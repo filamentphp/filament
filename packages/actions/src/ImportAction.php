@@ -314,6 +314,10 @@ class ImportAction extends Action
                             ]),
                         )
                         ->when(
+                            true,
+                            fn (Notification $notification) => $import->importer::modifyCompletedNotification($import, $columnMap, $options, $notification),
+                        )
+                        ->when(
                             ($jobConnection === 'sync') ||
                             (blank($jobConnection) && (config('queue.default') === 'sync')),
                             fn (Notification $notification) => $notification

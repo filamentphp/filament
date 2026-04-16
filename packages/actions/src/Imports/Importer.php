@@ -6,6 +6,7 @@ use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
@@ -311,6 +312,15 @@ abstract class Importer
     public static function getCompletedNotificationTitle(Import $import): string
     {
         return __('filament-actions::import.notifications.completed.title');
+    }
+
+    /**
+     * @param  array<string, string>  $columnMap
+     * @param  array<string, mixed>  $options
+     */
+    public static function modifyCompletedNotification(Import $import, array $columnMap, array $options, Notification $notification): ?Notification
+    {
+        return null;
     }
 
     /**
