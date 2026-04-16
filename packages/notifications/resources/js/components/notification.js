@@ -130,17 +130,48 @@ export default (Alpine) => {
             )
         },
 
+        getNotificationScope() {
+            if (
+                this.$el.closest(
+                    '[data-fi-modal-id="database-notifications"]',
+                ) !== null
+            ) {
+                return 'database'
+            }
+
+            return null
+        },
+
+        getScopedEventName(eventName) {
+            if (this.getNotificationScope() !== 'database') {
+                return eventName
+            }
+
+            return (
+                {
+                    markedNotificationAsRead:
+                        'databaseNotificationMarkedAsRead',
+                    markedNotificationAsUnread:
+                        'databaseNotificationMarkedAsUnread',
+                    notificationClosed: 'databaseNotificationClosed',
+                }[eventName] ?? eventName
+            )
+        },
+
         close() {
             this.isShown = false
 
             setTimeout(
                 () =>
                     window.dispatchEvent(
-                        new CustomEvent('notificationClosed', {
-                            detail: {
-                                id: notification.id,
+                        new CustomEvent(
+                            this.getScopedEventName('notificationClosed'),
+                            {
+                                detail: {
+                                    id: notification.id,
+                                },
                             },
-                        }),
+                        ),
                     ),
                 this.transitionDuration,
             )
@@ -148,21 +179,27 @@ export default (Alpine) => {
 
         markAsRead() {
             window.dispatchEvent(
-                new CustomEvent('markedNotificationAsRead', {
-                    detail: {
-                        id: notification.id,
+                new CustomEvent(
+                    this.getScopedEventName('markedNotificationAsRead'),
+                    {
+                        detail: {
+                            id: notification.id,
+                        },
                     },
-                }),
+                ),
             )
         },
 
         markAsUnread() {
             window.dispatchEvent(
-                new CustomEvent('markedNotificationAsUnread', {
-                    detail: {
-                        id: notification.id,
+                new CustomEvent(
+                    this.getScopedEventName('markedNotificationAsUnread'),
+                    {
+                        detail: {
+                            id: notification.id,
+                        },
                     },
-                }),
+                ),
             )
         },
 

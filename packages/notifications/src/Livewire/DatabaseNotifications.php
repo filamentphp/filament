@@ -38,7 +38,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[On('databaseNotificationsSent')]
     public function refresh(): void {}
 
-    #[On('notificationClosed')]
+    #[On('databaseNotificationClosed')]
     public function removeNotification(string $id): void
     {
         $this->getNotificationsQuery()
@@ -46,7 +46,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->delete();
     }
 
-    #[On('markedNotificationAsRead')]
+    #[On('databaseNotificationMarkedAsRead')]
     public function markNotificationAsRead(string $id): void
     {
         $this->getNotificationsQuery()
@@ -54,7 +54,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->update(['read_at' => now()]);
     }
 
-    #[On('markedNotificationAsUnread')]
+    #[On('databaseNotificationMarkedAsUnread')]
     public function markNotificationAsUnread(string $id): void
     {
         $this->getNotificationsQuery()
