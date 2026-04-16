@@ -245,6 +245,10 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
+        if ($driverName === 'pgsql' && str_contains($column, '.')) {
+            $column = $databaseConnection->getTablePrefix() . $column;
+        }
+
         $column = match ($driverName) {
             'pgsql' => (
                 str($column)->contains('->')

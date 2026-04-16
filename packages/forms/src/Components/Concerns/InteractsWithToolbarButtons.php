@@ -135,7 +135,11 @@ trait InteractsWithToolbarButtons
 
         foreach ($buttons as $button) {
             if (is_object($button)) {
-                $modified[] = $button;
+                $button = $this->filterDisabledToolbarButtonsFromItem($button, $buttonsToDisable);
+
+                if ($button !== null) {
+                    $modified[] = $button;
+                }
 
                 continue;
             }
@@ -145,7 +149,11 @@ trait InteractsWithToolbarButtons
 
                 foreach ($button as $item) {
                     if (is_object($item)) {
-                        $filteredGroup[] = $item;
+                        $item = $this->filterDisabledToolbarButtonsFromItem($item, $buttonsToDisable);
+
+                        if ($item !== null) {
+                            $filteredGroup[] = $item;
+                        }
 
                         continue;
                     }
@@ -168,6 +176,14 @@ trait InteractsWithToolbarButtons
         }
 
         return $modified;
+    }
+
+    /**
+     * @param  array<string>  $buttonsToDisable
+     */
+    protected function filterDisabledToolbarButtonsFromItem(object $item, array $buttonsToDisable): ?object
+    {
+        return $item;
     }
 
     /**
@@ -196,7 +212,7 @@ trait InteractsWithToolbarButtons
                         continue;
                     }
 
-                    if ($this->hasToolbarButtonInArray($modified, $item) || in_array($item, $filteredGroup)) {
+                    if ($this->hasToolbarButtonInButtons($modified, $item) || in_array($item, $filteredGroup)) {
                         continue;
                     }
 
@@ -210,7 +226,7 @@ trait InteractsWithToolbarButtons
                 continue;
             }
 
-            if ($this->hasToolbarButtonInArray($modified, $button)) {
+            if ($this->hasToolbarButtonInButtons($modified, $button)) {
                 continue;
             }
 
@@ -223,11 +239,11 @@ trait InteractsWithToolbarButtons
     /**
      * @param  array<int, string | object | array<int, string | object>>  $buttons
      */
-    protected function hasToolbarButtonInArray(array $buttons, string $button): bool
+    protected function hasToolbarButtonInButtons(array $buttons, string $button): bool
     {
         foreach ($buttons as $item) {
             if (is_array($item)) {
-                if ($this->hasToolbarButtonInArray($item, $button)) {
+                if ($this->hasToolbarButtonInButtons($item, $button)) {
                     return true;
                 }
 
@@ -238,7 +254,7 @@ trait InteractsWithToolbarButtons
                 return true;
             }
 
-            if (is_object($item) && $this->isToolbarButtonInObject($item, $button)) {
+            if (is_object($item) && $this->hasToolbarButtonInItem($item, $button)) {
                 return true;
             }
         }
@@ -246,7 +262,7 @@ trait InteractsWithToolbarButtons
         return false;
     }
 
-    protected function isToolbarButtonInObject(object $item, string $button): bool
+    protected function hasToolbarButtonInItem(object $item, string $button): bool
     {
         return false;
     }
@@ -273,12 +289,11 @@ trait InteractsWithToolbarButtons
     public function hasToolbarButton(string | array $button): bool
     {
         $buttonsToCheck = is_array($button) ? $button : [$button];
+        $toolbarButtons = $this->getToolbarButtons();
 
-        foreach ($this->getToolbarButtons() as $buttonGroup) {
-            foreach ($buttonGroup as $item) {
-                if (is_string($item) && in_array($item, $buttonsToCheck)) {
-                    return true;
-                }
+        foreach ($buttonsToCheck as $buttonToCheck) {
+            if ($this->hasToolbarButtonInButtons($toolbarButtons, $buttonToCheck)) {
+                return true;
             }
         }
 

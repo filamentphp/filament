@@ -55,6 +55,11 @@ return [
             'title' => 'Tallennettu',
         ],
 
+        'throttled' => [
+            'title' => 'Liian monta yritystä. Yritä uudelleen :seconds sekunnin jälkeen.',
+            'body' => 'Yritä uudelleen :seconds sekunnin jälkeen.',
+        ],
+
     ],
 
     'actions' => [
