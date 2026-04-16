@@ -21,8 +21,6 @@ export default function chart({ cachedData, options, type }) {
         userRadialTicksColor: options?.scales?.r?.ticks?.color,
 
         init() {
-            this._initChart()
-
             this.$wire.$on('updateChartData', ({ data }) => this.updateChartData(data))
 
             Alpine.effect(() => {
@@ -41,10 +39,11 @@ export default function chart({ cachedData, options, type }) {
                     this.$nextTick(() => this.updateChartTheme())
                 })
 
-            this.resizeObserver = new ResizeObserver(
-                Alpine.debounce(() => this.resizeChart(), 250)
-            )
-            this.resizeObserver.observe(this.$el)
+            this.$nextTick(() => {
+                this._initChart()
+                this.resizeObserver = new ResizeObserver(() => this.resizeChart())
+                this.resizeObserver.observe(this.$el)
+            })
         },
 
         _initChart() {
@@ -60,7 +59,7 @@ export default function chart({ cachedData, options, type }) {
 
             const { backgroundColor, borderColor, textColor, gridColor } = this.getChartFallbackColors()
             const fontFamily = getComputedStyle(this.$el).fontFamily
-            const hasMaxHeight = this.$refs.canvas.style.maxHeight !== ''
+            const hasMaxHeight = this.$refs.canvas.style.maxHeight !== '100%'
 
             options ??= {}
             options.backgroundColor ??= backgroundColor
@@ -69,6 +68,7 @@ export default function chart({ cachedData, options, type }) {
             options.font ??= {}
             options.font.family ??= fontFamily
             options.borderWidth ??= 2
+            options.responsive ??= false
             options.maintainAspectRatio ??= hasMaxHeight
             options.pointBackgroundColor =
                 this.userPointBackgroundColor ?? borderColor
@@ -129,8 +129,7 @@ export default function chart({ cachedData, options, type }) {
 
         resizeChart() {
             this.whenChart((chart) => {
-                chart.destroy()
-                this._initChart()
+                chart.resize()
             })
         },
 
