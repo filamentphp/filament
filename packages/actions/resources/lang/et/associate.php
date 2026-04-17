@@ -7,22 +7,22 @@ return [
             'heading' => 'Ühenda :label',
             'fields' => [
                 'record_id' => [
-                    'label' => 'Kirje'
-                ]
+                    'label' => 'Kirje',
+                ],
             ],
             'actions' => [
                 'associate' => [
-                    'label' => 'Ühenda'
+                    'label' => 'Ühenda',
                 ],
                 'associate_another' => [
-                    'label' => 'Ühenda & ühenda järgmine'
-                ]
-            ]
+                    'label' => 'Ühenda & ühenda järgmine',
+                ],
+            ],
         ],
         'notifications' => [
             'associated' => [
-                'title' => 'Ühendatud'
-            ]
-        ]
-    ]
+                'title' => 'Ühendatud',
+            ],
+        ],
+    ],
 ];
