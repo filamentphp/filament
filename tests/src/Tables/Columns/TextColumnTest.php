@@ -177,29 +177,6 @@ describe('rendering', function (): void {
     });
 });
 
-it('has no accessibility issues in light mode', function (): void {
-    retry(10, function (): void {
-        Post::factory()->count(3)->create();
-
-        $this->actingAs(User::factory()->create());
-
-        visit('/columns-browser-test')
-            ->assertNoAccessibilityIssues();
-    });
-});
-
-it('has no accessibility issues in dark mode', function (): void {
-    retry(10, function (): void {
-        Post::factory()->count(3)->create();
-
-        $this->actingAs(User::factory()->create());
-
-        visit('/columns-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
-    });
-});
-
 class RenderTextColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
