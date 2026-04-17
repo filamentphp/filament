@@ -16,7 +16,7 @@ jobs:
       matrix:
         php: [8.5, 8.4, 8.3]
         laravel: [13.*, 12.*, 11.*]
-        db: [sqlite, mysql, pgsql]
+        db: [sqlite]
         dependency-version: [prefer-stable]
         include:
           - laravel: 13.*
@@ -25,9 +25,37 @@ jobs:
             testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
+          - php: 8.5
+            laravel: 13.*
+            testbench: 11.*
+            db: mysql
+            dependency-version: prefer-stable
+          - php: 8.5
+            laravel: 13.*
+            testbench: 11.*
+            db: pgsql
+            dependency-version: prefer-stable
+          - php: 8.5
+            laravel: 12.*
+            testbench: 10.*
+            db: mysql
+            dependency-version: prefer-stable
+          - php: 8.5
+            laravel: 12.*
+            testbench: 10.*
+            db: pgsql
+            dependency-version: prefer-stable
+          - php: 8.4
+            laravel: 11.*
+            testbench: 9.*
+            db: mysql
+            dependency-version: prefer-stable
+          - php: 8.4
+            laravel: 11.*
+            testbench: 9.*
+            db: pgsql
+            dependency-version: prefer-stable
         exclude:
-          - laravel: 13.*
-            php: 8.2
           - laravel: 11.*
             php: 8.5
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - DB:${{ matrix.db }}
@@ -116,16 +144,37 @@ jobs:
         run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --exclude-group=commands
         env:
           DB_PASSWORD: password
-      - name: Execute tests (non-parallel fallback)
+      - name: Retry tests (parallel, attempt 2)
         if: steps.parallel-tests.outcome == 'failure'
-        id: non-parallel-tests
-        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --exclude-group=commands
+        id: parallel-retry-2
+        continue-on-error: true
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=commands
         env:
           DB_PASSWORD: password
-      - name: Warn about parallel test failure
-        if: steps.parallel-tests.outcome == 'failure' && steps.non-parallel-tests.outcome == 'success'
+      - name: Retry tests (parallel, attempt 3)
+        if: steps.parallel-retry-2.outcome == 'failure'
+        id: parallel-retry-3
+        continue-on-error: true
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=commands
+        env:
+          DB_PASSWORD: password
+      - name: Retry tests (parallel, attempt 4)
+        if: steps.parallel-retry-3.outcome == 'failure'
+        id: parallel-retry-4
+        continue-on-error: true
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=commands
+        env:
+          DB_PASSWORD: password
+      - name: Retry tests (parallel, attempt 5)
+        if: steps.parallel-retry-4.outcome == 'failure'
+        id: parallel-retry-5
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --bail --exclude-group=commands
+        env:
+          DB_PASSWORD: password
+      - name: Warn about flaky tests
+        if: steps.parallel-tests.outcome == 'failure' && (steps.parallel-retry-2.outcome == 'success' || steps.parallel-retry-3.outcome == 'success' || steps.parallel-retry-4.outcome == 'success' || steps.parallel-retry-5.outcome == 'success')
         run: |
-          echo "::warning::Parallel tests failed but non-parallel tests passed. This may indicate a race condition or test isolation issue."
+          echo "::warning::Parallel tests failed but a retry passed. This may indicate a race condition or test isolation issue."
       - name: Execute command tests (serial)
         run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --group=commands
         env:

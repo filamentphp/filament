@@ -127,7 +127,7 @@ trait InteractsWithTable
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
-            $this->tableColumnSearches ?? [],
+            $this->tableColumnSearches,
         );
 
         if ($shouldPersistColumnSearchesInSession) {
@@ -157,7 +157,7 @@ trait InteractsWithTable
         }
 
         if ($this->getTable()->isPaginated()) {
-            $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
+            $this->tableRecordsPerPage ??= $this->getDefaultTableRecordsPerPageSelectOption();
         }
     }
 

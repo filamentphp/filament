@@ -68,3 +68,7 @@ it('only deletes selected records', function (): void {
         expect($post->refresh()->deleted_at)->toBeNull();
     }
 });
+
+it('returns `delete` from `getDefaultName()`', function (): void {
+    expect(DeleteBulkAction::getDefaultName())->toBe('delete');
+});

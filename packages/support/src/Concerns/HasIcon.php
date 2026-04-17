@@ -14,6 +14,10 @@ trait HasIcon
 
     public function icon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
+        // Security: Icon strings are escaped when rendered as URLs, but
+        // invalid icon names from user input will cause rendering errors.
+        // Validate against a known allowlist if user-controlled.
+
         $this->icon = filled($icon) ? $icon : false;
 
         return $this;

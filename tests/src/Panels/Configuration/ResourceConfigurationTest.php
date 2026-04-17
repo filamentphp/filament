@@ -11,150 +11,158 @@ use Livewire\Livewire;
 
 uses(TestCase::class);
 
-it('can register resource configurations', function (): void {
-    $configurations = Filament::getCurrentOrDefaultPanel()->getResourceConfigurations();
+describe('registration', function (): void {
+    it('can register resource configurations', function (): void {
+        $configurations = Filament::getCurrentOrDefaultPanel()->getResourceConfigurations();
 
-    expect($configurations)->toHaveCount(2);
+        expect($configurations)->toHaveCount(2);
 
-    $keys = collect($configurations)->map(fn ($configuration) => $configuration->getKey())->all();
+        $keys = collect($configurations)->map(fn ($configuration) => $configuration->getKey())->all();
 
-    expect($keys)->toContain('featured');
-    expect($keys)->toContain('archived');
-});
-
-it('can register default resource without configuration', function (): void {
-    $resources = Filament::getResources();
-
-    expect($resources)->toContain(ConfigurablePostResource::class);
-});
-
-it('can generate different slugs for each configuration', function (): void {
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
-    expect(ConfigurablePostResource::getSlug())->toBe('featured-posts');
-    Filament::setCurrentResourceConfigurationKey(null);
-
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
-    expect(ConfigurablePostResource::getSlug())->toBe('archived-posts');
-    Filament::setCurrentResourceConfigurationKey(null);
-});
-
-it('can access configuration using `getConfiguration()`', function (): void {
-    // Without configuration context, returns null
-    expect(ConfigurablePostResource::getConfiguration())->toBeNull();
-
-    // Set configuration context
-    $panel = Filament::getCurrentOrDefaultPanel();
-    $featuredConfig = $panel->getResourceConfiguration(ConfigurablePostResource::class, 'featured');
-
-    Filament::setCurrentResourceConfigurationKey('featured');
-
-    expect(ConfigurablePostResource::getConfiguration())->toBe($featuredConfig);
-    expect(ConfigurablePostResource::hasConfiguration())->toBeTrue();
-
-    // Clean up
-    Filament::setCurrentResourceConfigurationKey(null);
-});
-
-it('can use `withConfiguration()` to execute callback in configuration context', function (): void {
-    $result = ConfigurablePostResource::withConfiguration('featured', function () {
-        $configuration = ConfigurablePostResource::getConfiguration();
-
-        return $configuration?->getKey();
+        expect($keys)->toContain('featured');
+        expect($keys)->toContain('archived');
     });
 
-    expect($result)->toBe('featured');
+    it('can register default resource without configuration', function (): void {
+        $resources = Filament::getResources();
 
-    // After callback, configuration context is restored
-    expect(ConfigurablePostResource::getConfiguration())->toBeNull();
+        expect($resources)->toContain(ConfigurablePostResource::class);
+    });
+
+    it('can generate different slugs for each configuration', function (): void {
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+        expect(ConfigurablePostResource::getSlug())->toBe('featured-posts');
+        Filament::setCurrentResourceConfigurationKey(null);
+
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+        expect(ConfigurablePostResource::getSlug())->toBe('archived-posts');
+        Filament::setCurrentResourceConfigurationKey(null);
+    });
 });
 
-it('can generate URLs for specific configurations', function (): void {
-    $defaultUrl = ConfigurablePostResource::getUrl();
-    $featuredUrl = ConfigurablePostResource::getUrl(configuration: 'featured');
-    $archivedUrl = ConfigurablePostResource::getUrl(configuration: 'archived');
+describe('configuration access', function (): void {
+    it('can access configuration using `getConfiguration()`', function (): void {
+        // Without configuration context, returns null
+        expect(ConfigurablePostResource::getConfiguration())->toBeNull();
 
-    expect($defaultUrl)->toContain('/configurable-posts');
-    expect($featuredUrl)->toContain('/featured-posts');
-    expect($archivedUrl)->toContain('/archived-posts');
+        // Set configuration context
+        $panel = Filament::getCurrentOrDefaultPanel();
+        $featuredConfig = $panel->getResourceConfiguration(ConfigurablePostResource::class, 'featured');
+
+        Filament::setCurrentResourceConfigurationKey('featured');
+
+        expect(ConfigurablePostResource::getConfiguration())->toBe($featuredConfig);
+        expect(ConfigurablePostResource::hasConfiguration())->toBeTrue();
+
+        // Clean up
+        Filament::setCurrentResourceConfigurationKey(null);
+    });
+
+    it('can use `withConfiguration()` to execute callback in configuration context', function (): void {
+        $result = ConfigurablePostResource::withConfiguration('featured', function () {
+            $configuration = ConfigurablePostResource::getConfiguration();
+
+            return $configuration?->getKey();
+        });
+
+        expect($result)->toBe('featured');
+
+        // After callback, configuration context is restored
+        expect(ConfigurablePostResource::getConfiguration())->toBeNull();
+    });
 });
 
-it('can filter records based on configuration', function (): void {
-    $author = User::factory()->create();
+describe('URLs and rendering', function (): void {
+    it('can generate URLs for specific configurations', function (): void {
+        $defaultUrl = ConfigurablePostResource::getUrl();
+        $featuredUrl = ConfigurablePostResource::getUrl(configuration: 'featured');
+        $archivedUrl = ConfigurablePostResource::getUrl(configuration: 'archived');
 
-    // Create published posts (featured)
-    $publishedPosts = Post::factory()
-        ->count(3)
-        ->for($author, 'author')
-        ->create(['is_published' => true]);
+        expect($defaultUrl)->toContain('/configurable-posts');
+        expect($featuredUrl)->toContain('/featured-posts');
+        expect($archivedUrl)->toContain('/archived-posts');
+    });
 
-    // Create unpublished posts (archived)
-    $unpublishedPosts = Post::factory()
-        ->count(2)
-        ->for($author, 'author')
-        ->create(['is_published' => false]);
+    it('can filter records based on configuration', function (): void {
+        $author = User::factory()->create();
 
-    // Test featured configuration filters to published posts
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+        // Create published posts (featured)
+        $publishedPosts = Post::factory()
+            ->count(3)
+            ->for($author, 'author')
+            ->create(['is_published' => true]);
 
-    Livewire::test(ListConfigurablePosts::class)
-        ->assertCanSeeTableRecords($publishedPosts)
-        ->assertCanNotSeeTableRecords($unpublishedPosts);
+        // Create unpublished posts (archived)
+        $unpublishedPosts = Post::factory()
+            ->count(2)
+            ->for($author, 'author')
+            ->create(['is_published' => false]);
 
-    Filament::setCurrentResourceConfigurationKey(null);
+        // Test featured configuration filters to published posts
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
 
-    // Test archived configuration filters to unpublished posts
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+        Livewire::test(ListConfigurablePosts::class)
+            ->assertCanSeeTableRecords($publishedPosts)
+            ->assertCanNotSeeTableRecords($unpublishedPosts);
 
-    Livewire::test(ListConfigurablePosts::class)
-        ->assertCanSeeTableRecords($unpublishedPosts)
-        ->assertCanNotSeeTableRecords($publishedPosts);
+        Filament::setCurrentResourceConfigurationKey(null);
 
-    Filament::setCurrentResourceConfigurationKey(null);
+        // Test archived configuration filters to unpublished posts
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+
+        Livewire::test(ListConfigurablePosts::class)
+            ->assertCanSeeTableRecords($unpublishedPosts)
+            ->assertCanNotSeeTableRecords($publishedPosts);
+
+        Filament::setCurrentResourceConfigurationKey(null);
+    });
 });
 
-it('can get navigation label from configuration', function (): void {
-    // Default label (derived from model name)
-    expect(ConfigurablePostResource::getNavigationLabel())->toBe('Posts');
+describe('navigation properties', function (): void {
+    it('can get navigation label from configuration', function (): void {
+        // Default label (derived from model name)
+        expect(ConfigurablePostResource::getNavigationLabel())->toBe('Posts');
 
-    // Featured configuration label
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
-    expect(ConfigurablePostResource::getNavigationLabel())->toBe('Featured Posts');
-    Filament::setCurrentResourceConfigurationKey(null);
+        // Featured configuration label
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+        expect(ConfigurablePostResource::getNavigationLabel())->toBe('Featured Posts');
+        Filament::setCurrentResourceConfigurationKey(null);
 
-    // Archived configuration label
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
-    expect(ConfigurablePostResource::getNavigationLabel())->toBe('Archived Posts');
-    Filament::setCurrentResourceConfigurationKey(null);
-});
+        // Archived configuration label
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+        expect(ConfigurablePostResource::getNavigationLabel())->toBe('Archived Posts');
+        Filament::setCurrentResourceConfigurationKey(null);
+    });
 
-it('can get navigation group from configuration', function (): void {
-    // Default group
-    expect(ConfigurablePostResource::getNavigationGroup())->toBe('Blog');
+    it('can get navigation group from configuration', function (): void {
+        // Default group
+        expect(ConfigurablePostResource::getNavigationGroup())->toBe('Blog');
 
-    // Featured configuration group
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
-    expect(ConfigurablePostResource::getNavigationGroup())->toBe('Featured Content');
-    Filament::setCurrentResourceConfigurationKey(null);
+        // Featured configuration group
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+        expect(ConfigurablePostResource::getNavigationGroup())->toBe('Featured Content');
+        Filament::setCurrentResourceConfigurationKey(null);
 
-    // Archived configuration group
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
-    expect(ConfigurablePostResource::getNavigationGroup())->toBe('Archive');
-    Filament::setCurrentResourceConfigurationKey(null);
-});
+        // Archived configuration group
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+        expect(ConfigurablePostResource::getNavigationGroup())->toBe('Archive');
+        Filament::setCurrentResourceConfigurationKey(null);
+    });
 
-it('can get navigation sort from configuration', function (): void {
-    // Default sort (null)
-    expect(ConfigurablePostResource::getNavigationSort())->toBeNull();
+    it('can get navigation sort from configuration', function (): void {
+        // Default sort (null)
+        expect(ConfigurablePostResource::getNavigationSort())->toBeNull();
 
-    // Featured configuration sort
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
-    expect(ConfigurablePostResource::getNavigationSort())->toBe(1);
-    Filament::setCurrentResourceConfigurationKey(null);
+        // Featured configuration sort
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+        expect(ConfigurablePostResource::getNavigationSort())->toBe(1);
+        Filament::setCurrentResourceConfigurationKey(null);
 
-    // Archived configuration sort
-    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
-    expect(ConfigurablePostResource::getNavigationSort())->toBe(100);
-    Filament::setCurrentResourceConfigurationKey(null);
+        // Archived configuration sort
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+        expect(ConfigurablePostResource::getNavigationSort())->toBe(100);
+        Filament::setCurrentResourceConfigurationKey(null);
+    });
 });
 
 it('throws exception when using `withConfiguration()` with unknown key', function (): void {

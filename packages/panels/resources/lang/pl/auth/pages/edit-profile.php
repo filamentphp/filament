@@ -55,6 +55,11 @@ return [
             'title' => 'Zapisano',
         ],
 
+        'throttled' => [
+            'title' => 'Zbyt wiele prób. Spróbuj ponownie za :seconds sekund.',
+            'body' => 'Proszę spróbować ponownie za :seconds sekund.',
+        ],
+
     ],
 
     'actions' => [
