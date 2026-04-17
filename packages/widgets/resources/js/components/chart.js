@@ -14,6 +14,9 @@ Chart.defaults.plugins.legend.position = 'bottom'
 
 export default function chart({ cachedData, options, type }) {
     return {
+        userBackgroundColor: options?.backgroundColor,
+        userBorderColor: options?.borderColor,
+        userTextColor: options?.color,
         userPointBackgroundColor: options?.pointBackgroundColor,
         userXGridColor: options?.scales?.x?.grid?.color,
         userYGridColor: options?.scales?.y?.grid?.color,
@@ -62,9 +65,9 @@ export default function chart({ cachedData, options, type }) {
             const hasMaxHeight = this.$refs.canvas.style.maxHeight !== '100%'
 
             options ??= {}
-            options.backgroundColor ??= backgroundColor
-            options.borderColor ??= borderColor
-            options.color ??= textColor
+            options.backgroundColor = this.userBackgroundColor ?? backgroundColor
+            options.borderColor = this.userBorderColor ?? borderColor
+            options.color = this.userTextColor ?? textColor
             options.font ??= {}
             options.font.family ??= fontFamily
             options.borderWidth ??= 2
@@ -122,8 +125,21 @@ export default function chart({ cachedData, options, type }) {
 
         updateChartTheme() {
             this.whenChart((chart) => {
-                chart.destroy()
-                this._initChart()
+                const { backgroundColor, borderColor, textColor, gridColor } = this.getChartFallbackColors()
+
+                chart.options.backgroundColor = this.userBackgroundColor ?? backgroundColor
+                chart.options.borderColor = this.userBorderColor ?? borderColor
+                chart.options.color = this.userTextColor ?? textColor
+                chart.options.pointBackgroundColor = this.userPointBackgroundColor ?? borderColor
+                chart.options.scales.x.grid.color = this.userXGridColor ?? gridColor
+                chart.options.scales.y.grid.color = this.userYGridColor ?? gridColor
+
+                if (type === 'polarArea') {
+                    chart.options.scales.r.grid.color = this.userRadialGridColor ?? gridColor
+                    chart.options.scales.r.ticks.color = this.userRadialTicksColor ?? textColor
+                }
+
+                chart.update('none')
             })
         },
 
