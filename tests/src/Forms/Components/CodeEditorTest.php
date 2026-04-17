@@ -200,7 +200,12 @@ it('can render `CodeEditor` in the browser', function (): void {
 
         visit('/code-editor-browser-test')
             ->assertSee('Test Code Editor')
-            ->assertNoSmoke();
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/code-editor-browser-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
     });
 });
 
