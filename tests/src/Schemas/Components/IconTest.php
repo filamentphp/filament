@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Schemas\Components\Icon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\TestCase;
 
@@ -43,6 +44,33 @@ describe('color', function (): void {
             ->color(static fn (): string => 'danger');
 
         expect($icon->getColor())->toBe('danger');
+    });
+});
+
+describe('size', function (): void {
+    it('returns `null` for `getSize()` by default', function (): void {
+        $icon = Icon::make(Heroicon::Check);
+
+        expect($icon->getSize())->toBeNull();
+    });
+
+    it('can set `size()`', function (): void {
+        $icon = Icon::make(Heroicon::Check)->size(IconSize::Large);
+
+        expect($icon->getSize())->toBe(IconSize::Large);
+    });
+
+    it('can set `size()` with a `Closure`', function (): void {
+        $icon = Icon::make(Heroicon::Check)
+            ->size(static fn (): IconSize => IconSize::Large);
+
+        expect($icon->getSize())->toBe(IconSize::Large);
+    });
+
+    it('can set `size()` with a string value', function (): void {
+        $icon = Icon::make(Heroicon::Check)->size('lg');
+
+        expect($icon->getSize())->toBe('lg');
     });
 });
 
@@ -98,5 +126,20 @@ describe('rendering', function (): void {
     it('renders with `tooltip()` set via `Closure`', function (): void {
         $html = Icon::make(Heroicon::Check)->tooltip(static fn (): string => 'Dynamic tip')->toEmbeddedHtml();
         expect($html)->not->toBe('');
+    });
+
+    it('renders with `size()`', function (): void {
+        $html = Icon::make(Heroicon::Check)->size(IconSize::Large)->toEmbeddedHtml();
+        expect($html)->toContain('fi-size-lg');
+    });
+
+    it('renders with `size()` set via `Closure`', function (): void {
+        $html = Icon::make(Heroicon::Check)->size(static fn (): IconSize => IconSize::Small)->toEmbeddedHtml();
+        expect($html)->toContain('fi-size-sm');
+    });
+
+    it('renders with default `IconSize::Medium` when no size is set', function (): void {
+        $html = Icon::make(Heroicon::Check)->toEmbeddedHtml();
+        expect($html)->toContain('fi-size-md');
     });
 });
