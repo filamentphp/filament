@@ -4,6 +4,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -282,6 +283,29 @@ describe('toolbar buttons', function (): void {
             ->toThrow(LogicException::class, 'You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function.');
     });
 
+    test('can disable grouped toolbar buttons using `disableToolbarButtons()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->toolbarButtons([
+                        [ToolbarButtonGroup::make('Heading', ['h1', 'h2'])],
+                        ['undo', 'redo'],
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $richEditor->disableToolbarButtons(['h1']);
+
+        $headingButtonGroup = $richEditor->getToolbarButtons()[0][0];
+
+        expect($headingButtonGroup)->toBeInstanceOf(ToolbarButtonGroup::class);
+
+        expect($headingButtonGroup->getButtons())->toEqual(['h2'])
+            ->and($richEditor->hasToolbarButton('h1'))->toBeFalse()
+            ->and($richEditor->hasToolbarButton('h2'))->toBeTrue();
+    });
+
 });
 
 describe('file attachments', function (): void {
@@ -454,6 +478,29 @@ describe('plugins', function (): void {
             ->and($buttons[0])->toEqual(['bold', 'highlight'])
             ->and($buttons[1])->toEqual(['undo', 'redo'])
             ->and($highlightButtons)->toHaveCount(1);
+    });
+
+    test('plugin implementing `HasToolbarButtons` does not duplicate toolbar buttons already returned by `ToolbarButtonGroup` in `toolbarButtons()`', function (): void {
+        $buttons = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->toolbarButtons([
+                        ['bold', 'italic'],
+                        [ToolbarButtonGroup::make('Formatting', ['highlight', 'underline'])],
+                        ['undo', 'redo'],
+                    ])
+                    ->plugins([new TestRichContentPlugin(enabledButtons: ['highlight'])]),
+            ])
+            ->getComponents()[0]
+            ->getToolbarButtons();
+
+        $highlightButtonGroup = $buttons[1][0];
+
+        expect($buttons)->toHaveCount(3)
+            ->and($highlightButtonGroup)->toBeInstanceOf(ToolbarButtonGroup::class)
+            ->and($highlightButtonGroup->getButtons())->toEqual(['highlight', 'underline'])
+            ->and($buttons[2])->toEqual(['undo', 'redo']);
     });
 
     test('plugin implementing `HasToolbarButtons` does not duplicate toolbar buttons already enabled by user `enableToolbarButtons()`', function (): void {

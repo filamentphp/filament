@@ -122,6 +122,20 @@ it('converts an OKLCH color to RGB via `convertToRgb()`', function (): void {
     expect($result)->toStartWith('rgb(');
 });
 
+it('passes through a HEX color unchanged via `convertToHex()`', function (): void {
+    expect(Color::convertToHex('#ff0000'))->toBe('#ff0000');
+});
+
+it('converts an RGB color to HEX via `convertToHex()`', function (): void {
+    expect(Color::convertToHex('rgb(255, 0, 0)'))->toBe('#ff0000');
+});
+
+it('converts an OKLCH color to HEX via `convertToHex()`', function (): void {
+    $result = Color::convertToHex('oklch(0.637 0.237 25.331)');
+
+    expect($result)->toMatch('/^#[0-9a-f]{6}$/');
+});
+
 it('calculates a contrast ratio greater than 1 via `calculateContrastRatio()`', function (): void {
     $ratio = Color::calculateContrastRatio('#ffffff', '#000000');
 
