@@ -47,7 +47,7 @@ class PartialsComponentHook extends ComponentHook
         return fn () => $this->storeSet('isPendingPartialRender', true);
     }
 
-    public function call($method = null): void
+    public function call(?string $method = null): void
     {
         if (str_starts_with((string) $method, '$')) {
             return;
