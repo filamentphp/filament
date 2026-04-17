@@ -51,7 +51,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
                 return;
             }
 
-            session()->put('filament.notifications.claimed', $notifications);
+            session()->put('filament.claimed_notifications', $notifications);
 
             $component->dispatch('notificationsSent');
         });
