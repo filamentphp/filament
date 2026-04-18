@@ -23,7 +23,7 @@ class RelationGroup extends Component
      */
     protected string | array | Closure | null $badgeColor = null;
 
-    protected bool | Closure $deferBadge = false;
+    protected bool | Closure $isBadgeDeferred = false;
 
     protected ?Model $ownerRecord = null;
 
@@ -81,21 +81,16 @@ class RelationGroup extends Component
         return $this;
     }
 
-    public function getLabel(): string
-    {
-        return $this->evaluate($this->label);
-    }
-
     public function deferBadge(bool | Closure $condition = true): static
     {
-        $this->deferBadge = $condition;
+        $this->isBadgeDeferred = $condition;
 
         return $this;
     }
 
-    public function isBadgeDeferred(): bool
+    public function getLabel(): string
     {
-        return (bool) $this->evaluate($this->deferBadge);
+        return $this->evaluate($this->label);
     }
 
     public function tab(?Closure $callback): static
@@ -149,6 +144,11 @@ class RelationGroup extends Component
         return $this->evaluate($this->badgeColor);
     }
 
+    public function isBadgeDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isBadgeDeferred);
+    }
+
     public function getOwnerRecord(): ?Model
     {
         return $this->ownerRecord;
@@ -190,13 +190,13 @@ class RelationGroup extends Component
 
     public function getTabComponent(): Tab
     {
-        $isDeferred = $this->isBadgeDeferred();
+        $isTabBadgeDeferred = $this->isBadgeDeferred();
 
         $tab = Tab::make($this->getLabel())
-            ->badge($isDeferred
-                ? fn () => $this->getBadge()
+            ->badge($isTabBadgeDeferred
+                ? fn (): ?string => $this->getBadge()
                 : $this->getBadge())
-            ->deferBadge($isDeferred)
+            ->deferBadge($isTabBadgeDeferred)
             ->badgeColor($this->getBadgeColor())
             ->badgeTooltip($this->getBadgeTooltip())
             ->icon($this->getIcon())

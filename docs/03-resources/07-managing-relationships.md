@@ -849,14 +849,14 @@ RelationGroup::make('Contacts', [
         ->icon('heroicon-m-document-text'));
 ```
 
-#### Deferring the loading of relation manager tab badges
+### Deferring the loading of relation manager tab badges
 
-If `getBadge()` runs an expensive query, set `$deferBadge = true` to load it asynchronously after the page renders:
+If `getBadge()` runs an expensive query, you may defer the badge so that it loads asynchronously after the page renders, by setting the `$isBadgeDeferred` property to `true`:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-protected static bool $deferBadge = true;
+protected static bool $isBadgeDeferred = true;
 
 public static function getBadge(Model $ownerRecord, string $pageClass): ?string
 {
@@ -866,7 +866,16 @@ public static function getBadge(Model $ownerRecord, string $pageClass): ?string
 }
 ```
 
-> `getBadge()` is automatically wrapped in a closure when `$deferBadge` is `true`. Override `isBadgeDeferred()` for dynamic, per-record control.
+Alternatively, you may override the `isBadgeDeferred()` method to define dynamic behavior:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
+{
+    return FeatureFlag::active();
+}
+```
 
 If you are using a [relation group](#grouping-relation-managers), use the fluent `deferBadge()` method:
 

@@ -361,7 +361,7 @@ it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `Relatio
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000);
 });
 
-it('defers badge loading when $deferBadge is true', function (): void {
+it('defers the tab badge loading when `$isBadgeDeferred` is `true`', function (): void {
     $ticket = Ticket::factory()->create();
 
     $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
@@ -369,7 +369,7 @@ it('defers badge loading when $deferBadge is true', function (): void {
     expect($tab->isBadgeDeferred())->toBeTrue();
 });
 
-it('returns the correct deferred badge value', function (): void {
+it('resolves the deferred tab badge value from `getBadge()`', function (): void {
     $ticket = Ticket::factory()
         ->hasAttached(Department::factory(3))
         ->create();
@@ -380,7 +380,7 @@ it('returns the correct deferred badge value', function (): void {
         ->and($tab->getBadge())->toBe('3');
 });
 
-it('does not defer badge loading by default', function (): void {
+it('does not defer the tab badge loading by default', function (): void {
     $ticket = Ticket::factory()->create();
 
     $tab = DepartmentsRelationManager::getTabComponent($ticket, EditTicket::class);
