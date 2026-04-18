@@ -24,14 +24,11 @@ trait HasNavigation
 
     protected Closure | bool $navigationBuilder = true;
 
-    protected NavigationBuilder | bool | null $resolvedNavigationBuilder = null;
-
     protected ?NavigationManager $navigationManager = null;
 
     public function navigation(Closure | bool $builder = true): static
     {
         $this->navigationBuilder = $builder;
-        $this->resolvedNavigationBuilder = null;
 
         return $this;
     }
@@ -110,21 +107,17 @@ trait HasNavigation
 
     protected function resolveNavigationBuilder(): NavigationBuilder | bool
     {
-        if ($this->resolvedNavigationBuilder !== null) {
-            return $this->resolvedNavigationBuilder;
-        }
-
         if (! $this->navigationBuilder instanceof Closure) {
-            return $this->resolvedNavigationBuilder = $this->navigationBuilder;
+            return $this->navigationBuilder;
         }
 
         $result = app()->call($this->navigationBuilder);
 
         if ($result instanceof NavigationBuilder) {
-            return $this->resolvedNavigationBuilder = $result;
+            return $result;
         }
 
-        return $this->resolvedNavigationBuilder = (bool) $result;
+        return (bool) $result;
     }
 
     /**

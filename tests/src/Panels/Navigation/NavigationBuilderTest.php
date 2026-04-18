@@ -135,20 +135,3 @@ it('hides navigation when `navigation(false)` is set', function (): void {
     expect(Filament::hasNavigation())->toBeFalse();
 });
 
-it('resolves the navigation closure only once per request', function (): void {
-    $callCount = 0;
-
-    Filament::getCurrentOrDefaultPanel()->navigation(function (NavigationBuilder $navigation) use (&$callCount): NavigationBuilder {
-        $callCount++;
-
-        return $navigation->items([
-            ...Dashboard::getNavigationItems(),
-        ]);
-    });
-
-    Filament::hasNavigation();
-    Filament::getCurrentOrDefaultPanel()->hasNavigationBuilder();
-    Filament::buildNavigation();
-
-    expect($callCount)->toBe(1);
-});
