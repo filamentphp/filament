@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Illuminate\Support\Arr;
 
 trait HasFooterActions
@@ -11,12 +12,12 @@ trait HasFooterActions
     use HasFooterActionsAlignment;
 
     /**
-     * @var array<Action | Closure>
+     * @var array<Action | ActionGroup | Closure>
      */
     protected array $footerActions = [];
 
     /**
-     * @param  array<Action | Closure>  $actions
+     * @param  array<Action | ActionGroup | Closure>  $actions
      */
     public function footerActions(array $actions): static
     {
@@ -29,7 +30,7 @@ trait HasFooterActions
     }
 
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     public function getFooterActions(): array
     {
@@ -37,7 +38,9 @@ trait HasFooterActions
 
         foreach ($this->footerActions as $footerAction) {
             foreach (Arr::wrap($this->evaluate($footerAction)) as $action) {
-                $actions[] = $this->prepareAction($action);
+                $actions[] = ($action instanceof ActionGroup)
+                    ? $this->prepareActionGroup($action)
+                    : $this->prepareAction($action);
             }
         }
 

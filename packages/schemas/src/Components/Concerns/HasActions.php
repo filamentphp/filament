@@ -147,9 +147,14 @@ trait HasActions
         return [];
     }
 
-    public function prepareAction(Action | ActionGroup $action): Action | ActionGroup
+    public function prepareAction(Action $action): Action
     {
         return $action->schemaComponent($this);
+    }
+
+    public function prepareActionGroup(ActionGroup $group): ActionGroup
+    {
+        return $group->schemaComponent($this);
     }
 
     /**

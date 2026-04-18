@@ -36,7 +36,9 @@ trait HasHeaderActions
 
         foreach ($this->headerActions as $headerAction) {
             foreach (Arr::wrap($this->evaluate($headerAction)) as $action) {
-                $actions[] = $this->prepareAction($action);
+                $actions[] = ($action instanceof ActionGroup)
+                    ? $this->prepareActionGroup($action)
+                    : $this->prepareAction($action);
             }
         }
 
