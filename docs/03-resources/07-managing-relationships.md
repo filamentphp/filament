@@ -3,6 +3,7 @@ title: Managing relationships
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Choosing the right tool for the job
 
@@ -832,6 +833,8 @@ public static function getTabComponent(Model $ownerRecord, string $pageClass): T
 }
 ```
 
+<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;string | int | float | null;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 If you are using a [relation group](#grouping-relation-managers), you can use the `tab()` method:
 
 ```php
@@ -848,6 +851,8 @@ RelationGroup::make('Contacts', [
         ->badgeTooltip('The number of posts in this category')
         ->icon('heroicon-m-document-text'));
 ```
+
+<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;string | int | float | null;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Sharing a resource's form and table with a relation manager
 
