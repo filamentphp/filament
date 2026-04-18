@@ -58,19 +58,29 @@ class Icon extends Component implements HasEmbeddedView
 
     public function getSize(): IconSize | string | null
     {
-        return $this->evaluate($this->size);
+        $size = $this->evaluate($this->size);
+
+        if (blank($size)) {
+            return null;
+        }
+
+        if ($size === 'base') {
+            return null;
+        }
+
+        if (is_string($size)) {
+            $size = IconSize::tryFrom($size) ?? $size;
+        }
+
+        return $size;
     }
 
     public function toEmbeddedHtml(): string
     {
         $size = $this->getSize();
 
-        if (is_string($size)) {
-            $size = IconSize::tryFrom($size) ?? null;
-        }
-
         return generate_icon_html($this->getIcon(), attributes: (new ComponentAttributeBag([
             'x-tooltip' => filled($tooltip = $this->getTooltip()) ? '{ content: ' . Js::from($tooltip) . ', theme: $store.theme, allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ' }' : null,
-        ]))->merge($this->getExtraAttributes(), escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']), size: $size)->toHtml();
+        ]))->merge($this->getExtraAttributes(), escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']), size: $size instanceof IconSize ? $size : null)->toHtml();
     }
 }

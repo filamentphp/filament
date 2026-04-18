@@ -67,10 +67,16 @@ describe('size', function (): void {
         expect($icon->getSize())->toBe(IconSize::Large);
     });
 
-    it('can set `size()` with a string value', function (): void {
+    it('resolves a string `size()` to the matching `IconSize`', function (): void {
         $icon = Icon::make(Heroicon::Check)->size('lg');
 
-        expect($icon->getSize())->toBe('lg');
+        expect($icon->getSize())->toBe(IconSize::Large);
+    });
+
+    it('returns `null` for `getSize()` when `size()` is `"base"`', function (): void {
+        $icon = Icon::make(Heroicon::Check)->size('base');
+
+        expect($icon->getSize())->toBeNull();
     });
 });
 
