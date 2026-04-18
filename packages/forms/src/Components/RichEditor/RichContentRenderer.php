@@ -281,6 +281,72 @@ class RichContentRenderer implements Htmlable
         });
     }
 
+    protected function flattenMergeTagsForText(Editor $editor): void
+    {
+        $editor->descendants(function (object &$node): void {
+            if (! isset($node->content) || ! is_array($node->content)) {
+                return;
+            }
+
+            $hasMergeTags = false;
+
+            foreach ($node->content as $child) {
+                if (in_array($child->type, ['mergeTag', 'rawHtmlMergeTag'])) {
+                    $hasMergeTags = true;
+
+                    break;
+                }
+            }
+
+            if (! $hasMergeTags) {
+                return;
+            }
+
+            $merged = [];
+
+            foreach ($node->content as $child) {
+                foreach ($this->resolveTextNodesFromMergeTag($child) as $textNode) {
+                    $last = end($merged);
+
+                    if ($last && $last->type === 'text' && $textNode->type === 'text') {
+                        $last->text .= $textNode->text;
+                    } else {
+                        $merged[] = $textNode;
+                    }
+                }
+            }
+
+            $node->content = $merged;
+        });
+    }
+
+    /**
+     * @return array<object>
+     */
+    protected function resolveTextNodesFromMergeTag(object $node): array
+    {
+        if ($node->type === 'mergeTag') {
+            return $node->content ?? [];
+        }
+
+        if ($node->type === 'rawHtmlMergeTag') {
+            $text = trim(preg_replace('/\s+/', ' ', strip_tags($node->html ?? '')));
+
+            if ($text === '') {
+                return [];
+            }
+
+            return [
+                (object) [
+                    'type' => 'text',
+                    'text' => $text,
+                ],
+            ];
+        }
+
+        return [$node];
+    }
+
     protected function processMentions(Editor $editor): void
     {
         if (blank($this->mentionProviders)) {
@@ -400,6 +466,7 @@ class RichContentRenderer implements Htmlable
             app(LeadExtension::class),
             app(Link::class, [
                 'options' => [
+                    'HTMLAttributes' => [],
                     'allowedProtocols' => $this->getLinkProtocols(),
                 ],
             ]),
@@ -484,6 +551,9 @@ class RichContentRenderer implements Htmlable
 
     public function toUnsafeHtml(): string
     {
+        // Security: This method returns unsanitized HTML. Only use for
+        // internal processing — never render in Blade. Use `toHtml()`.
+
         $editor = $this->getEditor();
 
         $this->processCustomBlocks($editor);
@@ -497,6 +567,10 @@ class RichContentRenderer implements Htmlable
 
     public function toHtml(): string
     {
+        // Security: Always use `toHtml()` (not `toUnsafeHtml()`) when
+        // rendering user-provided rich content. This applies
+        // Symfony's `HtmlSanitizer` to prevent XSS.
+
         return Str::sanitizeHtml($this->toUnsafeHtml());
     }
 
@@ -505,6 +579,7 @@ class RichContentRenderer implements Htmlable
         $editor = $this->getEditor();
 
         $this->processMergeTags($editor);
+        $this->flattenMergeTagsForText($editor);
 
         return $editor->getText();
     }
@@ -541,10 +616,34 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     * @param  ?array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
+        if ($blocks !== null) {
+            $flattened = [];
+
+            foreach ($blocks as $key => $value) {
+                if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                    // Data association: `BlockClass::class => $data`
+                    $flattened[$key] = $value;
+                } elseif (is_array($value)) {
+                    // Group or ungrouped section: `'Label' => [...]` or `[...]`
+                    foreach ($value as $innerKey => $innerValue) {
+                        if (is_string($innerKey)) {
+                            $flattened[$innerKey] = $innerValue;
+                        } else {
+                            $flattened[] = $innerValue;
+                        }
+                    }
+                } else {
+                    $flattened[] = $value;
+                }
+            }
+
+            $blocks = $flattened;
+        }
+
         $this->customBlocks = $blocks;
 
         return $this;

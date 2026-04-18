@@ -12,7 +12,7 @@
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
     $isHtmlAllowed = $isHtmlAllowed();
-    $isNative = (! ($isSearchable || $isMultiple) && $isNative());
+    $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $isNative());
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
     $key = $getKey();

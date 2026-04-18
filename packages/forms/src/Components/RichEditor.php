@@ -30,6 +30,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -37,6 +38,13 @@ use Tiptap\Editor;
 
 class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 {
+    // Security: The rich editor outputs raw HTML. Attackers can intercept
+    // the value and send arbitrary HTML to the backend. When rendering
+    // in Blade views, always sanitize using `sanitizeHtml()` or the
+    // `RichContentRenderer`. Never use `{!! $content !!}` unsanitized.
+    // The default sanitizer permits inline `style` attributes —
+    // configure a restrictive one for untrusted user content.
+
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
@@ -387,132 +395,108 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.clear_formatting'),
         ]);
 
-        $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
-            $fileAttachmentProvider = $component->getFileAttachmentProvider();
-
-            if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $record)) {
-                return;
-            }
-
-            $fileAttachmentIds = [];
-
-            $component->rawState(
-                $component->getTipTapEditor()
-                    ->setContent($rawState ?? [
-                        'type' => 'doc',
-                        'content' => [],
-                    ])
-                    ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                        if ($node->type !== 'image') {
-                            return;
-                        }
-
-                        if (blank($node->attrs->id ?? null)) {
-                            return;
-                        }
-
-                        $attachment = $component->getUploadedFileAttachment($node->attrs->id);
-
-                        if ($attachment) {
-                            $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
-                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
-
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
-
-                        if (blank($fileAttachmentIdFromAnotherRecord)) {
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
-                        $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
-                    })
-                    ->getDocument(),
-            );
-
-            $fileAttachmentProvider?->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
+        $this->beforeStateDehydrated(static function (RichEditor $component): void {
+            $component->saveFileAttachments();
         }, shouldUpdateValidatedStateAfter: true);
 
-        $this->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, Model $record): void {
-            $fileAttachmentProvider = $component->getFileAttachmentProvider();
-
-            if (! $fileAttachmentProvider) {
-                return;
-            }
-
-            if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
-                return;
-            }
-
-            if (! $record->wasRecentlyCreated) {
-                return;
-            }
-
-            $fileAttachmentIds = [];
-
-            $component->rawState(
-                $component->getTipTapEditor()
-                    ->setContent($rawState ?? [
-                        'type' => 'doc',
-                        'content' => [],
-                    ])
-                    ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                        if ($node->type !== 'image') {
-                            return;
-                        }
-
-                        if (blank($node->attrs->id ?? null)) {
-                            return;
-                        }
-
-                        $attachment = $component->getUploadedFileAttachment($node->attrs->id);
-
-                        if ($attachment) {
-                            $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
-                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
-
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
-
-                        if (blank($fileAttachmentIdFromAnotherRecord)) {
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
-                        $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
-                    })
-                    ->getDocument(),
-            );
-
-            $record->setAttribute($component->getContentAttribute()->getName(), $component->getState());
-            $record->save();
-
-            $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
+        $this->saveRelationshipsUsing(static function (RichEditor $component): void {
+            $component->saveFileAttachmentsToRecord();
         });
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function resolveFileAttachmentIds(): array
+    {
+        $fileAttachmentIds = [];
+
+        $this->rawState(
+            $this->getTipTapEditor()
+                ->setContent($this->getRawState() ?? [
+                    'type' => 'doc',
+                    'content' => [],
+                ])
+                ->descendants(function (object &$node) use (&$fileAttachmentIds): void {
+                    if ($node->type !== 'image') {
+                        return;
+                    }
+
+                    if (blank($node->attrs->id ?? null)) {
+                        return;
+                    }
+
+                    $attachment = $this->getUploadedFileAttachment($node->attrs->id);
+
+                    if ($attachment) {
+                        $node->attrs->id = $this->saveUploadedFileAttachment($attachment);
+                        $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->id);
+
+                        $fileAttachmentIds[] = $node->attrs->id;
+
+                        return;
+                    }
+
+                    if (filled($this->getFileAttachmentUrl($node->attrs->id))) {
+                        $fileAttachmentIds[] = $node->attrs->id;
+
+                        return;
+                    }
+
+                    $fileAttachmentIdFromAnotherRecord = $this->saveFileAttachmentFromAnotherRecord($node->attrs->id);
+
+                    if (blank($fileAttachmentIdFromAnotherRecord)) {
+                        $fileAttachmentIds[] = $node->attrs->id;
+
+                        return;
+                    }
+
+                    $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
+                    $node->attrs->src = $this->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
+                })
+                ->getDocument(),
+        );
+
+        return $fileAttachmentIds;
+    }
+
+    public function saveFileAttachments(): void
+    {
+        $fileAttachmentProvider = $this->getFileAttachmentProvider();
+
+        if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $this->getRecord())) {
+            return;
+        }
+
+        $fileAttachmentIds = $this->resolveFileAttachmentIds();
+
+        $fileAttachmentProvider?->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
+    }
+
+    public function saveFileAttachmentsToRecord(): void
+    {
+        $fileAttachmentProvider = $this->getFileAttachmentProvider();
+
+        if (! $fileAttachmentProvider) {
+            return;
+        }
+
+        if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
+            return;
+        }
+
+        $record = $this->getRecord();
+
+        if (! $record->wasRecentlyCreated) {
+            return;
+        }
+
+        $fileAttachmentIds = $this->resolveFileAttachmentIds();
+
+        $record->setAttribute($this->getContentAttribute()->getName(), $this->getState());
+        $record->save();
+
+        $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
     }
 
     public function isDehydrated(): bool
@@ -728,9 +712,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getContentAttribute(): ?RichContentAttribute
     {
-        // Do not read content attributes from the model when the rich editor is nested
-        // inside a custom block action modal, since the content attribute should only
-        // be used to configure the parent rich editor.
+        // Do not read content attributes from the model when the
+        // rich editor is nested inside a custom block action
+        // modal — the content attribute should only be used
+        // to configure the parent rich editor.
         if ($this->getRootContainer()->getOperation() === CustomBlockAction::NAME) {
             return null;
         }
@@ -817,6 +802,39 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         }
 
         return $modifications;
+    }
+
+    protected function hasToolbarButtonInItem(object $item, string $button): bool
+    {
+        if ($item instanceof ToolbarButtonGroup) {
+            return in_array($button, $item->getButtons());
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  array<string>  $buttonsToDisable
+     */
+    protected function filterDisabledToolbarButtonsFromItem(object $item, array $buttonsToDisable): ?object
+    {
+        if (! ($item instanceof ToolbarButtonGroup)) {
+            return $item;
+        }
+
+        $buttons = array_values(array_filter(
+            $item->getButtons(),
+            static fn (string $button): bool => ! in_array($button, $buttonsToDisable),
+        ));
+
+        if (blank($buttons)) {
+            return null;
+        }
+
+        $item = clone $item;
+        $item->buttons($buttons);
+
+        return $item;
     }
 
     /**
@@ -1040,7 +1058,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<class-string<RichContentCustomBlock>> | Closure | null  $blocks
+     * @param  array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>> | Closure | null  $blocks
      */
     public function customBlocks(array | Closure | null $blocks): static
     {
@@ -1050,11 +1068,32 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
+     * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
+     */
+    protected function resolveCustomBlocks(): array
+    {
+        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocksConfig() ?? [];
+    }
+
+    /**
      * @return array<class-string<RichContentCustomBlock>>
      */
     public function getCustomBlocks(): array
     {
-        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
+        $blocks = $this->resolveCustomBlocks();
+        $result = [];
+
+        foreach ($blocks as $value) {
+            if (is_array($value)) {
+                foreach ($value as $innerKey => $innerValue) {
+                    $result[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -1065,6 +1104,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         if (isset($this->cachedCustomBlocks)) {
             return $this->cachedCustomBlocks;
         }
+
+        $this->cachedCustomBlocks = [];
 
         foreach ($this->getCustomBlocks() as $block) {
             $this->cachedCustomBlocks[$block::getId()] = $block;
@@ -1079,6 +1120,42 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getCustomBlock(string $id): ?string
     {
         return $this->getCachedCustomBlocks()[$id] ?? null;
+    }
+
+    /**
+     * @return Collection<string, Collection<int, class-string<RichContentCustomBlock>>>
+     */
+    public function getGroupedCustomBlocks(): Collection
+    {
+        $blocks = $this->resolveCustomBlocks();
+        $ungrouped = [];
+        $groups = collect();
+
+        foreach ($blocks as $key => $value) {
+            if (is_string($key) && is_array($value)) {
+                $groupBlocks = [];
+
+                foreach ($value as $innerKey => $innerValue) {
+                    $groupBlocks[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+
+                $groups->put($key, collect($groupBlocks));
+            } elseif (is_array($value)) {
+                foreach ($value as $innerKey => $innerValue) {
+                    $ungrouped[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $ungrouped[] = $value;
+            }
+        }
+
+        $result = collect();
+
+        if (! empty($ungrouped)) {
+            $result->put('', collect($ungrouped));
+        }
+
+        return $result->merge($groups);
     }
 
     /**

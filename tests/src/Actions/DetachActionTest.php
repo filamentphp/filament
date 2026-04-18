@@ -91,3 +91,7 @@ it('can detach multiple records sequentially', function (): void {
         'ticket_id' => $ticket->getKey(),
     ]);
 });
+
+it('returns `detach` from `getDefaultName()`', function (): void {
+    expect(DetachAction::getDefaultName())->toBe('detach');
+});

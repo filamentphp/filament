@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.5, 8.4, 8.3, 8.2]
+        php: [8.5, 8.4, 8.3]
         laravel: [13.*, 12.*, 11.*]
         dependency-version: [prefer-stable]
         include:
@@ -24,21 +24,6 @@ jobs:
             testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
-          - php: 8.5
-            pest: ^4.0
-            pest-plugin-laravel: ^4.0
-          - php: 8.4
-            pest: ^4.0
-            pest-plugin-laravel: ^4.0
-          - php: 8.3
-            pest: ^4.0
-            pest-plugin-laravel: ^4.0
-          - php: 8.2
-            pest: ^3.7
-            pest-plugin-laravel: ^3.0
-        exclude:
-          - laravel: 13.*
-            php: 8.2
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
     steps:
       - uses: actions/checkout@v4
@@ -65,8 +50,7 @@ jobs:
           coverage: none
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest:${{ matrix.pest }}" "pestphp/pest-plugin-laravel:${{ matrix.pest-plugin-laravel }}" --no-interaction --no-update
-          if [ "${{ matrix.php }}" = "8.2" ]; then composer remove pestphp/pest-plugin-browser --dev --no-interaction --no-update; fi
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
       - name: Run PHPStan
         run: ./vendor/bin/phpstan

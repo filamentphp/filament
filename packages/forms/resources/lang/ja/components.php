@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => '一致するマージタグがありません。',
 
+        'mentions' => [
+            'no_options_message' => '利用可能なオプションはありません。',
+            'no_search_results_message' => '検索結果はありませんでした。',
+            'search_prompt' => '検索キーワードを入力...',
+            'searching_message' => '検索中...',
+        ],
+
         'tools' => [
             'align_center' => '中央揃え',
             'align_end' => '右揃え',
@@ -583,8 +590,11 @@ return [
             'custom_blocks' => 'ブロック',
             'details' => '詳細',
             'h1' => 'タイトル',
-            'h2' => '見出し',
-            'h3' => '小見出し',
+            'h2' => '見出し 2',
+            'h3' => '見出し 3',
+            'h4' => '見出し 4',
+            'h5' => '見出し 5',
+            'h6' => '見出し 6',
             'grid' => 'グリッド',
             'grid_delete' => 'グリッドを削除',
             'highlight' => 'ハイライト',
@@ -594,6 +604,7 @@ return [
             'link' => 'リンク',
             'merge_tags' => 'マージタグ',
             'ordered_list' => '番号付きリスト',
+            'paragraph' => '段落',
             'redo' => 'やり直し',
             'small' => '小文字',
             'strike' => '取り消し線',
@@ -610,6 +621,7 @@ return [
             'table_merge_cells' => 'セルを結合',
             'table_split_cell' => 'セルを分割',
             'table_toggle_header_row' => 'ヘッダー行を切り替え',
+            'table_toggle_header_cell' => 'ヘッダーセルを切り替え',
             'text_color' => '文字色',
             'underline' => '下線',
             'undo' => '元に戻す',
@@ -676,9 +688,11 @@ return [
 
         'loading_message' => '読み込み中...',
 
-        'max_items_message' => ':count個のみ選択されてます',
+        'max_items_message' => ':count個のみ選択されてます。',
 
-        'no_search_results_message' => '検索結果はありませんでした',
+        'no_options_message' => '利用可能なオプションはありませんでした。',
+
+        'no_search_results_message' => '検索結果はありませんでした。',
 
         'placeholder' => 'オプションを選択',
 
@@ -689,7 +703,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => '削除',
+            ],
+
+        ],
+
         'placeholder' => '新規タグ',
+
     ],
 
     'text_input' => [

@@ -329,6 +329,12 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function preserveFilenames(bool | Closure $condition = true): static
     {
+        // Security: Preserving user-provided filenames on local or public
+        // disks can allow PHP file execution (e.g. uploading `.php`
+        // files). `acceptedFileTypes()` validates MIME type but not
+        // extension. Use S3 or keep the default random filenames.
+        // Only use this with trusted users.
+
         $this->shouldPreserveFilenames = $condition;
 
         return $this;
@@ -431,6 +437,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function visibility(string | Closure | null $visibility): static
     {
+        // Security: Default visibility is `private` (except on the `public`
+        // disk). Always use `acceptedFileTypes()` and `maxSize()` for
+        // server-side validation regardless of visibility setting.
+
         $this->visibility = $visibility;
 
         return $this;
@@ -916,6 +926,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function getUploadedFileNameForStorageUsing(?Closure $callback): static
     {
+        // Security: Custom storage filenames carry the same risk as
+        // `preserveFilenames()` — user-controlled names on local
+        // or public disks can enable PHP execution.
+
         $this->getUploadedFileNameForStorageUsing = $callback;
 
         return $this;
