@@ -314,13 +314,9 @@ abstract class Importer
         return __('filament-actions::import.notifications.completed.title');
     }
 
-    /**
-     * @param  array<string, string>  $columnMap
-     * @param  array<string, mixed>  $options
-     */
-    public static function modifyCompletedNotification(Import $import, array $columnMap, array $options, Notification $notification): ?Notification
+    public static function modifyCompletedNotification(Notification $notification, Import $import): Notification
     {
-        return null;
+        return $notification;
     }
 
     /**
