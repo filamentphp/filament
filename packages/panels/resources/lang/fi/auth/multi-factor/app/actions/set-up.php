@@ -54,6 +54,8 @@ return [
 
                     'invalid' => 'Antamasi koodi on viallinen.',
 
+                    'rate_limited' => 'Liian monta yritystä. Yritä myöhemmin uudelleen.',
+
                 ],
 
             ],

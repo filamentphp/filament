@@ -14,6 +14,13 @@ use Illuminate\Validation\ValidationException;
 
 abstract class Importer
 {
+    // Security: Imports do not perform per-record authorization checks.
+    // Each CSV row is processed by `resolveRecord()`, `fillRecord()`,
+    // and `saveRecord()` without consulting Laravel policies. Add
+    // manual checks in lifecycle hooks (`beforeCreate()`, etc.)
+    // if needed. Failure CSVs contain original data unchanged —
+    // formula injection risk applies to those files too.
+
     /** @var array<ImportColumn> */
     protected array $cachedColumns;
 
@@ -145,6 +152,9 @@ abstract class Importer
 
     public function resolveRecord(): ?Model
     {
+        // Security: This method runs without policy checks.
+        // Override to add authorization logic if needed.
+
         $keyName = app(static::getModel())->getKeyName();
         $keyColumnName = $this->columnMap[$keyName] ?? $keyName;
 

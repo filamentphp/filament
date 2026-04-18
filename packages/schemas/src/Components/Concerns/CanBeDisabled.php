@@ -15,6 +15,12 @@ trait CanBeDisabled
 
     public function disabled(bool | Closure $condition = true): static
     {
+        // Security: Disabling a field prevents it from being saved, but
+        // skilled users can manipulate Livewire's JavaScript to bypass
+        // the disabled state on the client. Always enforce authorization
+        // on the backend (e.g. in `mutateFormDataBeforeSave()` or
+        // via Model Policies) for sensitive fields.
+
         $this->isDisabled = $condition;
         $this->saved(fn (Component $component): bool => ! $component->evaluate($condition));
 

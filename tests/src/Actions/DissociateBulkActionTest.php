@@ -79,3 +79,7 @@ it('only dissociates selected records', function (): void {
         expect($post->refresh()->author_id)->toBe($user->id);
     }
 });
+
+it('returns `dissociate` from `getDefaultName()`', function (): void {
+    expect(DissociateBulkAction::getDefaultName())->toBe('dissociate');
+});

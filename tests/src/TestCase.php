@@ -40,6 +40,13 @@ use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use PDO;
 use PDOException;
+use Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository;
+use Spatie\MediaLibrary\Downloaders\DefaultDownloader;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Observers\MediaObserver;
+use Spatie\MediaLibrary\Support\FileNamer\DefaultFileNamer;
+use Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator;
+use Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -89,6 +96,60 @@ abstract class TestCase extends BaseTestCase
         Gate::policy(Department::class, DepartmentPolicy::class);
 
         $app['config']->set('auth.providers.users.model', User::class);
+        $app['config']->set('media-library', [
+            'disk_name' => 'public',
+            'max_file_size' => 1024 * 1024 * 10,
+            'queue_connection_name' => 'sync',
+            'queue_name' => '',
+            'queue_conversions_by_default' => false,
+            'media_model' => Media::class,
+            'media_observer' => MediaObserver::class,
+            'use_default_collection_serialization' => false,
+            'file_namer' => DefaultFileNamer::class,
+            'path_generator' => DefaultPathGenerator::class,
+            'url_generator' => DefaultUrlGenerator::class,
+            'moves_media_on_update' => false,
+            'version_urls' => true,
+            'image_optimizers' => [],
+            'image_generators' => [],
+            'image_driver' => 'gd',
+            'ffmpeg_path' => '/usr/bin/ffmpeg',
+            'ffprobe_path' => '/usr/bin/ffprobe',
+            'temporary_directory_path' => null,
+            'jobs' => [],
+            'media_downloader' => DefaultDownloader::class,
+            'remote' => ['extra_headers' => []],
+            'responsive_images' => [
+                'use_tiny_placeholders' => true,
+                'tiny_placeholder_generator' => null,
+            ],
+            'enable_vapor_uploads' => false,
+            'default_loading_attribute_value' => null,
+            'prefix' => '',
+        ]);
+        $app['config']->set('settings', [
+            'settings' => [],
+            'default_repository' => 'database',
+            'repositories' => [
+                'database' => [
+                    'type' => DatabaseSettingsRepository::class,
+                    'model' => null,
+                    'table' => 'spatie_settings',
+                    'connection' => null,
+                ],
+            ],
+            'cache' => [
+                'enabled' => false,
+                'store' => null,
+                'prefix' => null,
+                'ttl' => null,
+                'memo' => false,
+            ],
+            'auto_discover_settings' => [],
+            'global_casts' => [],
+            'encoder' => null,
+            'decoder' => null,
+        ]);
         $app['config']->set('view.paths', [
             ...$app['config']->get('view.paths'),
             __DIR__ . '/../resources/views',

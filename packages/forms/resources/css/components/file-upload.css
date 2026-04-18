@@ -45,12 +45,13 @@
         @apply bg-transparent;
     }
 
+    & .filepond--drop-label,
     & .filepond--drop-label label {
-        @apply p-3! text-sm text-gray-600 dark:text-gray-400;
+        @apply p-3! text-sm text-gray-600! opacity-100! dark:text-gray-400!;
     }
 
     & .filepond--label-action {
-        @apply text-primary-600 hover:text-primary-500 dark:hover:text-primary-500 font-medium no-underline transition duration-75 dark:text-white;
+        @apply text-primary-700 hover:text-primary-600 dark:hover:text-primary-400 dark:text-primary-400 font-medium no-underline transition duration-75;
     }
 
     & .filepond--drip-blob {

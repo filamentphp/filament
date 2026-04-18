@@ -138,6 +138,9 @@ trait HasState
 
     public function afterStateUpdatedJs(string | Closure | null $js): static
     {
+        // Security: This JavaScript is evaluated on the client via `eval()`.
+        // Never pass user input — only developer-defined expressions.
+
         if (blank($js)) {
             $this->afterStateUpdatedJs = [];
 
@@ -378,11 +381,17 @@ trait HasState
         $container = $this->getContainer();
 
         while ($parentComponent = $container->getParentComponent()) {
+            $parentContainer = $parentComponent->getContainer();
+
             if ($parentComponent->hasStatePath()) {
                 break;
             }
 
-            $container = $parentComponent->getContainer();
+            if ($parentContainer->getStatePath() !== $container->getStatePath()) {
+                break;
+            }
+
+            $container = $parentContainer;
         }
 
         foreach ($container->getFlatComponents(withActions: false, withHidden: true) as $component) {
@@ -481,9 +490,10 @@ trait HasState
 
             $isStatePathMatching = in_array($statePathToCheck, $statePaths);
 
-            // Even if the current component's state path is not present in the array of state paths to hydrate,
-            // a parent state path may be present. In this case, we still need to hydrate the field as it is
-            // nested inside the parent state that was hydrated.
+            // Even if the current component's state path is not in the
+            // array of state paths to hydrate, a parent path may be.
+            // In that case we still need to hydrate the field since
+            // it is nested inside the parent state.
             while ((! $isStatePathMatching) && str($statePathToCheck)->contains('.')) {
                 $statePathToCheck = (string) str($statePathToCheck)->beforeLast('.');
 
@@ -639,9 +649,11 @@ trait HasState
 
         data_set($livewire, $this->getStatePath(), $this->evaluate($state));
 
-        // For components such as repeaters and builders, the default child schemas depend on the state of the component.
-        // When loading state into these fields after the state is already present, the cached child schemas need to be
-        // cleared so that they can be re-evaluated based on the new state. `rawState()` is called during this process.
+        // For components like repeaters and builders, child schemas
+        // depend on the component's state. When loading state after
+        // it is already present, cached child schemas must be
+        // cleared so they can be re-evaluated. `rawState()`
+        // is called during this process.
         $this->clearCachedDefaultChildSchemas();
 
         return $this;

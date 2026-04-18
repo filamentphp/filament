@@ -9,6 +9,11 @@ use LogicException;
 
 class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
 {
+    // Security: Like the rich editor, the markdown editor sends raw content
+    // to the backend. When rendering in Blade views, always sanitize with
+    // `sanitizeHtml()` and `markdown()` together. Never use `{!! !!}`
+    // with unsanitized content.
+
     use CanConfigureCommonMark;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasFileAttachments;

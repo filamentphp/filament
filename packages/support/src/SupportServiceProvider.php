@@ -104,20 +104,28 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->scoped(
+            HtmlSanitizerConfig::class,
+            fn (): HtmlSanitizerConfig => (new HtmlSanitizerConfig)
+                ->allowSafeElements()
+                ->allowRelativeLinks()
+                ->allowRelativeMedias()
+                ->allowAttribute('class', allowedElements: '*')
+                ->allowAttribute('data-color', allowedElements: '*')
+                ->allowAttribute('data-cols', allowedElements: '*')
+                ->allowAttribute('data-col-span', allowedElements: '*')
+                ->allowAttribute('data-from-breakpoint', allowedElements: '*')
+                ->allowAttribute('data-id', allowedElements: '*')
+                ->allowAttribute('data-type', allowedElements: '*')
+                ->allowAttribute('style', allowedElements: '*')
+                ->allowAttribute('width', allowedElements: 'img')
+                ->allowAttribute('height', allowedElements: 'img')
+                ->withMaxInputLength(500000),
+        );
+
+        $this->app->scoped(
             HtmlSanitizerInterface::class,
             fn (): HtmlSanitizer => new HtmlSanitizer(
-                (new HtmlSanitizerConfig)
-                    ->allowSafeElements()
-                    ->allowRelativeLinks()
-                    ->allowRelativeMedias()
-                    ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('data-color', allowedElements: '*')
-                    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
-                    ->allowAttribute('data-type', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*')
-                    ->allowAttribute('width', allowedElements: 'img')
-                    ->allowAttribute('height', allowedElements: 'img')
-                    ->withMaxInputLength(500000),
+                $this->app->make(HtmlSanitizerConfig::class),
             ),
         );
 

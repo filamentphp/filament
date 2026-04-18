@@ -39,6 +39,10 @@ use function Filament\Support\generate_search_term_expression;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
+    // Security: This column saves directly without checking Laravel
+    // Model Policies. Use `disabled()` to restrict editing
+    // based on your own authorization logic.
+
     use CanDisableOptions;
     use CanSelectPlaceholder;
     use Concerns\CanBeValidated {
@@ -329,6 +333,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     public function allowOptionsHtml(bool | Closure $condition = true): static
     {
+        // Security: Enabling HTML in options renders them without escaping.
+        // Only use with trusted content — never with raw user input.
+
         $this->isOptionsHtmlAllowed = $condition;
 
         return $this;
