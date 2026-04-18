@@ -120,6 +120,12 @@ if (! function_exists('Filament\Support\is_app_url')) {
             return true;
         }
 
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        if ($scheme && (! in_array($scheme, ['http', 'https'], strict: true))) {
+            return false;
+        }
+
         $urlHost = parse_url($url, PHP_URL_HOST);
 
         return (! $urlHost) || $urlHost === request()->getHost();
@@ -181,6 +187,8 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
         }
 
         if (is_string($icon) && str_contains($icon, '/')) {
+            $icon = e($icon);
+
             return new HtmlString(<<<HTML
                 <img src="{$icon}" {$attributes->toHtml()} />
                 HTML);
@@ -236,6 +244,10 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
     {
         $driverName = $databaseConnection->getDriverName();
+
+        if ($driverName === 'pgsql' && str_contains($column, '.')) {
+            $column = $databaseConnection->getTablePrefix() . $column;
+        }
 
         $column = match ($driverName) {
             'pgsql' => (

@@ -1,10 +1,13 @@
 ---
 title: Query builder
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 The query builder allows you to define a complex set of conditions to filter the data in your table. It is able to handle unlimited nesting of conditions, which you can group together with "and" and "or" operations.
+
+<AutoScreenshot name="tables/filters/query-builder" alt="Query builder filter" version="4.x" />
 
 To use it, you need to define a set of "constraints" that will be used to filter the data. Filament includes some built-in constraints, that follow common data types, but you can also define your own custom constraints.
 

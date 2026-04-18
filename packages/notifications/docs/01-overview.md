@@ -1,6 +1,7 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
@@ -44,6 +45,10 @@ Notification::make()
 ```
 
 The title text can contain basic, safe HTML elements. To generate safe HTML with Markdown, you can use the [`Str::markdown()` helper](https://laravel.com/docs/strings#method-str-markdown): `title(Str::markdown('Saved **successfully**'))`
+
+<Aside variant="danger">
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
+</Aside>
 
 Or with JavaScript:
 
@@ -302,6 +307,10 @@ new FilamentNotification()
     .send()
 ```
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks.
+</Aside>
+
 ### Dispatching Livewire events from notification actions
 
 Sometimes you want to execute additional code when a notification action is clicked. This can be achieved by setting a Livewire event which should be dispatched on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
@@ -488,3 +497,5 @@ use Filament\Support\Enums\VerticalAlignment;
 Notifications::alignment(Alignment::Start);
 Notifications::verticalAlignment(VerticalAlignment::End);
 ```
+
+<AutoScreenshot name="notifications/positioning" alt="Notification positioned at the bottom start of the page" version="4.x" />

@@ -28,6 +28,7 @@ class TeamsRelationManager extends RelationManager
             ->components([
                 TextInput::make('name')
                     ->required(),
+                TextInput::make('slug'),
                 Textarea::make('description')
                     ->columnSpanFull(),
                 TextInput::make('budget')
@@ -45,6 +46,8 @@ class TeamsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('slug')
                     ->searchable(),
                 TextColumn::make('budget')
                     ->numeric()

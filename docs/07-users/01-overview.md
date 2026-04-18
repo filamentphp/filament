@@ -1,10 +1,13 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
+
+<AutoScreenshot name="panels/login" alt="The default login page" version="4.x" />
 
 ## Authorizing access to the panel
 
@@ -178,6 +181,12 @@ public function panel(Panel $panel): Panel
         ->profile();
 }
 ```
+
+<AutoScreenshot name="panels/registration" alt="The default registration page" version="4.x" />
+
+<AutoScreenshot name="panels/password-reset" alt="The default password reset page" version="4.x" />
+
+<AutoScreenshot name="panels/profile" alt="The default profile page" version="4.x" />
 
 Filament also supports multi-factor authentication, which you can learn about in the [Multi-factor authentication](multi-factor-authentication) section.
 

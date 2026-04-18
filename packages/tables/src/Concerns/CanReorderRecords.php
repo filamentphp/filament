@@ -42,8 +42,8 @@ trait CanReorderRecords
             $modelKeyName = $model->getKeyName();
             $wrappedModelKeyName = $model->getConnection()?->getQueryGrammar()?->wrap($modelKeyName) ?? $modelKeyName;
 
-            $model
-                ->newModelQuery()
+            $this->getTable()
+                ->getQuery()
                 ->whereIn($modelKeyName, array_values($order))
                 ->update([
                     $orderColumn => new Expression(

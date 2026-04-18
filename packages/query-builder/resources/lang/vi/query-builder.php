@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Giây',
+                'minute' => 'Phút',
+                'hour' => 'Giờ',
+                'day' => 'Ngày',
+                'week' => 'Tuần',
+                'month' => 'Tháng',
+                'quarter' => 'Quý',
+                'year' => 'Năm',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Thập kỷ trước',
+                'past_5_years' => '5 năm qua',
+                'past_2_years' => '2 năm qua',
+                'past_year' => 'Năm qua',
+                'past_6_months' => '6 tháng qua',
+                'past_quarter' => 'Quý trước',
+                'past_month' => 'Tháng trước',
+                'past_2_weeks' => '2 tuần trước',
+                'past_week' => 'Tuần trước',
+                'past_hour' => 'Giờ qua',
+                'past_minute' => 'Phút qua',
+                'this_decade' => 'Thập kỷ này',
+                'this_year' => 'Năm nay',
+                'this_quarter' => 'Quý này',
+                'this_month' => 'Tháng này',
+                'today' => 'Hôm nay',
+                'this_hour' => 'Giờ này',
+                'this_minute' => 'Phút này',
+                'next_minute' => 'Phút tới',
+                'next_hour' => 'Giờ tới',
+                'next_week' => 'Tuần tới',
+                'next_2_weeks' => '2 tuần tới',
+                'next_month' => 'Tháng tới',
+                'next_quarter' => 'Quý tới',
+                'next_6_months' => '6 tháng tới',
+                'next_year' => 'Năm tới',
+                'next_2_years' => '2 năm tới',
+                'next_5_years' => '5 năm tới',
+                'next_decade' => 'Thập kỷ tới',
+                'custom' => 'Tùy chỉnh',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Năm',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Kiểu ngày',
+
+                    'options' => [
+                        'absolute' => 'Ngày cụ thể',
+                        'relative' => 'Khung thời gian tương đối',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Khoảng thời gian',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Bao nhiêu',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Đơn vị thời gian',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Thì',
+
+                    'options' => [
+                        'past' => 'Quá khứ',
+                        'future' => 'Tương lai',
+                    ],
+
                 ],
 
             ],

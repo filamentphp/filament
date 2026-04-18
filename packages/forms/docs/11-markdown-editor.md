@@ -1,6 +1,7 @@
 ---
 title: Markdown editor
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -26,6 +27,10 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 {!! str($record->content)->markdown()->sanitizeHtml() !!}
 ```
 
+<Aside variant="danger">
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
+</Aside>
+
 ## Customizing the toolbar buttons
 
 You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults:
@@ -46,6 +51,8 @@ MarkdownEditor::make('content')
 Each nested array in the main array represents a group of buttons in the toolbar.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/markdown-editor/custom-toolbar" alt="Markdown editor with customized toolbar buttons" version="4.x" />
 
 ## Uploading images to the editor
 

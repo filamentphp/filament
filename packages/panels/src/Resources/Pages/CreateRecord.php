@@ -26,6 +26,8 @@ use Livewire\Attributes\Locked;
 use Throwable;
 
 /**
+ * @template TModel of Model = Model
+ *
  * @property-read Schema $form
  */
 class CreateRecord extends Page
@@ -33,6 +35,7 @@ class CreateRecord extends Page
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
 
+    /** @var ?TModel */
     public ?Model $record = null;
 
     /**
@@ -199,6 +202,7 @@ class CreateRecord extends Page
 
     /**
      * @param  array<string, mixed>  $data
+     * @return TModel
      */
     protected function handleRecordCreation(array $data): Model
     {
@@ -347,7 +351,7 @@ class CreateRecord extends Page
     }
 
     /**
-     * @return Model|class-string<Model>|null
+     * @return TModel|class-string<TModel>|null
      */
     protected function getMountedActionSchemaModel(): Model | string | null
     {
@@ -364,6 +368,9 @@ class CreateRecord extends Page
         static::$canCreateAnother = false;
     }
 
+    /**
+     * @return ?TModel
+     */
     public function getRecord(): ?Model
     {
         return $this->record;

@@ -30,6 +30,8 @@ return [
 
             'loading_message' => '読み込み中...',
 
+            'no_options_message' => '利用可能なオプションはありません。',
+
             'no_search_results_message' => '条件に一致するオプションがありません。',
 
             'placeholder' => '選択してください',

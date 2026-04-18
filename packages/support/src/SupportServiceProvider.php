@@ -76,6 +76,11 @@ class SupportServiceProvider extends PackageServiceProvider
             fn () => new CliManager,
         );
 
+        $this->app->singleton(
+            TimezoneManager::class,
+            fn () => new TimezoneManager,
+        );
+
         $this->app->scoped(
             ScopedComponentManager::class,
             fn () => $this->app->make(ComponentManager::class)->clone(),
@@ -99,20 +104,28 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->scoped(
+            HtmlSanitizerConfig::class,
+            fn (): HtmlSanitizerConfig => (new HtmlSanitizerConfig)
+                ->allowSafeElements()
+                ->allowRelativeLinks()
+                ->allowRelativeMedias()
+                ->allowAttribute('class', allowedElements: '*')
+                ->allowAttribute('data-color', allowedElements: '*')
+                ->allowAttribute('data-cols', allowedElements: '*')
+                ->allowAttribute('data-col-span', allowedElements: '*')
+                ->allowAttribute('data-from-breakpoint', allowedElements: '*')
+                ->allowAttribute('data-id', allowedElements: '*')
+                ->allowAttribute('data-type', allowedElements: '*')
+                ->allowAttribute('style', allowedElements: '*')
+                ->allowAttribute('width', allowedElements: 'img')
+                ->allowAttribute('height', allowedElements: 'img')
+                ->withMaxInputLength(500000),
+        );
+
+        $this->app->scoped(
             HtmlSanitizerInterface::class,
             fn (): HtmlSanitizer => new HtmlSanitizer(
-                (new HtmlSanitizerConfig)
-                    ->allowSafeElements()
-                    ->allowRelativeLinks()
-                    ->allowRelativeMedias()
-                    ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('data-color', allowedElements: '*')
-                    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
-                    ->allowAttribute('data-type', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*')
-                    ->allowAttribute('width', allowedElements: 'img')
-                    ->allowAttribute('height', allowedElements: 'img')
-                    ->withMaxInputLength(500000),
+                $this->app->make(HtmlSanitizerConfig::class),
             ),
         );
 
@@ -152,6 +165,26 @@ class SupportServiceProvider extends PackageServiceProvider
         FilamentAsset::register([
             Js::make('support', __DIR__ . '/../dist/index.js'),
         ], 'filament/support');
+
+        Blade::directive('capture', function (string $expression): string {
+            [$name, $arguments] = str_contains($expression, ',') ?
+                array_map('trim', explode(',', $expression, 2)) :
+                [$expression, ''];
+
+            return "
+                <?php {$name} = (function (\$args) {
+                    return function ({$arguments}) use (\$args) {
+                        extract(\$args, EXTR_SKIP);
+                        ob_start(); ?>
+            ";
+        });
+
+        Blade::directive('endcapture', function (): string {
+            return "
+                <?php return new \Illuminate\Support\HtmlString(ob_get_clean()); };
+                    })(get_defined_vars()); ?>
+            ";
+        });
 
         Blade::directive('captureSlots', function (string $expression): string {
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";

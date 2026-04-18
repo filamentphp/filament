@@ -48,7 +48,9 @@ trait InteractsWithTable
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
-        $this->cacheMountedActions($this->mountedActions);
+        if (empty($this->cacheMountedActions($this->mountedActions))) {
+            $this->mountedActions = [];
+        }
 
         $this->initTableColumnManager();
 
@@ -125,7 +127,7 @@ trait InteractsWithTable
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
-            $this->tableColumnSearches ?? [],
+            $this->tableColumnSearches,
         );
 
         if ($shouldPersistColumnSearchesInSession) {
@@ -155,7 +157,7 @@ trait InteractsWithTable
         }
 
         if ($this->getTable()->isPaginated()) {
-            $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
+            $this->tableRecordsPerPage ??= $this->getDefaultTableRecordsPerPageSelectOption();
         }
     }
 

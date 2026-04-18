@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panels\Navigation;
 
+use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -14,12 +15,22 @@ class BadgeColor extends Page
     {
         filament()
             ->getCurrentPanel()
-            ->navigationItems([
-                NavigationItem::make()
-                    ->label('Orders')
-                    ->url(fn (): string => '#')
-                    ->icon(Heroicon::OutlinedShoppingCart)
-                    ->badge(32, 'danger'),
-            ]);
+            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+                return $builder->items([
+                    NavigationItem::make('Dashboard')
+                        ->icon(Heroicon::OutlinedHome)
+                        ->url('#'),
+                    NavigationItem::make('Orders')
+                        ->icon(Heroicon::OutlinedShoppingCart)
+                        ->badge(32, 'warning')
+                        ->url('#'),
+                    NavigationItem::make('Products')
+                        ->icon(Heroicon::OutlinedShoppingBag)
+                        ->url('#'),
+                    NavigationItem::make('Customers')
+                        ->icon(Heroicon::OutlinedUserGroup)
+                        ->url('#'),
+                ]);
+            });
     }
 }

@@ -1,11 +1,14 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app using tables and forms.
+
+<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="4.x" />
 
 ## Creating a resource
 
@@ -52,6 +55,10 @@ php artisan make:filament-resource Customer --simple
 Your resource will have a "Manage" page, which is a List page with modals added.
 
 Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
+
+<AutoScreenshot name="panels/resources/simple-modal-create" alt="Simple (modal) resource create modal" version="4.x" />
+
+<AutoScreenshot name="panels/resources/simple-modal-edit" alt="Simple (modal) resource edit modal" version="4.x" />
 
 ### Automatically generating forms and tables
 
@@ -582,6 +589,8 @@ public static function getRecordSubNavigation(Page $page): array
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
+<AutoScreenshot name="panels/resources/sub-navigation" alt="Resource with sub-navigation" version="4.x" />
+
 <Aside variant="tip">
     If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 </Aside>
@@ -595,6 +604,12 @@ use Filament\Pages\Enums\SubNavigationPosition;
 
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
+
+<AutoScreenshot name="panels/resources/sub-navigation-end" alt="Resource with end sub-navigation position" version="4.x" />
+
+The `SubNavigationPosition::Top` option renders the sub-navigation as tabs above the page content:
+
+<AutoScreenshot name="panels/resources/sub-navigation-top" alt="Resource with top sub-navigation position" version="4.x" />
 
 ## Deleting resource pages
 

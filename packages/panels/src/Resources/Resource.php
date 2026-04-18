@@ -24,16 +24,28 @@ abstract class Resource
         Macroable::__call as dynamicMacroCall;
     }
     use Resource\Concerns\BelongsToCluster;
+
+    /** @use Resource\Concerns\BelongsToParent<TModel> */
     use Resource\Concerns\BelongsToParent;
+
+    /** @use Resource\Concerns\BelongsToTenant<TModel> */
     use Resource\Concerns\BelongsToTenant;
+
     use Resource\Concerns\CanGenerateUrls;
     use Resource\Concerns\HasAuthorization;
     use Resource\Concerns\HasBreadcrumbs;
     use Resource\Concerns\HasConfiguration;
+
+    /** @use Resource\Concerns\HasGlobalSearch<TModel> */
     use Resource\Concerns\HasGlobalSearch;
+
+    /** @use Resource\Concerns\HasLabels<TModel> */
     use Resource\Concerns\HasLabels;
+
     use Resource\Concerns\HasNavigation;
     use Resource\Concerns\HasPages;
+
+    /** @use Resource\Concerns\HasRoutes<TModel> */
     use Resource\Concerns\HasRoutes;
 
     protected static bool $isDiscovered = true;
@@ -75,6 +87,11 @@ abstract class Resource
      */
     public static function getEloquentQuery(): Builder
     {
+        // Security: Override this method to scope queries to the current
+        // user's permissions. By default all records are returned
+        // (subject to tenant scoping if active). Failing to scope
+        // in multi-user apps can expose unauthorized records.
+
         $query = static::getModel()::query();
 
         if (! static::isScopedToTenant()) {

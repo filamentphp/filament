@@ -1,10 +1,13 @@
 ---
 title: Clusters
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Clusters are a hierarchical structure in panels that allow you to group [resources](../resources) and [custom pages](custom-pages) together. They are useful for organizing your panel into logical sections, and can help reduce the size of your panel's sidebar.
+
+<AutoScreenshot name="panels/cluster" alt="A cluster page with sub-navigation" version="4.x" />
 
 When using a cluster, a few things happen:
 
@@ -98,6 +101,12 @@ use Filament\Pages\Enums\SubNavigationPosition;
 
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
+
+<AutoScreenshot name="panels/cluster-end" alt="Cluster with end sub-navigation position" version="4.x" />
+
+The `SubNavigationPosition::Top` option renders the sub-navigation as tabs above the page content:
+
+<AutoScreenshot name="panels/cluster-top" alt="Cluster with top sub-navigation position" version="4.x" />
 
 ## Customizing the cluster breadcrumb
 
