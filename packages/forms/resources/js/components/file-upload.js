@@ -481,7 +481,10 @@ export default function fileUploadFormComponent({
                 files.push({
                     source: uploadedFile.url,
                     options: {
-                        metadata: uploadedFile.metadata,
+                        metadata: {
+                            openableUrl: uploadedFile.openableUrl,
+                            downloadableUrl: uploadedFile.downloadableUrl,
+                        },
                         type: 'local',
                         ...(!uploadedFile.type ||
                         (isPreviewable &&

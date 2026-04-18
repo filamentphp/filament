@@ -74,9 +74,9 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected ?Closure $getUploadedFileUsing = null;
 
-    protected ?Closure $getOpenableUrlUsing = null;
+    protected ?Closure $getOpenableFileUrlUsing = null;
 
-    protected ?Closure $getDownloadableUrlUsing = null;
+    protected ?Closure $getDownloadableFileUrlUsing = null;
 
     protected ?Closure $reorderUploadedFilesUsing = null;
 
@@ -454,16 +454,16 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-    public function getOpenableUrlUsing(?Closure $callback): static
+    public function getOpenableFileUrlUsing(?Closure $callback): static
     {
-        $this->getOpenableUrlUsing = $callback;
+        $this->getOpenableFileUrlUsing = $callback;
 
         return $this;
     }
 
-    public function getDownloadableUrlUsing(?Closure $callback): static
+    public function getDownloadableFileUrlUsing(?Closure $callback): static
     {
-        $this->getDownloadableUrlUsing = $callback;
+        $this->getDownloadableFileUrlUsing = $callback;
 
         return $this;
     }
@@ -804,13 +804,18 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     }
 
     /**
-     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
+     * @return array<array{name: string, size: int, type: string, url: string, openableUrl?: string, downloadableUrl?: string} | null> | null
      */
     #[ExposedLivewireMethod]
     #[Renderless]
     public function getUploadedFiles(): ?array
     {
         $urls = [];
+
+        $callback = $this->getUploadedFileUsing;
+        $storedFileNames = $this->getStoredFileNames();
+        $openableFileUrlCallback = $this->isOpenable() ? $this->getOpenableFileUrlUsing : null;
+        $downloadableFileUrlCallback = $this->isDownloadable() ? $this->getDownloadableFileUrlUsing : null;
 
         foreach ($this->getRawState() ?? [] as $fileKey => $file) {
             if ($file instanceof TemporaryUploadedFile) {
@@ -819,33 +824,39 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 continue;
             }
 
-            $callback = $this->getUploadedFileUsing;
-
             if (! $callback) {
                 return [$fileKey => null];
             }
 
             $urls[$fileKey] = $this->evaluate($callback, [
                 'file' => $file,
-                'storedFileNames' => $this->getStoredFileNames(),
+                'storedFileNames' => $storedFileNames,
             ]) ?: null;
 
-            if ($this->isOpenable() && $this->getOpenableUrlUsing) {
-                $openableUrl = $this->evaluate($this->getOpenableUrlUsing, [
-                    'file' => $file,
-                    'storedFileNames' => $this->getStoredFileNames(),
-                ]);
-
-                $urls[$fileKey]['metadata']['openableUrl'] = $openableUrl;
+            if ($urls[$fileKey] === null) {
+                continue;
             }
 
-            if ($this->isDownloadable() && $this->getDownloadableUrlUsing) {
-                $downloadableUrl = $this->evaluate($this->getDownloadableUrlUsing, [
+            if ($openableFileUrlCallback) {
+                $openableUrl = $this->evaluate($openableFileUrlCallback, [
                     'file' => $file,
-                    'storedFileNames' => $this->getStoredFileNames(),
+                    'storedFileNames' => $storedFileNames,
                 ]);
 
-                $urls[$fileKey]['metadata']['downloadableUrl'] = $downloadableUrl;
+                if ($openableUrl !== null) {
+                    $urls[$fileKey]['openableUrl'] = $openableUrl;
+                }
+            }
+
+            if ($downloadableFileUrlCallback) {
+                $downloadableUrl = $this->evaluate($downloadableFileUrlCallback, [
+                    'file' => $file,
+                    'storedFileNames' => $storedFileNames,
+                ]);
+
+                if ($downloadableUrl !== null) {
+                    $urls[$fileKey]['downloadableUrl'] = $downloadableUrl;
+                }
             }
         }
 
