@@ -194,6 +194,8 @@ CheckboxList::make('technologies')
     ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
 ```
 
+<AutoScreenshot name="forms/fields/checkbox-list/disabled-options" alt="Checkbox list with disabled option" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
@@ -232,6 +234,8 @@ CheckboxList::make('technology')
     ->searchable()
     ->allowHtml()
 ```
+
+<AutoScreenshot name="forms/fields/checkbox-list/html-labels" alt="Checkbox list with HTML labels" version="4.x" />
 
 <Aside variant="danger">
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.

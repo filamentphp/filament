@@ -91,7 +91,6 @@
         "filepond-plugin-image-preview": "^4.6.11",
         "filepond-plugin-image-resize": "^2.0.10",
         "filepond-plugin-image-transform": "^3.8.7",
-        "filepond-plugin-media-preview": "^1.0.11",
         "js-md5": "^0.8.3",
         "laravel-echo": "^1.14.0",
         "laravel-mix": "^6.0.37",

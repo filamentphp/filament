@@ -72,3 +72,5 @@ EmptyState::make('No users yet')
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/empty-state/contained-false" alt="Empty state without container" version="4.x" />

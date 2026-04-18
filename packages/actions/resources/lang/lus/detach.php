@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Thlawn then a ni e.',
+                'title' => 'Thlawn ṭhen a ni e.',
             ],
 
         ],

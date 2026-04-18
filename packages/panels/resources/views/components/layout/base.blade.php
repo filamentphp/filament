@@ -12,7 +12,7 @@
     dir="{{ __('filament-panels::layout.direction') ?? 'ltr' }}"
     @class([
         'fi',
-        'dark' => filament()->hasDarkModeForced(),
+        'dark' => filament()->hasDarkMode() && filament()->hasDarkModeForced(),
     ])
 >
     <head>
@@ -81,6 +81,10 @@
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
                 --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
+            }
+
+            html.fi {
+                --livewire-progress-bar-color: var(--primary-500);
             }
         </style>
 

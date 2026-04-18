@@ -11,3 +11,7 @@ it('can retrieve `FilamentManager` from container', function (): void {
         filament(),
     );
 });
+
+it('returns the same `FilamentManager` instance on repeated calls', function (): void {
+    expect(filament())->toBe(filament());
+});

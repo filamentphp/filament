@@ -311,6 +311,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/actions/bulk-not-grouped" alt="Table with grouped and ungrouped bulk actions" version="4.x" />
+
 Alternatively, if all of your bulk actions are grouped, you can use the shorthand `groupedBulkActions()` method:
 
 ```php

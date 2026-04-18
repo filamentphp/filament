@@ -27,6 +27,8 @@ class ForceDeleteAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::force-delete.single.modal.actions.delete.label'));
 
+        $this->successNotificationTitle(__('filament-actions::force-delete.single.notifications.deleted.title'));
+
         $this->defaultColor('danger');
 
         $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::FORCE_DELETE_ACTION) ?? Heroicon::Trash);

@@ -145,6 +145,8 @@ TextColumn::make('created_at')
     ->time()
 ```
 
+<AutoScreenshot name="tables/columns/text/date" alt="Text column with date formatting" version="4.x" />
+
 You may customize the date format by passing a custom format string to the `date()`, `dateTime()`, or `time()` method. You may use any [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
 ```php
@@ -207,6 +209,8 @@ TextColumn::make('created_at')
     ->since()
 ```
 
+<AutoScreenshot name="tables/columns/text/since" alt="Text column with relative date formatting" version="4.x" />
+
 #### Displaying a formatting date in a tooltip
 
 Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()`, `isoTimeTooltip()`, or `sinceTooltip()` method to display a formatted date in a [tooltip](overview#adding-a-tooltip-to-an-column), often to provide extra information:
@@ -242,6 +246,8 @@ TextColumn::make('created_at')
     ->dateTime()
     ->sinceTooltip()
 ```
+
+<AutoScreenshot name="tables/columns/text/date-tooltip" alt="Text column with a date tooltip on relative dates" version="4.x" />
 
 #### Setting the timezone for date formatting
 
@@ -294,6 +300,8 @@ TextColumn::make('stock')
     ->numeric()
 ```
 
+<AutoScreenshot name="tables/columns/text/numeric" alt="Text column with numeric formatting" version="4.x" />
+
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
 ```php
@@ -326,6 +334,8 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('price')
     ->money('EUR')
 ```
+
+<AutoScreenshot name="tables/columns/text/money" alt="Text column with money formatting" version="4.x" />
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `money()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -373,6 +383,8 @@ TextColumn::make('description')
     ->markdown()
 ```
 
+<AutoScreenshot name="tables/columns/text/markdown" alt="Text column with Markdown rendering" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the text should be rendered as Markdown or not:
 
 ```php
@@ -395,6 +407,8 @@ TextColumn::make('description')
     ->html()
 ```
 
+<AutoScreenshot name="tables/columns/text/html" alt="Text column with HTML rendering" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the text should be rendered as HTML or not:
 
 ```php
@@ -405,6 +419,10 @@ TextColumn::make('description')
 ```
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `html()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="danger">
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
+</Aside>
 
 #### Rendering raw HTML without sanitization
 
@@ -485,6 +503,8 @@ TextColumn::make('authors.name')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `listWithLineBreaks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/text/list" alt="Text column with values displayed on separate lines" version="4.x" />
+
 ### Adding bullet points to the list
 
 You may add a bullet point to each list item using the `bulleted()` method:
@@ -506,6 +526,8 @@ TextColumn::make('authors.name')
 ```
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `bulleted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="tables/columns/text/bulleted" alt="Text column with bulleted list of values" version="4.x" />
 
 ### Limiting the number of values in the list
 
@@ -551,6 +573,8 @@ TextColumn::make('authors.name')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `expandableLimitedList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/text/expandable-limited-list" alt="Text column with an expandable limited list" version="4.x" />
+
 ### Splitting a single value into multiple list items
 
 If you want to "explode" a text string from your model into multiple list items, you can do so with the `separator()` method. This is useful for displaying comma-separated tags [as badges](#displaying-as-a-badge), for example:
@@ -562,6 +586,8 @@ TextColumn::make('tags')
     ->badge()
     ->separator(',')
 ```
+
+<AutoScreenshot name="tables/columns/text/separator-badge" alt="Text column with badges from comma-separated values" version="4.x" />
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -632,6 +658,8 @@ TextColumn::make('description')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/text/limit" alt="Text column with limited text length" version="4.x" />
+
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
 ```php
@@ -675,6 +703,8 @@ TextColumn::make('description')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/text/words" alt="Text column with limited word count" version="4.x" />
+
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
 ```php
@@ -708,6 +738,8 @@ TextColumn::make('description')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `wrap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/text/wrap" alt="Text column with wrapping text" version="4.x" />
+
 #### Limiting text to a specific number of lines
 
 You may want to limit text to a specific number of lines instead of limiting it to a fixed length. Clamping text to a number of lines is useful in responsive interfaces where you want to ensure a consistent experience across all screen sizes. This can be achieved using the `lineClamp()` method:
@@ -721,6 +753,8 @@ TextColumn::make('description')
 ```
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `lineClamp()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="tables/columns/text/line-clamp" alt="Text column with line clamping" version="4.x" />
 
 ## Allowing the text to be copied to the clipboard
 

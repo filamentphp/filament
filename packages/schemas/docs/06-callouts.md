@@ -108,6 +108,8 @@ Callout::make('Quick note')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `iconSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="schemas/layout/callout/icon-size" alt="Callout with small icon" version="4.x" />
+
 ## Using a custom background color
 
 You can set a custom background color using the `color()` method:

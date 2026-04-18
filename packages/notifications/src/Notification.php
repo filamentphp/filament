@@ -138,6 +138,9 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     protected function isViewSafe(string $view): bool
     {
+        // Security: Only explicitly whitelisted views can be rendered in
+        // notifications, preventing view injection from stored data.
+
         return in_array($view, $this->safeViews, strict: true);
     }
 
@@ -262,6 +265,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if (blank($notification)) {
+            Assert::assertNotEmpty(
+                $notifications->toArray(),
+                'A notification was expected but none were sent.',
+            );
+
             return;
         }
 
@@ -298,6 +306,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if (blank($notification)) {
+            Assert::assertEmpty(
+                $notifications->toArray(),
+                'No notification was expected but at least one was sent.',
+            );
+
             return;
         }
 

@@ -149,17 +149,17 @@ class Range extends Summarizer
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label = $this->getLabel())) { ?>
                 <span class="fi-ta-range-summary-label">
-                    <?= $label ?>
+                    <?= e($label) ?>
                 </span>
             <?php } ?>
 
             <?php if (filled($from) || filled($to)) { ?>
                 <span>
-                    <?= $from ?>
+                    <?= e($from) ?>
 
                     <?= (filled($from) && filled($to)) ? '-' : '' ?>
 
-                    <?= $to ?>
+                    <?= e($to) ?>
                 </span>
             <?php } ?>
         </div>

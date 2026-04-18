@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Panels\Navigation;
 
+use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -14,19 +15,21 @@ class SortItems extends Page
     {
         filament()
             ->getCurrentPanel()
-            ->navigationItems([
-                NavigationItem::make()
-                    ->label('Products')
-                    ->badge('2')
-                    ->sort(2)
-                    ->icon(Heroicon::OutlinedDocumentText)
-                    ->url(fn (): string => '#'),
-                NavigationItem::make('')
-                    ->label('Orders')
-                    ->badge('1')
-                    ->sort(1)
-                    ->icon(Heroicon::OutlinedDocumentText)
-                    ->url(fn (): string => '#'),
-            ]);
+            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+                return $builder->items([
+                    NavigationItem::make('Dashboard')
+                        ->icon(Heroicon::OutlinedHome)
+                        ->url('#'),
+                    NavigationItem::make('Orders')
+                        ->icon(Heroicon::OutlinedShoppingCart)
+                        ->url('#'),
+                    NavigationItem::make('Products')
+                        ->icon(Heroicon::OutlinedShoppingBag)
+                        ->url('#'),
+                    NavigationItem::make('Customers')
+                        ->icon(Heroicon::OutlinedUserGroup)
+                        ->url('#'),
+                ]);
+            });
     }
 }

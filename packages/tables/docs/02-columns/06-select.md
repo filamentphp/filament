@@ -42,6 +42,8 @@ SelectColumn::make('status')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `native()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/select/javascript" alt="Table with JavaScript select column" version="4.x" />
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchableOptions()` method:
@@ -464,3 +466,9 @@ SelectColumn::make()
         // Runs after the state is saved to the database.
     })
 ```
+
+## Security
+
+### Authorization
+
+The select column does not automatically check Laravel Model Policies before saving changes. When a user updates a value via the select column, Filament checks whether the column is `disabled()` but does not run any `update` policy gate check. This means that if a user can see a record in the table and the column is not disabled, they can update that column's value regardless of any `update` policy you have defined. If you need to restrict who can edit this column, you should use the `disabled()` method to conditionally prevent editing based on your own authorization logic, for example `disabled(fn ($record) => $record->user_id !== auth()->id())`. Alternatively, consider using a full edit page or modal action where Filament's resource authorization is enforced.

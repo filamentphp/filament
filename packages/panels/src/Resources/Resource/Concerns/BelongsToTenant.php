@@ -18,6 +18,15 @@ use Znck\Eloquent\Relations\BelongsToThrough;
  */
 trait BelongsToTenant
 {
+    // Security: Tenant query scoping is applied via global scopes registered
+    // after tenant identification in middleware. Queries before identification
+    // (early middleware, service providers) will NOT be scoped. Custom queries
+    // outside the panel must be manually scoped. Laravel's `unique()` /
+    // `exists()` validation rules bypass global scopes — use
+    // `scopedUnique()` / `scopedExists()` instead. Filament does
+    // not guarantee multi-tenant security; it is your
+    // responsibility to implement correctly.
+
     protected static bool $isScopedToTenant = true;
 
     protected static ?string $tenantOwnershipRelationshipName = null;
@@ -62,6 +71,10 @@ trait BelongsToTenant
 
     public static function scopeToTenant(bool $condition = true): void
     {
+        // Security: Disabling tenant scoping means this resource's queries
+        // will not be filtered by tenant. All tenants' data will be
+        // accessible. Only disable for shared / cross-tenant resources.
+
         static::$isScopedToTenant = $condition;
     }
 
