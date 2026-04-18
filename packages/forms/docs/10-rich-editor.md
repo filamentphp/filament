@@ -1213,3 +1213,89 @@ public function getTipTapJsExtensions(): array
     ];
 }
 ```
+
+#### Sharing the bundled TipTap/ProseMirror instance
+
+When custom JavaScript extensions import from `@tiptap/core` or `@tiptap/pm/*`, each compiled extension includes its own copy of these packages. This wastes around 150-200 KB per extension and — more importantly — creates multiple ProseMirror instances on the page. Because ProseMirror relies heavily on `instanceof` checks (for `Node`, `Mark`, `Plugin`, `DecorationSet`, etc.), extensions that bundle their own copy of these modules can fail to interoperate with the editor's core.
+
+To avoid this, Filament exposes the bundled TipTap and ProseMirror modules on `window.FilamentRichEditor.tiptap`:
+
+```js
+window.FilamentRichEditor.tiptap = {
+    core,     // @tiptap/core
+    pmState,  // @tiptap/pm/state
+    pmView,   // @tiptap/pm/view
+    pmModel,  // @tiptap/pm/model
+}
+```
+
+You can reference these modules directly in your extension:
+
+```javascript
+const { Node, mergeAttributes } = window.FilamentRichEditor.tiptap.core
+const { Plugin, PluginKey } = window.FilamentRichEditor.tiptap.pmState
+
+export default Node.create({
+    name: 'myExtension',
+    // ...
+})
+```
+
+Alternatively, you can configure your build to intercept imports of `@tiptap/core` and `@tiptap/pm/{state,view,model}` and resolve them from the global at runtime. This lets you keep writing normal `import` statements in your extension source — other `@tiptap/*` packages (like `@tiptap/extension-highlight`) continue to be bundled as usual. The following esbuild plugin inspects each intercepted package's real named exports at build time and rewrites the imports to read from `window.FilamentRichEditor.tiptap`:
+
+```bash
+npm install --save-dev @tiptap/core @tiptap/pm
+```
+
+```js
+// bin/build.js
+import * as esbuild from 'esbuild'
+
+const tiptapSharedPlugin = {
+    name: 'tiptap-shared',
+    setup(build) {
+        const keys = {
+            '@tiptap/core': 'core',
+            '@tiptap/pm/state': 'pmState',
+            '@tiptap/pm/view': 'pmView',
+            '@tiptap/pm/model': 'pmModel',
+        }
+
+        build.onResolve({ filter: /^@tiptap\/(core|pm\/(state|view|model))$/ }, (args) => ({
+            path: args.path,
+            namespace: 'tiptap-shared',
+        }))
+
+        build.onLoad({ filter: /.*/, namespace: 'tiptap-shared' }, async (args) => {
+            const realModule = await import(args.path)
+            const namedExports = Object.keys(realModule).filter(
+                (key) => key !== '__esModule' && key !== 'default',
+            )
+
+            const key = keys[args.path]
+            let code = `const __module = window.FilamentRichEditor.tiptap.${key};\n`
+
+            if (namedExports.length) {
+                code += `export const { ${namedExports.join(', ')} } = __module;\n`
+            }
+
+            code += `export default __module?.default ?? __module;\n`
+
+            return { contents: code, loader: 'js' }
+        })
+    },
+}
+
+esbuild.build({
+    // ...
+    plugins: [tiptapSharedPlugin],
+    entryPoints: ['./resources/js/filament/rich-content-plugins/my-extension.js'],
+    outfile: './resources/js/dist/filament/rich-content-plugins/my-extension.js',
+})
+```
+
+<Aside variant="info">
+    `window.FilamentRichEditor.tiptap` is assigned when the rich editor bundle loads, which happens before `getTipTapJsExtensions()` URLs are fetched. If you need to use the modules in a context where the rich editor has not yet loaded, bundle your own copies instead.
+
+    The esbuild plugin above reads the named exports from your locally-installed `@tiptap/core` and `@tiptap/pm` at build time, so keep those versions roughly in sync with the version bundled by Filament — otherwise a newer named export referenced in your extension may be `undefined` at runtime.
+</Aside>

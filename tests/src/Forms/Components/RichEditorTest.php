@@ -1435,6 +1435,19 @@ it('can render `RichEditor` in the browser', function (): void {
     });
 });
 
+it('exposes TipTap and ProseMirror modules on `window.FilamentRichEditor.tiptap` once the editor has mounted', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/rich-editor-browser-test')
+            ->assertPresent('.fi-fo-rich-editor .tiptap')
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.core?.Editor === 'function'")
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmState?.Plugin === 'function'")
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmView?.EditorView === 'function'")
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmModel?.Node === 'function'");
+    });
+});
+
 class RenderRichEditor extends Livewire
 {
     public function form(Schema $form): Schema
