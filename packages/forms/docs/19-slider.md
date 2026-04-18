@@ -82,6 +82,8 @@ Slider::make('slider')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `rangePadding()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/slider/range-padding" alt="Slider with range padding" version="4.x" />
+
 In this example, even though the minimum value is 0 and the maximum value is 100, the user will only be able to select values between 10 and 90. The padding will be applied to both ends of the track, so the selected value will always be at least 10 units away from the edges of the track.
 
 If you would like to control the padding on each side of the track separately, you can pass an array of two values to the `rangePadding()` method. The first value will be applied to the start of the track, and the second value will be applied to the end of the track:
@@ -117,6 +119,8 @@ Slider::make('slider')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `rtl()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/slider/rtl" alt="Right-to-left slider" version="4.x" />
 
 ## Adding multiple values to a slider
 
@@ -191,6 +195,8 @@ Slider::make('slider')
     ->vertical()
     ->rtl(false)
 ```
+
+<AutoScreenshot name="forms/fields/slider/top-to-bottom" alt="Top-to-bottom vertical slider" version="4.x" />
 
 ## Adding tooltips to handles
 
@@ -567,6 +573,8 @@ Slider::make('slider')
     ->nonLinearPoints(['20%' => 50, '50%' => 75])
     ->pips()
 ```
+
+<AutoScreenshot name="forms/fields/slider/non-linear" alt="Slider with non-linear track" version="4.x" />
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `nonLinearPoints()` method also accepts a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 

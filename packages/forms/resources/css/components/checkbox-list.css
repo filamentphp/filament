@@ -37,6 +37,16 @@
         & .fi-fo-checkbox-list-option-description {
             @apply text-gray-500 dark:text-gray-400;
         }
+
+        &:has(.fi-checkbox-input:disabled) {
+            & .fi-fo-checkbox-list-option-label {
+                @apply text-gray-400 dark:text-gray-500;
+            }
+
+            & .fi-fo-checkbox-list-option-description {
+                @apply text-gray-300 dark:text-gray-600;
+            }
+        }
     }
 
     & .fi-fo-checkbox-list-no-search-results-message {

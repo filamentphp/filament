@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Koden du angav är ogiltig.',
 
+                    'rate_limited' => 'För många försök inom begränsad tidsintervall. Vänligen försök igen senare.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Återställningskoden du angav är ogiltig.',
+
+                    'rate_limited' => 'För många försök inom begränsad tidsintervall. Vänligen försök igen senare.',
 
                 ],
 

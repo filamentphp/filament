@@ -265,6 +265,10 @@
                         & .fi-in-entry-label {
                             @apply @xl:hidden;
                         }
+
+                        & .fi-fo-toggle-buttons-wrp .fi-fo-field-content-col {
+                            @apply @xl:auto-cols-[1fr];
+                        }
                     }
                 }
             }
@@ -338,6 +342,10 @@
 
                         & .fi-in-entry-label {
                             @apply lg:hidden;
+                        }
+
+                        & .fi-fo-toggle-buttons-wrp .fi-fo-field-content-col {
+                            @apply lg:auto-cols-[1fr];
                         }
                     }
                 }

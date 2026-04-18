@@ -39,6 +39,10 @@ use function Filament\Support\generate_search_term_expression;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
+    // Security: This column saves directly without checking Laravel
+    // Model Policies. Use `disabled()` to restrict editing
+    // based on your own authorization logic.
+
     use CanDisableOptions;
     use CanSelectPlaceholder;
     use Concerns\CanBeValidated {
@@ -329,6 +333,9 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     public function allowOptionsHtml(bool | Closure $condition = true): static
     {
+        // Security: Enabling HTML in options renders them without escaping.
+        // Only use with trusted content — never with raw user input.
+
         $this->isOptionsHtmlAllowed = $condition;
 
         return $this;
@@ -995,7 +1002,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
-            <input type="hidden" value="<?= str(($state instanceof BackedEnum) ? $state->value : $state)->replace('"', '\\"') ?>" x-ref="serverState" />
+            <input type="hidden" value="<?= e(($state instanceof BackedEnum) ? $state->value : $state) ?>" x-ref="serverState" />
 
             <div
                 x-bind:class="{
@@ -1023,15 +1030,15 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         <?= $inputAttributes->toHtml() ?>
                     >
                         <?php if ($canSelectPlaceholder) { ?>
-                            <option value=""><?= $placeholder ?></option>
+                            <option value=""><?= e($placeholder) ?></option>
                         <?php } ?>
 
                         <?php foreach ($options as $value => $label) { ?>
                             <option
                                 <?= $this->isOptionDisabled($value, $label) ? 'disabled' : null ?>
-                                value="<?= $value ?>"
+                                value="<?= e($value) ?>"
                             >
-                                <?= $label ?>
+                                <?= e($label) ?>
                             </option>
                         <?php } ?>
                     </select>

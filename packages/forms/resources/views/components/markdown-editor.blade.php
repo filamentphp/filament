@@ -3,6 +3,7 @@
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
     $key = $getKey();
+    $label = $getLabel();
     $statePath = $getStatePath();
     $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
     $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
@@ -31,6 +32,7 @@
                             canAttachFiles: @js($hasFileAttachments()),
                             isLiveDebounced: @js($isLiveDebounced()),
                             isLiveOnBlur: @js($isLiveOnBlur()),
+                            label: @js($label),
                             liveDebounce: @js($getNormalizedLiveDebounce()),
                             maxHeight: @js($getMaxHeight()),
                             minHeight: @js($getMinHeight()),

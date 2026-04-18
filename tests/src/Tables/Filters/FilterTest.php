@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
@@ -8,6 +10,30 @@ use Filament\Tests\Tables\TestCase;
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+it('can set `toggle()` as the form component', function (): void {
+    $filter = Filter::make('is_published')->toggle();
+
+    expect($filter->getFormField())->toBeInstanceOf(Toggle::class);
+});
+
+it('can set `checkbox()` as the form component', function (): void {
+    $filter = Filter::make('is_published')->toggle()->checkbox();
+
+    expect($filter->getFormField())->toBeInstanceOf(Checkbox::class);
+});
+
+it('defaults form component to `Checkbox`', function (): void {
+    $filter = Filter::make('is_published');
+
+    expect($filter->getFormField())->toBeInstanceOf(Checkbox::class);
+});
+
+it('can set a custom `formComponent()`', function (): void {
+    $filter = Filter::make('is_published')->formComponent(Toggle::class);
+
+    expect($filter->getFormField())->toBeInstanceOf(Toggle::class);
+});
 
 it('can filter records by boolean column', function (): void {
     $posts = Post::factory()->count(10)->create();
@@ -118,4 +144,92 @@ it('can check if a filter is visible', function (): void {
 it('can check if a filter is hidden', function (): void {
     livewire(PostsTable::class)
         ->assertTableFilterHidden('hidden');
+});
+
+it('returns `["isActive" => false]` from `getResetState()` by default', function (): void {
+    $filter = Filter::make('test');
+
+    expect($filter->getResetState())->toBe(['isActive' => false]);
+});
+
+it('returns fluent `$this` from `toggle()`', function (): void {
+    $filter = Filter::make('test');
+
+    expect($filter->toggle())->toBe($filter);
+});
+
+it('returns fluent `$this` from `checkbox()`', function (): void {
+    $filter = Filter::make('test');
+
+    expect($filter->checkbox())->toBe($filter);
+});
+
+it('returns fluent `$this` from `formComponent()`', function (): void {
+    $filter = Filter::make('test');
+
+    expect($filter->formComponent(Toggle::class))->toBe($filter);
+});
+
+it('sets the form field label from the filter label', function (): void {
+    $filter = Filter::make('test')
+        ->label('My Filter');
+
+    $field = $filter->getFormField();
+
+    expect($field->getLabel())->toBe('My Filter');
+});
+
+// BaseFilter tests (tested via Filter, which extends BaseFilter)
+
+describe('construction (BaseFilter)', function (): void {
+    it('can be constructed with a name', function (): void {
+        $filter = Filter::make('status');
+
+        expect($filter->getName())->toBe('status');
+    });
+
+    it('throws `LogicException` when name is blank', function (): void {
+        Filter::make('');
+    })->throws(LogicException::class);
+});
+
+it('returns `null` from `getDefaultName()`', function (): void {
+    expect(Filter::getDefaultName())->toBeNull();
+});
+
+describe('label (BaseFilter)', function (): void {
+    it('auto-generates label from name', function (): void {
+        $filter = Filter::make('is-published');
+
+        expect($filter->getLabel())->toBeString()->not->toBeEmpty();
+    });
+
+    it('can set label with a `Closure`', function (): void {
+        $filter = Filter::make('status')
+            ->label(static fn (): string => 'Dynamic');
+
+        expect($filter->getLabel())->toBe('Dynamic');
+    });
+});
+
+describe('column span (BaseFilter)', function (): void {
+    it('defaults column span to `1`', function (): void {
+        $filter = Filter::make('status');
+
+        expect($filter->getColumnSpan())->toBe(1);
+    });
+
+    it('can set `columnSpan()`', function (): void {
+        $filter = Filter::make('status')
+            ->columnSpan(2);
+
+        expect($filter->getColumnSpan())->toBe(2);
+    });
+
+    it('can set `columnSpanFull()`', function (): void {
+        $filter = Filter::make('status')
+            ->columnSpanFull();
+
+        expect($filter->getColumnSpan())->toBe(['default' => 'full']);
+    });
 });

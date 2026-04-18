@@ -21,195 +21,199 @@ beforeEach(function (): void {
     actingAs(User::factory()->create());
 });
 
-it('can generate a secret and recovery codes when the action is mounted', function (): void {
-    livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpAppAuthentication')
-            ->schemaComponent('app', schema: 'content'))
-        ->assertActionMounted(TestAction::make('setUpAppAuthentication')
-            ->schemaComponent('app', schema: 'content')
-            ->arguments(function (array $actualArguments): bool {
-                $encrypted = decrypt($actualArguments['encrypted']);
+describe('setup flow', function (): void {
+    it('can generate a secret and recovery codes when the action is mounted', function (): void {
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->assertActionMounted(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content')
+                ->arguments(function (array $actualArguments): bool {
+                    $encrypted = decrypt($actualArguments['encrypted']);
 
-                if (blank($encrypted['secret'] ?? null)) {
-                    return false;
-                }
-
-                if (blank($encrypted['recoveryCodes'] ?? null)) {
-                    return false;
-                }
-
-                if (count($encrypted['recoveryCodes']) !== 8) {
-                    return false;
-                }
-
-                foreach ($encrypted['recoveryCodes'] as $recoveryCode) {
-                    if (! is_string($recoveryCode)) {
+                    if (blank($encrypted['secret'] ?? null)) {
                         return false;
                     }
 
-                    if (blank($recoveryCode)) {
+                    if (blank($encrypted['recoveryCodes'] ?? null)) {
                         return false;
                     }
-                }
 
-                if (blank($encrypted['userId'] ?? null)) {
-                    return false;
-                }
+                    if (count($encrypted['recoveryCodes']) !== 8) {
+                        return false;
+                    }
 
-                return $encrypted['userId'] === auth()->id();
-            }));
-});
+                    foreach ($encrypted['recoveryCodes'] as $recoveryCode) {
+                        if (! is_string($recoveryCode)) {
+                            return false;
+                        }
 
-it('can save the secret and recovery codes to the user when the action is submitted', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+                        if (blank($recoveryCode)) {
+                            return false;
+                        }
+                    }
 
-    $user = auth()->user();
+                    if (blank($encrypted['userId'] ?? null)) {
+                        return false;
+                    }
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
+                    return $encrypted['userId'] === auth()->id();
+                }));
+    });
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
+    it('can save the secret and recovery codes to the user when the action is submitted', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
+        $user = auth()->user();
 
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpAppAuthentication')
-            ->schemaComponent('app', schema: 'content'));
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
 
-    $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
-    $secret = $encryptedActionArguments['secret'];
-    $recoveryCodes = $encryptedActionArguments['recoveryCodes'];
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
 
-    $livewire
-        ->fillForm(['code' => $appAuthentication->getCurrentCode($user, $secret)])
-        ->callMountedAction()
-        ->assertHasNoFormErrors();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'));
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBe($secret);
+        $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
+        $secret = $encryptedActionArguments['secret'];
+        $recoveryCodes = $encryptedActionArguments['recoveryCodes'];
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
+        $livewire
+            ->fillForm(['code' => $appAuthentication->getCurrentCode($user, $secret)])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
 
-    foreach ($user->getAppAuthenticationRecoveryCodes() as $hashedRecoveryCode) {
-        expect(Hash::check(array_shift($recoveryCodes), $hashedRecoveryCode))
+        expect(filled($user->getAppAuthenticationSecret()))
             ->toBeTrue();
-    }
+
+        expect($user->getAppAuthenticationSecret())
+            ->toBe($secret);
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+
+        foreach ($user->getAppAuthenticationRecoveryCodes() as $hashedRecoveryCode) {
+            expect(Hash::check(array_shift($recoveryCodes), $hashedRecoveryCode))
+                ->toBeTrue();
+        }
+    });
+
+    it('will not set up authentication when an invalid code is used', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
+
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
+
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'));
+
+        $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
+        $secret = $encryptedActionArguments['secret'];
+
+        $livewire
+            ->fillForm([
+                'code' => ($appAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
+            ])
+            ->callMountedAction()
+            ->assertHasFormErrors();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
+
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
+    });
 });
 
-it('will not set up authentication when an invalid code is used', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+describe('validation', function (): void {
+    test('codes are required', function (): void {
+        $user = auth()->user();
 
-    $user = auth()->user();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->fillForm(['code' => ''])
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
 
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpAppAuthentication')
-            ->schemaComponent('app', schema: 'content'));
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
 
-    $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
-    $secret = $encryptedActionArguments['secret'];
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
 
-    $livewire
-        ->fillForm([
-            'code' => ($appAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
-        ])
-        ->callMountedAction()
-        ->assertHasFormErrors();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
+    });
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
+    test('codes must be 6 digits', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
+        $user = auth()->user();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
-});
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
 
-test('codes are required', function (): void {
-    $user = auth()->user();
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'));
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
+        $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
+        $secret = $encryptedActionArguments['secret'];
 
-    livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpAppAuthentication')
-            ->schemaComponent('app', schema: 'content'))
-        ->fillForm(['code' => ''])
-        ->callMountedAction()
-        ->assertHasFormErrors([
-            'code' => 'required',
-        ]);
+        $livewire
+            ->fillForm([
+                'code' => Str::limit($appAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
+            ])
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'code' => 'digits',
+            ]);
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
-});
-
-test('codes must be 6 digits', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
-
-    $user = auth()->user();
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
-
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
-
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpAppAuthentication')
-            ->schemaComponent('app', schema: 'content'));
-
-    $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
-    $secret = $encryptedActionArguments['secret'];
-
-    $livewire
-        ->fillForm([
-            'code' => Str::limit($appAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
-        ])
-        ->callMountedAction()
-        ->assertHasFormErrors([
-            'code' => 'digits',
-        ]);
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
-
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
+    });
 });
 
 it('can throttle code verification attempts per user', function (): void {

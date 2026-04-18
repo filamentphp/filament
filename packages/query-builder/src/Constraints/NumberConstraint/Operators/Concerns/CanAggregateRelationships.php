@@ -114,7 +114,17 @@ trait CanAggregateRelationships
 
     protected function getAggregate(): ?string
     {
-        return $this->getSettings()[static::getAggregateSelectName()] ?? null;
+        $aggregate = $this->getSettings()[static::getAggregateSelectName()] ?? null;
+
+        if ($aggregate === null) {
+            return null;
+        }
+
+        if (! array_key_exists($aggregate, $this->getAggregateSelect()->getOptions())) {
+            return null;
+        }
+
+        return $aggregate;
     }
 
     protected function getAttributeLabel(): string

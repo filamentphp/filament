@@ -12,7 +12,7 @@
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
     $isHtmlAllowed = $isHtmlAllowed();
-    $isNative = (! ($isSearchable || $isMultiple) && $isNative());
+    $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $isNative());
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
     $key = $getKey();
@@ -26,7 +26,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
-    $state = $getState();
+    $state = $getRawState();
     $livewireKey = $getLivewireKey();
 @endphp
 
@@ -161,7 +161,7 @@
                             hasInitialNoOptionsMessage: @js($hasInitialNoOptionsMessage),
                             initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
                             initialOptionLabels: @js((filled($state) && $isMultiple) ? $getOptionLabelsForJs() : []),
-                            initialState: @js(is_array($state) ? $state : ($state !== null ? (string) $state : null)),
+                            initialState: @js($state),
                             isAutofocused: @js($isAutofocused),
                             isDisabled: @js($isDisabled),
                             isHtmlAllowed: @js($isHtmlAllowed),

@@ -25,117 +25,119 @@ beforeEach(function (): void {
     Notification::fake();
 });
 
-it('can generate a secret when the action is mounted', function (): void {
-    /** @var EmailAuthentication $emailAuthentication */
-    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+describe('setup flow', function (): void {
+    it('can generate a secret when the action is mounted', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $emailAuthentication->generateCodesUsing(fn (): string => $code);
 
-    livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailAuthentication')
-            ->schemaComponent('email_code', schema: 'content'));
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'));
 
-    Notification::assertSentTo(auth()->user(), VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($code, $emailAuthentication): bool {
-        if ($notification->codeExpiryMinutes !== $emailAuthentication->getCodeExpiryMinutes()) {
-            return false;
-        }
+        Notification::assertSentTo(auth()->user(), VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($code, $emailAuthentication): bool {
+            if ($notification->codeExpiryMinutes !== $emailAuthentication->getCodeExpiryMinutes()) {
+                return false;
+            }
 
-        return $notification->code === $code;
+            return $notification->code === $code;
+        });
     });
-});
 
-it('can enable email authentication', function (): void {
-    /** @var EmailAuthentication $emailAuthentication */
-    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+    it('can enable email authentication', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    expect($user->hasEmailAuthentication())
-        ->toBeFalse();
+        expect($user->hasEmailAuthentication())
+            ->toBeFalse();
 
-    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $emailAuthentication->generateCodesUsing(fn (): string => $code);
 
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailAuthentication')
-            ->schemaComponent('email_code', schema: 'content'));
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'));
 
-    $livewire
-        ->fillForm(['code' => $code])
-        ->callMountedAction()
-        ->assertHasNoFormErrors();
+        $livewire
+            ->fillForm(['code' => $code])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
 
-    expect($user->hasEmailAuthentication())
-        ->toBeTrue();
-});
+        expect($user->hasEmailAuthentication())
+            ->toBeTrue();
+    });
 
-it('can resend the code to the user', function (): void {
-    $this->travelTo(now()->subMinute());
+    it('can resend the code to the user', function (): void {
+        $this->travelTo(now()->subMinute());
 
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailAuthentication')
-            ->schemaComponent('email_code', schema: 'content'));
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'));
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
-    $this->travelBack();
+        $this->travelBack();
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'))
-        ->assertNotified(
-            FilamentNotification::make()
-                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
-                ->success()
-        );
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
+                    ->success()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
-});
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    });
 
-it('can resend the code to the user more than twice per minute', function (): void {
-    $this->travelTo(now()->subMinute());
+    it('can resend the code to the user more than twice per minute', function (): void {
+        $this->travelTo(now()->subMinute());
 
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailAuthentication')
-            ->schemaComponent('email_code', schema: 'content'));
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'));
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'))
-        ->assertNotified(
-            FilamentNotification::make()
-                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
-                ->success()
-        );
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
+                    ->success()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'))
-        ->assertNotified(
-            FilamentNotification::make()
-                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
-                ->danger()
-        );
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
+                    ->danger()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
-    $this->travelBack();
+        $this->travelBack();
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'))
-        ->assertNotified(
-            FilamentNotification::make()
-                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
-                ->success()
-        );
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
+                    ->success()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 3);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 3);
+    });
 });
 
 it('will not set up authentication when an invalid code is used', function (): void {

@@ -3,6 +3,7 @@
 namespace Filament\Resources\Resource\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use ReflectionProperty;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -31,7 +33,18 @@ trait HasGlobalSearch
 
     public static function canGloballySearch(): bool
     {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
+        $isGloballySearchable = static::$isGloballySearchable;
+
+        if (
+            $isGloballySearchable &&
+            Filament::getCurrentOrDefaultPanel()?->isGlobalSearchResourceOptIn()
+        ) {
+            $isGloballySearchable = (new ReflectionProperty(static::class, 'isGloballySearchable'))
+                ->getDeclaringClass()
+                ->getName() === static::class;
+        }
+
+        return $isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
     }
 
     /**

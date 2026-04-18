@@ -575,6 +575,10 @@ TextColumn::make('title')
     ->openUrlInNewTab()
 ```
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks.
+</Aside>
+
 ### Triggering actions
 
 To run a function when a cell is clicked, you may use the `action()` method. Each method accepts a `$record` parameter which you may use to customize the behavior of the action:
@@ -649,6 +653,7 @@ TextColumn::make('sku')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `headerTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/header-tooltips" alt="Table with header tooltip on a column" version="4.x" />
 
 ## Aligning column content
 
@@ -737,6 +742,8 @@ TextColumn::make('name')
 
 <UtilityInjection set="tableColumns" version="4.x">The `wrapHeader()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/wrap-header" alt="Table with wrapped column headers" version="4.x" />
+
 ## Controlling the width of columns
 
 By default, columns will take up as much space as they need. You may allow some columns to consume more space than others by using the `grow()` method:
@@ -760,6 +767,8 @@ IconColumn::make('is_paid')
 ```
 
 <UtilityInjection set="tableColumns" except="$state" version="4.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="tables/columns/width" alt="Table with column width controls" version="4.x" />
 
 ## Grouping columns
 
@@ -911,6 +920,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/columns/column-manager-modal" alt="Table with column manager in a modal" version="4.x" />
+
 You may use the [trigger action API](#customizing-the-column-manager-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
 
 #### Customizing the column manager trigger action
@@ -986,6 +997,8 @@ public function table(Table $table): Table
         ->columnManagerColumns(2);
 }
 ```
+
+<AutoScreenshot name="tables/columns/column-manager-columns" alt="Table with a 2-column column manager" version="4.x" />
 
 ## Adding extra HTML attributes to a column content
 
