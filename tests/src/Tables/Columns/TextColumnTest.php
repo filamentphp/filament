@@ -11,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
-use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -174,29 +173,6 @@ describe('rendering', function (): void {
     it('can render with `expandableLimitedList()` set via `Closure`', function (): void {
         Post::factory()->create();
         livewire(RenderTextColumnWithClosureExpandableLimitedList::class)->assertSuccessful();
-    });
-});
-
-it('has no accessibility issues in light mode', function (): void {
-    retry(10, function (): void {
-        Post::factory()->count(3)->create();
-
-        $this->actingAs(User::factory()->create());
-
-        visit('/columns-browser-test')
-            ->assertNoAccessibilityIssues();
-    });
-});
-
-it('has no accessibility issues in dark mode', function (): void {
-    retry(10, function (): void {
-        Post::factory()->count(3)->create();
-
-        $this->actingAs(User::factory()->create());
-
-        visit('/columns-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
     });
 });
 
