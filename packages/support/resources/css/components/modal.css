@@ -12,6 +12,8 @@
 
     &.fi-modal-slide-over.fi-modal-slide-over-from-start {
         & > .fi-modal-window-ctn > .fi-modal-window {
+            @apply me-auto;
+
             &.fi-transition-enter-start,
             &.fi-transition-leave-end {
                 @apply -translate-x-full rtl:translate-x-full;
@@ -127,7 +129,7 @@
     }
 
     & > .fi-modal-window-ctn {
-        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] sm:grid-rows-[1fr_auto_3fr];
+        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
 
         &.fi-clickable {
             @apply cursor-pointer;

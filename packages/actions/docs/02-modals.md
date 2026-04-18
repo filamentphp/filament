@@ -399,6 +399,29 @@ Action::make('updateAuthor')
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
 
+### Changing the slide-over position
+
+By default, slide-overs enter from the end of the screen (the right side in left-to-right languages, the left side in right-to-left languages). You may change this to the start of the screen by passing `SlideOverPosition::Start` to the `slideOverPosition()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Support\Enums\SlideOverPosition;
+
+Action::make('updateAuthor')
+    ->schema([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->slideOver()
+    ->slideOverPosition(SlideOverPosition::Start)
+```
+
+<AutoScreenshot name="actions/modal/slide-over-start" alt="Slide over from the start of the screen" version="4.x" />
+
+This is useful when the action trigger sits near the start of the viewport — for example, a row action at the beginning of a table row — so the slide-over opens adjacent to its trigger instead of across the screen.
+
 ## Changing the modal width
 
 You can change the width of the modal by using the `modalWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge`, `SevenExtraLarge`, and `Screen`:

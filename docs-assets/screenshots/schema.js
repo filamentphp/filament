@@ -352,6 +352,21 @@ export default {
         },
         selector: '.fi-modal-window-ctn',
     },
+    'actions/modal/slide-over-start': {
+        url: 'actions',
+        viewport: {
+            width: 1280,
+            height: 720,
+            deviceScaleFactor: 2,
+        },
+        before: async (page) => {
+            await page.click('#slideOverStartAction button')
+            await page.waitForSelector('#modal h2')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+        selector: '.fi-modal-window-ctn',
+    },
     'actions/modal/no-close-button': {
         url: 'actions',
         viewport: {
