@@ -97,14 +97,14 @@ describe('badge', function (): void {
     it('can set `badge()` with a number', function (): void {
         $tab = Tab::make('Test')->badge(5);
 
-        expect($tab->getBadge())->toBe(5);
+        expect($tab->getBadge())->toBe('5');
     });
 
     it('can set `badge()` with a `Closure`', function (): void {
         $tab = Tab::make('Test')
             ->badge(static fn (): int => 42);
 
-        expect($tab->getBadge())->toBe(42);
+        expect($tab->getBadge())->toBe('42');
     });
 
     it('can clear `badge()` with `null`', function (): void {
