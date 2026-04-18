@@ -60,11 +60,13 @@ class PanelsRenderHook
 
     const PAGE_FOOTER_WIDGETS_START = 'panels::page.footer-widgets.start';
 
-    const PAGE_HEADER_HEADING_BEFORE = 'panels::page.header.heading.before';
-
     const PAGE_HEADER_ACTIONS_AFTER = 'panels::page.header.actions.after';
 
     const PAGE_HEADER_ACTIONS_BEFORE = 'panels::page.header.actions.before';
+
+    const PAGE_HEADER_HEADING_AFTER = 'panels::page.header.heading.after';
+
+    const PAGE_HEADER_HEADING_BEFORE = 'panels::page.header.heading.before';
 
     const PAGE_HEADER_WIDGETS_AFTER = 'panels::page.header-widgets.after';
 
