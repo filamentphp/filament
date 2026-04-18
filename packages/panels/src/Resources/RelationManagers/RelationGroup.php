@@ -130,9 +130,11 @@ class RelationGroup extends Component
     /**
      * @return string | array<string> | null
      */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(string | int | float | null $badge = null): string | array | null
     {
-        return $this->evaluate($this->badgeColor);
+        return $this->evaluate($this->badgeColor, [
+            'badge' => $badge,
+        ]);
     }
 
     public function getOwnerRecord(): ?Model
@@ -177,9 +179,9 @@ class RelationGroup extends Component
     public function getTabComponent(): Tab
     {
         $tab = Tab::make($this->getLabel())
-            ->badge($this->getBadge())
-            ->badgeColor($this->getBadgeColor())
-            ->badgeTooltip($this->getBadgeTooltip())
+            ->badge($badge = $this->getBadge())
+            ->badgeColor($this->getBadgeColor($badge))
+            ->badgeTooltip($this->getBadgeTooltip($badge))
             ->icon($this->getIcon())
             ->iconPosition($this->getIconPosition());
 

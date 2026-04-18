@@ -236,8 +236,8 @@ class Tabs extends Component
                 continue;
             }
 
-            $badgeState = $tab->getBadge();
-            $badgeColor = $tab->getBadgeColor($badgeState);
+            $badge = $tab->getBadge();
+            $badgeColor = $tab->getBadgeColor($badge);
 
             $badgeColorClasses = '';
             $badgeColorStyles = '';
@@ -249,20 +249,21 @@ class Tabs extends Component
                 $badgeColorClasses = implode(' ', FilamentColor::getComponentClasses(BadgeComponent::class, $badgeColor));
             }
 
-            $badgeIcon = $tab->getBadgeIcon();
+            $badgeIcon = $tab->getBadgeIcon($badge);
             $badgeIconHtml = $badgeIcon
                 ? generate_icon_html($badgeIcon, size: IconSize::Small)?->toHtml()
                 : null;
 
-            $badgeIconPosition = $tab->getBadgeIconPosition();
+            $badgeIconPosition = $tab->getBadgeIconPosition($badge);
+            $badgeTooltip = $tab->getBadgeTooltip($badge);
 
             $badges[strval($tabKey)] = [
-                'badge' => $badgeState,
+                'badge' => $badge,
                 'badgeColorClasses' => $badgeColorClasses,
                 'badgeColorStyles' => $badgeColorStyles,
                 'badgeIconHtml' => $badgeIconHtml,
                 'badgeIconPosition' => $badgeIconPosition instanceof IconPosition ? $badgeIconPosition->value : $badgeIconPosition,
-                'badgeTooltip' => $tab->getBadgeTooltip() ? strval($tab->getBadgeTooltip()) : null,
+                'badgeTooltip' => $badgeTooltip ? strval($badgeTooltip) : null,
             ];
         }
 

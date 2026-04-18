@@ -132,9 +132,9 @@
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
@@ -174,7 +174,7 @@
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                                 $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                                 $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
@@ -214,7 +214,7 @@
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                                 $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                                 $tabIcon = $tab->getIcon();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
@@ -344,9 +344,9 @@
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
                     $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();

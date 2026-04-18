@@ -633,8 +633,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-group']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),
@@ -655,9 +655,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-group']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
-            badgeTooltip: $this->getBadgeTooltip(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
+            badgeTooltip: $this->getBadgeTooltip($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconSize: $this->getIconSize(),
@@ -673,8 +673,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-group']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconSize: $this->getIconSize(),
@@ -691,8 +691,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-group']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),

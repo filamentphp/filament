@@ -822,8 +822,8 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-action']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -861,9 +861,9 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-action']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
-            badgeTooltip: $this->getBadgeTooltip(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
+            badgeTooltip: $this->getBadgeTooltip($badge),
             color: $this->getColor(),
             href: ($isDisabled || $shouldPostToUrl) ? null : $url,
             icon: $this->getIcon(default: $this->getGroupedIcon()),
@@ -894,8 +894,8 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-action']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -929,8 +929,8 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-action']),
-            badge: $badgeState = $this->getBadge(),
-            badgeColor: $this->getBadgeColor($badgeState),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
