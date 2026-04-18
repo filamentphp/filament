@@ -106,3 +106,49 @@ it('can register navigation groups individually', function (): void {
                 ->each->toBeInstanceOf(NavigationItem::class),
         );
 });
+
+it('hides navigation when a closure returns `false`', function (): void {
+    Filament::getCurrentOrDefaultPanel()->navigation(fn (): bool => false);
+
+    expect(Filament::hasNavigation())->toBeFalse();
+});
+
+it('shows auto-discovered navigation items when a closure returns `true`', function (): void {
+    Filament::getCurrentOrDefaultPanel()->navigation(fn (): bool => true);
+
+    expect(Filament::hasNavigation())->toBeTrue()
+        ->and(Filament::getCurrentOrDefaultPanel()->hasNavigationBuilder())->toBeFalse();
+
+    $itemLabels = collect(Filament::getNavigation())
+        ->flatMap(fn (NavigationGroup $group) => $group->getItems())
+        ->map(fn (NavigationItem $item) => $item->getLabel());
+
+    expect($itemLabels)
+        ->toContain('Dashboard')
+        ->toContain('Users')
+        ->toContain('Posts');
+});
+
+it('hides navigation when `navigation(false)` is set', function (): void {
+    Filament::getCurrentOrDefaultPanel()->navigation(false);
+
+    expect(Filament::hasNavigation())->toBeFalse();
+});
+
+it('resolves the navigation closure only once per request', function (): void {
+    $callCount = 0;
+
+    Filament::getCurrentOrDefaultPanel()->navigation(function (NavigationBuilder $navigation) use (&$callCount): NavigationBuilder {
+        $callCount++;
+
+        return $navigation->items([
+            ...Dashboard::getNavigationItems(),
+        ]);
+    });
+
+    Filament::hasNavigation();
+    Filament::getCurrentOrDefaultPanel()->hasNavigationBuilder();
+    Filament::buildNavigation();
+
+    expect($callCount)->toBe(1);
+});
