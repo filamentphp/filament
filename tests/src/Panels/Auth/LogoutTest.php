@@ -17,7 +17,7 @@ it('can log a user out', function (): void {
     $this->assertGuest();
 });
 
-it('allows a user to override the logout response', function (): void {
+it('allows a user to override the `LogoutResponse`', function (): void {
     $logoutResponseFake = new class implements LogoutResponse
     {
         public function toResponse($request): RedirectResponse
@@ -32,4 +32,12 @@ it('allows a user to override the logout response', function (): void {
         ->actingAs(User::factory()->create())
         ->post(Filament::getLogoutUrl())
         ->assertRedirect('https://example.com');
+});
+
+it('redirects unauthenticated users when attempting to log out', function (): void {
+    $this->assertGuest();
+
+    $this
+        ->post(Filament::getLogoutUrl())
+        ->assertRedirect(Filament::getLoginUrl());
 });

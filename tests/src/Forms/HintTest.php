@@ -10,9 +10,39 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('has a form with the default name \'form\'', function (): void {
+it('can render a form with a `Closure`-based `hint()`', function (): void {
     livewire(TestComponentWithFormWithTestFieldHint::class)
         ->assertFormExists();
+});
+
+describe('hint icon tooltip', function (): void {
+    it('can set a hint icon tooltip via `hintIcon()` second parameter', function (): void {
+        $field = TextInput::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintIcon('heroicon-o-information-circle', 'Example tooltip');
+        expect($field->getHintIconTooltip())
+            ->toBe('Example tooltip');
+    });
+
+    it('does not clear a previously set hint icon tooltip when calling `hintIcon()` without a tooltip', function (): void {
+        $field = TextInput::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintIconTooltip('Example tooltip')
+            ->hintIcon('heroicon-o-information-circle');
+
+        expect($field->getHintIconTooltip())
+            ->toBe('Example tooltip');
+    });
+
+    it('can clear a previously set hint icon tooltip by explicitly passing `null` to `hintIcon()`', function (): void {
+        $field = TextInput::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintIconTooltip('Example tooltip')
+            ->hintIcon('heroicon-o-information-circle', null);
+
+        expect($field->getHintIconTooltip())
+            ->toBeNull();
+    });
 });
 
 class TestFieldWithChildComponentSchema extends Field
@@ -77,31 +107,3 @@ class TestComponentWithFormWithTestFieldHint extends Livewire
             ->statePath('data');
     }
 }
-
-it('can set a hint icon tooltip via hintIcon second parameter', function (): void {
-    $field = TextInput::make('test')
-        ->container(Schema::make(Livewire::make()))
-        ->hintIcon('heroicon-o-information-circle', 'Example tooltip');
-    expect($field->getHintIconTooltip())
-        ->toBe('Example tooltip');
-});
-
-it('does not clear a previously set hint icon tooltip when calling hintIcon without a tooltip', function (): void {
-    $field = TextInput::make('test')
-        ->container(Schema::make(Livewire::make()))
-        ->hintIconTooltip('Example tooltip')
-        ->hintIcon('heroicon-o-information-circle');
-
-    expect($field->getHintIconTooltip())
-        ->toBe('Example tooltip');
-});
-
-it('can clear a previously set hint icon tooltip by explicitly passing null to hintIcon', function (): void {
-    $field = TextInput::make('test')
-        ->container(Schema::make(Livewire::make()))
-        ->hintIconTooltip('Example tooltip')
-        ->hintIcon('heroicon-o-information-circle', null);
-
-    expect($field->getHintIconTooltip())
-        ->toBeNull();
-});

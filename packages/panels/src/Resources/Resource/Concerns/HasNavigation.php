@@ -181,6 +181,10 @@ trait HasNavigation
 
     public static function shouldRegisterNavigation(): bool
     {
+        // Security: Hiding a resource from navigation does NOT prevent
+        // direct URL access. Use resource authorization (Model
+        // Policies) to control who can access pages.
+
         return static::$shouldRegisterNavigation;
     }
 
