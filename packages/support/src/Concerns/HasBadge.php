@@ -13,8 +13,12 @@ trait HasBadge
      */
     protected string | array | Closure | null $badgeColor = null;
 
-    public function badge(string | Closure | null $badge): static
+    public function badge(string | int | float | Closure | null $badge): static
     {
+        if (is_int($badge) || is_float($badge)) {
+            $badge = (string) $badge;
+        }
+
         $this->badge = $badge;
 
         return $this;
@@ -23,7 +27,7 @@ trait HasBadge
     /**
      * @deprecated Use `badge()` instead.
      */
-    public function indicator(string | Closure | null $indicator): static
+    public function indicator(string | int | float | Closure | null $indicator): static
     {
         return $this->badge($indicator);
     }
