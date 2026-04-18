@@ -548,6 +548,35 @@ return [
 
                         'color' => [
                             'label' => 'Color',
+
+                            'options' => [
+                                'slate' => 'Gris pizarra',
+                                'gray' => 'Gris',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Gris neutral',
+                                'stone' => 'Piedra',
+                                'mauve' => 'Malva',
+                                'olive' => 'Oliva',
+                                'mist' => 'Neblina',
+                                'taupe' => 'Gris topo',
+                                'red' => 'Rojo',
+                                'orange' => 'Naranja',
+                                'amber' => 'Ámbar',
+                                'yellow' => 'Amarillo',
+                                'lime' => 'Lima',
+                                'green' => 'Verde',
+                                'emerald' => 'Verde esmeralda',
+                                'teal' => 'Verde azulado',
+                                'cyan' => 'Turquesa',
+                                'sky' => 'Cielo',
+                                'blue' => 'Azul',
+                                'indigo' => 'Índigo',
+                                'violet' => 'Violeta',
+                                'purple' => 'Púrpura',
+                                'fuchsia' => 'Fucsia',
+                                'pink' => 'Rosado',
+                                'rose' => 'Rosa',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -568,6 +597,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
 
+        'mentions' => [
+            'no_options_message' => 'No hay opciones disponibles.',
+            'no_search_results_message' => 'No hay resultados que coincidan con su búsqueda.',
+            'search_prompt' => 'Comience a escribir para buscar...',
+            'searching_message' => 'Buscando...',
+        ],
+
         'tools' => [
             'align_center' => 'Alinear al centro',
             'align_end' => 'Alinear al final',
@@ -583,8 +619,11 @@ return [
             'custom_blocks' => 'Bloques',
             'details' => 'Detalles',
             'h1' => 'Título',
-            'h2' => 'Encabezado',
-            'h3' => 'Subencabezado',
+            'h2' => 'Encabezado 2',
+            'h3' => 'Encabezado 3',
+            'h4' => 'Encabezado 4',
+            'h5' => 'Encabezado 5',
+            'h6' => 'Encabezado 6',
             'grid' => 'Cuadrícula',
             'grid_delete' => 'Eliminar cuadrícula',
             'highlight' => 'Resaltar',
@@ -594,6 +633,7 @@ return [
             'link' => 'Enlace',
             'merge_tags' => 'Etiquetas dinámicas',
             'ordered_list' => 'Lista numerada',
+            'paragraph' => 'Párrafo',
             'redo' => 'Rehacer',
             'small' => 'Texto pequeño',
             'strike' => 'Tachar',
@@ -692,7 +732,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Eliminar',
+            ],
+
+        ],
+
         'placeholder' => 'Nueva etiqueta',
+
     ],
 
     'text_input' => [

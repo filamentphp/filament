@@ -55,6 +55,11 @@ return [
             'title' => 'Saved',
         ],
 
+        'throttled' => [
+            'title' => 'Too many requests. Please try again in :seconds seconds.',
+            'body' => 'Please try again in :seconds seconds.',
+        ],
+
     ],
 
     'actions' => [

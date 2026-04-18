@@ -309,6 +309,9 @@ class Action extends ViewComponent implements Arrayable
 
     public function alpineClickHandler(string | Closure | null $handler): static
     {
+        // Security: This JavaScript expression is evaluated on the client.
+        // Never pass user input — only developer-defined expressions.
+
         $this->alpineClickHandler = $handler;
         $this->livewireClickHandlerEnabled(blank($handler));
 
@@ -317,6 +320,9 @@ class Action extends ViewComponent implements Arrayable
 
     public function actionJs(string | Closure | null $action): static
     {
+        // Security: This JavaScript expression is evaluated on the client.
+        // Never pass user input — only developer-defined expressions.
+
         $this->alpineClickHandler($action);
 
         return $this;
@@ -466,7 +472,7 @@ class Action extends ViewComponent implements Arrayable
 
         $argumentsParameter = '';
 
-        if (count($arguments = $this->getArguments())) {
+        if (count($arguments = $this->getInvokedArguments() ?? [])) {
             $argumentsParameter .= ', ';
             $argumentsParameter .= Js::from($arguments);
         }

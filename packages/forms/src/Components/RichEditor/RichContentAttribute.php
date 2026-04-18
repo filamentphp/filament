@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -38,7 +39,7 @@ class RichContentAttribute implements Htmlable
     protected ?array $mentionProviders = null;
 
     /**
-     * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
+     * @var ?array<class-string<RichContentCustomBlock> | array<int | string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
 
@@ -112,7 +113,21 @@ class RichContentAttribute implements Htmlable
 
     public function getFileAttachmentProvider(): ?FileAttachmentProvider
     {
-        return $this->fileAttachmentProvider;
+        if ($this->fileAttachmentProvider) {
+            return $this->fileAttachmentProvider;
+        }
+
+        foreach ($this->getPlugins() as $plugin) {
+            if ($plugin instanceof HasFileAttachmentProvider) {
+                $provider = $plugin->getFileAttachmentProvider();
+
+                if ($provider) {
+                    return $this->fileAttachmentProvider = $provider->attribute($this);
+                }
+            }
+        }
+
+        return null;
     }
 
     public function getModel(): Model
@@ -133,7 +148,23 @@ class RichContentAttribute implements Htmlable
             return '';
         }
 
-        return RichContentRenderer::make($content)
+        return $this->getRenderer()->toHtml();
+    }
+
+    public function toText(): string
+    {
+        $content = $this->model->getAttribute($this->name);
+
+        if (blank($content)) {
+            return '';
+        }
+
+        return $this->getRenderer()->toText();
+    }
+
+    public function getRenderer(): RichContentRenderer
+    {
+        return RichContentRenderer::make($this->model->getAttribute($this->name) ?? '')
             ->plugins($this->getPlugins())
             ->customBlocks($this->customBlocks)
             ->mergeTags($this->mergeTags)
@@ -141,8 +172,7 @@ class RichContentAttribute implements Htmlable
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
-            ->textColors($this->getTextColors())
-            ->toHtml();
+            ->textColors($this->getTextColors());
     }
 
     /**
@@ -199,7 +229,7 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     * @param  ?array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
@@ -220,10 +250,28 @@ class RichContentAttribute implements Htmlable
         $blocks = [];
 
         foreach ($this->customBlocks as $key => $block) {
-            $blocks[] = is_string($key) ? $key : $block;
+            if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                // Data association: `BlockClass::class => $data`
+                $blocks[] = $key;
+            } elseif (is_array($block)) {
+                // Group or ungrouped section: `'Label' => [...]` or `[...]`
+                foreach ($block as $innerKey => $innerValue) {
+                    $blocks[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $blocks[] = $block;
+            }
         }
 
         return $blocks;
+    }
+
+    /**
+     * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
+     */
+    public function getCustomBlocksConfig(): array
+    {
+        return $this->customBlocks ?? [];
     }
 
     public function json(bool $condition = true): static

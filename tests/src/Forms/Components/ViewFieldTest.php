@@ -22,6 +22,13 @@ it('can set and get state', function (): void {
         ->assertSchemaStateSet(['custom' => 'test value']);
 });
 
+it('can set a custom `view()`', function (): void {
+    $field = ViewField::make('custom')
+        ->view('filament-forms::components.hidden');
+
+    expect($field->getView())->toBe('filament-forms::components.hidden');
+});
+
 class TestComponentWithViewField extends Livewire
 {
     public function form(Schema $form): Schema

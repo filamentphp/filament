@@ -93,3 +93,7 @@ it('can restore multiple records sequentially', function (): void {
     assertNotSoftDeleted($department1);
     assertNotSoftDeleted($department2);
 });
+
+it('returns `restore` from `getDefaultName()`', function (): void {
+    expect(RestoreAction::getDefaultName())->toBe('restore');
+});

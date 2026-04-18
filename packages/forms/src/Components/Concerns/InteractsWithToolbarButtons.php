@@ -9,7 +9,7 @@ use LogicException;
 trait InteractsWithToolbarButtons
 {
     /**
-     * @var array<string | array<string>> | Closure | null
+     * @var array<int, string | object | array<int, string | object>> | Closure | null
      */
     protected array | Closure | null $toolbarButtons = null;
 
@@ -45,7 +45,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | array<string | array<string>>>  $buttonsToEnable
+     * @param  array<string | object | array<string | object>>  $buttonsToEnable
      */
     public function enableToolbarButtons(array $buttonsToEnable = []): static
     {
@@ -62,7 +62,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | array<string>> | Closure | null  $buttons
+     * @param  array<int, string | object | array<int, string | object>> | Closure | null  $buttons
      */
     public function toolbarButtons(array | Closure | null $buttons): static
     {
@@ -73,24 +73,26 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @return array<array<string>>
+     * @return array<array<string | object>>
      */
     public function getToolbarButtons(): array
     {
-        // Start with either custom buttons or default buttons
         $buttons = $this->evaluate($this->toolbarButtons) ?? $this->getDefaultToolbarButtons(); /** @phpstan-ignore method.notFound */
 
-        // Apply all queued modifications in order
-        foreach ($this->toolbarButtonsModifications as $modification) {
+        // Extra modifications (e.g. from plugins) are applied first,
+        // so that user-level modifications always take precedence.
+        $modifications = [...$this->getExtraToolbarButtonsModifications(), ...$this->toolbarButtonsModifications];
+
+        foreach ($modifications as $modification) {
             $buttons = match ($modification['type']) {
                 'disableAll' => [],
                 'disable' => $this->applyDisableToolbarButtonsModification($buttons, $modification['buttons']),
-                'enable' => [...$buttons, ...$modification['buttons']],
+                'enable' => $this->applyEnableToolbarButtonsModification($buttons, $modification['buttons']),
                 default => throw new Exception('Unknown toolbar buttons modification type: [' . $modification['type'] . '].'),
             };
         }
 
-        // Now group the buttons
+        // Group consecutive non-array items together; arrays become their own groups
         $toolbar = [];
         $newButtonGroup = [];
 
@@ -107,13 +109,12 @@ trait InteractsWithToolbarButtons
 
             if (filled($newButtonGroup)) {
                 $toolbar[] = $newButtonGroup;
-
                 $newButtonGroup = [];
-
-                continue;
             }
 
-            $toolbar[] = $buttonGroup;
+            if (filled($buttonGroup)) {
+                $toolbar[] = $buttonGroup;
+            }
         }
 
         if (filled($newButtonGroup)) {
@@ -124,32 +125,154 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | array<string>>  $buttons
+     * @param  array<int, string | object | array<int, string | object>>  $buttons
      * @param  array<string>  $buttonsToDisable
-     * @return array<string | array<string>>
+     * @return array<int, string | object | array<int, string | object>>
      */
     protected function applyDisableToolbarButtonsModification(array $buttons, array $buttonsToDisable): array
     {
-        return array_reduce(
-            $buttons,
-            function ($carry, $button) use ($buttonsToDisable) {
-                if (is_array($button)) {
-                    $filtered = array_values(array_filter(
-                        $button,
-                        static fn ($button) => ! in_array($button, $buttonsToDisable),
-                    ));
+        $modified = [];
 
-                    if (filled($filtered)) {
-                        $carry[] = $filtered;
-                    }
-                } elseif (! in_array($button, $buttonsToDisable)) {
-                    $carry[] = $button;
+        foreach ($buttons as $button) {
+            if (is_object($button)) {
+                $button = $this->filterDisabledToolbarButtonsFromItem($button, $buttonsToDisable);
+
+                if ($button !== null) {
+                    $modified[] = $button;
                 }
 
-                return $carry;
-            },
-            initial: [],
-        );
+                continue;
+            }
+
+            if (is_array($button)) {
+                $filteredGroup = [];
+
+                foreach ($button as $item) {
+                    if (is_object($item)) {
+                        $item = $this->filterDisabledToolbarButtonsFromItem($item, $buttonsToDisable);
+
+                        if ($item !== null) {
+                            $filteredGroup[] = $item;
+                        }
+
+                        continue;
+                    }
+
+                    if (! in_array($item, $buttonsToDisable)) {
+                        $filteredGroup[] = $item;
+                    }
+                }
+
+                if (filled($filteredGroup)) {
+                    $modified[] = $filteredGroup;
+                }
+
+                continue;
+            }
+
+            if (! in_array($button, $buttonsToDisable)) {
+                $modified[] = $button;
+            }
+        }
+
+        return $modified;
+    }
+
+    /**
+     * @param  array<string>  $buttonsToDisable
+     */
+    protected function filterDisabledToolbarButtonsFromItem(object $item, array $buttonsToDisable): ?object
+    {
+        return $item;
+    }
+
+    /**
+     * @param  array<int, string | object | array<int, string | object>>  $buttons
+     * @param  array<int, string | object | array<int, string | object>>  $buttonsToEnable
+     * @return array<int, string | object | array<int, string | object>>
+     */
+    protected function applyEnableToolbarButtonsModification(array $buttons, array $buttonsToEnable): array
+    {
+        $modified = $buttons;
+
+        foreach ($buttonsToEnable as $button) {
+            if (is_object($button)) {
+                $modified[] = $button;
+
+                continue;
+            }
+
+            if (is_array($button)) {
+                $filteredGroup = [];
+
+                foreach ($button as $item) {
+                    if (is_object($item)) {
+                        $filteredGroup[] = $item;
+
+                        continue;
+                    }
+
+                    if ($this->hasToolbarButtonInButtons($modified, $item) || in_array($item, $filteredGroup)) {
+                        continue;
+                    }
+
+                    $filteredGroup[] = $item;
+                }
+
+                if (filled($filteredGroup)) {
+                    $modified[] = $filteredGroup;
+                }
+
+                continue;
+            }
+
+            if ($this->hasToolbarButtonInButtons($modified, $button)) {
+                continue;
+            }
+
+            $modified[] = $button;
+        }
+
+        return $modified;
+    }
+
+    /**
+     * @param  array<int, string | object | array<int, string | object>>  $buttons
+     */
+    protected function hasToolbarButtonInButtons(array $buttons, string $button): bool
+    {
+        foreach ($buttons as $item) {
+            if (is_array($item)) {
+                if ($this->hasToolbarButtonInButtons($item, $button)) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if (is_string($item) && ($item === $button)) {
+                return true;
+            }
+
+            if (is_object($item) && $this->hasToolbarButtonInItem($item, $button)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function hasToolbarButtonInItem(object $item, string $button): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return array<array{type: string, buttons?: array<string | array<string | array<string>>>}>
+     */
+    protected function getExtraToolbarButtonsModifications(): array
+    {
+        return [];
     }
 
     /**
@@ -165,14 +288,11 @@ trait InteractsWithToolbarButtons
      */
     public function hasToolbarButton(string | array $button): bool
     {
-        foreach ($this->getToolbarButtons() as $buttonGroup) {
-            if (is_array($button)) {
-                foreach ($button as $singleButton) {
-                    if (in_array($singleButton, $buttonGroup)) {
-                        return true;
-                    }
-                }
-            } elseif (in_array($button, $buttonGroup)) {
+        $buttonsToCheck = is_array($button) ? $button : [$button];
+        $toolbarButtons = $this->getToolbarButtons();
+
+        foreach ($buttonsToCheck as $buttonToCheck) {
+            if ($this->hasToolbarButtonInButtons($toolbarButtons, $buttonToCheck)) {
                 return true;
             }
         }

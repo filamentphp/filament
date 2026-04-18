@@ -145,6 +145,8 @@ TextEntry::make('created_at')
     ->time()
 ```
 
+<AutoScreenshot name="infolists/entries/text/date" alt="Text entry with date formatting" version="4.x" />
+
 You may customize the date format by passing a custom format string to the `date()`, `dateTime()`, or `time()` method. You may use any [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
 ```php
@@ -207,6 +209,8 @@ TextEntry::make('created_at')
     ->since()
 ```
 
+<AutoScreenshot name="infolists/entries/text/since" alt="Text entry with relative date formatting" version="4.x" />
+
 #### Displaying a formatting date in a tooltip
 
 Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()`, `isoTimeTooltip()`, or `sinceTooltip()` method to display a formatted date in a [tooltip](overview#adding-a-tooltip-to-an-entry), often to provide extra information:
@@ -242,6 +246,8 @@ TextEntry::make('created_at')
     ->dateTime()
     ->sinceTooltip()
 ```
+
+<AutoScreenshot name="infolists/entries/text/date-tooltip" alt="Text entry with a date tooltip on relative dates" version="4.x" />
 
 #### Setting the timezone for date formatting
 
@@ -294,6 +300,8 @@ TextEntry::make('stock')
     ->numeric()
 ```
 
+<AutoScreenshot name="infolists/entries/text/numeric" alt="Text entry with numeric formatting" version="4.x" />
+
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
 ```php
@@ -326,6 +334,8 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('price')
     ->money('EUR')
 ```
+
+<AutoScreenshot name="infolists/entries/text/money" alt="Text entry with money formatting" version="4.x" />
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `money()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -373,6 +383,8 @@ TextEntry::make('description')
     ->markdown()
 ```
 
+<AutoScreenshot name="infolists/entries/text/markdown" alt="Text entry with Markdown rendering" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the text should be rendered as Markdown or not:
 
 ```php
@@ -395,6 +407,8 @@ TextEntry::make('description')
     ->html()
 ```
 
+<AutoScreenshot name="infolists/entries/text/html" alt="Text entry with HTML rendering" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the text should be rendered as HTML or not:
 
 ```php
@@ -405,6 +419,10 @@ TextEntry::make('description')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `html()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="danger">
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
+</Aside>
 
 #### Rendering raw HTML without sanitization
 
@@ -527,6 +545,8 @@ TextEntry::make('authors.name')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `expandableLimitedList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="infolists/entries/text/expandable-limited-list" alt="Text entry with an expandable limited list" version="4.x" />
+
 ### Splitting a single value into multiple list items
 
 If you want to "explode" a text string from your model into multiple list items, you can do so with the `separator()` method. This is useful for displaying comma-separated tags [as badges](#displaying-as-a-badge), for example:
@@ -538,6 +558,8 @@ TextEntry::make('tags')
     ->badge()
     ->separator(',')
 ```
+
+<AutoScreenshot name="infolists/entries/text/separator-badge" alt="Text entry with badges from comma-separated values" version="4.x" />
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `separator()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -632,6 +654,8 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="infolists/entries/text/limit" alt="Text entry with limited text length" version="4.x" />
+
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
 ```php
@@ -675,6 +699,8 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="infolists/entries/text/words" alt="Text entry with limited word count" version="4.x" />
+
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
 ```php
@@ -699,6 +725,8 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `lineClamp()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="infolists/entries/text/line-clamp" alt="Text entry with line clamping" version="4.x" />
+
 ### Preventing text wrapping
 
 By default, text will wrap to the next line if it exceeds the width of the container. You can prevent this behavior using the `wrap(false)` method:
@@ -711,6 +739,8 @@ TextEntry::make('description')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `wrap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/text/wrap" alt="Text entry with wrapping disabled" version="4.x" />
 
 ## Allowing the text to be copied to the clipboard
 
@@ -743,3 +773,22 @@ TextEntry::make('apiKey')
 <Aside variant="warning">
     This feature only works when SSL is enabled for the app.
 </Aside>
+
+## Adding suffix and prefix actions
+
+You may place an [action](../actions) before and after the entry using the `prefixAction()` and `suffixAction()` methods:
+
+```php
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('cost')
+    ->prefix('€')
+    ->suffixAction(
+        Action::make('copyCostToPrice')
+            ->icon(Heroicon::Clipboard),
+    )
+```
+
+<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" version="4.x" />

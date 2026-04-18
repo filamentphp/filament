@@ -444,5 +444,6 @@ use Filament\Facades\Filament;
 $team = Team::factory()->create();
 
 Filament::setTenant($this->team);
+Filament::setCurrentPanel('admin');
 Filament::bootCurrentPanel();
 ```

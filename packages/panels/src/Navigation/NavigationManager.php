@@ -176,8 +176,24 @@ class NavigationManager
             $page::registerNavigationItems();
         }
 
+        foreach ($this->panel->getPageConfigurations() as $configuration) {
+            Filament::setCurrentPageConfigurationKey($configuration->getKey());
+
+            $configuration->page::registerNavigationItems();
+
+            Filament::setCurrentPageConfigurationKey(null);
+        }
+
         foreach ($this->panel->getResources() as $resource) {
             $resource::registerNavigationItems();
+        }
+
+        foreach ($this->panel->getResourceConfigurations() as $configuration) {
+            Filament::setCurrentResourceConfigurationKey($configuration->getKey());
+
+            $configuration->resource::registerNavigationItems();
+
+            Filament::setCurrentResourceConfigurationKey(null);
         }
 
         $this->isNavigationMounted = true;

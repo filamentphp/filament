@@ -82,7 +82,7 @@ trait HasSubNavigation
                     $itemGroupKey = $itemGroup->name;
                 }
 
-                if (array_key_exists($itemGroupKey, $navigationGroups)) {
+                if (array_key_exists($itemGroupKey ?? '', $navigationGroups)) {
                     $navigationGroups[$itemGroupKey]->items([
                         ...$navigationGroups[$itemGroupKey]->getItems(),
                         $item,

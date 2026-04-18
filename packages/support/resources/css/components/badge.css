@@ -53,6 +53,10 @@
         @apply text-gray-400 dark:text-gray-500;
     }
 
+    & .fi-icon.fi-color {
+        @apply text-color-500;
+    }
+
     & .fi-badge-delete-btn {
         @apply -my-1 -ms-1 -me-2 flex items-center justify-center p-1 transition duration-75 outline-none;
 

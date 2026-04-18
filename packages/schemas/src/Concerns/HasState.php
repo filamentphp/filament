@@ -285,6 +285,36 @@ trait HasState
     }
 
     /**
+     * Takes the raw Livewire state and prunes it to only contain keys
+     * present in the template array. This preserves the sparse structure
+     * of validated data while using clean (unmutated) values from Livewire.
+     *
+     * @param  array<string, mixed>  $source
+     * @param  array<string, mixed>  $template
+     * @return array<string, mixed>
+     */
+    protected function pruneStateToMatchKeys(array $source, array $template): array
+    {
+        $result = [];
+
+        foreach ($template as $key => $templateValue) {
+            if (! array_key_exists($key, $source)) {
+                $result[$key] = $templateValue;
+
+                continue;
+            }
+
+            if (is_array($templateValue) && is_array($source[$key])) {
+                $result[$key] = $this->pruneStateToMatchKeys($source[$key], $templateValue);
+            } else {
+                $result[$key] = $source[$key];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @param  array<string, mixed> | null  $state
      */
     public function fill(?array $state = null, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
@@ -416,6 +446,34 @@ trait HasState
     {
         return Component::withVisibilityCache(function () use ($shouldCallHooksBefore, $afterValidate): array {
             $state = $this->validate();
+
+            // `validate()` returns data that went through `prepareForValidation()`,
+            // which applies `mutateStateForValidation()` mutations. Those mutations
+            // should only affect validation rules, not the dehydrated output. Replace
+            // the mutated values with clean Livewire data, preserving the validated
+            // array's sparse key structure.
+            $statePath = $this->getStatePath();
+            $livewire = $this->getLivewire();
+
+            if (filled($statePath)) {
+                $rawState = data_get($livewire, $statePath);
+
+                if (is_array($rawState)) {
+                    $validatedFormData = data_get($state, $statePath);
+
+                    if (is_array($validatedFormData)) {
+                        data_set($state, $statePath, $this->pruneStateToMatchKeys($rawState, $validatedFormData));
+                    }
+                }
+            } else {
+                $rawState = [];
+
+                foreach (array_keys($state) as $key) {
+                    $rawState[$key] = data_get($livewire, $key);
+                }
+
+                $state = $this->pruneStateToMatchKeys($rawState, $state);
+            }
 
             if ($shouldCallHooksBefore) {
                 $this->callBeforeStateDehydrated($state);

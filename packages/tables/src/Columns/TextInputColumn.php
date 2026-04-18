@@ -22,6 +22,10 @@ use function Filament\Support\generate_icon_html;
 
 class TextInputColumn extends Column implements Editable, HasEmbeddedView
 {
+    // Security: This column saves directly without checking Laravel
+    // Model Policies. Use `disabled()` to restrict editing
+    // based on your own authorization logic.
+
     use Concerns\CanBeValidated;
     use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
@@ -268,7 +272,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
-            <input type="hidden" value="<?= str($state)->replace('"', '\\"') ?>" x-ref="serverState" />
+            <input type="hidden" value="<?= e($state) ?>" x-ref="serverState" />
 
             <div
                 x-bind:class="{

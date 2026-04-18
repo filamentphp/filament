@@ -30,6 +30,10 @@ return [
                                 'title' => 'Vi har skickat dig en ny kod via mejl',
                             ],
 
+                            'throttled' => [
+                                'title' => 'För många försök inom begränsad tidsintervall. Vänta innan du begär en ny kod.',
+                            ],
+
                         ],
 
                     ],
@@ -39,6 +43,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Koden du angav är ogiltig.',
+
+                    'rate_limited' => 'För många försök inom begränsad tidsintervall. Vänligen försök igen senare.',
 
                 ],
 

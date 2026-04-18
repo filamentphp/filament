@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 
 use function Filament\Tests\livewire;
 
@@ -56,28 +57,66 @@ it('can resend notification', function (): void {
     Notification::assertSentTo($userToVerify, VerifyEmail::class);
 });
 
-it('can throttle resend notification attempts', function (): void {
-    Notification::fake();
+describe('rate limiting', function (): void {
+    it('can throttle resend notification attempts', function (): void {
+        Notification::fake();
 
-    $userToVerify = User::factory()->create([
-        'email_verified_at' => null,
-    ]);
+        $userToVerify = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
 
-    $this->actingAs($userToVerify);
+        $this->actingAs($userToVerify);
 
-    foreach (range(1, 2) as $i) {
+        foreach (range(1, 2) as $i) {
+            livewire(EmailVerificationPrompt::class)
+                ->callAction('resendNotification')
+                ->assertNotified();
+        }
+
+        Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+
         livewire(EmailVerificationPrompt::class)
             ->callAction('resendNotification')
             ->assertNotified();
-    }
 
-    Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+        Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+    });
 
-    livewire(EmailVerificationPrompt::class)
-        ->callAction('resendNotification')
-        ->assertNotified();
+    it('can throttle resend notification attempts per user', function (): void {
+        Notification::fake();
 
-    Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+        $userToVerify = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $this->actingAs($userToVerify);
+
+        // Clear the IP-based rate limiter between attempts to isolate the
+        // user-based rate limit (simulates an attacker rotating IPs).
+        $clearIpRateLimiter = function (): void {
+            RateLimiter::clear('livewire-rate-limiter:' . sha1(EmailVerificationPrompt::class . '|resendNotification|' . request()->ip()));
+        };
+
+        foreach (range(1, 2) as $i) {
+            $clearIpRateLimiter();
+
+            livewire(EmailVerificationPrompt::class)
+                ->callAction('resendNotification')
+                ->assertNotified();
+        }
+
+        Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+
+        $clearIpRateLimiter();
+
+        // The 3rd attempt should be rate limited by user ID
+        livewire(EmailVerificationPrompt::class)
+            ->callAction('resendNotification')
+            ->assertNotified();
+
+        Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+    });
+
 });
 
 it('redirects guests to the panel when unauthenticated', function (): void {

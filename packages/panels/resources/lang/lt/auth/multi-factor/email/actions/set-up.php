@@ -44,6 +44,8 @@ return [
 
                     'invalid' => 'Įvestas kodas yra neteisingas.',
 
+                    'rate_limited' => 'Per daug bandymų. Pabandykite vėliau.',
+
                 ],
 
             ],

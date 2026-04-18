@@ -33,6 +33,8 @@ class Tab extends Component implements CanConcealComponents
 
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
+    protected bool | Closure $isBadgeDeferred = false;
+
     /**
      * @var view-string
      */
@@ -131,8 +133,25 @@ class Tab extends Component implements CanConcealComponents
         return $this->evaluate($this->badgeIconPosition) ?? IconPosition::Before;
     }
 
+    public function deferBadge(bool | Closure $condition = true): static
+    {
+        $this->isBadgeDeferred = $condition;
+
+        return $this;
+    }
+
+    public function isBadgeDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isBadgeDeferred);
+    }
+
     public function excludeQueryWhenResolvingRecord(bool | Closure $condition = true): static
     {
+        // Security: Do NOT use this on tabs that enforce authorization
+        // scopes (e.g. restricting records by tenant or user ownership).
+        // Excluding the query allows direct URL access to records
+        // that the tab's scope would otherwise prevent.
+
         $this->shouldExcludeQueryWhenResolvingRecord = $condition;
 
         return $this;

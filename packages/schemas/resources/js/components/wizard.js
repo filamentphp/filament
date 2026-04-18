@@ -9,11 +9,14 @@ export default function wizardSchemaComponent({
         step: null,
 
         init() {
-            this.$watch('step', () => this.updateQueryString())
-
             this.step = this.getSteps().at(startStep - 1)
 
-            this.autofocusFields()
+            this.$watch('step', () => {
+                this.updateQueryString()
+                this.autofocusFields()
+            })
+
+            this.autofocusFields(true)
         },
 
         async requestNextStep() {
@@ -31,7 +34,6 @@ export default function wizardSchemaComponent({
 
             this.step = this.getSteps()[nextStepIndex]
 
-            this.autofocusFields()
             this.scroll()
         },
 
@@ -44,7 +46,6 @@ export default function wizardSchemaComponent({
 
             this.step = this.getSteps()[previousStepIndex]
 
-            this.autofocusFields()
             this.scroll()
         },
 
@@ -61,7 +62,6 @@ export default function wizardSchemaComponent({
 
             this.step = stepKey
 
-            this.autofocusFields()
             this.scroll()
         },
 
@@ -73,12 +73,31 @@ export default function wizardSchemaComponent({
             })
         },
 
-        autofocusFields() {
-            this.$nextTick(() =>
-                this.$refs[`step-${this.step}`]
-                    .querySelector('[autofocus]')
-                    ?.focus(),
-            )
+        autofocusFields(respectCurrentFocus = false) {
+            this.$nextTick(() => {
+                if (
+                    respectCurrentFocus &&
+                    document.activeElement &&
+                    document.activeElement !== document.body &&
+                    this.$el.compareDocumentPosition(document.activeElement) &
+                        Node.DOCUMENT_POSITION_PRECEDING
+                ) {
+                    return
+                }
+
+                const fields =
+                    this.$refs[`step-${this.step}`]?.querySelectorAll(
+                        '[autofocus]',
+                    ) ?? []
+
+                for (const field of fields) {
+                    field.focus()
+
+                    if (document.activeElement === field) {
+                        break
+                    }
+                }
+            })
         },
 
         getStepIndex(step) {

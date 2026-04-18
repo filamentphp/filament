@@ -17,8 +17,10 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Filament\PanelRegistry;
+use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\Widget;
@@ -56,7 +58,7 @@ use Livewire\Component;
  * @method static string | null getEmailVerificationPromptUrl(array<string, mixed> $parameters = [])
  * @method static string | null getSetUpRequiredMultiFactorAuthenticationUrl(array<string, mixed> $parameters = [])
  * @method static string getEmailVerifiedMiddleware()
- * @method static array<array{ title: string | Closure, body: string | Closure | null }> getErrorNotifications()
+ * @method static array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }> getErrorNotifications()
  * @method static string | null getFavicon()
  * @method static string getFontFamily()
  * @method static string getMonoFontFamily()
@@ -165,6 +167,14 @@ use Livewire\Component;
  * @method static void setCurrentPanel(Panel | string | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
  * @method static void setTenant(Model | null $tenant = null, bool $isQuiet = false)
+ * @method static void setCurrentResourceConfigurationKey(string | null $key)
+ * @method static string | null getCurrentResourceConfigurationKey()
+ * @method static ResourceConfiguration | null getResourceConfiguration(string $resourceClass)
+ * @method static void setCurrentPageConfigurationKey(string | null $key)
+ * @method static string | null getCurrentPageConfigurationKey()
+ * @method static PageConfiguration | null getPageConfiguration(string $pageClass)
+ * @method static void forResourceConfiguration(string $resourceClass, string $key)
+ * @method static void forPageConfiguration(string $pageClass, string $key)
  *
  * @see FilamentManager
  */

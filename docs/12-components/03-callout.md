@@ -2,6 +2,8 @@
 title: Callout Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 A callout can be used to draw attention to important information or messages:
@@ -20,6 +22,8 @@ A callout can be used to draw attention to important information or messages:
     </x-slot>
 </x-filament::callout>
 ```
+
+<AutoScreenshot name="components/callout/simple" alt="An info callout" version="4.x" />
 
 ## Using status colors
 
@@ -79,6 +83,8 @@ You can set the `color` attribute to `danger`, `info`, `success`, or `warning` t
 </x-filament::callout>
 ```
 
+<AutoScreenshot name="components/callout/colors" alt="Callouts in different colors" version="4.x" />
+
 ## Adding an icon to the callout
 
 You can add an [icon](../styling/icons) to a callout using the `icon` attribute:
@@ -94,6 +100,8 @@ You can add an [icon](../styling/icons) to a callout using the `icon` attribute:
     </x-slot>
 </x-filament::callout>
 ```
+
+<AutoScreenshot name="components/callout/custom-icon" alt="A callout with a custom icon" version="4.x" />
 
 ### Changing the color of the callout icon
 
@@ -113,6 +121,8 @@ By default, the icon color inherits from the callout's `color`. You can override
     </x-slot>
 </x-filament::callout>
 ```
+
+<AutoScreenshot name="components/callout/icon-color" alt="A callout with a custom icon color" version="4.x" />
 
 ### Changing the size of the callout icon
 
@@ -148,6 +158,8 @@ By default, the size of the callout icon is "large". You can change it to "small
 </x-filament::callout>
 ```
 
+<AutoScreenshot name="components/callout/icon-sizes" alt="Callouts with different icon sizes" version="4.x" />
+
 ## Using a custom background color
 
 You can set a custom background color using the `color` attribute with any supported color:
@@ -166,6 +178,8 @@ You can set a custom background color using the `color` attribute with any suppo
     </x-slot>
 </x-filament::callout>
 ```
+
+<AutoScreenshot name="components/callout/primary-color" alt="A callout with a primary color" version="4.x" />
 
 ## Adding content to the footer
 
@@ -213,6 +227,37 @@ You can also include buttons or other interactive elements in the footer:
 </x-filament::callout>
 ```
 
+<AutoScreenshot name="components/callout/footer" alt="A callout with a footer action" version="4.x" />
+
+## Adding content to the controls
+
+You can add custom content to the callout controls (top-right corner) using the `controls` slot:
+
+```blade
+<x-filament::callout
+    icon="heroicon-o-information-circle"
+    color="info"
+>
+    <x-slot name="heading">
+        Dismissible Callout
+    </x-slot>
+
+    <x-slot name="description">
+        This callout can be dismissed using the control in the top-right corner.
+    </x-slot>
+
+    <x-slot name="controls">
+        <x-filament::icon-button
+            icon="heroicon-m-x-mark"
+            color="gray"
+            label="Dismiss"
+        />
+    </x-slot>
+</x-filament::callout>
+```
+
+<AutoScreenshot name="components/callout/controls" alt="A callout with a dismiss control" version="4.x" />
+
 ## Callouts without an icon
 
 Callouts can be rendered without an icon if needed:
@@ -229,6 +274,8 @@ Callouts can be rendered without an icon if needed:
 </x-filament::callout>
 ```
 
+<AutoScreenshot name="components/callout/no-icon" alt="A callout without an icon" version="4.x" />
+
 ## Callouts with only a heading
 
 Callouts can be used with just a heading, without a description:
@@ -243,3 +290,5 @@ Callouts can be used with just a heading, without a description:
     </x-slot>
 </x-filament::callout>
 ```
+
+<AutoScreenshot name="components/callout/heading-only" alt="A callout with only a heading" version="4.x" />

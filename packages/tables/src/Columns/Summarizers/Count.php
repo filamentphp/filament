@@ -78,7 +78,7 @@ class Count extends Summarizer
 
     public function getSelectedState(): int | float | null
     {
-        if (! array_key_exists($this->selectAlias, $this->selectedState)) {
+        if (! array_key_exists($this->selectAlias ?? '', $this->selectedState)) {
             return null;
         }
 
@@ -125,7 +125,7 @@ class Count extends Summarizer
             <div <?= $attributes->toHtml() ?>>
                 <?php if (filled($label = $this->getLabel())) { ?>
                     <span class="fi-ta-icon-count-summary-label">
-                        <?= $label ?>
+                        <?= e($label) ?>
                     </span>
                 <?php } ?>
 

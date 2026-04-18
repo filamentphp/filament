@@ -140,7 +140,7 @@
     >
         <{{ filled($wireSubmitHandler) ? 'form' : 'div' }}
             @if ($closeByEscaping)
-                x-on:keydown.window.escape="{{ $closeEventHandler }}"
+                x-on:keydown.window.escape="if (isTopmost()) {{ $closeEventHandler }}"
             @endif
             x-show="isWindowVisible"
             x-transition:enter="fi-transition-enter"

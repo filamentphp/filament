@@ -20,6 +20,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/filters/grid-columns" alt="Table with filters in grid columns" version="4.x" />
+
 ## Controlling the width of the filters dropdown
 
 To customize the dropdown width, you may use the `filtersFormWidth()` method, and specify a width - `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge` or `SevenExtraLarge`. By default, the width is `ExtraSmall`:
@@ -72,6 +74,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/filters/modal" alt="Table with filters in a modal" version="4.x" />
+
 You may use the [trigger action API](overview#customizing-the-filters-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
 
 ## Displaying filters above the table content
@@ -109,6 +113,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/filters/above-content-collapsible" alt="Table with collapsible filters above content" version="4.x" />
+
 ## Displaying filters below the table content
 
 To render the filters below the table content instead of in a dropdown, you may use:
@@ -144,6 +150,10 @@ public function table(Table $table): Table
         ], layout: FiltersLayout::BeforeContent); // or `FiltersLayout::AfterContent`
 }
 ```
+
+<AutoScreenshot name="tables/filters/before-content" alt="Table with filters before content" version="4.x" />
+
+<AutoScreenshot name="tables/filters/after-content" alt="Table with filters after content" version="4.x" />
 
 ### Allowing filters to be collapsible when displayed to the left or right of the table content
 
@@ -212,6 +222,8 @@ public function table(Table $table): Table
 ```
 
 In this example, we have put two of the filters inside a [section](../../schemas/sections) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the filter form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.
+
+<AutoScreenshot name="tables/filters/custom-form-schema" alt="Table with custom filter form schema" version="4.x" />
 
 ## Displaying the reset action in the footer
 

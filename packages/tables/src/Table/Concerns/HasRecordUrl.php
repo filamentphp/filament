@@ -12,6 +12,8 @@ trait HasRecordUrl
 
     protected string | Closure | null $recordUrl = null;
 
+    protected bool $hasCustomRecordUrl = false;
+
     /**
      * @var array<array<mixed> | Closure>
      */
@@ -24,12 +26,25 @@ trait HasRecordUrl
         return $this;
     }
 
-    public function recordUrl(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function recordUrl(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
-        $this->openRecordUrlInNewTab($shouldOpenInNewTab);
+        // Security: If this URL is derived from user input, validate it
+        // to prevent XSS via `javascript:` protocol URLs rendered
+        // in `href` attributes.
+
+        if ($shouldOpenInNewTab !== null) {
+            $this->openRecordUrlInNewTab($shouldOpenInNewTab);
+        }
+
         $this->recordUrl = $url;
+        $this->hasCustomRecordUrl = true;
 
         return $this;
+    }
+
+    public function hasCustomRecordUrl(): bool
+    {
+        return $this->hasCustomRecordUrl;
     }
 
     /**
@@ -71,6 +86,9 @@ trait HasRecordUrl
      */
     public function extraRecordLinkAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraRecordLinkAttributes[] = $attributes;
         } else {

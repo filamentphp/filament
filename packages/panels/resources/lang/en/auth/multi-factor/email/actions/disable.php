@@ -44,6 +44,8 @@ return [
 
                     'invalid' => 'The code you entered is invalid.',
 
+                    'rate_limited' => 'Too many attempts. Please try again later.',
+
                 ],
 
             ],

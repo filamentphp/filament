@@ -171,7 +171,7 @@
                                 @endphp
 
                                 @if ($hasBlockIcons && filled($blockIcon))
-                                    {{ \Filament\Support\generate_icon_html($blockIcon, (new \Illuminate\View\ComponentAttributeBag)->class(['fi-fo-builder-item-header-icon'])) }}
+                                    {{ \Filament\Support\generate_icon_html($blockIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)->class(['fi-fo-builder-item-header-icon'])) }}
                                 @endif
 
                                 @if ($hasBlockLabels)

@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Enums\IconSize;
 
+    $controls = $getChildSchema($schemaComponent::CONTROLS_SCHEMA_KEY)?->toHtmlString();
     $extraAttributeBag = $getExtraAttributeBag();
     $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
     $color = $getColor();
@@ -25,5 +26,9 @@
 >
     <x-slot name="footer">
         {{ $footer }}
+    </x-slot>
+
+    <x-slot name="controls">
+        {{ $controls }}
     </x-slot>
 </x-filament::callout>
