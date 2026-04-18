@@ -13,6 +13,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
@@ -175,6 +176,15 @@ class PrimesDemo extends Component implements HasSchemas
                     ->schema([
                         Icon::make(Heroicon::ExclamationCircle)
                             ->color('danger'),
+                    ]),
+                Group::make()
+                    ->id('iconLarge')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Icon::make(Heroicon::Star)
+                            ->size(IconSize::Large),
                     ]),
                 Group::make()
                     ->id('iconTooltip')
