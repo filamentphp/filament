@@ -16,7 +16,7 @@ trait HasBadgeTooltip
         return $this;
     }
 
-    public function getBadgeTooltip(string | int | float | null $badge = null): string | Htmlable | null
+    public function getBadgeTooltip(?string $badge = null): string | Htmlable | null
     {
         return $this->evaluate($this->badgeTooltip, [
             'badge' => $badge,

@@ -123,14 +123,14 @@ class Tab extends Component implements CanConcealComponents
         return $this;
     }
 
-    public function getBadgeIcon(string | int | float | null $badge = null): string | BackedEnum | Htmlable | null
+    public function getBadgeIcon(?string $badge = null): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->badgeIcon, [
             'badge' => $badge,
         ]);
     }
 
-    public function getBadgeIconPosition(string | int | float | null $badge = null): IconPosition | string
+    public function getBadgeIconPosition(?string $badge = null): IconPosition | string
     {
         return $this->evaluate($this->badgeIconPosition, [
             'badge' => $badge,

@@ -130,7 +130,7 @@ class RelationGroup extends Component
     /**
      * @return string | array<string> | null
      */
-    public function getBadgeColor(string | int | float | null $badge = null): string | array | null
+    public function getBadgeColor(?string $badge = null): string | array | null
     {
         return $this->evaluate($this->badgeColor, [
             'badge' => $badge,
