@@ -260,7 +260,7 @@ class Action extends ViewComponent implements Arrayable
         return $this->getView() === static::BADGE_VIEW;
     }
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | Closure | null $badge = null): static
     {
         if (func_num_args() === 0) {
             /** @phpstan-ignore-next-line */

@@ -219,7 +219,7 @@ class Tabs extends Component
     }
 
     /**
-     * @return array<string, array{badge: string | int | float | null, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
+     * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
     #[ExposedLivewireMethod]
     #[Renderless]
