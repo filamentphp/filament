@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Support\Contracts\LoadingIndicator;
-use Filament\Support\DefaultLoadingIndicator;
+use Filament\Support\View\DefaultLoadingIndicator;
 use Filament\Tests\TestCase;
 use Illuminate\View\ComponentAttributeBag;
 

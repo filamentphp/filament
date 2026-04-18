@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support;
+namespace Filament\Support\View;
 
 use Filament\Support\Contracts\LoadingIndicator;
 use Illuminate\View\ComponentAttributeBag;

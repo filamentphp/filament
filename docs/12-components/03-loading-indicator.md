@@ -17,7 +17,7 @@ The loading indicator is an animated SVG that can be used to indicate that somet
 
 ## Replacing the default loading indicator
 
-Filament renders the loading indicator through the `Filament\Support\Contracts\LoadingIndicator` contract, which is bound to `Filament\Support\DefaultLoadingIndicator` by default. You may replace it with your own implementation by binding a different class in a service provider:
+Filament renders the loading indicator through the `Filament\Support\Contracts\LoadingIndicator` contract, which is bound to `Filament\Support\View\DefaultLoadingIndicator` by default. You may replace it with your own implementation by binding a different class in a service provider:
 
 ```php
 use App\Support\CustomLoadingIndicator;
