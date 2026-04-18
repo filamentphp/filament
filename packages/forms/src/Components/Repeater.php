@@ -1203,7 +1203,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         ));
     }
 
-    public function getItemLabel(string $key, int $index): string | Htmlable | null
+    public function getItemLabel(string $key, ?int $index = null): string | Htmlable | null
     {
         $container = $this->getChildSchema($key);
 
