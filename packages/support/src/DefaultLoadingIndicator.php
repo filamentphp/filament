@@ -7,18 +7,14 @@ use Illuminate\View\ComponentAttributeBag;
 
 class DefaultLoadingIndicator implements LoadingIndicator
 {
-    public function __construct(
-        protected ComponentAttributeBag $attributes,
-    ) {}
-
-    public function toHtml(): string
+    public function toHtml(ComponentAttributeBag $attributes): string
     {
         return <<<HTML
             <svg
                 fill="none"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
-                {$this->attributes->toHtml()}
+                {$attributes->toHtml()}
             >
                 <path
                     clip-rule="evenodd"

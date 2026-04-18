@@ -215,9 +215,11 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
             "fi-size-{$size->value}",
         ]);
 
-        return new HtmlString(
-            app(LoadingIndicator::class, ['attributes' => $attributes])->toHtml()
-        );
+        static $loadingIndicator = null;
+
+        $loadingIndicator ??= app(LoadingIndicator::class);
+
+        return new HtmlString($loadingIndicator->toHtml($attributes));
     }
 }
 
