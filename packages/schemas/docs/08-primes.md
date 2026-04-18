@@ -304,7 +304,7 @@ Icon::make(Heroicon::Star)
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/icon/large" alt="Icon in a large size" version="4.x" />
+<AutoScreenshot name="primes/icon/sizes" alt="Icons rendered at every available size for comparison" version="4.x" />
 
 ### Adding a tooltip to the icon
 

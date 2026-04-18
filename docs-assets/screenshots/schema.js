@@ -4110,9 +4110,9 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'primes/icon/large': {
+    'primes/icon/sizes': {
         url: 'primes',
-        selector: '#iconLarge',
+        selector: '#iconSizes',
         viewport: {
             width: 1920,
             height: 640,

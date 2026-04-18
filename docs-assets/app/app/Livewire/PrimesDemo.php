@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Image;
@@ -15,6 +16,7 @@ use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
@@ -178,13 +180,26 @@ class PrimesDemo extends Component implements HasSchemas
                             ->color('danger'),
                     ]),
                 Group::make()
-                    ->id('iconLarge')
+                    ->id('iconSizes')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
                     ->schema([
-                        Icon::make(Heroicon::Star)
-                            ->size(IconSize::Large),
+                        Flex::make([
+                            Icon::make(Heroicon::Star)
+                                ->size(IconSize::ExtraSmall),
+                            Icon::make(Heroicon::Star)
+                                ->size(IconSize::Small),
+                            Icon::make(Heroicon::Star)
+                                ->size(IconSize::Medium),
+                            Icon::make(Heroicon::Star)
+                                ->size(IconSize::Large),
+                            Icon::make(Heroicon::Star)
+                                ->size(IconSize::ExtraLarge),
+                            Icon::make(Heroicon::Star)
+                                ->size(IconSize::TwoExtraLarge),
+                        ])
+                            ->verticalAlignment(VerticalAlignment::Center),
                     ]),
                 Group::make()
                     ->id('iconTooltip')
