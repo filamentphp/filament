@@ -116,6 +116,15 @@ it('can remove all table filters', function (): void {
         ->assertCanSeeTableRecords($posts);
 });
 
+it('can customize the remove all filters action', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->assertSee('Clear filters')
+        ->assertCanNotSeeTableRecords($posts->where('is_published', false));
+});
+
 it('can use a custom attribute for the `SelectFilter`', function (): void {
     $posts = Post::factory()->count(10)->create();
 

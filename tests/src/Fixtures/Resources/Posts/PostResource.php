@@ -66,6 +66,11 @@ class PostResource extends Resource
                 Tables\Filters\Filter::make('is_published')
                     ->query(fn (Builder $query) => $query->where('is_published', true)),
             ])
+            ->filtersRemoveAllAction(
+                fn (Action $action) => $action
+                    ->label('Clear filters')
+                    ->link(),
+            )
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

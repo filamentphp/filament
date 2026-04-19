@@ -45,6 +45,8 @@ trait HasFilters
 
     protected ?Closure $modifyFiltersApplyActionUsing = null;
 
+    protected ?Closure $modifyFiltersRemoveAllActionUsing = null;
+
     protected FiltersResetActionPosition | Closure | null $filtersResetActionPosition = null;
 
     public function deferFilters(bool | Closure $condition = true): static
@@ -62,6 +64,13 @@ trait HasFilters
     public function filtersApplyAction(?Closure $callback): static
     {
         $this->modifyFiltersApplyActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function filtersRemoveAllAction(?Closure $callback): static
+    {
+        $this->modifyFiltersRemoveAllActionUsing = $callback;
 
         return $this;
     }
@@ -262,6 +271,31 @@ trait HasFilters
             $action = $this->evaluate($this->modifyFiltersApplyActionUsing, [
                 'action' => $action,
             ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function getFiltersRemoveAllAction(): Action
+    {
+        $action = Action::make('removeAllFilters')
+            ->label(__('filament-tables::table.filters.actions.remove_all.label'))
+            ->tooltip(__('filament-tables::table.filters.actions.remove_all.tooltip'))
+            ->action('removeTableFilters')
+            ->iconButton()
+            ->icon(FilamentIcon::resolve(TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON) ?? Heroicon::XMark)
+            ->color('gray')
+            ->table($this)
+            ->authorize(true);
+
+        if ($this->modifyFiltersRemoveAllActionUsing) {
+            $action = $this->evaluate($this->modifyFiltersRemoveAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        if ($action->getView() === Action::BUTTON_VIEW) {
+            $action->defaultSize(Size::Small);
         }
 
         return $action;

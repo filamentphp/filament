@@ -159,6 +159,15 @@ it('can filter posts by `is_published`', function (): void {
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
 });
 
+it('can customize the remove all filters action for resource tables', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(ListPosts::class)
+        ->filterTable('is_published')
+        ->assertSee('Clear filters')
+        ->assertCanNotSeeTableRecords($posts->where('is_published', false));
+});
+
 it('can delete posts', function (): void {
     $post = Post::factory()->create();
 

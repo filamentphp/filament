@@ -182,6 +182,11 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Filters\Filter::make('hidden')
                     ->hidden(),
             ])
+            ->filtersRemoveAllAction(
+                fn (Action $action) => $action
+                    ->label('Clear filters')
+                    ->link(),
+            )
             ->persistFiltersInSession()
             ->headerActions([
                 Action::make('data')
