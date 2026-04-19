@@ -399,6 +399,42 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Securing file attachment IDs
+
+The `data-id` attribute on an image node is an identifier for a file on the configured disk. When the content is rendered, Filament generates a URL for it — a signed temporary URL if the visibility is `private`. Like any other Livewire form field value, the content and its `data-id` attributes are controlled by the client: a request can be intercepted to change a `data-id` to any other identifier on the same disk. If the disk also stores files belonging to other users or records, an attacker could otherwise cause the rendered content to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that inserts an image from a pre-existing library, or a "copy from another record" button. If none of your editors rely on such a flow, call `preventFileAttachmentTampering()` on the field to enable a built-in check:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentTampering()
+```
+
+Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` has its `id` and `src` attributes removed before the record is saved and before any URL is generated. Newly uploaded images always pass through.
+
+If you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection.
+
+<Aside variant="warning">
+    `preventFileAttachmentTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` is rejected unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+#### Allowing additional `data-id` values with a callback
+
+If your application legitimately references an identifier that is not on the record — for example, a "copy from another record" action — pass the `allowFilePathUsing` argument to approve it:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
 ### Validating uploaded images
 
 You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:

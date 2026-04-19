@@ -281,6 +281,128 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasNoFormErrors(['files.test']);
     });
+
+    it('rejects a `.php` client filename when `acceptedFileTypes()` is used', function (): void {
+        Storage::fake('local');
+
+        livewire(TestComponentWithAcceptedFileTypesUpload::class)
+            ->fillForm([
+                'avatar' => UploadedFile::fake()->image('shell.php'),
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['avatar']);
+    });
+});
+
+describe('preventing existing file path tampering', function (): void {
+    it('allows a tampered string value to overwrite the record when `preventFilePathTampering()` is not used', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecord::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save');
+
+        expect($user->refresh()->status)->toBe('uploads/tampered.jpg');
+    });
+
+    it('drops a tampered string value when using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save');
+
+        expect($user->refresh()->status)->toBeNull();
+    });
+
+    it('leaves an unchanged string value alone when using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/original.jpg'])
+            ->call('save');
+
+        expect($user->refresh()->status)->toBe('uploads/original.jpg');
+    });
+
+    it('drops tampered paths from a multi-file value while keeping the originals when using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['json' => ['uploads/a.jpg', 'uploads/b.jpg']]);
+
+        livewire(TestComponentWithMultipleFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.json', ['uploads/a.jpg', 'uploads/b.jpg', 'uploads/evil.jpg'])
+            ->call('save');
+
+        expect($user->refresh()->json)->toBe(['uploads/a.jpg', 'uploads/b.jpg']);
+    });
+
+    it('allows the file to be cleared when using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', null)
+            ->call('save');
+
+        expect($user->refresh()->status)->toBeNull();
+    });
+
+    it('rejects all string values when no record is bound and `preventFilePathTampering()` is used', function (): void {
+        livewire(TestComponentWithFileUploadPreventingTamperingWithoutRecord::class)
+            ->set('data.status', ['uploads/anything.jpg'])
+            ->call('save')
+            ->assertSet('data.status', []);
+    });
+
+    it('keeps a submitted path when the `allowFilePathUsing` callback returns `true`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordAllowingTemplateFilePaths::class, ['record' => $user])
+            ->set('data.status', ['templates/brochure.pdf'])
+            ->call('save');
+
+        expect($user->refresh()->status)->toBe('templates/brochure.pdf');
+    });
+
+    it('drops a submitted path when the `allowFilePathUsing` callback returns `false`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordAllowingTemplateFilePaths::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save');
+
+        expect($user->refresh()->status)->toBeNull();
+    });
+
+    it('returns `null` for tampered paths from `getUploadedFiles()` when using `preventFilePathTampering()`', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
+
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        $component = livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $uploadedFiles = $field->getUploadedFiles();
+
+        expect($uploadedFiles)->toBe([0 => null]);
+    });
+
+    it('does not gate `getUploadedFiles()` when `preventFilePathTampering()` is not used', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
+
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        $component = livewire(TestComponentWithFileUploadRecord::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $uploadedFiles = $field->getUploadedFiles();
+
+        expect($uploadedFiles[0])->not->toBeNull();
+    });
 });
 
 class TestComponentWithFileUpload extends Livewire
@@ -2063,5 +2185,154 @@ class RenderFileUploadWithNoFetchFileInfo extends Livewire
     public function form(Schema $form): Schema
     {
         return $form->schema([FileUpload::make('file')->fetchFileInformation(false)])->statePath('data');
+    }
+}
+
+class TestComponentWithFileUploadRecord extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithFileUploadRecordPreventingTampering extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithFileUploadPreventingTamperingWithoutRecord extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithFileUploadRecordAllowingTemplateFilePaths extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(
+                        allowFilePathUsing: static fn (string $file): bool => str_starts_with($file, 'templates/'),
+                    ),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithAcceptedFileTypesUpload extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('avatar')
+                    ->disk('local')
+                    ->directory('avatars')
+                    ->acceptedFileTypes(['image/png']),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithMultipleFileUploadRecordPreventingTampering extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('json')
+                    ->multiple()
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
     }
 }

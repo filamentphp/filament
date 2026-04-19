@@ -183,6 +183,40 @@ FileUpload::make('attachments')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `storeFileNamesIn()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Authorizing existing file paths
+
+The value of a `FileUpload` field is a string, or an array of strings, containing the path to the file on the configured disk. Like any other Livewire form field value, it is controlled by the client: a request can be intercepted to change the submitted path to any other file on the same disk. If the field points at a resource that must not be accessible to other users — a private document on a shared disk, or a per-user directory — an attacker could otherwise cause the record to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that sets the field to a pre-uploaded template file, or a "copy from another record" button. If none of your fields rely on such a flow, call `preventFilePathTampering()` on the field to enable a built-in check:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering()
+```
+
+Filament compares every submitted string path against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match are dropped before the record is saved and before any URL is generated for the field. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
+
+<Aside variant="warning">
+    `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path is rejected unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+### Allowing additional file paths with a callback
+
+If your application legitimately references a path that is not on the record — for example, a button that selects a pre-uploaded template file — pass the `allowFilePathUsing` argument to approve it:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
 ## Avatar mode
 
 You can enable avatar mode for your file upload field using the `avatar()` method:
@@ -678,6 +712,10 @@ Since Filament is powered by Livewire and uses its file upload system, you will 
 </Aside>
 
 ### File type validation
+
+<Aside variant="danger">
+    By default, a `FileUpload` accepts **any file type**, the same way Laravel's `file` validation rule does. On a `local` or `public` disk served by a PHP-executing web server, this means a user can upload a `.php` file and have it executed as code — remote code execution. You should **always** call `acceptedFileTypes()` (or `image()`) with an explicit list of MIME types unless you have a specific reason not to. Doing so also activates Laravel's built-in block on PHP-family extensions (`.php`, `.phtml`, `.phar`, etc.) via the `mimetypes` validation rule, rejecting files whose client-supplied filename would otherwise land on disk as executable code.
+</Aside>
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types.
 
