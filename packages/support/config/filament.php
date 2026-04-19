@@ -45,6 +45,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Temporary URL Expiry
+    |--------------------------------------------------------------------------
+    |
+    | This is the duration in minutes for which temporary URLs will be valid.
+    | This applies to private files in file uploads, images, and other media.
+    |
+    */
+
+    'temporary_url_expiry' => 30,
+
+    /*
+    |--------------------------------------------------------------------------
     | Assets Path
     |--------------------------------------------------------------------------
     |
