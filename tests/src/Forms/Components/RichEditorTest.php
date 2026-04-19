@@ -1556,6 +1556,146 @@ describe('preventing file attachment tampering', function (): void {
     });
 });
 
+describe('cross-record file attachment callbacks', function (): void {
+    it('returns `null` from `getFileAttachmentUrlFromAnotherRecord()` when no callback is set', function (): void {
+        $editor = new RichEditor('content');
+
+        expect($editor->getFileAttachmentUrlFromAnotherRecord('any-id'))->toBeNull();
+    });
+
+    it('delegates `getFileAttachmentUrlFromAnotherRecord()` to the registered callback', function (): void {
+        $editor = (new RichEditor('content'))
+            ->getFileAttachmentUrlFromAnotherRecordUsing(
+                static fn (string $file): string => "xr://{$file}",
+            );
+
+        expect($editor->getFileAttachmentUrlFromAnotherRecord('shared-1'))->toBe('xr://shared-1');
+    });
+
+    it('returns `null` from `saveFileAttachmentFromAnotherRecord()` when no callback is set', function (): void {
+        $editor = new RichEditor('content');
+
+        expect($editor->saveFileAttachmentFromAnotherRecord('any-id'))->toBeNull();
+    });
+
+    it('delegates `saveFileAttachmentFromAnotherRecord()` to the registered callback', function (): void {
+        $editor = (new RichEditor('content'))
+            ->saveFileAttachmentFromAnotherRecordUsing(
+                static fn (string $file): string => "copied:{$file}",
+            );
+
+        expect($editor->saveFileAttachmentFromAnotherRecord('from-other'))->toBe('copied:from-other');
+    });
+});
+
+describe('`resolveFileAttachmentIds()` behaviour', function (): void {
+    it('persists a newly uploaded image and rewrites its `data-id` to the stored path', function (): void {
+        \Illuminate\Support\Facades\Storage::fake('tmp-for-tests');
+
+        $image = imagecreatetruecolor(10, 10);
+        ob_start();
+        imagejpeg($image);
+        $imageContent = ob_get_clean();
+        imagedestroy($image);
+
+        $temporaryFileName = \Livewire\Features\SupportFileUploads\TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            \Illuminate\Http\UploadedFile::fake()->image('new-upload.jpg'),
+        );
+        \Illuminate\Support\Facades\Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $imageContent);
+
+        $temporaryFile = \Livewire\Features\SupportFileUploads\TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+        $editor = (new RichEditor('content'))
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $livewire = $editor->getLivewire();
+
+        data_set(
+            $livewire,
+            'componentFileAttachments.' . $editor->getStatePath() . '.new-upload-uuid',
+            $temporaryFile,
+        );
+
+        $editor->saveUploadedFileAttachmentUsing(static fn (): string => 'uploads/persisted.jpg');
+        $editor->getFileAttachmentUrlUsing(static fn (string $file): string => "https://cdn.test/{$file}");
+
+        $editor->rawState('<p><img src="placeholder" data-id="new-upload-uuid" /></p>');
+
+        $ids = $editor->resolveFileAttachmentIds();
+
+        expect($ids)->toContain('uploads/persisted.jpg');
+
+        $srcs = [];
+
+        walkEditorRawState($editor, function (array $node) use (&$srcs): void {
+            if (($node['type'] ?? null) === 'image') {
+                $srcs[$node['attrs']['id'] ?? ''] = $node['attrs']['src'] ?? null;
+            }
+        });
+
+        expect($srcs)->toHaveKey('uploads/persisted.jpg');
+        expect($srcs['uploads/persisted.jpg'])->toBe('https://cdn.test/uploads/persisted.jpg');
+    });
+
+    it('keeps an existing disk-resident `data-id` unchanged and records it as in-use', function (): void {
+        $editor = (new RichEditor('content'))
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $editor->getFileAttachmentUrlUsing(static fn (string $file): ?string => "https://cdn.test/{$file}");
+
+        $editor->rawState('<p><img src="placeholder" data-id="uploads/kept.jpg" /></p>');
+
+        $ids = $editor->resolveFileAttachmentIds();
+
+        expect($ids)->toContain('uploads/kept.jpg');
+    });
+
+    it('consults `saveFileAttachmentFromAnotherRecord()` for unknown `data-id`s that do not resolve to an existing file', function (): void {
+        $editor = (new RichEditor('content'))
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $editor->getFileAttachmentUrlUsing(static function (string $file): ?string {
+            return str_starts_with($file, 'migrated/') ? "https://cdn.test/{$file}" : null;
+        });
+
+        $editor->saveFileAttachmentFromAnotherRecordUsing(
+            static fn (string $file): string => "migrated/{$file}",
+        );
+
+        $editor->rawState('<p><img src="placeholder" data-id="foreign-id" /></p>');
+
+        $editor->resolveFileAttachmentIds();
+
+        $srcs = [];
+
+        walkEditorRawState($editor, function (array $node) use (&$srcs): void {
+            if (($node['type'] ?? null) === 'image') {
+                $srcs[$node['attrs']['id'] ?? ''] = $node['attrs']['src'] ?? null;
+            }
+        });
+
+        expect($srcs)->toHaveKey('migrated/foreign-id');
+        expect($srcs['migrated/foreign-id'])->toBe('https://cdn.test/migrated/foreign-id');
+    });
+});
+
+function walkEditorRawState(RichEditor $editor, callable $callback): void
+{
+    $decoded = json_decode(json_encode($editor->getRawState()), true);
+
+    $walker = function ($nodes) use (&$walker, $callback): void {
+        foreach ($nodes as $node) {
+            $callback($node);
+
+            if (! empty($node['content'] ?? null)) {
+                $walker($node['content']);
+            }
+        }
+    };
+
+    $walker($decoded['content'] ?? []);
+}
+
 class RenderRichEditor extends Livewire
 {
     public function form(Schema $form): Schema
