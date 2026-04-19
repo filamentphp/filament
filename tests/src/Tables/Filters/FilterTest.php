@@ -4,6 +4,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersRemoveAllAction;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 
@@ -111,6 +112,7 @@ it('can remove all table filters', function (): void {
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('is_published')
+        ->assertDontSee('Clear filters')
         ->assertCanNotSeeTableRecords($unpublishedPosts)
         ->removeTableFilters()
         ->assertCanSeeTableRecords($posts);
@@ -119,7 +121,7 @@ it('can remove all table filters', function (): void {
 it('can customize the remove all filters action', function (): void {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostsTable::class)
+    livewire(PostsTableWithCustomFiltersRemoveAllAction::class)
         ->filterTable('is_published')
         ->assertSee('Clear filters')
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
