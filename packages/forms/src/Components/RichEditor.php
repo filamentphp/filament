@@ -99,6 +99,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
+    protected bool | Closure $shouldPreventFileAttachmentTampering = false;
+
+    protected ?Closure $allowFileAttachmentPathUsing = null;
+
     protected string | Closure | null $activePanel = null;
 
     /**
@@ -411,13 +415,16 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $fileAttachmentIds = [];
 
+        $shouldPreventTampering = $this->shouldPreventFileAttachmentTampering();
+        $originalFileAttachmentPaths = $shouldPreventTampering ? $this->getOriginalFileAttachmentPaths() : [];
+
         $this->rawState(
             $this->getTipTapEditor()
                 ->setContent($this->getRawState() ?? [
                     'type' => 'doc',
                     'content' => [],
                 ])
-                ->descendants(function (object &$node) use (&$fileAttachmentIds): void {
+                ->descendants(function (object &$node) use (&$fileAttachmentIds, $shouldPreventTampering, $originalFileAttachmentPaths): void {
                     if ($node->type !== 'image') {
                         return;
                     }
@@ -433,6 +440,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->id);
 
                         $fileAttachmentIds[] = $node->attrs->id;
+
+                        return;
+                    }
+
+                    if ($shouldPreventTampering && ! $this->isFileAttachmentPathAuthorized($node->attrs->id, $originalFileAttachmentPaths)) {
+                        $node->attrs->id = null;
+                        $node->attrs->src = null;
 
                         return;
                     }
@@ -458,6 +472,75 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         );
 
         return $fileAttachmentIds;
+    }
+
+    public function preventFileAttachmentTampering(bool | Closure $condition = true, ?Closure $allowFilePathUsing = null): static
+    {
+        $this->shouldPreventFileAttachmentTampering = $condition;
+        $this->allowFileAttachmentPathUsing = $allowFilePathUsing;
+
+        return $this;
+    }
+
+    public function shouldPreventFileAttachmentTampering(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPreventFileAttachmentTampering);
+    }
+
+    /**
+     * @param  array<string> | null  $originalPaths
+     */
+    public function isFileAttachmentPathAuthorized(string $file, ?array $originalPaths = null): bool
+    {
+        if (in_array($file, $originalPaths ?? $this->getOriginalFileAttachmentPaths(), strict: true)) {
+            return true;
+        }
+
+        if ($this->allowFileAttachmentPathUsing) {
+            return (bool) $this->evaluate($this->allowFileAttachmentPathUsing, [
+                'file' => $file,
+            ]);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getOriginalFileAttachmentPaths(): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record instanceof Model) {
+            return [];
+        }
+
+        $attribute = $this->getName();
+
+        $originalContent = $record->getOriginal($attribute, $record->getAttribute($attribute));
+
+        if (blank($originalContent)) {
+            return [];
+        }
+
+        $ids = [];
+
+        $this->getTipTapEditor()
+            ->setContent($originalContent)
+            ->descendants(function (object $node) use (&$ids): void {
+                if ($node->type !== 'image') {
+                    return;
+                }
+
+                if (blank($node->attrs->id ?? null)) {
+                    return;
+                }
+
+                $ids[] = $node->attrs->id;
+            });
+
+        return $ids;
     }
 
     public function saveFileAttachments(): void

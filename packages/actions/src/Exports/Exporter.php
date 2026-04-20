@@ -8,6 +8,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -94,6 +95,11 @@ abstract class Exporter
     public static function getCompletedNotificationTitle(Export $export): string
     {
         return __('filament-actions::export.notifications.completed.title');
+    }
+
+    public static function modifyCompletedNotification(Notification $notification, Export $export): Notification
+    {
+        return $notification;
     }
 
     /**

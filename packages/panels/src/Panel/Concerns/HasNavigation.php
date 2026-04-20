@@ -38,10 +38,9 @@ trait HasNavigation
      */
     public function buildNavigation(): array
     {
-        /** @var NavigationBuilder $builder */
-        $builder = app()->call($this->navigationBuilder);
+        $resolved = $this->resolveNavigationBuilder();
 
-        return $builder->getNavigation();
+        return $resolved instanceof NavigationBuilder ? $resolved->getNavigation() : [];
     }
 
     /**
@@ -98,12 +97,27 @@ trait HasNavigation
 
     public function hasNavigation(): bool
     {
-        return $this->navigationBuilder !== false;
+        return $this->resolveNavigationBuilder() !== false;
     }
 
     public function hasNavigationBuilder(): bool
     {
-        return $this->navigationBuilder instanceof Closure;
+        return $this->resolveNavigationBuilder() instanceof NavigationBuilder;
+    }
+
+    protected function resolveNavigationBuilder(): NavigationBuilder | bool
+    {
+        if (! $this->navigationBuilder instanceof Closure) {
+            return $this->navigationBuilder;
+        }
+
+        $result = app()->call($this->navigationBuilder);
+
+        if ($result instanceof NavigationBuilder) {
+            return $result;
+        }
+
+        return (bool) $result;
     }
 
     /**

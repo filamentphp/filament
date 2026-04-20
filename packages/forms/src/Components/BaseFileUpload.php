@@ -7,6 +7,7 @@ use Filament\Schemas\Components\StateCasts\FileUploadStateCast;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
@@ -64,6 +65,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected bool | Closure $shouldFetchFileInformation = true;
 
+    protected bool | Closure $shouldPreventFilePathTampering = false;
+
+    protected ?Closure $allowFilePathUsing = null;
+
     protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure | null $visibility = null;
@@ -73,6 +78,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     protected ?Closure $getUploadedFileNameForStorageUsing = null;
 
     protected ?Closure $getUploadedFileUsing = null;
+
+    protected ?Closure $getOpenableFileUrlUsing = null;
+
+    protected ?Closure $getDownloadableFileUrlUsing = null;
 
     protected ?Closure $reorderUploadedFilesUsing = null;
 
@@ -105,6 +114,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         parent::setUp();
 
+        // This disk-existence check only runs when state is hydrated from the record
+        // (initial form load), not when state is later updated from a Livewire request.
+        // It is therefore not a security boundary for submitted paths — see the note in
+        // `saveUploadedFiles()` and the file upload documentation.
         $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $rawState): void {
             $shouldFetchFileInformation = $component->shouldFetchFileInformation();
 
@@ -153,7 +166,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 try {
                     $url = $storage->temporaryUrl(
                         $file,
-                        now()->addMinutes(30)->endOfHour(),
+                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                     );
                 } catch (Throwable $exception) {
                     // This driver does not support creating temporary URLs.
@@ -425,6 +438,14 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
+    public function preventFilePathTampering(bool | Closure $condition = true, ?Closure $allowFilePathUsing = null): static
+    {
+        $this->shouldPreventFilePathTampering = $condition;
+        $this->allowFilePathUsing = $allowFilePathUsing;
+
+        return $this;
+    }
+
     /**
      * @deprecated Use `storeFiles()` instead.
      */
@@ -456,6 +477,20 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function getUploadedFileUsing(?Closure $callback): static
     {
         $this->getUploadedFileUsing = $callback;
+
+        return $this;
+    }
+
+    public function getOpenableFileUrlUsing(?Closure $callback): static
+    {
+        $this->getOpenableFileUrlUsing = $callback;
+
+        return $this;
+    }
+
+    public function getDownloadableFileUrlUsing(?Closure $callback): static
+    {
+        $this->getDownloadableFileUrlUsing = $callback;
 
         return $this;
     }
@@ -607,6 +642,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function shouldStoreFiles(): bool
     {
         return (bool) $this->evaluate($this->shouldStoreFiles);
+    }
+
+    public function shouldPreventFilePathTampering(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPreventFilePathTampering);
     }
 
     public function getFileNamesStatePath(): ?string
@@ -796,13 +836,20 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     }
 
     /**
-     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
+     * @return array<array{name: string, size: int, type: string, url: string, openableUrl?: string, downloadableUrl?: string} | null> | null
      */
     #[ExposedLivewireMethod]
     #[Renderless]
     public function getUploadedFiles(): ?array
     {
         $urls = [];
+
+        $shouldCheckAuthorization = $this->shouldPreventFilePathTampering();
+        $originalPaths = $shouldCheckAuthorization ? $this->getOriginalFilePaths() : [];
+        $callback = $this->getUploadedFileUsing;
+        $storedFileNames = $this->getStoredFileNames();
+        $openableFileUrlCallback = $this->isOpenable() ? $this->getOpenableFileUrlUsing : null;
+        $downloadableFileUrlCallback = $this->isDownloadable() ? $this->getDownloadableFileUrlUsing : null;
 
         foreach ($this->getRawState() ?? [] as $fileKey => $file) {
             if ($file instanceof TemporaryUploadedFile) {
@@ -811,7 +858,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 continue;
             }
 
-            $callback = $this->getUploadedFileUsing;
+            if ($shouldCheckAuthorization && is_string($file) && ! $this->isFilePathAuthorized($file, $originalPaths)) {
+                $urls[$fileKey] = null;
+
+                continue;
+            }
 
             if (! $callback) {
                 return [$fileKey => null];
@@ -819,8 +870,34 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
             $urls[$fileKey] = $this->evaluate($callback, [
                 'file' => $file,
-                'storedFileNames' => $this->getStoredFileNames(),
+                'storedFileNames' => $storedFileNames,
             ]) ?: null;
+
+            if ($urls[$fileKey] === null) {
+                continue;
+            }
+
+            if ($openableFileUrlCallback) {
+                $openableUrl = $this->evaluate($openableFileUrlCallback, [
+                    'file' => $file,
+                    'storedFileNames' => $storedFileNames,
+                ]);
+
+                if ($openableUrl !== null) {
+                    $urls[$fileKey]['openableUrl'] = $openableUrl;
+                }
+            }
+
+            if ($downloadableFileUrlCallback) {
+                $downloadableUrl = $this->evaluate($downloadableFileUrlCallback, [
+                    'file' => $file,
+                    'storedFileNames' => $storedFileNames,
+                ]);
+
+                if ($downloadableUrl !== null) {
+                    $urls[$fileKey]['downloadableUrl'] = $downloadableUrl;
+                }
+            }
         }
 
         return $urls;
@@ -838,7 +915,17 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return;
         }
 
+        if ($this->shouldPreventFilePathTampering()) {
+            $this->dropTamperedFilePaths();
+        }
+
         $rawState = array_filter(array_map(function (TemporaryUploadedFile | string $file) {
+            // String values represent paths to files that already exist on the disk, and
+            // are passed through unchanged. Like any Livewire form field value, this
+            // string is client-controllable, so applications that serve files from
+            // per-user or otherwise restricted locations must authorize the submitted
+            // path at the application level. See the "Authorizing existing file paths"
+            // section of the file upload documentation.
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
             }
@@ -874,6 +961,64 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         $this->rawState($rawState);
         $this->callAfterStateUpdated();
+    }
+
+    protected function dropTamperedFilePaths(): void
+    {
+        $originalPaths = $this->getOriginalFilePaths();
+
+        $filtered = [];
+
+        foreach (Arr::wrap($this->getRawState()) as $key => $file) {
+            if ($file instanceof TemporaryUploadedFile) {
+                $filtered[$key] = $file;
+
+                continue;
+            }
+
+            if (is_string($file) && $this->isFilePathAuthorized($file, $originalPaths)) {
+                $filtered[$key] = $file;
+            }
+        }
+
+        $this->rawState($filtered);
+    }
+
+    /**
+     * @param  array<string> | null  $originalPaths
+     */
+    public function isFilePathAuthorized(string $file, ?array $originalPaths = null): bool
+    {
+        if (in_array($file, $originalPaths ?? $this->getOriginalFilePaths(), strict: true)) {
+            return true;
+        }
+
+        if ($this->allowFilePathUsing) {
+            return (bool) $this->evaluate($this->allowFilePathUsing, [
+                'file' => $file,
+            ]);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getOriginalFilePaths(): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record instanceof Model) {
+            return [];
+        }
+
+        $attribute = $this->getName();
+
+        return array_values(array_filter(
+            Arr::wrap($record->getOriginal($attribute, $record->getAttribute($attribute))),
+            static fn (mixed $path): bool => is_string($path) && filled($path),
+        ));
     }
 
     public function storeFileName(string $file, string $fileName): void

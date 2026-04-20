@@ -16,4 +16,9 @@ final class FileResult extends Result
         public array $missingTranslations = [],
         public array $removedTranslations = []
     ) {}
+
+    public function getTranslationLine(Locale $locale, string $key): ?int
+    {
+        return \array_search($key, array_keys($this->missingTranslations)) ?: null;
+    }
 }
