@@ -14,6 +14,18 @@ return [
 
                 'label' => 'עמודות',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'בחר הכל',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'בטל בחירה של הכל',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
