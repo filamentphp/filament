@@ -286,6 +286,7 @@ trait HasFilters
             ->iconButton()
             ->icon(FilamentIcon::resolve(TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON) ?? Heroicon::XMark)
             ->color('gray')
+            ->defaultSize(Size::Small)
             ->table($this)
             ->authorize(true);
 
@@ -293,10 +294,6 @@ trait HasFilters
             $action = $this->evaluate($this->modifyFiltersRemoveAllActionUsing, [
                 'action' => $action,
             ]) ?? $action;
-        }
-
-        if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize(Size::Small);
         }
 
         return $action;
