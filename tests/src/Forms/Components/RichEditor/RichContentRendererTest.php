@@ -6,7 +6,6 @@ use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProv
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
-use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;

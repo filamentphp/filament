@@ -134,4 +134,3 @@ it('hides navigation when `navigation(false)` is set', function (): void {
 
     expect(Filament::hasNavigation())->toBeFalse();
 });
-
