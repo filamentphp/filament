@@ -74,7 +74,12 @@ return [
 
         'max_rows' => [
             'title' => 'ייצוא גדול מידי',
-            'body' => 'You may not export more than 1 row at once.|You may not export more than :count rows at once.',
+            'body' => 'אין לייצא יותר משורה אחת בבת אחת.|אין לייצא יותר מ-:count שורות בבת אחת.',
+        ],
+
+        'no_columns' => [
+            'title' => 'לא נבחרו עמודות',
+            'body' => 'יש לבחור לפחות עמודה אחת כדי לייצא.',
         ],
 
         'started' => [
