@@ -73,6 +73,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasData;
+    use Concerns\HasExtraModalOverlayAttributes;
     use Concerns\HasExtraModalWindowAttributes;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;

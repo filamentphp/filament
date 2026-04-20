@@ -693,6 +693,49 @@ ImportAction::make()
 
 <UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `headerOffset()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Customizing the completion notification
+
+When an import finishes, Filament sends a notification to the user who started it. You can customize the title and body of that notification by overriding `getCompletedNotificationTitle()` and `getCompletedNotificationBody()` on your importer:
+
+```php
+use Filament\Actions\Imports\Models\Import;
+
+public static function getCompletedNotificationTitle(Import $import): string
+{
+    return 'Your product import has finished';
+}
+
+public static function getCompletedNotificationBody(Import $import): string
+{
+    return $import->successful_rows . ' products were imported.';
+}
+```
+
+For anything beyond the title and body — for example, changing the notification color, adding extra actions, or replacing the icon — override `modifyCompletedNotification()`. You can either mutate the `Notification` passed in and return it, or build and return a completely new one:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\Imports\Models\Import;
+use Filament\Notifications\Notification;
+
+public static function modifyCompletedNotification(Notification $notification, Import $import): Notification
+{
+    $notification->icon('heroicon-o-shopping-bag');
+
+    if ($import->getOptions()['sendWelcomeEmails'] ?? false) {
+        $notification->actions([
+            ...$notification->getActions(),
+            Action::make('viewWelcomeEmails')
+                ->url(route('emails.sent')),
+        ]);
+    }
+
+    return $notification;
+}
+```
+
+The `Import` model exposes the column mapping and options the user selected via `$import->getColumnMap()` and `$import->getOptions()`, so you can tailor the notification based on what the user imported.
+
 ## Customizing the import job
 
 The default job for processing imports is `Filament\Actions\Imports\Jobs\ImportCsv`. If you want to extend this class and override any of its methods, you may replace the original class in the `register()` method of a service provider:

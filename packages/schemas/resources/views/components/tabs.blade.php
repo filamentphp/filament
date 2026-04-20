@@ -86,39 +86,14 @@
                 $hasDeferredBadges ? '{
                     deferredBadges: {},
                     isLoadingDeferredBadges: true,
-                    unsubscribeLivewireHook: null,
 
-                    async fetchDeferredBadges() {
-                        this.isLoadingDeferredBadges = true
-
+                    async init() {
                         try {
                             const badges = await $wire.callSchemaComponentMethod(' . \Illuminate\Support\Js::from($tabsKey) . ', \'getDeferredTabBadges\')
                             this.deferredBadges = badges ?? {}
                         } finally {
                             this.isLoadingDeferredBadges = false
                         }
-                    },
-
-                    async init() {
-                        await this.fetchDeferredBadges()
-
-                        this.unsubscribeLivewireHook = Livewire.hook(\'commit\', ({ component, succeed }) => {
-                            succeed(() => {
-                                if (component.id !== $wire.__instance.id) {
-                                    return
-                                }
-
-                                if (this.isLoadingDeferredBadges) {
-                                    return
-                                }
-
-                                this.fetchDeferredBadges()
-                            })
-                        })
-                    },
-
-                    destroy() {
-                        this.unsubscribeLivewireHook?.()
                     },
                 }' : null
             "
@@ -267,11 +242,8 @@
             x-data="{
                 deferredBadges: {},
                 isLoadingDeferredBadges: true,
-                unsubscribeLivewireHook: null,
 
-                async fetchDeferredBadges() {
-                    this.isLoadingDeferredBadges = true
-
+                async init() {
                     try {
                         const badges = await $wire.callSchemaComponentMethod(
                             @js($tabsKey),
@@ -282,37 +254,6 @@
                     } finally {
                         this.isLoadingDeferredBadges = false
                     }
-                },
-
-                async init() {
-                    await this.fetchDeferredBadges()
-
-                    this.unsubscribeLivewireHook = Livewire.hook(
-                        'commit',
-                        ({ component, commit, succeed }) => {
-                            succeed(() => {
-                                if (component.id !== $wire.__instance.id) {
-                                    return
-                                }
-
-                                if (this.isLoadingDeferredBadges) {
-                                    return
-                                }
-
-                                const updateKeys = Object.keys(commit.updates ?? {})
-
-                                if (updateKeys.length === 1 && updateKeys[0] === @js($livewireProperty)) {
-                                    return
-                                }
-
-                                this.fetchDeferredBadges()
-                            })
-                        },
-                    )
-                },
-
-                destroy() {
-                    this.unsubscribeLivewireHook?.()
                 },
             }"
         @endif

@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\SlideOverPosition;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -43,6 +44,8 @@ trait CanOpenModal
     protected array $modalActions = [];
 
     protected bool | Closure $isModalSlideOver = false;
+
+    protected SlideOverPosition | Closure | null $slideOverPosition = null;
 
     protected Alignment | string | Closure | null $modalAlignment = null;
 
@@ -162,6 +165,13 @@ trait CanOpenModal
     public function slideOver(bool | Closure $condition = true): static
     {
         $this->isModalSlideOver = $condition;
+
+        return $this;
+    }
+
+    public function slideOverPosition(SlideOverPosition | Closure | null $position = null): static
+    {
+        $this->slideOverPosition = $position;
 
         return $this;
     }
@@ -657,6 +667,11 @@ trait CanOpenModal
     public function isModalSlideOver(): bool
     {
         return (bool) $this->evaluate($this->isModalSlideOver);
+    }
+
+    public function getSlideOverPosition(): ?SlideOverPosition
+    {
+        return $this->evaluate($this->slideOverPosition);
     }
 
     public function hasModal(): ?bool

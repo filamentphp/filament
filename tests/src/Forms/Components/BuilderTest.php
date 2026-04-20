@@ -1456,6 +1456,16 @@ describe('labels with `Closure`', function (): void {
     });
 });
 
+describe('block labels', function (): void {
+    it('injects the `$index` of the item into the `Block::label()` `Closure`', function (): void {
+        $block = Builder\Block::make('content')
+            ->label(static fn (?int $index, ?array $state): string => "Block {$index}: {$state['title']}");
+
+        expect($block->getLabel(['title' => 'first'], 'item-0', 0))->toBe('Block 0: first');
+        expect($block->getLabel(['title' => 'second'], 'item-1', 1))->toBe('Block 1: second');
+    });
+});
+
 describe('`blockPickerColumns()` default behavior', function (): void {
     it('returns default column values when no breakpoint is requested', function (): void {
         $builder = Builder::make('content');

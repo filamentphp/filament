@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
@@ -280,6 +281,112 @@ describe('validation', function (): void {
             ])
             ->call('save')
             ->assertHasNoFormErrors(['files.test']);
+    });
+});
+
+describe('openable and downloadable URLs', function (): void {
+    $makeField = function (Closure $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'))
+            ->multiple()
+            ->getUploadedFileUsing(static fn (BaseFileUpload $component, string $file): array => [
+                'name' => $file,
+                'size' => 0,
+                'type' => null,
+                'url' => "https://cdn.example.com/{$file}",
+            ]);
+
+        $configure($field);
+
+        $field->rawState(['key1' => 'doc.pdf']);
+
+        return $field;
+    };
+
+    it('populates `openableUrl` when `openable()` and `getOpenableFileUrlUsing()` are set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->openable()
+            ->getOpenableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/open/{$file}"));
+
+        expect($field->getUploadedFiles())
+            ->toBe([
+                'key1' => [
+                    'name' => 'doc.pdf',
+                    'size' => 0,
+                    'type' => null,
+                    'url' => 'https://cdn.example.com/doc.pdf',
+                    'openableUrl' => 'https://signed.example.com/open/doc.pdf',
+                ],
+            ]);
+    });
+
+    it('populates `downloadableUrl` when `downloadable()` and `getDownloadableFileUrlUsing()` are set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->downloadable()
+            ->getDownloadableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/download/{$file}"));
+
+        expect($field->getUploadedFiles())
+            ->toBe([
+                'key1' => [
+                    'name' => 'doc.pdf',
+                    'size' => 0,
+                    'type' => null,
+                    'url' => 'https://cdn.example.com/doc.pdf',
+                    'downloadableUrl' => 'https://signed.example.com/download/doc.pdf',
+                ],
+            ]);
+    });
+
+    it('does not populate `openableUrl` when `openable()` is disabled', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->getOpenableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/open/{$file}"));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('openableUrl');
+    });
+
+    it('does not populate `downloadableUrl` when `downloadable()` is disabled', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->getDownloadableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/download/{$file}"));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('downloadableUrl');
+    });
+
+    it('does not populate URL keys when the callbacks are not set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field->openable()->downloadable());
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('openableUrl')
+            ->not->toHaveKey('downloadableUrl');
+    });
+
+    it('preserves `null` entries when `getUploadedFileUsing()` returns `null` even with openable URL callback set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->openable()
+            ->getUploadedFileUsing(static fn (): ?array => null)
+            ->getOpenableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/open/{$file}"));
+
+        expect($field->getUploadedFiles())
+            ->toBe(['key1' => null]);
+    });
+
+    it('omits `openableUrl` when `getOpenableFileUrlUsing()` returns `null`', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->openable()
+            ->getOpenableFileUrlUsing(static fn (): ?string => null));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('openableUrl');
+    });
+
+    it('omits `downloadableUrl` when `getDownloadableFileUrlUsing()` returns `null`', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->downloadable()
+            ->getDownloadableFileUrlUsing(static fn (): ?string => null));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('downloadableUrl');
     });
 });
 
