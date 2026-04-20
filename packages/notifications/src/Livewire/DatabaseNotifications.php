@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -41,7 +42,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {
-        if (! str($id)->isUuid()) {
+        if (! Str::isUuid($id)) {
             return;
         }
 
@@ -53,7 +54,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[On('markedNotificationAsRead')]
     public function markNotificationAsRead(string $id): void
     {
-        if (! str($id)->isUuid()) {
+        if (! Str::isUuid($id)) {
             return;
         }
 
@@ -65,7 +66,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[On('markedNotificationAsUnread')]
     public function markNotificationAsUnread(string $id): void
     {
-        if (! str($id)->isUuid()) {
+        if (! Str::isUuid($id)) {
             return;
         }
 
