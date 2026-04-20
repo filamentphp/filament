@@ -254,7 +254,7 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" version="4.x" />
 
-## Customizing the "remove all filters" action
+## Customizing the remove all filters action
 
 To customize the action that removes all active filters from the indicator bar, you may use the `filtersRemoveAllAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
@@ -270,11 +270,12 @@ public function table(Table $table): Table
         ])
         ->filtersRemoveAllAction(
             fn (Action $action) => $action
-                ->label('Clear filters')
-                ->link(),
+                ->tooltip('Clear filters'),
         );
 }
 ```
+
+<AutoScreenshot name="tables/filters/custom-remove-all-action" alt="Table with custom filters remove all action" version="4.x" />
 
 ## Filter utility injection
 

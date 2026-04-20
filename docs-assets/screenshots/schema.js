@@ -5085,6 +5085,20 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/filters/custom-remove-all-action': {
+        url: 'tables?table=filtersCustomRemoveAllAction',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('.fi-ta-filter-indicators .fi-icon-btn')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'tables/filters/grid-columns': {
         url: 'tables?table=filtersGridColumns',
         selector: '#table',
