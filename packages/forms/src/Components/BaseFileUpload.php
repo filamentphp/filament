@@ -153,7 +153,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 try {
                     $url = $storage->temporaryUrl(
                         $file,
-                        now()->addMinutes(config('filament.temporary_url_expiry', 30))->endOfHour(),
+                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                     );
                 } catch (Throwable $exception) {
                     // This driver does not support creating temporary URLs.

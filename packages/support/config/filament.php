@@ -45,15 +45,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Temporary URL Expiry
+    | Temporary File URL Expiry
     |--------------------------------------------------------------------------
     |
-    | This is the duration in minutes for which temporary URLs will be valid.
-    | This applies to private files in file uploads, images, and other media.
+    | When Filament generates temporary URLs for previewing private files
+    | (file uploads, image columns, image entries, rich editor attachments,
+    | etc.), this value controls how many minutes those URLs remain valid.
+    |
+    | The generated URL's expiry is rounded up to the end of the hour it
+    | falls in, so the effective lifetime will be between this value and
+    | this value plus up to 60 minutes.
     |
     */
 
-    'temporary_url_expiry' => 30,
+    'temporary_file_url_expiry_minutes' => 30,
 
     /*
     |--------------------------------------------------------------------------
