@@ -9,6 +9,7 @@
     $isCollapsible = $this->isCollapsible();
     $type = $this->getType();
     $maxHeight = $this->getMaxHeight();
+    $hasMaxHeight = filled($maxHeight) && $maxHeight !== '100%';
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -87,7 +88,7 @@
                         ->color(ChartWidgetComponent::class, $color)
                         ->class([
                             'fi-wi-chart-canvas-ctn',
-                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => $maxHeight,
+                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => $hasMaxHeight,
                         ])
                 }}
             >
@@ -95,8 +96,8 @@
                     x-ref="canvas"
                     @style([
                         'width: 100%',
-                        'height: 100%; max-height: 100%' => !$maxHeight,
-                        "max-height: {$maxHeight}" => $maxHeight
+                        'height: 100%; max-height: 100%' => !$hasMaxHeight,
+                        "max-height: {$maxHeight}" => $hasMaxHeight
                     ])
                 ></canvas>
 
