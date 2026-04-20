@@ -215,7 +215,7 @@ FileUpload::make('avatar')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 
 ## Avatar mode
 
@@ -570,7 +570,7 @@ FileUpload::make('attachments')
 
 The function receives the stored `$file` path and must return the URL that should be used when the "open" button is clicked. Returning `null` falls back to the default URL.
 
-<UtilityInjection set="formFields" version="4.x">The `getOpenableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">The `getOpenableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
 
 ## Downloading files
 
@@ -613,7 +613,7 @@ FileUpload::make('attachments')
 
 The function receives the stored `$file` path and must return the URL that should be used when the download button is clicked. Returning `null` falls back to the default URL.
 
-<UtilityInjection set="formFields" version="4.x">The `getDownloadableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">The `getDownloadableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
 
 ## Previewing files
 

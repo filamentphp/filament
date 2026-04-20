@@ -275,7 +275,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/custom-remove-all-action" alt="Table with custom filters remove all action" version="4.x" />
+<AutoScreenshot name="tables/filters/custom-remove-all-action" alt="Table with custom filters remove all action" version="5.x" />
 
 ## Filter utility injection
 

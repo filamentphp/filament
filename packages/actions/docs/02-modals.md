@@ -418,7 +418,7 @@ Action::make('updateAuthor')
     ->slideOverPosition(SlideOverPosition::Start)
 ```
 
-<AutoScreenshot name="actions/modal/slide-over-start" alt="Slide over from the start of the screen" version="4.x" />
+<AutoScreenshot name="actions/modal/slide-over-start" alt="Slide over from the start of the screen" version="5.x" />
 
 This is useful when the action trigger sits near the start of the viewport — for example, a row action at the beginning of a table row — so the slide-over opens adjacent to its trigger instead of across the screen.
 
@@ -888,7 +888,7 @@ Action::make('updateAuthor')
     ->extraModalOverlayAttributes(['class' => 'update-author-overlay'])
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `extraModalOverlayAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `extraModalOverlayAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     By default, calling `extraModalOverlayAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass <code>merge: true</code> to the method.

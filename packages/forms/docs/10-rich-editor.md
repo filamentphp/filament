@@ -433,7 +433,7 @@ RichEditor::make('content')
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 
 ### Validating uploaded images
 
@@ -657,7 +657,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="4.x" />
+<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="5.x" />
 
 Groups are displayed in the order they are defined in the array, with sticky headings in the side panel.
 
