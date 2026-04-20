@@ -124,8 +124,8 @@
                         @php
                             $itemIsActive = $item->isActive();
                             $itemBadge = $item->getBadge();
-                            $itemBadgeColor = $item->getBadgeColor();
-                            $itemBadgeTooltip = $item->getBadgeTooltip();
+                            $itemBadgeColor = $item->getBadgeColor($itemBadge);
+                            $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
                             $itemUrl = $item->getUrl();
                             $itemIcon = $itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon();
                             $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
@@ -173,8 +173,8 @@
                 $isItemActive = (! $isItemChildItemsActive) && $item->isActive();
                 $itemActiveIcon = $item->getActiveIcon();
                 $itemBadge = $item->getBadge();
-                $itemBadgeColor = $item->getBadgeColor();
-                $itemBadgeTooltip = $item->getBadgeTooltip();
+                $itemBadgeColor = $item->getBadgeColor($itemBadge);
+                $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
                 $itemChildItems = $item->getChildItems();
                 $itemIcon = $item->getIcon();
                 $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();

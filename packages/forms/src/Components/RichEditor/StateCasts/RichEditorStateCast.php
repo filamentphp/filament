@@ -65,6 +65,9 @@ class RichEditorStateCast implements StateCast
             $state = $state->toHtml();
         }
 
+        $shouldPreventTampering = $this->richEditor->shouldPreventFileAttachmentTampering();
+        $originalFileAttachmentPaths = $shouldPreventTampering ? $this->richEditor->getOriginalFileAttachmentPaths() : [];
+
         $editor = $this->richEditor->getTipTapEditor()
             ->setContent($state ?? [
                 'type' => 'doc',
@@ -75,12 +78,18 @@ class RichEditorStateCast implements StateCast
                     ],
                 ],
             ])
-            ->descendants(function (object &$node): void {
+            ->descendants(function (object &$node) use ($shouldPreventTampering, $originalFileAttachmentPaths): void {
                 if ($node->type !== 'image') {
                     return;
                 }
 
                 if (blank($node->attrs->id ?? null)) {
+                    return;
+                }
+
+                if ($shouldPreventTampering && ! $this->richEditor->isFileAttachmentPathAuthorized($node->attrs->id, $originalFileAttachmentPaths)) {
+                    $node->attrs->src = null;
+
                     return;
                 }
 

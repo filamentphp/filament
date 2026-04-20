@@ -399,6 +399,42 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Securing file attachment IDs
+
+The `data-id` attribute on an image node is an identifier for a file on the configured disk. When the content is rendered, Filament generates a URL for it — a signed temporary URL if the visibility is `private`. Like any other Livewire form field value, the content and its `data-id` attributes are controlled by the client: a request can be intercepted to change a `data-id` to any other identifier on the same disk. If the disk also stores files belonging to other users or records, an attacker could otherwise cause the rendered content to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that inserts an image from a pre-existing library, or a "copy from another record" button. If none of your editors rely on such a flow, call `preventFileAttachmentTampering()` on the field to enable a built-in check:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentTampering()
+```
+
+Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` has its `id` and `src` attributes removed before the record is saved and before any URL is generated. Newly uploaded images always pass through.
+
+If you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection.
+
+<Aside variant="warning">
+    `preventFileAttachmentTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` is rejected unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+#### Allowing additional `data-id` values with a callback
+
+If your application legitimately references an identifier that is not on the record — for example, a "copy from another record" action — pass the `allowFilePathUsing` argument to approve it:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
 ### Validating uploaded images
 
 You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:
@@ -1213,3 +1249,89 @@ public function getTipTapJsExtensions(): array
     ];
 }
 ```
+
+#### Sharing the bundled TipTap/ProseMirror instance
+
+When custom JavaScript extensions import from `@tiptap/core` or `@tiptap/pm/*`, each compiled extension includes its own copy of these packages. This wastes around 150-200 KB per extension and — more importantly — creates multiple ProseMirror instances on the page. Because ProseMirror relies heavily on `instanceof` checks (for `Node`, `Mark`, `Plugin`, `DecorationSet`, etc.), extensions that bundle their own copy of these modules can fail to interoperate with the editor's core.
+
+To avoid this, Filament exposes the bundled TipTap and ProseMirror modules on `window.FilamentRichEditor.tiptap`:
+
+```js
+window.FilamentRichEditor.tiptap = {
+    core,     // @tiptap/core
+    pmState,  // @tiptap/pm/state
+    pmView,   // @tiptap/pm/view
+    pmModel,  // @tiptap/pm/model
+}
+```
+
+You can reference these modules directly in your extension:
+
+```javascript
+const { Node, mergeAttributes } = window.FilamentRichEditor.tiptap.core
+const { Plugin, PluginKey } = window.FilamentRichEditor.tiptap.pmState
+
+export default Node.create({
+    name: 'myExtension',
+    // ...
+})
+```
+
+Alternatively, you can configure your build to intercept imports of `@tiptap/core` and `@tiptap/pm/{state,view,model}` and resolve them from the global at runtime. This lets you keep writing normal `import` statements in your extension source — other `@tiptap/*` packages (like `@tiptap/extension-highlight`) continue to be bundled as usual. The following esbuild plugin inspects each intercepted package's real named exports at build time and rewrites the imports to read from `window.FilamentRichEditor.tiptap`:
+
+```bash
+npm install --save-dev @tiptap/core @tiptap/pm
+```
+
+```js
+// bin/build.js
+import * as esbuild from 'esbuild'
+
+const tiptapSharedPlugin = {
+    name: 'tiptap-shared',
+    setup(build) {
+        const keys = {
+            '@tiptap/core': 'core',
+            '@tiptap/pm/state': 'pmState',
+            '@tiptap/pm/view': 'pmView',
+            '@tiptap/pm/model': 'pmModel',
+        }
+
+        build.onResolve({ filter: /^@tiptap\/(core|pm\/(state|view|model))$/ }, (args) => ({
+            path: args.path,
+            namespace: 'tiptap-shared',
+        }))
+
+        build.onLoad({ filter: /.*/, namespace: 'tiptap-shared' }, async (args) => {
+            const realModule = await import(args.path)
+            const namedExports = Object.keys(realModule).filter(
+                (key) => key !== '__esModule' && key !== 'default',
+            )
+
+            const key = keys[args.path]
+            let code = `const __module = window.FilamentRichEditor.tiptap.${key};\n`
+
+            if (namedExports.length) {
+                code += `export const { ${namedExports.join(', ')} } = __module;\n`
+            }
+
+            code += `export default __module?.default ?? __module;\n`
+
+            return { contents: code, loader: 'js' }
+        })
+    },
+}
+
+esbuild.build({
+    // ...
+    plugins: [tiptapSharedPlugin],
+    entryPoints: ['./resources/js/filament/rich-content-plugins/my-extension.js'],
+    outfile: './resources/js/dist/filament/rich-content-plugins/my-extension.js',
+})
+```
+
+<Aside variant="info">
+    `window.FilamentRichEditor.tiptap` is assigned when the rich editor bundle loads, which happens before `getTipTapJsExtensions()` URLs are fetched. If you need to use the modules in a context where the rich editor has not yet loaded, bundle your own copies instead.
+
+    The esbuild plugin above reads the named exports from your locally-installed `@tiptap/core` and `@tiptap/pm` at build time, so keep those versions roughly in sync with the version bundled by Filament — otherwise a newer named export referenced in your extension may be `undefined` at runtime.
+</Aside>

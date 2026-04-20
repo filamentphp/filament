@@ -34,7 +34,7 @@ class Notifications extends Component
     #[On('notificationsSent')]
     public function pullNotificationsFromSession(): void
     {
-        $notifications = session()->pull('filament.notifications.claimed')
+        $notifications = session()->pull('filament.claimed_notifications')
             ?? session()->pull('filament.notifications')
             ?? [];
 

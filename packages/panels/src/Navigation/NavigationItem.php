@@ -170,9 +170,11 @@ class NavigationItem extends Component
     /**
      * @return string | array<string> | null
      */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(?string $badge = null): string | array | null
     {
-        return $this->evaluate($this->badgeColor);
+        return $this->evaluate($this->badgeColor, [
+            'badge' => $badge,
+        ]);
     }
 
     public function getGroup(): string | UnitEnum | null
