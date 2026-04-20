@@ -89,9 +89,9 @@ describe('max width', function (): void {
     });
 
     it('can set `maxWidth()`', function (): void {
-        $component = (new Component)->maxWidth(Width::Container);
+        $component = (new Component)->maxWidth(Width::TwoExtraLarge);
 
-        expect($component->getMaxWidth())->toBe(Width::Container);
+        expect($component->getMaxWidth())->toBe(Width::TwoExtraLarge);
     });
 });
 
