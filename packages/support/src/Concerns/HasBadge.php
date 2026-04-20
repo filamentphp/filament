@@ -6,7 +6,7 @@ use Closure;
 
 trait HasBadge
 {
-    protected string | int | float | Closure | null $badge = null;
+    protected string | Closure | null $badge = null;
 
     /**
      * @var string | array<string> | Closure | null
@@ -15,6 +15,10 @@ trait HasBadge
 
     public function badge(string | int | float | Closure | null $badge): static
     {
+        if (is_int($badge) || is_float($badge)) {
+            $badge = (string) $badge;
+        }
+
         $this->badge = $badge;
 
         return $this;
@@ -46,7 +50,7 @@ trait HasBadge
         return $this->badgeColor($color);
     }
 
-    public function getBadge(): string | int | float | null
+    public function getBadge(): ?string
     {
         return $this->evaluate($this->badge);
     }
@@ -54,8 +58,10 @@ trait HasBadge
     /**
      * @return string | array<string> | null
      */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(?string $badge = null): string | array | null
     {
-        return $this->evaluate($this->badgeColor);
+        return $this->evaluate($this->badgeColor, [
+            'badge' => $badge,
+        ]);
     }
 }

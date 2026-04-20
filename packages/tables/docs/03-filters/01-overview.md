@@ -254,6 +254,29 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" version="4.x" />
 
+## Customizing the remove all filters action
+
+To customize the action that removes all active filters from the indicator bar, you may use the `filtersRemoveAllAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
+
+```php
+use Filament\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersRemoveAllAction(
+            fn (Action $action) => $action
+                ->tooltip('Clear filters'),
+        );
+}
+```
+
+<AutoScreenshot name="tables/filters/custom-remove-all-action" alt="Table with custom filters remove all action" version="4.x" />
+
 ## Filter utility injection
 
 The vast majority of methods used to configure filters accept functions as parameters instead of hardcoded values:

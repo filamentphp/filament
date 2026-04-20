@@ -162,6 +162,7 @@ trait HasRelationManagers
                 ->all();
 
             return Tabs::make()
+                ->key('relationManagerTabs')
                 ->livewireProperty('activeRelationManager')
                 ->contained(false)
                 ->tabs($tabs);

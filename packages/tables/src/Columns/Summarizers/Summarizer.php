@@ -206,14 +206,17 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
+        $label = $this->getLabel();
+        $isLabelHidden = $this->isLabelHidden();
+
         $attributes = $this->getExtraAttributeBag()
             ->class(['fi-ta-text-summary']);
 
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?php if (filled($label = $this->getLabel())) { ?>
-                <span class="fi-ta-text-summary-label">
+            <?php if (filled($label)) { ?>
+                <span class="fi-ta-text-summary-label<?= $isLabelHidden ? ' fi-sr-only' : '' ?>">
                     <?= e($label) ?>
                 </span>
             <?php } ?>

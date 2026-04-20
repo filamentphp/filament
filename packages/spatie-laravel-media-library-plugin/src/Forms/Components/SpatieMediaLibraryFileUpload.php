@@ -94,7 +94,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
                 try {
                     $url = $media?->getTemporaryUrl(
-                        now()->addMinutes(30)->endOfHour(),
+                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                         (filled($conversion) && $media->hasGeneratedConversion($conversion)) ? $conversion : '',
                     );
                 } catch (Throwable $exception) {

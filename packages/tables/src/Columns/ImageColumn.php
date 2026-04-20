@@ -213,7 +213,7 @@ class ImageColumn extends Column implements HasEmbeddedView
             try {
                 return $storage->temporaryUrl(
                     $state,
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.

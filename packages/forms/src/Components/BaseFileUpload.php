@@ -79,6 +79,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected ?Closure $getUploadedFileUsing = null;
 
+    protected ?Closure $getOpenableFileUrlUsing = null;
+
+    protected ?Closure $getDownloadableFileUrlUsing = null;
+
     protected ?Closure $reorderUploadedFilesUsing = null;
 
     protected ?Closure $saveUploadedFileUsing = null;
@@ -162,7 +166,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 try {
                     $url = $storage->temporaryUrl(
                         $file,
-                        now()->addMinutes(30)->endOfHour(),
+                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                     );
                 } catch (Throwable $exception) {
                     // This driver does not support creating temporary URLs.
@@ -473,6 +477,20 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function getUploadedFileUsing(?Closure $callback): static
     {
         $this->getUploadedFileUsing = $callback;
+
+        return $this;
+    }
+
+    public function getOpenableFileUrlUsing(?Closure $callback): static
+    {
+        $this->getOpenableFileUrlUsing = $callback;
+
+        return $this;
+    }
+
+    public function getDownloadableFileUrlUsing(?Closure $callback): static
+    {
+        $this->getDownloadableFileUrlUsing = $callback;
 
         return $this;
     }
@@ -818,7 +836,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     }
 
     /**
-     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
+     * @return array<array{name: string, size: int, type: string, url: string, openableUrl?: string, downloadableUrl?: string} | null> | null
      */
     #[ExposedLivewireMethod]
     #[Renderless]
@@ -828,6 +846,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         $shouldCheckAuthorization = $this->shouldPreventFilePathTampering();
         $originalPaths = $shouldCheckAuthorization ? $this->getOriginalFilePaths() : [];
+        $callback = $this->getUploadedFileUsing;
+        $storedFileNames = $this->getStoredFileNames();
+        $openableFileUrlCallback = $this->isOpenable() ? $this->getOpenableFileUrlUsing : null;
+        $downloadableFileUrlCallback = $this->isDownloadable() ? $this->getDownloadableFileUrlUsing : null;
 
         foreach ($this->getRawState() ?? [] as $fileKey => $file) {
             if ($file instanceof TemporaryUploadedFile) {
@@ -842,16 +864,40 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 continue;
             }
 
-            $callback = $this->getUploadedFileUsing;
-
             if (! $callback) {
                 return [$fileKey => null];
             }
 
             $urls[$fileKey] = $this->evaluate($callback, [
                 'file' => $file,
-                'storedFileNames' => $this->getStoredFileNames(),
+                'storedFileNames' => $storedFileNames,
             ]) ?: null;
+
+            if ($urls[$fileKey] === null) {
+                continue;
+            }
+
+            if ($openableFileUrlCallback) {
+                $openableUrl = $this->evaluate($openableFileUrlCallback, [
+                    'file' => $file,
+                    'storedFileNames' => $storedFileNames,
+                ]);
+
+                if ($openableUrl !== null) {
+                    $urls[$fileKey]['openableUrl'] = $openableUrl;
+                }
+            }
+
+            if ($downloadableFileUrlCallback) {
+                $downloadableUrl = $this->evaluate($downloadableFileUrlCallback, [
+                    'file' => $file,
+                    'storedFileNames' => $storedFileNames,
+                ]);
+
+                if ($downloadableUrl !== null) {
+                    $urls[$fileKey]['downloadableUrl'] = $downloadableUrl;
+                }
+            }
         }
 
         return $urls;
