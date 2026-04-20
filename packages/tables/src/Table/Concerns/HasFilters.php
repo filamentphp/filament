@@ -282,6 +282,7 @@ trait HasFilters
             ->label(__('filament-tables::table.filters.actions.remove_all.label'))
             ->tooltip(__('filament-tables::table.filters.actions.remove_all.tooltip'))
             ->action('removeTableFilters')
+            ->livewireTarget('removeTableFilters,removeTableFilter')
             ->iconButton()
             ->icon(FilamentIcon::resolve(TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON) ?? Heroicon::XMark)
             ->color('gray')
