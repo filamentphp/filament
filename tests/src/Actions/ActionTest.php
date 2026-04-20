@@ -1306,9 +1306,9 @@ describe('ActionGroup dropdown properties', function (): void {
 
     it('can set `dropdownWidth()` with a string that maps to enum', function (): void {
         $group = ActionGroup::make([Action::make('edit')])
-            ->dropdownWidth('lg');
+            ->dropdownWidth('3xs');
 
-        expect($group->getDropdownWidth())->toBe(Width::Large);
+        expect($group->getDropdownWidth())->toBe(Width::ThreeExtraSmall);
     });
 
     it('defaults `hasDropdownFlip()` to `true`', function (): void {

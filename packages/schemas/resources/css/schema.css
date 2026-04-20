@@ -41,6 +41,14 @@
     }
 
     & > .fi-grid-col {
+        &.fi-width-3xs {
+            @apply max-w-3xs;
+        }
+
+        &.fi-width-2xs {
+            @apply max-w-2xs;
+        }
+
         &.fi-width-xs {
             @apply max-w-xs;
         }
@@ -83,6 +91,14 @@
 
         &.fi-width-7xl {
             @apply max-w-7xl;
+        }
+
+        &.fi-width-none {
+            @apply max-w-none;
+        }
+
+        &.fi-width-container {
+            @apply container;
         }
 
         & > .fi-sc-component {
