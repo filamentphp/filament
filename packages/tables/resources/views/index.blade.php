@@ -799,19 +799,7 @@
                         </div>
 
                         @if (collect($filterIndicators)->contains(fn (\Filament\Tables\Filters\Indicator $indicator): bool => $indicator->isRemovable()))
-                            <button
-                                type="button"
-                                x-tooltip="{
-                                    content: @js(__('filament-tables::table.filters.actions.remove_all.tooltip')),
-                                    theme: $store.theme,
-                                }"
-                                wire:click="removeTableFilters"
-                                wire:loading.attr="disabled"
-                                wire:target="removeTableFilters,removeTableFilter"
-                                class="fi-icon-btn fi-size-sm"
-                            >
-                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Tables\View\TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
-                            </button>
+                            {{ $getFiltersRemoveAllAction() }}
                         @endif
                     </div>
                 @endif

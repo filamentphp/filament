@@ -94,7 +94,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
                 try {
                     $url = $media?->getTemporaryUrl(
-                        now()->addMinutes(30)->endOfHour(),
+                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                         (filled($conversion) && $media->hasGeneratedConversion($conversion)) ? $conversion : '',
                     );
                 } catch (Throwable $exception) {
@@ -155,6 +155,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $rawState): array {
             $uuids = array_filter(array_keys($rawState));
+
+            $recordMediaUuids = $record?->getRelationValue('media')?->pluck('uuid')->all() ?? [];
+
+            $uuids = array_values(array_filter(
+                $uuids,
+                static fn (string $uuid): bool => in_array($uuid, $recordMediaUuids, strict: true),
+            ));
+
+            if (empty($uuids)) {
+                return $rawState;
+            }
 
             $mediaClass = ($record && method_exists($record, 'getMediaModel')) ? $record->getMediaModel() : null;
             $mediaClass ??= config('media-library.media_model', Media::class);

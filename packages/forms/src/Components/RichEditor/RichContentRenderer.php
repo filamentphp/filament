@@ -155,6 +155,14 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
+        // The `$file` value comes from a `data-id` attribute on an image node in
+        // client-submitted rich editor content, and is not authorized here before
+        // being passed to the filesystem. Applications whose disk stores files
+        // belonging to multiple users or records must supply a custom file
+        // attachment provider (or use the Spatie Media Library provider) that
+        // validates the id against records the current user is allowed to read.
+        // See the "Securing file attachment IDs" section of the rich editor
+        // documentation.
         $fileAttachmentProvider = $this->getFileAttachmentProvider();
 
         if ($fileAttachmentProvider) {
@@ -178,7 +186,7 @@ class RichContentRenderer implements Htmlable
             try {
                 return $storage->temporaryUrl(
                     $file,
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.

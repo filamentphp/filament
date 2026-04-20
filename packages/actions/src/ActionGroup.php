@@ -166,7 +166,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->getTriggerView() === static::BADGE_VIEW;
     }
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | Closure | null $badge = null): static
     {
         if (func_num_args() === 0) {
             /** @phpstan-ignore-next-line */
@@ -633,8 +633,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),
@@ -655,9 +655,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
-            badgeTooltip: $this->getBadgeTooltip(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
+            badgeTooltip: $this->getBadgeTooltip($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconSize: $this->getIconSize(),
@@ -673,8 +673,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconSize: $this->getIconSize(),
@@ -691,8 +691,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),

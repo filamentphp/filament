@@ -352,6 +352,21 @@ export default {
         },
         selector: '.fi-modal-window-ctn',
     },
+    'actions/modal/slide-over-start': {
+        url: 'actions',
+        viewport: {
+            width: 1280,
+            height: 720,
+            deviceScaleFactor: 2,
+        },
+        before: async (page) => {
+            await page.click('#slideOverStartAction button')
+            await page.waitForSelector('#modal h2')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+        selector: '.fi-modal-window-ctn',
+    },
     'actions/modal/no-close-button': {
         url: 'actions',
         viewport: {
@@ -4110,6 +4125,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'primes/icon/sizes': {
+        url: 'primes',
+        selector: '#iconSizes',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'primes/icon/tooltip': {
         url: 'primes',
         selector: '#iconTooltip',
@@ -5083,6 +5107,20 @@ export default {
             width: 1080,
             height: 640,
             deviceScaleFactor: 3,
+        },
+    },
+    'tables/filters/custom-remove-all-action': {
+        url: 'tables?table=filtersCustomRemoveAllAction',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('.fi-ta-filter-indicators .fi-icon-btn')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
     'tables/filters/grid-columns': {
