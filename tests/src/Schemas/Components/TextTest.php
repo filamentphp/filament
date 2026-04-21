@@ -396,6 +396,21 @@ describe('copying', function (): void {
 
         expect($text->getCopyMessageDuration('Test'))->toBe(3000);
     });
+
+    it('can set `copyable()` with a string message', function (): void {
+        $text = Text::make('Test')->copyable('Copied Success');
+
+        expect($text->isCopyable('Test'))->toBeTrue()
+            ->and($text->getCopyMessage('Test'))->toBe('Copied Success');
+    });
+
+    it('still allows overriding the message via `copyMessage()` after `copyable(string)`', function (): void {
+        $text = Text::make('Test')
+            ->copyable('First')
+            ->copyMessage('Second');
+
+        expect($text->getCopyMessage('Test'))->toBe('Second');
+    });
 });
 
 describe('rendering', function (): void {

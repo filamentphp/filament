@@ -29,6 +29,15 @@ ColorEntry::make('color')
     ->copyMessageDuration(1500)
 ```
 
+As a shorthand, you may pass the confirmation message directly into `copyable()`:
+
+```php
+use Filament\Infolists\Components\ColorEntry;
+
+ColorEntry::make('color')
+    ->copyable('Copied!')
+```
+
 <AutoScreenshot name="infolists/entries/color/copyable" alt="Color entry with a button to copy it" version="4.x" />
 
 Optionally, you may pass a boolean value to control if the color should be copyable or not:

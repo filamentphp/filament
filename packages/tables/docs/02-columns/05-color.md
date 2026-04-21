@@ -30,6 +30,15 @@ ColorColumn::make('color')
     ->copyMessageDuration(1500)
 ```
 
+As a shorthand, you may pass the confirmation message directly into `copyable()`:
+
+```php
+use Filament\Tables\Columns\ColorColumn;
+
+ColorColumn::make('color')
+    ->copyable('Copied!')
+```
+
 <AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="4.x" />
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:

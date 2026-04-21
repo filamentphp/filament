@@ -14,8 +14,15 @@ trait CanBeCopied
 
     protected int | Closure | null $copyMessageDuration = null;
 
-    public function copyable(bool | Closure $condition = true): static
+    public function copyable(bool | string | Closure $condition = true): static
     {
+        if (is_string($condition)) {
+            $this->isCopyable = true;
+            $this->copyMessage = $condition;
+
+            return $this;
+        }
+
         $this->isCopyable = $condition;
 
         return $this;

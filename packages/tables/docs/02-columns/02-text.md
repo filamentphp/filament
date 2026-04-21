@@ -769,6 +769,15 @@ TextColumn::make('email')
     ->copyMessageDuration(1500)
 ```
 
+As a shorthand, you may pass the confirmation message directly into `copyable()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('email')
+    ->copyable('Email address copied')
+```
+
 <AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" version="4.x" />
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:

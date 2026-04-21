@@ -75,6 +75,15 @@ CodeEntry::make('code')
     ->copyMessageDuration(1500)
 ```
 
+As a shorthand, you may pass the confirmation message directly into `copyable()`:
+
+```php
+use Filament\Infolists\Components\CodeEntry;
+
+CodeEntry::make('code')
+    ->copyable('Copied!')
+```
+
 Optionally, you may pass a boolean value to control if the code should be copyable or not:
 
 ```php
