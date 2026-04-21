@@ -50,6 +50,7 @@ class RichEditorStateCast implements StateCast
 
                 unset($node->attrs->label);
                 unset($node->attrs->preview);
+                unset($node->attrs->shouldApplyProseStylingToPreview);
             });
         }
 
@@ -112,6 +113,7 @@ class RichEditorStateCast implements StateCast
 
                 $node->attrs->label = $block::getPreviewLabel($nodeConfig);
                 $node->attrs->preview = base64_encode($block::toPreviewHtml($nodeConfig));
+                $node->attrs->shouldApplyProseStylingToPreview = $block::shouldApplyProseStylingToPreview($nodeConfig);
             });
         }
 

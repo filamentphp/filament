@@ -210,6 +210,14 @@
             @apply hidden;
         }
 
+        &.fi-width-3xs {
+            @apply max-w-3xs;
+        }
+
+        &.fi-width-2xs {
+            @apply max-w-2xs;
+        }
+
         &.fi-width-xs {
             @apply max-w-xs;
         }
@@ -254,6 +262,10 @@
             @apply max-w-7xl;
         }
 
+        &.fi-width-none {
+            @apply max-w-none;
+        }
+
         &.fi-width-full {
             @apply max-w-full;
         }
@@ -272,6 +284,10 @@
 
         &.fi-width-prose {
             @apply max-w-prose;
+        }
+
+        &.fi-width-container {
+            @apply container;
         }
 
         &.fi-width-screen-sm {
