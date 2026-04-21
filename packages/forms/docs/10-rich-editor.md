@@ -693,6 +693,38 @@ RichEditor::make('content')
     ->activePanel('customBlocks')
 ```
 
+### Styling custom block previews with prose
+
+By default, custom block previews are displayed without prose styling to make styling easier. You can enable prose styling for a block's preview using the `shouldApplyProseStylingToPreview()` method. This is useful when you want the preview to display with typography styles like headings, paragraphs, and other prose elements:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+
+class HeadingBlock extends RichContentCustomBlock
+{
+    // ...
+
+    /**
+     * @param  array<string, mixed>  $config
+     */
+    public static function shouldApplyProseStylingToPreview(array $config): bool
+    {
+        return true;
+    }
+}
+```
+
+When `shouldApplyProseStylingToPreview()` returns `true`, the block's preview will be styled with the prose typography styles defined in the rich editor, including proper margins, font sizes, and other text formatting. By default, this method returns `false`, so previews are displayed with minimal styling.
+
+You can make this decision based on the block's configuration, allowing different blocks to have different preview styling:
+
+```php
+public static function shouldApplyProseStylingToPreview(array $config): bool
+{
+    return ($config['useProseStyle'] ?? false) === true;
+}
+```
+
 ## Using merge tags
 
 Merge tags allow the user to insert "placeholders" into their rich content, which can be replaced with dynamic values when the content is rendered. This is useful for inserting things like the current user's name, or the current date.

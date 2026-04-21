@@ -183,6 +183,44 @@ describe('`set()`', function (): void {
         expect(base64_decode($found['attrs']['preview'] ?? ''))->toBe('<strong>Preview HTML</strong>');
     });
 
+    it('hydrates a custom block `shouldApplyProseStylingToPreview` from the registered block class', function (): void {
+        $editor = makeStateCastEditor()
+            ->customBlocks([StateCastCustomBlock::class, StateCastProseBlock::class]);
+
+        $cast = new RichEditorStateCast($editor);
+
+        $result = $cast->set('<div data-type="customBlock" data-id="preview-block"></div>');
+
+        $found = null;
+
+        walkStateCastResult($result, function (array $node) use (&$found): void {
+            if (($node['type'] ?? null) === 'customBlock') {
+                $found = $node;
+            }
+        });
+
+        expect($found['attrs']['shouldApplyProseStylingToPreview'] ?? null)->toBeFalse();
+    });
+
+    it('hydrates `shouldApplyProseStylingToPreview` as `true` when the block class enables it', function (): void {
+        $editor = makeStateCastEditor()
+            ->customBlocks([StateCastProseBlock::class]);
+
+        $cast = new RichEditorStateCast($editor);
+
+        $result = $cast->set('<div data-type="customBlock" data-id="prose-block"></div>');
+
+        $found = null;
+
+        walkStateCastResult($result, function (array $node) use (&$found): void {
+            if (($node['type'] ?? null) === 'customBlock') {
+                $found = $node;
+            }
+        });
+
+        expect($found['attrs']['shouldApplyProseStylingToPreview'] ?? null)->toBeTrue();
+    });
+
     it('does not hydrate `label` or `preview` for custom block nodes with unregistered ids', function (): void {
         $editor = makeStateCastEditor()
             ->customBlocks([StateCastCustomBlock::class]);
@@ -353,6 +391,100 @@ describe('`get()`', function (): void {
         expect($found['attrs']['id'] ?? null)->toBe('preview-block');
     });
 
+    it('strips `shouldApplyProseStylingToPreview` attr from custom blocks before returning output', function (): void {
+        $editor = makeStateCastEditor()
+            ->customBlocks([StateCastProseBlock::class])
+            ->json();
+
+        $cast = new RichEditorStateCast($editor);
+
+        $document = $cast->set('<div data-type="customBlock" data-id="prose-block"></div>');
+
+        $output = $cast->get($document);
+
+        $found = null;
+
+        walkStateCastResult($output, function (array $node) use (&$found): void {
+            if (($node['type'] ?? null) === 'customBlock') {
+                $found = $node;
+            }
+        });
+
+        expect($found['attrs']['shouldApplyProseStylingToPreview'] ?? null)->toBeNull();
+        expect($found['attrs']['id'] ?? null)->toBe('prose-block');
+    });
+
+    it('removes `label` and `preview` attrs even when they do not exist yet in the custom block', function (): void {
+        $editor = makeStateCastEditor()
+            ->customBlocks([StateCastCustomBlock::class])
+            ->json();
+
+        $cast = new RichEditorStateCast($editor);
+
+        // Create a custom block node without label/preview attrs
+        $document = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'preview-block',
+                        'config' => null,
+                    ],
+                ],
+            ],
+        ];
+
+        $output = $cast->get($document);
+
+        $found = null;
+
+        walkStateCastResult($output, function (array $node) use (&$found): void {
+            if (($node['type'] ?? null) === 'customBlock') {
+                $found = $node;
+            }
+        });
+
+        expect($found['attrs']['label'] ?? null)->toBeNull();
+        expect($found['attrs']['preview'] ?? null)->toBeNull();
+        expect($found['attrs']['id'] ?? null)->toBe('preview-block');
+    });
+
+    it('removes `shouldApplyProseStylingToPreview` attr even when it does not exist yet in the custom block', function (): void {
+        $editor = makeStateCastEditor()
+            ->customBlocks([StateCastProseBlock::class])
+            ->json();
+
+        $cast = new RichEditorStateCast($editor);
+
+        // Create a custom block node without shouldApplyProseStylingToPreview attr
+        $document = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'prose-block',
+                        'config' => null,
+                    ],
+                ],
+            ],
+        ];
+
+        $output = $cast->get($document);
+
+        $found = null;
+
+        walkStateCastResult($output, function (array $node) use (&$found): void {
+            if (($node['type'] ?? null) === 'customBlock') {
+                $found = $node;
+            }
+        });
+
+        expect($found['attrs']['shouldApplyProseStylingToPreview'] ?? null)->toBeNull();
+        expect($found['attrs']['id'] ?? null)->toBe('prose-block');
+    });
+
     it('handles `null` state without error', function (): void {
         $cast = new RichEditorStateCast(makeStateCastEditor());
 
@@ -380,5 +512,33 @@ class StateCastCustomBlock extends RichContentCustomBlock
     public static function toHtml(array $config, array $data): ?string
     {
         return '<div>Rendered block</div>';
+    }
+}
+
+class StateCastProseBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'prose-block';
+    }
+
+    public static function getPreviewLabel(array $config): string
+    {
+        return 'Prose block';
+    }
+
+    public static function toPreviewHtml(array $config): ?string
+    {
+        return '<h2>With Prose Styling</h2>';
+    }
+
+    public static function shouldApplyProseStylingToPreview(array $config): bool
+    {
+        return true;
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div>Rendered prose block</div>';
     }
 }
