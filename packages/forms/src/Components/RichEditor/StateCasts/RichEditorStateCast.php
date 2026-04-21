@@ -66,7 +66,7 @@ class RichEditorStateCast implements StateCast
             $state = $state->toHtml();
         }
 
-        $shouldPreventTampering = $this->richEditor->shouldPreventFileAttachmentTampering();
+        $shouldPreventTampering = $this->richEditor->shouldPreventFileAttachmentPathTampering();
         $originalFileAttachmentPaths = $shouldPreventTampering ? $this->richEditor->getOriginalFileAttachmentPaths() : [];
 
         $editor = $this->richEditor->getTipTapEditor()

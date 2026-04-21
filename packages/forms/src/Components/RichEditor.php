@@ -99,7 +99,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
-    protected bool | Closure $shouldPreventFileAttachmentTampering = false;
+    protected bool | Closure $shouldPreventFileAttachmentPathTampering = false;
 
     protected ?Closure $allowFileAttachmentPathUsing = null;
 
@@ -415,7 +415,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $fileAttachmentIds = [];
 
-        $shouldPreventTampering = $this->shouldPreventFileAttachmentTampering();
+        $shouldPreventTampering = $this->shouldPreventFileAttachmentPathTampering();
         $originalFileAttachmentPaths = $shouldPreventTampering ? $this->getOriginalFileAttachmentPaths() : [];
 
         $this->rawState(
@@ -474,17 +474,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $fileAttachmentIds;
     }
 
-    public function preventFileAttachmentTampering(bool | Closure $condition = true, ?Closure $allowFilePathUsing = null): static
+    public function preventFileAttachmentPathTampering(bool | Closure $condition = true, ?Closure $allowFilePathUsing = null): static
     {
-        $this->shouldPreventFileAttachmentTampering = $condition;
+        $this->shouldPreventFileAttachmentPathTampering = $condition;
         $this->allowFileAttachmentPathUsing = $allowFilePathUsing;
 
         return $this;
     }
 
-    public function shouldPreventFileAttachmentTampering(): bool
+    public function shouldPreventFileAttachmentPathTampering(): bool
     {
-        return (bool) $this->evaluate($this->shouldPreventFileAttachmentTampering);
+        return (bool) $this->evaluate($this->shouldPreventFileAttachmentPathTampering);
     }
 
     /**
