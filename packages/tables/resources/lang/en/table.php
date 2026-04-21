@@ -168,6 +168,27 @@ return [
 
         'indicator' => 'Active filters',
 
+        'date_range' => [
+
+            'fields' => [
+
+                'date_from' => [
+                    'label' => 'From',
+                ],
+
+                'date_until' => [
+                    'label' => 'Until',
+                ],
+
+            ],
+
+            'indicator' => [
+                'from' => 'From :date',
+                'until' => 'Until :date',
+            ],
+
+        ],
+
         'multi_select' => [
             'placeholder' => 'All',
         ],
