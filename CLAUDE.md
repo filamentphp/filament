@@ -242,10 +242,15 @@ Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
    },
    ```
 
-3. **Build assets** if you changed any CSS or JS files (the docs app uses the compiled output):
+3. **Build assets** if you changed any CSS or JS files. Two builds are required — the repo root compiles each package's dist output, and the docs app has its own Vite build that bundles those outputs into `docs-assets/app/public/build/`. Skipping the second step leaves the docs app serving stale CSS, and screenshots will render against pre-change styles:
    ```bash
+   # Terminal 1: compile package dist output
    npm run build
+
+   # Terminal 2: bundle the docs app's CSS from the package output
+   cd docs-assets/app && npm run build
    ```
+   If you also changed the Livewire demo or Blade views, clear caches afterwards: `cd docs-assets/app && php artisan optimize:clear`.
 
 4. **Generate screenshots**:
    ```bash

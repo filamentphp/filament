@@ -8,12 +8,14 @@ use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPluginWithoutToolbarButtons;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 use function Filament\Tests\livewire;
@@ -1435,6 +1437,278 @@ it('can render `RichEditor` in the browser', function (): void {
     });
 });
 
+describe('preventing file attachment tampering', function (): void {
+    beforeEach(function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/original.jpg', 'original');
+        Storage::disk('local')->put('uploads/evil.jpg', 'evil');
+    });
+
+    it('allows a tampered `data-id` to overwrite the record when `preventFileAttachmentTampering()` is not used', function (): void {
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        livewire(TestComponentWithRichEditorRecord::class, ['record' => $post])
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
+            ->call('save');
+
+        expect($post->fresh()->content)
+            ->toContain('data-id="uploads/evil.jpg"')
+            ->and($post->fresh()->content)->not->toContain('data-id="uploads/original.jpg"');
+    });
+
+    it('drops a tampered `data-id` when using `preventFileAttachmentTampering()`', function (): void {
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        livewire(TestComponentWithRichEditorRecordPreventingTampering::class, ['record' => $post])
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
+            ->call('save');
+
+        expect($post->fresh()->content)->not->toContain('uploads/evil.jpg');
+    });
+
+    it('leaves an unchanged `data-id` alone when using `preventFileAttachmentTampering()`', function (): void {
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        livewire(TestComponentWithRichEditorRecordPreventingTampering::class, ['record' => $post])
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />')
+            ->call('save');
+
+        expect($post->fresh()->content)->toContain('data-id="uploads/original.jpg"');
+    });
+
+    it('keeps a `data-id` that the `allowFilePathUsing` callback approves', function (): void {
+        Storage::disk('local')->put('templates/brochure.jpg', 'template');
+
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        livewire(TestComponentWithRichEditorRecordAllowingTemplatePaths::class, ['record' => $post])
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="templates/brochure.jpg" />')
+            ->call('save');
+
+        expect($post->fresh()->content)->toContain('data-id="templates/brochure.jpg"');
+    });
+
+    it('drops a `data-id` that the `allowFilePathUsing` callback rejects', function (): void {
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        livewire(TestComponentWithRichEditorRecordAllowingTemplatePaths::class, ['record' => $post])
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
+            ->call('save');
+
+        expect($post->fresh()->content)->not->toContain('uploads/evil.jpg');
+    });
+
+    it('rejects all `data-id` values when no record is bound and `preventFileAttachmentTampering()` is used', function (): void {
+        livewire(TestComponentWithRichEditorPreventingTamperingWithoutRecord::class)
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
+            ->assertSuccessful();
+    });
+
+    it('does not resolve a URL for a tampered `data-id` during state cast hydration', function (): void {
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        $editor = (new RichEditor('content'))
+            ->fileAttachmentsDisk('local')
+            ->preventFileAttachmentTampering()
+            ->container(Schema::make(Livewire::make())->model($post)->statePath('data'));
+
+        $cast = new Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast($editor);
+
+        $result = $cast->set('<p>Hello</p><img src="http://original" data-id="uploads/original.jpg" /><img src="http://evil" data-id="uploads/evil.jpg" />');
+
+        $decoded = json_decode(json_encode($result), true);
+
+        $srcById = [];
+
+        $walker = function ($nodes) use (&$walker, &$srcById): void {
+            foreach ($nodes as $node) {
+                if (($node['type'] ?? null) === 'image') {
+                    $id = $node['attrs']['id'] ?? null;
+
+                    if (filled($id)) {
+                        $srcById[$id] = $node['attrs']['src'] ?? null;
+                    }
+                }
+
+                if (! empty($node['content'] ?? null)) {
+                    $walker($node['content']);
+                }
+            }
+        };
+
+        $walker($decoded['content'] ?? []);
+
+        expect($srcById)->toHaveKey('uploads/original.jpg');
+        expect($srcById)->toHaveKey('uploads/evil.jpg');
+        expect($srcById['uploads/evil.jpg'])->toBeNull();
+    });
+});
+
+describe('cross-record file attachment callbacks', function (): void {
+    it('returns `null` from `getFileAttachmentUrlFromAnotherRecord()` when no callback is set', function (): void {
+        $editor = new RichEditor('content');
+
+        expect($editor->getFileAttachmentUrlFromAnotherRecord('any-id'))->toBeNull();
+    });
+
+    it('delegates `getFileAttachmentUrlFromAnotherRecord()` to the registered callback', function (): void {
+        $editor = (new RichEditor('content'))
+            ->getFileAttachmentUrlFromAnotherRecordUsing(
+                static fn (string $file): string => "xr://{$file}",
+            );
+
+        expect($editor->getFileAttachmentUrlFromAnotherRecord('shared-1'))->toBe('xr://shared-1');
+    });
+
+    it('returns `null` from `saveFileAttachmentFromAnotherRecord()` when no callback is set', function (): void {
+        $editor = new RichEditor('content');
+
+        expect($editor->saveFileAttachmentFromAnotherRecord('any-id'))->toBeNull();
+    });
+
+    it('delegates `saveFileAttachmentFromAnotherRecord()` to the registered callback', function (): void {
+        $editor = (new RichEditor('content'))
+            ->saveFileAttachmentFromAnotherRecordUsing(
+                static fn (string $file): string => "copied:{$file}",
+            );
+
+        expect($editor->saveFileAttachmentFromAnotherRecord('from-other'))->toBe('copied:from-other');
+    });
+});
+
+describe('`resolveFileAttachmentIds()` behaviour', function (): void {
+    it('persists a newly uploaded image and rewrites its `data-id` to the stored path', function (): void {
+        \Illuminate\Support\Facades\Storage::fake('tmp-for-tests');
+
+        $image = imagecreatetruecolor(10, 10);
+        ob_start();
+        imagejpeg($image);
+        $imageContent = ob_get_clean();
+        imagedestroy($image);
+
+        $temporaryFileName = \Livewire\Features\SupportFileUploads\TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            \Illuminate\Http\UploadedFile::fake()->image('new-upload.jpg'),
+        );
+        \Illuminate\Support\Facades\Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $imageContent);
+
+        $temporaryFile = \Livewire\Features\SupportFileUploads\TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+        $editor = (new RichEditor('content'))
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $livewire = $editor->getLivewire();
+
+        data_set(
+            $livewire,
+            'componentFileAttachments.' . $editor->getStatePath() . '.new-upload-uuid',
+            $temporaryFile,
+        );
+
+        $editor->saveUploadedFileAttachmentUsing(static fn (): string => 'uploads/persisted.jpg');
+        $editor->getFileAttachmentUrlUsing(static fn (string $file): string => "https://cdn.test/{$file}");
+
+        $editor->rawState('<p><img src="placeholder" data-id="new-upload-uuid" /></p>');
+
+        $ids = $editor->resolveFileAttachmentIds();
+
+        expect($ids)->toContain('uploads/persisted.jpg');
+
+        $srcs = [];
+
+        walkEditorRawState($editor, function (array $node) use (&$srcs): void {
+            if (($node['type'] ?? null) === 'image') {
+                $srcs[$node['attrs']['id'] ?? ''] = $node['attrs']['src'] ?? null;
+            }
+        });
+
+        expect($srcs)->toHaveKey('uploads/persisted.jpg');
+        expect($srcs['uploads/persisted.jpg'])->toBe('https://cdn.test/uploads/persisted.jpg');
+    });
+
+    it('keeps an existing disk-resident `data-id` unchanged and records it as in-use', function (): void {
+        $editor = (new RichEditor('content'))
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $editor->getFileAttachmentUrlUsing(static fn (string $file): ?string => "https://cdn.test/{$file}");
+
+        $editor->rawState('<p><img src="placeholder" data-id="uploads/kept.jpg" /></p>');
+
+        $ids = $editor->resolveFileAttachmentIds();
+
+        expect($ids)->toContain('uploads/kept.jpg');
+    });
+
+    it('consults `saveFileAttachmentFromAnotherRecord()` for unknown `data-id`s that do not resolve to an existing file', function (): void {
+        $editor = (new RichEditor('content'))
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $editor->getFileAttachmentUrlUsing(static function (string $file): ?string {
+            return str_starts_with($file, 'migrated/') ? "https://cdn.test/{$file}" : null;
+        });
+
+        $editor->saveFileAttachmentFromAnotherRecordUsing(
+            static fn (string $file): string => "migrated/{$file}",
+        );
+
+        $editor->rawState('<p><img src="placeholder" data-id="foreign-id" /></p>');
+
+        $editor->resolveFileAttachmentIds();
+
+        $srcs = [];
+
+        walkEditorRawState($editor, function (array $node) use (&$srcs): void {
+            if (($node['type'] ?? null) === 'image') {
+                $srcs[$node['attrs']['id'] ?? ''] = $node['attrs']['src'] ?? null;
+            }
+        });
+
+        expect($srcs)->toHaveKey('migrated/foreign-id');
+        expect($srcs['migrated/foreign-id'])->toBe('https://cdn.test/migrated/foreign-id');
+    });
+});
+
+function walkEditorRawState(RichEditor $editor, callable $callback): void
+{
+    $decoded = json_decode(json_encode($editor->getRawState()), true);
+
+    $walker = function ($nodes) use (&$walker, $callback): void {
+        foreach ($nodes as $node) {
+            $callback($node);
+
+            if (! empty($node['content'] ?? null)) {
+                $walker($node['content']);
+            }
+        }
+    };
+
+    $walker($decoded['content'] ?? []);
+}
+
+it('exposes TipTap and ProseMirror modules on `window.FilamentRichEditor.tiptap` once the editor has mounted', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/rich-editor-browser-test')
+            ->assertPresent('.fi-fo-rich-editor .tiptap')
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.core?.Editor === 'function'")
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmState?.Plugin === 'function'")
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmView?.EditorView === 'function'")
+            ->assertScript("typeof window.FilamentRichEditor?.tiptap?.pmModel?.Node === 'function'");
+    });
+});
+
 class RenderRichEditor extends Livewire
 {
     public function form(Schema $form): Schema
@@ -1771,5 +2045,101 @@ class RichEditorTestBlockC extends RichContentCustomBlock
     public static function toHtml(array $config, array $data): ?string
     {
         return '<div>C</div>';
+    }
+}
+
+class TestComponentWithRichEditorRecord extends Livewire
+{
+    public Post $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('local'),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithRichEditorRecordPreventingTampering extends Livewire
+{
+    public Post $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('local')
+                    ->preventFileAttachmentTampering(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithRichEditorRecordAllowingTemplatePaths extends Livewire
+{
+    public Post $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('local')
+                    ->preventFileAttachmentTampering(
+                        allowFilePathUsing: static fn (string $file): bool => str_starts_with($file, 'templates/'),
+                    ),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithRichEditorPreventingTamperingWithoutRecord extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('local')
+                    ->preventFileAttachmentTampering(),
+            ])
+            ->statePath('data');
     }
 }

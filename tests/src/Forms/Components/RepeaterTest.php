@@ -2098,6 +2098,30 @@ describe('item labels', function (): void {
         expect($repeater->hasItemLabels())->toBeFalse();
     });
 
+    it('injects the `$index` of the item into the `itemLabel()` `Closure`', function (): void {
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $repeater = Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name'),
+                    ])
+                    ->itemLabel(static fn (int $index, array $state): string => "Item {$index}: {$state['name']}")
+                    ->default([
+                        ['name' => 'first'],
+                        ['name' => 'second'],
+                        ['name' => 'third'],
+                    ]),
+            ])
+            ->fill();
+
+        $itemKeys = array_keys($repeater->getRawState());
+
+        expect($repeater->getItemLabel($itemKeys[0], 0))->toBe('Item 0: first');
+        expect($repeater->getItemLabel($itemKeys[1], 1))->toBe('Item 1: second');
+        expect($repeater->getItemLabel($itemKeys[2], 2))->toBe('Item 2: third');
+    });
+
     it('can set `itemNumbers()` with a `Closure`', function (): void {
         $repeater = Repeater::make('items')
             ->itemNumbers(static fn (): bool => true);

@@ -10,14 +10,31 @@
         }
     }
 
-    &.fi-modal-slide-over {
+    &.fi-modal-slide-over.fi-modal-slide-over-from-start {
         & > .fi-modal-window-ctn > .fi-modal-window {
-            @apply ms-auto overflow-y-auto;
+            @apply me-auto;
+
+            &.fi-transition-enter-start,
+            &.fi-transition-leave-end {
+                @apply -translate-x-full rtl:translate-x-full;
+            }
+        }
+    }
+
+    &.fi-modal-slide-over.fi-modal-slide-over-from-end {
+        & > .fi-modal-window-ctn > .fi-modal-window {
+            @apply ms-auto;
 
             &.fi-transition-enter-start,
             &.fi-transition-leave-end {
                 @apply translate-x-full rtl:-translate-x-full;
             }
+        }
+    }
+
+    &.fi-modal-slide-over {
+        & > .fi-modal-window-ctn > .fi-modal-window {
+            @apply overflow-y-auto;
 
             &.fi-transition-enter-end,
             &.fi-transition-leave-start {
