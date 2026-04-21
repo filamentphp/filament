@@ -53,6 +53,7 @@ class CustomBlockAction
                         'id' => $arguments['id'],
                         'label' => $block::getPreviewLabel($data),
                         'preview' => base64_encode($block::toPreviewHtml($data)),
+                        'shouldApplyProseStylingToPreview' => $block::shouldApplyProseStylingToPreview($data),
                     ],
                 ];
 

@@ -18,9 +18,10 @@ class RelationshipOrderer
     public function buildSubquery(EloquentBuilder $query, string $relationshipName, string $column): Builder
     {
         $relationshipChain = $this->buildRelationshipChain($query->getModel(), $relationshipName);
-        $targetModel = $this->getTargetModel($relationshipChain);
+        $lastRelationship = end($relationshipChain);
+        $targetModel = $lastRelationship->getRelated();
 
-        $subquery = $this->initializeSubquery($targetModel, $column);
+        $subquery = $lastRelationship->getQuery()->select($targetModel->qualifyColumn($column));
         $this->applyRelationshipConstraints($subquery, $relationshipChain, $query->getModel());
 
         return $subquery->limit(1)->toBase();
@@ -36,7 +37,7 @@ class RelationshipOrderer
         $chain = [];
 
         foreach ($relationshipSegments as $relationshipSegment) {
-            $relationship = $currentModel->{$relationshipSegment}();
+            $relationship = Relation::noConstraints(fn () => $currentModel->{$relationshipSegment}());
 
             $this->validateRelationshipType($relationship);
 
@@ -62,21 +63,6 @@ class RelationshipOrderer
     /**
      * @param  array<Relation>  $relationshipChain
      */
-    protected function getTargetModel(array $relationshipChain): Model
-    {
-        $lastRelationship = end($relationshipChain);
-
-        return $lastRelationship->getRelated();
-    }
-
-    protected function initializeSubquery(Model $targetModel, string $column): EloquentBuilder
-    {
-        return $targetModel::query()->select($targetModel->qualifyColumn($column));
-    }
-
-    /**
-     * @param  array<Relation>  $relationshipChain
-     */
     protected function applyRelationshipConstraints(
         EloquentBuilder $subquery,
         array $relationshipChain,
@@ -86,11 +72,12 @@ class RelationshipOrderer
 
         for ($i = $chainLength - 1; $i >= 0; $i--) {
             $isFirstRelationship = $i === 0;
+            $isSubqueryBase = $i === ($chainLength - 1);
 
             if ($isFirstRelationship) {
-                $this->applyFirstRelationshipConstraint($subquery, $relationshipChain[$i], $baseModel); /** @phpstan-ignore argument.type */
+                $this->applyFirstRelationshipConstraint($subquery, $relationshipChain[$i], $baseModel, $isSubqueryBase); /** @phpstan-ignore argument.type */
             } else {
-                $this->applyIntermediateRelationshipJoin($subquery, $relationshipChain[$i], $relationshipChain[$i - 1]); /** @phpstan-ignore argument.type, argument.type */
+                $this->applyIntermediateRelationshipJoin($subquery, $relationshipChain[$i], $relationshipChain[$i - 1], $isSubqueryBase); /** @phpstan-ignore argument.type, argument.type */
             }
         }
     }
@@ -98,7 +85,8 @@ class RelationshipOrderer
     protected function applyFirstRelationshipConstraint(
         EloquentBuilder $subquery,
         BelongsTo | HasOne | MorphOne | BelongsToThrough | HasOneThrough $relationship,
-        Model $baseModel
+        Model $baseModel,
+        bool $isSubqueryBase,
     ): void {
         $baseTable = $baseModel->getTable();
 
@@ -109,9 +97,9 @@ class RelationshipOrderer
         } elseif ($relationship instanceof HasOne) {
             $this->applyHasOneConstraint($subquery, $relationship, $baseModel);
         } elseif ($relationship instanceof BelongsToThrough) {
-            $this->applyBelongsToThroughConstraint($subquery, $relationship, $baseModel);
+            $this->applyBelongsToThroughConstraint($subquery, $relationship, $baseModel, $isSubqueryBase);
         } elseif ($relationship instanceof HasOneThrough) {
-            $this->applyHasOneThroughConstraint($subquery, $relationship);
+            $this->applyHasOneThroughConstraint($subquery, $relationship, $isSubqueryBase);
         }
     }
 
@@ -155,25 +143,10 @@ class RelationshipOrderer
         EloquentBuilder $subquery,
         BelongsToThrough $relationship,
         Model $baseModel,
+        bool $isSubqueryBase,
     ): void {
-        $throughParents = $relationship->getThroughParents();
-
-        foreach ($throughParents as $i => $throughParent) {
-            $isFirstThroughParent = $i === 0;
-
-            if ($isFirstThroughParent) {
-                $predecessor = $relationship->getRelated();
-                $first = $throughParent->qualifyColumn($relationship->getForeignKeyName($predecessor));
-                $second = $predecessor->qualifyColumn($relationship->getLocalKeyName($predecessor));
-
-                $subquery->join($throughParent->getTable(), $first, '=', $second);
-            } else {
-                $predecessor = $throughParents[$i - 1];
-                $first = $throughParent->qualifyColumn($relationship->getForeignKeyName($predecessor));
-                $second = $predecessor->qualifyColumn($relationship->getLocalKeyName($predecessor));
-
-                $subquery->join($throughParent->getTable(), $first, '=', $second);
-            }
+        if (! $isSubqueryBase) {
+            $this->joinBelongsToThroughParents($subquery, $relationship);
         }
 
         $subquery->whereColumn(
@@ -182,27 +155,58 @@ class RelationshipOrderer
         );
     }
 
-    protected function applyHasOneThroughConstraint(EloquentBuilder $subquery, HasOneThrough $relationship): void
-    {
-        /** @var Model $throughParent */
-        $throughParent = invade($relationship)->throughParent; /** @phpstan-ignore property.protected */
-        $subquery->join(
-            $throughParent->getTable(),
-            $relationship->getQualifiedFirstKeyName(),
-            '=',
-            $relationship->getQualifiedLocalKeyName()
-        );
+    protected function applyHasOneThroughConstraint(
+        EloquentBuilder $subquery,
+        HasOneThrough $relationship,
+        bool $isSubqueryBase,
+    ): void {
+        if (! $isSubqueryBase) {
+            $this->joinHasOneThroughParent($subquery, $relationship);
+        }
 
         $subquery->whereColumn(
-            $relationship->getQualifiedForeignKeyName(),
-            $relationship->getQualifiedParentKeyName()
+            $relationship->getQualifiedFirstKeyName(),
+            $relationship->getQualifiedLocalKeyName(),
+        );
+    }
+
+    protected function joinBelongsToThroughParents(
+        EloquentBuilder $subquery,
+        BelongsToThrough $relationship,
+    ): void {
+        $throughParents = $relationship->getThroughParents();
+
+        foreach ($throughParents as $i => $throughParent) {
+            $predecessor = ($i === 0)
+                ? $relationship->getRelated()
+                : $throughParents[$i - 1];
+
+            $subquery->join(
+                $throughParent->getTable(),
+                $throughParent->qualifyColumn($relationship->getForeignKeyName($predecessor)),
+                '=',
+                $predecessor->qualifyColumn($relationship->getLocalKeyName($predecessor)),
+            );
+        }
+    }
+
+    protected function joinHasOneThroughParent(
+        EloquentBuilder $subquery,
+        HasOneThrough $relationship,
+    ): void {
+        $subquery->join(
+            invade($relationship)->throughParent->getTable(), /** @phpstan-ignore property.protected */
+            $relationship->getQualifiedParentKeyName(),
+            '=',
+            $relationship->getQualifiedFarKeyName(),
         );
     }
 
     protected function applyIntermediateRelationshipJoin(
         EloquentBuilder $subquery,
         BelongsTo | HasOne | MorphOne | BelongsToThrough | HasOneThrough $currentRelationship,
-        BelongsTo | HasOne | MorphOne | BelongsToThrough | HasOneThrough $previousRelationship
+        BelongsTo | HasOne | MorphOne | BelongsToThrough | HasOneThrough $previousRelationship,
+        bool $isSubqueryBase,
     ): void {
         $previousTable = $previousRelationship->getRelated()->getTable();
 
@@ -213,8 +217,16 @@ class RelationshipOrderer
         } elseif ($currentRelationship instanceof HasOne) {
             $this->joinHasOne($subquery, $currentRelationship, $previousTable);
         } elseif ($currentRelationship instanceof BelongsToThrough) {
+            if (! $isSubqueryBase) {
+                $this->joinBelongsToThroughParents($subquery, $currentRelationship);
+            }
+
             $this->joinBelongsToThrough($subquery, $currentRelationship, $previousTable);
         } elseif ($currentRelationship instanceof HasOneThrough) {
+            if (! $isSubqueryBase) {
+                $this->joinHasOneThroughParent($subquery, $currentRelationship);
+            }
+
             $this->joinHasOneThrough($subquery, $currentRelationship, $previousTable);
         }
     }
@@ -267,35 +279,8 @@ class RelationshipOrderer
         string $previousTable
     ): void {
         $throughParents = $relationship->getThroughParents();
-        $targetModel = $relationship->getRelated();
-
-        // Join through parents from target to previousTable
-        // For User->Company via Team: join Team to Company, then User to Team
-        foreach ($throughParents as $i => $throughParent) {
-            $isFirstThroughParent = $i === 0;
-
-            if ($isFirstThroughParent) {
-                // Join first through parent to the target model
-                $subquery->join(
-                    $throughParent->getTable(),
-                    $targetModel->qualifyColumn($relationship->getLocalKeyName($targetModel)),
-                    '=',
-                    $throughParent->qualifyColumn($relationship->getForeignKeyName($targetModel)),
-                );
-            } else {
-                // Join subsequent through parents
-                $predecessor = $throughParents[$i - 1];
-                $subquery->join(
-                    $throughParent->getTable(),
-                    $predecessor->qualifyColumn($relationship->getLocalKeyName($predecessor)),
-                    '=',
-                    $throughParent->qualifyColumn($relationship->getForeignKeyName($predecessor)),
-                );
-            }
-        }
-
-        // Finally, join the previous table to the last through parent
         $lastThroughParent = end($throughParents);
+
         $subquery->join(
             $previousTable,
             $lastThroughParent->qualifyColumn($relationship->getLocalKeyName($lastThroughParent)),
@@ -309,15 +294,6 @@ class RelationshipOrderer
         HasOneThrough $relationship,
         string $previousTable
     ): void {
-        /** @var Model $throughParent */
-        $throughParent = invade($relationship)->throughParent; /** @phpstan-ignore property.protected */
-        $subquery->join(
-            $throughParent->getTable(),
-            $relationship->getQualifiedParentKeyName(),
-            '=',
-            $relationship->getQualifiedFarKeyName()
-        );
-
         $subquery->join(
             $previousTable,
             $relationship->getQualifiedLocalKeyName(),

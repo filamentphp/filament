@@ -1444,7 +1444,7 @@ describe('preventing file attachment tampering', function (): void {
         Storage::disk('local')->put('uploads/evil.jpg', 'evil');
     });
 
-    it('allows a tampered `data-id` to overwrite the record when `preventFileAttachmentTampering()` is not used', function (): void {
+    it('allows a tampered `data-id` to overwrite the record when `preventFileAttachmentPathTampering()` is not used', function (): void {
         $post = Post::factory()->create([
             'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
         ]);
@@ -1458,7 +1458,7 @@ describe('preventing file attachment tampering', function (): void {
             ->and($post->fresh()->content)->not->toContain('data-id="uploads/original.jpg"');
     });
 
-    it('drops a tampered `data-id` when using `preventFileAttachmentTampering()`', function (): void {
+    it('drops a tampered `data-id` when using `preventFileAttachmentPathTampering()`', function (): void {
         $post = Post::factory()->create([
             'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
         ]);
@@ -1470,7 +1470,7 @@ describe('preventing file attachment tampering', function (): void {
         expect($post->fresh()->content)->not->toContain('uploads/evil.jpg');
     });
 
-    it('leaves an unchanged `data-id` alone when using `preventFileAttachmentTampering()`', function (): void {
+    it('leaves an unchanged `data-id` alone when using `preventFileAttachmentPathTampering()`', function (): void {
         $post = Post::factory()->create([
             'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
         ]);
@@ -1508,7 +1508,7 @@ describe('preventing file attachment tampering', function (): void {
         expect($post->fresh()->content)->not->toContain('uploads/evil.jpg');
     });
 
-    it('rejects all `data-id` values when no record is bound and `preventFileAttachmentTampering()` is used', function (): void {
+    it('rejects all `data-id` values when no record is bound and `preventFileAttachmentPathTampering()` is used', function (): void {
         livewire(TestComponentWithRichEditorPreventingTamperingWithoutRecord::class)
             ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
             ->assertSuccessful();
@@ -1521,7 +1521,7 @@ describe('preventing file attachment tampering', function (): void {
 
         $editor = (new RichEditor('content'))
             ->fileAttachmentsDisk('local')
-            ->preventFileAttachmentTampering()
+            ->preventFileAttachmentPathTampering()
             ->container(Schema::make(Livewire::make())->model($post)->statePath('data'));
 
         $cast = new Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast($editor);
@@ -2089,7 +2089,7 @@ class TestComponentWithRichEditorRecordPreventingTampering extends Livewire
             ->components([
                 RichEditor::make('content')
                     ->fileAttachmentsDisk('local')
-                    ->preventFileAttachmentTampering(),
+                    ->preventFileAttachmentPathTampering(),
             ])
             ->model($this->record)
             ->statePath('data');
@@ -2116,7 +2116,7 @@ class TestComponentWithRichEditorRecordAllowingTemplatePaths extends Livewire
             ->components([
                 RichEditor::make('content')
                     ->fileAttachmentsDisk('local')
-                    ->preventFileAttachmentTampering(
+                    ->preventFileAttachmentPathTampering(
                         allowFilePathUsing: static fn (string $file): bool => str_starts_with($file, 'templates/'),
                     ),
             ])
@@ -2138,7 +2138,7 @@ class TestComponentWithRichEditorPreventingTamperingWithoutRecord extends Livewi
             ->components([
                 RichEditor::make('content')
                     ->fileAttachmentsDisk('local')
-                    ->preventFileAttachmentTampering(),
+                    ->preventFileAttachmentPathTampering(),
             ])
             ->statePath('data');
     }

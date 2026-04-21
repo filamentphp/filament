@@ -202,6 +202,18 @@ Filament compares every submitted string path against the value originally loade
     `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path is rejected unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
 </Aside>
 
+To apply this check to every `FileUpload` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::configureUsing(function (FileUpload $component): void {
+    $component->preventFilePathTampering();
+});
+```
+
+Individual fields can still opt out by calling `preventFilePathTampering(false)`.
+
 ### Allowing additional file paths with a callback
 
 If your application legitimately references a path that is not on the record — for example, a button that selects a pre-uploaded template file — pass the `allowFilePathUsing` argument to approve it:
