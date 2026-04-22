@@ -12,10 +12,12 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\File;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\XLSX\Writer;
+use Throwable;
 
 class CreateXlsxFile implements ShouldQueue
 {
@@ -25,6 +27,13 @@ class CreateXlsxFile implements ShouldQueue
     use SerializesModels;
 
     public bool $deleteWhenMissingModels = true;
+
+    public ?int $tries = 3;
+
+    public ?int $maxExceptions = 0;
+
+    /** @var array<int> */
+    public array $backoff = [30, 60, 300];
 
     protected Exporter $exporter;
 
@@ -96,5 +105,14 @@ class CreateXlsxFile implements ShouldQueue
         );
 
         unlink($temporaryFile);
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        Log::error(static::class . ' permanently failed', [
+            'export_id' => $this->export->getKey(),
+            'exception_class' => $exception::class,
+            'exception_message' => $exception->getMessage(),
+        ]);
     }
 }

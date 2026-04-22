@@ -13,6 +13,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ExportCompletion implements ShouldQueue
 {
@@ -22,6 +24,10 @@ class ExportCompletion implements ShouldQueue
     use SerializesModels;
 
     public bool $deleteWhenMissingModels = true;
+
+    public ?int $tries = 1;
+
+    public ?int $maxExceptions = 0;
 
     protected Exporter $exporter;
 
@@ -92,5 +98,14 @@ class ExportCompletion implements ShouldQueue
         } else {
             $notification->sendToDatabase($this->export->user, isEventDispatched: true);
         }
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        Log::error(static::class . ' permanently failed', [
+            'export_id' => $this->export->getKey(),
+            'exception_class' => $exception::class,
+            'exception_message' => $exception->getMessage(),
+        ]);
     }
 }
