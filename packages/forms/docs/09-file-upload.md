@@ -196,10 +196,10 @@ FileUpload::make('avatar')
     ->preventFilePathTampering()
 ```
 
-Filament compares every submitted string path against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match are dropped before the record is saved and before any URL is generated for the field. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
+Filament compares every submitted string path against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
 
 <Aside variant="warning">
-    `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path is rejected unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
+    `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path fails validation unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
 </Aside>
 
 To apply this check to every `FileUpload` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
@@ -216,7 +216,7 @@ Individual fields can still opt out by calling `preventFilePathTampering(false)`
 
 ### Allowing additional file paths with a callback
 
-If your application legitimately references a path that is not on the record — for example, a button that selects a pre-uploaded template file — pass the `allowFilePathUsing` argument to approve it:
+If your application legitimately references a path that is not on the record — for example, a button that selects a pre-uploaded template file — pass the `allowFilePathUsing` argument to approve it. Approved paths bypass the validation error:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -228,6 +228,18 @@ FileUpload::make('avatar')
 ```
 
 <UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
+The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering()
+    ->validationMessages([
+        'tampered' => 'The selected attachment is not permitted.',
+    ])
+```
 
 ## Avatar mode
 

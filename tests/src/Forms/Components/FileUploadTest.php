@@ -306,14 +306,15 @@ describe('preventing existing file path tampering', function (): void {
         expect($user->refresh()->status)->toBe('uploads/tampered.jpg');
     });
 
-    it('drops a tampered string value when using `preventFilePathTampering()`', function (): void {
+    it('fails validation for a tampered string value when using `preventFilePathTampering()`', function (): void {
         $user = User::factory()->create(['status' => 'uploads/original.jpg']);
 
         livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
             ->set('data.status', ['uploads/tampered.jpg'])
-            ->call('save');
+            ->call('save')
+            ->assertHasFormErrors(['status']);
 
-        expect($user->refresh()->status)->toBeNull();
+        expect($user->refresh()->status)->toBe('uploads/original.jpg');
     });
 
     it('leaves an unchanged string value alone when using `preventFilePathTampering()`', function (): void {
@@ -321,17 +322,19 @@ describe('preventing existing file path tampering', function (): void {
 
         livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
             ->set('data.status', ['uploads/original.jpg'])
-            ->call('save');
+            ->call('save')
+            ->assertHasNoFormErrors();
 
         expect($user->refresh()->status)->toBe('uploads/original.jpg');
     });
 
-    it('drops tampered paths from a multi-file value while keeping the originals when using `preventFilePathTampering()`', function (): void {
+    it('fails validation when a tampered path is mixed with originals in a multi-file value using `preventFilePathTampering()`', function (): void {
         $user = User::factory()->create(['json' => ['uploads/a.jpg', 'uploads/b.jpg']]);
 
         livewire(TestComponentWithMultipleFileUploadRecordPreventingTampering::class, ['record' => $user])
             ->set('data.json', ['uploads/a.jpg', 'uploads/b.jpg', 'uploads/evil.jpg'])
-            ->call('save');
+            ->call('save')
+            ->assertHasFormErrors(['json']);
 
         expect($user->refresh()->json)->toBe(['uploads/a.jpg', 'uploads/b.jpg']);
     });
@@ -341,16 +344,17 @@ describe('preventing existing file path tampering', function (): void {
 
         livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
             ->set('data.status', null)
-            ->call('save');
+            ->call('save')
+            ->assertHasNoFormErrors();
 
         expect($user->refresh()->status)->toBeNull();
     });
 
-    it('rejects all string values when no record is bound and `preventFilePathTampering()` is used', function (): void {
+    it('fails validation for all string values when no record is bound and `preventFilePathTampering()` is used', function (): void {
         livewire(TestComponentWithFileUploadPreventingTamperingWithoutRecord::class)
             ->set('data.status', ['uploads/anything.jpg'])
             ->call('save')
-            ->assertSet('data.status', []);
+            ->assertHasFormErrors(['status']);
     });
 
     it('keeps a submitted path when the `allowFilePathUsing` callback returns `true`', function (): void {
@@ -358,19 +362,30 @@ describe('preventing existing file path tampering', function (): void {
 
         livewire(TestComponentWithFileUploadRecordAllowingTemplateFilePaths::class, ['record' => $user])
             ->set('data.status', ['templates/brochure.pdf'])
-            ->call('save');
+            ->call('save')
+            ->assertHasNoFormErrors();
 
         expect($user->refresh()->status)->toBe('templates/brochure.pdf');
     });
 
-    it('drops a submitted path when the `allowFilePathUsing` callback returns `false`', function (): void {
+    it('fails validation when the `allowFilePathUsing` callback returns `false`', function (): void {
         $user = User::factory()->create(['status' => 'uploads/original.jpg']);
 
         livewire(TestComponentWithFileUploadRecordAllowingTemplateFilePaths::class, ['record' => $user])
             ->set('data.status', ['uploads/tampered.jpg'])
-            ->call('save');
+            ->call('save')
+            ->assertHasFormErrors(['status']);
 
-        expect($user->refresh()->status)->toBeNull();
+        expect($user->refresh()->status)->toBe('uploads/original.jpg');
+    });
+
+    it('uses a custom validation message when `tampered` is defined in `validationMessages()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTamperingAndCustomMessage::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save')
+            ->assertHasFormErrors(['status' => 'The selected attachment is not permitted.']);
     });
 
     it('returns `null` for tampered paths from `getUploadedFiles()` when using `preventFilePathTampering()`', function (): void {
@@ -2433,6 +2448,36 @@ class TestComponentWithMultipleFileUploadRecordPreventingTampering extends Livew
                     ->multiple()
                     ->fetchFileInformation(false)
                     ->preventFilePathTampering(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithFileUploadRecordPreventingTamperingAndCustomMessage extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering()
+                    ->validationMessages([
+                        'tampered' => 'The selected attachment is not permitted.',
+                    ]),
             ])
             ->model($this->record)
             ->statePath('data');
