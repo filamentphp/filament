@@ -1458,16 +1458,19 @@ describe('preventing file attachment tampering', function (): void {
             ->and($post->fresh()->content)->not->toContain('data-id="uploads/original.jpg"');
     });
 
-    it('drops a tampered `data-id` when using `preventFileAttachmentPathTampering()`', function (): void {
+    it('fails validation for a tampered `data-id` when using `preventFileAttachmentPathTampering()`', function (): void {
         $post = Post::factory()->create([
             'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
         ]);
 
         livewire(TestComponentWithRichEditorRecordPreventingTampering::class, ['record' => $post])
             ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
-            ->call('save');
+            ->call('save')
+            ->assertHasFormErrors(['content']);
 
-        expect($post->fresh()->content)->not->toContain('uploads/evil.jpg');
+        expect($post->fresh()->content)
+            ->toContain('data-id="uploads/original.jpg"')
+            ->and($post->fresh()->content)->not->toContain('uploads/evil.jpg');
     });
 
     it('leaves an unchanged `data-id` alone when using `preventFileAttachmentPathTampering()`', function (): void {
@@ -1477,7 +1480,8 @@ describe('preventing file attachment tampering', function (): void {
 
         livewire(TestComponentWithRichEditorRecordPreventingTampering::class, ['record' => $post])
             ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />')
-            ->call('save');
+            ->call('save')
+            ->assertHasNoFormErrors();
 
         expect($post->fresh()->content)->toContain('data-id="uploads/original.jpg"');
     });
@@ -1491,27 +1495,43 @@ describe('preventing file attachment tampering', function (): void {
 
         livewire(TestComponentWithRichEditorRecordAllowingTemplatePaths::class, ['record' => $post])
             ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="templates/brochure.jpg" />')
-            ->call('save');
+            ->call('save')
+            ->assertHasNoFormErrors();
 
         expect($post->fresh()->content)->toContain('data-id="templates/brochure.jpg"');
     });
 
-    it('drops a `data-id` that the `allowFilePathUsing` callback rejects', function (): void {
+    it('fails validation when the `allowFilePathUsing` callback rejects a `data-id`', function (): void {
         $post = Post::factory()->create([
             'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
         ]);
 
         livewire(TestComponentWithRichEditorRecordAllowingTemplatePaths::class, ['record' => $post])
             ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
-            ->call('save');
+            ->call('save')
+            ->assertHasFormErrors(['content']);
 
-        expect($post->fresh()->content)->not->toContain('uploads/evil.jpg');
+        expect($post->fresh()->content)
+            ->toContain('data-id="uploads/original.jpg"')
+            ->and($post->fresh()->content)->not->toContain('uploads/evil.jpg');
     });
 
-    it('rejects all `data-id` values when no record is bound and `preventFileAttachmentPathTampering()` is used', function (): void {
+    it('fails validation for all `data-id` values when no record is bound and `preventFileAttachmentPathTampering()` is used', function (): void {
         livewire(TestComponentWithRichEditorPreventingTamperingWithoutRecord::class)
             ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
-            ->assertSuccessful();
+            ->call('save')
+            ->assertHasFormErrors(['content']);
+    });
+
+    it('uses a custom validation message when `tampered` is defined in `validationMessages()`', function (): void {
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        livewire(TestComponentWithRichEditorRecordPreventingTamperingAndCustomMessage::class, ['record' => $post])
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
+            ->call('save')
+            ->assertHasFormErrors(['content' => 'The content references an image that is not permitted.']);
     });
 
     it('does not resolve a URL for a tampered `data-id` during state cast hydration', function (): void {
@@ -2141,5 +2161,40 @@ class TestComponentWithRichEditorPreventingTamperingWithoutRecord extends Livewi
                     ->preventFileAttachmentPathTampering(),
             ])
             ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithRichEditorRecordPreventingTamperingAndCustomMessage extends Livewire
+{
+    public Post $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('local')
+                    ->preventFileAttachmentPathTampering()
+                    ->validationMessages([
+                        'tampered' => 'The content references an image that is not permitted.',
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
     }
 }

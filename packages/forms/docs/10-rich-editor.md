@@ -412,12 +412,12 @@ RichEditor::make('content')
     ->preventFileAttachmentPathTampering()
 ```
 
-Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` has its `id` and `src` attributes removed before the record is saved and before any URL is generated. Newly uploaded images always pass through.
+Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through.
 
 If you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection.
 
 <Aside variant="warning">
-    `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` is rejected unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
+    `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
 </Aside>
 
 To apply this check to every `RichEditor` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
@@ -434,7 +434,7 @@ Individual fields can still opt out by calling `preventFileAttachmentPathTamperi
 
 #### Allowing additional `data-id` values with a callback
 
-If your application legitimately references an identifier that is not on the record — for example, a "copy from another record" action — pass the `allowFilePathUsing` argument to approve it:
+If your application legitimately references an identifier that is not on the record — for example, a "copy from another record" action — pass the `allowFilePathUsing` argument to approve it. Approved identifiers bypass the validation error:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -446,6 +446,18 @@ RichEditor::make('content')
 ```
 
 <UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
+The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentPathTampering()
+    ->validationMessages([
+        'tampered' => 'The content references an image that is not permitted.',
+    ])
+```
 
 ### Validating uploaded images
 
