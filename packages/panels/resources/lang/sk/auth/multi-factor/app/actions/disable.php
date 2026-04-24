@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Zadaný kód je neplatný.',
 
+                    'rate_limited' => 'Príliš veľa pokusov. Skúste to neskôr.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Zadaný obnovovací kód je neplatný.',
+
+                    'rate_limited' => 'Príliš veľa pokusov. Skúste to neskôr.',
 
                 ],
 
