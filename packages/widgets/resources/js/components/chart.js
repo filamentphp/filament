@@ -44,8 +44,12 @@ export default function chart({ cachedData, options, type }) {
 
             this.$nextTick(() => {
                 this._initChart()
-                this.resizeObserver = new ResizeObserver(() => this.resizeChart())
+
+                this.resizeObserver = new ResizeObserver(() => this._resizeChart())
                 this.resizeObserver.observe(this.$el)
+
+                this.dprObserver = Alpine.debounce(() => this._handleDprChange(), 250)
+                window.addEventListener('resize', this.dprObserver)
             })
         },
 
@@ -143,7 +147,15 @@ export default function chart({ cachedData, options, type }) {
             })
         },
 
-        resizeChart() {
+        _handleDprChange() {
+            this.whenChart((chart) => {
+                if (chart.currentDevicePixelRatio !== window.devicePixelRatio) {
+                    chart.resize()
+                }
+            })
+        },
+
+        _resizeChart() {
             this.whenChart((chart) => {
                 chart.resize()
             })
@@ -178,6 +190,7 @@ export default function chart({ cachedData, options, type }) {
 
         destroy() {
             this.resizeObserver?.disconnect()
+            this.dprObserver && window.removeEventListener('resize', this.dprObserver)
             this.getChart()?.destroy()
         },
     }
