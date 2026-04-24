@@ -406,6 +406,47 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->saveRelationshipsUsing(static function (RichEditor $component): void {
             $component->saveFileAttachmentsToRecord();
         });
+
+        $this->rule(static function (RichEditor $component): Closure {
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $originalPaths = $component->getOriginalFileAttachmentPaths();
+                $attachmentIds = [];
+
+                $component->getTipTapEditor()
+                    ->setContent($value)
+                    ->descendants(function (object $node) use (&$attachmentIds): void {
+                        if ($node->type !== 'image') {
+                            return;
+                        }
+
+                        $id = $node->attrs->id ?? null;
+
+                        if (blank($id)) {
+                            return;
+                        }
+
+                        $attachmentIds[] = $id;
+                    });
+
+                foreach ($attachmentIds as $id) {
+                    if ($component->getUploadedFileAttachment($id) !== null) {
+                        continue;
+                    }
+
+                    if ($component->isFileAttachmentPathAuthorized($id, $originalPaths)) {
+                        continue;
+                    }
+
+                    $fail(__($component->getValidationMessages()['tampered'] ?? 'filament-forms::validation.tampered_file_path', ['attribute' => $component->getValidationAttribute()]));
+
+                    return;
+                }
+            };
+        }, static fn (RichEditor $component): bool => $component->shouldPreventFileAttachmentPathTampering());
     }
 
     /**
@@ -415,16 +456,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $fileAttachmentIds = [];
 
-        $shouldPreventTampering = $this->shouldPreventFileAttachmentPathTampering();
-        $originalFileAttachmentPaths = $shouldPreventTampering ? $this->getOriginalFileAttachmentPaths() : [];
-
         $this->rawState(
             $this->getTipTapEditor()
                 ->setContent($this->getRawState() ?? [
                     'type' => 'doc',
                     'content' => [],
                 ])
-                ->descendants(function (object &$node) use (&$fileAttachmentIds, $shouldPreventTampering, $originalFileAttachmentPaths): void {
+                ->descendants(function (object &$node) use (&$fileAttachmentIds): void {
                     if ($node->type !== 'image') {
                         return;
                     }
@@ -440,13 +478,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->id);
 
                         $fileAttachmentIds[] = $node->attrs->id;
-
-                        return;
-                    }
-
-                    if ($shouldPreventTampering && ! $this->isFileAttachmentPathAuthorized($node->attrs->id, $originalFileAttachmentPaths)) {
-                        $node->attrs->id = null;
-                        $node->attrs->src = null;
 
                         return;
                     }

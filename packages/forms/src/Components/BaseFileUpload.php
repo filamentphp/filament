@@ -692,6 +692,30 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             ...$arrayRules,
         ];
 
+        if ($this->shouldPreventFilePathTampering()) {
+            $rules[] = function (string $attribute, mixed $value, Closure $fail): void {
+                $originalPaths = $this->getOriginalFilePaths();
+
+                foreach (Arr::wrap($value) as $file) {
+                    if ($file instanceof TemporaryUploadedFile) {
+                        continue;
+                    }
+
+                    if (! is_string($file)) {
+                        continue;
+                    }
+
+                    if ($this->isFilePathAuthorized($file, $originalPaths)) {
+                        continue;
+                    }
+
+                    $fail(__($this->getValidationMessages()['tampered'] ?? 'filament-forms::validation.tampered_file_path', ['attribute' => $this->getValidationAttribute()]));
+
+                    return;
+                }
+            };
+        }
+
         $rules[] = function (string $attribute, array $value, Closure $fail) use ($fileRules): void {
             $files = array_filter($value, fn (TemporaryUploadedFile | string $file): bool => $file instanceof TemporaryUploadedFile);
 
@@ -915,10 +939,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return;
         }
 
-        if ($this->shouldPreventFilePathTampering()) {
-            $this->dropTamperedFilePaths();
-        }
-
         $rawState = array_filter(array_map(function (TemporaryUploadedFile | string $file) {
             // String values represent paths to files that already exist on the disk, and
             // are passed through unchanged. Like any Livewire form field value, this
@@ -961,27 +981,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         $this->rawState($rawState);
         $this->callAfterStateUpdated();
-    }
-
-    protected function dropTamperedFilePaths(): void
-    {
-        $originalPaths = $this->getOriginalFilePaths();
-
-        $filtered = [];
-
-        foreach (Arr::wrap($this->getRawState()) as $key => $file) {
-            if ($file instanceof TemporaryUploadedFile) {
-                $filtered[$key] = $file;
-
-                continue;
-            }
-
-            if (is_string($file) && $this->isFilePathAuthorized($file, $originalPaths)) {
-                $filtered[$key] = $file;
-            }
-        }
-
-        $this->rawState($filtered);
     }
 
     /**

@@ -23,6 +23,10 @@ class ExportCompletion implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
+    public ?int $tries = 1;
+
+    public ?int $maxExceptions = 0;
+
     protected Exporter $exporter;
 
     /**

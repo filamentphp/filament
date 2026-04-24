@@ -200,13 +200,13 @@ The value of a `FileUpload` field is a string (or array of strings) pointing to 
 
 Filament allows this by default because legitimate features depend on it — for example, an action that sets a field to a pre-uploaded template file, or a "copy from another record" button. If your forms do not rely on such a flow, opt in to the built-in checks:
 
-- For `FileUpload` fields, call [`preventFilePathTampering()`](../forms/file-upload#authorizing-existing-file-paths) to drop submitted paths that do not match the original value on the record.
-- For `RichEditor` fields, call [`preventFileAttachmentPathTampering()`](../forms/rich-editor#securing-file-attachment-ids) to strip `data-id` values that are not already present in the record's stored content.
+- For `FileUpload` fields, call [`preventFilePathTampering()`](../forms/file-upload#authorizing-existing-file-paths) to fail validation when a submitted path does not match the original value on the record.
+- For `RichEditor` fields, call [`preventFileAttachmentPathTampering()`](../forms/rich-editor#securing-file-attachment-ids) to fail validation when a submitted `data-id` is not already present in the record's stored content.
 
 Both methods compare submitted values against the attribute on the record via `$record->getOriginal()`, and both accept an `allowFilePathUsing` callback for paths that are legitimately added outside the record (such as shared template files). Newly uploaded files and images always pass through unchanged.
 
 <Aside variant="warning">
-    These checks require a record on the form, so on create pages every submitted existing path is rejected unless the `allowFilePathUsing` callback approves it. New uploads are unaffected.
+    These checks require a record on the form, so on create pages every submitted existing path fails validation unless the `allowFilePathUsing` callback approves it. New uploads are unaffected.
 </Aside>
 
 If you want these checks to apply across your entire application rather than remembering to add them to each field, enable them globally from a service provider's `boot()` method using `configureUsing()`:

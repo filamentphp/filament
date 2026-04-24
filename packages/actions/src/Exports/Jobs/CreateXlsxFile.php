@@ -26,6 +26,13 @@ class CreateXlsxFile implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
+    public ?int $tries = 3;
+
+    public ?int $maxExceptions = 0;
+
+    /** @var array<int> */
+    public array $backoff = [30, 60, 300];
+
     protected Exporter $exporter;
 
     /**
