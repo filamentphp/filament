@@ -16,7 +16,6 @@ use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\XLSX\Writer;
-use Throwable;
 
 class CreateXlsxFile implements ShouldQueue
 {

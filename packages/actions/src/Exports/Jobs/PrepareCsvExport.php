@@ -18,7 +18,6 @@ use Illuminate\Support\Collection;
 use League\Csv\Bom;
 use League\Csv\Writer;
 use SplTempFileObject;
-use Throwable;
 
 class PrepareCsvExport implements ShouldQueue
 {
