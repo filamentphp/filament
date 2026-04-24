@@ -4,6 +4,7 @@ use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileA
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\TextColor;
@@ -1977,7 +1978,7 @@ describe('file attachment URLs', function (): void {
 
             public function cleanUpFileAttachments(array $exceptIds): void {}
 
-            public function attribute(\Filament\Forms\Components\RichEditor\RichContentAttribute $attribute): static
+            public function attribute(RichContentAttribute $attribute): static
             {
                 return $this;
             }
@@ -2018,7 +2019,7 @@ describe('file attachment URLs', function (): void {
 
                     public function cleanUpFileAttachments(array $exceptIds): void {}
 
-                    public function attribute(\Filament\Forms\Components\RichEditor\RichContentAttribute $attribute): static
+                    public function attribute(RichContentAttribute $attribute): static
                     {
                         return $this;
                     }
