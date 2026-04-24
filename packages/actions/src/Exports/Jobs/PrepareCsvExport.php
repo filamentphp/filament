@@ -15,7 +15,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use League\Csv\Bom;
 use League\Csv\Writer;
 use SplTempFileObject;
@@ -232,15 +231,5 @@ class PrepareCsvExport implements ShouldQueue
     public function getExportCsvJob(): string
     {
         return ExportCsv::class;
-    }
-
-    public function failed(Throwable $exception): void
-    {
-        Log::error(static::class . ' permanently failed', [
-            'export_id' => $this->export->getKey(),
-            'batch_id' => $this->batch()?->id,
-            'exception_class' => $exception::class,
-            'exception_message' => $exception->getMessage(),
-        ]);
     }
 }

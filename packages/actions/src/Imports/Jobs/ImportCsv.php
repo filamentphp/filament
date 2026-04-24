@@ -17,7 +17,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -211,15 +210,5 @@ class ImportCsv implements ShouldQueue
         }
 
         return $value;
-    }
-
-    public function failed(Throwable $exception): void
-    {
-        Log::error(static::class . ' permanently failed', [
-            'import_id' => $this->import->getKey(),
-            'batch_id' => $this->batch()?->id,
-            'exception_class' => $exception::class,
-            'exception_message' => $exception->getMessage(),
-        ]);
     }
 }

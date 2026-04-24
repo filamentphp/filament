@@ -16,7 +16,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Throwable;
@@ -148,16 +147,5 @@ class ExportCsv implements ShouldQueue
     public function tags(): array
     {
         return $this->exporter->getJobTags();
-    }
-
-    public function failed(Throwable $exception): void
-    {
-        Log::error(static::class . ' permanently failed', [
-            'export_id' => $this->export->getKey(),
-            'page' => $this->page,
-            'batch_id' => $this->batch()?->id,
-            'exception_class' => $exception::class,
-            'exception_message' => $exception->getMessage(),
-        ]);
     }
 }

@@ -12,7 +12,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\File;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use OpenSpout\Common\Entity\Style\Style;
@@ -105,14 +104,5 @@ class CreateXlsxFile implements ShouldQueue
         );
 
         unlink($temporaryFile);
-    }
-
-    public function failed(Throwable $exception): void
-    {
-        Log::error(static::class . ' permanently failed', [
-            'export_id' => $this->export->getKey(),
-            'exception_class' => $exception::class,
-            'exception_message' => $exception->getMessage(),
-        ]);
     }
 }
