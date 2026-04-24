@@ -42,9 +42,9 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {
-        // if (! Str::isUuid($id)) {
-        //     return;
-        // }
+        if (! Str::isUuid($id)) {
+            return;
+        }
 
         $this->getNotificationsQuery()
             ->where('id', $id)
@@ -54,9 +54,9 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[On('markedNotificationAsRead')]
     public function markNotificationAsRead(string $id): void
     {
-        // if (! Str::isUuid($id)) {
-        //     return;
-        // }
+        if (! Str::isUuid($id)) {
+            return;
+        }
 
         $this->getNotificationsQuery()
             ->where('id', $id)
@@ -66,9 +66,9 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     #[On('markedNotificationAsUnread')]
     public function markNotificationAsUnread(string $id): void
     {
-        // if (! Str::isUuid($id)) {
-        //     return;
-        // }
+        if (! Str::isUuid($id)) {
+            return;
+        }
 
         $this->getNotificationsQuery()
             ->where('id', $id)
