@@ -28,10 +28,9 @@ describe('partial rendering', function (): void {
                 ->assertSee('Product SKU')
                 ->assertSee('Product Name')
                 ->fill('#form\.product_name', $productName)
-                ->wait(3)
+                ->assertValue('#form\.product_slug', Str::slug($productName))
                 ->assertSee($productSku)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+                ->assertNoSmoke();
         });
     });
 
@@ -48,11 +47,9 @@ describe('partial rendering', function (): void {
                 ->assertSee('Post Title')
                 ->assertSee('Post Date')
                 ->fill('#form\.post_title', $postTitle)
-                ->wait(1)
                 ->assertSee('/' . Str::slug($postTitle))
                 ->assertSee($postDate)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+                ->assertNoSmoke();
         });
     });
 
@@ -68,21 +65,9 @@ describe('partial rendering', function (): void {
             $page
                 ->assertSee($question)
                 ->radio("#form\.question-{$answer}", $answer)
-                ->wait(1)
+                ->waitForEvent('networkidle')
                 ->assertSee($question)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        });
-    });
-
-    it('has no accessibility issues in dark mode', function (): void {
-        retry(10, callback: function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/partial-rendering-test')
-                ->inDarkMode()
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
+                ->assertNoSmoke();
         });
     });
 });

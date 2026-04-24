@@ -10,14 +10,31 @@
         }
     }
 
-    &.fi-modal-slide-over {
+    &.fi-modal-slide-over.fi-modal-slide-over-from-start {
         & > .fi-modal-window-ctn > .fi-modal-window {
-            @apply ms-auto overflow-y-auto;
+            @apply me-auto;
+
+            &.fi-transition-enter-start,
+            &.fi-transition-leave-end {
+                @apply -translate-x-full rtl:translate-x-full;
+            }
+        }
+    }
+
+    &.fi-modal-slide-over.fi-modal-slide-over-from-end {
+        & > .fi-modal-window-ctn > .fi-modal-window {
+            @apply ms-auto;
 
             &.fi-transition-enter-start,
             &.fi-transition-leave-end {
                 @apply translate-x-full rtl:-translate-x-full;
             }
+        }
+    }
+
+    &.fi-modal-slide-over {
+        & > .fi-modal-window-ctn > .fi-modal-window {
+            @apply overflow-y-auto;
 
             &.fi-transition-enter-end,
             &.fi-transition-leave-start {
@@ -193,6 +210,14 @@
             @apply hidden;
         }
 
+        &.fi-width-3xs {
+            @apply max-w-3xs;
+        }
+
+        &.fi-width-2xs {
+            @apply max-w-2xs;
+        }
+
         &.fi-width-xs {
             @apply max-w-xs;
         }
@@ -237,6 +262,10 @@
             @apply max-w-7xl;
         }
 
+        &.fi-width-none {
+            @apply max-w-none;
+        }
+
         &.fi-width-full {
             @apply max-w-full;
         }
@@ -255,6 +284,10 @@
 
         &.fi-width-prose {
             @apply max-w-prose;
+        }
+
+        &.fi-width-container {
+            @apply container;
         }
 
         &.fi-width-screen-sm {

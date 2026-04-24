@@ -99,6 +99,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
+    protected bool | Closure $shouldPreventFileAttachmentPathTampering = false;
+
+    protected ?Closure $allowFileAttachmentPathUsing = null;
+
     protected string | Closure | null $activePanel = null;
 
     /**
@@ -402,6 +406,47 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->saveRelationshipsUsing(static function (RichEditor $component): void {
             $component->saveFileAttachmentsToRecord();
         });
+
+        $this->rule(static function (RichEditor $component): Closure {
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $originalPaths = $component->getOriginalFileAttachmentPaths();
+                $attachmentIds = [];
+
+                $component->getTipTapEditor()
+                    ->setContent($value)
+                    ->descendants(function (object $node) use (&$attachmentIds): void {
+                        if ($node->type !== 'image') {
+                            return;
+                        }
+
+                        $id = $node->attrs->id ?? null;
+
+                        if (blank($id)) {
+                            return;
+                        }
+
+                        $attachmentIds[] = $id;
+                    });
+
+                foreach ($attachmentIds as $id) {
+                    if ($component->getUploadedFileAttachment($id) !== null) {
+                        continue;
+                    }
+
+                    if ($component->isFileAttachmentPathAuthorized($id, $originalPaths)) {
+                        continue;
+                    }
+
+                    $fail(__($component->getValidationMessages()['tampered'] ?? 'filament-forms::validation.tampered_file_path', ['attribute' => $component->getValidationAttribute()]));
+
+                    return;
+                }
+            };
+        }, static fn (RichEditor $component): bool => $component->shouldPreventFileAttachmentPathTampering());
     }
 
     /**
@@ -458,6 +503,75 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         );
 
         return $fileAttachmentIds;
+    }
+
+    public function preventFileAttachmentPathTampering(bool | Closure $condition = true, ?Closure $allowFilePathUsing = null): static
+    {
+        $this->shouldPreventFileAttachmentPathTampering = $condition;
+        $this->allowFileAttachmentPathUsing = $allowFilePathUsing;
+
+        return $this;
+    }
+
+    public function shouldPreventFileAttachmentPathTampering(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPreventFileAttachmentPathTampering);
+    }
+
+    /**
+     * @param  array<string> | null  $originalPaths
+     */
+    public function isFileAttachmentPathAuthorized(string $file, ?array $originalPaths = null): bool
+    {
+        if (in_array($file, $originalPaths ?? $this->getOriginalFileAttachmentPaths(), strict: true)) {
+            return true;
+        }
+
+        if ($this->allowFileAttachmentPathUsing) {
+            return (bool) $this->evaluate($this->allowFileAttachmentPathUsing, [
+                'file' => $file,
+            ]);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getOriginalFileAttachmentPaths(): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record instanceof Model) {
+            return [];
+        }
+
+        $attribute = $this->getName();
+
+        $originalContent = $record->getOriginal($attribute, $record->getAttribute($attribute));
+
+        if (blank($originalContent)) {
+            return [];
+        }
+
+        $ids = [];
+
+        $this->getTipTapEditor()
+            ->setContent($originalContent)
+            ->descendants(function (object $node) use (&$ids): void {
+                if ($node->type !== 'image') {
+                    return;
+                }
+
+                if (blank($node->attrs->id ?? null)) {
+                    return;
+                }
+
+                $ids[] = $node->attrs->id;
+            });
+
+        return $ids;
     }
 
     public function saveFileAttachments(): void

@@ -113,6 +113,8 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     protected static string | Htmlable | null $badgeTooltip = null;
 
+    protected static bool $isBadgeDeferred = false;
+
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
@@ -152,12 +154,17 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
-        return Tab::make(static::class::getTitle($ownerRecord, $pageClass))
-            ->badge(static::class::getBadge($ownerRecord, $pageClass))
-            ->badgeColor(static::class::getBadgeColor($ownerRecord, $pageClass))
-            ->badgeTooltip(static::class::getBadgeTooltip($ownerRecord, $pageClass))
-            ->icon(static::class::getIcon($ownerRecord, $pageClass))
-            ->iconPosition(static::class::getIconPosition($ownerRecord, $pageClass));
+        $isTabBadgeDeferred = static::isBadgeDeferred($ownerRecord, $pageClass);
+
+        return Tab::make(static::getTitle($ownerRecord, $pageClass))
+            ->badge($isTabBadgeDeferred
+                ? static fn (): ?string => static::getBadge($ownerRecord, $pageClass)
+                : static::getBadge($ownerRecord, $pageClass))
+            ->deferBadge($isTabBadgeDeferred)
+            ->badgeColor(static::getBadgeColor($ownerRecord, $pageClass))
+            ->badgeTooltip(static::getBadgeTooltip($ownerRecord, $pageClass))
+            ->icon(static::getIcon($ownerRecord, $pageClass))
+            ->iconPosition(static::getIconPosition($ownerRecord, $pageClass));
     }
 
     public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | Htmlable | null
@@ -183,6 +190,11 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): string | Htmlable | null
     {
         return static::$badgeTooltip;
+    }
+
+    public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
+    {
+        return static::$isBadgeDeferred;
     }
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string

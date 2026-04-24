@@ -64,6 +64,10 @@ class ImportCsv implements ShouldQueue
 
     public function handle(): void
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
+
         /** @var Authenticatable $user */
         $user = $this->import->user;
 
