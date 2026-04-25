@@ -510,6 +510,7 @@
                                             $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
                                             $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
                                             $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
+                                            $filtersTriggerActionSlideOverPosition = $filtersTriggerAction->getSlideOverPosition();
                                             $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
                                             $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
                                         @endphp
@@ -527,6 +528,7 @@
                                             :icon="$filtersTriggerActionModalIcon"
                                             :icon-color="$filtersTriggerActionModalIconColor"
                                             :slide-over="$filtersTriggerActionIsModalSlideOver"
+                                            :slide-over-position="$filtersTriggerActionSlideOverPosition"
                                             :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
                                             :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
                                             :width="$filtersFormWidth"
@@ -601,6 +603,7 @@
                                             $columnManagerTriggerActionModalIcon = $columnManagerTriggerAction->getModalIcon();
                                             $columnManagerTriggerActionModalIconColor = $columnManagerTriggerAction->getModalIconColor();
                                             $columnManagerTriggerActionIsModalSlideOver = $columnManagerTriggerAction->isModalSlideOver();
+                                            $columnManagerTriggerActionSlideOverPosition = $columnManagerTriggerAction->getSlideOverPosition();
                                             $columnManagerTriggerActionIsModalFooterSticky = $columnManagerTriggerAction->isModalFooterSticky();
                                             $columnManagerTriggerActionIsModalHeaderSticky = $columnManagerTriggerAction->isModalHeaderSticky();
                                         @endphp
@@ -618,6 +621,7 @@
                                             :icon="$columnManagerTriggerActionModalIcon"
                                             :icon-color="$columnManagerTriggerActionModalIconColor"
                                             :slide-over="$columnManagerTriggerActionIsModalSlideOver"
+                                            :slide-over-position="$columnManagerTriggerActionSlideOverPosition"
                                             :sticky-footer="$columnManagerTriggerActionIsModalFooterSticky"
                                             :sticky-header="$columnManagerTriggerActionIsModalHeaderSticky"
                                             :width="$columnManagerWidth"
