@@ -45,7 +45,7 @@ trait CanOpenModal
 
     protected bool | Closure $isModalSlideOver = false;
 
-    protected SlideOverPosition | Closure | null $slideOverPosition = null;
+    protected SlideOverPosition | Closure | null $modalSlideOverPosition = null;
 
     protected Alignment | string | Closure | null $modalAlignment = null;
 
@@ -171,7 +171,7 @@ trait CanOpenModal
 
     public function slideOverPosition(SlideOverPosition | Closure | null $position = null): static
     {
-        $this->slideOverPosition = $position;
+        $this->modalSlideOverPosition = $position;
 
         return $this;
     }
@@ -669,9 +669,9 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
-    public function getSlideOverPosition(): ?SlideOverPosition
+    public function getModalSlideOverPosition(): ?SlideOverPosition
     {
-        return $this->evaluate($this->slideOverPosition);
+        return $this->evaluate($this->modalSlideOverPosition);
     }
 
     public function hasModal(): ?bool
