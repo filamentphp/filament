@@ -2,8 +2,8 @@
 
 namespace Filament\Panel\Concerns;
 
-use Filament\Support\Enums\Width;
 use Closure;
+use Filament\Support\Enums\Width;
 
 trait HasMaxContentWidth
 {
