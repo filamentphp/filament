@@ -50,7 +50,7 @@
             }
 
             & .fi-modal-close-btn {
-                @apply end-6 top-6;
+                @apply end-6 top-5;
             }
         }
     }
@@ -162,7 +162,7 @@
         @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         & .fi-modal-header {
-            @apply flex px-6 pt-6;
+            @apply flex px-5 pt-5;
 
             &.fi-vertical-align-center {
                 @apply items-center;
@@ -389,7 +389,7 @@
     &.fi-modal-has-sticky-header {
         & > .fi-modal-window-ctn > .fi-modal-window {
             & > .fi-modal-header {
-                @apply sticky top-0 z-10 border-b border-gray-200 bg-white pb-6 dark:border-white/10 dark:bg-gray-900;
+                @apply sticky top-0 z-10 border-b border-gray-200 bg-white pb-5 dark:border-white/10 dark:bg-gray-900;
             }
 
             & .fi-modal-content,
