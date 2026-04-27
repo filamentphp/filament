@@ -137,13 +137,17 @@ Route::name('filament.')
                                 }
 
                                 $routeGroup
-                                    ->group(function () use ($panel): void {
+                                    ->group(function () use ($hasTenancy, $panel, $tenantDomain): void {
                                         foreach ($panel->getAuthenticatedTenantRoutes() as $routes) {
                                             $routes($panel);
                                         }
 
                                         if (version_compare(Application::VERSION, '13.0.0', '<')) { /** @phpstan-ignore if.alwaysFalse, if.alwaysTrue */
-                                            Route::get('/', RedirectToHomeController::class)->name('home');
+                                            $route = Route::get('/', RedirectToHomeController::class)->name('home');
+
+                                            if ($hasTenancy && blank($tenantDomain)) {
+                                                $route->fallback();
+                                            }
                                         }
 
                                         Route::name('tenant.')->group(function () use ($panel): void {
@@ -188,7 +192,11 @@ Route::name('filament.')
                                             $rootKey = $rootDomain . $rootUri;
 
                                             if (! isset(Route::getRoutes()->getRoutesByMethod()['GET'][$rootKey])) {
-                                                Route::get('/', RedirectToHomeController::class)->name('home');
+                                                $route = Route::get('/', RedirectToHomeController::class)->name('home');
+
+                                                if ($hasTenancy && blank($tenantDomain)) {
+                                                    $route->fallback();
+                                                }
                                             }
                                         }
                                     });
