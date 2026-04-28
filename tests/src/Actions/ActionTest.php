@@ -238,12 +238,16 @@ describe('nested actions', function (): void {
     });
 
     it('keeps parent actions mounted when the modal close button does not cancel them', function (): void {
-        livewire(Actions::class)
+        $livewire = livewire(Actions::class)
             ->mountAction([
                 'grandparentWithModalCloseButtonCancellation',
                 TestAction::make('parentWithModalCloseButtonCancellation')->schemaComponent('grandparentValue'),
                 TestAction::make('closeButtonPreservesParentActions')->schemaComponent('parentValue'),
-            ])
+            ]);
+
+        expect($livewire->instance()->getMountedAction()->shouldModalCloseButtonCancelParentActions())->toBeFalse();
+
+        $livewire
             ->unmountAction(false)
             ->assertActionMounted([
                 'grandparentWithModalCloseButtonCancellation',
@@ -258,7 +262,7 @@ describe('nested actions', function (): void {
                 TestAction::make('parentWithModalCloseButtonCancellation')->schemaComponent('grandparentValue'),
                 TestAction::make('closeButtonCancelsAllParentActions')->schemaComponent('parentValue'),
             ])
-            ->call('unmountAction', true)
+            ->unmountAction()
             ->assertActionNotMounted();
     });
 
@@ -269,7 +273,7 @@ describe('nested actions', function (): void {
                 TestAction::make('parentWithModalCloseButtonCancellation')->schemaComponent('grandparentValue'),
                 TestAction::make('closeButtonCancelsToNamedParentAction')->schemaComponent('parentValue'),
             ])
-            ->call('unmountAction', 'parentWithModalCloseButtonCancellation')
+            ->unmountAction()
             ->assertActionMounted('grandparentWithModalCloseButtonCancellation');
     });
 
