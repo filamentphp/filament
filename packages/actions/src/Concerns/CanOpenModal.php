@@ -87,6 +87,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalClosedByClickingAway = null;
 
+    protected bool | Closure | null $isModalClickThrough = null;
+
     protected bool | Closure | null $isModalClosedByEscaping = null;
 
     protected bool | Closure | null $isModalAutofocused = null;
@@ -101,6 +103,13 @@ trait CanOpenModal
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
         $this->isModalClosedByClickingAway = $condition;
+
+        return $this;
+    }
+
+    public function modalClickThrough(bool | Closure | null $condition = true): static
+    {
+        $this->isModalClickThrough = $condition;
 
         return $this;
     }
@@ -704,6 +713,11 @@ trait CanOpenModal
     public function isModalClosedByClickingAway(): bool
     {
         return (bool) ($this->evaluate($this->isModalClosedByClickingAway) ?? ModalComponent::$isClosedByClickingAway);
+    }
+
+    public function isModalClickThrough(): bool
+    {
+        return (bool) ($this->evaluate($this->isModalClickThrough) ?? ModalComponent::$isModalClickThrough);
     }
 
     public function isModalClosedByEscaping(): bool

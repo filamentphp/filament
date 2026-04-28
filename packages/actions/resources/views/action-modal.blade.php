@@ -6,6 +6,7 @@
     $actionIsModalAutofocused = $action->isModalAutofocused();
     $actionHasModalCloseButton = $action->hasModalCloseButton();
     $actionIsModalClosedByClickingAway = $action->isModalClosedByClickingAway();
+    $actionIsModalClickThrough = $action->isModalClickThrough();
     $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
     $actionModalDescription = $action->getModalDescription();
     $actionExtraModalWindowAttributeBag = $action->getExtraModalWindowAttributeBag();
@@ -30,6 +31,7 @@
     :autofocus="$actionIsModalAutofocused"
     :close-button="$actionHasModalCloseButton"
     :close-by-clicking-away="$actionIsModalClosedByClickingAway"
+    :click-through="$actionIsModalClickThrough"
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"
     :focus-trap-returns-focus="false"

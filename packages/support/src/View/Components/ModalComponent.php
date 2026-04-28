@@ -10,6 +10,8 @@ class ModalComponent
 
     public static bool $isClosedByEscaping = true;
 
+    public static bool $isModalClickThrough = false;
+
     public static bool $isAutofocused = true;
 
     public static function autofocus(bool $condition = true): void
@@ -30,5 +32,10 @@ class ModalComponent
     public static function closedByEscaping(bool $condition = true): void
     {
         static::$isClosedByEscaping = $condition;
+    }
+
+    public static function modalClickThrough(bool $condition = true): void
+    {
+        static::$isModalClickThrough = $condition;
     }
 }
