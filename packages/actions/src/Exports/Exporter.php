@@ -242,6 +242,11 @@ abstract class Exporter
         return Row::fromValues($values, $style);
     }
 
+    public function configureXlsxWriterAfterOpen(Writer $writer): Writer
+    {
+        return $writer;
+    }
+
     public function configureXlsxWriterBeforeClose(Writer $writer): Writer
     {
         return $writer;
