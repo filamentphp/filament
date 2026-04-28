@@ -237,6 +237,42 @@ describe('nested actions', function (): void {
             ->assertNotDispatched('parent-called');
     });
 
+    it('keeps parent actions mounted when the modal close button does not cancel them', function (): void {
+        livewire(Actions::class)
+            ->mountAction([
+                'grandparentWithModalCloseButtonCancellation',
+                TestAction::make('parentWithModalCloseButtonCancellation')->schemaComponent('grandparentValue'),
+                TestAction::make('closeButtonPreservesParentActions')->schemaComponent('parentValue'),
+            ])
+            ->unmountAction(false)
+            ->assertActionMounted([
+                'grandparentWithModalCloseButtonCancellation',
+                TestAction::make('parentWithModalCloseButtonCancellation')->schemaComponent('grandparentValue'),
+            ]);
+    });
+
+    it('can cancel all parent actions when closing a modal using the close button', function (): void {
+        livewire(Actions::class)
+            ->mountAction([
+                'grandparentWithModalCloseButtonCancellation',
+                TestAction::make('parentWithModalCloseButtonCancellation')->schemaComponent('grandparentValue'),
+                TestAction::make('closeButtonCancelsAllParentActions')->schemaComponent('parentValue'),
+            ])
+            ->call('unmountAction', true)
+            ->assertActionNotMounted();
+    });
+
+    it('can cancel parent actions to a named action when closing a modal using the close button', function (): void {
+        livewire(Actions::class)
+            ->mountAction([
+                'grandparentWithModalCloseButtonCancellation',
+                TestAction::make('parentWithModalCloseButtonCancellation')->schemaComponent('grandparentValue'),
+                TestAction::make('closeButtonCancelsToNamedParentAction')->schemaComponent('parentValue'),
+            ])
+            ->call('unmountAction', 'parentWithModalCloseButtonCancellation')
+            ->assertActionMounted('grandparentWithModalCloseButtonCancellation');
+    });
+
     it('can mount a nested action with parent arguments', function (): void {
         livewire(Actions::class)
             ->mountAction([
@@ -421,6 +457,24 @@ describe('properties', function (): void {
         livewire(Actions::class)
             ->assertActionShouldOpenUrlInNewTab('urlInNewTab')
             ->assertActionShouldNotOpenUrlInNewTab('urlNotInNewTab');
+    });
+
+    it('can use `modalCloseButton()` to cancel all parent actions', function (): void {
+        $action = Action::make('test')
+            ->modalCloseButton(cancelParentActions: true);
+
+        expect($action->hasModalCloseButton())->toBeTrue();
+        expect($action->shouldModalCloseButtonCancelParentActions())->toBeTrue();
+        expect($action->shouldCancelAllParentActions())->toBeTrue();
+    });
+
+    it('can use `modalCloseButton()` to cancel parent actions to a named action', function (): void {
+        $action = Action::make('test')
+            ->modalCloseButton(cancelParentActions: 'parentAction');
+
+        expect($action->shouldModalCloseButtonCancelParentActions())->toBeTrue();
+        expect($action->shouldCancelAllParentActions())->toBeFalse();
+        expect($action->getParentActionToCancelTo())->toBe('parentAction');
     });
 
     it('can use `badge()` to set badge display mode', function (): void {

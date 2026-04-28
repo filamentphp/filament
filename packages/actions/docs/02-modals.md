@@ -762,6 +762,36 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions" version="4.x">The `modalCloseButton()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+If closing the modal with the close button should also cancel parent actions, you can pass the `cancelParentActions` argument to `modalCloseButton()`. Pass `true` to cancel all parent actions, or pass an action name to cancel back to a specific parent action:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('createPost')
+    ->schema([
+        TextInput::make('title')
+            ->required()
+            ->registerActions([
+                Action::make('confirmCreation')
+                    ->requiresConfirmation()
+                    ->modalCloseButton(cancelParentActions: true)
+                    ->action(function (): void {
+                        // ...
+                    }),
+                Action::make('editPostMetadata')
+                    ->requiresConfirmation()
+                    ->modalCloseButton(cancelParentActions: 'createPost')
+                    ->action(function (): void {
+                        // ...
+                    }),
+            ]),
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+```
+
 If you'd like to hide the close button for all modals in the application, you can do so by calling `ModalComponent::closeButton(false)` inside a service provider or middleware:
 
 ```php

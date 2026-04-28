@@ -13,6 +13,7 @@
     'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
+    'closeButtonEventHandler' => null,
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
@@ -58,6 +59,7 @@
     }
 
     $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
+    $closeButtonEventHandler ??= $closeEventHandler;
 
     $wireSubmitHandler = $attributes->get('wire:submit.prevent');
     $attributes = $attributes->except(['wire:submit.prevent']);
@@ -197,7 +199,7 @@
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
                             tabindex="-1"
-                            :x-on:click="$closeEventHandler"
+                            :x-on:click="$closeButtonEventHandler"
                             class="fi-modal-close-btn"
                         />
                     @endif
