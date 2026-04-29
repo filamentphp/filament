@@ -323,7 +323,7 @@ FileUpload::make('image')
 
 ### Setting the image editor's mode
 
-You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs#viewmode):
+You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs/blob/v1/README.md#viewmode):
 
 ```php
 use Filament\Forms\Components\FileUpload;
