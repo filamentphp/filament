@@ -214,6 +214,7 @@
             <div
                 @if (! $hasHeader) x-cloak @endif
                 x-show="@js($hasHeader) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
+                wire:key="{{ $this->getId() }}.table.header-{{ (int) $hasHeader }}-{{ (int) $hasNonBulkToolbarAction }}-{{ (int) !!$toolbarActions }}"
                 class="fi-ta-header-ctn"
             >
                 {{ FilamentView::renderHook(TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
@@ -293,6 +294,7 @@
                 <div
                     @if (! $hasHeaderToolbar) x-cloak @endif
                     x-show="@js($hasHeaderToolbar) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
+                    wire:key="{{ $this->getId() }}.table.header-toolbar-{{ (int) $hasHeaderToolbar }}-{{ (int) $hasNonBulkToolbarAction }}-{{ (int) !!$toolbarActions }}"
                     class="fi-ta-header-toolbar"
                 >
                     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
