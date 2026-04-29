@@ -25,6 +25,8 @@ trait CanBeAuthorized
 
     protected bool | Closure $hasAuthorizationNotification = false;
 
+    protected bool | Closure $shouldHideAuthorizationFeedbackWithoutMessage = false;
+
     protected bool | string | Closure | null $authorizeIndividualRecords = null;
 
     /**
@@ -193,6 +195,22 @@ trait CanBeAuthorized
         return $this;
     }
 
+    public function authorizationTooltipOrHidden(bool | Closure $condition = true): static
+    {
+        $this->hasAuthorizationTooltip = $condition;
+        $this->shouldHideAuthorizationFeedbackWithoutMessage = $condition;
+
+        return $this;
+    }
+
+    public function authorizationNotificationOrHidden(bool | Closure $condition = true): static
+    {
+        $this->hasAuthorizationNotification = $condition;
+        $this->shouldHideAuthorizationFeedbackWithoutMessage = $condition;
+
+        return $this;
+    }
+
     public function hasAuthorizationTooltip(): bool
     {
         return (bool) $this->evaluate($this->hasAuthorizationTooltip);
@@ -203,17 +221,30 @@ trait CanBeAuthorized
         return (bool) $this->evaluate($this->hasAuthorizationNotification);
     }
 
+    public function shouldHideAuthorizationFeedbackWithoutMessage(): bool
+    {
+        return (bool) $this->evaluate($this->shouldHideAuthorizationFeedbackWithoutMessage);
+    }
+
     public function isAuthorizedOrNotHiddenWhenUnauthorized(): bool
     {
-        if ($this->hasAuthorizationTooltip()) {
+        $hasFeedback = $this->hasAuthorizationTooltip() || $this->hasAuthorizationNotification();
+
+        if (! $hasFeedback) {
+            return $this->isAuthorized();
+        }
+
+        if (! $this->shouldHideAuthorizationFeedbackWithoutMessage()) {
             return true;
         }
 
-        if ($this->hasAuthorizationNotification()) {
+        $response = $this->getAuthorizationResponse();
+
+        if ($response->allowed()) {
             return true;
         }
 
-        return $this->isAuthorized();
+        return filled($response->message()) || filled($this->getAuthorizationMessage());
     }
 
     public function authorizeIndividualRecords(bool | string | Closure | null $callback = true): static

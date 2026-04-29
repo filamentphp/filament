@@ -275,6 +275,28 @@ Action::make('edit')
     ->authorizationNotification()
 ```
 
+If your policy mixes deny responses that carry a message with deny responses that don't (for example, a `Gate::before()` short-circuit that returns plain `false`), you can use `authorizationTooltipOrHidden()` to disable the action with a tooltip when a message is available, and hide the action otherwise:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->authorize('update')
+    ->authorizationTooltipOrHidden()
+```
+
+Likewise, `authorizationNotificationOrHidden()` keeps the action clickable and sends a notification when the deny response has a message, but hides the action when it doesn't:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->authorize('update')
+    ->authorizationNotificationOrHidden()
+```
+
 ### Disabling a button
 
 If you want to disable a button instead of hiding it, you can use the `disabled()` method:
