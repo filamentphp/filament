@@ -1,5 +1,5 @@
 @props([
-    'navigation',
+'navigation',
 ])
 
 <x-filament::tabs
@@ -8,8 +8,8 @@
     @foreach ($navigation as $navigationGroup)
         @php
             $navigationGroupLabel = $navigationGroup->getLabel();
-            $isNavigationGroupActive = $navigationGroup->isActive();
-            $navigationGroupIcon = $navigationGroup->getIcon();
+                        $isNavigationGroupActive = $navigationGroup->isActive();
+                        $navigationGroupIcon = $navigationGroup->getIcon();
         @endphp
 
         @if ($navigationGroupLabel)
@@ -27,12 +27,12 @@
                     @foreach ($navigationGroup->getItems() as $navigationItem)
                         @php
                             $navigationItemBadge = $navigationItem->getBadge();
-                            $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
-                            $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip($navigationItemBadge);
-                            $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
-                            $navigationItemUrl = $navigationItem->getUrl();
-                            $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
-                            $navigationItemExtraAttributes = $navigationItem->getExtraAttributeBag();
+                                                        $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
+                                                        $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip($navigationItemBadge);
+                                                        $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
+                                                        $navigationItemUrl = $navigationItem->getUrl();
+                                                        $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
+                                                        $navigationItemExtraAttributes = $navigationItem->getExtraAttributeBag();
                         @endphp
 
                         <x-filament::dropdown.list.item
@@ -60,13 +60,13 @@
             @foreach ($navigationGroup->getItems() as $navigationItem)
                 @php
                     $isNavigationItemActive = $navigationItem->isActive();
-                    $navigationItemBadge = $navigationItem->getBadge();
-                    $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
-                    $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip($navigationItemBadge);
-                    $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
-                    $navigationItemUrl = $navigationItem->getUrl();
-                    $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
-                    $navigationItemExtraAttributes = $navigationItem->getExtraAttributeBag();
+                                        $navigationItemBadge = $navigationItem->getBadge();
+                                        $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
+                                        $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip($navigationItemBadge);
+                                        $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
+                                        $navigationItemUrl = $navigationItem->getUrl();
+                                        $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
+                                        $navigationItemExtraAttributes = $navigationItem->getExtraAttributeBag();
                 @endphp
 
                 <x-filament::tabs.item

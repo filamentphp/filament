@@ -1,18 +1,18 @@
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\GridDirection;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Support\Enums\GridDirection;
+        use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
-    'action',
-    'actionAlignment' => null,
-    'afterItem' => null,
-    'blocks',
-    'columns' => null,
-    'key',
-    'trigger',
-    'width' => null,
+'action',
+'actionAlignment' => null,
+'afterItem' => null,
+'blocks',
+'columns' => null,
+'key',
+'trigger',
+'width' => null,
 ])
 
 <x-filament::dropdown
@@ -46,15 +46,15 @@
                 @php
                     $blockIcon = $block->getIcon();
 
-                    $wireClickActionArguments = ['block' => $block->getName()];
+                                        $wireClickActionArguments = ['block' => $block->getName()];
 
-                    if (filled($afterItem)) {
-                        $wireClickActionArguments['afterItem'] = $afterItem;
-                    }
+                                        if (filled($afterItem)) {
+                                            $wireClickActionArguments['afterItem'] = $afterItem;
+                                        }
 
-                    $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
+                                        $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
 
-                    $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
+                                        $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
                 @endphp
 
                 <x-filament::dropdown.list.item

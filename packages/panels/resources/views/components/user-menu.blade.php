@@ -1,33 +1,33 @@
 @props([
-    'position' => null,
+'position' => null,
 ])
 
 @php
     use Filament\Actions\Action;
-    use Filament\Enums\UserMenuPosition;
-    use Illuminate\Support\Arr;
+        use Filament\Enums\UserMenuPosition;
+        use Illuminate\Support\Arr;
 
-    $user = filament()->auth()->user();
+        $user = filament()->auth()->user();
 
-    $items = $this->getUserMenuItems();
+        $items = $this->getUserMenuItems();
 
-    $itemsBeforeAndAfterThemeSwitcher = collect($items)
-        ->groupBy(fn (Action $item): bool => $item->getSort() < 0, preserveKeys: true)
-        ->all();
-    $itemsBeforeThemeSwitcher = $itemsBeforeAndAfterThemeSwitcher[true] ?? collect();
-    $itemsAfterThemeSwitcher = $itemsBeforeAndAfterThemeSwitcher[false] ?? collect();
+        $itemsBeforeAndAfterThemeSwitcher = collect($items)
+            ->groupBy(fn (Action $item): bool => $item->getSort() < 0, preserveKeys: true)
+            ->all();
+        $itemsBeforeThemeSwitcher = $itemsBeforeAndAfterThemeSwitcher[true] ?? collect();
+        $itemsAfterThemeSwitcher = $itemsBeforeAndAfterThemeSwitcher[false] ?? collect();
 
-    $hasProfileHeader = $itemsBeforeThemeSwitcher->has('profile') &&
-        blank(($item = Arr::first($itemsBeforeThemeSwitcher))->getUrl()) &&
-        (! $item->hasAction());
+        $hasProfileHeader = $itemsBeforeThemeSwitcher->has('profile') &&
+            blank(($item = Arr::first($itemsBeforeThemeSwitcher))->getUrl()) &&
+            (! $item->hasAction());
 
-    if ($itemsBeforeThemeSwitcher->has('profile')) {
-        $itemsBeforeThemeSwitcher = $itemsBeforeThemeSwitcher->prepend($itemsBeforeThemeSwitcher->pull('profile'), 'profile');
-    }
+        if ($itemsBeforeThemeSwitcher->has('profile')) {
+            $itemsBeforeThemeSwitcher = $itemsBeforeThemeSwitcher->prepend($itemsBeforeThemeSwitcher->pull('profile'), 'profile');
+        }
 
-    $position ??= filament()->getUserMenuPosition();
+        $position ??= filament()->getUserMenuPosition();
 
-    $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+        $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
@@ -37,7 +37,7 @@
     :teleport="$position === UserMenuPosition::Topbar"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-user-menu'])
+        ->class(['fi-user-menu'])
     "
 >
     <x-slot name="trigger">
@@ -68,7 +68,7 @@
 
                 {{
                     \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
-                        'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
+                    'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
                     ]))
                 }}
             </button>
@@ -78,10 +78,10 @@
     @if ($hasProfileHeader)
         @php
             $item = $itemsBeforeThemeSwitcher['profile'];
-            $itemColor = $item->getColor();
-            $itemIcon = $item->getIcon();
+                        $itemColor = $item->getColor();
+                        $itemIcon = $item->getIcon();
 
-            unset($itemsBeforeThemeSwitcher['profile']);
+                        unset($itemsBeforeThemeSwitcher['profile']);
         @endphp
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}

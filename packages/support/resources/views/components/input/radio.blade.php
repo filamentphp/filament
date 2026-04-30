@@ -1,14 +1,14 @@
 @props([
-    'valid' => true,
+'valid' => true,
 ])
 
 <input
     type="radio"
     {{
         $attributes
-            ->class([
-                'fi-radio-input',
-                'fi-invalid' => ! $valid,
-            ])
+        ->class([
+        'fi-radio-input',
+        'fi-invalid' => ! $valid,
+        ])
     }}
 />

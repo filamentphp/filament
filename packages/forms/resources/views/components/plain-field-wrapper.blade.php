@@ -1,27 +1,27 @@
 @props([
-    'field' => null,
-    'id' => null,
-    'label' => null,
-    'labelTag' => 'label',
+'field' => null,
+'id' => null,
+'label' => null,
+'labelTag' => 'label',
 ])
 
 @php
     use Illuminate\View\ComponentAttributeBag;
 
-    if ($field) {
-        $id ??= $field->getId();
-        $label ??= $field->getLabel();
-    }
+        if ($field) {
+            $id ??= $field->getId();
+            $label ??= $field->getLabel();
+        }
 @endphp
 
 <div
     data-field-wrapper
     {{
         (new ComponentAttributeBag)
-            ->merge($field?->getExtraFieldWrapperAttributes() ?? [], escape: false)
-            ->class([
-                'fi-fo-field',
-            ])
+        ->merge($field?->getExtraFieldWrapperAttributes() ?? [], escape: false)
+        ->class([
+        'fi-fo-field',
+        ])
     }}
 >
     @if (filled($label))

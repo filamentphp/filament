@@ -1,54 +1,54 @@
 @props([
-    'alpineDisabled' => null,
-    'alpineValid' => null,
-    'disabled' => false,
-    'inlinePrefix' => false,
-    'inlineSuffix' => false,
-    'prefix' => null,
-    'prefixActions' => [],
-    'prefixIcon' => null,
-    'prefixIconColor' => 'gray',
-    'prefixIconAlias' => null,
-    'suffix' => null,
-    'suffixActions' => [],
-    'suffixIcon' => null,
-    'suffixIconColor' => 'gray',
-    'suffixIconAlias' => null,
-    'valid' => true,
+'alpineDisabled' => null,
+'alpineValid' => null,
+'disabled' => false,
+'inlinePrefix' => false,
+'inlineSuffix' => false,
+'prefix' => null,
+'prefixActions' => [],
+'prefixIcon' => null,
+'prefixIconColor' => 'gray',
+'prefixIconAlias' => null,
+'suffix' => null,
+'suffixActions' => [],
+'suffixIcon' => null,
+'suffixIconColor' => 'gray',
+'suffixIconAlias' => null,
+'valid' => true,
 ])
 
 @php
     use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $prefixActions = array_filter(
-        $prefixActions,
-        fn (\Filament\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
-    );
+        $prefixActions = array_filter(
+            $prefixActions,
+            fn (\Filament\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
+        );
 
-    $suffixActions = array_filter(
-        $suffixActions,
-        fn (\Filament\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
-    );
+        $suffixActions = array_filter(
+            $suffixActions,
+            fn (\Filament\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
+        );
 
-    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
-    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
+        $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
+        $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
 
-    $hasAlpineDisabledClasses = filled($alpineDisabled);
-    $hasAlpineValidClasses = filled($alpineValid);
-    $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
+        $hasAlpineDisabledClasses = filled($alpineDisabled);
+        $hasAlpineValidClasses = filled($alpineValid);
+        $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
+        $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
 
-    $hasLoadingIndicator = filled($wireTarget);
+        $hasLoadingIndicator = filled($wireTarget);
 
-    if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
-    }
+        if ($hasLoadingIndicator) {
+            $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
+        }
 
-    $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
-    $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
-    $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
+        $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
+        $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
+        $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
 @endphp
 
 <div
@@ -60,12 +60,12 @@
     @endif
     {{
         $attributes
-            ->except(['wire:target', 'tabindex'])
-            ->class([
-                'fi-input-wrp',
-                'fi-disabled' => (! $hasAlpineClasses) && $disabled,
-                'fi-invalid' => (! $hasAlpineClasses) && (! $valid),
-            ])
+        ->except(['wire:target', 'tabindex'])
+        ->class([
+        'fi-input-wrp',
+        'fi-disabled' => (! $hasAlpineClasses) && $disabled,
+        'fi-invalid' => (! $hasAlpineClasses) && (! $valid),
+        ])
     }}
 >
     @if ($hasPrefix || $hasLoadingIndicator)
@@ -79,10 +79,10 @@
                 x-on:click="$dispatch('focus-input')"
             @endif
             @class([
-                'fi-input-wrp-prefix',
-                'fi-input-wrp-prefix-has-content' => $hasPrefix,
-                'fi-inline' => $inlinePrefix,
-                'fi-input-wrp-prefix-has-label' => filled($prefix),
+            'fi-input-wrp-prefix',
+            'fi-input-wrp-prefix-has-content' => $hasPrefix,
+            'fi-inline' => $inlinePrefix,
+            'fi-input-wrp-prefix-has-label' => filled($prefix),
             ])
         >
             @if (count($prefixActions))
@@ -98,18 +98,18 @@
 
             {{
                 \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
-                    ->merge([
-                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ], escape: false)
-                    ->color(IconComponent::class, $prefixIconColor))
+                ->merge([
+                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ], escape: false)
+                ->color(IconComponent::class, $prefixIconColor))
             }}
 
             @if ($hasLoadingIndicator)
                 {{
                     \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
-                        'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
+                    'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                     ]))->color(IconComponent::class, 'gray'))
                 }}
             @endif
@@ -131,8 +131,8 @@
             wire:target="{{ $loadingIndicatorTarget }}"
         @endif
         @class([
-            'fi-input-wrp-content-ctn',
-            'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
+        'fi-input-wrp-content-ctn',
+        'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
         ])
     >
         {{ $slot }}
@@ -144,9 +144,9 @@
                 x-on:click="$dispatch('focus-input')"
             @endif
             @class([
-                'fi-input-wrp-suffix',
-                'fi-inline' => $inlineSuffix,
-                'fi-input-wrp-suffix-has-label' => filled($suffix),
+            'fi-input-wrp-suffix',
+            'fi-inline' => $inlineSuffix,
+            'fi-input-wrp-suffix-has-label' => filled($suffix),
             ])
         >
             @if (filled($suffix))
@@ -157,11 +157,11 @@
 
             {{
                 \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
-                    ->merge([
-                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ], escape: false)
-                    ->color(IconComponent::class, $suffixIconColor))
+                ->merge([
+                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ], escape: false)
+                ->color(IconComponent::class, $suffixIconColor))
             }}
 
             @if (count($suffixActions))

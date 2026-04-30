@@ -1,16 +1,16 @@
 @props([
-    'active' => false,
-    'collapsible' => true,
-    'icon' => null,
-    'items' => [],
-    'label' => null,
-    'sidebarCollapsible' => true,
-    'subNavigation' => false,
+'active' => false,
+'collapsible' => true,
+'icon' => null,
+'items' => [],
+'label' => null,
+'sidebarCollapsible' => true,
+'subNavigation' => false,
 ])
 
 @php
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
-    $hasDropdown = filled($label) && filled($icon) && $sidebarCollapsible;
+        $hasDropdown = filled($label) && filled($icon) && $sidebarCollapsible;
 @endphp
 
 <li
@@ -19,9 +19,9 @@
     x-bind:class="{ 'fi-collapsed': $store.sidebar.groupIsCollapsed(label) }"
     {{
         $attributes->class([
-            'fi-sidebar-group',
-            'fi-active' => $active,
-            'fi-collapsible' => $collapsible,
+        'fi-sidebar-group',
+        'fi-active' => $active,
+        'fi-collapsible' => $collapsible,
         ])
     }}
 >
@@ -87,29 +87,29 @@
             @php
                 $lists = [];
 
-                foreach ($items as $item) {
-                    if ($childItems = $item->getChildItems()) {
-                        $lists[] = [
-                            $item,
-                            ...$childItems,
-                        ];
-                        $lists[] = [];
+                                foreach ($items as $item) {
+                                    if ($childItems = $item->getChildItems()) {
+                                        $lists[] = [
+                                            $item,
+                                            ...$childItems,
+                                        ];
+                                        $lists[] = [];
 
-                        continue;
-                    }
+                                        continue;
+                                    }
 
-                    if (empty($lists)) {
-                        $lists[] = [$item];
+                                    if (empty($lists)) {
+                                        $lists[] = [$item];
 
-                        continue;
-                    }
+                                        continue;
+                                    }
 
-                    $lists[count($lists) - 1][] = $item;
-                }
+                                    $lists[count($lists) - 1][] = $item;
+                                }
 
-                if (empty($lists[count($lists) - 1])) {
-                    array_pop($lists);
-                }
+                                if (empty($lists[count($lists) - 1])) {
+                                    array_pop($lists);
+                                }
             @endphp
 
             @if (filled($label))
@@ -123,13 +123,13 @@
                     @foreach ($list as $item)
                         @php
                             $itemIsActive = $item->isActive();
-                            $itemBadge = $item->getBadge();
-                            $itemBadgeColor = $item->getBadgeColor($itemBadge);
-                            $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
-                            $itemUrl = $item->getUrl();
-                            $itemIcon = $itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon();
-                            $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
-                            $itemExtraAttributes = $item->getExtraAttributeBag();
+                                                        $itemBadge = $item->getBadge();
+                                                        $itemBadgeColor = $item->getBadgeColor($itemBadge);
+                                                        $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
+                                                        $itemUrl = $item->getUrl();
+                                                        $itemIcon = $itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon();
+                                                        $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
+                                                        $itemExtraAttributes = $item->getExtraAttributeBag();
                         @endphp
 
                         <x-filament::dropdown.list.item
@@ -170,25 +170,25 @@
         @foreach ($items as $item)
             @php
                 $isItemChildItemsActive = $item->isChildItemsActive();
-                $isItemActive = (! $isItemChildItemsActive) && $item->isActive();
-                $itemActiveIcon = $item->getActiveIcon();
-                $itemBadge = $item->getBadge();
-                $itemBadgeColor = $item->getBadgeColor($itemBadge);
-                $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
-                $itemChildItems = $item->getChildItems();
-                $itemIcon = $item->getIcon();
-                $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
-                $itemUrl = $item->getUrl();
-                $itemExtraAttributes = $item->getExtraAttributeBag();
+                                $isItemActive = (! $isItemChildItemsActive) && $item->isActive();
+                                $itemActiveIcon = $item->getActiveIcon();
+                                $itemBadge = $item->getBadge();
+                                $itemBadgeColor = $item->getBadgeColor($itemBadge);
+                                $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
+                                $itemChildItems = $item->getChildItems();
+                                $itemIcon = $item->getIcon();
+                                $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
+                                $itemUrl = $item->getUrl();
+                                $itemExtraAttributes = $item->getExtraAttributeBag();
 
-                if ($icon) {
-                    if ($hasDropdown || (blank($itemIcon) && blank($itemActiveIcon))) {
-                        $itemIcon = null;
-                        $itemActiveIcon = null;
-                    } else {
-                        throw new \Exception('Navigation group [' . $label . '] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.');
-                    }
-                }
+                                if ($icon) {
+                                    if ($hasDropdown || (blank($itemIcon) && blank($itemActiveIcon))) {
+                                        $itemIcon = null;
+                                        $itemActiveIcon = null;
+                                    } else {
+                                        throw new \Exception('Navigation group [' . $label . '] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.');
+                                    }
+                                }
             @endphp
 
             <x-filament-panels::sidebar.item

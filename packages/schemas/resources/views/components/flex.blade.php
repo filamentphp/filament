@@ -1,36 +1,36 @@
 @php
     use Filament\Actions\Action;
-    use Filament\Actions\ActionGroup;
-    use Filament\Schemas\Components\Component;
-    use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\VerticalAlignment;
+        use Filament\Actions\ActionGroup;
+        use Filament\Schemas\Components\Component;
+        use Filament\Support\Enums\Alignment;
+        use Filament\Support\Enums\VerticalAlignment;
 
-    $statePath = $getStatePath();
+        $statePath = $getStatePath();
 
-    $fromBreakpoint = $getFromBreakpoint();
-    $verticalAlignment = $getVerticalAlignment();
-    $alignment = $getAlignment();
+        $fromBreakpoint = $getFromBreakpoint();
+        $verticalAlignment = $getVerticalAlignment();
+        $alignment = $getAlignment();
 
-    if (! $verticalAlignment instanceof VerticalAlignment) {
-        $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
-    }
+        if (! $verticalAlignment instanceof VerticalAlignment) {
+            $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
+        }
 
-    if (! $alignment instanceof Alignment) {
-        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
-    }
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
 @endphp
 
 <div
     {{
         $attributes
-            ->merge($getExtraAttributes(), escape: false)
-            ->class([
-                'fi-sc-flex',
-                'fi-dense' => $isDense(),
-                'fi-from-' . ($fromBreakpoint ?? 'default'),
-                ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
-                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
-            ])
+        ->merge($getExtraAttributes(), escape: false)
+        ->class([
+        'fi-sc-flex',
+        'fi-dense' => $isDense(),
+        'fi-from-' . ($fromBreakpoint ?? 'default'),
+        ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
+        ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
+        ])
     }}
 >
     @foreach ($getChildSchema()->getComponents() as $schemaComponent)
@@ -41,9 +41,9 @@
         @else
             @php
                 $hiddenJs = $schemaComponent->getHiddenJs();
-                $visibleJs = $schemaComponent->getVisibleJs();
+                                $visibleJs = $schemaComponent->getVisibleJs();
 
-                $schemaComponentStatePath = $schemaComponent->getStatePath();
+                                $schemaComponentStatePath = $schemaComponent->getStatePath();
             @endphp
 
             <div
@@ -59,16 +59,16 @@
                     )) !!}"
                 @endif
                 @if (filled($visibilityJs = match ([filled($hiddenJs), filled($visibleJs)]) {
-                         [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
-                         [true, false] => "! ({$hiddenJs})",
-                         [false, true] => $visibleJs,
-                         default => null,
+                     [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
+                     [true, false] => "! ({$hiddenJs})",
+                     [false, true] => $visibleJs,
+                     default => null,
                      }))
                     x-bind:class="{ 'fi-hidden': ! ({!! $visibilityJs !!}) }"
                     x-cloak
                 @endif
                 @class([
-                    'fi-growable' => ($schemaComponent instanceof Component) && $schemaComponent->canGrow(),
+                'fi-growable' => ($schemaComponent instanceof Component) && $schemaComponent->canGrow(),
                 ])
             >
                 {{ $schemaComponent }}

@@ -1,6 +1,6 @@
 @props([
-    'alpineValid' => null,
-    'valid' => true,
+'alpineValid' => null,
+'valid' => true,
 ])
 
 @php
@@ -17,10 +17,10 @@
     @endif
     {{
         $attributes
-            ->class([
-                'fi-checkbox-input',
-                'fi-valid' => (! $hasAlpineValidClasses) && $valid,
-                'fi-invalid' => (! $hasAlpineValidClasses) && (! $valid),
-            ])
+        ->class([
+        'fi-checkbox-input',
+        'fi-valid' => (! $hasAlpineValidClasses) && $valid,
+        'fi-invalid' => (! $hasAlpineValidClasses) && (! $valid),
+        ])
     }}
 />

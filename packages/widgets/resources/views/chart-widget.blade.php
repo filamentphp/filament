@@ -1,13 +1,13 @@
 @php
     use Filament\Widgets\View\Components\ChartWidgetComponent;
-    use Illuminate\View\ComponentAttributeBag;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $color = $this->getColor();
-    $heading = $this->getHeading();
-    $description = $this->getDescription();
-    $filters = $this->getFilters();
-    $isCollapsible = $this->isCollapsible();
-    $type = $this->getType();
+        $color = $this->getColor();
+        $heading = $this->getHeading();
+        $description = $this->getDescription();
+        $filters = $this->getFilters();
+        $isCollapsible = $this->isCollapsible();
+        $type = $this->getType();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -84,11 +84,11 @@
                         })"
                 {{
                     (new ComponentAttributeBag)
-                        ->color(ChartWidgetComponent::class, $color)
-                        ->class([
-                            'fi-wi-chart-canvas-ctn',
-                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight),
-                        ])
+                    ->color(ChartWidgetComponent::class, $color)
+                    ->class([
+                    'fi-wi-chart-canvas-ctn',
+                    'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight),
+                    ])
                 }}
             >
                 <canvas

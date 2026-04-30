@@ -1,15 +1,15 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $isConcealed = $isConcealed();
-    $isDisabled = $isDisabled();
-    $rows = $getRows();
-    $placeholder = $getPlaceholder();
-    $shouldAutosize = $shouldAutosize();
-    $placeholder = $getPlaceholder();
-    $statePath = $getStatePath();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $isConcealed = $isConcealed();
+        $isDisabled = $isDisabled();
+        $rows = $getRows();
+        $placeholder = $getPlaceholder();
+        $shouldAutosize = $shouldAutosize();
+        $placeholder = $getPlaceholder();
+        $statePath = $getStatePath();
 
-    $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
+        $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
 @endphp
 
 <x-dynamic-component
@@ -22,10 +22,10 @@
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-                ->class([
-                    'fi-fo-textarea',
-                    'fi-autosizable' => $shouldAutosize,
-                ])
+            ->class([
+                'fi-fo-textarea',
+                'fi-autosizable' => $shouldAutosize,
+            ])
         "
     >
         <div wire:ignore.self style="height: '{{ $initialHeight . 'rem' }}'">
@@ -50,20 +50,20 @@
                 {{ $getExtraAlpineAttributeBag() }}
                 {{
                     $getExtraInputAttributeBag()
-                        ->merge([
-                            'autocomplete' => $getAutocomplete(),
-                            'autofocus' => $isAutofocused(),
-                            'cols' => $getCols(),
-                            'disabled' => $isDisabled,
-                            'id' => $getId(),
-                            'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
-                            'minlength' => (! $isConcealed) ? $getMinLength() : null,
-                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                            'readonly' => $isReadOnly(),
-                            'required' => $isRequired() && (! $isConcealed),
-                            'rows' => $rows,
-                            $applyStateBindingModifiers('wire:model') => $statePath,
-                        ], escape: false)
+                    ->merge([
+                    'autocomplete' => $getAutocomplete(),
+                    'autofocus' => $isAutofocused(),
+                    'cols' => $getCols(),
+                    'disabled' => $isDisabled,
+                    'id' => $getId(),
+                    'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
+                    'minlength' => (! $isConcealed) ? $getMinLength() : null,
+                    'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                    'readonly' => $isReadOnly(),
+                    'required' => $isRequired() && (! $isConcealed),
+                    'rows' => $rows,
+                    $applyStateBindingModifiers('wire:model') => $statePath,
+                    ], escape: false)
                 }}
             ></textarea>
         </div>

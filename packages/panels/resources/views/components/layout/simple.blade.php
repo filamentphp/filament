@@ -1,21 +1,21 @@
 @php
     use Filament\Support\Enums\Width;
 
-    $livewire ??= null;
+        $livewire ??= null;
 
-    $renderHookScopes = $livewire?->getRenderHookScopes();
-    $maxContentWidth ??= (filament()->getSimplePageMaxContentWidth() ?? Width::Large);
+        $renderHookScopes = $livewire?->getRenderHookScopes();
+        $maxContentWidth ??= (filament()->getSimplePageMaxContentWidth() ?? Width::Large);
 
-    if (is_string($maxContentWidth)) {
-        $maxContentWidth = Width::tryFrom($maxContentWidth) ?? $maxContentWidth;
-    }
+        if (is_string($maxContentWidth)) {
+            $maxContentWidth = Width::tryFrom($maxContentWidth) ?? $maxContentWidth;
+        }
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
     @props([
-        'after' => null,
-        'heading' => null,
-        'subheading' => null,
+    'after' => null,
+    'heading' => null,
+    'subheading' => null,
     ])
 
     <div class="fi-simple-layout">
@@ -39,8 +39,8 @@
         <div class="fi-simple-main-ctn">
             <main
                 @class([
-                    'fi-simple-main',
-                    ($maxContentWidth instanceof Width) ? "fi-width-{$maxContentWidth->value}" : $maxContentWidth,
+                'fi-simple-main',
+                ($maxContentWidth instanceof Width) ? "fi-width-{$maxContentWidth->value}" : $maxContentWidth,
                 ])
             >
                 {{ $slot }}

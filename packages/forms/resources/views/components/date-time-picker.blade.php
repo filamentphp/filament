@@ -1,37 +1,37 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $datalistOptions = $getDatalistOptions();
-    $disabledDates = $getDisabledDates();
-    $extraAlpineAttributes = $getExtraAlpineAttributes();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $extraInputAttributeBag = $getExtraInputAttributeBag();
-    $hasDate = $hasDate();
-    $hasTime = $hasTime();
-    $hasSeconds = $hasSeconds();
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $isAutofocused = $isAutofocused();
-    $isPrefixInline = $isPrefixInline();
-    $isSuffixInline = $isSuffixInline();
-    $maxDate = $getMaxDate();
-    $minDate = $getMinDate();
-    $defaultFocusedDate = $getDefaultFocusedDate();
-    $prefixActions = $getPrefixActions();
-    $prefixIcon = $getPrefixIcon();
-    $prefixIconColor = $getPrefixIconColor();
-    $prefixLabel = $getPrefixLabel();
-    $suffixActions = $getSuffixActions();
-    $suffixIcon = $getSuffixIcon();
-    $suffixIconColor = $getSuffixIconColor();
-    $suffixLabel = $getSuffixLabel();
-    $statePath = $getStatePath();
-    $placeholder = $getPlaceholder();
-    $isReadOnly = $isReadOnly();
-    $isRequired = $isRequired();
-    $isConcealed = $isConcealed();
-    $step = $getStep();
-    $type = $getType();
-    $livewireKey = $getLivewireKey();
+        $datalistOptions = $getDatalistOptions();
+        $disabledDates = $getDisabledDates();
+        $extraAlpineAttributes = $getExtraAlpineAttributes();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $extraInputAttributeBag = $getExtraInputAttributeBag();
+        $hasDate = $hasDate();
+        $hasTime = $hasTime();
+        $hasSeconds = $hasSeconds();
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $isAutofocused = $isAutofocused();
+        $isPrefixInline = $isPrefixInline();
+        $isSuffixInline = $isSuffixInline();
+        $maxDate = $getMaxDate();
+        $minDate = $getMinDate();
+        $defaultFocusedDate = $getDefaultFocusedDate();
+        $prefixActions = $getPrefixActions();
+        $prefixIcon = $getPrefixIcon();
+        $prefixIconColor = $getPrefixIconColor();
+        $prefixLabel = $getPrefixLabel();
+        $suffixActions = $getSuffixActions();
+        $suffixIcon = $getSuffixIcon();
+        $suffixIconColor = $getSuffixIconColor();
+        $suffixLabel = $getSuffixLabel();
+        $statePath = $getStatePath();
+        $placeholder = $getPlaceholder();
+        $isReadOnly = $isReadOnly();
+        $isRequired = $isRequired();
+        $isConcealed = $isConcealed();
+        $step = $getStep();
+        $type = $getType();
+        $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component
@@ -59,27 +59,27 @@
             <input
                 {{
                     $extraInputAttributeBag
-                        ->merge($extraAlpineAttributes, escape: false)
-                        ->merge([
-                            'autofocus' => $isAutofocused,
-                            'disabled' => $isDisabled,
-                            'id' => $id,
-                            'list' => $datalistOptions ? $id . '-list' : null,
-                            'max' => $hasTime ? $maxDate : ($maxDate ? \Carbon\Carbon::parse($maxDate)->toDateString() : null),
-                            'min' => $hasTime ? $minDate : ($minDate ? \Carbon\Carbon::parse($minDate)->toDateString() : null),
-                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                            'readonly' => $isReadOnly,
-                            'required' => $isRequired && (! $isConcealed),
-                            'step' => $step,
-                            'type' => $type,
-                            $applyStateBindingModifiers('wire:model') => $statePath,
-                            'x-data' => count($extraAlpineAttributes) ? '{}' : null,
-                        ], escape: false)
-                        ->class([
-                            'fi-input',
-                            'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                            'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-                        ])
+                    ->merge($extraAlpineAttributes, escape: false)
+                    ->merge([
+                    'autofocus' => $isAutofocused,
+                    'disabled' => $isDisabled,
+                    'id' => $id,
+                    'list' => $datalistOptions ? $id . '-list' : null,
+                    'max' => $hasTime ? $maxDate : ($maxDate ? \Carbon\Carbon::parse($maxDate)->toDateString() : null),
+                    'min' => $hasTime ? $minDate : ($minDate ? \Carbon\Carbon::parse($minDate)->toDateString() : null),
+                    'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                    'readonly' => $isReadOnly,
+                    'required' => $isRequired && (! $isConcealed),
+                    'step' => $step,
+                    'type' => $type,
+                    $applyStateBindingModifiers('wire:model') => $statePath,
+                    'x-data' => count($extraAlpineAttributes) ? '{}' : null,
+                    ], escape: false)
+                    ->class([
+                    'fi-input',
+                    'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                    'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                    ])
                 }}
             />
         @else
@@ -99,14 +99,14 @@
                 wire:ignore
                 wire:key="{{ $livewireKey }}.{{
                     substr(md5(serialize([
-                        $disabledDates,
-                        $isDisabled,
-                        $isReadOnly,
-                        $maxDate,
-                        $minDate,
-                        $hasDate,
-                        $hasTime,
-                        $hasSeconds,
+                    $disabledDates,
+                    $isDisabled,
+                    $isReadOnly,
+                    $maxDate,
+                    $minDate,
+                    $hasDate,
+                    $hasTime,
+                    $hasSeconds,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
@@ -143,7 +143,7 @@
                     @disabled($isDisabled || $isReadOnly)
                     {{
                         $getExtraTriggerAttributeBag()->class([
-                            'fi-fo-date-time-picker-trigger',
+                        'fi-fo-date-time-picker-trigger',
                         ])
                     }}
                 >
@@ -155,7 +155,7 @@
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
-                            'fi-fo-date-time-picker-display-text-input',
+                        'fi-fo-date-time-picker-display-text-input',
                         ])
                     />
                 </button>
@@ -167,7 +167,7 @@
                     wire:ignore
                     wire:key="{{ $livewireKey }}.panel"
                     @class([
-                        'fi-fo-date-time-picker-panel',
+                    'fi-fo-date-time-picker-panel',
                     ])
                 >
                     @if ($hasDate)

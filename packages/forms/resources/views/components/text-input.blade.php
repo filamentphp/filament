@@ -1,73 +1,73 @@
 @php
     use Filament\Forms\Components\TextInput\Actions\HidePasswordAction;
-    use Filament\Forms\Components\TextInput\Actions\ShowPasswordAction;
+        use Filament\Forms\Components\TextInput\Actions\ShowPasswordAction;
 
-    $fieldWrapperView = $getFieldWrapperView();
-    $datalistOptions = $getDatalistOptions();
-    $extraAlpineAttributes = $getExtraAlpineAttributes();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $id = $getId();
-    $isConcealed = $isConcealed();
-    $isDisabled = $isDisabled();
-    $isPasswordRevealable = $isPasswordRevealable();
-    $isPrefixInline = $isPrefixInline();
-    $isSuffixInline = $isSuffixInline();
-    $mask = $getMask();
-    $prefixActions = $getPrefixActions();
-    $prefixIcon = $getPrefixIcon();
-    $prefixIconColor = $getPrefixIconColor();
-    $prefixLabel = $getPrefixLabel();
-    $suffixActions = $getSuffixActions();
-    $suffixIcon = $getSuffixIcon();
-    $suffixIconColor = $getSuffixIconColor();
-    $suffixLabel = $getSuffixLabel();
-    $statePath = $getStatePath();
-    $placeholder = $getPlaceholder();
+        $fieldWrapperView = $getFieldWrapperView();
+        $datalistOptions = $getDatalistOptions();
+        $extraAlpineAttributes = $getExtraAlpineAttributes();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $id = $getId();
+        $isConcealed = $isConcealed();
+        $isDisabled = $isDisabled();
+        $isPasswordRevealable = $isPasswordRevealable();
+        $isPrefixInline = $isPrefixInline();
+        $isSuffixInline = $isSuffixInline();
+        $mask = $getMask();
+        $prefixActions = $getPrefixActions();
+        $prefixIcon = $getPrefixIcon();
+        $prefixIconColor = $getPrefixIconColor();
+        $prefixLabel = $getPrefixLabel();
+        $suffixActions = $getSuffixActions();
+        $suffixIcon = $getSuffixIcon();
+        $suffixIconColor = $getSuffixIconColor();
+        $suffixLabel = $getSuffixLabel();
+        $statePath = $getStatePath();
+        $placeholder = $getPlaceholder();
 
-    if ($isPasswordRevealable) {
-        $xData = '{ isPasswordRevealed: false }';
-    } elseif (count($extraAlpineAttributes) || filled($mask)) {
-        $xData = '{}';
-    } else {
-        $xData = null;
-    }
+        if ($isPasswordRevealable) {
+            $xData = '{ isPasswordRevealed: false }';
+        } elseif (count($extraAlpineAttributes) || filled($mask)) {
+            $xData = '{}';
+        } else {
+            $xData = null;
+        }
 
-    if ($isPasswordRevealable) {
-        $type = null;
-    } elseif (filled($mask)) {
-        $type = 'text';
-    } else {
-        $type = $getType();
-    }
+        if ($isPasswordRevealable) {
+            $type = null;
+        } elseif (filled($mask)) {
+            $type = 'text';
+        } else {
+            $type = $getType();
+        }
 
-    $inputAttributes = $getExtraInputAttributeBag()
-        ->merge($extraAlpineAttributes, escape: false)
-        ->merge([
-            'autocapitalize' => $getAutocapitalize(),
-            'autocomplete' => $getAutocomplete(),
-            'autofocus' => $isAutofocused(),
-            'disabled' => $isDisabled,
-            'id' => $id,
-            'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-            'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-            'inputmode' => $getInputMode(),
-            'list' => $datalistOptions ? $id . '-list' : null,
-            'max' => (! $isConcealed) ? $getMaxValue() : null,
-            'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
-            'min' => (! $isConcealed) ? $getMinValue() : null,
-            'minlength' => (! $isConcealed) ? $getMinLength() : null,
-            'placeholder' => filled($placeholder) ? e($placeholder) : null,
-            'readonly' => $isReadOnly(),
-            'required' => $isRequired() && (! $isConcealed),
-            'step' => $getStep(),
-            'type' => $type,
-            $applyStateBindingModifiers('wire:model') => $statePath,
-            'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
-            'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-        ], escape: false)
-        ->class([
-            'fi-revealable' => $isPasswordRevealable,
-        ]);
+        $inputAttributes = $getExtraInputAttributeBag()
+            ->merge($extraAlpineAttributes, escape: false)
+            ->merge([
+                'autocapitalize' => $getAutocapitalize(),
+                'autocomplete' => $getAutocomplete(),
+                'autofocus' => $isAutofocused(),
+                'disabled' => $isDisabled,
+                'id' => $id,
+                'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'inputmode' => $getInputMode(),
+                'list' => $datalistOptions ? $id . '-list' : null,
+                'max' => (! $isConcealed) ? $getMaxValue() : null,
+                'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
+                'min' => (! $isConcealed) ? $getMinValue() : null,
+                'minlength' => (! $isConcealed) ? $getMinLength() : null,
+                'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                'readonly' => $isReadOnly(),
+                'required' => $isRequired() && (! $isConcealed),
+                'step' => $getStep(),
+                'type' => $type,
+                $applyStateBindingModifiers('wire:model') => $statePath,
+                'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
+                'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+            ], escape: false)
+            ->class([
+                'fi-revealable' => $isPasswordRevealable,
+            ]);
 @endphp
 
 <x-dynamic-component
@@ -92,15 +92,15 @@
         x-on:focus-input.stop="$el.querySelector('input')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-                ->class(['fi-fo-text-input'])
+            ->class(['fi-fo-text-input'])
         "
     >
         <input
             {{
                 $inputAttributes->class([
-                    'fi-input',
-                    'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                    'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'fi-input',
+                'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                 ])
             }}
         />

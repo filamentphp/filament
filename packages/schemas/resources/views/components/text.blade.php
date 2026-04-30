@@ -1,23 +1,23 @@
 @php
     use Filament\Schemas\View\Components\TextComponent;
-    use Filament\Support\Enums\FontFamily;
-    use Filament\Support\Enums\FontWeight;
-    use Filament\Support\RawJs;
+        use Filament\Support\Enums\FontFamily;
+        use Filament\Support\Enums\FontWeight;
+        use Filament\Support\RawJs;
 
-    $color = $getColor();
-    $content = $getContent();
-    $icon = $getIcon();
-    $iconPosition = $getIconPosition();
-    $iconSize = $getIconSize();
-    $size = $getSize();
-    $tooltip = $getTooltip();
-    $weight = $getWeight();
-    $fontFamily = $getFontFamily();
+        $color = $getColor();
+        $content = $getContent();
+        $icon = $getIcon();
+        $iconPosition = $getIconPosition();
+        $iconSize = $getIconSize();
+        $size = $getSize();
+        $tooltip = $getTooltip();
+        $weight = $getWeight();
+        $fontFamily = $getFontFamily();
 
-    $copyableState = $getCopyableState($content) ?? $content;
-    $copyMessage = $getCopyMessage($copyableState);
-    $copyMessageDuration = $getCopyMessageDuration($copyableState);
-    $isCopyable = $isCopyable($copyableState);
+        $copyableState = $getCopyableState($content) ?? $content;
+        $copyMessage = $getCopyMessage($copyableState);
+        $copyMessageDuration = $getCopyMessageDuration($copyableState);
+        $isCopyable = $isCopyable($copyableState);
 @endphp
 
 @if ($isBadge())
@@ -62,15 +62,15 @@
         @endif
         {{
             (new \Illuminate\View\ComponentAttributeBag)
-                ->color(TextComponent::class, $color)
-                ->class([
-                    'fi-sc-text',
-                    'fi-copyable' => $isCopyable,
-                    ($size instanceof \BackedEnum) ? "fi-size-{$size->value}" : $size,
-                    ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : $weight,
-                    ($fontFamily instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : $fontFamily,
-                ])
-                ->merge($getExtraAttributes(), escape: false)
+            ->color(TextComponent::class, $color)
+            ->class([
+            'fi-sc-text',
+            'fi-copyable' => $isCopyable,
+            ($size instanceof \BackedEnum) ? "fi-size-{$size->value}" : $size,
+            ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : $weight,
+            ($fontFamily instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : $fontFamily,
+            ])
+            ->merge($getExtraAttributes(), escape: false)
         }}
     >
         {{ $content }}

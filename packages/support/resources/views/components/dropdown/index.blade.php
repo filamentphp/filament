@@ -1,30 +1,30 @@
 @props([
-    'availableHeight' => null,
-    'availableWidth' => null,
-    'flip' => true,
-    'maxHeight' => null,
-    'offset' => 8,
-    'placement' => null,
-    'shift' => false,
-    'size' => false,
-    'sizePadding' => 16,
-    'teleport' => false,
-    'trigger' => null,
-    'width' => null,
+'availableHeight' => null,
+'availableWidth' => null,
+'flip' => true,
+'maxHeight' => null,
+'offset' => 8,
+'placement' => null,
+'shift' => false,
+'size' => false,
+'sizePadding' => 16,
+'teleport' => false,
+'trigger' => null,
+'width' => null,
 ])
 
 @php
     use Filament\Support\Enums\Width;
 
-    $sizeConfig = collect([
-        'availableHeight' => $availableHeight,
-        'availableWidth' => $availableWidth,
-        'padding' => $sizePadding,
-    ])->filter()->toJson();
+        $sizeConfig = collect([
+            'availableHeight' => $availableHeight,
+            'availableWidth' => $availableWidth,
+            'padding' => $sizePadding,
+        ])->filter()->toJson();
 
-    if (is_string($width)) {
-        $width = Width::tryFrom($width) ?? $width;
-    }
+        if (is_string($width)) {
+            $width = Width::tryFrom($width) ?? $width;
+        }
 @endphp
 
 <div
@@ -52,12 +52,12 @@
                 wire:key="{{ $attributes->get('wire:key') }}.panel"
             @endif
             @class([
-                'fi-dropdown-panel',
-                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : ''),
-                'fi-scrollable' => $maxHeight || $size,
+            'fi-dropdown-panel',
+            ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : ''),
+            'fi-scrollable' => $maxHeight || $size,
             ])
             @style([
-                "max-height: {$maxHeight}" => $maxHeight,
+            "max-height: {$maxHeight}" => $maxHeight,
             ])
         >
             {{ $slot }}

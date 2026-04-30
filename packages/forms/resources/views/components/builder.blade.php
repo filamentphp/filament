@@ -1,63 +1,63 @@
 @php
     use Filament\Actions\Action;
-    use Filament\Support\Enums\Alignment;
+        use Filament\Support\Enums\Alignment;
 
-    $fieldWrapperView = $getFieldWrapperView();
-    $items = $getItems();
-    $blockPickerBlocks = $getBlockPickerBlocks();
-    $blockPickerColumns = $getBlockPickerColumns();
-    $blockPickerWidth = $getBlockPickerWidth();
-    $hasBlockPreviews = $hasBlockPreviews();
-    $hasInteractiveBlockPreviews = $hasInteractiveBlockPreviews();
+        $fieldWrapperView = $getFieldWrapperView();
+        $items = $getItems();
+        $blockPickerBlocks = $getBlockPickerBlocks();
+        $blockPickerColumns = $getBlockPickerColumns();
+        $blockPickerWidth = $getBlockPickerWidth();
+        $hasBlockPreviews = $hasBlockPreviews();
+        $hasInteractiveBlockPreviews = $hasInteractiveBlockPreviews();
 
-    $addAction = $getAction($getAddActionName());
-    $addActionAlignment = $getAddActionAlignment();
-    $addBetweenAction = $getAction($getAddBetweenActionName());
-    $cloneAction = $getAction($getCloneActionName());
-    $collapseAllAction = $getAction($getCollapseAllActionName());
-    $editAction = $getAction($getEditActionName());
-    $expandAllAction = $getAction($getExpandAllActionName());
-    $deleteAction = $getAction($getDeleteActionName());
-    $moveDownAction = $getAction($getMoveDownActionName());
-    $moveUpAction = $getAction($getMoveUpActionName());
-    $reorderAction = $getAction($getReorderActionName());
-    $extraItemActions = $getExtraItemActions();
+        $addAction = $getAction($getAddActionName());
+        $addActionAlignment = $getAddActionAlignment();
+        $addBetweenAction = $getAction($getAddBetweenActionName());
+        $cloneAction = $getAction($getCloneActionName());
+        $collapseAllAction = $getAction($getCollapseAllActionName());
+        $editAction = $getAction($getEditActionName());
+        $expandAllAction = $getAction($getExpandAllActionName());
+        $deleteAction = $getAction($getDeleteActionName());
+        $moveDownAction = $getAction($getMoveDownActionName());
+        $moveUpAction = $getAction($getMoveUpActionName());
+        $reorderAction = $getAction($getReorderActionName());
+        $extraItemActions = $getExtraItemActions();
 
-    $isAddable = $isAddable();
-    $isCloneable = $isCloneable();
-    $isCollapsible = $isCollapsible();
-    $isDeletable = $isDeletable();
-    $isReorderableWithButtons = $isReorderableWithButtons();
-    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+        $isAddable = $isAddable();
+        $isCloneable = $isCloneable();
+        $isCollapsible = $isCollapsible();
+        $isDeletable = $isDeletable();
+        $isReorderableWithButtons = $isReorderableWithButtons();
+        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
 
-    $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
-    $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
-    $persistCollapsed = $shouldPersistCollapsed();
+        $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
+        $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+        $persistCollapsed = $shouldPersistCollapsed();
 
-    $key = $getKey();
-    $statePath = $getStatePath();
+        $key = $getKey();
+        $statePath = $getStatePath();
 
-    $blockLabelHeadingTag = $getHeadingTag();
-    $isBlockLabelTruncated = $isBlockLabelTruncated();
-    $labelBetweenItems = $getLabelBetweenItems();
+        $blockLabelHeadingTag = $getHeadingTag();
+        $isBlockLabelTruncated = $isBlockLabelTruncated();
+        $labelBetweenItems = $getLabelBetweenItems();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{
             $attributes
-                ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'fi-fo-builder',
-                    'fi-collapsible' => $isCollapsible,
-                ])
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+            'fi-fo-builder',
+            'fi-collapsible' => $isCollapsible,
+            ])
         }}
     >
         @if ($collapseAllActionIsVisible || $expandAllActionIsVisible)
             <div
                 @class([
-                    'fi-fo-builder-actions',
-                    'fi-hidden' => count($items) < 2,
+                'fi-fo-builder-actions',
+                'fi-hidden' => count($items) < 2,
                 ])
             >
                 @if ($collapseAllActionIsVisible)
@@ -93,29 +93,29 @@
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
-                    $hasBlockIcons = $hasBlockIcons();
-                    $hasBlockNumbers = $hasBlockNumbers();
-                    $hasBlockHeaders = $hasBlockHeaders();
+                                        $hasBlockIcons = $hasBlockIcons();
+                                        $hasBlockNumbers = $hasBlockNumbers();
+                                        $hasBlockHeaders = $hasBlockHeaders();
                 @endphp
 
                 @foreach ($items as $itemKey => $item)
                     @php
                         $visibleExtraItemActions = array_filter(
-                            $extraItemActions,
-                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                        );
-                        $cloneAction = $cloneAction(['item' => $itemKey]);
-                        $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                        $deleteAction = $deleteAction(['item' => $itemKey]);
-                        $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                        $editAction = $editAction(['item' => $itemKey]);
-                        $editActionIsVisible = $hasBlockPreviews && $editAction->isVisible();
-                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
-                        $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
-                        $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
-                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
-                        $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
+                                                    $extraItemActions,
+                                                    fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                                                );
+                                                $cloneAction = $cloneAction(['item' => $itemKey]);
+                                                $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
+                                                $deleteAction = $deleteAction(['item' => $itemKey]);
+                                                $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                                                $editAction = $editAction(['item' => $itemKey]);
+                                                $editActionIsVisible = $hasBlockPreviews && $editAction->isVisible();
+                                                $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
+                                                $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
+                                                $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
+                                                $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
+                                                $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                                                $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                     @endphp
 
                     <li
@@ -130,10 +130,10 @@
                         x-sortable-item="{{ $itemKey }}"
                         {{
                             $item->getParentComponent()->getExtraAttributeBag()
-                                ->class([
-                                    'fi-fo-builder-item',
-                                    'fi-fo-builder-item-has-header' => $hasItemHeader,
-                                ])
+                            ->class([
+                            'fi-fo-builder-item',
+                            'fi-fo-builder-item-has-header' => $hasItemHeader,
+                            ])
                         }}
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
@@ -177,8 +177,8 @@
                                 @if ($hasBlockLabels)
                                     <{{ $blockLabelHeadingTag }}
                                         @class([
-                                            'fi-fo-builder-item-header-label',
-                                            'fi-truncated' => $isBlockLabelTruncated,
+                                        'fi-fo-builder-item-header-label',
+                                        'fi-truncated' => $isBlockLabelTruncated,
                                         ])
                                     >
                                         {{ $item->getParentComponent()->getLabel($item->getRawState(), $itemKey, $loop->index) }}
@@ -243,15 +243,15 @@
                         <div
                             x-show="! isCollapsed"
                             @class([
-                                'fi-fo-builder-item-content',
-                                'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $item->getParentComponent()->hasPreview(),
+                            'fi-fo-builder-item-content',
+                            'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $item->getParentComponent()->hasPreview(),
                             ])
                         >
                             @if ($hasBlockPreviews && $item->getParentComponent()->hasPreview())
                                 <div
                                     @class([
-                                        'fi-fo-builder-item-preview',
-                                        'fi-interactive' => $hasInteractiveBlockPreviews,
+                                    'fi-fo-builder-item-preview',
+                                    'fi-interactive' => $hasInteractiveBlockPreviews,
                                     ])
                                 >
                                     {{ $item->getParentComponent()->renderPreview($item->getRawState()) }}

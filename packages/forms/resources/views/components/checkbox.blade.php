@@ -1,22 +1,22 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $statePath = $getStatePath();
-    $attributes = $attributes
-        ->merge([
-            'autofocus' => $isAutofocused(),
-            'disabled' => $isDisabled(),
-            'id' => $getId(),
-            'required' => $isRequired() && (! $isConcealed()),
-            'wire:loading.attr' => 'disabled',
-            $applyStateBindingModifiers('wire:model') => $statePath,
-        ], escape: false)
-        ->merge($getExtraAttributes(), escape: false)
-        ->merge($getExtraInputAttributes(), escape: false)
-        ->class([
-            'fi-checkbox-input',
-            'fi-valid' => ! $errors->has($statePath),
-            'fi-invalid' => $errors->has($statePath),
-        ]);
+        $statePath = $getStatePath();
+        $attributes = $attributes
+            ->merge([
+                'autofocus' => $isAutofocused(),
+                'disabled' => $isDisabled(),
+                'id' => $getId(),
+                'required' => $isRequired() && (! $isConcealed()),
+                'wire:loading.attr' => 'disabled',
+                $applyStateBindingModifiers('wire:model') => $statePath,
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraInputAttributes(), escape: false)
+            ->class([
+                'fi-checkbox-input',
+                'fi-valid' => ! $errors->has($statePath),
+                'fi-invalid' => $errors->has($statePath),
+            ]);
 @endphp
 
 <x-dynamic-component

@@ -3,10 +3,10 @@
 @endphp
 
 @props([
-    'applyAction',
-    'form',
-    'headingTag' => 'h3',
-    'resetActionPosition' => FiltersResetActionPosition::Header,
+'applyAction',
+'form',
+'headingTag' => 'h3',
+'resetActionPosition' => FiltersResetActionPosition::Header,
 ])
 
 <div {{ $attributes->class(['fi-ta-filters']) }}>

@@ -1,26 +1,26 @@
 @php
     use Filament\Support\Enums\Alignment;
 
-    $fieldWrapperView = $getFieldWrapperView();
-    $id = $getId();
-    $automaticallyCropImagesAspectRatio = $getAutomaticallyCropImagesAspectRatio();
-    $automaticallyResizeImagesHeight = $getAutomaticallyResizeImagesHeight();
-    $automaticallyResizeImagesWidth = $getAutomaticallyResizeImagesWidth();
-    $isAvatar = $isAvatar();
-    $isMultiple = $isMultiple();
-    $key = $getKey();
-    $statePath = $getStatePath();
-    $isDisabled = $isDisabled();
-    $hasImageEditor = $hasImageEditor();
-    $isImageEditorExplicitlyEnabled = $isImageEditorExplicitlyEnabled();
-    $hasCircleCropper = $hasCircleCropper();
-    $livewireKey = $getLivewireKey();
+        $fieldWrapperView = $getFieldWrapperView();
+        $id = $getId();
+        $automaticallyCropImagesAspectRatio = $getAutomaticallyCropImagesAspectRatio();
+        $automaticallyResizeImagesHeight = $getAutomaticallyResizeImagesHeight();
+        $automaticallyResizeImagesWidth = $getAutomaticallyResizeImagesWidth();
+        $isAvatar = $isAvatar();
+        $isMultiple = $isMultiple();
+        $key = $getKey();
+        $statePath = $getStatePath();
+        $isDisabled = $isDisabled();
+        $hasImageEditor = $hasImageEditor();
+        $isImageEditorExplicitlyEnabled = $isImageEditorExplicitlyEnabled();
+        $hasCircleCropper = $hasCircleCropper();
+        $livewireKey = $getLivewireKey();
 
-    $alignment = $getAlignment() ?? Alignment::Start;
+        $alignment = $getAlignment() ?? Alignment::Start;
 
-    if (! $alignment instanceof Alignment) {
-        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
-    }
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
 @endphp
 
 <x-dynamic-component
@@ -129,23 +129,23 @@
         wire:ignore
         wire:key="{{ $livewireKey }}.{{
             substr(md5(serialize([
-                $isDisabled,
+            $isDisabled,
             ])), 0, 64)
         }}"
         {{
             $attributes
-                ->merge([
-                    'aria-labelledby' => "{$id}-label",
-                    'id' => $id,
-                    'role' => 'group',
-                ], escape: false)
-                ->merge($getExtraAttributes(), escape: false)
-                ->merge($getExtraAlpineAttributes(), escape: false)
-                ->class([
-                    'fi-fo-file-upload',
-                    'fi-fo-file-upload-avatar' => $isAvatar,
-                    ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
-                ])
+            ->merge([
+            'aria-labelledby' => "{$id}-label",
+            'id' => $id,
+            'role' => 'group',
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraAlpineAttributes(), escape: false)
+            ->class([
+            'fi-fo-file-upload',
+            'fi-fo-file-upload-avatar' => $isAvatar,
+            ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
+            ])
         }}
     >
         <div class="fi-fo-file-upload-input-ctn">
@@ -153,12 +153,12 @@
                 x-ref="input"
                 {{
                     $getExtraInputAttributeBag()
-                        ->merge([
-                            'aria-labelledby' => "{$id}-label",
-                            'disabled' => $isDisabled,
-                            'multiple' => $isMultiple,
-                            'type' => 'file',
-                        ], escape: false)
+                    ->merge([
+                    'aria-labelledby' => "{$id}-label",
+                    'disabled' => $isDisabled,
+                    'multiple' => $isMultiple,
+                    'type' => 'file',
+                    ], escape: false)
                 }}
             />
         </div>
@@ -178,9 +178,9 @@
                 x-trap.noscroll="isEditorOpen"
                 x-on:keydown.escape.prevent.stop="closeEditor"
                 @class([
-                    'fi-fo-file-upload-editor',
-                    'fi-fo-file-upload-editor-circle-cropper' => $hasCircleCropper,
-                    'fi-fo-file-upload-editor-crop-only' => ! $isImageEditorExplicitlyEnabled,
+                'fi-fo-file-upload-editor',
+                'fi-fo-file-upload-editor-circle-cropper' => $hasCircleCropper,
+                'fi-fo-file-upload-editor-crop-only' => ! $isImageEditorExplicitlyEnabled,
                 ])
             >
                 <div
@@ -329,8 +329,8 @@
                                     x-on:click.prevent.stop="editor.reset()"
                                     {{
                                         (new \Illuminate\View\ComponentAttributeBag)
-                                            ->color(\Filament\Support\View\Components\ButtonComponent::class, 'danger')
-                                            ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
+                                        ->color(\Filament\Support\View\Components\ButtonComponent::class, 'danger')
+                                        ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
                                     }}
                                 >
                                     {{ __('filament-forms::components.file_upload.editor.actions.reset.label') }}
@@ -341,8 +341,8 @@
                                     x-on:click.prevent="saveEditor"
                                     {{
                                         (new \Illuminate\View\ComponentAttributeBag)
-                                            ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
-                                            ->class(['fi-btn'])
+                                        ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
+                                        ->class(['fi-btn'])
                                     }}
                                 >
                                     {{ __('filament-forms::components.file_upload.editor.actions.save.label') }}
@@ -353,8 +353,8 @@
                                     x-on:click.prevent="saveEditor"
                                     {{
                                         (new \Illuminate\View\ComponentAttributeBag)
-                                            ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
-                                            ->class(['fi-btn'])
+                                        ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
+                                        ->class(['fi-btn'])
                                     }}
                                 >
                                     {{ __('filament-forms::components.file_upload.editor.actions.save.label') }}

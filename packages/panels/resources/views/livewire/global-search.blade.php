@@ -1,7 +1,7 @@
 @php
     $debounce = filament()->getGlobalSearchDebounce();
-    $keyBindings = filament()->getGlobalSearchKeyBindings();
-    $suffix = filament()->getGlobalSearchFieldSuffix();
+        $keyBindings = filament()->getGlobalSearchKeyBindings();
+        $suffix = filament()->getGlobalSearchFieldSuffix();
 @endphp
 
 <div class="fi-global-search-ctn">
@@ -87,8 +87,8 @@
 
                                         <li
                                             @class([
-                                                'fi-global-search-result',
-                                                'fi-global-search-result-has-actions' => $resultVisibleActions,
+                                            'fi-global-search-result',
+                                            'fi-global-search-result-has-actions' => $resultVisibleActions,
                                             ])
                                         >
                                             <a

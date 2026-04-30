@@ -1,15 +1,15 @@
 @props([
-    'currentPageOptionProperty' => 'tableRecordsPerPage',
-    'extremeLinks' => false,
-    'paginator',
-    'pageOptions' => [],
+'currentPageOptionProperty' => 'tableRecordsPerPage',
+'extremeLinks' => false,
+'paginator',
+'pageOptions' => [],
 ])
 
 @php
     use Illuminate\Contracts\Pagination\CursorPaginator;
 
-    $isRtl = __('filament-panels::layout.direction') === 'rtl';
-    $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
+        $isRtl = __('filament-panels::layout.direction') === 'rtl';
+        $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
 @endphp
 
 <nav
@@ -17,18 +17,18 @@
     role="navigation"
     {{
         $attributes->class([
-            'fi-pagination',
-            'fi-simple' => $isSimple,
+        'fi-pagination',
+        'fi-simple' => $isSimple,
         ])
     }}
 >
     @if (! $paginator->onFirstPage())
         @php
             if ($paginator instanceof CursorPaginator) {
-                $wireClickAction = "setPage('{$paginator->previousCursor()->encode()}', '{$paginator->getCursorName()}')";
-            } else {
-                $wireClickAction = "previousPage('{$paginator->getPageName()}')";
-            }
+                            $wireClickAction = "setPage('{$paginator->previousCursor()->encode()}', '{$paginator->getCursorName()}')";
+                        } else {
+                            $wireClickAction = "previousPage('{$paginator->getPageName()}')";
+                        }
         @endphp
 
         <x-filament::button
@@ -46,13 +46,13 @@
         <span class="fi-pagination-overview">
             {{
                 trans_choice(
-                    'filament::components/pagination.overview',
-                    $paginator->total(),
-                    [
-                        'first' => \Illuminate\Support\Number::format($paginator->firstItem() ?? 0),
-                        'last' => \Illuminate\Support\Number::format($paginator->lastItem() ?? 0),
-                        'total' => \Illuminate\Support\Number::format($paginator->total()),
-                    ],
+                'filament::components/pagination.overview',
+                $paginator->total(),
+                [
+                'first' => \Illuminate\Support\Number::format($paginator->firstItem() ?? 0),
+                'last' => \Illuminate\Support\Number::format($paginator->lastItem() ?? 0),
+                'total' => \Illuminate\Support\Number::format($paginator->total()),
+                ],
                 )
             }}
         </span>
@@ -99,10 +99,10 @@
     @if ($paginator->hasMorePages())
         @php
             if ($paginator instanceof CursorPaginator) {
-                $wireClickAction = "setPage('{$paginator->nextCursor()->encode()}', '{$paginator->getCursorName()}')";
-            } else {
-                $wireClickAction = "nextPage('{$paginator->getPageName()}')";
-            }
+                            $wireClickAction = "setPage('{$paginator->nextCursor()->encode()}', '{$paginator->getCursorName()}')";
+                        } else {
+                            $wireClickAction = "nextPage('{$paginator->getPageName()}')";
+                        }
         @endphp
 
         <x-filament::button

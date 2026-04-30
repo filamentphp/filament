@@ -1,11 +1,11 @@
 <div class="fi-topbar-ctn">
     @php
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
-        $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
-        $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
-        $hasTopNavigation = filament()->hasTopNavigation();
-        $hasNavigation = filament()->hasNavigation();
-        $hasTenancy = filament()->hasTenancy();
+                $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+                $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
+                $hasTopNavigation = filament()->hasTopNavigation();
+                $hasNavigation = filament()->hasNavigation();
+                $hasTenancy = filament()->hasTenancy();
     @endphp
 
     <nav class="fi-topbar">
@@ -120,9 +120,9 @@
                     @foreach ($navigation as $group)
                         @php
                             $groupLabel = $group->getLabel();
-                            $groupExtraTopbarAttributeBag = $group->getExtraTopbarAttributeBag();
-                            $isGroupActive = $group->isActive();
-                            $groupIcon = $group->getIcon();
+                                                        $groupExtraTopbarAttributeBag = $group->getExtraTopbarAttributeBag();
+                                                        $isGroupActive = $group->isActive();
+                                                        $groupIcon = $group->getIcon();
                         @endphp
 
                         @if ($groupLabel)
@@ -143,29 +143,29 @@
                                 @php
                                     $lists = [];
 
-                                    foreach ($group->getItems() as $item) {
-                                        if ($childItems = $item->getChildItems()) {
-                                            $lists[] = [
-                                                $item,
-                                                ...$childItems,
-                                            ];
-                                            $lists[] = [];
+                                                                        foreach ($group->getItems() as $item) {
+                                                                            if ($childItems = $item->getChildItems()) {
+                                                                                $lists[] = [
+                                                                                    $item,
+                                                                                    ...$childItems,
+                                                                                ];
+                                                                                $lists[] = [];
 
-                                            continue;
-                                        }
+                                                                                continue;
+                                                                            }
 
-                                        if (empty($lists)) {
-                                            $lists[] = [$item];
+                                                                            if (empty($lists)) {
+                                                                                $lists[] = [$item];
 
-                                            continue;
-                                        }
+                                                                                continue;
+                                                                            }
 
-                                        $lists[count($lists) - 1][] = $item;
-                                    }
+                                                                            $lists[count($lists) - 1][] = $item;
+                                                                        }
 
-                                    if (empty($lists[count($lists) - 1])) {
-                                        array_pop($lists);
-                                    }
+                                                                        if (empty($lists[count($lists) - 1])) {
+                                                                            array_pop($lists);
+                                                                        }
                                 @endphp
 
                                 @foreach ($lists as $list)
@@ -173,13 +173,13 @@
                                         @foreach ($list as $item)
                                             @php
                                                 $isItemActive = $item->isActive();
-                                                $itemBadge = $item->getBadge();
-                                                $itemBadgeColor = $item->getBadgeColor($itemBadge);
-                                                $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
-                                                $itemUrl = $item->getUrl();
-                                                $itemIcon = $isItemActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon();
-                                                $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
-                                                $itemExtraAttributes = $item->getExtraAttributeBag();
+                                                                                                $itemBadge = $item->getBadge();
+                                                                                                $itemBadgeColor = $item->getBadgeColor($itemBadge);
+                                                                                                $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
+                                                                                                $itemUrl = $item->getUrl();
+                                                                                                $itemIcon = $isItemActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon();
+                                                                                                $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
+                                                                                                $itemExtraAttributes = $item->getExtraAttributeBag();
                                             @endphp
 
                                             <x-filament::dropdown.list.item
@@ -203,14 +203,14 @@
                             @foreach ($group->getItems() as $item)
                                 @php
                                     $isItemActive = $item->isActive();
-                                    $itemActiveIcon = $item->getActiveIcon();
-                                    $itemBadge = $item->getBadge();
-                                    $itemBadgeColor = $item->getBadgeColor($itemBadge);
-                                    $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
-                                    $itemIcon = $item->getIcon();
-                                    $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
-                                    $itemUrl = $item->getUrl();
-                                    $itemExtraAttributes = $item->getExtraAttributeBag();
+                                                                        $itemActiveIcon = $item->getActiveIcon();
+                                                                        $itemBadge = $item->getBadge();
+                                                                        $itemBadgeColor = $item->getBadgeColor($itemBadge);
+                                                                        $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
+                                                                        $itemIcon = $item->getIcon();
+                                                                        $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
+                                                                        $itemUrl = $item->getUrl();
+                                                                        $itemExtraAttributes = $item->getExtraAttributeBag();
                                 @endphp
 
                                 <x-filament-panels::topbar.item

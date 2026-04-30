@@ -1,6 +1,6 @@
 @php
     $extraAttributes = $getExtraAttributes();
-    $id = $getId();
+        $id = $getId();
 @endphp
 
 @if (filled($id) || filled($extraAttributes))
@@ -8,10 +8,10 @@
     {{-- Avoid formatting issues with unclosed elements --}}
     {{
         $attributes
-            ->merge([
-                'id' => $id,
-            ], escape: false)
-            ->merge($extraAttributes, escape: false)
+        ->merge([
+        'id' => $id,
+        ], escape: false)
+        ->merge($extraAttributes, escape: false)
     }}
     >
 @endif

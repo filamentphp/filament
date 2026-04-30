@@ -1,28 +1,28 @@
 @php
     use Filament\Actions\View\ActionsRenderHook;
-    use Filament\Support\Facades\FilamentView;
+        use Filament\Support\Facades\FilamentView;
 
-    $actionModalAlignment = $action->getModalAlignment();
-    $actionIsModalAutofocused = $action->isModalAutofocused();
-    $actionHasModalCloseButton = $action->hasModalCloseButton();
-    $actionIsModalClosedByClickingAway = $action->isModalClosedByClickingAway();
-    $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
-    $actionModalDescription = $action->getModalDescription();
-    $actionExtraModalWindowAttributeBag = $action->getExtraModalWindowAttributeBag();
-    $actionExtraModalOverlayAttributeBag = $action->getExtraModalOverlayAttributeBag();
-    $actionModalFooterActions = $action->getVisibleModalFooterActions();
-    $actionModalFooterActionsAlignment = $action->getModalFooterActionsAlignment();
-    $actionModalHeading = $action->getModalHeading();
-    $actionModalIcon = $action->getModalIcon();
-    $actionModalIconColor = $action->getModalIconColor();
-    $actionModalId = "fi-{$this->getId()}-action-{$action->getNestingIndex()}";
-    $actionIsModalSlideOver = $action->isModalSlideOver();
-    $actionSlideOverPosition = $action->getSlideOverPosition();
-    $actionIsModalFooterSticky = $action->isModalFooterSticky();
-    $actionIsModalHeaderSticky = $action->isModalHeaderSticky();
-    $actionModalWidth = $action->getModalWidth();
-    $actionLivewireCallMountedActionName = $action->hasFormWrapper() ? $action->getLivewireCallMountedActionName() : null;
-    $actionModalWireKey = "{$this->getId()}.actions.{$action->getName()}.modal";
+        $actionModalAlignment = $action->getModalAlignment();
+        $actionIsModalAutofocused = $action->isModalAutofocused();
+        $actionHasModalCloseButton = $action->hasModalCloseButton();
+        $actionIsModalClosedByClickingAway = $action->isModalClosedByClickingAway();
+        $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
+        $actionModalDescription = $action->getModalDescription();
+        $actionExtraModalWindowAttributeBag = $action->getExtraModalWindowAttributeBag();
+        $actionExtraModalOverlayAttributeBag = $action->getExtraModalOverlayAttributeBag();
+        $actionModalFooterActions = $action->getVisibleModalFooterActions();
+        $actionModalFooterActionsAlignment = $action->getModalFooterActionsAlignment();
+        $actionModalHeading = $action->getModalHeading();
+        $actionModalIcon = $action->getModalIcon();
+        $actionModalIconColor = $action->getModalIconColor();
+        $actionModalId = "fi-{$this->getId()}-action-{$action->getNestingIndex()}";
+        $actionIsModalSlideOver = $action->isModalSlideOver();
+        $actionSlideOverPosition = $action->getSlideOverPosition();
+        $actionIsModalFooterSticky = $action->isModalFooterSticky();
+        $actionIsModalHeaderSticky = $action->isModalHeaderSticky();
+        $actionModalWidth = $action->getModalWidth();
+        $actionLivewireCallMountedActionName = $action->hasFormWrapper() ? $action->getLivewireCallMountedActionName() : null;
+        $actionModalWireKey = "{$this->getId()}.actions.{$action->getName()}.modal";
 @endphp
 
 <x-filament::modal

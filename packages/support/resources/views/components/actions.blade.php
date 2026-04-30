@@ -3,44 +3,44 @@
 @endphp
 
 @props([
-    'actions' => [],
-    'alignment' => Alignment::Start,
-    'fullWidth' => false,
+'actions' => [],
+'alignment' => Alignment::Start,
+'fullWidth' => false,
 ])
 
 @php
     if (is_array($actions)) {
-        $actions = array_filter(
-            $actions,
-            fn ($action): bool => $action->isVisible(),
-        );
-    }
+            $actions = array_filter(
+                $actions,
+                fn ($action): bool => $action->isVisible(),
+            );
+        }
 
-    if (! $alignment instanceof Alignment) {
-        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
-    }
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
 
-    $hasActions = false;
+        $hasActions = false;
 
-    $hasSlot = ! \Filament\Support\is_slot_empty($slot);
-    $actionsAreHtmlable = $actions instanceof \Illuminate\Contracts\Support\Htmlable;
+        $hasSlot = ! \Filament\Support\is_slot_empty($slot);
+        $actionsAreHtmlable = $actions instanceof \Illuminate\Contracts\Support\Htmlable;
 
-    if ($hasSlot) {
-        $hasActions = true;
-    } elseif ($actionsAreHtmlable) {
-        $hasActions = ! \Filament\Support\is_slot_empty($actions);
-    } else {
-        $hasActions = filled($actions);
-    }
+        if ($hasSlot) {
+            $hasActions = true;
+        } elseif ($actionsAreHtmlable) {
+            $hasActions = ! \Filament\Support\is_slot_empty($actions);
+        } else {
+            $hasActions = filled($actions);
+        }
 @endphp
 
 @if ($hasActions)
     <div
         {{
             $attributes->class([
-                'fi-ac',
-                'fi-width-full' => $fullWidth,
-                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : null) => ! $fullWidth,
+            'fi-ac',
+            'fi-width-full' => $fullWidth,
+            ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : null) => ! $fullWidth,
             ])
         }}
     >

@@ -1,53 +1,53 @@
 @php
     use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
-    use Filament\Forms\Components\Field;
+        use Filament\Forms\Components\Field;
 
-    $fieldWrapperView = $getFieldWrapperView();
+        $fieldWrapperView = $getFieldWrapperView();
 
-    $errorMessages = null;
-    $errorMessage = null;
+        $errorMessages = null;
+        $errorMessage = null;
 
-    foreach ($getChildComponentContainer()->getComponents() as $childComponent) {
-        if (! ($childComponent instanceof Field)) {
-            continue;
-        }
-
-        $statePath = $childComponent->getStatePath();
-
-        if (blank($statePath)) {
-            continue;
-        }
-
-        if ($errors->has($statePath)) {
-            if ($childComponent->shouldShowAllValidationMessages()) {
-                $errorMessages = $errors->get($statePath);
-                $shouldShowAllValidationMessages = true;
-            } else {
-                $errorMessage = $errors->first($statePath);
+        foreach ($getChildComponentContainer()->getComponents() as $childComponent) {
+            if (! ($childComponent instanceof Field)) {
+                continue;
             }
 
-            $areHtmlValidationMessagesAllowed = $childComponent->areHtmlValidationMessagesAllowed();
+            $statePath = $childComponent->getStatePath();
 
-            break;
-        }
-
-        if (! ($childComponent instanceof HasNestedRecursiveValidationRules)) {
-            continue;
-        }
-
-        if ($errors->has("{$statePath}.*")) {
-            if ($childComponent->shouldShowAllValidationMessages()) {
-                $errorMessages = $errors->get("{$statePath}.*");
-                $shouldShowAllValidationMessages = true;
-            } else {
-                $errorMessage = $errors->first("{$statePath}.*");
+            if (blank($statePath)) {
+                continue;
             }
 
-            $areHtmlValidationMessagesAllowed = $childComponent->areHtmlValidationMessagesAllowed();
+            if ($errors->has($statePath)) {
+                if ($childComponent->shouldShowAllValidationMessages()) {
+                    $errorMessages = $errors->get($statePath);
+                    $shouldShowAllValidationMessages = true;
+                } else {
+                    $errorMessage = $errors->first($statePath);
+                }
 
-            break;
+                $areHtmlValidationMessagesAllowed = $childComponent->areHtmlValidationMessagesAllowed();
+
+                break;
+            }
+
+            if (! ($childComponent instanceof HasNestedRecursiveValidationRules)) {
+                continue;
+            }
+
+            if ($errors->has("{$statePath}.*")) {
+                if ($childComponent->shouldShowAllValidationMessages()) {
+                    $errorMessages = $errors->get("{$statePath}.*");
+                    $shouldShowAllValidationMessages = true;
+                } else {
+                    $errorMessage = $errors->first("{$statePath}.*");
+                }
+
+                $areHtmlValidationMessagesAllowed = $childComponent->areHtmlValidationMessagesAllowed();
+
+                break;
+            }
         }
-    }
 @endphp
 
 <x-dynamic-component
@@ -61,11 +61,11 @@
     <div
         {{
             $attributes
-                ->merge([
-                    'id' => $getId(),
-                ], escape: false)
-                ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-sc-fused-group'])
+            ->merge([
+            'id' => $getId(),
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->class(['fi-sc-fused-group'])
         }}
     >
         {{ $getChildSchema() }}

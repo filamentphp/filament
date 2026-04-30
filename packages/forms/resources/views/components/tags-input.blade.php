@@ -1,24 +1,24 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $extraAttributes = $getExtraAttributes();
-    $extraInputAttributeBag = $getExtraInputAttributeBag();
-    $color = $getColor() ?? 'primary';
-    $id = $getId();
-    $isAutofocused = $isAutofocused();
-    $isDisabled = $isDisabled();
-    $isPrefixInline = $isPrefixInline();
-    $isReorderable = (! $isDisabled) && $isReorderable();
-    $isSuffixInline = $isSuffixInline();
-    $placeholder = $getPlaceholder();
-    $prefixActions = $getPrefixActions();
-    $prefixIcon = $getPrefixIcon();
-    $prefixIconColor = $getPrefixIconColor();
-    $prefixLabel = $getPrefixLabel();
-    $statePath = $getStatePath();
-    $suffixActions = $getSuffixActions();
-    $suffixIcon = $getSuffixIcon();
-    $suffixIconColor = $getSuffixIconColor();
-    $suffixLabel = $getSuffixLabel();
+        $extraAttributes = $getExtraAttributes();
+        $extraInputAttributeBag = $getExtraInputAttributeBag();
+        $color = $getColor() ?? 'primary';
+        $id = $getId();
+        $isAutofocused = $isAutofocused();
+        $isDisabled = $isDisabled();
+        $isPrefixInline = $isPrefixInline();
+        $isReorderable = (! $isDisabled) && $isReorderable();
+        $isSuffixInline = $isSuffixInline();
+        $placeholder = $getPlaceholder();
+        $prefixActions = $getPrefixActions();
+        $prefixIcon = $getPrefixIcon();
+        $prefixIconColor = $getPrefixIconColor();
+        $prefixLabel = $getPrefixLabel();
+        $statePath = $getStatePath();
+        $suffixActions = $getSuffixActions();
+        $suffixIcon = $getSuffixIcon();
+        $suffixIconColor = $getSuffixIconColor();
+        $suffixLabel = $getSuffixLabel();
 @endphp
 
 <x-dynamic-component
@@ -42,11 +42,11 @@
         x-on:focus-input.stop="$el.querySelector('input')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
-                ->merge($extraAttributes, escape: false)
-                ->class([
-                    'fi-fo-tags-input',
-                    'fi-disabled' => $isDisabled,
-                ])
+            ->merge($extraAttributes, escape: false)
+            ->class([
+                'fi-fo-tags-input',
+                'fi-disabled' => $isDisabled,
+            ])
         "
     >
         <div
@@ -61,21 +61,21 @@
             <input
                 {{
                     $extraInputAttributeBag
-                        ->merge([
-                            'autocomplete' => 'off',
-                            'autofocus' => $isAutofocused,
-                            'disabled' => $isDisabled,
-                            'id' => $id,
-                            'list' => $id . '-suggestions',
-                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                            'type' => 'text',
-                            'x-bind' => 'input',
-                        ], escape: false)
-                        ->class([
-                            'fi-input',
-                            'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                            'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-                        ])
+                    ->merge([
+                    'autocomplete' => 'off',
+                    'autofocus' => $isAutofocused,
+                    'disabled' => $isDisabled,
+                    'id' => $id,
+                    'list' => $id . '-suggestions',
+                    'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                    'type' => 'text',
+                    'x-bind' => 'input',
+                    ], escape: false)
+                    ->class([
+                    'fi-input',
+                    'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                    'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                    ])
                 }}
             />
 
@@ -109,8 +109,8 @@
                                 :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
                                 :x-sortable-handle="$isReorderable ? '' : null"
                                 @class([
-                                    'fi-reorderable' => $isReorderable,
-                                ])
+                                                                    'fi-reorderable' => $isReorderable,
+                                                                ])
                             >
                                 {{ $getTagPrefix() }}
 

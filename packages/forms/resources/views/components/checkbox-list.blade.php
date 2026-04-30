@@ -1,17 +1,17 @@
 @php
     use Filament\Support\Enums\GridDirection;
 
-    $fieldWrapperView = $getFieldWrapperView();
-    $extraInputAttributeBag = $getExtraInputAttributeBag();
-    $isHtmlAllowed = $isHtmlAllowed();
-    $gridDirection = $getGridDirection() ?? GridDirection::Column;
-    $isBulkToggleable = $isBulkToggleable();
-    $isDisabled = $isDisabled();
-    $isSearchable = $isSearchable();
-    $statePath = $getStatePath();
-    $options = $getOptions();
-    $livewireKey = $getLivewireKey();
-    $wireModelAttribute = $applyStateBindingModifiers('wire:model');
+        $fieldWrapperView = $getFieldWrapperView();
+        $extraInputAttributeBag = $getExtraInputAttributeBag();
+        $isHtmlAllowed = $isHtmlAllowed();
+        $gridDirection = $getGridDirection() ?? GridDirection::Column;
+        $isBulkToggleable = $isBulkToggleable();
+        $isDisabled = $isDisabled();
+        $isSearchable = $isSearchable();
+        $statePath = $getStatePath();
+        $options = $getOptions();
+        $livewireKey = $getLivewireKey();
+        $wireModelAttribute = $applyStateBindingModifiers('wire:model');
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -68,16 +68,16 @@
         <div
             {{
                 $getExtraAttributeBag()
-                    ->grid($getColumns(), $gridDirection)
-                    ->merge([
-                        'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
-                    ], escape: false)
-                    ->class([
-                        'fi-fo-checkbox-list-options',
-                    ])
+                ->grid($getColumns(), $gridDirection)
+                ->merge([
+                'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
+                ], escape: false)
+                ->class([
+                'fi-fo-checkbox-list-options',
+                ])
             }}
         >
-            @forelse ($options as $value => $label)
+            @forelse (options as $value => $label)
                 <div
                     wire:key="{{ $livewireKey }}.options.{{ $value }}"
                     @if ($isSearchable)
@@ -99,18 +99,18 @@
                             type="checkbox"
                             {{
                                 $extraInputAttributeBag
-                                    ->merge([
-                                        'disabled' => $isDisabled || $isOptionDisabled($value, $label),
-                                        'value' => $value,
-                                        'wire:loading.attr' => 'disabled',
-                                        $wireModelAttribute => $statePath,
-                                        'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
-                                    ], escape: false)
-                                    ->class([
-                                        'fi-checkbox-input',
-                                        'fi-valid' => ! $errors->has($statePath),
-                                        'fi-invalid' => $errors->has($statePath),
-                                    ])
+                                ->merge([
+                                'disabled' => $isDisabled || $isOptionDisabled($value, $label),
+                                'value' => $value,
+                                'wire:loading.attr' => 'disabled',
+                                $wireModelAttribute => $statePath,
+                                'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
+                                ], escape: false)
+                                ->class([
+                                'fi-checkbox-input',
+                                'fi-valid' => ! $errors->has($statePath),
+                                'fi-invalid' => $errors->has($statePath),
+                                ])
                             }}
                         />
 

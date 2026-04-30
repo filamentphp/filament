@@ -1,66 +1,66 @@
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\SlideOverPosition;
-    use Filament\Support\Enums\Width;
-    use Filament\Support\View\Components\ModalComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Support\Enums\SlideOverPosition;
+        use Filament\Support\Enums\Width;
+        use Filament\Support\View\Components\ModalComponent\IconComponent;
+        use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
-    'alignment' => Alignment::Start,
-    'ariaLabelledby' => null,
-    'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
-    'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
-    'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
-    'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
-    'closeEventName' => 'close-modal',
-    'closeQuietlyEventName' => 'close-modal-quietly',
-    'description' => null,
-    'extraModalWindowAttributeBag' => null,
-    'extraModalOverlayAttributeBag' => null,
-    'footer' => null,
-    'footerActions' => [],
-    'footerActionsAlignment' => Alignment::Start,
-    'header' => null,
-    'heading' => null,
-    'icon' => null,
-    'iconAlias' => null,
-    'iconColor' => 'primary',
-    'id' => null,
-    'openEventName' => 'open-modal',
-    'slideOver' => false,
-    'slideOverPosition' => SlideOverPosition::End,
-    'stickyFooter' => false,
-    'stickyHeader' => false,
-    'teleport' => null,
-    'trigger' => null,
-    'visible' => true,
-    'width' => 'sm',
+'alignment' => Alignment::Start,
+'ariaLabelledby' => null,
+'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
+'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
+'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
+'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
+'closeEventName' => 'close-modal',
+'closeQuietlyEventName' => 'close-modal-quietly',
+'description' => null,
+'extraModalWindowAttributeBag' => null,
+'extraModalOverlayAttributeBag' => null,
+'footer' => null,
+'footerActions' => [],
+'footerActionsAlignment' => Alignment::Start,
+'header' => null,
+'heading' => null,
+'icon' => null,
+'iconAlias' => null,
+'iconColor' => 'primary',
+'id' => null,
+'openEventName' => 'open-modal',
+'slideOver' => false,
+'slideOverPosition' => SlideOverPosition::End,
+'stickyFooter' => false,
+'stickyHeader' => false,
+'teleport' => null,
+'trigger' => null,
+'visible' => true,
+'width' => 'sm',
 ])
 
 @php
     $hasContent = ! \Filament\Support\is_slot_empty($slot);
-    $hasDescription = filled($description);
-    $hasFooter = (! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions)));
-    $hasHeading = filled($heading);
-    $hasIcon = filled($icon);
+        $hasDescription = filled($description);
+        $hasFooter = (! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions)));
+        $hasHeading = filled($heading);
+        $hasIcon = filled($icon);
 
-    if (! $alignment instanceof Alignment) {
-        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
-    }
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
 
-    if (! $footerActionsAlignment instanceof Alignment) {
-        $footerActionsAlignment = filled($footerActionsAlignment) ? (Alignment::tryFrom($footerActionsAlignment) ?? $footerActionsAlignment) : null;
-    }
+        if (! $footerActionsAlignment instanceof Alignment) {
+            $footerActionsAlignment = filled($footerActionsAlignment) ? (Alignment::tryFrom($footerActionsAlignment) ?? $footerActionsAlignment) : null;
+        }
 
-    if (is_string($width)) {
-        $width = Width::tryFrom($width) ?? $width;
-    }
+        if (is_string($width)) {
+            $width = Width::tryFrom($width) ?? $width;
+        }
 
-    $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
+        $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
 
-    $wireSubmitHandler = $attributes->get('wire:submit.prevent');
-    $attributes = $attributes->except(['wire:submit.prevent']);
+        $wireSubmitHandler = $attributes->get('wire:submit.prevent');
+        $attributes = $attributes->except(['wire:submit.prevent']);
 @endphp
 
 @if ($trigger)
@@ -116,14 +116,14 @@
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     {{
         $attributes->class([
-            'fi-modal',
-            'fi-absolute-positioning-context',
-            'fi-modal-slide-over' => $slideOver,
-            'fi-modal-slide-over-from-start' => $slideOver && $slideOverPosition === SlideOverPosition::Start,
-            'fi-modal-slide-over-from-end' => $slideOver && $slideOverPosition === SlideOverPosition::End,
-            'fi-modal-has-sticky-header' => $stickyHeader,
-            'fi-modal-has-sticky-footer' => $stickyFooter,
-            'fi-width-screen' => $width === Width::Screen,
+        'fi-modal',
+        'fi-absolute-positioning-context',
+        'fi-modal-slide-over' => $slideOver,
+        'fi-modal-slide-over-from-start' => $slideOver && $slideOverPosition === SlideOverPosition::Start,
+        'fi-modal-slide-over-from-end' => $slideOver && $slideOverPosition === SlideOverPosition::End,
+        'fi-modal-has-sticky-header' => $stickyHeader,
+        'fi-modal-has-sticky-footer' => $stickyFooter,
+        'fi-width-screen' => $width === Width::Screen,
         ])
     }}
 >
@@ -133,7 +133,7 @@
         x-transition.duration.300ms.opacity
         {{
             ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
-                'fi-modal-close-overlay',
+            'fi-modal-close-overlay',
             ])
         }}
     ></div>
@@ -143,8 +143,8 @@
             x-on:click.self="{{ $closeEventHandler }}"
         @endif
         @class([
-            'fi-modal-window-ctn',
-            'fi-clickable' => $closeByClickingAway,
+        'fi-modal-window-ctn',
+        'fi-clickable' => $closeByClickingAway,
         ])
     >
         <{{ filled($wireSubmitHandler) ? 'form' : 'div' }}
@@ -168,14 +168,14 @@
             @endif
             {{
                 ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
-                    'fi-modal-window',
-                    'fi-modal-window-has-close-btn' => $closeButton,
-                    'fi-modal-window-has-content' => $hasContent,
-                    'fi-modal-window-has-footer' => $hasFooter,
-                    'fi-modal-window-has-icon' => $hasIcon,
-                    'fi-hidden' => ! $visible,
-                    ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
-                    ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
+                'fi-modal-window',
+                'fi-modal-window-has-close-btn' => $closeButton,
+                'fi-modal-window-has-content' => $hasContent,
+                'fi-modal-window-has-footer' => $hasFooter,
+                'fi-modal-window-has-icon' => $hasIcon,
+                'fi-hidden' => ! $visible,
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
+                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
                 ])
             }}
         >
@@ -185,8 +185,8 @@
                         wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.header"
                     @endif
                     @class([
-                        'fi-modal-header',
-                        'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
+                    'fi-modal-header',
+                    'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
                     ])
                 >
                     @if ($closeButton)
@@ -247,8 +247,8 @@
                         wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.footer"
                     @endif
                     @class([
-                        'fi-modal-footer',
-                        ($footerActionsAlignment instanceof Alignment) ? "fi-align-{$footerActionsAlignment->value}" : null,
+                    'fi-modal-footer',
+                    ($footerActionsAlignment instanceof Alignment) ? "fi-align-{$footerActionsAlignment->value}" : null,
                     ])
                 >
                     @if (! \Filament\Support\is_slot_empty($footer))

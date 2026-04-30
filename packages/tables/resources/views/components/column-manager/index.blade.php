@@ -1,16 +1,16 @@
 @php
     use Filament\Tables\Enums\ColumnManagerResetActionPosition;
-    use Illuminate\View\ComponentAttributeBag;
+        use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
-    'applyAction',
-    'columns' => null,
-    'hasReorderableColumns',
-    'hasToggleableColumns',
-    'headingTag' => 'h3',
-    'reorderAnimationDuration' => 300,
-    'resetActionPosition' => ColumnManagerResetActionPosition::Header,
+'applyAction',
+'columns' => null,
+'hasReorderableColumns',
+'hasToggleableColumns',
+'headingTag' => 'h3',
+'reorderAnimationDuration' => 300,
+'resetActionPosition' => ColumnManagerResetActionPosition::Header,
 ])
 
 <div

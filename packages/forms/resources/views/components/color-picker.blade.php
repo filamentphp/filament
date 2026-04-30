@@ -1,23 +1,23 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $isDisabled = $isDisabled();
-    $isLive = $isLive();
-    $isLiveOnBlur = $isLiveOnBlur();
-    $isLiveDebounced = $isLiveDebounced();
-    $isPrefixInline = $isPrefixInline();
-    $isSuffixInline = $isSuffixInline();
-    $liveDebounce = $getLiveDebounce();
-    $prefixActions = $getPrefixActions();
-    $prefixIcon = $getPrefixIcon();
-    $prefixIconColor = $getPrefixIconColor();
-    $prefixLabel = $getPrefixLabel();
-    $suffixActions = $getSuffixActions();
-    $suffixIcon = $getSuffixIcon();
-    $suffixIconColor = $getSuffixIconColor();
-    $suffixLabel = $getSuffixLabel();
-    $statePath = $getStatePath();
-    $placeholder = $getPlaceholder();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $isDisabled = $isDisabled();
+        $isLive = $isLive();
+        $isLiveOnBlur = $isLiveOnBlur();
+        $isLiveDebounced = $isLiveDebounced();
+        $isPrefixInline = $isPrefixInline();
+        $isSuffixInline = $isSuffixInline();
+        $liveDebounce = $getLiveDebounce();
+        $prefixActions = $getPrefixActions();
+        $prefixIcon = $getPrefixIcon();
+        $prefixIconColor = $getPrefixIconColor();
+        $prefixLabel = $getPrefixLabel();
+        $suffixActions = $getSuffixActions();
+        $suffixIcon = $getSuffixIcon();
+        $suffixIconColor = $getSuffixIconColor();
+        $suffixLabel = $getSuffixLabel();
+        $statePath = $getStatePath();
+        $placeholder = $getPlaceholder();
 @endphp
 
 <x-dynamic-component
@@ -41,7 +41,7 @@
         x-on:focus-input.stop="$el.querySelector('input')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-                ->class('fi-fo-color-picker')
+            ->class('fi-fo-color-picker')
         "
     >
         <div
@@ -66,21 +66,21 @@
                 x-ref="input"
                 {{
                     $getExtraInputAttributeBag()
-                        ->merge([
-                            'autocomplete' => 'off',
-                            'disabled' => $isDisabled,
-                            'id' => $getId(),
-                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                            'required' => $isRequired() && (! $isConcealed()),
-                            'type' => 'text',
-                            'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
-                            'x-on:blur' => $isLiveOnBlur ? 'isOpen() ? null : commitState()' : null,
-                        ], escape: false)
-                        ->class([
-                            'fi-input',
-                            'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                            'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-                        ])
+                    ->merge([
+                    'autocomplete' => 'off',
+                    'disabled' => $isDisabled,
+                    'id' => $getId(),
+                    'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                    'required' => $isRequired() && (! $isConcealed()),
+                    'type' => 'text',
+                    'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
+                    'x-on:blur' => $isLiveOnBlur ? 'isOpen() ? null : commitState()' : null,
+                    ], escape: false)
+                    ->class([
+                    'fi-input',
+                    'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                    'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                    ])
                 }}
             />
 
@@ -103,11 +103,11 @@
             >
                 @php
                     $tag = match ($getFormat()) {
-                        'hsl' => 'hsl-string',
-                        'rgb' => 'rgb-string',
-                        'rgba' => 'rgba-string',
-                        default => 'hex',
-                    } . '-color-picker';
+                                            'hsl' => 'hsl-string',
+                                            'rgb' => 'rgb-string',
+                                            'rgba' => 'rgba-string',
+                                            default => 'hex',
+                                        } . '-color-picker';
                 @endphp
 
                 <{{ $tag }} x-ref="picker" color="{{ $getState() }}" />

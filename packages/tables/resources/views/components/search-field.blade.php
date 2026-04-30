@@ -3,10 +3,10 @@
 @endphp
 
 @props([
-    'debounce' => '500ms',
-    'onBlur' => false,
-    'placeholder' => __('filament-tables::table.fields.search.placeholder'),
-    'wireModel' => 'tableSearch',
+'debounce' => '500ms',
+'onBlur' => false,
+'placeholder' => __('filament-tables::table.fields.search.placeholder'),
+'wireModel' => 'tableSearch',
 ])
 
 @php

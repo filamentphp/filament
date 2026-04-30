@@ -1,12 +1,12 @@
 @props([
-    'active' => false,
-    'activeIcon' => null,
-    'badge' => null,
-    'badgeColor' => null,
-    'badgeTooltip' => null,
-    'icon' => null,
-    'shouldOpenUrlInNewTab' => false,
-    'url' => null,
+'active' => false,
+'activeIcon' => null,
+'badge' => null,
+'badgeColor' => null,
+'badgeTooltip' => null,
+'icon' => null,
+'shouldOpenUrlInNewTab' => false,
+'url' => null,
 ])
 
 @php
@@ -16,8 +16,8 @@
 <li
     {{
         $attributes->class([
-            'fi-topbar-item',
-            'fi-active' => $active,
+        'fi-topbar-item',
+        'fi-active' => $active,
         ])
     }}
 >

@@ -1,5 +1,5 @@
 @props([
-    'navigation',
+'navigation',
 ])
 
 <x-filament::dropdown
@@ -7,24 +7,24 @@
     width="xs"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-page-sub-navigation-dropdown'])
+        ->class(['fi-page-sub-navigation-dropdown'])
     "
 >
     <x-slot name="trigger">
         @php
             $activeItem = null;
 
-            foreach ($navigation as $navigationGroup) {
-                foreach ($navigationGroup->getItems() as $navigationItem) {
-                    foreach ([$navigationItem, ...$navigationItem->getChildItems()] as $navigationItemChild) {
-                        if ($navigationItemChild->isActive()) {
-                            $activeItem = $navigationItemChild;
+                        foreach ($navigation as $navigationGroup) {
+                            foreach ($navigationGroup->getItems() as $navigationItem) {
+                                foreach ([$navigationItem, ...$navigationItem->getChildItems()] as $navigationItemChild) {
+                                    if ($navigationItemChild->isActive()) {
+                                        $activeItem = $navigationItemChild;
 
-                            break 3;
+                                        break 3;
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
-            }
         @endphp
 
         <x-filament::button
@@ -49,11 +49,11 @@
                 @foreach ([$navigationItem, ...$navigationItem->getChildItems()] as $navigationItemChild)
                     @php
                         $navigationItemBadge = $navigationItem->getBadge();
-                        $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
-                        $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
-                        $navigationItemUrl = $navigationItem->getUrl();
-                        $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
-                        $navigationItemExtraAttributes = $navigationItemChild->getExtraAttributeBag();
+                                                $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
+                                                $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
+                                                $navigationItemUrl = $navigationItem->getUrl();
+                                                $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
+                                                $navigationItemExtraAttributes = $navigationItemChild->getExtraAttributeBag();
                     @endphp
 
                     <x-filament::dropdown.list.item

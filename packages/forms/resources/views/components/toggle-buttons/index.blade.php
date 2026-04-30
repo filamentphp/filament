@@ -1,17 +1,17 @@
 @php
     use Filament\Support\Enums\GridDirection;
-    use Illuminate\View\ComponentAttributeBag;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $fieldWrapperView = $getFieldWrapperView();
-    $gridDirection = $getGridDirection() ?? GridDirection::Column;
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $isInline = $isInline();
-    $isMultiple = $isMultiple();
-    $statePath = $getStatePath();
-    $areButtonLabelsHidden = $areButtonLabelsHidden();
-    $wireModelAttribute = $applyStateBindingModifiers('wire:model');
-    $extraInputAttributeBag = $getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
+        $fieldWrapperView = $getFieldWrapperView();
+        $gridDirection = $getGridDirection() ?? GridDirection::Column;
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $isInline = $isInline();
+        $isMultiple = $isMultiple();
+        $statePath = $getStatePath();
+        $areButtonLabelsHidden = $areButtonLabelsHidden();
+        $wireModelAttribute = $applyStateBindingModifiers('wire:model');
+        $extraInputAttributeBag = $getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
 @endphp
 
 <x-dynamic-component
@@ -23,20 +23,20 @@
     <div
         {{
             $getExtraAttributeBag()
-                ->when(! $isInline, fn (ComponentAttributeBag $attributes) => $attributes->grid($getColumns(), $gridDirection))
-                ->class([
-                    'fi-fo-toggle-buttons',
-                    'fi-inline' => $isInline,
-                ])
+            ->when(! $isInline, fn (ComponentAttributeBag $attributes) => $attributes->grid($getColumns(), $gridDirection))
+            ->class([
+            'fi-fo-toggle-buttons',
+            'fi-inline' => $isInline,
+            ])
         }}
     >
         @foreach ($getOptions() as $value => $label)
             @php
                 $inputId = "{$id}-{$value}";
-                $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
-                $color = $getColor($value);
-                $icon = $getIcon($value);
-                $tooltip = $getTooltip($value);
+                                $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
+                                $color = $getColor($value);
+                                $icon = $getIcon($value);
+                                $tooltip = $getTooltip($value);
             @endphp
 
             <div class="fi-fo-toggle-buttons-btn-ctn">

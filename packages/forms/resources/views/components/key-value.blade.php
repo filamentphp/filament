@@ -1,17 +1,17 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $canEditKeys = $canEditKeys();
-    $canEditValues = $canEditValues();
-    $keyPlaceholder = $getKeyPlaceholder();
-    $valuePlaceholder = $getValuePlaceholder();
-    $debounce = $getLiveDebounce();
-    $isAddable = $isAddable();
-    $isDeletable = $isDeletable();
-    $isDisabled = $isDisabled();
-    $isReorderable = $isReorderable();
-    $statePath = $getStatePath();
-    $livewireKey = $getLivewireKey();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $canEditKeys = $canEditKeys();
+        $canEditValues = $canEditValues();
+        $keyPlaceholder = $getKeyPlaceholder();
+        $valuePlaceholder = $getValuePlaceholder();
+        $debounce = $getLiveDebounce();
+        $isAddable = $isAddable();
+        $isDeletable = $isDeletable();
+        $isDisabled = $isDisabled();
+        $isReorderable = $isReorderable();
+        $statePath = $getStatePath();
+        $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component
@@ -24,7 +24,7 @@
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-                ->class(['fi-fo-key-value'])
+            ->class(['fi-fo-key-value'])
         "
     >
         <div
@@ -36,13 +36,13 @@
             wire:ignore
             wire:key="{{ $livewireKey }}.{{
                 substr(md5(serialize([
-                    $isDisabled,
+                $isDisabled,
                 ])), 0, 64)
             }}"
             {{
                 $attributes
-                    ->merge($getExtraAlpineAttributes(), escape: false)
-                    ->class(['fi-fo-key-value-table-ctn'])
+                ->merge($getExtraAlpineAttributes(), escape: false)
+                ->class(['fi-fo-key-value-table-ctn'])
             }}
         >
             <table class="fi-fo-key-value-table">

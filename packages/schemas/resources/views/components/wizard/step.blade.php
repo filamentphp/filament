@@ -1,9 +1,9 @@
 @php
     $id = $getId();
-    $key = $getKey();
-    $wizard = $getContainer()->getParentComponent();
-    $isContained = $wizard->isContained();
-    $alpineSubmitHandler = $hasFormWrapper() ? $wizard->getAlpineSubmitHandler() : null;
+        $key = $getKey();
+        $wizard = $getContainer()->getParentComponent();
+        $isContained = $wizard->isContained();
+        $alpineSubmitHandler = $hasFormWrapper() ? $wizard->getAlpineSubmitHandler() : null;
 @endphp
 
 <{{ filled($alpineSubmitHandler) ? 'form' : 'div' }}
@@ -25,13 +25,13 @@
     x-ref="step-{{ $key }}"
     {{
         $attributes
-            ->merge([
-                'aria-labelledby' => $id,
-                'id' => $id,
-                'role' => 'tabpanel',
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-sc-wizard-step'])
+        ->merge([
+        'aria-labelledby' => $id,
+        'id' => $id,
+        'role' => 'tabpanel',
+        ], escape: false)
+        ->merge($getExtraAttributes(), escape: false)
+        ->class(['fi-sc-wizard-step'])
     }}
 >
     {{ $getChildSchema() }}

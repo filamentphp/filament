@@ -1,37 +1,37 @@
 @php
     use Filament\Actions\Action;
-    use Filament\Support\Enums\Alignment;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Support\Enums\Alignment;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $fieldWrapperView = $getFieldWrapperView();
+        $fieldWrapperView = $getFieldWrapperView();
 
-    $items = $getItems();
+        $items = $getItems();
 
-    $addAction = $getAction($getAddActionName());
-    $addActionAlignment = $getAddActionAlignment();
-    $cloneAction = $getAction($getCloneActionName());
-    $deleteAction = $getAction($getDeleteActionName());
-    $moveDownAction = $getAction($getMoveDownActionName());
-    $moveUpAction = $getAction($getMoveUpActionName());
-    $reorderAction = $getAction($getReorderActionName());
-    $extraItemActions = $getExtraItemActions();
+        $addAction = $getAction($getAddActionName());
+        $addActionAlignment = $getAddActionAlignment();
+        $cloneAction = $getAction($getCloneActionName());
+        $deleteAction = $getAction($getDeleteActionName());
+        $moveDownAction = $getAction($getMoveDownActionName());
+        $moveUpAction = $getAction($getMoveUpActionName());
+        $reorderAction = $getAction($getReorderActionName());
+        $extraItemActions = $getExtraItemActions();
 
-    $isAddable = $isAddable();
-    $isCloneable = $isCloneable();
-    $isDeletable = $isDeletable();
-    $isReorderableWithButtons = $isReorderableWithButtons();
-    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+        $isAddable = $isAddable();
+        $isCloneable = $isCloneable();
+        $isDeletable = $isDeletable();
+        $isReorderableWithButtons = $isReorderableWithButtons();
+        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
 
-    $key = $getKey();
-    $statePath = $getStatePath();
+        $key = $getKey();
+        $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{
             $attributes
-                ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-simple-repeater'])
+            ->merge($getExtraAttributes(), escape: false)
+            ->class(['fi-fo-simple-repeater'])
         }}
     >
         @if (count($items))
@@ -39,29 +39,29 @@
                 x-sortable
                 {{
                     (new ComponentAttributeBag)
-                        ->grid($getGridColumns())
-                        ->merge([
-                            'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                            'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
-                        ], escape: false)
-                        ->class(['fi-fo-simple-repeater-items'])
+                    ->grid($getGridColumns())
+                    ->merge([
+                    'data-sortable-animation-duration' => $getReorderAnimationDuration(),
+                    'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                    ], escape: false)
+                    ->class(['fi-fo-simple-repeater-items'])
                 }}
             >
                 @foreach ($items as $itemKey => $item)
                     @php
                         $visibleExtraItemActions = array_filter(
-                            $extraItemActions,
-                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                        );
-                        $cloneAction = $cloneAction(['item' => $itemKey]);
-                        $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                        $deleteAction = $deleteAction(['item' => $itemKey]);
-                        $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
-                        $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
-                        $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
-                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                                                    $extraItemActions,
+                                                    fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                                                );
+                                                $cloneAction = $cloneAction(['item' => $itemKey]);
+                                                $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
+                                                $deleteAction = $deleteAction(['item' => $itemKey]);
+                                                $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                                                $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
+                                                $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
+                                                $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
+                                                $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
+                                                $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                     @endphp
 
                     <li
@@ -118,8 +118,8 @@
         @if ($isAddable && $addAction->isVisible())
             <div
                 @class([
-                    'fi-fo-simple-repeater-add',
-                    ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
+                'fi-fo-simple-repeater-add',
+                ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                 ])
             >
                 {{ $addAction }}

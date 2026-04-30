@@ -1,15 +1,15 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $isDisabled = $isDisabled();
-    $isLive = $isLive();
-    $isLiveOnBlur = $isLiveOnBlur();
-    $isLiveDebounced = $isLiveDebounced();
-    $liveDebounce = $getLiveDebounce();
-    $key = $getKey();
-    $language = $getLanguage();
-    $statePath = $getStatePath();
-    $livewireKey = $getLivewireKey();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $isDisabled = $isDisabled();
+        $isLive = $isLive();
+        $isLiveOnBlur = $isLiveOnBlur();
+        $isLiveDebounced = $isLiveDebounced();
+        $liveDebounce = $getLiveDebounce();
+        $key = $getKey();
+        $language = $getLanguage();
+        $statePath = $getStatePath();
+        $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -18,7 +18,7 @@
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-                ->class(['fi-fo-code-editor'])
+            ->class(['fi-fo-code-editor'])
         "
     >
         <div
@@ -37,8 +37,8 @@
             wire:ignore
             wire:key="{{ $livewireKey }}.{{
                 substr(md5(serialize([
-                    $isDisabled,
-                    $language?->value,
+                $isDisabled,
+                $language?->value,
                 ])), 0, 64)
             }}"
             {{ $getExtraAlpineAttributeBag() }}

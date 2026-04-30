@@ -1,10 +1,10 @@
 @php
     $isContained = $isContained();
-    $key = $getKey();
-    $previousAction = $getAction('previous');
-    $nextAction = $getAction('next');
-    $steps = $getChildSchema()->getComponents();
-    $isHeaderHidden = $isHeaderHidden();
+        $key = $getKey();
+        $previousAction = $getAction('previous');
+        $nextAction = $getAction('next');
+        $steps = $getChildSchema()->getComponents();
+        $isHeaderHidden = $isHeaderHidden();
 @endphp
 
 <div
@@ -22,26 +22,26 @@
     wire:ignore.self
     {{
         $attributes
-            ->merge([
-                'id' => $getId(),
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class([
-                'fi-sc-wizard',
-                'fi-contained' => $isContained,
-                'fi-sc-wizard-header-hidden' => $isHeaderHidden,
-            ])
+        ->merge([
+        'id' => $getId(),
+        ], escape: false)
+        ->merge($getExtraAttributes(), escape: false)
+        ->merge($getExtraAlpineAttributes(), escape: false)
+        ->class([
+        'fi-sc-wizard',
+        'fi-contained' => $isContained,
+        'fi-sc-wizard-header-hidden' => $isHeaderHidden,
+        ])
     }}
 >
     <input
         type="hidden"
         value="{{
             collect($steps)
-                ->filter(static fn (\Filament\Schemas\Components\Wizard\Step $step): bool => $step->isVisible())
-                ->map(static fn (\Filament\Schemas\Components\Wizard\Step $step): ?string => $step->getKey())
-                ->values()
-                ->toJson()
+            ->filter(static fn (\Filament\Schemas\Components\Wizard\Step $step): bool => $step->isVisible())
+            ->map(static fn (\Filament\Schemas\Components\Wizard\Step $step): ?string => $step->getKey())
+            ->values()
+            ->toJson()
         }}"
         x-ref="stepsData"
     />
@@ -78,25 +78,25 @@
 
                             {{
                                 \Filament\Support\generate_icon_html(
-                                    $completedIcon ?? \Filament\Support\Icons\Heroicon::OutlinedCheck,
-                                    alias: filled($completedIcon) ? null : \Filament\Schemas\View\SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP,
-                                    attributes: new \Illuminate\View\ComponentAttributeBag([
-                                        'x-cloak' => 'x-cloak',
-                                        'x-show' => "getStepIndex(step) > {$loop->index}",
-                                    ]),
-                                    size: \Filament\Support\Enums\IconSize::Large,
+                                $completedIcon ?? \Filament\Support\Icons\Heroicon::OutlinedCheck,
+                                alias: filled($completedIcon) ? null : \Filament\Schemas\View\SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP,
+                                attributes: new \Illuminate\View\ComponentAttributeBag([
+                                'x-cloak' => 'x-cloak',
+                                'x-show' => "getStepIndex(step) > {$loop->index}",
+                                ]),
+                                size: \Filament\Support\Enums\IconSize::Large,
                                 )
                             }}
 
                             @if (filled($icon = $step->getIcon()))
                                 {{
                                     \Filament\Support\generate_icon_html(
-                                        $icon,
-                                        attributes: new \Illuminate\View\ComponentAttributeBag([
-                                            'x-cloak' => 'x-cloak',
-                                            'x-show' => "getStepIndex(step) <= {$loop->index}",
-                                        ]),
-                                        size: \Filament\Support\Enums\IconSize::Large,
+                                    $icon,
+                                    attributes: new \Illuminate\View\ComponentAttributeBag([
+                                    'x-cloak' => 'x-cloak',
+                                    'x-show' => "getStepIndex(step) <= {$loop->index}",
+                                    ]),
+                                    size: \Filament\Support\Enums\IconSize::Large,
                                     )
                                 }}
                             @else

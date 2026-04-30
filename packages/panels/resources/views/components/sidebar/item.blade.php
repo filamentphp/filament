@@ -1,20 +1,20 @@
 @props([
-    'active' => false,
-    'activeChildItems' => false,
-    'activeIcon' => null,
-    'badge' => null,
-    'badgeColor' => null,
-    'badgeTooltip' => null,
-    'childItems' => [],
-    'first' => false,
-    'grouped' => false,
-    'icon' => null,
-    'last' => false,
-    'shouldOpenUrlInNewTab' => false,
-    'sidebarCollapsible' => true,
-    'subGrouped' => false,
-    'subNavigation' => false,
-    'url',
+'active' => false,
+'activeChildItems' => false,
+'activeIcon' => null,
+'badge' => null,
+'badgeColor' => null,
+'badgeTooltip' => null,
+'childItems' => [],
+'first' => false,
+'grouped' => false,
+'icon' => null,
+'last' => false,
+'shouldOpenUrlInNewTab' => false,
+'sidebarCollapsible' => true,
+'subGrouped' => false,
+'subNavigation' => false,
+'url',
 ])
 
 @php
@@ -24,10 +24,10 @@
 <li
     {{
         $attributes->class([
-            'fi-sidebar-item',
-            'fi-active' => $active,
-            'fi-sidebar-item-has-active-child-items' => $activeChildItems,
-            'fi-sidebar-item-has-url' => filled($url),
+        'fi-sidebar-item',
+        'fi-active' => $active,
+        'fi-sidebar-item-has-active-child-items' => $activeChildItems,
+        'fi-sidebar-item-has-url' => filled($url),
         ])
     }}
 >
@@ -52,7 +52,7 @@
         @if (filled($icon) && ((! $subGrouped) || ($sidebarCollapsible && (! $subNavigation))))
             {{
                 \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Illuminate\View\ComponentAttributeBag([
-                    'x-show' => ($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false,
+                'x-show' => ($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false,
                 ]))->class(['fi-sidebar-item-icon']), size: \Filament\Support\Enums\IconSize::Large)
             }}
         @endif
@@ -117,15 +117,15 @@
             @foreach ($childItems as $childItem)
                 @php
                     $isChildItemChildItemsActive = $childItem->isChildItemsActive();
-                    $isChildActive = (! $isChildItemChildItemsActive) && $childItem->isActive();
-                    $childItemActiveIcon = $childItem->getActiveIcon();
-                    $childItemBadge = $childItem->getBadge();
-                    $childItemBadgeColor = $childItem->getBadgeColor($childItemBadge);
-                    $childItemBadgeTooltip = $childItem->getBadgeTooltip($childItemBadge);
-                    $childItemIcon = $childItem->getIcon();
-                    $shouldChildItemOpenUrlInNewTab = $childItem->shouldOpenUrlInNewTab();
-                    $childItemUrl = $childItem->getUrl();
-                    $childItemExtraAttributes = $childItem->getExtraAttributeBag();
+                                        $isChildActive = (! $isChildItemChildItemsActive) && $childItem->isActive();
+                                        $childItemActiveIcon = $childItem->getActiveIcon();
+                                        $childItemBadge = $childItem->getBadge();
+                                        $childItemBadgeColor = $childItem->getBadgeColor($childItemBadge);
+                                        $childItemBadgeTooltip = $childItem->getBadgeTooltip($childItemBadge);
+                                        $childItemIcon = $childItem->getIcon();
+                                        $shouldChildItemOpenUrlInNewTab = $childItem->shouldOpenUrlInNewTab();
+                                        $childItemUrl = $childItem->getUrl();
+                                        $childItemExtraAttributes = $childItem->getExtraAttributeBag();
                 @endphp
 
                 <x-filament-panels::sidebar.item

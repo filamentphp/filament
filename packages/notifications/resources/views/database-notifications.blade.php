@@ -1,13 +1,13 @@
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Support\View\Components\BadgeComponent;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $notifications = $this->getNotifications();
-    $unreadNotificationsCount = $this->getUnreadNotificationsCount();
-    $hasNotifications = $notifications->count();
-    $isPaginated = $notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages();
-    $pollingInterval = $this->getPollingInterval();
+        $notifications = $this->getNotifications();
+        $unreadNotificationsCount = $this->getUnreadNotificationsCount();
+        $hasNotifications = $notifications->count();
+        $isPaginated = $notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages();
+        $pollingInterval = $this->getPollingInterval();
 @endphp
 
 <div class="fi-no-database">
@@ -51,7 +51,7 @@
                             <span
                                 {{
                                     (new ComponentAttributeBag)->color(BadgeComponent::class, 'primary')->class([
-                                        'fi-badge fi-size-xs',
+                                    'fi-badge fi-size-xs',
                                     ])
                                 }}
                             >
@@ -75,8 +75,8 @@
             @foreach ($notifications as $notification)
                 <div
                     @class([
-                        'fi-no-notification-read-ctn' => ! $notification->unread(),
-                        'fi-no-notification-unread-ctn' => $notification->unread(),
+                    'fi-no-notification-read-ctn' => ! $notification->unread(),
+                    'fi-no-notification-unread-ctn' => $notification->unread(),
                     ])
                 >
                     {{ $this->getNotification($notification)->inline() }}

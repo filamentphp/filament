@@ -1,5 +1,5 @@
 @props([
-    'livewire' => null,
+'livewire' => null,
 ])
 
 @php
@@ -11,8 +11,8 @@
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament-panels::layout.direction') ?? 'ltr' }}"
     @class([
-        'fi',
-        'dark' => filament()->hasDarkMode() && filament()->hasDarkModeForced(),
+    'fi',
+    'dark' => filament()->hasDarkMode() && filament()->hasDarkModeForced(),
     ])
 >
     <head>
@@ -28,7 +28,7 @@
 
         @php
             $title = trim(strip_tags($livewire?->getTitle() ?? ''));
-            $brandName = trim(strip_tags(filament()->getBrandName()));
+                        $brandName = trim(strip_tags(filament()->getBrandName()));
         @endphp
 
         <title>
@@ -127,11 +127,11 @@
     <body
         {{
             $attributes
-                ->merge($livewire?->getExtraBodyAttributes() ?? [], escape: false)
-                ->class([
-                    'fi-body',
-                    'fi-panel-' . filament()->getId(),
-                ])
+            ->merge($livewire?->getExtraBodyAttributes() ?? [], escape: false)
+            ->class([
+            'fi-body',
+            'fi-panel-' . filament()->getId(),
+            ])
         }}
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::BODY_START, scopes: $renderHookScopes) }}

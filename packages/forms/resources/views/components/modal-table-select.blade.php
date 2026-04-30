@@ -1,28 +1,28 @@
 @php
     use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 
-    $fieldWrapperView = $getFieldWrapperView();
-    $extraAttributes = $getExtraAttributes();
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $isMultiple = $isMultiple();
-    $hasBadges = $hasBadges();
-    $badgeColor = $getBadgeColor();
+        $fieldWrapperView = $getFieldWrapperView();
+        $extraAttributes = $getExtraAttributes();
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $isMultiple = $isMultiple();
+        $hasBadges = $hasBadges();
+        $badgeColor = $getBadgeColor();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{
             $attributes
-                ->merge([
-                    'id' => $id,
-                ], escape: false)
-                ->merge($extraAttributes, escape: false)
-                ->class([
-                    'fi-fo-modal-table-select',
-                    'fi-fo-modal-table-select-disabled' => $isDisabled,
-                    'fi-fo-modal-table-select-multiple' => $isMultiple,
-                ])
+            ->merge([
+            'id' => $id,
+            ], escape: false)
+            ->merge($extraAttributes, escape: false)
+            ->class([
+            'fi-fo-modal-table-select',
+            'fi-fo-modal-table-select-disabled' => $isDisabled,
+            'fi-fo-modal-table-select-multiple' => $isMultiple,
+            ])
         }}
     >
         @if (((! $isMultiple) && filled($optionLabel = $getOptionLabel())) ||

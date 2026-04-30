@@ -1,12 +1,12 @@
 @php
     $id = $getId();
-    $fieldWrapperView = $getFieldWrapperView();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $key = $getKey();
-    $label = $getLabel();
-    $statePath = $getStatePath();
-    $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
-    $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
+        $fieldWrapperView = $getFieldWrapperView();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $key = $getKey();
+        $label = $getLabel();
+        $statePath = $getStatePath();
+        $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
+        $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -19,7 +19,7 @@
             :valid="! $errors->has($statePath)"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-                    ->class(['fi-fo-markdown-editor'])
+                ->class(['fi-fo-markdown-editor'])
             "
         >
             <div

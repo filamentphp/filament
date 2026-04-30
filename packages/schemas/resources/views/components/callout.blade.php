@@ -1,21 +1,21 @@
 @php
     use Filament\Support\Enums\IconSize;
 
-    $controls = $getChildSchema($schemaComponent::CONTROLS_SCHEMA_KEY)?->toHtmlString();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
-    $color = $getColor();
-    $description = $getDescription();
-    $heading = $getHeading();
-    $icon = $getIcon();
-    $iconColor = $getIconColor();
-    $iconSize = $getIconSize() ?? IconSize::Large;
+        $controls = $getChildSchema($schemaComponent::CONTROLS_SCHEMA_KEY)?->toHtmlString();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
+        $color = $getColor();
+        $description = $getDescription();
+        $heading = $getHeading();
+        $icon = $getIcon();
+        $iconColor = $getIconColor();
+        $iconSize = $getIconSize() ?? IconSize::Large;
 @endphp
 
 <x-filament::callout
     :attributes="
         \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-            ->class(['fi-sc-callout'])
+        ->class(['fi-sc-callout'])
     "
     :color="$color ?? 'gray'"
     :description="$description"
