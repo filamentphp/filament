@@ -1,51 +1,51 @@
 @php
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\Size;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Filament\Support\View\Components\DropdownComponent\ItemComponent;
-    use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Support\Enums\Size;
+        use Filament\Support\View\Components\BadgeComponent;
+        use Filament\Support\View\Components\DropdownComponent\ItemComponent;
+        use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+        use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
-    'alpineDeferredBadgeData' => null,
-    'alpineDeferredBadgeLoading' => null,
-    'badge' => null,
-    'badgeColor' => 'primary',
-    'badgeTooltip' => null,
-    'color' => 'gray',
-    'disabled' => false,
-    'href' => null,
-    'icon' => null,
-    'iconAlias' => null,
-    'iconColor' => null,
-    'iconSize' => null,
-    'image' => null,
-    'keyBindings' => null,
-    'loadingIndicator' => true,
-    'spaMode' => null,
-    'tag' => 'button',
-    'target' => null,
-    'tooltip' => null,
+'alpineDeferredBadgeData' => null,
+'alpineDeferredBadgeLoading' => null,
+'badge' => null,
+'badgeColor' => 'primary',
+'badgeTooltip' => null,
+'color' => 'gray',
+'disabled' => false,
+'href' => null,
+'icon' => null,
+'iconAlias' => null,
+'iconColor' => null,
+'iconSize' => null,
+'image' => null,
+'keyBindings' => null,
+'loadingIndicator' => true,
+'spaMode' => null,
+'tag' => 'button',
+'target' => null,
+'tooltip' => null,
 ])
 
 @php
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
-        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
-    }
+            $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        }
 
-    $iconColor ??= $color;
+        $iconColor ??= $color;
 
-    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
+        $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
-    $hasLoadingIndicator = filled($wireTarget);
+        $hasLoadingIndicator = filled($wireTarget);
 
-    if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
-    }
+        if ($hasLoadingIndicator) {
+            $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
+        }
 
-    $hasDeferredBadge = filled($alpineDeferredBadgeData);
-    $hasTooltip = filled($tooltip);
+        $hasDeferredBadge = filled($alpineDeferredBadgeData);
+        $hasTooltip = filled($tooltip);
 @endphp
 
 {!! ($tag === 'form') ? ('<form ' . $attributes->only(['action', 'class', 'method', 'wire:submit'])->toHtml() . '>') : '' !!}
@@ -71,39 +71,39 @@
     @endif
     {{
         $attributes
-            ->when(
-                $tag === 'form',
-                fn (ComponentAttributeBag $attributes) => $attributes->except(['action', 'class', 'method', 'wire:submit']),
-            )
-            ->merge([
-                'aria-disabled' => $disabled ? 'true' : null,
-                'disabled' => $disabled && blank($tooltip),
-                'type' => match ($tag) {
-                    'button' => 'button',
-                    'form' => 'submit',
-                    default => null,
-                },
-                'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
-                'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-            ], escape: false)
-            ->when(
-                $disabled && $hasTooltip,
-                fn (ComponentAttributeBag $attributes) => $attributes->filter(
-                    fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
-                ),
-            )
-            ->class([
-                'fi-dropdown-list-item',
-                'fi-disabled' => $disabled,
-            ])
-            ->color(ItemComponent::class, $color)
+        ->when(
+        $tag === 'form',
+        fn (ComponentAttributeBag $attributes) => $attributes->except(['action', 'class', 'method', 'wire:submit']),
+        )
+        ->merge([
+        'aria-disabled' => $disabled ? 'true' : null,
+        'disabled' => $disabled && blank($tooltip),
+        'type' => match ($tag) {
+        'button' => 'button',
+        'form' => 'submit',
+        default => null,
+        },
+        'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
+        'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+        ], escape: false)
+        ->when(
+        $disabled && $hasTooltip,
+        fn (ComponentAttributeBag $attributes) => $attributes->filter(
+        fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
+        ),
+        )
+        ->class([
+        'fi-dropdown-list-item',
+        'fi-disabled' => $disabled,
+        ])
+        ->color(ItemComponent::class, $color)
     }}
 >
     @if ($icon)
         {{
             \Filament\Support\generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
     @endif
@@ -122,8 +122,8 @@
     @if ($hasLoadingIndicator)
         {{
             \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => $loadingIndicatorTarget,
+            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+            'wire:target' => $loadingIndicatorTarget,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)
         }}
     @endif

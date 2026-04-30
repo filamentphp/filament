@@ -1,157 +1,157 @@
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\VerticalAlignment;
-    use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentView;
-    use Filament\Tables\Actions\HeaderActionsPosition;
-    use Filament\Tables\Columns\Column;
-    use Filament\Tables\Columns\ColumnGroup;
-    use Filament\Tables\Enums\ColumnManagerLayout;
-    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
-    use Filament\Tables\Enums\FiltersLayout;
-    use Filament\Tables\Enums\FiltersResetActionPosition;
-    use Filament\Tables\Enums\RecordActionsPosition;
-    use Filament\Tables\Enums\RecordCheckboxPosition;
-    use Filament\Tables\View\TablesRenderHook;
-    use Illuminate\Support\Str;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Support\Enums\VerticalAlignment;
+        use Filament\Support\Enums\Width;
+        use Filament\Support\Facades\FilamentView;
+        use Filament\Tables\Actions\HeaderActionsPosition;
+        use Filament\Tables\Columns\Column;
+        use Filament\Tables\Columns\ColumnGroup;
+        use Filament\Tables\Enums\ColumnManagerLayout;
+        use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+        use Filament\Tables\Enums\FiltersLayout;
+        use Filament\Tables\Enums\FiltersResetActionPosition;
+        use Filament\Tables\Enums\RecordActionsPosition;
+        use Filament\Tables\Enums\RecordCheckboxPosition;
+        use Filament\Tables\View\TablesRenderHook;
+        use Illuminate\Support\Str;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $defaultRecordActions = $getRecordActions();
-    $flatRecordActionsCount = count($getFlatRecordActions());
-    $recordActionsAlignment = $getRecordActionsAlignment();
-    $recordActionsPosition = $getRecordActionsPosition();
-    $recordActionsColumnLabel = $getRecordActionsColumnLabel();
+        $defaultRecordActions = $getRecordActions();
+        $flatRecordActionsCount = count($getFlatRecordActions());
+        $recordActionsAlignment = $getRecordActionsAlignment();
+        $recordActionsPosition = $getRecordActionsPosition();
+        $recordActionsColumnLabel = $getRecordActionsColumnLabel();
 
-    if (! $recordActionsAlignment instanceof Alignment) {
-        $recordActionsAlignment = filled($recordActionsAlignment) ? (Alignment::tryFrom($recordActionsAlignment) ?? $recordActionsAlignment) : null;
-    }
-
-    $activeFiltersCount = $getActiveFiltersCount();
-    $isSelectionDisabled = $isSelectionDisabled();
-    $maxSelectableRecords = $getMaxSelectableRecords();
-    $columns = $getVisibleColumns();
-    $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
-    $columnsLayout = $getColumnsLayout();
-    $content = $getContent();
-    $contentGrid = $getContentGrid();
-    $contentFooter = $getContentFooter();
-    $filterIndicators = $getFilterIndicators();
-    $filtersApplyAction = $getFiltersApplyAction();
-    $filtersForm = $getFiltersForm();
-    $filtersFormWidth = $getFiltersFormWidth();
-    $filtersResetActionPosition = $getFiltersResetActionPosition();
-    $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
-    $hasColumnGroups = $hasColumnGroups();
-    $hasColumnsLayout = $hasColumnsLayout();
-    $hasPageSummary = $hasPageSummary();
-    $hasAllTableSummary = $hasAllTableSummary();
-    $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
-    $hasTopLevelSummary = $hasSummary && ($hasPageSummary || $hasAllTableSummary);
-    $header = $getHeader();
-    $headerActions = array_filter(
-        $getHeaderActions(),
-        fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
-    );
-    $headerActionsPosition = $getHeaderActionsPosition();
-    $heading = $getHeading();
-    $group = $getGrouping();
-    $toolbarActions = array_filter(
-        $getToolbarActions(),
-        fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
-    );
-
-    $hasNonBulkToolbarAction = false;
-
-    foreach ($toolbarActions as $toolbarAction) {
-        if ($toolbarAction instanceof \Filament\Actions\BulkActionGroup) {
-            continue;
+        if (! $recordActionsAlignment instanceof Alignment) {
+            $recordActionsAlignment = filled($recordActionsAlignment) ? (Alignment::tryFrom($recordActionsAlignment) ?? $recordActionsAlignment) : null;
         }
 
-        if ($toolbarAction instanceof \Filament\Actions\ActionGroup) {
-            if ($toolbarAction->hasNonBulkAction()) {
+        $activeFiltersCount = $getActiveFiltersCount();
+        $isSelectionDisabled = $isSelectionDisabled();
+        $maxSelectableRecords = $getMaxSelectableRecords();
+        $columns = $getVisibleColumns();
+        $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
+        $columnsLayout = $getColumnsLayout();
+        $content = $getContent();
+        $contentGrid = $getContentGrid();
+        $contentFooter = $getContentFooter();
+        $filterIndicators = $getFilterIndicators();
+        $filtersApplyAction = $getFiltersApplyAction();
+        $filtersForm = $getFiltersForm();
+        $filtersFormWidth = $getFiltersFormWidth();
+        $filtersResetActionPosition = $getFiltersResetActionPosition();
+        $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
+        $hasColumnGroups = $hasColumnGroups();
+        $hasColumnsLayout = $hasColumnsLayout();
+        $hasPageSummary = $hasPageSummary();
+        $hasAllTableSummary = $hasAllTableSummary();
+        $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
+        $hasTopLevelSummary = $hasSummary && ($hasPageSummary || $hasAllTableSummary);
+        $header = $getHeader();
+        $headerActions = array_filter(
+            $getHeaderActions(),
+            fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+        );
+        $headerActionsPosition = $getHeaderActionsPosition();
+        $heading = $getHeading();
+        $group = $getGrouping();
+        $toolbarActions = array_filter(
+            $getToolbarActions(),
+            fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+        );
+
+        $hasNonBulkToolbarAction = false;
+
+        foreach ($toolbarActions as $toolbarAction) {
+            if ($toolbarAction instanceof \Filament\Actions\BulkActionGroup) {
+                continue;
+            }
+
+            if ($toolbarAction instanceof \Filament\Actions\ActionGroup) {
+                if ($toolbarAction->hasNonBulkAction()) {
+                    $hasNonBulkToolbarAction = true;
+
+                    break;
+                }
+
+                continue;
+            }
+
+            if (! $toolbarAction->isBulk()) {
                 $hasNonBulkToolbarAction = true;
 
                 break;
             }
-
-            continue;
         }
 
-        if (! $toolbarAction->isBulk()) {
-            $hasNonBulkToolbarAction = true;
+        $groups = $getGroups();
+        $description = $getDescription();
+        $isGroupsOnly = $isGroupsOnly() && $group;
+        $isReorderable = $isReorderable();
+        $isReordering = $isReordering();
+        $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
+        $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
+        $areGroupsCollapsedByDefault = $areGroupsCollapsedByDefault();
+        $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
+        $isColumnSearchVisible = $isSearchableByColumn();
+        $isGlobalSearchVisible = $isSearchable();
+        $isSearchOnBlur = $isSearchOnBlur();
+        $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
+        $selectsCurrentPageOnly = $selectsCurrentPageOnly();
+        $selectsGroupsOnly = $selectsGroupsOnly();
+        $recordCheckboxPosition = $getRecordCheckboxPosition();
+        $isStriped = $isStriped();
+        $isStackedOnMobile = $isStackedOnMobile();
+        $isLoaded = $isLoaded();
+        $hasFilters = $isFilterable();
+        $filtersLayout = $getFiltersLayout();
+        $filtersTriggerAction = $getFiltersTriggerAction();
+        $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
+        $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
+        $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
+        $hasFiltersBeforeContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible]);
+        $hasFiltersAfterContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AfterContent, FiltersLayout::AfterContentCollapsible]);
+        $hasCollapsibleFilters = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContentCollapsible, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]);
+        $hasFiltersTrigger = $hasFilters && ($hasFiltersDialog || $hasFiltersBeforeContent || $hasFiltersAfterContent);
+        $filtersFormMaxHeight = $getFiltersFormMaxHeight();
+        $hasColumnManager = $hasColumnManager();
+        $columnManagerLayout = $getColumnManagerLayout();
+        $hasReorderableColumns = $hasReorderableColumns();
+        $hasToggleableColumns = $hasToggleableColumns();
+        $columnManagerApplyAction = $getColumnManagerApplyAction();
+        $columnManagerTriggerAction = $getColumnManagerTriggerAction();
+        $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManager;
+        $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
+        $headingTag = $getHeadingTag();
+        $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
+        $pluralModelLabel = $getPluralModelLabel();
+        $records = $isLoaded ? $getRecords() : null;
+        $hasPagination = (($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) && (($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
+        $hasEmptyState = ($records !== null) && ! count($records);
+        $hasContentLayout = $content || $hasColumnsLayout;
+        $searchDebounce = $getSearchDebounce();
+        $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
+        $columnsCount = count($columns);
+        $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
+        $page = $this->getTablePage();
+        $defaultSortOptionLabel = $getDefaultSortOptionLabel();
+        $sortDirection = $getSortDirection();
 
-            break;
+        if (count($defaultRecordActions) && (! $isReordering)) {
+            $columnsCount++;
         }
-    }
 
-    $groups = $getGroups();
-    $description = $getDescription();
-    $isGroupsOnly = $isGroupsOnly() && $group;
-    $isReorderable = $isReorderable();
-    $isReordering = $isReordering();
-    $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
-    $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
-    $areGroupsCollapsedByDefault = $areGroupsCollapsedByDefault();
-    $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
-    $isColumnSearchVisible = $isSearchableByColumn();
-    $isGlobalSearchVisible = $isSearchable();
-    $isSearchOnBlur = $isSearchOnBlur();
-    $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
-    $selectsCurrentPageOnly = $selectsCurrentPageOnly();
-    $selectsGroupsOnly = $selectsGroupsOnly();
-    $recordCheckboxPosition = $getRecordCheckboxPosition();
-    $isStriped = $isStriped();
-    $isStackedOnMobile = $isStackedOnMobile();
-    $isLoaded = $isLoaded();
-    $hasFilters = $isFilterable();
-    $filtersLayout = $getFiltersLayout();
-    $filtersTriggerAction = $getFiltersTriggerAction();
-    $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
-    $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
-    $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
-    $hasFiltersBeforeContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible]);
-    $hasFiltersAfterContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AfterContent, FiltersLayout::AfterContentCollapsible]);
-    $hasCollapsibleFilters = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContentCollapsible, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]);
-    $hasFiltersTrigger = $hasFilters && ($hasFiltersDialog || $hasFiltersBeforeContent || $hasFiltersAfterContent);
-    $filtersFormMaxHeight = $getFiltersFormMaxHeight();
-    $hasColumnManager = $hasColumnManager();
-    $columnManagerLayout = $getColumnManagerLayout();
-    $hasReorderableColumns = $hasReorderableColumns();
-    $hasToggleableColumns = $hasToggleableColumns();
-    $columnManagerApplyAction = $getColumnManagerApplyAction();
-    $columnManagerTriggerAction = $getColumnManagerTriggerAction();
-    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManager;
-    $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
-    $headingTag = $getHeadingTag();
-    $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
-    $pluralModelLabel = $getPluralModelLabel();
-    $records = $isLoaded ? $getRecords() : null;
-    $hasPagination = (($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) && (($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
-    $hasEmptyState = ($records !== null) && ! count($records);
-    $hasContentLayout = $content || $hasColumnsLayout;
-    $searchDebounce = $getSearchDebounce();
-    $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
-    $columnsCount = count($columns);
-    $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
-    $page = $this->getTablePage();
-    $defaultSortOptionLabel = $getDefaultSortOptionLabel();
-    $sortDirection = $getSortDirection();
+        if ($isSelectionEnabled || $isReordering) {
+            $columnsCount++;
+        }
 
-    if (count($defaultRecordActions) && (! $isReordering)) {
-        $columnsCount++;
-    }
+        if ($group) {
+            $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (\Illuminate\Database\Query\Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
+        }
 
-    if ($isSelectionEnabled || $isReordering) {
-        $columnsCount++;
-    }
-
-    if ($group) {
-        $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (\Illuminate\Database\Query\Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
-    }
-
-    if (is_string($filtersFormWidth)) {
-        $filtersFormWidth = Width::tryFrom($filtersFormWidth) ?? $filtersFormWidth;
-    }
+        if (is_string($filtersFormWidth)) {
+            $filtersFormWidth = Width::tryFrom($filtersFormWidth) ?? $filtersFormWidth;
+        }
 @endphp
 
 <div
@@ -168,8 +168,8 @@
             })"
     {{
         $getExtraAttributeBag()->class([
-            'fi-ta',
-            'fi-loading' => $records === null,
+        'fi-ta',
+        'fi-loading' => $records === null,
         ])
     }}
 >
@@ -181,10 +181,10 @@
 
     <div
         @class([
-            'fi-ta-ctn',
-            'fi-ta-ctn-with-content-layout' => $hasContentLayout,
-            'fi-ta-ctn-with-footer' => $hasPagination || $hasEmptyState || $hasFiltersBelowContent,
-            'fi-ta-ctn-with-header' => $hasHeader,
+        'fi-ta-ctn',
+        'fi-ta-ctn-with-content-layout' => $hasContentLayout,
+        'fi-ta-ctn-with-footer' => $hasPagination || $hasEmptyState || $hasFiltersBelowContent,
+        'fi-ta-ctn-with-header' => $hasHeader,
         ])
     >
         @if ($hasFiltersBeforeContent)
@@ -195,9 +195,9 @@
                 x-transition:leave-end="fi-opacity-0"
                 x-bind:class="{ 'fi-open': areFiltersOpen }"
                 @class([
-                    'fi-ta-filters-before-content-ctn',
-                    'lg:fi-open' => ! $hasCollapsibleFilters,
-                    (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
+                'fi-ta-filters-before-content-ctn',
+                'lg:fi-open' => ! $hasCollapsibleFilters,
+                (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
                 ])
             >
                 <x-filament-tables::filters
@@ -223,8 +223,8 @@
                 @elseif (($heading || $description || $headerActions) && ! $isReordering)
                     <div
                         @class([
-                            'fi-ta-header',
-                            'fi-ta-header-adaptive-actions-position' => $headerActions && ($headerActionsPosition === HeaderActionsPosition::Adaptive),
+                        'fi-ta-header',
+                        'fi-ta-header-adaptive-actions-position' => $headerActions && ($headerActionsPosition === HeaderActionsPosition::Adaptive),
                         ])
                     >
                         @if ($heading || $description)
@@ -265,7 +265,7 @@
                             x-bind:class="{ 'fi-open': areFiltersOpen }"
                         @endif
                         @class([
-                            'fi-ta-filters-above-content-ctn',
+                        'fi-ta-filters-above-content-ctn',
                         ])
                     >
                         <x-filament-tables::filters
@@ -369,8 +369,8 @@
                                     width="xs"
                                     wire:key="{{ $this->getId() }}.table.grouping"
                                     @class([
-                                        'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
-                                    ])
+                                                                            'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
+                                                                        ])
                                 >
                                     <x-slot name="trigger">
                                         {{ $getGroupRecordsTriggerAction() }}
@@ -499,20 +499,20 @@
                                     @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
                                         @php
                                             $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
-                                            $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
-                                            $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
-                                            $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
-                                            $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
-                                            $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
-                                            $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
-                                            $filtersTriggerActionModalFooterActionsAlignment = $filtersTriggerAction->getModalFooterActionsAlignment();
-                                            $filtersTriggerActionModalHeading = $filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading');
-                                            $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
-                                            $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
-                                            $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
-                                            $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
-                                            $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
-                                            $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
+                                                                                        $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
+                                                                                        $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
+                                                                                        $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
+                                                                                        $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
+                                                                                        $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
+                                                                                        $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
+                                                                                        $filtersTriggerActionModalFooterActionsAlignment = $filtersTriggerAction->getModalFooterActionsAlignment();
+                                                                                        $filtersTriggerActionModalHeading = $filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading');
+                                                                                        $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
+                                                                                        $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
+                                                                                        $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
+                                                                                        $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
+                                                                                        $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
+                                                                                        $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
                                         @endphp
 
                                         <x-filament::modal
@@ -572,8 +572,8 @@
                                         x-ref="filtersTriggerActionContainer"
                                         x-on:click="toggleFiltersDropdown"
                                         @class([
-                                            'fi-ta-filters-trigger-action-ctn',
-                                            'lg:fi-hidden' => ! $hasCollapsibleFilters,
+                                        'fi-ta-filters-trigger-action-ctn',
+                                        'lg:fi-hidden' => ! $hasCollapsibleFilters,
                                         ])
                                     >
                                         {{ $filtersTriggerAction->badge($activeFiltersCount) }}
@@ -585,27 +585,27 @@
                                 @if ($hasColumnManager)
                                     @php
                                         $columnManagerMaxHeight = $getColumnManagerMaxHeight();
-                                        $columnManagerWidth = $getColumnManagerWidth();
-                                        $columnManagerColumns = $getColumnManagerColumns();
+                                                                                $columnManagerWidth = $getColumnManagerWidth();
+                                                                                $columnManagerColumns = $getColumnManagerColumns();
                                     @endphp
 
                                     @if (($columnManagerLayout === ColumnManagerLayout::Modal) || $columnManagerTriggerAction->isModalSlideOver())
                                         @php
                                             $columnManagerTriggerActionModalAlignment = $columnManagerTriggerAction->getModalAlignment();
-                                            $columnManagerTriggerActionIsModalAutofocused = $columnManagerTriggerAction->isModalAutofocused();
-                                            $columnManagerTriggerActionHasModalCloseButton = $columnManagerTriggerAction->hasModalCloseButton();
-                                            $columnManagerTriggerActionIsModalClosedByClickingAway = $columnManagerTriggerAction->isModalClosedByClickingAway();
-                                            $columnManagerTriggerActionIsModalClosedByEscaping = $columnManagerTriggerAction->isModalClosedByEscaping();
-                                            $columnManagerTriggerActionModalDescription = $columnManagerTriggerAction->getModalDescription();
-                                            $columnManagerTriggerActionVisibleModalFooterActions = $columnManagerTriggerAction->getVisibleModalFooterActions();
-                                            $columnManagerTriggerActionModalFooterActionsAlignment = $columnManagerTriggerAction->getModalFooterActionsAlignment();
-                                            $columnManagerTriggerActionModalHeading = $columnManagerTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.column_manager.heading');
-                                            $columnManagerTriggerActionModalIcon = $columnManagerTriggerAction->getModalIcon();
-                                            $columnManagerTriggerActionModalIconColor = $columnManagerTriggerAction->getModalIconColor();
-                                            $columnManagerTriggerActionIsModalSlideOver = $columnManagerTriggerAction->isModalSlideOver();
-                                            $columnManagerTriggerActionModalSlideOverPosition = $columnManagerTriggerAction->getModalSlideOverPosition();
-                                            $columnManagerTriggerActionIsModalFooterSticky = $columnManagerTriggerAction->isModalFooterSticky();
-                                            $columnManagerTriggerActionIsModalHeaderSticky = $columnManagerTriggerAction->isModalHeaderSticky();
+                                                                                        $columnManagerTriggerActionIsModalAutofocused = $columnManagerTriggerAction->isModalAutofocused();
+                                                                                        $columnManagerTriggerActionHasModalCloseButton = $columnManagerTriggerAction->hasModalCloseButton();
+                                                                                        $columnManagerTriggerActionIsModalClosedByClickingAway = $columnManagerTriggerAction->isModalClosedByClickingAway();
+                                                                                        $columnManagerTriggerActionIsModalClosedByEscaping = $columnManagerTriggerAction->isModalClosedByEscaping();
+                                                                                        $columnManagerTriggerActionModalDescription = $columnManagerTriggerAction->getModalDescription();
+                                                                                        $columnManagerTriggerActionVisibleModalFooterActions = $columnManagerTriggerAction->getVisibleModalFooterActions();
+                                                                                        $columnManagerTriggerActionModalFooterActionsAlignment = $columnManagerTriggerAction->getModalFooterActionsAlignment();
+                                                                                        $columnManagerTriggerActionModalHeading = $columnManagerTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.column_manager.heading');
+                                                                                        $columnManagerTriggerActionModalIcon = $columnManagerTriggerAction->getModalIcon();
+                                                                                        $columnManagerTriggerActionModalIconColor = $columnManagerTriggerAction->getModalIconColor();
+                                                                                        $columnManagerTriggerActionIsModalSlideOver = $columnManagerTriggerAction->isModalSlideOver();
+                                                                                        $columnManagerTriggerActionModalSlideOverPosition = $columnManagerTriggerAction->getModalSlideOverPosition();
+                                                                                        $columnManagerTriggerActionIsModalFooterSticky = $columnManagerTriggerAction->isModalFooterSticky();
+                                                                                        $columnManagerTriggerActionIsModalHeaderSticky = $columnManagerTriggerAction->isModalHeaderSticky();
                                         @endphp
 
                                         <x-filament::modal
@@ -699,8 +699,8 @@
                 >
                     {{
                         \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => 'reorderTable',
+                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                        'wire:target' => 'reorderTable',
                         ]))
                     }}
 
@@ -717,7 +717,7 @@
                     <div>
                         {{
                             \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
-                                'x-show' => 'isLoading',
+                            'x-show' => 'isLoading',
                             ]))
                         }}
 
@@ -820,9 +820,9 @@
                         @if (! $isReordering)
                             @php
                                 $sortableColumns = array_filter(
-                                    $columns,
-                                    fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                                );
+                                                                    $columns,
+                                                                    fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                                                                );
                             @endphp
 
                             @if (($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupsOnly)) || count($sortableColumns))
@@ -971,60 +971,60 @@
                                 @endif
                                 {{
                                     (new ComponentAttributeBag)
-                                        ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
-                                        ->class([
-                                            'fi-ta-content',
-                                            'fi-ta-content-grid' => $contentGrid,
-                                            'fi-ta-content-grouped' => $this->getTableGrouping(),
-                                        ])
+                                    ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
+                                    ->class([
+                                    'fi-ta-content',
+                                    'fi-ta-content-grid' => $contentGrid,
+                                    'fi-ta-content-grouped' => $this->getTableGrouping(),
+                                    ])
                                 }}
                             >
                                 @php
                                     $previousRecord = null;
-                                    $previousRecordGroupKey = null;
-                                    $previousRecordGroupTitle = null;
+                                                                        $previousRecordGroupKey = null;
+                                                                        $previousRecordGroupTitle = null;
                                 @endphp
 
                                 @foreach ($records as $record)
                                     @php
                                         $recordAction = $getRecordAction($record);
-                                        $recordKey = $getRecordKey($record);
-                                        $recordUrl = $getRecordUrl($record);
-                                        $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
-                                        $recordGroupKey = $group?->getStringKey($record);
-                                        $recordGroupTitle = $group?->getTitle($record);
-                                        $isRecordGroupCollapsible = $group?->isCollapsible();
+                                                                                $recordKey = $getRecordKey($record);
+                                                                                $recordUrl = $getRecordUrl($record);
+                                                                                $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
+                                                                                $recordGroupKey = $group?->getStringKey($record);
+                                                                                $recordGroupTitle = $group?->getTitle($record);
+                                                                                $isRecordGroupCollapsible = $group?->isCollapsible();
 
-                                        $collapsibleColumnsLayout?->record($record)->recordKey($recordKey);
-                                        $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
+                                                                                $collapsibleColumnsLayout?->record($record)->recordKey($recordKey);
+                                                                                $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
 
-                                        $recordActions = array_reduce(
-                                            $defaultRecordActions,
-                                            function (array $carry, $action) use ($record): array {
-                                                $action = $action->getClone();
+                                                                                $recordActions = array_reduce(
+                                                                                    $defaultRecordActions,
+                                                                                    function (array $carry, $action) use ($record): array {
+                                                                                        $action = $action->getClone();
 
-                                                if (! $action instanceof \Filament\Actions\BulkAction) {
-                                                    $action->record($record);
-                                                }
+                                                                                        if (! $action instanceof \Filament\Actions\BulkAction) {
+                                                                                            $action->record($record);
+                                                                                        }
 
-                                                if ($action->isHidden()) {
-                                                    return $carry;
-                                                }
+                                                                                        if ($action->isHidden()) {
+                                                                                            return $carry;
+                                                                                        }
 
-                                                $carry[] = $action;
+                                                                                        $carry[] = $action;
 
-                                                return $carry;
-                                            },
-                                            initial: [],
-                                        );
+                                                                                        return $carry;
+                                                                                    },
+                                                                                    initial: [],
+                                                                                );
                                     @endphp
 
                                     @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                             <table
                                                 @class([
-                                                    'fi-ta-table',
-                                                    'fi-ta-table-reordering' => $isReordering,
+                                                'fi-ta-table',
+                                                'fi-ta-table-reordering' => $isReordering,
                                                 ])
                                             >
                                                 <tbody>
@@ -1057,8 +1057,8 @@
                                                 @endif
                                             @endif
                                             @class([
-                                                'fi-ta-group-header',
-                                                'fi-collapsible' => $isRecordGroupCollapsible,
+                                            'fi-ta-group-header',
+                                            'fi-collapsible' => $isRecordGroupCollapsible,
                                             ])
                                         >
                                             @if ($isSelectionEnabled && ($maxSelectableRecords !== 1))
@@ -1145,11 +1145,11 @@
                                             x-sortable-handle
                                         @endif
                                         @class([
-                                            'fi-ta-record',
-                                            'fi-clickable' => $recordUrl || $recordAction,
-                                            'fi-ta-record-with-content-prefix' => $isReordering || ($isSelectionEnabled && $isRecordSelectable($record)),
-                                            'fi-ta-record-with-content-suffix' => $hasCollapsibleColumnsLayout && (! $isReordering),
-                                            ...$getRecordClasses($record),
+                                        'fi-ta-record',
+                                        'fi-clickable' => $recordUrl || $recordAction,
+                                        'fi-ta-record-with-content-prefix' => $isReordering || ($isSelectionEnabled && $isRecordSelectable($record)),
+                                        'fi-ta-record-with-content-suffix' => $hasCollapsibleColumnsLayout && (! $isReordering),
+                                        ...$getRecordClasses($record),
                                         ])
                                         x-bind:class="{
                                             {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
@@ -1158,7 +1158,7 @@
                                     >
                                         @php
                                             $hasItemBeforeRecordContent = $isReordering || ($isSelectionEnabled && $isRecordSelectable($record));
-                                            $hasItemAfterRecordContent = $hasCollapsibleColumnsLayout && (! $isReordering);
+                                                                                        $hasItemAfterRecordContent = $hasCollapsibleColumnsLayout && (! $isReordering);
                                         @endphp
 
                                         @if ($isReordering)
@@ -1197,18 +1197,18 @@
                                                         @foreach ($columnsLayout as $columnsLayoutComponent)
                                                             {{
                                                                 $columnsLayoutComponent
-                                                                    ->record($record)
-                                                                    ->recordKey($recordKey)
-                                                                    ->rowLoop($loop)
-                                                                    ->renderInLayout()
+                                                                ->record($record)
+                                                                ->recordKey($recordKey)
+                                                                ->rowLoop($loop)
+                                                                ->renderInLayout()
                                                             }}
                                                         @endforeach
                                                     </a>
                                                 @elseif ($recordAction)
                                                     @php
                                                         $recordWireClickAction = $getRecordAction($record)
-                                                            ? "mountTableAction('{$recordAction}', '{$recordKey}')"
-                                                            : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                                                                                    ? "mountTableAction('{$recordAction}', '{$recordKey}')"
+                                                                                                                    : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
                                                     @endphp
 
                                                     <button
@@ -1221,10 +1221,10 @@
                                                         @foreach ($columnsLayout as $columnsLayoutComponent)
                                                             {{
                                                                 $columnsLayoutComponent
-                                                                    ->record($record)
-                                                                    ->recordKey($recordKey)
-                                                                    ->rowLoop($loop)
-                                                                    ->renderInLayout()
+                                                                ->record($record)
+                                                                ->recordKey($recordKey)
+                                                                ->rowLoop($loop)
+                                                                ->renderInLayout()
                                                             }}
                                                         @endforeach
                                                     </button>
@@ -1235,10 +1235,10 @@
                                                         @foreach ($columnsLayout as $columnsLayoutComponent)
                                                             {{
                                                                 $columnsLayoutComponent
-                                                                    ->record($record)
-                                                                    ->recordKey($recordKey)
-                                                                    ->rowLoop($loop)
-                                                                    ->renderInLayout()
+                                                                ->record($record)
+                                                                ->recordKey($recordKey)
+                                                                ->rowLoop($loop)
+                                                                ->renderInLayout()
                                                             }}
                                                         @endforeach
                                                     </div>
@@ -1258,14 +1258,14 @@
                                             @if ($recordActions && (! $isReordering))
                                                 <div
                                                     @class([
-                                                        'fi-ta-actions fi-wrapped sm:fi-not-wrapped',
-                                                        match ($recordActionsAlignment ?? Alignment::Start) {
-                                                            Alignment::Start => 'fi-align-start',
-                                                            Alignment::Center => 'fi-align-center',
-                                                            Alignment::End => 'fi-align-end',
-                                                        } => $contentGrid,
-                                                        'fi-align-start md:fi-align-end' => ! $contentGrid,
-                                                        'fi-ta-actions-before-columns-position' => $recordActionsPosition === RecordActionsPosition::BeforeColumns,
+                                                    'fi-ta-actions fi-wrapped sm:fi-not-wrapped',
+                                                    match ($recordActionsAlignment ?? Alignment::Start) {
+                                                    Alignment::Start => 'fi-align-start',
+                                                    Alignment::Center => 'fi-align-center',
+                                                    Alignment::End => 'fi-align-end',
+                                                    } => $contentGrid,
+                                                    'fi-align-start md:fi-align-end' => ! $contentGrid,
+                                                    'fi-ta-actions-before-columns-position' => $recordActionsPosition === RecordActionsPosition::BeforeColumns,
                                                     ])
                                                 >
                                                     @foreach ($recordActions as $action)
@@ -1288,8 +1288,8 @@
 
                                     @php
                                         $previousRecordGroupKey = $recordGroupKey;
-                                        $previousRecordGroupTitle = $recordGroupTitle;
-                                        $previousRecord = $record;
+                                                                                $previousRecordGroupTitle = $recordGroupTitle;
+                                                                                $previousRecord = $record;
                                     @endphp
                                 @endforeach
 
@@ -1317,8 +1317,8 @@
                         @if (($content || $hasColumnsLayout) && $contentFooter)
                             {{
                                 $contentFooter->with([
-                                    'columns' => $columns,
-                                    'records' => $records,
+                                'columns' => $columns,
+                                'records' => $records,
                                 ])
                             }}
                         @endif
@@ -1341,15 +1341,15 @@
                     @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
                         @php
                             $sortableColumns = $isStackedOnMobile ? array_filter(
-                                $columns,
-                                fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                            ) : [];
+                                                            $columns,
+                                                            fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                                                        ) : [];
                         @endphp
 
                         <table
                             @class([
-                                'fi-ta-table',
-                                'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
+                            'fi-ta-table',
+                            'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
                             ])
                         >
                             <thead>
@@ -1529,11 +1529,11 @@
                                                         colspan="{{ $columnGroupColumnsCount }}"
                                                         {{
                                                             $columnGroup->getExtraHeaderAttributeBag()->class([
-                                                                'fi-ta-header-group-cell',
-                                                                'fi-wrapped' => $columnGroup->canHeaderWrap(),
-                                                                ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
-                                                                (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
-                                                                (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
+                                                            'fi-ta-header-group-cell',
+                                                            'fi-wrapped' => $columnGroup->canHeaderWrap(),
+                                                            ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
+                                                            (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
+                                                            (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
                                                             ])
                                                         }}
                                                     >
@@ -1639,22 +1639,22 @@
 
                                     @foreach ($columns as $column)
                                         @if ($hasHeaderCellRenderHook && filled($headerCellView = FilamentView::renderHook(TablesRenderHook::HEADER_CELL, scopes: static::class, data: [
-                                                 'column' => $column,
-                                                 'isReordering' => $isReordering,
+                                             'column' => $column,
+                                             'isReordering' => $isReordering,
                                              ])))
                                             {{ $headerCellView }}
                                         @else
                                             @php
                                                 $columnName = $column->getName();
-                                                $columnLabel = $column->getLabel();
-                                                $columnAlignment = $column->getAlignment();
-                                                $columnWidth = $column->getWidth();
-                                                $isColumnActivelySorted = $getSortColumn() === $column->getName();
-                                                $isColumnSortable = $column->isSortable() && (! $isReordering);
-                                                $columnHeaderTooltip = $column->getHeaderTooltip();
-                                                $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
-                                                    ? 'x-tooltip.html'
-                                                    : 'x-tooltip';
+                                                                                                $columnLabel = $column->getLabel();
+                                                                                                $columnAlignment = $column->getAlignment();
+                                                                                                $columnWidth = $column->getWidth();
+                                                                                                $isColumnActivelySorted = $getSortColumn() === $column->getName();
+                                                                                                $isColumnSortable = $column->isSortable() && (! $isReordering);
+                                                                                                $columnHeaderTooltip = $column->getHeaderTooltip();
+                                                                                                $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
+                                                                                                    ? 'x-tooltip.html'
+                                                                                                    : 'x-tooltip';
                                             @endphp
 
                                             <th
@@ -1663,20 +1663,20 @@
                                                 @endif
                                                 {{
                                                     $column->getExtraHeaderAttributeBag()
-                                                        ->class([
-                                                            'fi-ta-header-cell',
-                                                            'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
-                                                            'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
-                                                            'fi-grouped' => $column->getGroup(),
-                                                            'fi-wrapped' => $column->canHeaderWrap(),
-                                                            'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
-                                                            ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                            (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                            (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                                        ])
-                                                        ->style([
-                                                            ('width: ' . $columnWidth) => filled($columnWidth),
-                                                        ])
+                                                    ->class([
+                                                    'fi-ta-header-cell',
+                                                    'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
+                                                    'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
+                                                    'fi-grouped' => $column->getGroup(),
+                                                    'fi-wrapped' => $column->canHeaderWrap(),
+                                                    'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
+                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                                    ])
+                                                    ->style([
+                                                    ('width: ' . $columnWidth) => filled($columnWidth),
+                                                    ])
                                                 }}
                                             >
                                                 @if ($isColumnSortable)
@@ -1706,19 +1706,19 @@
 
                                                         {{
                                                             \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
-                                                                $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
-                                                                $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
-                                                                default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
+                                                            $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
+                                                            $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
+                                                            default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
                                                             }, attributes: (new \Illuminate\View\ComponentAttributeBag([
-                                                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
-                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
+                                                            'wire:target' => "sortTable('{$columnName}')",
                                                             ])))
                                                         }}
 
                                                         {{
                                                             \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
-                                                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                                            'wire:target' => "sortTable('{$columnName}')",
                                                             ]))
                                                         }}
                                                     </span>
@@ -1854,9 +1854,9 @@
 
                                                 <td
                                                     @class([
-                                                        'fi-ta-cell',
-                                                        'fi-ta-individual-search-cell' => $isIndividuallySearchable = $column->isIndividuallySearchable(),
-                                                        'fi-ta-individual-search-cell-' . str($columnName)->camel()->kebab() => $isIndividuallySearchable,
+                                                    'fi-ta-cell',
+                                                    'fi-ta-individual-search-cell' => $isIndividuallySearchable = $column->isIndividuallySearchable(),
+                                                    'fi-ta-individual-search-cell-' . str($columnName)->camel()->kebab() => $isIndividuallySearchable,
                                                     ])
                                                 >
                                                     @if ($isIndividuallySearchable)
@@ -1884,46 +1884,46 @@
                                     @if (count($records))
                                         @php
                                             $isRecordRowStriped = false;
-                                            $previousRecord = null;
-                                            $previousRecordGroupKey = null;
-                                            $previousRecordGroupTitle = null;
+                                                                                        $previousRecord = null;
+                                                                                        $previousRecordGroupKey = null;
+                                                                                        $previousRecordGroupTitle = null;
                                         @endphp
 
                                         @foreach ($records as $record)
                                             @php
                                                 $recordAction = $getRecordAction($record);
-                                                $recordKey = $getRecordKey($record);
-                                                $recordUrl = $getRecordUrl($record);
-                                                $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
-                                                $recordGroupKey = $group?->getStringKey($record);
-                                                $recordGroupTitle = $group?->getTitle($record);
+                                                                                                $recordKey = $getRecordKey($record);
+                                                                                                $recordUrl = $getRecordUrl($record);
+                                                                                                $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
+                                                                                                $recordGroupKey = $group?->getStringKey($record);
+                                                                                                $recordGroupTitle = $group?->getTitle($record);
 
-                                                $recordActions = array_reduce(
-                                                    $defaultRecordActions,
-                                                    function (array $carry, $action) use ($record): array {
-                                                        $action = $action->getClone();
+                                                                                                $recordActions = array_reduce(
+                                                                                                    $defaultRecordActions,
+                                                                                                    function (array $carry, $action) use ($record): array {
+                                                                                                        $action = $action->getClone();
 
-                                                        if (! $action instanceof \Filament\Actions\BulkAction) {
-                                                            $action->record($record);
-                                                        }
+                                                                                                        if (! $action instanceof \Filament\Actions\BulkAction) {
+                                                                                                            $action->record($record);
+                                                                                                        }
 
-                                                        if ($action->isHidden()) {
-                                                            return $carry;
-                                                        }
+                                                                                                        if ($action->isHidden()) {
+                                                                                                            return $carry;
+                                                                                                        }
 
-                                                        $carry[] = $action;
+                                                                                                        $carry[] = $action;
 
-                                                        return $carry;
-                                                    },
-                                                    initial: [],
-                                                );
+                                                                                                        return $carry;
+                                                                                                    },
+                                                                                                    initial: [],
+                                                                                                );
                                             @endphp
 
                                             @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                                     @php
                                                         $groupColumn = $group->getColumn();
-                                                        $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                                                                                                $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
                                                     @endphp
 
                                                     <x-filament-tables::summary.row
@@ -1946,19 +1946,19 @@
                                                     >
                                                         @php
                                                             $isRecordGroupCollapsible = $group?->isCollapsible();
-                                                            $groupHeaderColspan = $columnsCount;
+                                                                                                                        $groupHeaderColspan = $columnsCount;
 
-                                                            if ($isSelectionEnabled) {
-                                                                $groupHeaderColspan--;
+                                                                                                                        if ($isSelectionEnabled) {
+                                                                                                                            $groupHeaderColspan--;
 
-                                                                if (
-                                                                    ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
-                                                                    count($defaultRecordActions) &&
-                                                                    ($recordActionsPosition === RecordActionsPosition::BeforeCells)
-                                                                ) {
-                                                                    $groupHeaderColspan--;
-                                                                }
-                                                            }
+                                                                                                                            if (
+                                                                                                                                ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
+                                                                                                                                count($defaultRecordActions) &&
+                                                                                                                                ($recordActionsPosition === RecordActionsPosition::BeforeCells)
+                                                                                                                            ) {
+                                                                                                                                $groupHeaderColspan--;
+                                                                                                                            }
+                                                                                                                        }
                                                         @endphp
 
                                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
@@ -2018,8 +2018,8 @@
                                                                     x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) ? 'fi-collapsed' : null"
                                                                 @endif
                                                                 @class([
-                                                                    'fi-ta-group-header',
-                                                                    'fi-collapsible' => $isRecordGroupCollapsible,
+                                                                'fi-ta-group-header',
+                                                                'fi-collapsible' => $isRecordGroupCollapsible,
                                                                 ])
                                                             >
                                                                 <div>
@@ -2115,10 +2115,10 @@
                                                         'fi-selected': isRecordSelected(@js($recordKey)),
                                                     }"
                                                     @class([
-                                                        'fi-ta-row',
-                                                        'fi-clickable' => $recordAction || $recordUrl,
-                                                        'fi-striped' => $isStriped && $isRecordRowStriped,
-                                                        ...$getRecordClasses($record),
+                                                    'fi-ta-row',
+                                                    'fi-clickable' => $recordAction || $recordUrl,
+                                                    'fi-striped' => $isStriped && $isRecordRowStriped,
+                                                    ...$getRecordClasses($record),
                                                     ])
                                                 >
                                                     @if ($isReordering)
@@ -2136,14 +2136,14 @@
                                                         <td class="fi-ta-cell">
                                                             <div
                                                                 @class([
-                                                                    'fi-ta-actions',
-                                                                    match ($recordActionsAlignment) {
-                                                                        Alignment::Center => 'fi-align-center',
-                                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                                        Alignment::End, Alignment::Right => '',
-                                                                        default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
-                                                                    },
+                                                                'fi-ta-actions',
+                                                                match ($recordActionsAlignment) {
+                                                                Alignment::Center => 'fi-align-center',
+                                                                Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                                Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                                Alignment::End, Alignment::Right => '',
+                                                                default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
+                                                                },
                                                                 ])
                                                             >
                                                                 @foreach ($recordActions as $action)
@@ -2182,14 +2182,14 @@
                                                         <td class="fi-ta-cell">
                                                             <div
                                                                 @class([
-                                                                    'fi-ta-actions',
-                                                                    match ($recordActionsAlignment) {
-                                                                        Alignment::Center => 'fi-align-center',
-                                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                                        Alignment::End, Alignment::Right => '',
-                                                                        default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
-                                                                    },
+                                                                'fi-ta-actions',
+                                                                match ($recordActionsAlignment) {
+                                                                Alignment::Center => 'fi-align-center',
+                                                                Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                                Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                                Alignment::End, Alignment::Right => '',
+                                                                default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
+                                                                },
                                                                 ])
                                                             >
                                                                 @foreach ($recordActions as $action)
@@ -2202,45 +2202,45 @@
                                                     @foreach ($columns as $column)
                                                         @php
                                                             $column->record($record);
-                                                            $column->rowLoop($loop->parent);
-                                                            $column->recordKey($recordKey);
+                                                                                                                        $column->rowLoop($loop->parent);
+                                                                                                                        $column->recordKey($recordKey);
 
-                                                            $columnAction = $column->getAction();
-                                                            $columnUrl = $column->getUrl();
-                                                            $columnHasStateBasedUrls = $column->hasStateBasedUrls();
-                                                            $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
+                                                                                                                        $columnAction = $column->getAction();
+                                                                                                                        $columnUrl = $column->getUrl();
+                                                                                                                        $columnHasStateBasedUrls = $column->hasStateBasedUrls();
+                                                                                                                        $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
 
-                                                            $columnWrapperTag = match (true) {
-                                                                ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
-                                                                ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
-                                                                default => 'div',
-                                                            };
+                                                                                                                        $columnWrapperTag = match (true) {
+                                                                                                                            ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
+                                                                                                                            ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
+                                                                                                                            default => 'div',
+                                                                                                                        };
 
-                                                            if ($columnWrapperTag === 'button') {
-                                                                if ($columnAction instanceof \Filament\Actions\Action) {
-                                                                    $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', '{$recordKey}')";
-                                                                } elseif ($columnAction) {
-                                                                    $columnWireClickAction = "callTableColumnAction('{$column->getName()}', '{$recordKey}')";
-                                                                } else {
-                                                                    if ($this->getTable()->getAction($recordAction)) {
-                                                                        $columnWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
-                                                                    } else {
-                                                                        $columnWireClickAction = "{$recordAction}('{$recordKey}')";
-                                                                    }
-                                                                }
-                                                            }
+                                                                                                                        if ($columnWrapperTag === 'button') {
+                                                                                                                            if ($columnAction instanceof \Filament\Actions\Action) {
+                                                                                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', '{$recordKey}')";
+                                                                                                                            } elseif ($columnAction) {
+                                                                                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', '{$recordKey}')";
+                                                                                                                            } else {
+                                                                                                                                if ($this->getTable()->getAction($recordAction)) {
+                                                                                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                                                                                                } else {
+                                                                                                                                    $columnWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
                                                         @endphp
 
                                                         <td
                                                             wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                                             {{
                                                                 $column->getExtraCellAttributeBag()->class([
-                                                                    'fi-ta-cell',
-                                                                    'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
-                                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                                    ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
-                                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                                                'fi-ta-cell',
+                                                                'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
+                                                                ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                                ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
+                                                                (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                                (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
                                                                 ])
                                                             }}
                                                         >
@@ -2258,8 +2258,8 @@
                                                                     wire:target="{{ $columnWireClickAction }}"
                                                                 @endif
                                                                 @class([
-                                                                    'fi-ta-col',
-                                                                    'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
+                                                                'fi-ta-col',
+                                                                'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
                                                                 ])
                                                             >
                                                                 {{ $column }}
@@ -2272,14 +2272,14 @@
                                                         <td class="fi-ta-cell">
                                                             <div
                                                                 @class([
-                                                                    'fi-ta-actions',
-                                                                    match ($recordActionsAlignment) {
-                                                                        Alignment::Center => 'fi-align-center',
-                                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                                        Alignment::End, Alignment::Right => '',
-                                                                        default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
-                                                                    },
+                                                                'fi-ta-actions',
+                                                                match ($recordActionsAlignment) {
+                                                                Alignment::Center => 'fi-align-center',
+                                                                Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                                Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                                Alignment::End, Alignment::Right => '',
+                                                                default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
+                                                                },
                                                                 ])
                                                             >
                                                                 @foreach ($recordActions as $action)
@@ -2318,14 +2318,14 @@
                                                         <td class="fi-ta-cell">
                                                             <div
                                                                 @class([
-                                                                    'fi-ta-actions',
-                                                                    match ($recordActionsAlignment) {
-                                                                        Alignment::Center => 'fi-align-center',
-                                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                                        Alignment::End, Alignment::Right => '',
-                                                                        default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
-                                                                    },
+                                                                'fi-ta-actions',
+                                                                match ($recordActionsAlignment) {
+                                                                Alignment::Center => 'fi-align-center',
+                                                                Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                                Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                                Alignment::End, Alignment::Right => '',
+                                                                default => is_string($recordActionsAlignment) ? $recordActionsAlignment : '',
+                                                                },
                                                                 ])
                                                             >
                                                                 @foreach ($recordActions as $action)
@@ -2339,16 +2339,16 @@
 
                                             @php
                                                 $isRecordRowStriped = ! $isRecordRowStriped;
-                                                $previousRecord = $record;
-                                                $previousRecordGroupKey = $recordGroupKey;
-                                                $previousRecordGroupTitle = $recordGroupTitle;
+                                                                                                $previousRecord = $record;
+                                                                                                $previousRecordGroupKey = $recordGroupKey;
+                                                                                                $previousRecordGroupTitle = $recordGroupTitle;
                                             @endphp
                                         @endforeach
 
                                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
                                             @php
                                                 $groupColumn = $group->getColumn();
-                                                $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                                                                                        $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
                                             @endphp
 
                                             <x-filament-tables::summary.row
@@ -2393,8 +2393,8 @@
                                     <tr>
                                         {{
                                             $contentFooter->with([
-                                                'columns' => $columns,
-                                                'records' => $records,
+                                            'columns' => $columns,
+                                            'records' => $records,
                                             ])
                                         }}
                                     </tr>
@@ -2432,8 +2432,8 @@
                             @endif
 
                             @if ($emptyStateActions = array_filter(
-                                     $getEmptyStateActions(),
-                                     fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+                                 $getEmptyStateActions(),
+                                 fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
                                  ))
                                 <div
                                     class="fi-ta-actions fi-align-center fi-wrapped"
@@ -2451,7 +2451,7 @@
             @if ($hasPagination)
                 @php
                     $hasExtremePaginationLinks = $hasExtremePaginationLinks();
-                    $paginationPageOptions = $getPaginationPageOptions();
+                                        $paginationPageOptions = $getPaginationPageOptions();
                 @endphp
 
                 <x-filament::pagination
@@ -2480,9 +2480,9 @@
                 x-transition:leave-end="fi-opacity-0"
                 x-bind:class="{ 'fi-open': areFiltersOpen }"
                 @class([
-                    'fi-ta-filters-after-content-ctn',
-                    'lg:fi-open' => ! $hasCollapsibleFilters,
-                    (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
+                'fi-ta-filters-after-content-ctn',
+                'lg:fi-open' => ! $hasCollapsibleFilters,
+                (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
                 ])
             >
                 <x-filament-tables::filters

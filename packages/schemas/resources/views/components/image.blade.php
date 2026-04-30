@@ -1,14 +1,14 @@
 @php
     use Filament\Support\Enums\Alignment;
 
-    $alignment = $getAlignment();
-    $height = $getImageHeight() ?? '8rem';
-    $width = $getImageWidth();
-    $tooltip = $getTooltip();
+        $alignment = $getAlignment();
+        $height = $getImageHeight() ?? '8rem';
+        $width = $getImageWidth();
+        $tooltip = $getTooltip();
 
-    if (! $alignment instanceof Alignment) {
-        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
-    }
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
 @endphp
 
 <img
@@ -19,13 +19,13 @@
     @endif
     {{
         $getExtraAttributeBag()
-            ->class([
-                'fi-sc-image',
-                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
-            ])
-            ->style([
-                "height: {$height}" => $height,
-                "width: {$width}" => $width,
-            ])
+        ->class([
+        'fi-sc-image',
+        ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
+        ])
+        ->style([
+        "height: {$height}" => $height,
+        "width: {$width}" => $width,
+        ])
     }}
 />

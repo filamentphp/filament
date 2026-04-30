@@ -1,15 +1,15 @@
 @php
     use Filament\Support\Enums\VerticalAlignment;
 
-    $actions = $getChildSchema()->getComponents();
-    $alignment = $getAlignment();
-    $isFullWidth = $isFullWidth();
-    $isSticky = $isSticky();
-    $verticalAlignment = $getVerticalAlignment();
+        $actions = $getChildSchema()->getComponents();
+        $alignment = $getAlignment();
+        $isFullWidth = $isFullWidth();
+        $isSticky = $isSticky();
+        $verticalAlignment = $getVerticalAlignment();
 
-    if (! $verticalAlignment instanceof VerticalAlignment) {
-        $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
-    }
+        if (! $verticalAlignment instanceof VerticalAlignment) {
+            $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
+        }
 @endphp
 
 <div
@@ -21,14 +21,14 @@
     @endif
     {{
         $attributes
-            ->merge([
-                'id' => $getId(),
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->class([
-                'fi-sc-actions',
-                ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
-            ])
+        ->merge([
+        'id' => $getId(),
+        ], escape: false)
+        ->merge($getExtraAttributes(), escape: false)
+        ->class([
+        'fi-sc-actions',
+        ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
+        ])
     }}
 >
     @if (filled($label = $getLabel()))

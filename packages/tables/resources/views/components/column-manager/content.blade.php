@@ -1,13 +1,13 @@
 @php
     use Filament\Support\Enums\GridDirection;
-    use Illuminate\View\ComponentAttributeBag;
+        use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
-    'columns' => null,
-    'hasReorderableColumns',
-    'hasToggleableColumns',
-    'reorderAnimationDuration' => 300,
+'columns' => null,
+'hasReorderableColumns',
+'hasToggleableColumns',
+'reorderAnimationDuration' => 300,
 ])
 
 <div
@@ -18,8 +18,8 @@
     @endif
     {{
         (new ComponentAttributeBag)
-            ->grid($columns, GridDirection::Column)
-            ->class(['fi-ta-col-manager-items'])
+        ->grid($columns, GridDirection::Column)
+        ->class(['fi-ta-col-manager-items'])
     }}
 >
     <template

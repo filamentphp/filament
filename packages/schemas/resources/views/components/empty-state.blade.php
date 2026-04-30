@@ -1,20 +1,20 @@
 @php
     $description = $getDescription();
-    $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
-    $heading = $getHeading();
-    $headingTag = $getHeadingTag();
-    $icon = $getIcon();
-    $iconColor = $getIconColor();
-    $iconSize = $getIconSize();
-    $isCompact = $isCompact();
-    $isContained = $isContained();
+        $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
+        $heading = $getHeading();
+        $headingTag = $getHeadingTag();
+        $icon = $getIcon();
+        $iconColor = $getIconColor();
+        $iconSize = $getIconSize();
+        $isCompact = $isCompact();
+        $isContained = $isContained();
 @endphp
 
 <div
     {{
         $attributes
-            ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-sc-empty-state'])
+        ->merge($getExtraAttributes(), escape: false)
+        ->class(['fi-sc-empty-state'])
     }}
 >
     <x-filament::empty-state

@@ -1,14 +1,14 @@
 @props([
-    'length' => 6,
+'length' => 6,
 ])
 
 <div
     x-data="{ currentNumberOfDigits: null }"
     {{
         $attributes
-            ->class([
-                'fi-one-time-code-input-ctn',
-            ])
+        ->class([
+        'fi-one-time-code-input-ctn',
+        ])
     }}
 >
     @foreach (range(1, $length) as $digit)

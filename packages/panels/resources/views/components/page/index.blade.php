@@ -1,23 +1,23 @@
 @props([
-    'fullHeight' => false,
+'fullHeight' => false,
 ])
 
 @php
     use Filament\Pages\Enums\SubNavigationPosition;
 
-    $subNavigation = $this->getCachedSubNavigation();
-    $subNavigationPosition = $this->getSubNavigationPosition();
-    $widgetData = $this->getWidgetData();
+        $subNavigation = $this->getCachedSubNavigation();
+        $subNavigationPosition = $this->getSubNavigationPosition();
+        $widgetData = $this->getWidgetData();
 @endphp
 
 <div
     {{
         $attributes->class([
-            'fi-page',
-            'fi-height-full' => $fullHeight,
-            'fi-page-has-sub-navigation' => $subNavigation,
-            "fi-page-has-sub-navigation-{$subNavigationPosition->value}" => $subNavigation,
-            ...$this->getPageClasses(),
+        'fi-page',
+        'fi-height-full' => $fullHeight,
+        'fi-page-has-sub-navigation' => $subNavigation,
+        "fi-page-has-sub-navigation-{$subNavigationPosition->value}" => $subNavigation,
+        ...$this->getPageClasses(),
         ])
     }}
 >
@@ -47,10 +47,10 @@
         @else
             @php
                 $heading = $this->getHeading();
-                $headerActions = $this->getCachedHeaderActions();
-                $headerActionsAlignment = $this->getHeaderActionsAlignment();
-                $breadcrumbs = filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : [];
-                $subheading = $this->getSubheading();
+                                $headerActions = $this->getCachedHeaderActions();
+                                $headerActionsAlignment = $this->getHeaderActionsAlignment();
+                                $breadcrumbs = filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : [];
+                                $subheading = $this->getSubheading();
             @endphp
 
             @if (filled($headerActions) || $breadcrumbs || filled($heading) || filled($subheading))

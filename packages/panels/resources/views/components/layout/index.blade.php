@@ -1,30 +1,30 @@
 @php
     use Filament\Support\Enums\Width;
 
-    $livewire ??= null;
+        $livewire ??= null;
 
-    $hasTopbar = filament()->hasTopbar();
-    $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
-    $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
-    $hasTopNavigation = filament()->hasTopNavigation();
-    $hasNavigation = filament()->hasNavigation();
-    $renderHookScopes = $livewire?->getRenderHookScopes();
-    $maxContentWidth ??= (filament()->getMaxContentWidth() ?? Width::SevenExtraLarge);
+        $hasTopbar = filament()->hasTopbar();
+        $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+        $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
+        $hasTopNavigation = filament()->hasTopNavigation();
+        $hasNavigation = filament()->hasNavigation();
+        $renderHookScopes = $livewire?->getRenderHookScopes();
+        $maxContentWidth ??= (filament()->getMaxContentWidth() ?? Width::SevenExtraLarge);
 
-    if (is_string($maxContentWidth)) {
-        $maxContentWidth = Width::tryFrom($maxContentWidth) ?? $maxContentWidth;
-    }
+        if (is_string($maxContentWidth)) {
+            $maxContentWidth = Width::tryFrom($maxContentWidth) ?? $maxContentWidth;
+        }
 @endphp
 
 <x-filament-panels::layout.base
     :livewire="$livewire"
     @class([
-        'fi-body-has-navigation' => $hasNavigation,
-        'fi-body-has-sidebar-collapsible-on-desktop' => $isSidebarCollapsibleOnDesktop,
-        'fi-body-has-sidebar-fully-collapsible-on-desktop' => $isSidebarFullyCollapsibleOnDesktop,
-        'fi-body-has-topbar' => $hasTopbar,
-        'fi-body-has-top-navigation' => $hasTopNavigation,
-    ])
+            'fi-body-has-navigation' => $hasNavigation,
+            'fi-body-has-sidebar-collapsible-on-desktop' => $isSidebarCollapsibleOnDesktop,
+            'fi-body-has-sidebar-fully-collapsible-on-desktop' => $isSidebarFullyCollapsibleOnDesktop,
+            'fi-body-has-topbar' => $hasTopbar,
+            'fi-body-has-top-navigation' => $hasTopNavigation,
+        ])
 >
     @if ($hasTopbar)
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_BEFORE, scopes: $renderHookScopes) }}
@@ -39,8 +39,8 @@
                 x-bind:class="{ 'lg:fi-hidden': $store.sidebar.isOpen }"
             @endif
             @class([
-                'fi-layout-sidebar-toggle-btn-ctn',
-                'lg:fi-hidden' => ! $isSidebarFullyCollapsibleOnDesktop,
+            'fi-layout-sidebar-toggle-btn-ctn',
+            'lg:fi-hidden' => ! $isSidebarFullyCollapsibleOnDesktop,
             ])
         >
             <x-filament::icon-button
@@ -98,8 +98,8 @@
 
             <main
                 @class([
-                    'fi-main',
-                    ($maxContentWidth instanceof Width) ? "fi-width-{$maxContentWidth->value}" : $maxContentWidth,
+                'fi-main',
+                ($maxContentWidth instanceof Width) ? "fi-width-{$maxContentWidth->value}" : $maxContentWidth,
                 ])
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::CONTENT_START, scopes: $renderHookScopes) }}

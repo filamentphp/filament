@@ -1,35 +1,35 @@
 @props([
-    'actions' => false,
-    'actionsPosition' => null,
-    'allTableSummary' => true,
-    'columns',
-    'extraHeadingColumn' => false,
-    'groupColumn' => null,
-    'groupsOnly' => false,
-    'pageSummary' => true,
-    'placeholderColumns' => true,
-    'pluralModelLabel',
-    'recordCheckboxPosition' => null,
-    'records',
-    'selectionEnabled' => false,
+'actions' => false,
+'actionsPosition' => null,
+'allTableSummary' => true,
+'columns',
+'extraHeadingColumn' => false,
+'groupColumn' => null,
+'groupsOnly' => false,
+'pageSummary' => true,
+'placeholderColumns' => true,
+'pluralModelLabel',
+'recordCheckboxPosition' => null,
+'records',
+'selectionEnabled' => false,
 ])
 
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Tables\Columns\Column;
-    use Filament\Tables\Enums\RecordActionsPosition;
-    use Filament\Tables\Enums\RecordCheckboxPosition;
+        use Filament\Tables\Columns\Column;
+        use Filament\Tables\Enums\RecordActionsPosition;
+        use Filament\Tables\Enums\RecordCheckboxPosition;
 
-    if ($groupsOnly && $groupColumn) {
-        $columns = collect($columns)
-            ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
-            ->all();
-    }
+        if ($groupsOnly && $groupColumn) {
+            $columns = collect($columns)
+                ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
+                ->all();
+        }
 
-    $hasPageSummary = $pageSummary && (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
+        $hasPageSummary = $pageSummary && (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 
-    $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
-    $allTableSummaryQuery = $allTableSummary ? $this->getAllTableSummaryQuery() : null;
+        $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
+        $allTableSummaryQuery = $allTableSummary ? $this->getAllTableSummaryQuery() : null;
 @endphp
 
 @if ($hasPageSummary)
@@ -57,19 +57,19 @@
                 @php
                     $alignment = $column->getAlignment() ?? Alignment::Start;
 
-                    if (! $alignment instanceof Alignment) {
-                        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
-                    }
+                                        if (! $alignment instanceof Alignment) {
+                                            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+                                        }
 
-                    $hasColumnHeaderLabel = (! $placeholderColumns) || $columnHasSummary;
+                                        $hasColumnHeaderLabel = (! $placeholderColumns) || $columnHasSummary;
                 @endphp
 
                 <td
                     {{
                         $column->getExtraHeaderAttributeBag()->class([
-                            'fi-ta-cell fi-ta-summary-header-cell',
-                            'fi-wrapped' => $column->canHeaderWrap(),
-                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
+                        'fi-ta-cell fi-ta-summary-header-cell',
+                        'fi-wrapped' => $column->canHeaderWrap(),
+                        (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
                         ])
                     }}
                 >
@@ -127,7 +127,7 @@
         :selected-state="$selectedState"
         :selection-enabled="$selectionEnabled"
         @class([
-            'fi-striped' => ! $hasPageSummary,
-        ])
+                    'fi-striped' => ! $hasPageSummary,
+                ])
     />
 @endif

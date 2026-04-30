@@ -1,45 +1,45 @@
 @php
     use Filament\Schemas\Components\Tabs\Tab;
-    use Filament\Schemas\View\SchemaIconAlias;
-    use Filament\Support\Icons\Heroicon;
+        use Filament\Schemas\View\SchemaIconAlias;
+        use Filament\Support\Icons\Heroicon;
 
-    $activeTab = $getActiveTab();
-    $hasDeferredBadges = $hasDeferredBadges();
-    $id = $getId();
-    $isContained = $isContained();
-    $isScrollable = $isScrollable();
-    $isVertical = $isVertical();
-    $label = $getLabel();
-    $livewireProperty = $getLivewireProperty();
-    $renderHookScopes = $getRenderHookScopes();
-    $tabs = $getChildSchema()->getComponents();
-    $tabsKey = $getKey();
+        $activeTab = $getActiveTab();
+        $hasDeferredBadges = $hasDeferredBadges();
+        $id = $getId();
+        $isContained = $isContained();
+        $isScrollable = $isScrollable();
+        $isVertical = $isVertical();
+        $label = $getLabel();
+        $livewireProperty = $getLivewireProperty();
+        $renderHookScopes = $getRenderHookScopes();
+        $tabs = $getChildSchema()->getComponents();
+        $tabsKey = $getKey();
 
-    $getTabVisibilityJs = function (Tab $tab, ?int $index = null, ?string $mode = null) use ($isScrollable): ?string {
-        $hiddenJs = $tab->getHiddenJs();
-        $visibleJs = $tab->getVisibleJs();
+        $getTabVisibilityJs = function (Tab $tab, ?int $index = null, ?string $mode = null) use ($isScrollable): ?string {
+            $hiddenJs = $tab->getHiddenJs();
+            $visibleJs = $tab->getVisibleJs();
 
-        $baseJs = match ([filled($hiddenJs), filled($visibleJs)]) {
-            [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
-            [true, false] => "! ({$hiddenJs})",
-            [false, true] => $visibleJs,
-            default => null,
+            $baseJs = match ([filled($hiddenJs), filled($visibleJs)]) {
+                [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
+                [true, false] => "! ({$hiddenJs})",
+                [false, true] => $visibleJs,
+                default => null,
+            };
+
+            if ($isScrollable || $index === null || $mode === null) {
+                return $baseJs;
+            }
+
+            $tabKey = $tab->getKey(isAbsolute: false);
+
+            $dropdownJs = match ($mode) {
+                'inline' => "(!withinDropdownMounted || withinDropdownIndex === null || {$index} < withinDropdownIndex)",
+                'trigger' => "(withinDropdownMounted && withinDropdownIndex !== null && {$index} >= withinDropdownIndex && '{$tabKey}' === tab)",
+                default => null,
+            };
+
+            return $baseJs ? "{$baseJs} && {$dropdownJs}" : $dropdownJs;
         };
-
-        if ($isScrollable || $index === null || $mode === null) {
-            return $baseJs;
-        }
-
-        $tabKey = $tab->getKey(isAbsolute: false);
-
-        $dropdownJs = match ($mode) {
-            'inline' => "(!withinDropdownMounted || withinDropdownIndex === null || {$index} < withinDropdownIndex)",
-            'trigger' => "(withinDropdownMounted && withinDropdownIndex !== null && {$index} >= withinDropdownIndex && '{$tabKey}' === tab)",
-            default => null,
-        };
-
-        return $baseJs ? "{$baseJs} && {$dropdownJs}" : $dropdownJs;
-    };
 @endphp
 
 @if (blank($livewireProperty))
@@ -57,17 +57,17 @@
         wire:ignore.self
         {{
             $attributes
-                ->merge([
-                    'id' => $id,
-                    'wire:key' => $getLivewireKey() . '.container',
-                ], escape: false)
-                ->merge($getExtraAttributes(), escape: false)
-                ->merge($getExtraAlpineAttributes(), escape: false)
-                ->class([
-                    'fi-sc-tabs',
-                    'fi-contained' => $isContained,
-                    'fi-vertical' => $isVertical,
-                ])
+            ->merge([
+            'id' => $id,
+            'wire:key' => $getLivewireKey() . '.container',
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraAlpineAttributes(), escape: false)
+            ->class([
+            'fi-sc-tabs',
+            'fi-contained' => $isContained,
+            'fi-vertical' => $isVertical,
+            ])
         }}
     >
         <input
@@ -105,17 +105,17 @@
             @foreach ($tabs as $index => $tab)
                 @php
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
-                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
-                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
-                    $tabIcon = $tab->getIcon();
-                    $tabIconPosition = $tab->getIconPosition();
-                    $tabKey = $tab->getKey(isAbsolute: false);
-                    $tabLabel = $tab->getLabel();
-                    $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'inline');
+                                        $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                                        $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                        $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                                        $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                                        $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                                        $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                                        $tabIcon = $tab->getIcon();
+                                        $tabIconPosition = $tab->getIconPosition();
+                                        $tabKey = $tab->getKey(isAbsolute: false);
+                                        $tabLabel = $tab->getLabel();
+                                        $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'inline');
                 @endphp
 
                 <x-filament::tabs.item
@@ -147,13 +147,13 @@
                         @foreach ($tabs as $index => $tab)
                             @php
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
-                                $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
-                                $tabExtraAttributeBag = $tab->getExtraAttributeBag();
-                                $tabKey = $tab->getKey(isAbsolute: false);
-                                $tabLabel = $tab->getLabel();
-                                $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'trigger');
+                                                                $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                                                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                                                                $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                                                                $tabKey = $tab->getKey(isAbsolute: false);
+                                                                $tabLabel = $tab->getLabel();
+                                                                $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'trigger');
                             @endphp
 
                             <x-filament::tabs.item
@@ -176,8 +176,8 @@
                         <x-filament::tabs.item x-show="isDropdownButtonVisible">
                             {{
                                 \Filament\Support\generate_icon_html(
-                                    Heroicon::EllipsisHorizontal,
-                                    alias: SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON,
+                                Heroicon::EllipsisHorizontal,
+                                alias: SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON,
                                 )
                             }}
                         </x-filament::tabs.item>
@@ -187,12 +187,12 @@
                         @foreach ($tabs as $index => $tab)
                             @php
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
-                                $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
-                                $tabIcon = $tab->getIcon();
-                                $tabKey = $tab->getKey(isAbsolute: false);
-                                $tabLabel = $tab->getLabel();
+                                                                $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                                                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                                                                $tabIcon = $tab->getIcon();
+                                                                $tabKey = $tab->getKey(isAbsolute: false);
+                                                                $tabLabel = $tab->getLabel();
                             @endphp
 
                             <x-filament::dropdown.list.item
@@ -259,16 +259,16 @@
         @endif
         {{
             $attributes
-                ->merge([
-                    'id' => $id,
-                    'wire:key' => $getLivewireKey() . '.container',
-                ], escape: false)
-                ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'fi-sc-tabs',
-                    'fi-contained' => $isContained,
-                    'fi-vertical' => $isVertical,
-                ])
+            ->merge([
+            'id' => $id,
+            'wire:key' => $getLivewireKey() . '.container',
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+            'fi-sc-tabs',
+            'fi-contained' => $isContained,
+            'fi-vertical' => $isVertical,
+            ])
         }}
     >
         <x-filament::tabs
@@ -283,16 +283,16 @@
             @foreach ($getChildSchema()->getComponents(withOriginalKeys: true) as $tabKey => $tab)
                 @php
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
-                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
-                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
-                    $tabIcon = $tab->getIcon();
-                    $tabIconPosition = $tab->getIconPosition();
-                    $tabKey = strval($tabKey);
-                    $tabLabel = $tab->getLabel() ?? $this->generateTabLabel($tabKey);
+                                        $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                                        $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                        $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                                        $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                                        $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                                        $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                                        $tabIcon = $tab->getIcon();
+                                        $tabIconPosition = $tab->getIconPosition();
+                                        $tabKey = strval($tabKey);
+                                        $tabLabel = $tab->getLabel() ?? $this->generateTabLabel($tabKey);
                 @endphp
 
                 <x-filament::tabs.item

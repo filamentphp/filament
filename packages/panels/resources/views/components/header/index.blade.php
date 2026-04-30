@@ -1,16 +1,16 @@
 @props([
-    'actions' => [],
-    'actionsAlignment' => null,
-    'breadcrumbs' => [],
-    'heading' => null,
-    'subheading' => null,
+'actions' => [],
+'actionsAlignment' => null,
+'breadcrumbs' => [],
+'heading' => null,
+'subheading' => null,
 ])
 
 <header
     {{
         $attributes->class([
-            'fi-header',
-            'fi-header-has-breadcrumbs' => $breadcrumbs,
+        'fi-header',
+        'fi-header-has-breadcrumbs' => $breadcrumbs,
         ])
     }}
 >
@@ -38,7 +38,7 @@
 
     @php
         $beforeActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
-        $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
+                $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
     @endphp
 
     @if (filled($beforeActions) || $actions || filled($afterActions))

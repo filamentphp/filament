@@ -1,11 +1,11 @@
 @php
     $id = $getId();
-    $key = $getKey(isAbsolute: false);
-    $tabs = $getContainer()->getParentComponent();
-    $isContained = $tabs->isContained();
-    $livewireProperty = $tabs->getLivewireProperty();
+        $key = $getKey(isAbsolute: false);
+        $tabs = $getContainer()->getParentComponent();
+        $isContained = $tabs->isContained();
+        $livewireProperty = $tabs->getLivewireProperty();
 
-    $childSchema = $getChildSchema();
+        $childSchema = $getChildSchema();
 @endphp
 
 @if (! empty($childSchema->getComponents()))
@@ -17,14 +17,14 @@
             x-on:expand="tab = @js($key)"
             {{
                 $attributes
-                    ->merge([
-                        'aria-labelledby' => $id,
-                        'id' => $id,
-                        'role' => 'tabpanel',
-                        'wire:key' => $getLivewireKey() . '.container',
-                    ], escape: false)
-                    ->merge($getExtraAttributes(), escape: false)
-                    ->class(['fi-sc-tabs-tab'])
+                ->merge([
+                'aria-labelledby' => $id,
+                'id' => $id,
+                'role' => 'tabpanel',
+                'wire:key' => $getLivewireKey() . '.container',
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->class(['fi-sc-tabs-tab'])
             }}
         >
             {{ $childSchema }}
@@ -33,14 +33,14 @@
         <div
             {{
                 $attributes
-                    ->merge([
-                        'aria-labelledby' => $id,
-                        'id' => $id,
-                        'role' => 'tabpanel',
-                        'wire:key' => $getLivewireKey() . '.container',
-                    ], escape: false)
-                    ->merge($getExtraAttributes(), escape: false)
-                    ->class(['fi-sc-tabs-tab fi-active'])
+                ->merge([
+                'aria-labelledby' => $id,
+                'id' => $id,
+                'role' => 'tabpanel',
+                'wire:key' => $getLivewireKey() . '.container',
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->class(['fi-sc-tabs-tab fi-active'])
             }}
         >
             {{ $childSchema }}

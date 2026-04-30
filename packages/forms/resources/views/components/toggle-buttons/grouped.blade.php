@@ -1,12 +1,12 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $isMultiple = $isMultiple();
-    $statePath = $getStatePath();
-    $areButtonLabelsHidden = $areButtonLabelsHidden();
-    $wireModelAttribute = $applyStateBindingModifiers('wire:model');
-    $extraInputAttributeBag = $getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $isMultiple = $isMultiple();
+        $statePath = $getStatePath();
+        $areButtonLabelsHidden = $areButtonLabelsHidden();
+        $wireModelAttribute = $applyStateBindingModifiers('wire:model');
+        $extraInputAttributeBag = $getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
 @endphp
 
 <x-dynamic-component
@@ -21,10 +21,10 @@
         @foreach ($getOptions() as $value => $label)
             @php
                 $inputId = "{$id}-{$value}";
-                $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
-                $color = $getColor($value);
-                $icon = $getIcon($value);
-                $tooltip = $getTooltip($value);
+                                $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
+                                $color = $getColor($value);
+                                $icon = $getIcon($value);
+                                $tooltip = $getTooltip($value);
             @endphp
 
             <input

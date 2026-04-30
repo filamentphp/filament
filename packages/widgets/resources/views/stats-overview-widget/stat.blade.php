@@ -1,16 +1,16 @@
 @php
     use Filament\Support\Enums\IconPosition;
-    use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
-    use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
+        use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $chartColor = $getChartColor() ?? 'gray';
-    $descriptionColor = $getDescriptionColor() ?? 'gray';
-    $descriptionIcon = $getDescriptionIcon();
-    $descriptionIconPosition = $getDescriptionIconPosition();
-    $url = $getUrl();
-    $tag = $url ? 'a' : 'div';
-    $chartDataChecksum = $generateChartDataChecksum();
+        $chartColor = $getChartColor() ?? 'gray';
+        $descriptionColor = $getDescriptionColor() ?? 'gray';
+        $descriptionIcon = $getDescriptionIcon();
+        $descriptionIconPosition = $getDescriptionIconPosition();
+        $url = $getUrl();
+        $tag = $url ? 'a' : 'div';
+        $chartDataChecksum = $generateChartDataChecksum();
 @endphp
 
 <{!! $tag !!}
@@ -19,9 +19,9 @@
     @endif
     {{
         $getExtraAttributeBag()
-            ->class([
-                'fi-wi-stats-overview-stat',
-            ])
+        ->class([
+        'fi-wi-stats-overview-stat',
+        ])
     }}
 >
     <div class="fi-wi-stats-overview-stat-content">

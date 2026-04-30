@@ -1,35 +1,35 @@
 @php
     use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\SectionComponent\IconComponent;
+        use Filament\Support\View\Components\SectionComponent\IconComponent;
 @endphp
 
 @props([
-    'compact' => false,
-    'contained' => true,
-    'description' => null,
-    'footer' => null,
-    'heading',
-    'headingTag' => 'h2',
-    'icon' => null,
-    'iconColor' => 'primary',
-    'iconSize' => null,
+'compact' => false,
+'contained' => true,
+'description' => null,
+'footer' => null,
+'heading',
+'headingTag' => 'h2',
+'icon' => null,
+'iconColor' => 'primary',
+'iconSize' => null,
 ])
 
 @php
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
-        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
-    }
+            $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        }
 
-    $hasDescription = filled((string) $description);
-    $hasIcon = filled($icon);
+        $hasDescription = filled((string) $description);
+        $hasIcon = filled($icon);
 @endphp
 
 <section
     {{
         $attributes->class([
-            'fi-empty-state',
-            'fi-compact' => $compact,
-            'fi-empty-state-not-contained' => ! $contained,
+        'fi-empty-state',
+        'fi-compact' => $compact,
+        'fi-empty-state-not-contained' => ! $contained,
         ])
     }}
 >
@@ -37,13 +37,13 @@
         @if ($hasIcon)
             <div
                 @class([
-                    'fi-empty-state-icon-bg',
-                    'fi-color ' . ('fi-color-' . $iconColor) => $iconColor !== 'gray',
+                'fi-empty-state-icon-bg',
+                'fi-color ' . ('fi-color-' . $iconColor) => $iconColor !== 'gray',
                 ])
             >
                 {{
                     \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag)
-                        ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
+                    ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
                 }}
             </div>
         @endif

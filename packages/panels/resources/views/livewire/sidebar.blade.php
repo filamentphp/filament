@@ -1,11 +1,11 @@
 <div>
     @php
         $navigation = filament()->getNavigation();
-        $isRtl = __('filament-panels::layout.direction') === 'rtl';
-        $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
-        $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
-        $hasNavigation = filament()->hasNavigation();
-        $hasTopbar = filament()->hasTopbar();
+                $isRtl = __('filament-panels::layout.direction') === 'rtl';
+                $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+                $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
+                $hasNavigation = filament()->hasNavigation();
+                $hasTopbar = filament()->hasTopbar();
     @endphp
 
     {{-- format-ignore-start --}}

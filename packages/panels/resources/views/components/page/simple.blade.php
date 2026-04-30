@@ -1,12 +1,12 @@
 @props([
-    'heading' => null,
-    'subheading' => null,
+'heading' => null,
+'subheading' => null,
 ])
 
 @php
     $heading ??= $this->getHeading();
-    $subheading ??= $this->getSubHeading();
-    $hasLogo = $this->hasLogo();
+        $subheading ??= $this->getSubHeading();
+        $hasLogo = $this->hasLogo();
 @endphp
 
 <div {{ $attributes->class(['fi-simple-page']) }}>

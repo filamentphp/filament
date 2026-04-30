@@ -1,17 +1,17 @@
 @php
     $brandName = filament()->getBrandName();
-    $brandLogo = filament()->getBrandLogo();
-    $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.5rem';
-    $darkModeBrandLogo = filament()->getDarkModeBrandLogo();
-    $hasDarkModeBrandLogo = filled($darkModeBrandLogo);
+        $brandLogo = filament()->getBrandLogo();
+        $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.5rem';
+        $darkModeBrandLogo = filament()->getDarkModeBrandLogo();
+        $hasDarkModeBrandLogo = filled($darkModeBrandLogo);
 
-    $getLogoClasses = fn (bool $isDarkMode): string => \Illuminate\Support\Arr::toCssClasses([
-        'fi-logo',
-        'fi-logo-light' => $hasDarkModeBrandLogo && (! $isDarkMode),
-        'fi-logo-dark' => $isDarkMode,
-    ]);
+        $getLogoClasses = fn (bool $isDarkMode): string => \Illuminate\Support\Arr::toCssClasses([
+            'fi-logo',
+            'fi-logo-light' => $hasDarkModeBrandLogo && (! $isDarkMode),
+            'fi-logo-dark' => $isDarkMode,
+        ]);
 
-    $logoStyles = "height: {$brandLogoHeight}";
+        $logoStyles = "height: {$brandLogoHeight}";
 @endphp
 
 @capture($content, $logo, $isDarkMode = false)
@@ -19,8 +19,8 @@
         <div
             {{
                 $attributes
-                    ->class([$getLogoClasses($isDarkMode)])
-                    ->style([$logoStyles])
+                ->class([$getLogoClasses($isDarkMode)])
+                ->style([$logoStyles])
             }}
         >
             {{ $logo }}
@@ -31,15 +31,15 @@
             src="{{ $logo }}"
             {{
                 $attributes
-                    ->class([$getLogoClasses($isDarkMode)])
-                    ->style([$logoStyles])
+                ->class([$getLogoClasses($isDarkMode)])
+                ->style([$logoStyles])
             }}
         />
     @else
         <div
             {{
                 $attributes->class([
-                    $getLogoClasses($isDarkMode),
+                $getLogoClasses($isDarkMode),
                 ])
             }}
         >

@@ -1,30 +1,30 @@
 @props([
-    'teleport' => false,
+'teleport' => false,
 ])
 
 @php
     use Filament\Actions\Action;
-    use Illuminate\Support\Arr;
+        use Illuminate\Support\Arr;
 
-    $currentTenant = filament()->getTenant();
-    $currentTenantName = filament()->getTenantName($currentTenant);
+        $currentTenant = filament()->getTenant();
+        $currentTenantName = filament()->getTenantName($currentTenant);
 
-    $items = $this->getTenantMenuItems();
+        $items = $this->getTenantMenuItems();
 
-    $canSwitchTenants = filament()->hasTenantSwitcher() && filled($tenants = array_filter(
-        filament()->getUserTenants(filament()->auth()->user()),
-        fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
-    ));
+        $canSwitchTenants = filament()->hasTenantSwitcher() && filled($tenants = array_filter(
+            filament()->getUserTenants(filament()->auth()->user()),
+            fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
+        ));
 
-    $isSearchable = $canSwitchTenants && (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10));
+        $isSearchable = $canSwitchTenants && (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10));
 
-    $itemsBeforeAndAfterTenantSwitcher = collect($items)
-        ->groupBy(fn (Action $item): bool => $canSwitchTenants && ($item->getSort() < 0), preserveKeys: true)
-        ->all();
-    $itemsBeforeTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[true] ?? collect();
-    $itemsAfterTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[false] ?? collect();
+        $itemsBeforeAndAfterTenantSwitcher = collect($items)
+            ->groupBy(fn (Action $item): bool => $canSwitchTenants && ($item->getSort() < 0), preserveKeys: true)
+            ->all();
+        $itemsBeforeTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[true] ?? collect();
+        $itemsAfterTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[false] ?? collect();
 
-    $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+        $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TENANT_MENU_BEFORE) }}
@@ -35,7 +35,7 @@
     :teleport="$teleport"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-tenant-menu'])
+        ->class(['fi-tenant-menu'])
     "
 >
     <x-slot name="trigger">
@@ -80,7 +80,7 @@
 
             {{
                 \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\View\PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
-                    'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
+                'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
                 ]))
             }}
         </button>
@@ -115,8 +115,8 @@
                 @foreach ($tenants as $tenant)
                     @php
                         $tenantImage = filament()->getTenantAvatarUrl($tenant);
-                        $tenantName = filament()->getTenantName($tenant);
-                        $tenantUrl = filament()->getUrl($tenant);
+                                                $tenantName = filament()->getTenantName($tenant);
+                                                $tenantUrl = filament()->getUrl($tenant);
                     @endphp
 
                     <div

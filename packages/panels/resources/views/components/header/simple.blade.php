@@ -1,7 +1,7 @@
 @props([
-    'heading' => null,
-    'logo' => true,
-    'subheading' => null,
+'heading' => null,
+'logo' => true,
+'subheading' => null,
 ])
 
 <header class="fi-simple-header">

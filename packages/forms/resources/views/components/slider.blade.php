@@ -1,9 +1,9 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $isVertical = $isVertical();
-    $pipsMode = $getPipsMode();
-    $livewireKey = $getLivewireKey();
-    $isDisabled = $isDisabled();
+        $isVertical = $isVertical();
+        $pipsMode = $getPipsMode();
+        $livewireKey = $getLivewireKey();
+        $isDisabled = $isDisabled();
 @endphp
 
 <x-dynamic-component
@@ -40,22 +40,22 @@
         wire:ignore
         wire:key="{{ $livewireKey }}.{{
             substr(md5(serialize([
-                $isDisabled,
+            $isDisabled,
             ])), 0, 64)
         }}"
         {{
             $attributes
-                ->merge([
-                    'id' => $getId(),
-                ], escape: false)
-                ->merge($getExtraAttributes(), escape: false)
-                ->merge($getExtraAlpineAttributes(), escape: false)
-                ->class([
-                    'fi-fo-slider',
-                    'fi-fo-slider-has-pips' => $pipsMode,
-                    'fi-fo-slider-has-tooltips' => $hasTooltips(),
-                    'fi-fo-slider-vertical' => $isVertical,
-                ])
+            ->merge([
+            'id' => $getId(),
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraAlpineAttributes(), escape: false)
+            ->class([
+            'fi-fo-slider',
+            'fi-fo-slider-has-pips' => $pipsMode,
+            'fi-fo-slider-has-tooltips' => $hasTooltips(),
+            'fi-fo-slider-vertical' => $isVertical,
+            ])
         }}
     ></div>
 </x-dynamic-component>

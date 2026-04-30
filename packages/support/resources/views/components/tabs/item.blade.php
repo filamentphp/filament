@@ -3,32 +3,32 @@
 @endphp
 
 @props([
-    'active' => false,
-    'alpineActive' => null,
-    'alpineDeferredBadgeData' => null,
-    'alpineDeferredBadgeLoading' => null,
-    'badge' => null,
-    'badgeColor' => null,
-    'badgeTooltip' => null,
-    'badgeIcon' => null,
-    'badgeIconPosition' => IconPosition::Before,
-    'href' => null,
-    'icon' => null,
-    'iconColor' => 'gray',
-    'iconPosition' => IconPosition::Before,
-    'spaMode' => null,
-    'tag' => 'button',
-    'target' => null,
-    'type' => 'button',
+'active' => false,
+'alpineActive' => null,
+'alpineDeferredBadgeData' => null,
+'alpineDeferredBadgeLoading' => null,
+'badge' => null,
+'badgeColor' => null,
+'badgeTooltip' => null,
+'badgeIcon' => null,
+'badgeIconPosition' => IconPosition::Before,
+'href' => null,
+'icon' => null,
+'iconColor' => 'gray',
+'iconPosition' => IconPosition::Before,
+'spaMode' => null,
+'tag' => 'button',
+'target' => null,
+'type' => 'button',
 ])
 
 @php
     if (! $iconPosition instanceof IconPosition) {
-        $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
-    }
+            $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
+        }
 
-    $hasAlpineActiveClasses = filled($alpineActive);
-    $hasDeferredBadge = filled($alpineDeferredBadgeData);
+        $hasAlpineActiveClasses = filled($alpineActive);
+        $hasDeferredBadge = filled($alpineDeferredBadgeData);
 @endphp
 
 <{{ $tag }}
@@ -44,14 +44,14 @@
     @endif
     {{
         $attributes
-            ->merge([
-                'aria-selected' => $active,
-                'role' => 'tab',
-            ])
-            ->class([
-                'fi-tabs-item',
-                'fi-active' => (! $hasAlpineActiveClasses) && $active,
-            ])
+        ->merge([
+        'aria-selected' => $active,
+        'role' => 'tab',
+        ])
+        ->class([
+        'fi-tabs-item',
+        'fi-active' => (! $hasAlpineActiveClasses) && $active,
+        ])
     }}
 >
     @if ($icon && $iconPosition === IconPosition::Before)

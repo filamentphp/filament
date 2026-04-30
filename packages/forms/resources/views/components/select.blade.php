@@ -1,33 +1,33 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $extraInputAttributeBag = $getExtraInputAttributeBag();
-    $canSelectPlaceholder = $canSelectPlaceholder();
-    $isAutofocused = $isAutofocused();
-    $isDisabled = $isDisabled();
-    $isMultiple = $isMultiple();
-    $isReorderable = $isReorderable();
-    $isSearchable = $isSearchable();
-    $hasInitialNoOptionsMessage = $hasInitialNoOptionsMessage();
-    $canOptionLabelsWrap = $canOptionLabelsWrap();
-    $isRequired = $isRequired();
-    $isConcealed = $isConcealed();
-    $isHtmlAllowed = $isHtmlAllowed();
-    $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $isNative());
-    $isPrefixInline = $isPrefixInline();
-    $isSuffixInline = $isSuffixInline();
-    $key = $getKey();
-    $id = $getId();
-    $prefixActions = $getPrefixActions();
-    $prefixIcon = $getPrefixIcon();
-    $prefixIconColor = $getPrefixIconColor();
-    $prefixLabel = $getPrefixLabel();
-    $suffixActions = $getSuffixActions();
-    $suffixIcon = $getSuffixIcon();
-    $suffixIconColor = $getSuffixIconColor();
-    $suffixLabel = $getSuffixLabel();
-    $statePath = $getStatePath();
-    $state = $getRawState();
-    $livewireKey = $getLivewireKey();
+        $extraInputAttributeBag = $getExtraInputAttributeBag();
+        $canSelectPlaceholder = $canSelectPlaceholder();
+        $isAutofocused = $isAutofocused();
+        $isDisabled = $isDisabled();
+        $isMultiple = $isMultiple();
+        $isReorderable = $isReorderable();
+        $isSearchable = $isSearchable();
+        $hasInitialNoOptionsMessage = $hasInitialNoOptionsMessage();
+        $canOptionLabelsWrap = $canOptionLabelsWrap();
+        $isRequired = $isRequired();
+        $isConcealed = $isConcealed();
+        $isHtmlAllowed = $isHtmlAllowed();
+        $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $isNative());
+        $isPrefixInline = $isPrefixInline();
+        $isSuffixInline = $isSuffixInline();
+        $key = $getKey();
+        $id = $getId();
+        $prefixActions = $getPrefixActions();
+        $prefixIcon = $getPrefixIcon();
+        $prefixIconColor = $getPrefixIconColor();
+        $prefixLabel = $getPrefixLabel();
+        $suffixActions = $getSuffixActions();
+        $suffixIcon = $getSuffixIcon();
+        $suffixIconColor = $getSuffixIconColor();
+        $suffixLabel = $getSuffixLabel();
+        $statePath = $getStatePath();
+        $state = $getRawState();
+        $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component
@@ -51,28 +51,28 @@
         :x-on:focus-input.stop="$isNative ? '$el.querySelector(\'select\')?.focus()' : '$el.querySelector(\'.fi-select-input-btn\')?.focus()'"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                ->class([
-                    'fi-fo-select',
-                    'fi-fo-select-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                    'fi-fo-select-native' => $isNative,
-                ])
+            ->class([
+                'fi-fo-select',
+                'fi-fo-select-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'fi-fo-select-native' => $isNative,
+            ])
         "
     >
         @if ($isNative)
             <select
                 {{
                     $extraInputAttributeBag
-                        ->merge([
-                            'autofocus' => $isAutofocused,
-                            'disabled' => $isDisabled,
-                            'id' => $id,
-                            'required' => $isRequired && (! $isConcealed),
-                            $applyStateBindingModifiers('wire:model') => $statePath,
-                        ], escape: false)
-                        ->class([
-                            'fi-select-input',
-                            'fi-select-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                        ])
+                    ->merge([
+                    'autofocus' => $isAutofocused,
+                    'disabled' => $isDisabled,
+                    'id' => $id,
+                    'required' => $isRequired && (! $isConcealed),
+                    $applyStateBindingModifiers('wire:model') => $statePath,
+                    ], escape: false)
+                    ->class([
+                    'fi-select-input',
+                    'fi-select-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                    ])
                 }}
             >
                 @if ($canSelectPlaceholder)
@@ -188,16 +188,16 @@
                 wire:ignore
                 wire:key="{{ $livewireKey }}.{{
                     substr(md5(serialize([
-                        $isDisabled,
-                        $isReorderable,
+                    $isDisabled,
+                    $isReorderable,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                 {{
                     $attributes
-                        ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class(['fi-select-input'])
+                    ->merge($getExtraAlpineAttributes(), escape: false)
+                    ->class(['fi-select-input'])
                 }}
             >
                 <div x-ref="select"></div>

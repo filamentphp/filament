@@ -1,33 +1,33 @@
 @php
     $afterHeader = $getChildSchema($schemaComponent::AFTER_HEADER_SCHEMA_KEY)?->toHtmlString();
-    $isAside = $isAside();
-    $isCollapsed = $isCollapsed();
-    $isCollapsible = $isCollapsible();
-    $isCompact = $isCompact();
-    $isContained = $isContained();
-    $isDivided = $isDivided();
-    $isFormBefore = $isFormBefore();
-    $description = $getDescription();
-    $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
-    $heading = $getHeading();
-    $headingTag = $getHeadingTag();
-    $icon = $getIcon();
-    $iconColor = $getIconColor();
-    $iconSize = $getIconSize();
-    $shouldPersistCollapsed = $shouldPersistCollapsed();
-    $isSecondary = $isSecondary();
-    $id = $getId();
+        $isAside = $isAside();
+        $isCollapsed = $isCollapsed();
+        $isCollapsible = $isCollapsible();
+        $isCompact = $isCompact();
+        $isContained = $isContained();
+        $isDivided = $isDivided();
+        $isFormBefore = $isFormBefore();
+        $description = $getDescription();
+        $footer = $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY)?->toHtmlString();
+        $heading = $getHeading();
+        $headingTag = $getHeadingTag();
+        $icon = $getIcon();
+        $iconColor = $getIconColor();
+        $iconSize = $getIconSize();
+        $shouldPersistCollapsed = $shouldPersistCollapsed();
+        $isSecondary = $isSecondary();
+        $id = $getId();
 @endphp
 
 <div
     {{
         $attributes
-            ->merge([
-                'id' => $id,
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['fi-sc-section'])
+        ->merge([
+        'id' => $id,
+        ], escape: false)
+        ->merge($getExtraAttributes(), escape: false)
+        ->merge($getExtraAlpineAttributes(), escape: false)
+        ->class(['fi-sc-section'])
     }}
 >
     @if (filled($label = $getLabel()))

@@ -1,5 +1,5 @@
 @props([
-    'navigation',
+'navigation',
 ])
 
 <div
@@ -11,11 +11,11 @@
         @foreach ($navigation as $navigationGroup)
             @php
                 $isNavigationGroupActive = $navigationGroup->isActive();
-                $isNavigationGroupCollapsible = $navigationGroup->isCollapsible();
-                $navigationGroupIcon = $navigationGroup->getIcon();
-                $navigationGroupItems = $navigationGroup->getItems();
-                $navigationGroupLabel = $navigationGroup->getLabel();
-                $navigationGroupExtraSidebarAttributeBag = $navigationGroup->getExtraSidebarAttributeBag();
+                                $isNavigationGroupCollapsible = $navigationGroup->isCollapsible();
+                                $navigationGroupIcon = $navigationGroup->getIcon();
+                                $navigationGroupItems = $navigationGroup->getItems();
+                                $navigationGroupLabel = $navigationGroup->getLabel();
+                                $navigationGroupExtraSidebarAttributeBag = $navigationGroup->getExtraSidebarAttributeBag();
             @endphp
 
             <x-filament-panels::sidebar.group

@@ -1,61 +1,61 @@
 @php
     use Filament\Actions\Action;
-    use Filament\Support\Enums\Alignment;
-    use Illuminate\View\ComponentAttributeBag;
+        use Filament\Support\Enums\Alignment;
+        use Illuminate\View\ComponentAttributeBag;
 
-    $fieldWrapperView = $getFieldWrapperView();
+        $fieldWrapperView = $getFieldWrapperView();
 
-    $items = $getItems();
+        $items = $getItems();
 
-    $addAction = $getAction($getAddActionName());
-    $addActionAlignment = $getAddActionAlignment();
-    $addBetweenAction = $getAction($getAddBetweenActionName());
-    $cloneAction = $getAction($getCloneActionName());
-    $collapseAllAction = $getAction($getCollapseAllActionName());
-    $expandAllAction = $getAction($getExpandAllActionName());
-    $deleteAction = $getAction($getDeleteActionName());
-    $moveDownAction = $getAction($getMoveDownActionName());
-    $moveUpAction = $getAction($getMoveUpActionName());
-    $reorderAction = $getAction($getReorderActionName());
-    $extraItemActions = $getExtraItemActions();
+        $addAction = $getAction($getAddActionName());
+        $addActionAlignment = $getAddActionAlignment();
+        $addBetweenAction = $getAction($getAddBetweenActionName());
+        $cloneAction = $getAction($getCloneActionName());
+        $collapseAllAction = $getAction($getCollapseAllActionName());
+        $expandAllAction = $getAction($getExpandAllActionName());
+        $deleteAction = $getAction($getDeleteActionName());
+        $moveDownAction = $getAction($getMoveDownActionName());
+        $moveUpAction = $getAction($getMoveUpActionName());
+        $reorderAction = $getAction($getReorderActionName());
+        $extraItemActions = $getExtraItemActions();
 
-    $hasItemNumbers = $hasItemNumbers();
-    $hasItemHeaders = $hasItemHeaders();
-    $isAddable = $isAddable();
-    $isCloneable = $isCloneable();
-    $isCollapsible = $isCollapsible();
-    $isDeletable = $isDeletable();
-    $isReorderableWithButtons = $isReorderableWithButtons();
-    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+        $hasItemNumbers = $hasItemNumbers();
+        $hasItemHeaders = $hasItemHeaders();
+        $isAddable = $isAddable();
+        $isCloneable = $isCloneable();
+        $isCollapsible = $isCollapsible();
+        $isDeletable = $isDeletable();
+        $isReorderableWithButtons = $isReorderableWithButtons();
+        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
 
-    $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
-    $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
-    $persistCollapsed = $shouldPersistCollapsed();
+        $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
+        $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+        $persistCollapsed = $shouldPersistCollapsed();
 
-    $key = $getKey();
-    $statePath = $getStatePath();
+        $key = $getKey();
+        $statePath = $getStatePath();
 
-    $itemLabelHeadingTag = $getHeadingTag();
-    $isItemLabelTruncated = $isItemLabelTruncated();
-    $labelBetweenItems = $getLabelBetweenItems();
+        $itemLabelHeadingTag = $getHeadingTag();
+        $isItemLabelTruncated = $isItemLabelTruncated();
+        $labelBetweenItems = $getLabelBetweenItems();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{
             $attributes
-                ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'fi-fo-repeater',
-                    'fi-collapsible' => $isCollapsible,
-                ])
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+            'fi-fo-repeater',
+            'fi-collapsible' => $isCollapsible,
+            ])
         }}
     >
         @if ($collapseAllActionIsVisible || $expandAllActionIsVisible)
             <div
                 @class([
-                    'fi-fo-repeater-actions',
-                    'fi-hidden' => count($items) < 2,
+                'fi-fo-repeater-actions',
+                'fi-hidden' => count($items) < 2,
                 ])
             >
                 @if ($collapseAllActionIsVisible)
@@ -81,31 +81,31 @@
                 x-sortable
                 {{
                     (new ComponentAttributeBag)
-                        ->grid($getGridColumns())
-                        ->merge([
-                            'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                            'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
-                        ], escape: false)
-                        ->class(['fi-fo-repeater-items'])
+                    ->grid($getGridColumns())
+                    ->merge([
+                    'data-sortable-animation-duration' => $getReorderAnimationDuration(),
+                    'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                    ], escape: false)
+                    ->class(['fi-fo-repeater-items'])
                 }}
             >
                 @foreach ($items as $itemKey => $item)
                     @php
                         $itemLabel = $getItemLabel($itemKey, $loop->index);
-                        $visibleExtraItemActions = array_filter(
-                            $extraItemActions,
-                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                        );
-                        $cloneAction = $cloneAction(['item' => $itemKey]);
-                        $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                        $deleteAction = $deleteAction(['item' => $itemKey]);
-                        $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
-                        $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
-                        $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
-                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
-                        $hasItemHeader = $hasItemHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
+                                                $visibleExtraItemActions = array_filter(
+                                                    $extraItemActions,
+                                                    fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                                                );
+                                                $cloneAction = $cloneAction(['item' => $itemKey]);
+                                                $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
+                                                $deleteAction = $deleteAction(['item' => $itemKey]);
+                                                $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                                                $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
+                                                $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
+                                                $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
+                                                $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
+                                                $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                                                $hasItemHeader = $hasItemHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                     @endphp
 
                     <li
@@ -119,8 +119,8 @@
                         x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $itemKey }}"
                         @class([
-                            'fi-fo-repeater-item',
-                            'fi-fo-repeater-item-has-header' => $hasItemHeader,
+                        'fi-fo-repeater-item',
+                        'fi-fo-repeater-item-has-header' => $hasItemHeader,
                         ])
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
@@ -156,8 +156,8 @@
                                 @if (filled($itemLabel))
                                     <{{ $itemLabelHeadingTag }}
                                         @class([
-                                            'fi-fo-repeater-item-header-label',
-                                            'fi-truncated' => $isItemLabelTruncated,
+                                        'fi-fo-repeater-item-header-label',
+                                        'fi-truncated' => $isItemLabelTruncated,
                                         ])
                                     >
                                         {{ $itemLabel }}
@@ -253,8 +253,8 @@
         @if ($isAddable && $addAction->isVisible())
             <div
                 @class([
-                    'fi-fo-repeater-add',
-                    ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
+                'fi-fo-repeater-add',
+                ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                 ])
             >
                 {{ $addAction }}

@@ -1,22 +1,22 @@
 @php
     $customBlocks = $getCustomBlocks();
-    $groupedCustomBlocks = $getGroupedCustomBlocks();
-    $extraAttributeBag = $getExtraAttributeBag();
-    $fieldWrapperView = $getFieldWrapperView();
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $label = $getLabel();
-    $livewireKey = $getLivewireKey();
-    $key = $getKey();
-    $mergeTags = $getMergeTags();
-    $statePath = $getStatePath();
-    $mentions = $getMentionsForJs();
-    $toolbarButtons = $getToolbarButtons();
-    $tools = $getTools();
-    $floatingToolbars = $getFloatingToolbars();
-    $linkProtocols = $getLinkProtocols();
-    $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
-    $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
+        $groupedCustomBlocks = $getGroupedCustomBlocks();
+        $extraAttributeBag = $getExtraAttributeBag();
+        $fieldWrapperView = $getFieldWrapperView();
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $label = $getLabel();
+        $livewireKey = $getLivewireKey();
+        $key = $getKey();
+        $mergeTags = $getMergeTags();
+        $statePath = $getStatePath();
+        $mentions = $getMentionsForJs();
+        $toolbarButtons = $getToolbarButtons();
+        $tools = $getTools();
+        $floatingToolbars = $getFloatingToolbars();
+        $linkProtocols = $getLinkProtocols();
+        $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
+        $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -26,7 +26,7 @@
         x-cloak
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
-                ->class(['fi-fo-rich-editor'])
+            ->class(['fi-fo-rich-editor'])
         "
     >
         <div
@@ -81,7 +81,7 @@
             wire:ignore
             wire:key="{{ $livewireKey }}.{{
                 substr(md5(serialize([
-                    $isDisabled,
+                $isDisabled,
                 ])), 0, 64)
             }}"
         >
@@ -211,7 +211,7 @@
                                             >
                                                 {{
                                                     \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                                                        'x-show' => 'isLoading',
+                                                    'x-show' => 'isLoading',
                                                     ])))
                                                 }}
 
