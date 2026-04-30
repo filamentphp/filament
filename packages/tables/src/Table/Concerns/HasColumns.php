@@ -24,6 +24,11 @@ trait HasColumns
      */
     protected array $columnsLayout = [];
 
+    /**
+     * @var array<Column | ColumnLayoutComponent | ColumnGroup>
+     */
+    protected array $pushedColumns = [];
+
     protected ?ColumnLayoutComponent $collapsibleColumnsLayout = null;
 
     protected bool $hasColumnGroups = false;
@@ -40,7 +45,7 @@ trait HasColumns
         $this->columnsLayout = [];
         $this->collapsibleColumnsLayout = null;
         $this->hasColumnsLayout = false;
-        $this->pushColumns($components);
+        $this->appendColumns([...$components, ...$this->pushedColumns]);
 
         return $this;
     }
@@ -49,6 +54,16 @@ trait HasColumns
      * @param  array<Column | ColumnLayoutComponent | ColumnGroup>  $components
      */
     public function pushColumns(array $components): static
+    {
+        $this->pushedColumns = [...$this->pushedColumns, ...$components];
+
+        return $this->appendColumns($components);
+    }
+
+    /**
+     * @param  array<Column | ColumnLayoutComponent | ColumnGroup>  $components
+     */
+    protected function appendColumns(array $components): static
     {
         foreach ($components as $component) {
             $component->table($this);
