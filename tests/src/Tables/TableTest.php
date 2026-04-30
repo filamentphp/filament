@@ -190,6 +190,22 @@ describe('rendering', function (): void {
     });
 });
 
+describe('pushColumns', function (): void {
+    it('keeps columns pushed via `Table::configureUsing()` when a component later calls `columns()`', function (): void {
+        Table::configureUsing(
+            modifyUsing: fn (Table $table) => $table->pushColumns([
+                Tables\Columns\TextColumn::make('created_at'),
+                Tables\Columns\TextColumn::make('updated_at'),
+            ]),
+            during: function (): void {
+                $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+                expect($table->getColumns())->toHaveKeys(['title', 'created_at', 'updated_at']);
+            },
+        );
+    });
+});
+
 class TableTestComponent extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -264,5 +280,17 @@ class RecordUrlTableTestComponent extends TableTestComponent
     {
         return parent::table($table)
             ->recordUrl(static fn (Post $record): string => "/posts/{$record->getKey()}");
+    }
+}
+
+class PushColumnsTableTestComponent extends TableTestComponent
+{
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->pushColumns([
+                Tables\Columns\TextColumn::make('created_at'),
+                Tables\Columns\TextColumn::make('updated_at'),
+            ]);
     }
 }
