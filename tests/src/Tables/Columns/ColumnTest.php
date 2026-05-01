@@ -144,6 +144,51 @@ describe('placeholder', function (): void {
 
         expect($column->getPlaceholder())->toBe('N/A');
     });
+
+    it('can translate placeholder with `translatePlaceholder()`', function (): void {
+        $column = TextColumn::make('title')
+            ->placeholder('validation.required')
+            ->translatePlaceholder();
+
+        expect($column->getPlaceholder())->toBe(__('validation.required'));
+    });
+
+    it('does not translate placeholder when `translatePlaceholder()` is not called', function (): void {
+        $column = TextColumn::make('title')
+            ->placeholder('validation.required');
+
+        expect($column->getPlaceholder())->toBe('validation.required');
+    });
+});
+
+describe('tooltip', function (): void {
+    it('returns `null` for `getTooltip()` by default', function (): void {
+        $column = TextColumn::make('title');
+
+        expect($column->getTooltip())->toBeNull();
+    });
+
+    it('can set `tooltip()`', function (): void {
+        $column = TextColumn::make('title')
+            ->tooltip('Click to sort');
+
+        expect($column->getTooltip())->toBe('Click to sort');
+    });
+
+    it('can translate tooltip with `translateTooltip()`', function (): void {
+        $column = TextColumn::make('title')
+            ->tooltip('validation.required')
+            ->translateTooltip();
+
+        expect($column->getTooltip())->toBe(__('validation.required'));
+    });
+
+    it('does not translate tooltip when `translateTooltip()` is not called', function (): void {
+        $column = TextColumn::make('title')
+            ->tooltip('validation.required');
+
+        expect($column->getTooltip())->toBe('validation.required');
+    });
 });
 
 describe('width', function (): void {

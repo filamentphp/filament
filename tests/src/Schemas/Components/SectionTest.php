@@ -355,6 +355,21 @@ describe('heading', function (): void {
 
         expect($section->getHeading())->toBeNull();
     });
+
+    it('can translate heading with `translateHeading()`', function (): void {
+        $section = Section::make()
+            ->heading('validation.required')
+            ->translateHeading();
+
+        expect($section->getHeading())->toBe(__('validation.required'));
+    });
+
+    it('does not translate heading when `translateHeading()` is not called', function (): void {
+        $section = Section::make()
+            ->heading('validation.required');
+
+        expect($section->getHeading())->toBe('validation.required');
+    });
 });
 
 describe('description', function (): void {
@@ -390,6 +405,21 @@ describe('description', function (): void {
             ->description(null);
 
         expect($section->getDescription())->toBeNull();
+    });
+
+    it('can translate description with `translateDescription()`', function (): void {
+        $section = Section::make('Test')
+            ->description('validation.required')
+            ->translateDescription();
+
+        expect($section->getDescription())->toBe(__('validation.required'));
+    });
+
+    it('does not translate description when `translateDescription()` is not called', function (): void {
+        $section = Section::make('Test')
+            ->description('validation.required');
+
+        expect($section->getDescription())->toBe('validation.required');
     });
 });
 
@@ -450,6 +480,29 @@ describe('label', function (): void {
             ->translateLabel();
 
         expect($section->getLabel())->toBe(__('validation.required'));
+    });
+});
+
+describe('translatable', function (): void {
+    it('translates heading, description, and label with `translatable()`', function (): void {
+        $section = Section::make()
+            ->heading('validation.required')
+            ->description('validation.required')
+            ->label('validation.required')
+            ->translatable();
+
+        expect($section->getHeading())->toBe(__('validation.required'))
+            ->and($section->getDescription())->toBe(__('validation.required'))
+            ->and($section->getLabel())->toBe(__('validation.required'));
+    });
+
+    it('can disable translation with `translatable(false)`', function (): void {
+        $section = Section::make()
+            ->heading('validation.required')
+            ->translatable()
+            ->translatable(false);
+
+        expect($section->getHeading())->toBe('validation.required');
     });
 });
 

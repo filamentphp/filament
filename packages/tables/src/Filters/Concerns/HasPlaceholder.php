@@ -8,6 +8,8 @@ trait HasPlaceholder
 {
     protected string | Closure | null $placeholder = null;
 
+    protected bool $shouldTranslatePlaceholder = false;
+
     public function placeholder(string | Closure | null $placeholder): static
     {
         $this->placeholder = $placeholder;
@@ -15,8 +17,19 @@ trait HasPlaceholder
         return $this;
     }
 
+    public function translatePlaceholder(bool $shouldTranslatePlaceholder = true): static
+    {
+        $this->shouldTranslatePlaceholder = $shouldTranslatePlaceholder;
+
+        return $this;
+    }
+
     public function getPlaceholder(): ?string
     {
-        return $this->evaluate($this->placeholder);
+        $placeholder = $this->evaluate($this->placeholder);
+
+        return (is_string($placeholder) && $this->shouldTranslatePlaceholder) ?
+            __($placeholder) :
+            $placeholder;
     }
 }

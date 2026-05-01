@@ -11,6 +11,10 @@ trait HasTooltip
 
     protected string | Htmlable | Closure | null $emptyTooltip = null;
 
+    protected bool $shouldTranslateTooltip = false;
+
+    protected bool $shouldTranslateEmptyTooltip = false;
+
     public function tooltip(string | Htmlable | Closure | null $tooltip): static
     {
         $this->tooltip = $tooltip;
@@ -18,11 +22,22 @@ trait HasTooltip
         return $this;
     }
 
+    public function translateTooltip(bool $shouldTranslateTooltip = true): static
+    {
+        $this->shouldTranslateTooltip = $shouldTranslateTooltip;
+
+        return $this;
+    }
+
     public function getTooltip(mixed $state = null): string | Htmlable | null
     {
-        return $this->evaluate($this->tooltip, [
+        $tooltip = $this->evaluate($this->tooltip, [
             'state' => $state,
         ]);
+
+        return (is_string($tooltip) && $this->shouldTranslateTooltip) ?
+            __($tooltip) :
+            $tooltip;
     }
 
     public function emptyTooltip(string | Htmlable | Closure | null $tooltip): static
@@ -32,8 +47,19 @@ trait HasTooltip
         return $this;
     }
 
+    public function translateEmptyTooltip(bool $shouldTranslateEmptyTooltip = true): static
+    {
+        $this->shouldTranslateEmptyTooltip = $shouldTranslateEmptyTooltip;
+
+        return $this;
+    }
+
     public function getEmptyTooltip(): string | Htmlable | null
     {
-        return $this->evaluate($this->emptyTooltip);
+        $tooltip = $this->evaluate($this->emptyTooltip);
+
+        return (is_string($tooltip) && $this->shouldTranslateEmptyTooltip) ?
+            __($tooltip) :
+            $tooltip;
     }
 }

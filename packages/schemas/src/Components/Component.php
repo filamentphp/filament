@@ -116,6 +116,31 @@ class Component extends ViewComponent
         };
     }
 
+    public function translatable(bool $should = true): static
+    {
+        if (method_exists($this, 'translateLabel')) {
+            $this->translateLabel($should);
+        }
+
+        if (method_exists($this, 'translateHeading')) {
+            $this->translateHeading($should);
+        }
+
+        if (method_exists($this, 'translateDescription')) {
+            $this->translateDescription($should);
+        }
+
+        if (method_exists($this, 'translateTooltip')) {
+            $this->translateTooltip($should);
+        }
+
+        if (method_exists($this, 'translatePlaceholder')) {
+            $this->translatePlaceholder($should);
+        }
+
+        return $this;
+    }
+
     /**
      * @return array<string, mixed>
      */

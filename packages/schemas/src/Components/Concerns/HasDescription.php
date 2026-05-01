@@ -9,6 +9,8 @@ trait HasDescription
 {
     protected string | Htmlable | Closure | null $description = null;
 
+    protected bool $shouldTranslateDescription = false;
+
     public function description(string | Htmlable | Closure | null $description = null): static
     {
         $this->description = $description;
@@ -16,8 +18,19 @@ trait HasDescription
         return $this;
     }
 
+    public function translateDescription(bool $shouldTranslateDescription = true): static
+    {
+        $this->shouldTranslateDescription = $shouldTranslateDescription;
+
+        return $this;
+    }
+
     public function getDescription(): string | Htmlable | null
     {
-        return $this->evaluate($this->description);
+        $description = $this->evaluate($this->description);
+
+        return (is_string($description) && $this->shouldTranslateDescription) ?
+            __($description) :
+            $description;
     }
 }

@@ -462,6 +462,36 @@ class TestComponentWithUrlTextInput extends Livewire
     }
 }
 
+describe('placeholder', function (): void {
+    it('returns `null` for `getPlaceholder()` by default', function (): void {
+        $field = TextInput::make('name');
+
+        expect($field->getPlaceholder())->toBeNull();
+    });
+
+    it('can set `placeholder()`', function (): void {
+        $field = TextInput::make('name')
+            ->placeholder('Enter name...');
+
+        expect($field->getPlaceholder())->toBe('Enter name...');
+    });
+
+    it('can translate placeholder with `translatePlaceholder()`', function (): void {
+        $field = TextInput::make('name')
+            ->placeholder('validation.required')
+            ->translatePlaceholder();
+
+        expect($field->getPlaceholder())->toBe(__('validation.required'));
+    });
+
+    it('does not translate placeholder when `translatePlaceholder()` is not called', function (): void {
+        $field = TextInput::make('name')
+            ->placeholder('validation.required');
+
+        expect($field->getPlaceholder())->toBe('validation.required');
+    });
+});
+
 describe('rendering', function (): void {
     it('can render with `password()`', function (): void {
         livewire(RenderTextInputWithPassword::class)->assertSuccessful();

@@ -21,6 +21,40 @@ test('can ignore the default name if another is specified', function (): void {
         ->toBe('identifier');
 });
 
+describe('tooltip', function (): void {
+    it('returns `null` for `getTooltip()` by default', function (): void {
+        $entry = TextEntry::make('name')
+            ->container(Schema::make(Livewire::make()));
+
+        expect($entry->getTooltip())->toBeNull();
+    });
+
+    it('can set `tooltip()`', function (): void {
+        $entry = TextEntry::make('name')
+            ->container(Schema::make(Livewire::make()))
+            ->tooltip('Some tooltip');
+
+        expect($entry->getTooltip())->toBe('Some tooltip');
+    });
+
+    it('can translate tooltip with `translateTooltip()`', function (): void {
+        $entry = TextEntry::make('name')
+            ->container(Schema::make(Livewire::make()))
+            ->tooltip('validation.required')
+            ->translateTooltip();
+
+        expect($entry->getTooltip())->toBe(__('validation.required'));
+    });
+
+    it('does not translate tooltip when `translateTooltip()` is not called', function (): void {
+        $entry = TextEntry::make('name')
+            ->container(Schema::make(Livewire::make()))
+            ->tooltip('validation.required');
+
+        expect($entry->getTooltip())->toBe('validation.required');
+    });
+});
+
 describe('hint icon tooltip', function (): void {
     it('can set a hint icon tooltip via `hintIcon()` second parameter', function (): void {
         $entry = TextEntry::make('test')

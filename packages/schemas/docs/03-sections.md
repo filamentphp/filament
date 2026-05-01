@@ -300,3 +300,39 @@ Section::make('Heading')
 <AutoScreenshot name="schemas/layout/section/columns" alt="Section with grid columns" version="4.x" />
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Using translation strings in headings and descriptions
+
+If you want to use [translation strings](https://laravel.com/docs/localization#retrieving-translation-strings) as the section heading or description without wrapping them with `__()`, call `translatable()` globally in a service provider:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::configureUsing(function (Section $section): void {
+    $section->translatable();
+});
+```
+
+Once configured, raw translation keys work directly in `make()` and `description()`:
+
+```php
+use Filament\Schemas\Components\Section;
+
+Section::make('app/labels.details')
+    ->description('app/labels.details_description')
+    ->schema([
+        // ...
+    ])
+```
+
+The `translatable()` method enables translation for all string properties on the component at once (heading, description, and label). You can also opt individual components in explicitly using `translateHeading()` and `translateDescription()`:
+
+```php
+Section::make('app/labels.details')
+    ->translateHeading()
+    ->description('app/labels.details_description')
+    ->translateDescription()
+    ->schema([
+        // ...
+    ])
+```

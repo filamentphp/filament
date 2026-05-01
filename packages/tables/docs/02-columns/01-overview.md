@@ -98,6 +98,26 @@ TextColumn::make('title')
 
 <AutoScreenshot name="tables/columns/placeholder" alt="Column with a placeholder for empty state" version="4.x" />
 
+If you want to use [translation strings](https://laravel.com/docs/localization#retrieving-translation-strings) for placeholders and tooltips without wrapping them with `__()`, use `translatePlaceholder()` and `translateTooltip()`, or enable them globally for all columns in a service provider:
+
+```php
+use Filament\Tables\Columns\Column;
+
+Column::configureUsing(function (Column $column): void {
+    $column->translatePlaceholder()->translateTooltip();
+});
+```
+
+Once configured globally, raw translation keys work directly:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->placeholder('app/labels.not_applicable')
+    ->tooltip('app/labels.title_tooltip')
+```
+
 ### Displaying data from relationships
 
 You may use "dot notation" to access columns within relationships. The name of the relationship comes first, followed by a period, followed by the name of the column to display:
@@ -198,6 +218,19 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('name')
     ->label(__('columns.name'))
 ```
+
+## Tooltips
+
+You may specify a tooltip to display when hovering over a column cell using the `tooltip()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->tooltip('The full name of the user')
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Sorting
 
