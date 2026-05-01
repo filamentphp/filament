@@ -96,8 +96,8 @@
                     x-ref="canvas"
                     @style([
                         'width: 100%',
-                        'height: 100%; max-height: 100%' => !$hasMaxHeight,
-                        "max-height: {$maxHeight}" => $hasMaxHeight
+                        'height: 100%; max-height: 100%' => ! $hasMaxHeight,
+                        "max-height: {$maxHeight}" => $hasMaxHeight,
                     ])
                 ></canvas>
 

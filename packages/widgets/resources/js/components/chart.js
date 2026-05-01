@@ -24,7 +24,9 @@ export default function chart({ cachedData, options, type }) {
         userRadialTicksColor: options?.scales?.r?.ticks?.color,
 
         init() {
-            this.$wire.$on('updateChartData', ({ data }) => this.updateChartData(data))
+            this.$wire.$on('updateChartData', ({ data }) =>
+                this.updateChartData(data),
+            )
 
             Alpine.effect(() => {
                 Alpine.store('theme')
@@ -32,7 +34,9 @@ export default function chart({ cachedData, options, type }) {
                 this.$nextTick(() => this.updateChartTheme())
             })
 
-            this.systemThemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+            this.systemThemeMediaQuery = window.matchMedia(
+                '(prefers-color-scheme: dark)',
+            )
             this.systemThemeListener = () => {
                 if (Alpine.store('theme') !== 'system') {
                     return
@@ -40,7 +44,10 @@ export default function chart({ cachedData, options, type }) {
 
                 this.$nextTick(() => this.updateChartTheme())
             }
-            this.systemThemeMediaQuery.addEventListener('change', this.systemThemeListener)
+            this.systemThemeMediaQuery.addEventListener(
+                'change',
+                this.systemThemeListener,
+            )
 
             // Defer `initChart()` to `$nextTick` so the `Alpine.effect` above runs its
             // mandatory first invocation before the chart exists. `updateChartTheme()` then
@@ -49,10 +56,15 @@ export default function chart({ cachedData, options, type }) {
             this.$nextTick(() => {
                 this.initChart()
 
-                this.resizeObserver = new ResizeObserver(() => this.getChart()?.resize())
+                this.resizeObserver = new ResizeObserver(() =>
+                    this.getChart()?.resize(),
+                )
                 this.resizeObserver.observe(this.$el)
 
-                this.dprChangeHandler = Alpine.debounce(() => this.handleDprChange(), 250)
+                this.dprChangeHandler = Alpine.debounce(
+                    () => this.handleDprChange(),
+                    250,
+                )
                 window.addEventListener('resize', this.dprChangeHandler)
             })
         },
@@ -139,18 +151,23 @@ export default function chart({ cachedData, options, type }) {
         },
 
         applyChartColors(options) {
-            const { backgroundColor, borderColor, textColor, gridColor } = this.getChartColors()
+            const { backgroundColor, borderColor, textColor, gridColor } =
+                this.getChartColors()
 
-            options.backgroundColor = this.userBackgroundColor ?? backgroundColor
+            options.backgroundColor =
+                this.userBackgroundColor ?? backgroundColor
             options.borderColor = this.userBorderColor ?? borderColor
             options.color = this.userTextColor ?? textColor
-            options.pointBackgroundColor = this.userPointBackgroundColor ?? borderColor
+            options.pointBackgroundColor =
+                this.userPointBackgroundColor ?? borderColor
             options.scales.x.grid.color = this.userXGridColor ?? gridColor
             options.scales.y.grid.color = this.userYGridColor ?? gridColor
 
             if (type === 'polarArea') {
-                options.scales.r.grid.color = this.userRadialGridColor ?? gridColor
-                options.scales.r.ticks.color = this.userRadialTicksColor ?? textColor
+                options.scales.r.grid.color =
+                    this.userRadialGridColor ?? gridColor
+                options.scales.r.ticks.color =
+                    this.userRadialTicksColor ?? textColor
             }
         },
 
@@ -176,8 +193,11 @@ export default function chart({ cachedData, options, type }) {
 
         getChartColors() {
             return {
-                backgroundColor: getComputedStyle(this.$refs.backgroundColorElement).color,
-                borderColor: getComputedStyle(this.$refs.borderColorElement).color,
+                backgroundColor: getComputedStyle(
+                    this.$refs.backgroundColorElement,
+                ).color,
+                borderColor: getComputedStyle(this.$refs.borderColorElement)
+                    .color,
                 textColor: getComputedStyle(this.$refs.textColorElement).color,
                 gridColor: getComputedStyle(this.$refs.gridColorElement).color,
             }
@@ -185,8 +205,12 @@ export default function chart({ cachedData, options, type }) {
 
         destroy() {
             this.resizeObserver?.disconnect()
-            this.dprChangeHandler && window.removeEventListener('resize', this.dprChangeHandler)
-            this.systemThemeMediaQuery?.removeEventListener('change', this.systemThemeListener)
+            this.dprChangeHandler &&
+                window.removeEventListener('resize', this.dprChangeHandler)
+            this.systemThemeMediaQuery?.removeEventListener(
+                'change',
+                this.systemThemeListener,
+            )
             this.getChart()?.destroy()
         },
     }
