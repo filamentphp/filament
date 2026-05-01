@@ -477,11 +477,18 @@ export default {
                 document.body.style.overflow = 'hidden'
 
                 // Make the child modal's overlay more transparent so the parent slide-over is visible underneath.
+                // Disable the opacity transition first so the change applies instantly — otherwise the
+                // screenshot is captured mid-fade and the overlay looks darker than intended.
                 const overlays = document.querySelectorAll('.fi-modal-close-overlay')
                 if (overlays.length > 1) {
-                    overlays[overlays.length - 1].style.opacity = '0.4'
+                    const childOverlay = overlays[overlays.length - 1]
+                    childOverlay.style.transition = 'none'
+                    childOverlay.style.opacity = '0.4'
                 }
             })
+
+            // Wait one frame so the inline style takes effect before the screenshot.
+            await new Promise((resolve) => setTimeout(resolve, 100))
         },
     },
     'actions/modal/sticky-header': {
