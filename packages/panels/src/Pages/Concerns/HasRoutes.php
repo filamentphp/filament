@@ -29,6 +29,7 @@ trait HasRoutes
     public static function routes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
         $middleware = static::getRouteMiddleware($panel);
+        $routePath = static::getRoutePath($panel);
 
         if ($configuration) {
             $middleware = [
@@ -37,10 +38,14 @@ trait HasRoutes
             ];
         }
 
-        Route::get(static::getRoutePath($panel), static::class)
+        $route = Route::get($routePath, static::class)
             ->middleware($middleware)
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name(static::getRelativeRouteName($panel));
+
+        if ($panel->hasTenancy() && blank($panel->getTenantDomain()) && ($routePath === '/')) {
+            $route->fallback();
+        }
     }
 
     public static function getRoutePath(Panel $panel): string

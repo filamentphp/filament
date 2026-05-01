@@ -81,6 +81,10 @@ it('returns all colors', function (): void {
     $colors = [];
 
     foreach ((new ReflectionClass(Color::class))->getConstants() as $name => $color) {
+        if (! is_array($color)) {
+            continue; // skip non-palette constants like WCAG ratios
+        }
+
         $colors[Str::lower($name)] = $color;
     }
 
