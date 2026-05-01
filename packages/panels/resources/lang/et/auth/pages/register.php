@@ -2,15 +2,15 @@
 
 return [
 
-    'title' => 'Registreerimine',
+    'title' => 'Registreeru',
 
-    'heading' => 'Registreeruge',
+    'heading' => 'Registreeru',
 
     'actions' => [
 
         'login' => [
             'before' => 'või',
-            'label' => 'logige sisse oma kontole',
+            'label' => 'logi sisse olemasoleva kontoga',
         ],
 
     ],
@@ -37,7 +37,7 @@ return [
         'actions' => [
 
             'register' => [
-                'label' => 'Registreeruge',
+                'label' => 'Loo uus konto',
             ],
 
         ],

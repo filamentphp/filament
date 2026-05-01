@@ -4,6 +4,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
@@ -14,9 +15,11 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPluginWithoutToolbarButtons;
 use Filament\Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 use function Filament\Tests\livewire;
 
@@ -1544,7 +1547,7 @@ describe('preventing file attachment tampering', function (): void {
             ->preventFileAttachmentPathTampering()
             ->container(Schema::make(Livewire::make())->model($post)->statePath('data'));
 
-        $cast = new Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast($editor);
+        $cast = new RichEditorStateCast($editor);
 
         $result = $cast->set('<p>Hello</p><img src="http://original" data-id="uploads/original.jpg" /><img src="http://evil" data-id="uploads/evil.jpg" />');
 
@@ -1610,7 +1613,7 @@ describe('cross-record file attachment callbacks', function (): void {
 
 describe('`resolveFileAttachmentIds()` behaviour', function (): void {
     it('persists a newly uploaded image and rewrites its `data-id` to the stored path', function (): void {
-        \Illuminate\Support\Facades\Storage::fake('tmp-for-tests');
+        Storage::fake('tmp-for-tests');
 
         $image = imagecreatetruecolor(10, 10);
         ob_start();
@@ -1618,12 +1621,12 @@ describe('`resolveFileAttachmentIds()` behaviour', function (): void {
         $imageContent = ob_get_clean();
         imagedestroy($image);
 
-        $temporaryFileName = \Livewire\Features\SupportFileUploads\TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
-            \Illuminate\Http\UploadedFile::fake()->image('new-upload.jpg'),
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->image('new-upload.jpg'),
         );
-        \Illuminate\Support\Facades\Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $imageContent);
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $imageContent);
 
-        $temporaryFile = \Livewire\Features\SupportFileUploads\TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+        $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
 
         $editor = (new RichEditor('content'))
             ->container(Schema::make(Livewire::make())->statePath('data'));

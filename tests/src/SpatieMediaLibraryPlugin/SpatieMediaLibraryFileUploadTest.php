@@ -1,13 +1,21 @@
 <?php
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
 use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Filament\Tests\livewire;
@@ -470,11 +478,11 @@ describe('integration', function (): void {
     });
 });
 
-class ReorderableSpatieMediaLibraryFileUploadForm extends \Livewire\Component implements \Filament\Actions\Contracts\HasActions, \Filament\Schemas\Contracts\HasSchemas
+class ReorderableSpatieMediaLibraryFileUploadForm extends Component implements HasActions, HasSchemas
 {
-    use \Filament\Actions\Concerns\InteractsWithActions;
-    use \Filament\Schemas\Concerns\InteractsWithSchemas;
-    use \Livewire\WithFileUploads;
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use WithFileUploads;
 
     public $data = [];
 
@@ -486,7 +494,7 @@ class ReorderableSpatieMediaLibraryFileUploadForm extends \Livewire\Component im
         $this->form->fill([]);
     }
 
-    public function form(\Filament\Schemas\Schema $form): \Filament\Schemas\Schema
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -505,7 +513,7 @@ class ReorderableSpatieMediaLibraryFileUploadForm extends \Livewire\Component im
         $this->form->saveRelationships();
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('livewire.form');
     }

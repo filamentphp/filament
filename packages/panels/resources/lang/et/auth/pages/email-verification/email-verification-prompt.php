@@ -15,14 +15,14 @@ return [
     ],
 
     'messages' => [
-        'notification_not_received' => 'Ei ole saanud e-posti, mille me saatsime?',
-        'notification_sent' => 'Oleme saatnud e-kirja aadressile :email, mis sisaldab juhiseid, kuidas kinnitada oma e-posti aadressi.',
+        'notification_not_received' => 'Kas te ei saanud meie saadetud e-kirja?',
+        'notification_sent' => 'Saatsime e-kirja aadressile :email, mis sisaldab juhiseid teie e-posti aadressi kinnitamiseks.',
     ],
 
     'notifications' => [
 
         'notification_resent' => [
-            'title' => 'Oleme e-kirja uuesti saatnud.',
+            'title' => 'Saatsime e-kirja uuesti.',
         ],
 
         'notification_resend_throttled' => [
