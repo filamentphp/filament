@@ -321,7 +321,7 @@ trait InteractsWithRecord
         $defaultModel = $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
 
         if (($this instanceof Action) && ($model === $defaultModel)) {
-            return $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this);
+            return $this->getHasActionsLivewire()->getDefaultActionModelLabel($this);
         }
 
         return get_model_label($model);
