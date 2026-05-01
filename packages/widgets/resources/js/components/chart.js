@@ -84,9 +84,7 @@ export default function chart({ cachedData, options, type }) {
             const hasMaxHeight = this.$refs.canvas.style.maxHeight !== '100%'
 
             options ??= {}
-            options.animation ??= {}
-            options.animation.easing ??= 'linear'
-            options.animation.duration ??= 300
+            options.animation ??= false
             options.font ??= {}
             options.font.family ??= fontFamily
             options.borderWidth ??= 2
