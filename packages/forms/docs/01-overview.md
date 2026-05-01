@@ -1728,6 +1728,30 @@ Group::make()
 
 In this example, the customer's name is not `required()`, and the email address is only required when the `name` is filled. The `condition` function is used to check whether the `name` field is filled, and if it is, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists.
 
+### Saving relationship data when the component is hidden
+
+By default, if a layout component using `relationship()` is hidden when the form is submitted, Filament skips it entirely — the related record is not created or updated, and any existing record is left untouched. This is usually what you want, since hidden components have no state to save.
+
+If you need Filament to save the relationship even when the component is hidden — for example, when its field values are populated by [defaults](#setting-the-default-value-of-a-field) — call `saveRelationshipsWhenHidden()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+
+Group::make()
+    ->relationship('metadata')
+    ->saveRelationshipsWhenHidden()
+    ->hidden()
+    ->schema([
+        TextInput::make('source')
+            ->default('admin'),
+    ])
+```
+
+<Aside variant="warning">
+    Combining `saveRelationshipsWhenHidden()` with a `condition` that returns `false` while the component is hidden will cause any existing related record to be deleted when the form is submitted. If you only want to skip saving when the component is hidden, omit `saveRelationshipsWhenHidden()` and rely on the default behavior instead.
+</Aside>
+
 ## Global settings
 
 If you wish to change the default behavior of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method or a middleware. Pass a closure which is able to modify the component. For example, if you wish to make all [checkboxes `inline(false)`](checkbox#positioning-the-label-above), you can do it like so:

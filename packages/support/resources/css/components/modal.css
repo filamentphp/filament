@@ -42,7 +42,7 @@
             }
 
             & .fi-modal-header {
-                @apply gap-x-3;
+                @apply gap-x-3 pt-5;
             }
 
             & .fi-modal-icon-bg {
@@ -50,7 +50,7 @@
             }
 
             & .fi-modal-close-btn {
-                @apply end-6 top-6;
+                @apply end-6 top-5;
             }
         }
     }
@@ -396,6 +396,12 @@
             & .fi-modal-footer {
                 @apply px-6;
             }
+        }
+    }
+
+    &.fi-modal-slide-over.fi-modal-has-sticky-header {
+        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-header {
+            @apply pb-5;
         }
     }
 
