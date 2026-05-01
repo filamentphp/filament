@@ -122,6 +122,14 @@
     $columnManagerTriggerAction = $getColumnManagerTriggerAction();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManager;
     $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
+
+    // https://github.com/filamentphp/filament/pull/19787
+    $headerVisibilityMode = ($hasHeader || $hasNonBulkToolbarAction)
+        ? 'visible'
+        : (count($toolbarActions) ? 'selection' : 'hidden');
+    $headerToolbarVisibilityMode = ($hasHeaderToolbar || $hasNonBulkToolbarAction)
+        ? 'visible'
+        : (count($toolbarActions) ? 'selection' : 'hidden');
     $headingTag = $getHeadingTag();
     $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
@@ -214,6 +222,7 @@
             <div
                 @if (! $hasHeader) x-cloak @endif
                 x-show="@js($hasHeader) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
+                wire:key="{{ $this->getId() }}.table.header.{{ $headerVisibilityMode }}"
                 class="fi-ta-header-ctn"
             >
                 {{ FilamentView::renderHook(TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
@@ -293,6 +302,7 @@
                 <div
                     @if (! $hasHeaderToolbar) x-cloak @endif
                     x-show="@js($hasHeaderToolbar) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
+                    wire:key="{{ $this->getId() }}.table.header-toolbar.{{ $headerToolbarVisibilityMode }}"
                     class="fi-ta-header-toolbar"
                 >
                     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
