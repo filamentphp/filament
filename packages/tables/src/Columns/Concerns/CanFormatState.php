@@ -253,7 +253,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | Closure | null $locale = null): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | BackedEnum | Closure | null $locale = null): static
     {
         $this->isNumeric = true;
 
@@ -283,6 +283,10 @@ trait CanFormatState
             }
 
             $locale = $column->evaluate($locale) ?? $column->getTable()->getDefaultNumberLocale() ?? config('app.locale');
+
+            if ($locale instanceof BackedEnum) {
+                $locale = (string) $locale->value;
+            }
 
             return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), $locale);
         });

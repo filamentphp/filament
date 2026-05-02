@@ -9,6 +9,7 @@
     $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
     $actionModalDescription = $action->getModalDescription();
     $actionExtraModalWindowAttributeBag = $action->getExtraModalWindowAttributeBag();
+    $actionExtraModalOverlayAttributeBag = $action->getExtraModalOverlayAttributeBag();
     $actionModalFooterActions = $action->getVisibleModalFooterActions();
     $actionModalFooterActionsAlignment = $action->getModalFooterActionsAlignment();
     $actionModalHeading = $action->getModalHeading();
@@ -16,6 +17,7 @@
     $actionModalIconColor = $action->getModalIconColor();
     $actionModalId = "fi-{$this->getId()}-action-{$action->getNestingIndex()}";
     $actionIsModalSlideOver = $action->isModalSlideOver();
+    $actionModalSlideOverPosition = $action->getModalSlideOverPosition();
     $actionIsModalFooterSticky = $action->isModalFooterSticky();
     $actionIsModalHeaderSticky = $action->isModalHeaderSticky();
     $actionModalWidth = $action->getModalWidth();
@@ -31,6 +33,7 @@
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"
     :extra-modal-window-attribute-bag="$actionExtraModalWindowAttributeBag"
+    :extra-modal-overlay-attribute-bag="$actionExtraModalOverlayAttributeBag"
     :footer-actions="$actionModalFooterActions"
     :footer-actions-alignment="$actionModalFooterActionsAlignment"
     :heading="$actionModalHeading"
@@ -38,6 +41,7 @@
     :icon-color="$actionModalIconColor"
     :id="$actionModalId"
     :slide-over="$actionIsModalSlideOver"
+    :slide-over-position="$actionModalSlideOverPosition"
     :sticky-footer="$actionIsModalFooterSticky"
     :sticky-header="$actionIsModalHeaderSticky"
     :width="$actionModalWidth"

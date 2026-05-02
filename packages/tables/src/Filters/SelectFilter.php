@@ -12,8 +12,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
-use function Filament\Support\generate_search_term_expression;
-
 class SelectFilter extends BaseFilter
 {
     use Concerns\HasOptions;
@@ -336,216 +334,10 @@ class SelectFilter extends BaseFilter
                     $this->getRelationshipTitleAttribute(),
                     $this->modifyRelationshipQueryUsing,
                 )
-                ->getSearchResultsUsing(function (Select $component, ?string $search): array {
-                    $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-
-                    $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                    if ($this->modifyRelationshipQueryUsing) {
-                        $relationshipQuery = $component->evaluate($this->modifyRelationshipQueryUsing, [
-                            'query' => $relationshipQuery,
-                            'search' => $search,
-                        ]) ?? $relationshipQuery;
-                    }
-
-                    $component->applySearchConstraint(
-                        $relationshipQuery,
-                        generate_search_term_expression($search, $component->isSearchForcedCaseInsensitive(), $relationshipQuery->getConnection()),
-                    );
-
-                    $baseRelationshipQuery = $relationshipQuery->getQuery();
-
-                    if (isset($baseRelationshipQuery->limit)) {
-                        $component->optionsLimit($baseRelationshipQuery->limit);
-                        $this->optionsLimit($baseRelationshipQuery->limit);
-                    } else {
-                        $relationshipQuery->limit($component->getOptionsLimit());
-                    }
-
-                    $options = [];
-
-                    if (
-                        $this->hasEmptyRelationshipOption() &&
-                        str($this->getEmptyRelationshipOptionLabel())->lower()->contains(Str::lower($search))
-                    ) {
-                        $options[static::EMPTY_RELATIONSHIP_OPTION_KEY] = $this->getEmptyRelationshipOptionLabel();
-                    }
-
-                    $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
-
-                    if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                        return $options + $relationshipQuery
-                            ->get()
-                            ->mapWithKeys(static fn (Model $record) => [
-                                $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                            ])
-                            ->toArray();
-                    }
-
-                    $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-                    if (empty($relationshipQuery->getQuery()->orders)) {
-                        $relationshipOrderByAttribute = $relationshipTitleAttribute;
-
-                        if (str_contains($relationshipOrderByAttribute, ' as ')) {
-                            $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
-                        }
-
-                        $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
-                    }
-
-                    if (str_contains($relationshipTitleAttribute, '->')) {
-                        if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                            $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
-                        }
-                    } else {
-                        $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
-                    }
-
-                    return $options + $relationshipQuery
-                        ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
-                        ->toArray();
-                })
-                ->options(function (Select $component): ?array {
-                    if (($component->isSearchable()) && ! $component->isPreloaded()) {
-                        return null;
-                    }
-
-                    $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-
-                    $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                    if ($this->modifyRelationshipQueryUsing) {
-                        $relationshipQuery = $component->evaluate($this->modifyRelationshipQueryUsing, [
-                            'query' => $relationshipQuery,
-                            'search' => null,
-                        ]) ?? $relationshipQuery;
-                    }
-
-                    $baseRelationshipQuery = $relationshipQuery->getQuery();
-
-                    if (isset($baseRelationshipQuery->limit)) {
-                        $component->optionsLimit($baseRelationshipQuery->limit);
-                        $this->optionsLimit($baseRelationshipQuery->limit);
-                    } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
-                        $relationshipQuery->limit($component->getOptionsLimit());
-                    }
-
-                    $options = [];
-
-                    if ($this->hasEmptyRelationshipOption()) {
-                        $options[static::EMPTY_RELATIONSHIP_OPTION_KEY] = $this->getEmptyRelationshipOptionLabel();
-                    }
-
-                    $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
-
-                    if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                        return $options + $relationshipQuery
-                            ->get()
-                            ->mapWithKeys(static fn (Model $record) => [
-                                $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                            ])
-                            ->toArray();
-                    }
-
-                    $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-                    if (empty($relationshipQuery->getQuery()->orders)) {
-                        $relationshipOrderByAttribute = $relationshipTitleAttribute;
-
-                        if (str_contains($relationshipOrderByAttribute, ' as ')) {
-                            $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
-                        }
-
-                        $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
-                    }
-
-                    if (str_contains($relationshipTitleAttribute, '->')) {
-                        if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                            $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
-                        }
-                    } else {
-                        $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
-                    }
-
-                    return $options + $relationshipQuery
-                        ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
-                        ->toArray();
-                })
-                ->getOptionLabelUsing(function (Select $component) {
-                    if (
-                        $this->hasEmptyRelationshipOption() &&
-                        ($component->getState() === static::EMPTY_RELATIONSHIP_OPTION_KEY)
-                    ) {
-                        return $this->getEmptyRelationshipOptionLabel();
-                    }
-
-                    $record = $component->getSelectedRecord();
-
-                    if (! $record) {
-                        return null;
-                    }
-
-                    if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                        return $component->getOptionLabelFromRecord($record);
-                    }
-
-                    $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-                    if (str_contains($relationshipTitleAttribute, '->')) {
-                        $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
-                    }
-
-                    return data_get($record, $relationshipTitleAttribute);
-                })
-                ->getOptionLabelsUsing(function (Select $component, array $values): array {
-                    $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-
-                    $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                    $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
-
-                    $relationshipQuery->whereIn($qualifiedRelatedKeyName, $this->getRelationshipQueryValues($values));
-
-                    if ($this->modifyRelationshipQueryUsing) {
-                        $relationshipQuery = $component->evaluate($this->modifyRelationshipQueryUsing, [
-                            'query' => $relationshipQuery,
-                            'search' => null,
-                        ]) ?? $relationshipQuery;
-                    }
-
-                    $labels = [];
-
-                    if (
-                        $this->hasEmptyRelationshipOption() &&
-                        in_array(static::EMPTY_RELATIONSHIP_OPTION_KEY, $values)
-                    ) {
-                        $labels[static::EMPTY_RELATIONSHIP_OPTION_KEY] = $this->getEmptyRelationshipOptionLabel();
-                    }
-
-                    if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                        return $labels + $relationshipQuery
-                            ->get()
-                            ->mapWithKeys(static fn (Model $record) => [
-                                $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                            ])
-                            ->toArray();
-                    }
-
-                    $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-                    if (str_contains($relationshipTitleAttribute, '->')) {
-                        if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                            $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
-                        }
-                    } else {
-                        $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
-                    }
-
-                    return $labels + $relationshipQuery
-                        ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
-                        ->toArray();
-                })
+                ->getSearchResultsUsing(fn (Select $component, ?string $search): array => $this->getSearchResultsFromRelationship($component, $search))
+                ->options(fn (Select $component): ?array => $this->getOptionsFromRelationship($component))
+                ->getOptionLabelUsing(fn (Select $component) => $this->getOptionLabelFromRelationship($component))
+                ->getOptionLabelsUsing(fn (Select $component, array $values): array => $this->getOptionLabelsFromRelationship($component, $values))
                 ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
         } else {
             $field->options(fn (): array => $this->getOptions());
@@ -572,6 +364,132 @@ class SelectFilter extends BaseFilter
         }
 
         return $field;
+    }
+
+    /**
+     * @return array<string | int, string>
+     */
+    public function getSearchResultsFromRelationship(Select $select, ?string $search): array
+    {
+        $results = $select->getSearchResultsFromRelationship($search);
+
+        // Mirror any limit that `modifyQueryUsing()` set on the Select back onto the filter,
+        // so subsequent `getFormField()` calls construct a Select with the same limit.
+        $this->optionsLimit($select->getOptionsLimit());
+
+        if (
+            $this->hasEmptyRelationshipOption() &&
+            str($this->getEmptyRelationshipOptionLabel())->lower()->contains(Str::lower($search))
+        ) {
+            // Use `+` rather than spread so integer relationship keys are preserved.
+            return [static::EMPTY_RELATIONSHIP_OPTION_KEY => $this->getEmptyRelationshipOptionLabel()] + $results;
+        }
+
+        return $results;
+    }
+
+    /**
+     * @return array<string | int, string> | null
+     */
+    public function getOptionsFromRelationship(Select $select): ?array
+    {
+        $options = $select->getOptionsFromRelationship();
+
+        if ($options === null) {
+            return null;
+        }
+
+        // Mirror any limit that `modifyQueryUsing()` set on the Select back onto the filter,
+        // so subsequent `getFormField()` calls construct a Select with the same limit.
+        $this->optionsLimit($select->getOptionsLimit());
+
+        if ($this->hasEmptyRelationshipOption()) {
+            return [static::EMPTY_RELATIONSHIP_OPTION_KEY => $this->getEmptyRelationshipOptionLabel()] + $options;
+        }
+
+        return $options;
+    }
+
+    public function getOptionLabelFromRelationship(Select $select): mixed
+    {
+        if (
+            $this->hasEmptyRelationshipOption() &&
+            ($select->getState() === static::EMPTY_RELATIONSHIP_OPTION_KEY)
+        ) {
+            return $this->getEmptyRelationshipOptionLabel();
+        }
+
+        $record = $select->getSelectedRecord();
+
+        if (! $record) {
+            return null;
+        }
+
+        if ($select->hasOptionLabelFromRecordUsingCallback()) {
+            return $select->getOptionLabelFromRecord($record);
+        }
+
+        $relationshipTitleAttribute = $select->getRelationshipTitleAttribute();
+
+        if (str_contains($relationshipTitleAttribute, '->')) {
+            $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+        }
+
+        return data_get($record, $relationshipTitleAttribute);
+    }
+
+    /**
+     * @param  array<string>  $values
+     * @return array<string | int, string>
+     */
+    public function getOptionLabelsFromRelationship(Select $select, array $values): array
+    {
+        $relationship = Relation::noConstraints(fn () => $select->getRelationship());
+
+        $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+        $qualifiedRelatedKeyName = $select->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+        $relationshipQuery->whereIn($qualifiedRelatedKeyName, $this->getRelationshipQueryValues($values));
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $relationshipQuery = $select->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+                'search' => null,
+            ]) ?? $relationshipQuery;
+        }
+
+        $labels = [];
+
+        if (
+            $this->hasEmptyRelationshipOption() &&
+            in_array(static::EMPTY_RELATIONSHIP_OPTION_KEY, $values)
+        ) {
+            $labels[static::EMPTY_RELATIONSHIP_OPTION_KEY] = $this->getEmptyRelationshipOptionLabel();
+        }
+
+        if ($select->hasOptionLabelFromRecordUsingCallback()) {
+            return $labels + $relationshipQuery
+                ->get()
+                ->mapWithKeys(static fn (Model $record) => [
+                    $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $select->getOptionLabelFromRecord($record),
+                ])
+                ->toArray();
+        }
+
+        $relationshipTitleAttribute = $select->getRelationshipTitleAttribute();
+
+        if (str_contains($relationshipTitleAttribute, '->')) {
+            if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+        } else {
+            $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+        }
+
+        return $labels + $relationshipQuery
+            ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
+            ->toArray();
     }
 
     public function isMultiple(): bool

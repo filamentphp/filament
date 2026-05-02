@@ -73,6 +73,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasData;
+    use Concerns\HasExtraModalOverlayAttributes;
     use Concerns\HasExtraModalWindowAttributes;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
@@ -260,7 +261,7 @@ class Action extends ViewComponent implements Arrayable
         return $this->getView() === static::BADGE_VIEW;
     }
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | Closure | null $badge = null): static
     {
         if (func_num_args() === 0) {
             /** @phpstan-ignore-next-line */
@@ -822,8 +823,8 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -861,9 +862,9 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
-            badgeTooltip: $this->getBadgeTooltip(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
+            badgeTooltip: $this->getBadgeTooltip($badge),
             color: $this->getColor(),
             href: ($isDisabled || $shouldPostToUrl) ? null : $url,
             icon: $this->getIcon(default: $this->getGroupedIcon()),
@@ -894,8 +895,8 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -929,8 +930,8 @@ class Action extends ViewComponent implements Arrayable
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),

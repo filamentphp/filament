@@ -67,37 +67,96 @@ When rendering HTML content via methods like `html()` or `markdown()` on compone
 
 ### Default sanitizer configuration
 
-Filament's default sanitizer configuration permits inline `style` attributes on all elements. This is necessary to support rich text formatting features from the rich editor, such as font colors, text highlighting, and image sizing. However, this means that CSS properties like `background: url(...)` (which can trigger external HTTP requests) or `position: fixed` (which can create phishing overlays) will not be stripped.
+Filament registers `HtmlSanitizerConfig` as a scoped binding in Laravel's service container with the following default configuration:
 
-If your application renders HTML content from untrusted users, you should consider replacing the default sanitizer with a more restrictive configuration.
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+(new HtmlSanitizerConfig)
+    ->allowSafeElements()
+    ->allowRelativeLinks()
+    ->allowRelativeMedias()
+    ->allowAttribute('class', allowedElements: '*')
+    ->allowAttribute('data-color', allowedElements: '*')
+    ->allowAttribute('data-cols', allowedElements: '*')
+    ->allowAttribute('data-col-span', allowedElements: '*')
+    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
+    ->allowAttribute('data-id', allowedElements: '*')
+    ->allowAttribute('data-type', allowedElements: '*')
+    ->allowAttribute('style', allowedElements: '*')
+    ->allowAttribute('width', allowedElements: 'img')
+    ->allowAttribute('height', allowedElements: 'img')
+    ->withMaxInputLength(500000)
+```
+
+The `data-*` attributes are used internally by Filament's rich editor for features such as text colors, grid layouts, merge tags, mentions, and custom blocks. The `style` attribute is necessary to support rich text formatting features such as font colors, text highlighting, and image sizing. However, this means that CSS properties like `background: url(...)` (which can trigger external HTTP requests) or `position: fixed` (which can create phishing overlays) will not be stripped.
+
+If your application renders HTML content from untrusted users, you should consider restricting the default configuration.
 
 ### Customizing the sanitizer
 
-Filament binds the sanitizer as `HtmlSanitizerInterface` in Laravel's service container. You can override it by rebinding this interface in a service provider:
+Since `HtmlSanitizerConfig` is bound in the service container, you can use `extend()` in a service provider to modify the default configuration without replacing it entirely.
+
+#### Adding allowed attributes
+
+To allow additional attributes through the sanitizer, extend the config:
 
 ```php
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 public function register(): void
 {
-    $this->app->scoped(
-        HtmlSanitizerInterface::class,
-        fn (): HtmlSanitizer => new HtmlSanitizer(
-            (new HtmlSanitizerConfig)
-                ->allowSafeElements()
-                ->allowRelativeLinks()
-                ->allowRelativeMedias()
-                ->allowAttribute('class', allowedElements: '*')
-                ->allowAttribute('style', allowedElements: '*')
-                ->withMaxInputLength(500000),
-        ),
+    $this->app->extend(
+        HtmlSanitizerConfig::class,
+        fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+            ->allowAttribute('data-custom', allowedElements: '*'),
     );
 }
 ```
 
-You can restrict which CSS properties are allowed in `style` attributes, remove the `style` attribute allowance entirely, or make any other adjustments supported by Symfony's HtmlSanitizer. Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
+#### Restricting allowed attributes
+
+To remove an attribute that Filament allows by default, use `dropAttribute()`:
+
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+public function register(): void
+{
+    $this->app->extend(
+        HtmlSanitizerConfig::class,
+        fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+            ->dropAttribute('style', '*'),
+    );
+}
+```
+
+<Aside variant="danger">
+    Removing attributes that Filament's rich editor depends on (such as `data-color`, `data-cols`, `data-id`, or `style`) may break rich text rendering. Only restrict attributes when you understand their impact on Filament's components.
+</Aside>
+
+#### Replacing the sanitizer configuration entirely
+
+If you need full control, you can rebind `HtmlSanitizerConfig` entirely in a service provider:
+
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+public function register(): void
+{
+    $this->app->scoped(
+        HtmlSanitizerConfig::class,
+        fn (): HtmlSanitizerConfig => (new HtmlSanitizerConfig)
+            ->allowSafeElements()
+            ->allowRelativeLinks()
+            ->allowRelativeMedias()
+            ->allowAttribute('class', allowedElements: '*')
+            ->withMaxInputLength(500000),
+    );
+}
+```
+
+Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
 
 ### Sanitizing in Blade views
 
@@ -134,6 +193,40 @@ Filament's `FileUpload` component uses Livewire's file upload mechanism. There a
 By default, Filament generates random file names and stores files with `private` visibility. If you use `preserveFilenames()` or `getUploadedFileNameForStorageUsing()` with local or public disks, an attacker could upload a PHP file with a deceptive MIME type that gets executed by your server. The safer alternative is to use `storeFileNamesIn()`, which stores original file names in a separate database column while keeping randomly generated file names on disk. See the [file upload documentation](../forms/file-upload#security-implications-of-controlling-file-names) for a full explanation of these risks and recommended mitigations.
 
 You should always use `acceptedFileTypes()` to restrict the types of files users can upload, and validate file sizes with `maxSize()`. These constraints are enforced server-side, not just in the browser.
+
+## File path tampering
+
+The value of a `FileUpload` field is a string (or array of strings) pointing to a file on its configured disk. The `RichEditor` embeds images by storing their identifier in the `data-id` attribute of each image node, which is similarly resolved against a disk when the content is rendered. Like any other Livewire form field value, both are controlled by the client — a request can be intercepted to change a submitted path or `data-id` to any other file on the same disk. If the disk also stores files belonging to other users or records, an attacker can cause a record to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that sets a field to a pre-uploaded template file, or a "copy from another record" button. If your forms do not rely on such a flow, opt in to the built-in checks:
+
+- For `FileUpload` fields, call [`preventFilePathTampering()`](../forms/file-upload#authorizing-existing-file-paths) to fail validation when a submitted path does not match the original value on the record.
+- For `RichEditor` fields, call [`preventFileAttachmentPathTampering()`](../forms/rich-editor#securing-file-attachment-ids) to fail validation when a submitted `data-id` is not already present in the record's stored content.
+
+Both methods compare submitted values against the attribute on the record via `$record->getOriginal()`, and both accept an `allowFilePathUsing` callback for paths that are legitimately added outside the record (such as shared template files). Newly uploaded files and images always pass through unchanged.
+
+<Aside variant="warning">
+    These checks require a record on the form, so on create pages every submitted existing path fails validation unless the `allowFilePathUsing` callback approves it. New uploads are unaffected.
+</Aside>
+
+If you want these checks to apply across your entire application rather than remembering to add them to each field, enable them globally from a service provider's `boot()` method using `configureUsing()`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+
+FileUpload::configureUsing(function (FileUpload $component): void {
+    $component->preventFilePathTampering();
+});
+
+RichEditor::configureUsing(function (RichEditor $component): void {
+    $component->preventFileAttachmentPathTampering();
+});
+```
+
+Individual fields can still opt out by passing `false` to the corresponding method (for example, `preventFilePathTampering(false)`) when a specific form legitimately needs to accept paths that are not on the record.
+
+If your application isolates uploads per user or per record at the disk level — for example, by using a separate disk or directory for each tenant — this class of tampering is not exploitable and these methods are unnecessary. The `spatie/laravel-medialibrary` rich editor provider also performs an equivalent check implicitly by looking up each `data-id` against the record's own media collection.
 
 ## Scoping queries
 

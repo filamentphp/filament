@@ -106,18 +106,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
         $this->default([]);
 
-        $this->afterStateHydrated(static function (Builder $component, ?array $rawState): void {
-            $items = [];
-
-            foreach ($rawState ?? [] as $itemData) {
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
-                } else {
-                    $items[] = $itemData;
-                }
-            }
-
-            $component->rawState($items);
+        $this->afterStateHydrated(static function (Builder $component): void {
+            $component->hydrateItems();
         });
 
         $this->registerActions([
@@ -138,6 +128,21 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
             return array_values($state ?? []);
         });
+    }
+
+    public function hydrateItems(): void
+    {
+        $items = [];
+
+        foreach ($this->getRawState() ?? [] as $itemData) {
+            if ($uuid = $this->generateUuid()) {
+                $items[$uuid] = $itemData;
+            } else {
+                $items[] = $itemData;
+            }
+        }
+
+        $this->rawState($items);
     }
 
     /**

@@ -57,24 +57,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
         $this->default([]);
 
-        $this->afterStateHydrated(static function (TagsInput $component, $state): void {
-            if (is_array($state)) {
-                return;
-            }
-
-            if (! ($separator = $component->getSeparator())) {
-                $component->state([]);
-
-                return;
-            }
-
-            $state = explode($separator, $state ?? '');
-
-            if (count($state) === 1 && blank($state[0])) {
-                $state = [];
-            }
-
-            $component->state($state);
+        $this->afterStateHydrated(static function (TagsInput $component): void {
+            $component->hydrateTags();
         });
 
         $this->dehydrateStateUsing(static function (TagsInput $component, $state) {
@@ -88,6 +72,29 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
 
         $this->reorderAnimationDuration(100);
+    }
+
+    public function hydrateTags(): void
+    {
+        $state = $this->getState();
+
+        if (is_array($state)) {
+            return;
+        }
+
+        if (! ($separator = $this->getSeparator())) {
+            $this->state([]);
+
+            return;
+        }
+
+        $state = explode($separator, $state ?? '');
+
+        if (count($state) === 1 && blank($state[0])) {
+            $state = [];
+        }
+
+        $this->state($state);
     }
 
     public function tagPrefix(string | Closure | null $prefix): static
