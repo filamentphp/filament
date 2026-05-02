@@ -123,6 +123,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected string | Closure | null $relationship = null;
 
+    protected ?Closure $modifyRelationshipQueryUsing = null;
+
+    protected bool $shouldIgnoreRelationshipRecord = false;
+
+    protected ?Collection $cachedRelationshipRecords = null;
+
+    /**
+     * @var array<string | int, string> | null
+     */
+    protected ?array $cachedRelationshipOptions = null;
+
     protected int | Closure $optionsLimit = 50;
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
@@ -771,341 +782,21 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
+        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
+        $this->shouldIgnoreRelationshipRecord = $ignoreRecord;
+        $this->cachedRelationshipRecords = null;
+        $this->cachedRelationshipOptions = null;
 
-        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing, $ignoreRecord): array {
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            if ($ignoreRecord && ($record = $component->getRecord())) {
-                $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
-            }
-
-            if ($modifyQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationshipQuery,
-                    'search' => $search,
-                ]) ?? $relationshipQuery;
-            }
-
-            $component->applySearchConstraint(
-                $relationshipQuery,
-                generate_search_term_expression($search, $component->isSearchForcedCaseInsensitive(), $relationshipQuery->getConnection()),
-            );
-
-            $baseRelationshipQuery = $relationshipQuery->getQuery();
-
-            if (isset($baseRelationshipQuery->limit)) {
-                $component->optionsLimit($baseRelationshipQuery->limit);
-            } else {
-                $relationshipQuery->limit($component->getOptionsLimit());
-            }
-
-            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
-
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $relationshipQuery
-                    ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                    ])
-                    ->toArray();
-            }
-
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipOrderByAttribute = $relationshipTitleAttribute;
-
-                if (str_contains($relationshipOrderByAttribute, ' as ')) {
-                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
-                }
-
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
-            }
-
-            if (str_contains($relationshipTitleAttribute, '->')) {
-                if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
-                }
-            } else {
-                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
-            }
-
-            return $relationshipQuery
-                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
-                ->toArray();
+        $this->getSearchResultsUsing(static function (Select $component, ?string $search): array {
+            return $component->getSearchResultsFromRelationship($search);
         });
 
-        $cachedRecords = null;
-        $cachedOptions = null;
-
-        $this->options(static function (Select $component) use ($modifyQueryUsing, $ignoreRecord, &$cachedRecords, &$cachedOptions): ?array {
-            if (($component->isSearchable()) && ! $component->isPreloaded()) {
-                return null;
-            }
-
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-
-            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
-
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                if (
-                    (! $modifyQueryUsing) &&
-                    (! $ignoreRecord) &&
-                    ($cachedRecords !== null)
-                ) {
-                    return $cachedRecords
-                        ->mapWithKeys(static fn (Model $record) => [
-                            $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                        ])
-                        ->toArray();
-                }
-
-                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                if ($ignoreRecord && ($record = $component->getRecord())) {
-                    $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
-                }
-
-                if ($modifyQueryUsing) {
-                    $relationshipQuery = $component->evaluate($modifyQueryUsing, [
-                        'query' => $relationshipQuery,
-                        'search' => null,
-                    ]) ?? $relationshipQuery;
-                }
-
-                $baseRelationshipQuery = $relationshipQuery->getQuery();
-
-                if (isset($baseRelationshipQuery->limit)) {
-                    $component->optionsLimit($baseRelationshipQuery->limit);
-                } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
-                    $relationshipQuery->limit($component->getOptionsLimit());
-                }
-
-                $records = $relationshipQuery->get();
-
-                if ((! $modifyQueryUsing) && (! $ignoreRecord)) {
-                    $cachedRecords = $records;
-                }
-
-                return $records
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                    ])
-                    ->toArray();
-            }
-
-            if (
-                (! $modifyQueryUsing) &&
-                (! $ignoreRecord) &&
-                ($cachedOptions !== null)
-            ) {
-                return $cachedOptions;
-            }
-
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            if ($ignoreRecord && ($record = $component->getRecord())) {
-                $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
-            }
-
-            if ($modifyQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationshipQuery,
-                    'search' => null,
-                ]) ?? $relationshipQuery;
-            }
-
-            $baseRelationshipQuery = $relationshipQuery->getQuery();
-
-            if (isset($baseRelationshipQuery->limit)) {
-                $component->optionsLimit($baseRelationshipQuery->limit);
-            } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
-                $relationshipQuery->limit($component->getOptionsLimit());
-            }
-
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipOrderByAttribute = $relationshipTitleAttribute;
-
-                if (str_contains($relationshipOrderByAttribute, ' as ')) {
-                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
-                }
-
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
-            }
-
-            if (str_contains($relationshipTitleAttribute, '->')) {
-                if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
-                }
-            } else {
-                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
-            }
-
-            $options = $relationshipQuery
-                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
-                ->toArray();
-
-            if ((! $modifyQueryUsing) && (! $ignoreRecord)) {
-                $cachedOptions = $options;
-            }
-
-            return $options;
+        $this->options(static function (Select $component): ?array {
+            return $component->getOptionsFromRelationship();
         });
 
-        $this->loadStateFromRelationshipsUsing(static function (Select $component, $state) use ($modifyQueryUsing): void {
-            if (filled($state)) {
-                return;
-            }
-
-            $relationship = $component->getRelationship();
-            $relationshipName = $component->getRelationshipName();
-
-            if (
-                (! $modifyQueryUsing) &&
-                (! str_contains($relationshipName, '.')) &&
-                ($record = $component->getRecord()) instanceof Model &&
-                $record->relationLoaded($relationshipName)
-            ) {
-                $relatedRecords = $record->getRelationValue($relationshipName);
-
-                if (
-                    ($relationship instanceof BelongsToMany) ||
-                    ($relationship instanceof HasOneOrManyThrough)
-                ) {
-                    $relatedKeys = $relatedRecords
-                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
-                        ->map(static fn ($key): string => strval($key));
-
-                    $component->state(
-                        $component->isMultiple()
-                            ? $relatedKeys->all()
-                            : $relatedKeys->first(),
-                    );
-
-                    return;
-                }
-
-                if ($relationship instanceof BelongsToThrough) {
-                    $component->state(
-                        $relatedRecords?->getAttribute(
-                            $relationship->getRelated()->getKeyName(),
-                        ),
-                    );
-
-                    return;
-                }
-
-                if ($relationship instanceof HasMany) {
-                    $component->state(
-                        $relatedRecords
-                            ->pluck($relationship->getLocalKeyName())
-                            ->all(),
-                    );
-
-                    return;
-                }
-
-                if ($relationship instanceof HasOne) {
-                    $component->state(
-                        $relatedRecords?->getAttribute(
-                            $relationship->getLocalKeyName(),
-                        ),
-                    );
-
-                    return;
-                }
-
-                /** @var BelongsTo $relationship */
-                $component->state(
-                    $relatedRecords?->getAttribute(
-                        $relationship->getOwnerKeyName(),
-                    ),
-                );
-
-                return;
-            }
-
-            if (
-                ($relationship instanceof BelongsToMany) ||
-                ($relationship instanceof HasOneOrManyThrough)
-            ) {
-                if ($modifyQueryUsing) {
-                    $component->evaluate($modifyQueryUsing, [
-                        'query' => $relationship->getQuery(),
-                        'search' => null,
-                    ]);
-                }
-
-                /** @var Collection $relatedRecords */
-                $relatedRecords = $relationship->getResults();
-
-                // Cast the related keys to a string, otherwise
-                // JavaScript can't handle deselection.
-                //
-                // https://github.com/filamentphp/filament/issues/1111
-                $relatedKeys = $relatedRecords
-                    ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
-                    ->map(static fn ($key): string => strval($key));
-
-                $component->state(
-                    $component->isMultiple()
-                        ? $relatedKeys->all()
-                        : $relatedKeys->first(),
-                );
-
-                return;
-            }
-
-            if ($relationship instanceof BelongsToThrough) {
-                /** @var ?Model $relatedModel */
-                $relatedModel = $relationship->getResults();
-
-                $component->state(
-                    $relatedModel?->getAttribute(
-                        $relationship->getRelated()->getKeyName(),
-                    ),
-                );
-
-                return;
-            }
-
-            if ($relationship instanceof HasMany) {
-                /** @var Collection $relatedRecords */
-                $relatedRecords = $relationship->getResults();
-
-                $component->state(
-                    $relatedRecords
-                        ->pluck($relationship->getLocalKeyName())
-                        ->all(),
-                );
-
-                return;
-            }
-
-            if ($relationship instanceof HasOne) {
-                $relatedModel = $relationship->getResults();
-
-                $component->state(
-                    $relatedModel?->getAttribute(
-                        $relationship->getLocalKeyName(),
-                    ),
-                );
-
-                return;
-            }
-
-            /** @var BelongsTo $relationship */
-            $relatedModel = $relationship->getResults();
-
-            $component->state(
-                $relatedModel?->getAttribute(
-                    $relationship->getOwnerKeyName(),
-                ),
-            );
+        $this->loadStateFromRelationshipsUsing(static function (Select $component): void {
+            $component->fillStateFromRelationship();
         });
 
         $this->getOptionLabelUsing(static function (Select $component) {
@@ -1261,103 +952,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ->toArray();
         });
 
-        $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) use ($modifyQueryUsing): void {
-            $relationship = $component->getRelationship();
-
-            if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
-                $query = $relationship->getQuery();
-
-                if ($modifyQueryUsing) {
-                    $component->evaluate($modifyQueryUsing, [
-                        'query' => $query,
-                        'search' => null,
-                    ]);
-                }
-
-                $query->update([
-                    $relationship->getForeignKeyName() => null,
-                ]);
-
-                if (! empty($state)) {
-                    $relationship::noConstraints(function () use ($component, $record, $state, $modifyQueryUsing): void {
-                        $relationship = $component->getRelationship();
-
-                        $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
-
-                        if ($modifyQueryUsing) {
-                            $component->evaluate($modifyQueryUsing, [
-                                'query' => $query,
-                                'search' => null,
-                            ]);
-                        }
-
-                        $query->update([
-                            $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
-                        ]);
-                    });
-                }
-
-                return;
-            }
-
-            if (
-                ($relationship instanceof HasOneOrMany) ||
-                ($relationship instanceof HasOneOrManyThrough) ||
-                ($relationship instanceof BelongsToThrough)
-            ) {
-                return;
-            }
-
-            if (! $relationship instanceof BelongsToMany) {
-                // Security: If the model is new and the foreign key is already
-                // filled, don't overwrite it — the key may have been set by
-                // authorization logic or event listeners before save.
-                if (
-                    $record->wasRecentlyCreated &&
-                    filled($record->getAttributeValue($relationship->getForeignKeyName()))
-                ) {
-                    return;
-                }
-
-                $relationship->associate($state);
-                $record->wasRecentlyCreated && $record->save();
-
-                return;
-            }
-
-            if ($modifyQueryUsing) {
-                $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationship->getQuery(),
-                    'search' => null,
-                ]);
-            }
-
-            /** @var Collection $relatedRecords */
-            $relatedRecords = $relationship->getResults();
-
-            $state = Arr::wrap($state ?? []);
-
-            $recordsToDetach = array_diff(
-                $relatedRecords
-                    ->pluck($relationship->getRelatedKeyName())
-                    ->map(static fn ($key): string => strval($key))
-                    ->all(),
-                $state,
-            );
-
-            if (count($recordsToDetach) > 0) {
-                $relationship->detach($recordsToDetach);
-            }
-
-            $pivotData = $component->getPivotData();
-
-            if ($pivotData === []) {
-                $relationship->sync($state, detaching: false);
-
-                return;
-            }
-
-            $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
+        $this->saveRelationshipsUsing(static function (Select $component): void {
+            $component->saveStateToRelationship();
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Schema $schema) {
@@ -1381,6 +977,450 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->dehydrated(fn (Select $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
+    }
+
+    /**
+     * @return array<string | int, string>
+     */
+    public function getSearchResultsFromRelationship(?string $search): array
+    {
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+
+        $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+        if ($this->shouldIgnoreRelationshipRecord && ($record = $this->getRecord())) {
+            $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
+        }
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+                'search' => $search,
+            ]) ?? $relationshipQuery;
+        }
+
+        $this->applySearchConstraint(
+            $relationshipQuery,
+            generate_search_term_expression($search, $this->isSearchForcedCaseInsensitive(), $relationshipQuery->getConnection()),
+        );
+
+        $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+        if (isset($baseRelationshipQuery->limit)) {
+            $this->optionsLimit($baseRelationshipQuery->limit);
+        } else {
+            $relationshipQuery->limit($this->getOptionsLimit());
+        }
+
+        $qualifiedRelatedKeyName = $this->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+        if ($this->hasOptionLabelFromRecordUsingCallback()) {
+            return $relationshipQuery
+                ->get()
+                ->mapWithKeys(fn (Model $record) => [
+                    $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $this->getOptionLabelFromRecord($record),
+                ])
+                ->toArray();
+        }
+
+        $relationshipTitleAttribute = $this->getRelationshipTitleAttribute();
+
+        if (empty($relationshipQuery->getQuery()->orders)) {
+            $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+            if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+            }
+
+            $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
+        }
+
+        if (str_contains($relationshipTitleAttribute, '->')) {
+            if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+        } else {
+            $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+        }
+
+        return $relationshipQuery
+            ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
+            ->toArray();
+    }
+
+    /**
+     * @return array<string | int, string> | null
+     */
+    public function getOptionsFromRelationship(): ?array
+    {
+        if ($this->isSearchable() && (! $this->isPreloaded())) {
+            return null;
+        }
+
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+
+        $qualifiedRelatedKeyName = $this->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+        if ($this->hasOptionLabelFromRecordUsingCallback()) {
+            if (
+                (! $this->modifyRelationshipQueryUsing) &&
+                (! $this->shouldIgnoreRelationshipRecord) &&
+                ($this->cachedRelationshipRecords !== null)
+            ) {
+                return $this->cachedRelationshipRecords
+                    ->mapWithKeys(fn (Model $record) => [
+                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $this->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+            if ($this->shouldIgnoreRelationshipRecord && ($record = $this->getRecord())) {
+                $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
+            }
+
+            if ($this->modifyRelationshipQueryUsing) {
+                $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                    'query' => $relationshipQuery,
+                    'search' => null,
+                ]) ?? $relationshipQuery;
+            }
+
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $this->optionsLimit($baseRelationshipQuery->limit);
+            } elseif ($this->isSearchable() && filled($this->getSearchColumns())) {
+                $relationshipQuery->limit($this->getOptionsLimit());
+            }
+
+            $records = $relationshipQuery->get();
+
+            if ((! $this->modifyRelationshipQueryUsing) && (! $this->shouldIgnoreRelationshipRecord)) {
+                $this->cachedRelationshipRecords = $records;
+            }
+
+            return $records
+                ->mapWithKeys(fn (Model $record) => [
+                    $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $this->getOptionLabelFromRecord($record),
+                ])
+                ->toArray();
+        }
+
+        if (
+            (! $this->modifyRelationshipQueryUsing) &&
+            (! $this->shouldIgnoreRelationshipRecord) &&
+            ($this->cachedRelationshipOptions !== null)
+        ) {
+            return $this->cachedRelationshipOptions;
+        }
+
+        $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+        if ($this->shouldIgnoreRelationshipRecord && ($record = $this->getRecord())) {
+            $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
+        }
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+                'search' => null,
+            ]) ?? $relationshipQuery;
+        }
+
+        $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+        if (isset($baseRelationshipQuery->limit)) {
+            $this->optionsLimit($baseRelationshipQuery->limit);
+        } elseif ($this->isSearchable() && filled($this->getSearchColumns())) {
+            $relationshipQuery->limit($this->getOptionsLimit());
+        }
+
+        $relationshipTitleAttribute = $this->getRelationshipTitleAttribute();
+
+        if (empty($relationshipQuery->getQuery()->orders)) {
+            $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+            if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+            }
+
+            $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
+        }
+
+        if (str_contains($relationshipTitleAttribute, '->')) {
+            if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+        } else {
+            $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+        }
+
+        $options = $relationshipQuery
+            ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
+            ->toArray();
+
+        if ((! $this->modifyRelationshipQueryUsing) && (! $this->shouldIgnoreRelationshipRecord)) {
+            $this->cachedRelationshipOptions = $options;
+        }
+
+        return $options;
+    }
+
+    public function fillStateFromRelationship(): void
+    {
+        if (filled($this->getState())) {
+            return;
+        }
+
+        $relationship = $this->getRelationship();
+        $relationshipName = $this->getRelationshipName();
+
+        if (
+            (! $this->modifyRelationshipQueryUsing) &&
+            (! str_contains($relationshipName, '.')) &&
+            ($record = $this->getRecord()) instanceof Model &&
+            $record->relationLoaded($relationshipName)
+        ) {
+            $relatedRecords = $record->getRelationValue($relationshipName);
+
+            if (
+                ($relationship instanceof BelongsToMany) ||
+                ($relationship instanceof HasOneOrManyThrough)
+            ) {
+                $relatedKeys = $relatedRecords
+                    ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                    ->map(static fn ($key): string => strval($key));
+
+                $this->state(
+                    $this->isMultiple()
+                        ? $relatedKeys->all()
+                        : $relatedKeys->first(),
+                );
+
+                return;
+            }
+
+            if ($relationship instanceof BelongsToThrough) {
+                $this->state(
+                    $relatedRecords?->getAttribute(
+                        $relationship->getRelated()->getKeyName(),
+                    ),
+                );
+
+                return;
+            }
+
+            if ($relationship instanceof HasMany) {
+                $this->state(
+                    $relatedRecords
+                        ->pluck($relationship->getLocalKeyName())
+                        ->all(),
+                );
+
+                return;
+            }
+
+            if ($relationship instanceof HasOne) {
+                $this->state(
+                    $relatedRecords?->getAttribute(
+                        $relationship->getLocalKeyName(),
+                    ),
+                );
+
+                return;
+            }
+
+            /** @var BelongsTo $relationship */
+            $this->state(
+                $relatedRecords?->getAttribute(
+                    $relationship->getOwnerKeyName(),
+                ),
+            );
+
+            return;
+        }
+
+        if (
+            ($relationship instanceof BelongsToMany) ||
+            ($relationship instanceof HasOneOrManyThrough)
+        ) {
+            if ($this->modifyRelationshipQueryUsing) {
+                $this->evaluate($this->modifyRelationshipQueryUsing, [
+                    'query' => $relationship->getQuery(),
+                    'search' => null,
+                ]);
+            }
+
+            /** @var Collection $relatedRecords */
+            $relatedRecords = $relationship->getResults();
+
+            // Cast the related keys to a string, otherwise
+            // JavaScript can't handle deselection.
+            //
+            // https://github.com/filamentphp/filament/issues/1111
+            $relatedKeys = $relatedRecords
+                ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                ->map(static fn ($key): string => strval($key));
+
+            $this->state(
+                $this->isMultiple()
+                    ? $relatedKeys->all()
+                    : $relatedKeys->first(),
+            );
+
+            return;
+        }
+
+        if ($relationship instanceof BelongsToThrough) {
+            /** @var ?Model $relatedModel */
+            $relatedModel = $relationship->getResults();
+
+            $this->state(
+                $relatedModel?->getAttribute(
+                    $relationship->getRelated()->getKeyName(),
+                ),
+            );
+
+            return;
+        }
+
+        if ($relationship instanceof HasMany) {
+            /** @var Collection $relatedRecords */
+            $relatedRecords = $relationship->getResults();
+
+            $this->state(
+                $relatedRecords
+                    ->pluck($relationship->getLocalKeyName())
+                    ->all(),
+            );
+
+            return;
+        }
+
+        if ($relationship instanceof HasOne) {
+            $relatedModel = $relationship->getResults();
+
+            $this->state(
+                $relatedModel?->getAttribute(
+                    $relationship->getLocalKeyName(),
+                ),
+            );
+
+            return;
+        }
+
+        /** @var BelongsTo $relationship */
+        $relatedModel = $relationship->getResults();
+
+        $this->state(
+            $relatedModel?->getAttribute(
+                $relationship->getOwnerKeyName(),
+            ),
+        );
+    }
+
+    public function saveStateToRelationship(): void
+    {
+        $relationship = $this->getRelationship();
+        $record = $this->getRecord();
+        $state = $this->getState();
+
+        if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
+            $query = $relationship->getQuery();
+
+            if ($this->modifyRelationshipQueryUsing) {
+                $this->evaluate($this->modifyRelationshipQueryUsing, [
+                    'query' => $query,
+                    'search' => null,
+                ]);
+            }
+
+            $query->update([
+                $relationship->getForeignKeyName() => null,
+            ]);
+
+            if (! empty($state)) {
+                $relationship::noConstraints(function () use ($record, $state): void {
+                    $relationship = $this->getRelationship();
+
+                    $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
+
+                    if ($this->modifyRelationshipQueryUsing) {
+                        $this->evaluate($this->modifyRelationshipQueryUsing, [
+                            'query' => $query,
+                            'search' => null,
+                        ]);
+                    }
+
+                    $query->update([
+                        $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
+                    ]);
+                });
+            }
+
+            return;
+        }
+
+        if (
+            ($relationship instanceof HasOneOrMany) ||
+            ($relationship instanceof HasOneOrManyThrough) ||
+            ($relationship instanceof BelongsToThrough)
+        ) {
+            return;
+        }
+
+        if (! $relationship instanceof BelongsToMany) {
+            // Security: If the model is new and the foreign key is already
+            // filled, don't overwrite it — the key may have been set by
+            // authorization logic or event listeners before save.
+            if (
+                $record->wasRecentlyCreated &&
+                filled($record->getAttributeValue($relationship->getForeignKeyName()))
+            ) {
+                return;
+            }
+
+            $relationship->associate($state);
+            $record->wasRecentlyCreated && $record->save();
+
+            return;
+        }
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationship->getQuery(),
+                'search' => null,
+            ]);
+        }
+
+        /** @var Collection $relatedRecords */
+        $relatedRecords = $relationship->getResults();
+
+        $state = Arr::wrap($state ?? []);
+
+        $recordsToDetach = array_diff(
+            $relatedRecords
+                ->pluck($relationship->getRelatedKeyName())
+                ->map(static fn ($key): string => strval($key))
+                ->all(),
+            $state,
+        );
+
+        if (count($recordsToDetach) > 0) {
+            $relationship->detach($recordsToDetach);
+        }
+
+        $pivotData = $this->getPivotData();
+
+        if ($pivotData === []) {
+            $relationship->sync($state, detaching: false);
+
+            return;
+        }
+
+        $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
     }
 
     /**

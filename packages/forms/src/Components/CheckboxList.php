@@ -47,6 +47,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
     protected string | Closure | null $relationship = null;
 
+    protected ?Closure $modifyRelationshipQueryUsing = null;
+
     protected bool | Closure $isBulkToggleable = false;
 
     protected ?Closure $modifySelectAllActionUsing = null;
@@ -127,6 +129,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
+        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
         $cachedRecords = null;
         $cachedOptions = null;
@@ -221,87 +224,99 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             return $options;
         });
 
-        $this->loadStateFromRelationshipsUsing(static function (CheckboxList $component, ?array $state) use ($modifyQueryUsing): void {
-            $relationship = $component->getRelationship();
-            $relationshipName = $component->getRelationshipName();
-
-            if (
-                (! $modifyQueryUsing) &&
-                ($record = $component->getRecord()) instanceof Model &&
-                $record->relationLoaded($relationshipName)
-            ) {
-                /** @var Collection $relatedRecords */
-                $relatedRecords = $record->getRelationValue($relationshipName);
-
-                $component->state(
-                    $relatedRecords
-                        ->pluck($relationship->getRelatedKeyName())
-                        ->map(static fn ($key): string => strval($key))
-                        ->all(),
-                );
-
-                return;
-            }
-
-            if ($modifyQueryUsing) {
-                $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationship->getQuery(),
-                ]);
-            }
-
-            /** @var Collection $relatedRecords */
-            $relatedRecords = $relationship->getResults();
-
-            $component->state(
-                // Cast the related keys to a string, otherwise Livewire does not
-                // know how to handle deselection.
-                //
-                // https://github.com/filamentphp/filament/issues/1111
-                $relatedRecords
-                    ->pluck($relationship->getRelatedKeyName())
-                    ->map(static fn ($key): string => strval($key))
-                    ->all(),
-            );
+        $this->loadStateFromRelationshipsUsing(static function (CheckboxList $component): void {
+            $component->fillStateFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(static function (CheckboxList $component, ?array $state) use ($modifyQueryUsing): void {
-            $relationship = $component->getRelationship();
-
-            if ($modifyQueryUsing) {
-                $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationship->getQuery(),
-                ]);
-            }
-
-            /** @var Collection $relatedRecords */
-            $relatedRecords = $relationship->getResults();
-
-            $recordsToDetach = array_diff(
-                $relatedRecords
-                    ->pluck($relationship->getRelatedKeyName())
-                    ->map(static fn ($key): string => strval($key))
-                    ->all(),
-                $state ?? [],
-            );
-
-            if (count($recordsToDetach) > 0) {
-                $relationship->detach($recordsToDetach);
-            }
-
-            $pivotData = $component->getPivotData();
-
-            if ($pivotData === []) {
-                $relationship->sync($state ?? [], detaching: false);
-
-                return;
-            }
-
-            $relationship->syncWithPivotValues($state ?? [], $pivotData, detaching: false);
+        $this->saveRelationshipsUsing(static function (CheckboxList $component): void {
+            $component->saveStateToRelationship();
         });
 
         $this->dehydrated(false);
 
         return $this;
+    }
+
+    public function fillStateFromRelationship(): void
+    {
+        $relationship = $this->getRelationship();
+        $relationshipName = $this->getRelationshipName();
+
+        if (
+            (! $this->modifyRelationshipQueryUsing) &&
+            ($record = $this->getRecord()) instanceof Model &&
+            $record->relationLoaded($relationshipName)
+        ) {
+            /** @var Collection $relatedRecords */
+            $relatedRecords = $record->getRelationValue($relationshipName);
+
+            $this->state(
+                $relatedRecords
+                    ->pluck($relationship->getRelatedKeyName())
+                    ->map(static fn ($key): string => strval($key))
+                    ->all(),
+            );
+
+            return;
+        }
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationship->getQuery(),
+            ]);
+        }
+
+        /** @var Collection $relatedRecords */
+        $relatedRecords = $relationship->getResults();
+
+        $this->state(
+            // Cast the related keys to a string, otherwise Livewire does not
+            // know how to handle deselection.
+            //
+            // https://github.com/filamentphp/filament/issues/1111
+            $relatedRecords
+                ->pluck($relationship->getRelatedKeyName())
+                ->map(static fn ($key): string => strval($key))
+                ->all(),
+        );
+    }
+
+    public function saveStateToRelationship(): void
+    {
+        $relationship = $this->getRelationship();
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationship->getQuery(),
+            ]);
+        }
+
+        /** @var Collection $relatedRecords */
+        $relatedRecords = $relationship->getResults();
+
+        $state = $this->getState() ?? [];
+
+        $recordsToDetach = array_diff(
+            $relatedRecords
+                ->pluck($relationship->getRelatedKeyName())
+                ->map(static fn ($key): string => strval($key))
+                ->all(),
+            $state,
+        );
+
+        if (count($recordsToDetach) > 0) {
+            $relationship->detach($recordsToDetach);
+        }
+
+        $pivotData = $this->getPivotData();
+
+        if ($pivotData === []) {
+            $relationship->sync($state, detaching: false);
+
+            return;
+        }
+
+        $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
     }
 
     public function bulkToggleable(bool | Closure $condition = true): static
