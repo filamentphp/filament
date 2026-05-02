@@ -62,6 +62,7 @@ trait HasUserMenu
             ->label(($page ? $page::getLabel() : null) ?? Filament::getUserName(Filament::auth()->user()))
             ->icon(FilamentIcon::resolve(PanelsIconAlias::USER_MENU_PROFILE_ITEM) ?? Heroicon::UserCircle)
             ->url(Filament::getProfileUrl())
+            ->alpineClickHandler('close()')
             ->sort(-1);
 
         if ($item instanceof MenuItem) {
