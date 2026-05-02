@@ -46,20 +46,18 @@ class Toggle extends Field implements HasEmbeddedView
 
         $stateExpression = '$wire.' . $this->applyStateBindingModifiers("\$entangle('{$statePath}')");
 
-        $toggleAttributes = \Filament\Support\prepare_inherited_attributes(
-            (new ComponentAttributeBag)
-                ->merge([
-                    'aria-checked' => 'false',
-                    'autofocus' => $this->isAutofocused(),
-                    'disabled' => $this->isDisabled(),
-                    'id' => $this->getId(),
-                    'wire:loading.attr' => 'disabled',
-                    'wire:target' => $statePath,
-                ], escape: false)
-                ->merge($this->getExtraAttributes(), escape: false)
-                ->merge($this->getExtraAlpineAttributes(), escape: false)
-                ->class(['fi-fo-toggle'])
-        );
+        $toggleAttributes = (new ComponentAttributeBag)
+            ->merge([
+                'aria-checked' => 'false',
+                'autofocus' => $this->isAutofocused(),
+                'disabled' => $this->isDisabled(),
+                'id' => $this->getId(),
+                'wire:loading.attr' => 'disabled',
+                'wire:target' => $statePath,
+            ], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->merge($this->getExtraAlpineAttributes(), escape: false)
+            ->class(['fi-fo-toggle']);
 
         $onClasses = Js::from(Arr::toCssClasses([
             'fi-toggle-on',
@@ -81,7 +79,7 @@ class Toggle extends Field implements HasEmbeddedView
             x-bind:aria-checked="state?.toString()"
             x-on:click="state = ! state"
             x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
-            <?php if ($stateExpression) { ?>x-cloak<?php } ?>
+            x-cloak
             role="switch"
             type="button"
             <?= $toggleAttributes->class(['fi-toggle'])->toHtml() ?>
@@ -92,21 +90,19 @@ class Toggle extends Field implements HasEmbeddedView
             </div>
         </button>
 
-        <?php if ($stateExpression) { ?>
-            <div
-                x-cloak="inline-flex"
-                wire:ignore
-                <?= (new ComponentAttributeBag)->class([
-                    'fi-toggle fi-toggle-on fi-hidden',
-                    ...get_component_color_classes(ToggleComponent::class, $onColor),
-                ])->toHtml() ?>
-            >
-                <div>
-                    <div aria-hidden="true"></div>
-                    <div aria-hidden="true"><?= $onIconHtml ?></div>
-                </div>
+        <div
+            x-cloak="inline-flex"
+            wire:ignore
+            <?= (new ComponentAttributeBag)->class([
+                'fi-toggle fi-toggle-on fi-hidden',
+                ...get_component_color_classes(ToggleComponent::class, $onColor),
+            ])->toHtml() ?>
+        >
+            <div>
+                <div aria-hidden="true"></div>
+                <div aria-hidden="true"><?= $onIconHtml ?></div>
             </div>
-        <?php } ?>
+        </div>
 
         <?php $toggleHtml = ob_get_clean();
 

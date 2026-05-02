@@ -140,11 +140,6 @@ class Text extends Component implements HasEmbeddedView
         $hasTooltip = filled($tooltip);
 
         if ($this->isBadge()) {
-            // Inline badge rendering
-            if (! $iconPosition instanceof IconPosition) {
-                $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
-            }
-
             if (! $size instanceof Size) {
                 $size = filled($size) ? (is_string($size) ? (Size::tryFrom($size) ?? $size) : $size) : null;
             }
@@ -153,7 +148,7 @@ class Text extends Component implements HasEmbeddedView
                 $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
             }
 
-            $badgeAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+            $badgeAttributes = $this->getExtraAttributeBag()
                 ->merge([
                     'type' => $isCopyable ? 'button' : null,
                     'wire:loading.attr' => $isCopyable ? 'disabled' : null,

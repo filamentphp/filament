@@ -282,7 +282,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
         $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+        $wrapperAttributes = $this->getExtraAttributeBag()
             ->merge($extraAttributes, escape: false)
             ->except(['wire:target', 'tabindex'])
             ->merge([

@@ -28,14 +28,15 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\IconButtonComponent;
 use Filament\Support\View\Components\SectionComponent\IconComponent;
+use Filament\Support\View\SupportIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\is_slot_empty;
 
 class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, HasEmbeddedView
 {
@@ -382,14 +383,24 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                         <?php } ?>
 
                         <?php if ($collapsible) { ?>
-                            <?= view('filament::components.icon-button', [
-                                'color' => 'gray',
-                                'icon' => Heroicon::ChevronUp,
-                                'iconAlias' => \Filament\Support\View\SupportIconAlias::SECTION_COLLAPSE_BUTTON,
-                                'attributes' => (new ComponentAttributeBag)
-                                    ->merge(['x-on:click.stop' => 'isCollapsed = ! isCollapsed'], escape: false)
-                                    ->class(['fi-section-collapse-btn']),
-                            ])->toHtml() ?>
+                            <?php
+                                $collapseButtonAttributes = (new ComponentAttributeBag)
+                                    ->merge([
+                                        'type' => 'button',
+                                        'wire:loading.attr' => 'disabled',
+                                        'x-on:click.stop' => 'isCollapsed = ! isCollapsed',
+                                    ], escape: false)
+                                    ->class([
+                                        'fi-icon-btn',
+                                        'fi-size-md',
+                                        'fi-section-collapse-btn',
+                                    ])
+                                    ->color(IconButtonComponent::class, 'gray');
+                            ?>
+
+                            <button <?= $collapseButtonAttributes->toHtml() ?>>
+                                <?= generate_icon_html(Heroicon::ChevronUp, alias: SupportIconAlias::SECTION_COLLAPSE_BUTTON)?->toHtml() ?>
+                            </button>
                         <?php } ?>
                     </header>
                 <?php } ?>

@@ -3,9 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -16,18 +18,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Support\Arr;
+use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
-class TableSelect extends Field
+class TableSelect extends Field implements HasEmbeddedView
 {
     use Concerns\CanLimitItemsLength;
     use Concerns\HasPivotData;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.table-select';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.table-select';
 
     protected string | Closure | null $tableConfiguration = null;
 
@@ -415,5 +415,42 @@ class TableSelect extends Field
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true])];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAttributes = $this->getExtraAttributes();
+        $id = $this->getId();
+        $statePath = $this->getStatePath();
+
+        $properties = [
+            'isDisabled' => $this->isDisabled(),
+            'maxSelectableRecords' => $this->getMaxItems(),
+            'model' => $this->getModel(),
+            'record' => $this->getRecord(),
+            'relationshipName' => $this->getRelationshipName(),
+            'shouldIgnoreRelatedRecords' => $this->shouldIgnoreRelatedRecords(),
+            'tableConfiguration' => base64_encode($this->getTableConfiguration()),
+            'tableArguments' => $this->getTableArguments(),
+            $this->applyStateBindingModifiers('wire:model') => $statePath,
+        ];
+
+        $key = $this->getLivewireKey();
+
+        if (blank($key)) {
+            // Synthesize a stable key when the user hasn't set one, mirroring
+            // the deterministic key the Blade `@livewire` directive used to
+            // inject. Without this, Livewire would assign a fresh random ID
+            // per render and break state continuity across re-renders.
+            $key = 'fi-fo-table-select.' . md5($statePath);
+        }
+
+        $livewireHtml = \Livewire\Livewire::mount(TableSelectLivewireComponent::class, $properties, $key);
+
+        $attributes = (new ComponentAttributeBag)
+            ->merge(['id' => $id], escape: false)
+            ->merge($extraAttributes, escape: false);
+
+        return $this->wrapEmbeddedHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>');
     }
 }

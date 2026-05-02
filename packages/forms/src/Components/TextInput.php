@@ -15,7 +15,6 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\RawJs;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
-use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
@@ -398,7 +397,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
         $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+        $wrapperAttributes = $extraAttributeBag
             ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-data' => $xData,

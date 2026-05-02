@@ -52,9 +52,9 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
         $isLabelHidden = $this->isLabelHidden();
         $label = $this->getLabel();
         $isContained = $this->isContained();
-        $isRequired = method_exists($this, 'isMarkedAsRequired') ? $this->isMarkedAsRequired() : false;
+        $isRequired = $this->isMarkedAsRequired();
 
-        $attributes = \Filament\Support\prepare_inherited_attributes(new ComponentAttributeBag)
+        $attributes = (new ComponentAttributeBag)
             ->merge(['id' => $id], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class([

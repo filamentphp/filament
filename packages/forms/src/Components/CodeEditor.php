@@ -9,7 +9,6 @@ use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 class CodeEditor extends Field implements HasEmbeddedView
 {
@@ -44,7 +43,7 @@ class CodeEditor extends Field implements HasEmbeddedView
         $statePath = $this->getStatePath();
         $livewireKey = $this->getLivewireKey();
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+        $wrapperAttributes = $extraAttributeBag
             ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',

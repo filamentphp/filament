@@ -80,15 +80,15 @@ class Flex extends Component implements HasEmbeddedView
                 <?php } else { ?>
                     <?php
                         $hiddenJs = $schemaComponent->getHiddenJs();
-                        $visibleJs = $schemaComponent->getVisibleJs();
-                        $schemaComponentStatePath = $schemaComponent->getStatePath();
+                    $visibleJs = $schemaComponent->getVisibleJs();
+                    $schemaComponentStatePath = $schemaComponent->getStatePath();
 
-                        $visibilityJs = match ([filled($hiddenJs), filled($visibleJs)]) {
-                            [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
-                            [true, false] => "! ({$hiddenJs})",
-                            [false, true] => $visibleJs,
-                            default => null,
-                        };
+                    $visibilityJs = match ([filled($hiddenJs), filled($visibleJs)]) {
+                        [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
+                        [true, false] => "! ({$hiddenJs})",
+                        [false, true] => $visibleJs,
+                        default => null,
+                    };
                     ?>
                     <div
                         x-data="filamentSchemaComponent({
@@ -106,7 +106,7 @@ class Flex extends Component implements HasEmbeddedView
                             x-bind:class="{ 'fi-hidden': ! (<?= $visibilityJs ?>) }"
                             x-cloak
                         <?php } ?>
-                        <?php if (($schemaComponent instanceof Component) && $schemaComponent->canGrow()) { ?>
+                        <?php if ($schemaComponent->canGrow()) { ?>
                             class="fi-growable"
                         <?php } ?>
                     >

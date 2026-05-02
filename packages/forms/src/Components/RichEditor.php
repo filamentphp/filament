@@ -33,8 +33,8 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Js;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
@@ -1492,7 +1492,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+        $wrapperAttributes = $extraAttributeBag
             ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',

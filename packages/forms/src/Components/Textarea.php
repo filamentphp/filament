@@ -11,7 +11,6 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
@@ -81,7 +80,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
         $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+        $wrapperAttributes = $extraAttributeBag
             ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',

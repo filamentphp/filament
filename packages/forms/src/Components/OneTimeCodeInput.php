@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\View\ComponentAttributeBag;
 
 class OneTimeCodeInput extends Field implements HasEmbeddedView
 {
@@ -43,25 +42,22 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
         $placeholder = $this->getPlaceholder();
         $length = $this->getLength();
 
-        $outerAttributes = \Filament\Support\prepare_inherited_attributes(
-            $this->getExtraAttributeBag()
-                ->merge($this->getExtraAlpineAttributes(), escape: false)
-        )->class(['fi-one-time-code-input-ctn']);
+        $outerAttributes = $this->getExtraAttributeBag()
+            ->merge($this->getExtraAlpineAttributes(), escape: false)
+            ->class(['fi-one-time-code-input-ctn']);
 
-        $inputAttributes = \Filament\Support\prepare_inherited_attributes(
-            $this->getExtraInputAttributeBag()
-                ->merge([
-                    'autocomplete' => false,
-                    'autofocus' => $this->isAutofocused(),
-                    'disabled' => $this->isDisabled(),
-                    'id' => $this->getId(),
-                    'length' => $length,
-                    'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                    'readonly' => $this->isReadOnly(),
-                    'required' => $this->isRequired() && (! $this->isConcealed()),
-                    $this->applyStateBindingModifiers('wire:model') => $this->getStatePath(),
-                ], escape: false)
-        );
+        $inputAttributes = $this->getExtraInputAttributeBag()
+            ->merge([
+                'autocomplete' => false,
+                'autofocus' => $this->isAutofocused(),
+                'disabled' => $this->isDisabled(),
+                'id' => $this->getId(),
+                'length' => $length,
+                'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                'readonly' => $this->isReadOnly(),
+                'required' => $this->isRequired() && (! $this->isConcealed()),
+                $this->applyStateBindingModifiers('wire:model') => $this->getStatePath(),
+            ], escape: false);
 
         ob_start(); ?>
 

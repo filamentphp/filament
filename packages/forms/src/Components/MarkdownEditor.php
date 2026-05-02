@@ -8,7 +8,6 @@ use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
 class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
@@ -96,7 +95,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+        $wrapperAttributes = $extraAttributeBag
             ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',

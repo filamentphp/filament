@@ -31,7 +31,7 @@ use LogicException;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements CanConcealComponents, HasExtraItemActions, HasEmbeddedView
+class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use CanBeCompact;
@@ -1580,24 +1580,24 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     <?php foreach ($items as $itemKey => $item) { ?>
                         <?php
                             $itemIndex++;
-                            $isFirst = $itemIndex === 1;
-                            $isLast = $itemIndex === $itemCount;
+                        $isFirst = $itemIndex === 1;
+                        $isLast = $itemIndex === $itemCount;
 
-                            $itemLabel = $this->getItemLabel($itemKey, $itemIndex - 1);
-                            $visibleExtraItemActions = array_filter(
-                                $extraItemActions,
-                                fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                            );
-                            $itemCloneAction = $cloneAction(['item' => $itemKey]);
-                            $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                            $itemDeleteAction = $deleteAction(['item' => $itemKey]);
-                            $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
-                            $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
-                            $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
-                            $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
-                            $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
-                            $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
-                            $hasItemHeader = $hasItemHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
+                        $itemLabel = $this->getItemLabel($itemKey, $itemIndex - 1);
+                        $visibleExtraItemActions = array_filter(
+                            $extraItemActions,
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                        );
+                        $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                        $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
+                        $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                        $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
+                        $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
+                        $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
+                        $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
+                        $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
+                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $hasItemHeader = $hasItemHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                         ?>
 
                         <li
@@ -1765,22 +1765,22 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     <?php foreach ($items as $itemKey => $item) { ?>
                         <?php
                             $itemIndex++;
-                            $isFirst = $itemIndex === 1;
-                            $isLast = $itemIndex === $itemCount;
+                        $isFirst = $itemIndex === 1;
+                        $isLast = $itemIndex === $itemCount;
 
-                            $visibleExtraItemActions = array_filter(
-                                $extraItemActions,
-                                fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                            );
-                            $itemCloneAction = $cloneAction(['item' => $itemKey]);
-                            $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                            $itemDeleteAction = $deleteAction(['item' => $itemKey]);
-                            $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
-                            $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
-                            $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
-                            $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
-                            $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
-                            $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $visibleExtraItemActions = array_filter(
+                            $extraItemActions,
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                        );
+                        $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                        $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
+                        $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                        $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
+                        $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
+                        $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
+                        $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
+                        $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
+                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                         ?>
 
                         <li
@@ -1907,16 +1907,16 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                             <?php foreach ($tableColumns as $column) { ?>
                                 <?php
                                     $columnAlignment = $column->getAlignment();
-                                    $columnWidth = $column->getWidth();
-                                    $thAttributes = (new ComponentAttributeBag)
-                                        ->class([
-                                            'fi-wrapped' => $column->canHeaderWrap(),
-                                            ($columnAlignment instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
-                                        ]);
+                                $columnWidth = $column->getWidth();
+                                $thAttributes = (new ComponentAttributeBag)
+                                    ->class([
+                                        'fi-wrapped' => $column->canHeaderWrap(),
+                                        ($columnAlignment instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
+                                    ]);
 
-                                    if (filled($columnWidth)) {
-                                        $thAttributes = $thAttributes->style(['width: ' . $columnWidth]);
-                                    }
+                                if (filled($columnWidth)) {
+                                    $thAttributes = $thAttributes->style(['width: ' . $columnWidth]);
+                                }
                                 ?>
                                 <th <?= $thAttributes->toHtml() ?>>
                                     <?php if (! $column->isHeaderLabelHidden()) { ?>
@@ -1939,22 +1939,22 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                         <?php foreach ($items as $itemKey => $item) { ?>
                             <?php
                                 $itemIndex++;
-                                $isFirst = $itemIndex === 1;
-                                $isLast = $itemIndex === $itemCount;
+                            $isFirst = $itemIndex === 1;
+                            $isLast = $itemIndex === $itemCount;
 
-                                $visibleExtraItemActions = array_filter(
-                                    $extraItemActions,
-                                    fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                                );
-                                $itemCloneAction = $cloneAction(['item' => $itemKey]);
-                                $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                                $itemDeleteAction = $deleteAction(['item' => $itemKey]);
-                                $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
-                                $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
-                                $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
-                                $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
-                                $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
-                                $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                            $visibleExtraItemActions = array_filter(
+                                $extraItemActions,
+                                fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                            );
+                            $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                            $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
+                            $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                            $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
+                            $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
+                            $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
+                            $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
+                            $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
+                            $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                             ?>
 
                             <tr
@@ -1987,14 +1987,14 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                                 <?php
                                     $counter = 0;
-                                ?>
+                            ?>
 
                                 <?php foreach ($item->getComponents(withHidden: true) as $schemaComponent) { ?>
                                     <?php
-                                        throw_unless(
-                                            $schemaComponent instanceof \Filament\Schemas\Components\Component,
-                                            new \Exception('Table repeaters must only contain schema components, but [' . $schemaComponent::class . '] was used.'),
-                                        );
+                                    throw_unless(
+                                        $schemaComponent instanceof \Filament\Schemas\Components\Component,
+                                        new \Exception('Table repeaters must only contain schema components, but [' . $schemaComponent::class . '] was used.'),
+                                    );
                                     ?>
 
                                     <?php if (count($tableColumns) > $counter) { ?>
@@ -2008,11 +2008,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                                             <?php if ($schemaComponent->isVisible()) { ?>
                                                 <?php
                                                     $currentColumn = $tableColumns[$counter - 1] ?? null;
-                                                    $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
-                                                    $tdAttributes = (new ComponentAttributeBag)
-                                                        ->class([
-                                                            ($columnVerticalAlignment instanceof \Filament\Support\Enums\VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
-                                                        ]);
+                                                $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
+                                                $tdAttributes = (new ComponentAttributeBag)
+                                                    ->class([
+                                                        ($columnVerticalAlignment instanceof \Filament\Support\Enums\VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
+                                                    ]);
                                                 ?>
                                                 <td <?= $tdAttributes->toHtml() ?>>
                                                     <?= $schemaComponent->toSchemaHtml() ?>

@@ -12,11 +12,9 @@ use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\GridDirection;
-use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\ButtonComponent;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -107,25 +105,25 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             <?php foreach ($this->getOptions() as $value => $label) { ?>
                 <?php
                     $inputId = "{$id}-{$value}";
-                    $shouldOptionBeDisabled = $isDisabled || $this->isOptionDisabled($value, $label);
-                    $color = $this->getColor($value);
-                    $icon = $this->getIcon($value);
-                    $tooltip = $this->getTooltip($value);
+                $shouldOptionBeDisabled = $isDisabled || $this->isOptionDisabled($value, $label);
+                $color = $this->getColor($value);
+                $icon = $this->getIcon($value);
+                $tooltip = $this->getTooltip($value);
 
-                    // Simplified button rendering for label tags
-                    $buttonAttributes = (new ComponentAttributeBag)
-                        ->merge([
-                            'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
-                            'aria-label' => $areButtonLabelsHidden ? trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : (string) $label)) : null,
-                            'disabled' => $shouldOptionBeDisabled && blank($tooltip),
-                            'for' => $inputId,
-                        ], escape: false)
-                        ->class([
-                            'fi-btn',
-                            'fi-size-md',
-                            'fi-disabled' => $shouldOptionBeDisabled,
-                        ])
-                        ->color(app(ButtonComponent::class, ['isOutlined' => false]), $color);
+                // Simplified button rendering for label tags
+                $buttonAttributes = (new ComponentAttributeBag)
+                    ->merge([
+                        'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
+                        'aria-label' => $areButtonLabelsHidden ? trim(strip_tags((string) $label)) : null,
+                        'disabled' => $shouldOptionBeDisabled && blank($tooltip),
+                        'for' => $inputId,
+                    ], escape: false)
+                    ->class([
+                        'fi-btn',
+                        'fi-size-md',
+                        'fi-disabled' => $shouldOptionBeDisabled,
+                    ])
+                    ->color(app(ButtonComponent::class, ['isOutlined' => false]), $color);
                 ?>
 
                 <div class="fi-fo-toggle-buttons-btn-ctn">
@@ -144,7 +142,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
                     <label
                         <?php if (filled($tooltip)) { ?>
-                            x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?> }"
+                            x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: false }"
                         <?php } ?>
                         <?= $buttonAttributes->toHtml() ?>
                     >
@@ -182,26 +180,26 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             <?php foreach ($this->getOptions() as $value => $label) { ?>
                 <?php
                     $inputId = "{$id}-{$value}";
-                    $shouldOptionBeDisabled = $isDisabled || $this->isOptionDisabled($value, $label);
-                    $color = $this->getColor($value);
-                    $icon = $this->getIcon($value);
-                    $tooltip = $this->getTooltip($value);
+                $shouldOptionBeDisabled = $isDisabled || $this->isOptionDisabled($value, $label);
+                $color = $this->getColor($value);
+                $icon = $this->getIcon($value);
+                $tooltip = $this->getTooltip($value);
 
-                    // Inlined slice of `<x-filament::button tag="label" grouped>` for the grouped variant.
-                    $buttonAttributes = (new ComponentAttributeBag)
-                        ->merge([
-                            'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
-                            'aria-label' => $areButtonLabelsHidden ? trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : (string) $label)) : null,
-                            'disabled' => $shouldOptionBeDisabled && blank($tooltip),
-                            'for' => $inputId,
-                        ], escape: false)
-                        ->class([
-                            'fi-btn',
-                            'fi-btn-group-btn',
-                            'fi-size-md',
-                            'fi-disabled' => $shouldOptionBeDisabled,
-                        ])
-                        ->color(app(ButtonComponent::class, ['isOutlined' => false]), $color);
+                // Inlined slice of `<x-filament::button tag="label" grouped>` for the grouped variant.
+                $buttonAttributes = (new ComponentAttributeBag)
+                    ->merge([
+                        'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
+                        'aria-label' => $areButtonLabelsHidden ? trim(strip_tags((string) $label)) : null,
+                        'disabled' => $shouldOptionBeDisabled && blank($tooltip),
+                        'for' => $inputId,
+                    ], escape: false)
+                    ->class([
+                        'fi-btn',
+                        'fi-btn-group-btn',
+                        'fi-size-md',
+                        'fi-disabled' => $shouldOptionBeDisabled,
+                    ])
+                    ->color(app(ButtonComponent::class, ['isOutlined' => false]), $color);
                 ?>
 
                 <input
@@ -219,7 +217,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
                 <label
                     <?php if (filled($tooltip)) { ?>
-                        x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?> }"
+                        x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: false }"
                     <?php } ?>
                     <?= $buttonAttributes->toHtml() ?>
                 >

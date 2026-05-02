@@ -247,7 +247,10 @@ class Tabs extends Component implements HasEmbeddedView
         $isVertical = $this->isVertical();
         $label = $this->getLabel();
         $renderHookScopes = $this->getRenderHookScopes();
-        $tabs = $this->getChildSchema()->getComponents();
+        $tabs = array_filter(
+            $this->getChildSchema()->getComponents(),
+            static fn ($component): bool => $component instanceof Tab,
+        );
         $tabsKey = $this->getKey();
 
         $getTabVisibilityJs = static function (Tab $tab, ?int $index = null, ?string $mode = null) use ($isScrollable): ?string {
@@ -362,7 +365,7 @@ class Tabs extends Component implements HasEmbeddedView
 
             <nav <?= $navAttributes->toHtml() ?>>
                 <?php foreach ($this->getStartRenderHooks() as $startRenderHook) { ?>
-                    <?= FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) ?>
+                    <?= FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
 
                 <?php foreach ($tabs as $index => $tab) {
@@ -378,10 +381,6 @@ class Tabs extends Component implements HasEmbeddedView
                     $tabKey = $tab->getKey(isAbsolute: false);
                     $tabLabel = $tab->getLabel();
                     $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'inline');
-
-                    if (! $tabIconPosition instanceof IconPosition) {
-                        $tabIconPosition = filled($tabIconPosition) ? (IconPosition::tryFrom($tabIconPosition) ?? $tabIconPosition) : null;
-                    }
 
                     $tabItemAttributes = (new ComponentAttributeBag)
                         ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
@@ -593,7 +592,7 @@ class Tabs extends Component implements HasEmbeddedView
                 <?php } ?>
 
                 <?php foreach ($this->getEndRenderHooks() as $endRenderHook) { ?>
-                    <?= FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes) ?>
+                    <?= FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
             </nav>
 
@@ -607,7 +606,7 @@ class Tabs extends Component implements HasEmbeddedView
                 <?php } else { ?>
                     <?= $tab->toHtml() ?>
                 <?php }
-            } ?>
+                } ?>
         </div>
 
         <?php return ob_get_clean();

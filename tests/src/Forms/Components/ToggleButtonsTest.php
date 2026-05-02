@@ -99,12 +99,12 @@ describe('properties', function (): void {
         expect($toggleButtons->hasNullableBooleanState())->toBeTrue();
     });
 
-    it('can set `grouped()` view', function (): void {
+    it('can set `grouped()`', function (): void {
         $grouped = ToggleButtons::make('status')
             ->options(['a' => 'A'])
             ->grouped();
 
-        expect($grouped->getView())->toBe(ToggleButtons::GROUPED_VIEW);
+        expect($grouped->isGrouped())->toBeTrue();
     });
 });
 

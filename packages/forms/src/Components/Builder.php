@@ -13,10 +13,13 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\DropdownComponent\ItemComponent;
+use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
@@ -25,8 +28,9 @@ use Illuminate\View\ComponentAttributeBag;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use function Filament\Support\generate_icon_html;
+use function Filament\Support\generate_loading_indicator_html;
 
-class Builder extends Field implements CanConcealComponents, HasExtraItemActions, HasEmbeddedView
+class Builder extends Field implements CanConcealComponents, HasEmbeddedView, HasExtraItemActions
 {
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.builder';
 
@@ -1192,6 +1196,124 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         return (bool) $this->evaluate($this->hasBlockHeaders);
     }
 
+    /**
+     * @param  array<Block>  $blocks
+     * @param  array<string, ?int> | int | null  $columns
+     */
+    public static function renderBlockPickerHtml(
+        Action $action,
+        array $blocks,
+        string $key,
+        string $triggerHtml,
+        Alignment | string | null $actionAlignment = null,
+        ?string $afterItem = null,
+        array | int | null $columns = null,
+        Width | string | null $width = null,
+    ): string {
+        $placement = match ($actionAlignment) {
+            Alignment::Start, Alignment::Left => 'bottom-start',
+            Alignment::End, Alignment::Right => 'bottom-end',
+            default => null,
+        };
+
+        $alignmentClass = ($actionAlignment instanceof Alignment)
+            ? ('fi-align-' . $actionAlignment->value)
+            : (is_string($actionAlignment) ? $actionAlignment : null);
+
+        $widthClass = ($width instanceof Width)
+            ? "fi-width-{$width->value}"
+            : (is_string($width) ? $width : null);
+
+        $xFloatDirective = 'x-float' . ($placement ? ".placement.{$placement}" : '') . '.flip.shift.offset';
+
+        $dropdownAttributes = (new ComponentAttributeBag)
+            ->merge(['x-data' => 'filamentDropdown'], escape: false)
+            ->class([
+                'fi-dropdown',
+                'fi-fo-builder-block-picker',
+                $alignmentClass => filled($alignmentClass),
+            ]);
+
+        $panelAttributes = (new ComponentAttributeBag)
+            ->merge([
+                'x-cloak' => true,
+                'x-ref' => 'panel',
+                'x-transition:enter-start' => 'fi-opacity-0',
+                'x-transition:leave-end' => 'fi-opacity-0',
+                $xFloatDirective => '{ offset: 8 }',
+            ], escape: false)
+            ->class([
+                'fi-dropdown-panel',
+                $widthClass => filled($widthClass),
+            ]);
+
+        $loadingDelay = config('filament.livewire_loading_delay', 'default');
+
+        ob_start(); ?>
+
+        <div <?= $dropdownAttributes->toHtml() ?>>
+            <div
+                x-on:keyup.enter="toggle($event)"
+                x-on:keyup.space="toggle($event)"
+                x-on:mousedown="if ($event.button === 0) toggle($event)"
+                class="fi-dropdown-trigger"
+            >
+                <?= $triggerHtml ?>
+            </div>
+
+            <div <?= $panelAttributes->toHtml() ?>>
+                <div class="fi-dropdown-list">
+                    <div <?= (new ComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
+                        <?php foreach ($blocks as $block) { ?>
+                            <?php
+                                $blockIcon = $block->getIcon();
+
+                            $wireClickArguments = ['block' => $block->getName()];
+
+                            if (filled($afterItem)) {
+                                $wireClickArguments['afterItem'] = $afterItem;
+                            }
+
+                            $wireClick = "mountAction('{$action->getName()}', " . Js::from($wireClickArguments) . ", { schemaComponent: '{$key}' })";
+
+                            $itemAttributes = (new ComponentAttributeBag)
+                                ->merge([
+                                    'x-on:click' => 'close',
+                                    'wire:click' => $wireClick,
+                                    'type' => 'button',
+                                    'wire:loading.attr' => 'disabled',
+                                    'wire:target' => $wireClick,
+                                ], escape: false)
+                                ->class(['fi-dropdown-list-item'])
+                                ->color(ItemComponent::class, 'gray');
+                            ?>
+
+                            <button <?= $itemAttributes->toHtml() ?>>
+                                <?php if (filled($blockIcon)) { ?>
+                                    <?= generate_icon_html($blockIcon, attributes: (new ComponentAttributeBag([
+                                        'wire:loading.remove.delay.' . $loadingDelay => true,
+                                        'wire:target' => $wireClick,
+                                    ]))->color(IconComponent::class, 'gray'))?->toHtml() ?>
+                                <?php } ?>
+
+                                <?= generate_loading_indicator_html(new ComponentAttributeBag([
+                                    'wire:loading.delay.' . $loadingDelay => '',
+                                    'wire:target' => $wireClick,
+                                ]))->toHtml() ?>
+
+                                <span class="fi-dropdown-list-item-label">
+                                    <?= e($block->getLabel()) ?>
+                                </span>
+                            </button>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php return ob_get_clean();
+    }
+
     public function toEmbeddedHtml(): string
     {
         $items = $this->getItems();
@@ -1280,26 +1402,32 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 >
                     <?php foreach ($items as $itemKey => $item) { ?>
                         <?php
-                            $itemIndex++;
-                            $isFirst = $itemIndex === 1;
-                            $isLast = $itemIndex === $itemCount;
+                            $block = $item->getParentComponent();
 
-                            $visibleExtraItemActions = array_filter(
-                                $extraItemActions,
-                                fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                            );
-                            $itemCloneAction = $cloneAction(['item' => $itemKey]);
-                            $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
-                            $itemDeleteAction = $deleteAction(['item' => $itemKey]);
-                            $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
-                            $itemEditAction = $editAction(['item' => $itemKey]);
-                            $editActionIsVisible = $hasBlockPreviews && $itemEditAction->isVisible();
-                            $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
-                            $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
-                            $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
-                            $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
-                            $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
-                            $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
+                        if (! $block instanceof Block) {
+                            continue;
+                        }
+
+                        $itemIndex++;
+                        $isFirst = $itemIndex === 1;
+                        $isLast = $itemIndex === $itemCount;
+
+                        $visibleExtraItemActions = array_filter(
+                            $extraItemActions,
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                        );
+                        $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                        $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
+                        $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                        $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
+                        $itemEditAction = $editAction(['item' => $itemKey]);
+                        $editActionIsVisible = $hasBlockPreviews && $itemEditAction->isVisible();
+                        $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
+                        $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
+                        $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
+                        $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
+                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                         ?>
 
                         <li
@@ -1312,7 +1440,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                             x-on:builder-collapse.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = true)"
                             x-on:expand="isCollapsed = false"
                             x-sortable-item="<?= e($itemKey) ?>"
-                            <?= $item->getParentComponent()->getExtraAttributeBag()
+                            <?= $block->getExtraAttributeBag()
                                 ->class([
                                     'fi-fo-builder-item',
                                     'fi-fo-builder-item-has-header' => $hasItemHeader,
@@ -1342,8 +1470,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                                     <?php } ?>
 
                                     <?php
-                                        $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $itemKey);
-                                    ?>
+                                        $blockIcon = $block->getIcon($item->getRawState(), $itemKey);
+                                ?>
 
                                     <?php if ($hasBlockIcons && filled($blockIcon)) { ?>
                                         <?= generate_icon_html($blockIcon, attributes: (new ComponentAttributeBag)->class(['fi-fo-builder-item-header-icon']))?->toHtml() ?>
@@ -1352,11 +1480,11 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                                     <?php if ($hasBlockLabels) { ?>
                                         <<?= e($blockLabelHeadingTag) ?>
                                             <?= (new ComponentAttributeBag)->class([
-                                                'fi-fo-builder-item-header-label',
-                                                'fi-truncated' => $isBlockLabelTruncated,
-                                            ])->toHtml() ?>
+                                            'fi-fo-builder-item-header-label',
+                                            'fi-truncated' => $isBlockLabelTruncated,
+                                        ])->toHtml() ?>
                                         >
-                                            <?= e($item->getParentComponent()->getLabel($item->getRawState(), $itemKey, $itemIndex - 1)) ?>
+                                            <?= e($block->getLabel($item->getRawState(), $itemKey, $itemIndex - 1)) ?>
                                             <?php if ($hasBlockNumbers) { ?>
                                                 <?= e($itemIndex) ?>
                                             <?php } ?>
@@ -1399,18 +1527,18 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                             <div
                                 x-show="! isCollapsed"
                                 <?= (new ComponentAttributeBag)->class([
-                                    'fi-fo-builder-item-content',
-                                    'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $item->getParentComponent()->hasPreview(),
+                                'fi-fo-builder-item-content',
+                                'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $block->hasPreview(),
                                 ])->toHtml() ?>
                             >
-                                <?php if ($hasBlockPreviews && $item->getParentComponent()->hasPreview()) { ?>
+                                <?php if ($hasBlockPreviews && $block->hasPreview()) { ?>
                                     <div
                                         <?= (new ComponentAttributeBag)->class([
-                                            'fi-fo-builder-item-preview',
-                                            'fi-interactive' => $hasInteractiveBlockPreviews,
-                                        ])->toHtml() ?>
+                                        'fi-fo-builder-item-preview',
+                                        'fi-interactive' => $hasInteractiveBlockPreviews,
+                                    ])->toHtml() ?>
                                     >
-                                        <?= e($item->getParentComponent()->renderPreview($item->getRawState())) ?>
+                                        <?= $block->renderPreview($item->getRawState())->render() ?>
                                     </div>
 
                                     <?php if ($editActionIsVisible && (! $hasInteractiveBlockPreviews)) { ?>
@@ -1431,16 +1559,15 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                                 <li class="fi-fo-builder-add-between-items-ctn">
                                     <div class="fi-fo-builder-add-between-items">
                                         <div class="fi-fo-builder-block-picker-ctn">
-                                            <?= view('filament-forms::components.builder.block-picker', [
-                                                'action' => $addBetweenAction,
-                                                'afterItem' => $itemKey,
-                                                'columns' => $blockPickerColumns,
-                                                'blocks' => $blockPickerBlocks,
-                                                'key' => $key,
-                                                'width' => $blockPickerWidth,
-                                                'trigger' => new \Illuminate\Support\HtmlString($addBetweenAction(['afterItem' => $itemKey])->toHtml()),
-                                                'attributes' => new ComponentAttributeBag,
-                                            ])->toHtml() ?>
+                                            <?= static::renderBlockPickerHtml(
+                                                action: $addBetweenAction,
+                                                blocks: $blockPickerBlocks,
+                                                key: $key,
+                                                triggerHtml: $addBetweenAction(['afterItem' => $itemKey])->toHtml(),
+                                                afterItem: $itemKey,
+                                                columns: $blockPickerColumns,
+                                                width: $blockPickerWidth,
+                                            ) ?>
                                         </div>
                                     </div>
                                 </li>
@@ -1457,16 +1584,15 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             <?php } ?>
 
             <?php if ($isAddable && $addAction->isVisible()) { ?>
-                <?= view('filament-forms::components.builder.block-picker', [
-                    'action' => $addAction,
-                    'actionAlignment' => $addActionAlignment,
-                    'blocks' => $blockPickerBlocks,
-                    'columns' => $blockPickerColumns,
-                    'key' => $key,
-                    'width' => $blockPickerWidth,
-                    'trigger' => new \Illuminate\Support\HtmlString($addAction->toHtml()),
-                    'attributes' => new ComponentAttributeBag,
-                ])->toHtml() ?>
+                <?= static::renderBlockPickerHtml(
+                    action: $addAction,
+                    blocks: $blockPickerBlocks,
+                    key: $key,
+                    triggerHtml: $addAction->toHtml(),
+                    actionAlignment: $addActionAlignment,
+                    columns: $blockPickerColumns,
+                    width: $blockPickerWidth,
+                ) ?>
             <?php } ?>
         </div>
 

@@ -386,7 +386,7 @@ class KeyValue extends Field implements HasEmbeddedView
         $statePath = $this->getStatePath();
         $valuePlaceholder = $this->getValuePlaceholder();
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+        $wrapperAttributes = $this->getExtraAttributeBag()
             ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',

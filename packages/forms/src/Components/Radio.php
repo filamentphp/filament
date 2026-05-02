@@ -8,7 +8,6 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\GridDirection;
-use Illuminate\View\ComponentAttributeBag;
 
 class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedView
 {
@@ -91,7 +90,7 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
                             'fi-valid' => ! $hasError,
                             'fi-invalid' => $hasError,
                         ]);
-                    $first = false;
+                $first = false;
                 ?>
 
                 <label class="fi-fo-radio-label">

@@ -154,7 +154,7 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
         $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
         $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+        $wrapperAttributes = $extraAttributeBag
             ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => "\$el.querySelector('input:not([type=hidden])')?.focus()",

@@ -121,7 +121,7 @@ class Livewire extends Component implements HasEmbeddedView
         $properties = $this->getComponentProperties();
 
         if (blank($key)) {
-            // Synthesise a stable key when the user hasn't set one, mirroring
+            // Synthesize a stable key when the user hasn't set one, mirroring
             // the deterministic key the Blade `@livewire` directive used to
             // inject. Without this, Livewire would assign a fresh random ID
             // per render and break state continuity across re-renders.

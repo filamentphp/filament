@@ -3,13 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Illuminate\View\ComponentAttributeBag;
 
-class LivewireField extends Field
+class LivewireField extends Field implements HasEmbeddedView
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.livewire-field';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.livewire-field';
 
     protected bool | Closure $isLazy = false;
 
@@ -80,5 +79,36 @@ class LivewireField extends Field
             ...$properties,
             ...$this->getData(),
         ];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAttributes = $this->getExtraAttributes();
+        $id = $this->getId();
+        $hasWrapper = filled($id) || filled($extraAttributes);
+
+        $key = $this->getLivewireKey();
+        $component = $this->getComponent();
+        $properties = $this->getComponentProperties();
+
+        if (blank($key)) {
+            // Synthesize a stable key when the user hasn't set one, mirroring
+            // the deterministic key the Blade `@livewire` directive used to
+            // inject. Without this, Livewire would assign a fresh random ID
+            // per render and break state continuity across re-renders.
+            $key = 'fi-fo-livewire-field.' . md5($component . ':' . ($this->getKey() ?? $this->getStatePath()));
+        }
+
+        $livewireHtml = \Livewire\Livewire::mount($component, $properties, $key);
+
+        if ($hasWrapper) {
+            $attributes = (new ComponentAttributeBag)
+                ->merge(['id' => $id], escape: false)
+                ->merge($extraAttributes, escape: false);
+
+            $livewireHtml = '<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>';
+        }
+
+        return $this->wrapEmbeddedHtml($livewireHtml);
     }
 }

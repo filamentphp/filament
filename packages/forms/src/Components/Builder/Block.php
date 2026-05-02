@@ -56,9 +56,15 @@ class Block extends Component
         return $this;
     }
 
-    public function getIcon(): string | BackedEnum | Htmlable | null
+    /**
+     * @param  array<string, mixed> | null  $state
+     */
+    public function getIcon(?array $state = null, ?string $key = null): string | BackedEnum | Htmlable | null
     {
-        return $this->evaluate($this->icon);
+        return $this->evaluate(
+            $this->icon,
+            ['key' => $key, 'state' => $state, 'uuid' => $key],
+        );
     }
 
     public function maxItems(int | Closure | null $maxItems): static

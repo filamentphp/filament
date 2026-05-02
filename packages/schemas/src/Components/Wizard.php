@@ -352,7 +352,10 @@ class Wizard extends Component implements HasEmbeddedView
         $key = $this->getKey();
         $previousAction = $this->getAction('previous');
         $nextAction = $this->getAction('next');
-        $steps = $this->getChildSchema()->getComponents();
+        $steps = array_filter(
+            $this->getChildSchema()->getComponents(),
+            static fn ($component): bool => $component instanceof Step,
+        );
         $isHeaderHidden = $this->isHeaderHidden();
 
         $outerAttributes = (new ComponentAttributeBag)
@@ -387,10 +390,10 @@ class Wizard extends Component implements HasEmbeddedView
             <input
                 type="hidden"
                 value="<?= e(collect($steps)
-                    ->filter(static fn (Step $step): bool => $step->isVisible())
-                    ->map(static fn (Step $step): ?string => $step->getKey())
-                    ->values()
-                    ->toJson()) ?>"
+                ->filter(static fn (Step $step): bool => $step->isVisible())
+                ->map(static fn (Step $step): ?string => $step->getKey())
+                ->values()
+                ->toJson()) ?>"
                 x-ref="stepsData"
             />
 
@@ -448,7 +451,7 @@ class Wizard extends Component implements HasEmbeddedView
                                             x-show="getStepIndex(step) <= <?= $stepIndex ?>"
                                             class="fi-sc-wizard-header-step-number"
                                         >
-                                            <?= str_pad($stepIndex + 1, 2, '0', STR_PAD_LEFT) ?>
+                                            <?= str_pad((string) ($stepIndex + 1), 2, '0', STR_PAD_LEFT) ?>
                                         </span>
                                     <?php } ?>
                                 </div>

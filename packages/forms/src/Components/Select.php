@@ -1857,7 +1857,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
         $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
 
-        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+        $wrapperAttributes = $this->getExtraAttributeBag()
             ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => $isNative
@@ -1935,11 +1935,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                             <?php if ($this->isOptionDisabled($groupedValue, $groupedLabel)) { ?> disabled <?php } ?>
                                             value="<?= e($groupedValue) ?>"
                                         >
-                                            <?php if ($isHtmlAllowed) { ?>
-                                                <?= $groupedLabel ?>
-                                            <?php } else { ?>
-                                                <?= e($groupedLabel) ?>
-                                            <?php } ?>
+                                            <?= e($groupedLabel) ?>
                                         </option>
                                     <?php } ?>
                                 </optgroup>
@@ -1948,11 +1944,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     <?php if ($this->isOptionDisabled($value, $label)) { ?> disabled <?php } ?>
                                     value="<?= e($value) ?>"
                                 >
-                                    <?php if ($isHtmlAllowed) { ?>
-                                        <?= $label ?>
-                                    <?php } else { ?>
-                                        <?= e($label) ?>
-                                    <?php } ?>
+                                    <?= e($label) ?>
                                 </option>
                             <?php } ?>
                         <?php } ?>

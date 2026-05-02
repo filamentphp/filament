@@ -28,7 +28,6 @@ use Illuminate\Support\Arr;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\is_slot_empty;
 
 class Callout extends Component implements HasEmbeddedView
 {
@@ -256,7 +255,7 @@ class Callout extends Component implements HasEmbeddedView
         $hasIcon = filled($icon);
         $hasControls = filled($controls?->toHtml());
 
-        $attributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+        $attributes = $this->getExtraAttributeBag()
             ->color(CalloutComponent::class, $color)
             ->class(['fi-sc-callout', 'fi-callout']);
 
