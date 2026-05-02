@@ -420,9 +420,9 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
-            $this->extraAttributes[] = $attributes;
+            $this->extraTriggerAttributes[] = $attributes;
         } else {
-            $this->extraAttributes = [$attributes];
+            $this->extraTriggerAttributes = [$attributes];
         }
 
         return $this;

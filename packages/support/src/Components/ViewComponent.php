@@ -29,6 +29,13 @@ abstract class ViewComponent extends Component implements Htmlable
 
     protected View $viewInstance;
 
+    protected ?string $publishedViewOverrideCheckPath = null;
+
+    /**
+     * @var array<string, bool>
+     */
+    private static array $hasPublishedEmbeddedViewOverrideCache = [];
+
     /**
      * @param  view-string | null  $view
      * @param  array<string, mixed> | Closure  $viewData
@@ -119,10 +126,40 @@ abstract class ViewComponent extends Component implements Htmlable
     public function toHtml(): string
     {
         if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+            if (
+                filled($publishedViewOverrideCheckPath = $this->getPublishedViewOverrideCheckPath())
+                && static::hasPublishedEmbeddedViewOverride($publishedViewOverrideCheckPath)
+            ) {
+                $this->view = $publishedViewOverrideCheckPath;
+
+                return $this->render()->render();
+            }
+
             return $this->toEmbeddedHtml();
         }
 
         return $this->render()->render();
+    }
+
+    public function getPublishedViewOverrideCheckPath(): ?string
+    {
+        return $this->publishedViewOverrideCheckPath;
+    }
+
+    public static function hasPublishedEmbeddedViewOverride(string $view): bool
+    {
+        return self::$hasPublishedEmbeddedViewOverrideCache[$view] ??= self::checkForPublishedEmbeddedViewOverride($view);
+    }
+
+    protected static function checkForPublishedEmbeddedViewOverride(string $view): bool
+    {
+        if (! str_contains($view, '::')) {
+            return false;
+        }
+
+        [$namespace, $name] = explode('::', $view, 2);
+
+        return file_exists(resource_path('views/vendor/' . $namespace . '/' . str_replace('.', '/', $name) . '.blade.php'));
     }
 
     public function toHtmlString(): ?HtmlString

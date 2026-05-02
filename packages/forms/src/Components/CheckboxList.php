@@ -511,9 +511,6 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 <?php if ($isSearchable) { ?>
                     <div
                         <?= (new ComponentAttributeBag)
-                            ->merge([
-                                'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
-                            ], escape: false)
                             ->class([
                                 'fi-input-wrp',
                                 'fi-fo-checkbox-list-search-input-wrp',

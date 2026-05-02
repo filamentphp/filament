@@ -340,11 +340,11 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                     isCollapsed: <?php if ($shouldPersistCollapsed) { ?>$persist(<?= Js::from($isCollapsed) ?>).as(`section-${<?= Js::from($collapseId) ?> ?? $el.id}-isCollapsed`)<?php } else { ?><?= Js::from($isCollapsed) ?><?php } ?>,
                 }"
                 <?php if ($collapsible) { ?>
-                    x-on:collapse-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = true"
+                    x-on:collapse-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = true"
                     x-on:expand="isCollapsed = false"
-                    x-on:expand-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = false"
-                    x-on:open-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = false"
-                    x-on:toggle-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = ! isCollapsed"
+                    x-on:expand-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = false"
+                    x-on:open-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = false"
+                    x-on:toggle-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = ! isCollapsed"
                     x-bind:class="isCollapsed && 'fi-collapsed'"
                 <?php } ?>
                 <?= $sectionAttributes->toHtml() ?>
