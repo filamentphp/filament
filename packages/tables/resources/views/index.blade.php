@@ -122,6 +122,14 @@
     $columnManagerTriggerAction = $getColumnManagerTriggerAction();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManager;
     $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
+
+    // https://github.com/filamentphp/filament/pull/19787
+    $headerVisibilityMode = ($hasHeader || $hasNonBulkToolbarAction)
+        ? 'visible'
+        : (count($toolbarActions) ? 'selection' : 'hidden');
+    $headerToolbarVisibilityMode = ($hasHeaderToolbar || $hasNonBulkToolbarAction)
+        ? 'visible'
+        : (count($toolbarActions) ? 'selection' : 'hidden');
     $headingTag = $getHeadingTag();
     $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
@@ -214,6 +222,7 @@
             <div
                 @if (! $hasHeader) x-cloak @endif
                 x-show="@js($hasHeader) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
+                wire:key="{{ $this->getId() }}.table.header.{{ $headerVisibilityMode }}"
                 class="fi-ta-header-ctn"
             >
                 {{ FilamentView::renderHook(TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
@@ -293,6 +302,7 @@
                 <div
                     @if (! $hasHeaderToolbar) x-cloak @endif
                     x-show="@js($hasHeaderToolbar) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
+                    wire:key="{{ $this->getId() }}.table.header-toolbar.{{ $headerToolbarVisibilityMode }}"
                     class="fi-ta-header-toolbar"
                 >
                     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
@@ -504,12 +514,15 @@
                                             $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
                                             $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
                                             $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
+                                            $filtersTriggerActionExtraModalWindowAttributeBag = $filtersTriggerAction->getExtraModalWindowAttributeBag();
+                                            $filtersTriggerActionExtraModalOverlayAttributeBag = $filtersTriggerAction->getExtraModalOverlayAttributeBag();
                                             $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
                                             $filtersTriggerActionModalFooterActionsAlignment = $filtersTriggerAction->getModalFooterActionsAlignment();
                                             $filtersTriggerActionModalHeading = $filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading');
                                             $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
                                             $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
                                             $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
+                                            $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
                                             $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
                                             $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
                                         @endphp
@@ -521,12 +534,15 @@
                                             :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
                                             :description="$filtersTriggerActionModalDescription"
+                                            :extra-modal-window-attribute-bag="$filtersTriggerActionExtraModalWindowAttributeBag"
+                                            :extra-modal-overlay-attribute-bag="$filtersTriggerActionExtraModalOverlayAttributeBag"
                                             :footer-actions="$filtersTriggerActionVisibleModalFooterActions"
                                             :footer-actions-alignment="$filtersTriggerActionModalFooterActionsAlignment"
                                             :heading="$filtersTriggerActionModalHeading"
                                             :icon="$filtersTriggerActionModalIcon"
                                             :icon-color="$filtersTriggerActionModalIconColor"
                                             :slide-over="$filtersTriggerActionIsModalSlideOver"
+                                            :slide-over-position="$filtersTriggerActionModalSlideOverPosition"
                                             :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
                                             :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
                                             :width="$filtersFormWidth"
@@ -595,12 +611,15 @@
                                             $columnManagerTriggerActionIsModalClosedByClickingAway = $columnManagerTriggerAction->isModalClosedByClickingAway();
                                             $columnManagerTriggerActionIsModalClosedByEscaping = $columnManagerTriggerAction->isModalClosedByEscaping();
                                             $columnManagerTriggerActionModalDescription = $columnManagerTriggerAction->getModalDescription();
+                                            $columnManagerTriggerActionExtraModalWindowAttributeBag = $columnManagerTriggerAction->getExtraModalWindowAttributeBag();
+                                            $columnManagerTriggerActionExtraModalOverlayAttributeBag = $columnManagerTriggerAction->getExtraModalOverlayAttributeBag();
                                             $columnManagerTriggerActionVisibleModalFooterActions = $columnManagerTriggerAction->getVisibleModalFooterActions();
                                             $columnManagerTriggerActionModalFooterActionsAlignment = $columnManagerTriggerAction->getModalFooterActionsAlignment();
                                             $columnManagerTriggerActionModalHeading = $columnManagerTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.column_manager.heading');
                                             $columnManagerTriggerActionModalIcon = $columnManagerTriggerAction->getModalIcon();
                                             $columnManagerTriggerActionModalIconColor = $columnManagerTriggerAction->getModalIconColor();
                                             $columnManagerTriggerActionIsModalSlideOver = $columnManagerTriggerAction->isModalSlideOver();
+                                            $columnManagerTriggerActionModalSlideOverPosition = $columnManagerTriggerAction->getModalSlideOverPosition();
                                             $columnManagerTriggerActionIsModalFooterSticky = $columnManagerTriggerAction->isModalFooterSticky();
                                             $columnManagerTriggerActionIsModalHeaderSticky = $columnManagerTriggerAction->isModalHeaderSticky();
                                         @endphp
@@ -612,12 +631,15 @@
                                             :close-by-clicking-away="$columnManagerTriggerActionIsModalClosedByClickingAway"
                                             :close-by-escaping="$columnManagerTriggerActionIsModalClosedByEscaping"
                                             :description="$columnManagerTriggerActionModalDescription"
+                                            :extra-modal-window-attribute-bag="$columnManagerTriggerActionExtraModalWindowAttributeBag"
+                                            :extra-modal-overlay-attribute-bag="$columnManagerTriggerActionExtraModalOverlayAttributeBag"
                                             :footer-actions="$columnManagerTriggerActionVisibleModalFooterActions"
                                             :footer-actions-alignment="$columnManagerTriggerActionModalFooterActionsAlignment"
                                             :heading="$columnManagerTriggerActionModalHeading"
                                             :icon="$columnManagerTriggerActionModalIcon"
                                             :icon-color="$columnManagerTriggerActionModalIconColor"
                                             :slide-over="$columnManagerTriggerActionIsModalSlideOver"
+                                            :slide-over-position="$columnManagerTriggerActionModalSlideOverPosition"
                                             :sticky-footer="$columnManagerTriggerActionIsModalFooterSticky"
                                             :sticky-header="$columnManagerTriggerActionIsModalHeaderSticky"
                                             :width="$columnManagerWidth"

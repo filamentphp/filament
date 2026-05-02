@@ -6,6 +6,46 @@ use Illuminate\Support\Str;
 
 class Color
 {
+    /**
+     * WCAG 2.1 minimum contrast ratio for normal-size text at conformance level AA
+     * (success criterion 1.4.3 Contrast (Minimum)).
+     *
+     * @ref https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
+     */
+    public const WCAG_AA_TEXT = 4.5;
+
+    /**
+     * WCAG 2.1 minimum contrast ratio for large-scale text at conformance level AA
+     * (success criterion 1.4.3 Contrast (Minimum)).
+     *
+     * @ref https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
+     */
+    public const WCAG_AA_LARGE_TEXT = 3.0;
+
+    /**
+     * WCAG 2.1 contrast ratio for user interface components and graphical objects
+     * (success criterion 1.4.11 Non-text Contrast). Defined only at conformance level AA.
+     *
+     * @ref https://www.w3.org/WAI/WCAG21/Understanding/non-text-contrast.html
+     */
+    public const WCAG_AA_NON_TEXT = 3.0;
+
+    /**
+     * WCAG 2.1 enhanced contrast ratio for normal-size text at conformance level AAA
+     * (success criterion 1.4.6 Contrast (Enhanced)).
+     *
+     * @ref https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced.html
+     */
+    public const WCAG_AAA_TEXT = 7.0;
+
+    /**
+     * WCAG 2.1 enhanced contrast ratio for large-scale text at conformance level AAA
+     * (success criterion 1.4.6 Contrast (Enhanced)).
+     *
+     * @ref https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced.html
+     */
+    public const WCAG_AAA_LARGE_TEXT = 4.5;
+
     public const Slate = [
         50 => 'oklch(0.984 0.003 247.858)',
         100 => 'oklch(0.968 0.007 247.896)',
@@ -517,12 +557,47 @@ class Color
 
     public static function isTextContrastRatioAccessible(string $color1, string $color2): bool
     {
-        return static::calculateContrastRatio($color1, $color2) >= 4.5;
+        return static::calculateContrastRatio($color1, $color2) >= static::WCAG_AA_TEXT;
     }
 
     public static function isNonTextContrastRatioAccessible(string $color1, string $color2): bool
     {
-        return static::calculateContrastRatio($color1, $color2) >= 3;
+        return static::calculateContrastRatio($color1, $color2) >= static::WCAG_AA_NON_TEXT;
+    }
+
+    /**
+     * Find the first shade in `$palette` whose color has at least `$minRatio` contrast against
+     * `$surface`. Iterates from the lightest shade to the darkest by default, or darkest-first if
+     * `$shouldStartFromDarkest` is `true`. Shades outside `[$minShade, $maxShade]` are skipped. Returns `null`
+     * if no shade satisfies the constraints.
+     *
+     * @param  array<int, string>  $palette
+     */
+    public static function findShade(
+        array $palette,
+        string $surface,
+        float $minRatio = self::WCAG_AA_TEXT,
+        ?int $maxShade = null,
+        ?int $minShade = null,
+        bool $shouldStartFromDarkest = false,
+    ): ?int {
+        $shouldStartFromDarkest ? krsort($palette) : ksort($palette);
+
+        foreach ($palette as $shade => $value) {
+            if (($maxShade !== null) && ($shade > $maxShade)) {
+                continue;
+            }
+
+            if (($minShade !== null) && ($shade < $minShade)) {
+                continue;
+            }
+
+            if (static::calculateContrastRatio($surface, $value) >= $minRatio) {
+                return $shade;
+            }
+        }
+
+        return null;
     }
 
     /**

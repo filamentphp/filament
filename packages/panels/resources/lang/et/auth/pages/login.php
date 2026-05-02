@@ -2,19 +2,19 @@
 
 return [
 
-    'title' => 'Sisselogimine',
+    'title' => 'Logi sisse',
 
-    'heading' => 'Logige sisse',
+    'heading' => 'Logi sisse',
 
     'actions' => [
 
         'register' => [
             'before' => 'või',
-            'label' => 'registreeruge konto jaoks',
+            'label' => 'loo uus konto',
         ],
 
         'request_password_reset' => [
-            'label' => 'Unustasite parooli?',
+            'label' => 'Unustasid parooli?',
         ],
 
     ],
@@ -36,7 +36,7 @@ return [
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Logige sisse',
+                'label' => 'Logi sisse',
             ],
 
         ],
@@ -45,9 +45,9 @@ return [
 
     'multi_factor' => [
 
-        'heading' => 'Kinnitage oma identiteet',
+        'heading' => 'Kinnita oma identiteet',
 
-        'subheading' => 'Sisselogimise jätkamiseks peate kinnitama oma identiteedi.',
+        'subheading' => 'Sisselogimise jätkamiseks peate oma identiteedi kinnitama.',
 
         'form' => [
 

@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Armatuurlaud',
+    'title' => 'Töölaud',
 
     'actions' => [
 

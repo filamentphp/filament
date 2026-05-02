@@ -12,32 +12,28 @@ export default function statsOverviewStatChart({
             Alpine.effect(() => {
                 Alpine.store('theme')
 
-                const chart = this.getChart()
-
-                if (chart) {
-                    chart.destroy()
-                }
-
-                this.initChart()
+                this.$nextTick(() => this.updateChartTheme())
             })
 
-            window
-                .matchMedia('(prefers-color-scheme: dark)')
-                .addEventListener('change', () => {
-                    if (Alpine.store('theme') !== 'system') {
-                        return
-                    }
+            this.systemThemeMediaQuery = window.matchMedia(
+                '(prefers-color-scheme: dark)',
+            )
+            this.systemThemeListener = () => {
+                if (Alpine.store('theme') !== 'system') {
+                    return
+                }
 
-                    this.$nextTick(() => {
-                        const chart = this.getChart()
+                this.$nextTick(() => this.updateChartTheme())
+            }
+            this.systemThemeMediaQuery.addEventListener(
+                'change',
+                this.systemThemeListener,
+            )
 
-                        if (chart) {
-                            chart.destroy()
-                        }
-
-                        this.initChart()
-                    })
-                })
+            // Defer `initChart()` to `$nextTick` so the `Alpine.effect` above runs its
+            // mandatory first invocation before the chart exists. `updateChartTheme()` then
+            // exits early on that first run.
+            this.$nextTick(() => this.initChart())
         },
 
         initChart() {
@@ -49,22 +45,25 @@ export default function statsOverviewStatChart({
                 return
             }
 
-            return new Chart(this.$refs.canvas, {
+            // Alpine re-initializes this component when `dataChecksum` changes (on data
+            // updates from Livewire polling). The canvas is reused, so any prior Chart.js
+            // instance must be torn down before constructing a new one.
+            this.getChart()?.destroy()
+
+            const { backgroundColor, borderColor } = this.getChartColors()
+
+            new Chart(this.$refs.canvas, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels,
                     datasets: [
                         {
                             data: values,
                             borderWidth: 2,
                             fill: 'start',
                             tension: 0.5,
-                            backgroundColor: getComputedStyle(
-                                this.$refs.backgroundColorElement,
-                            ).color,
-                            borderColor: getComputedStyle(
-                                this.$refs.borderColorElement,
-                            ).color,
+                            backgroundColor,
+                            borderColor,
                         },
                     ],
                 },
@@ -82,6 +81,9 @@ export default function statsOverviewStatChart({
                         legend: {
                             display: false,
                         },
+                        tooltip: {
+                            enabled: false,
+                        },
                     },
                     scales: {
                         x: {
@@ -91,11 +93,22 @@ export default function statsOverviewStatChart({
                             display: false,
                         },
                     },
-                    tooltips: {
-                        enabled: false,
-                    },
                 },
             })
+        },
+
+        updateChartTheme() {
+            const chart = this.getChart()
+
+            if (!chart) {
+                return
+            }
+
+            const { backgroundColor, borderColor } = this.getChartColors()
+
+            chart.data.datasets[0].backgroundColor = backgroundColor
+            chart.data.datasets[0].borderColor = borderColor
+            chart.update('none')
         },
 
         getChart() {
@@ -104,6 +117,24 @@ export default function statsOverviewStatChart({
             }
 
             return Chart.getChart(this.$refs.canvas)
+        },
+
+        getChartColors() {
+            return {
+                backgroundColor: getComputedStyle(
+                    this.$refs.backgroundColorElement,
+                ).color,
+                borderColor: getComputedStyle(this.$refs.borderColorElement)
+                    .color,
+            }
+        },
+
+        destroy() {
+            this.systemThemeMediaQuery?.removeEventListener(
+                'change',
+                this.systemThemeListener,
+            )
+            this.getChart()?.destroy()
         },
     }
 }

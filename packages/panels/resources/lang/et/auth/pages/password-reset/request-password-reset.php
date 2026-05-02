@@ -4,7 +4,7 @@ return [
 
     'title' => 'Taasta oma parool',
 
-    'heading' => 'Unustasite parooli?',
+    'heading' => 'Unustasid parooli?',
 
     'actions' => [
 
