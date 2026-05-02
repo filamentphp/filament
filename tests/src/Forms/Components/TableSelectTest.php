@@ -308,7 +308,7 @@ describe('saving relationships', function (): void {
         $user = User::factory()->create(['team_id' => $teamA->id]);
 
         livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
-            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($user, $teamA, $teamB): bool {
+            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($teamA, $teamB): bool {
                 // Mimic the post-create state where wasRecentlyCreated is true and the FK is already filled
                 $component->getRecord()->wasRecentlyCreated = true;
                 $component->getRecord()->team_id = $teamA->id;
