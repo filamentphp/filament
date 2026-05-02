@@ -313,15 +313,14 @@ trait InteractsWithRecord
         }
 
         $model = $this->getModel();
+        $hasActionsLivewire = ($this instanceof Action) ? $this->getHasActionsLivewire() : null;
 
         if (! $model) {
-            return $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this) : null;
+            return $hasActionsLivewire?->getDefaultActionModelLabel($this);
         }
 
-        $defaultModel = $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
-
-        if (($this instanceof Action) && ($model === $defaultModel)) {
-            return $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this);
+        if ($hasActionsLivewire && ($model === $hasActionsLivewire->getDefaultActionModel($this))) {
+            return $hasActionsLivewire->getDefaultActionModelLabel($this);
         }
 
         return get_model_label($model);

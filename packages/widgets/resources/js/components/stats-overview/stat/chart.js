@@ -81,6 +81,9 @@ export default function statsOverviewStatChart({
                         legend: {
                             display: false,
                         },
+                        tooltip: {
+                            enabled: false,
+                        },
                     },
                     scales: {
                         x: {
@@ -89,9 +92,6 @@ export default function statsOverviewStatChart({
                         y: {
                             display: false,
                         },
-                    },
-                    tooltips: {
-                        enabled: false,
                     },
                 },
             })
