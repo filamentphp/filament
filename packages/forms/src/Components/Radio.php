@@ -12,6 +12,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.radio';
+
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;

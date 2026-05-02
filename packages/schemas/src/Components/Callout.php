@@ -32,6 +32,8 @@ use function Filament\Support\is_slot_empty;
 
 class Callout extends Component implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.callout';
+
     use HasColor {
         color as baseColor;
         getColor as getBaseColor;

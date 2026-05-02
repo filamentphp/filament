@@ -13,6 +13,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Group extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.grid';
+
     use EntanglesStateWithSingularRelationship;
 
     /**

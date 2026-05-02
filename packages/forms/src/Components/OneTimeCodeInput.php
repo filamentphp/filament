@@ -9,6 +9,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class OneTimeCodeInput extends Field implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.one-time-code-input';
+
     use Concerns\CanBeReadOnly;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;

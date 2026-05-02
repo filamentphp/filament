@@ -28,6 +28,8 @@ use function Filament\Support\generate_icon_html;
 
 class Builder extends Field implements CanConcealComponents, HasExtraItemActions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.builder';
+
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
@@ -1348,17 +1350,17 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                                     <?php } ?>
 
                                     <?php if ($hasBlockLabels) { ?>
-                                        <<?= $blockLabelHeadingTag ?>
+                                        <<?= e($blockLabelHeadingTag) ?>
                                             <?= (new ComponentAttributeBag)->class([
                                                 'fi-fo-builder-item-header-label',
                                                 'fi-truncated' => $isBlockLabelTruncated,
                                             ])->toHtml() ?>
                                         >
-                                            <?= e($item->getParentComponent()->getLabel($item->getRawState(), $itemKey)) ?>
+                                            <?= e($item->getParentComponent()->getLabel($item->getRawState(), $itemKey, $itemIndex - 1)) ?>
                                             <?php if ($hasBlockNumbers) { ?>
-                                                <?= $itemIndex ?>
+                                                <?= e($itemIndex) ?>
                                             <?php } ?>
-                                        </<?= $blockLabelHeadingTag ?>>
+                                        </<?= e($blockLabelHeadingTag) ?>>
                                     <?php } ?>
 
                                     <?php if ($editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions) { ?>
@@ -1408,7 +1410,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                                             'fi-interactive' => $hasInteractiveBlockPreviews,
                                         ])->toHtml() ?>
                                     >
-                                        <?= $item->getParentComponent()->renderPreview($item->getRawState()) ?>
+                                        <?= e($item->getParentComponent()->renderPreview($item->getRawState())) ?>
                                     </div>
 
                                     <?php if ($editActionIsVisible && (! $hasInteractiveBlockPreviews)) { ?>

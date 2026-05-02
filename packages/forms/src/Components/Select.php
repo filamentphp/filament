@@ -51,6 +51,8 @@ use function Filament\Support\generate_search_term_expression;
 
 class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.select';
+
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
@@ -1822,7 +1824,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $isRequired = $this->isRequired();
         $isConcealed = $this->isConcealed();
         $isHtmlAllowed = $this->isHtmlAllowed();
-        $isNative = (! ($isSearchable || $isMultiple) && $this->isNative());
+        $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $this->isNative());
         $isPrefixInline = $this->isPrefixInline();
         $isSuffixInline = $this->isSuffixInline();
         $key = $this->getKey();
@@ -1852,7 +1854,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
         $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
 
+        $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
+        $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
+
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+            ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => $isNative
                     ? "\$el.querySelector('select')?.focus()"
@@ -1872,6 +1878,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         <div <?= $wrapperAttributes->toHtml() ?>>
             <?php if ($hasPrefix) { ?>
                 <div
+                    <?php if ($canClickPrefixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-prefix',
                         'fi-input-wrp-prefix-has-content' => true,
@@ -1880,7 +1887,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     ])->toHtml() ?>
                 >
                     <?php if (count($prefixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div class="fi-input-wrp-actions" <?php if ($canClickPrefixAffix) { ?> x-on:click.stop <?php } ?>>
                             <?php foreach ($prefixActions as $prefixAction) { ?>
                                 <?= $prefixAction->toHtml() ?>
                             <?php } ?>
@@ -2038,6 +2045,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             <?php if ($hasSuffix) { ?>
                 <div
+                    <?php if ($canClickSuffixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-suffix',
                         'fi-inline' => $isSuffixInline,
@@ -2051,7 +2059,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
 
                     <?php if (count($suffixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div class="fi-input-wrp-actions" <?php if ($canClickSuffixAffix) { ?> x-on:click.stop <?php } ?>>
                             <?php foreach ($suffixActions as $suffixAction) { ?>
                                 <?= $suffixAction->toHtml() ?>
                             <?php } ?>

@@ -47,6 +47,8 @@ use function Filament\Support\generate_loading_indicator_html;
 
 class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.rich-editor';
+
     // Security: The rich editor outputs raw HTML. Attackers can intercept
     // the value and send arbitrary HTML to the backend. When rendering
     // in Blade views, always sanitize using `sanitizeHtml()` or the
@@ -1473,10 +1475,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     public function toEmbeddedHtml(): string
     {
-        $customBlocks = $this->getCustomBlocks();
+        $groupedCustomBlocks = $this->getGroupedCustomBlocks();
         $extraAttributeBag = $this->getExtraAttributeBag();
         $id = $this->getId();
         $isDisabled = $this->isDisabled();
+        $label = $this->getLabel();
         $livewireKey = $this->getLivewireKey();
         $key = $this->getKey();
         $mergeTags = $this->getMergeTags();
@@ -1490,6 +1493,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
                 'fi-fo-rich-editor',
@@ -1503,6 +1507,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         ob_start(); ?>
 
         <div x-cloak <?= $wrapperAttributes->toHtml() ?>>
+            <div class="fi-input-wrp-content-ctn">
             <div
                 x-load
                 x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
@@ -1531,6 +1536,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             },
                             hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,
+                            label: <?= Js::from($label) ?>,
                             isLiveDebounced: <?= Js::from($this->isLiveDebounced()) ?>,
                             isLiveOnBlur: <?= Js::from($this->isLiveOnBlur()) ?>,
                             key: <?= Js::from($key) ?>,
@@ -1632,29 +1638,39 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                     </div>
                                 </div>
 
-                                <div class="fi-fo-rich-editor-custom-blocks-list">
-                                    <?php foreach ($customBlocks as $block) { ?>
-                                        <?php $blockId = $block::getId(); ?>
-                                        <button
-                                            draggable="true"
-                                            type="button"
-                                            x-data="{ isLoading: false }"
-                                            x-on:click="
-                                                isLoading = true
-                                                $wire.mountAction(
-                                                    'customBlock',
-                                                    { editorSelection, id: <?= Js::from($blockId) ?>, mode: 'insert' },
-                                                    { schemaComponent: <?= Js::from($key) ?> },
-                                                )
-                                            "
-                                            x-on:dragstart="$event.dataTransfer.setData('customBlock', <?= Js::from($blockId) ?>)"
-                                            x-on:open-modal.window="isLoading = false"
-                                            x-on:run-rich-editor-commands.window="isLoading = false"
-                                            class="fi-fo-rich-editor-custom-block-btn"
-                                        >
-                                            <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
-                                            <?= e($block::getLabel()) ?>
-                                        </button>
+                                <div class="fi-fo-rich-editor-custom-blocks-ctn">
+                                    <?php foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks) { ?>
+                                        <?php if (filled($customBlockGroupLabel)) { ?>
+                                            <h4 class="fi-fo-rich-editor-custom-blocks-group-header">
+                                                <?= e($customBlockGroupLabel) ?>
+                                            </h4>
+                                        <?php } ?>
+
+                                        <div class="fi-fo-rich-editor-custom-blocks-list">
+                                            <?php foreach ($groupBlocks as $block) { ?>
+                                                <?php $blockId = $block::getId(); ?>
+                                                <button
+                                                    draggable="true"
+                                                    type="button"
+                                                    x-data="{ isLoading: false }"
+                                                    x-on:click="
+                                                        isLoading = true
+                                                        $wire.mountAction(
+                                                            'customBlock',
+                                                            { editorSelection, id: <?= Js::from($blockId) ?>, mode: 'insert' },
+                                                            { schemaComponent: <?= Js::from($key) ?> },
+                                                        )
+                                                    "
+                                                    x-on:dragstart="$event.dataTransfer.setData('customBlock', <?= Js::from($blockId) ?>)"
+                                                    x-on:open-modal.window="isLoading = false"
+                                                    x-on:run-rich-editor-commands.window="isLoading = false"
+                                                    class="fi-fo-rich-editor-custom-block-btn"
+                                                >
+                                                    <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
+                                                    <?= e($block::getLabel()) ?>
+                                                </button>
+                                            <?php } ?>
+                                        </div>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -1695,6 +1711,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                         </div>
                     <?php } ?>
                 </div>
+            </div>
             </div>
         </div>
 

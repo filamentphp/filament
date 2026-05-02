@@ -26,6 +26,8 @@ use function Filament\Support\generate_icon_html;
 
 class Wizard extends Component implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.wizard';
+
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
     use HasLabel;
@@ -417,7 +419,6 @@ class Wizard extends Component implements HasEmbeddedView
                                 x-bind:aria-current="getStepIndex(step) === <?= $stepIndex ?> ? 'step' : null"
                                 x-on:click="step = <?= Js::from($step->getKey()) ?>"
                                 x-bind:disabled="! isStepAccessible(<?= Js::from($step->getKey()) ?>) || <?= Js::from($previousAction->isDisabled()) ?>"
-                                role="step"
                                 class="fi-sc-wizard-header-step-btn"
                             >
                                 <div class="fi-sc-wizard-header-step-icon-ctn">
@@ -490,7 +491,7 @@ class Wizard extends Component implements HasEmbeddedView
                 </div>
 
                 <div x-show="isFirstStep()">
-                    <?= $this->getCancelAction()?->toHtml() ?>
+                    <?= e($this->getCancelAction()) ?>
                 </div>
 
                 <div
@@ -505,7 +506,7 @@ class Wizard extends Component implements HasEmbeddedView
                 </div>
 
                 <div x-bind:class="{ 'fi-hidden': ! isLastStep() }">
-                    <?= $this->getSubmitAction()?->toHtml() ?>
+                    <?= e($this->getSubmitAction()) ?>
                 </div>
             </div>
         </div>

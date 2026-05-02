@@ -20,6 +20,8 @@ use function Filament\Support\generate_icon_html;
 
 class FileUpload extends BaseFileUpload implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.file-upload';
+
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasAlignment;
@@ -850,7 +852,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
-        $wireKey = e($livewireKey) . '.' . substr(md5(serialize([$isDisabled])), 0, 64);
+        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled])), 0, 64);
 
         $outerAttributes = $this->getExtraAttributeBag()
             ->merge([
@@ -1055,7 +1057,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                         ] as $input) { ?>
                                             <label>
                                                 <div class="fi-input-wrp">
-                                                    <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content">
+                                                    <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-input-wrp-prefix-has-label">
                                                         <span class="fi-input-wrp-label">
                                                             <?= e($input['label']) ?>
                                                         </span>
@@ -1072,7 +1074,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                                         />
                                                     </div>
 
-                                                    <div class="fi-input-wrp-suffix">
+                                                    <div class="fi-input-wrp-suffix fi-input-wrp-suffix-has-label">
                                                         <span class="fi-input-wrp-label">
                                                             <?= e($input['unit']) ?>
                                                         </span>

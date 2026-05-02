@@ -24,6 +24,8 @@ use function Filament\Support\generate_icon_html;
 
 class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.date-time-picker';
+
     use Concerns\CanBeNative;
     use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
@@ -129,6 +131,13 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
         $livewireKey = $this->getLivewireKey();
         $isNative = $this->isNative();
 
+        // Mirror the snapshot Blade: the input's inline prefix/suffix classes
+        // are computed against the unfiltered prefix/suffix actions, while the
+        // wrapper Blade filtered actions before computing `$hasPrefix` /
+        // `$hasSuffix` for the prefix/suffix div rendering.
+        $hasInlinePrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
+        $hasInlineSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
+
         // Filter visible prefix/suffix actions
         $prefixActions = array_filter(
             $prefixActions,
@@ -142,7 +151,11 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
         $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
 
+        $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
+        $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
+
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => "\$el.querySelector('input:not([type=hidden])')?.focus()",
             ], escape: false)
@@ -158,6 +171,7 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
         <div <?= $wrapperAttributes->toHtml() ?>>
             <?php if ($hasPrefix) { ?>
                 <div
+                    <?php if ($canClickPrefixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-prefix',
                         'fi-input-wrp-prefix-has-content' => true,
@@ -166,7 +180,7 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
                     ])->toHtml() ?>
                 >
                     <?php if (count($prefixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div class="fi-input-wrp-actions" <?php if ($canClickPrefixAffix) { ?> x-on:click.stop <?php } ?>>
                             <?php foreach ($prefixActions as $prefixAction) { ?>
                                 <?= $prefixAction->toHtml() ?>
                             <?php } ?>
@@ -203,8 +217,8 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
                             ], escape: false)
                             ->class([
                                 'fi-input',
-                                'fi-input-has-inline-prefix' => $isPrefixInline && $hasPrefix,
-                                'fi-input-has-inline-suffix' => $isSuffixInline && $hasSuffix,
+                                'fi-input-has-inline-prefix' => $isPrefixInline && $hasInlinePrefix,
+                                'fi-input-has-inline-suffix' => $isSuffixInline && $hasInlineSuffix,
                             ])
                             ->toHtml() ?>
                     />
@@ -323,6 +337,7 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
 
             <?php if ($hasSuffix) { ?>
                 <div
+                    <?php if ($canClickSuffixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-suffix',
                         'fi-inline' => $isSuffixInline,
@@ -336,7 +351,7 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
                     <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
 
                     <?php if (count($suffixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div class="fi-input-wrp-actions" <?php if ($canClickSuffixAffix) { ?> x-on:click.stop <?php } ?>>
                             <?php foreach ($suffixActions as $suffixAction) { ?>
                                 <?= $suffixAction->toHtml() ?>
                             <?php } ?>

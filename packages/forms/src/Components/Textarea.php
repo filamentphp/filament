@@ -15,6 +15,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.textarea';
+
     use CanDisableGrammarly;
     use CanStripCharactersFromState;
     use CanTrimState;
@@ -80,6 +82,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
         $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
 
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
                 'fi-fo-textarea',

@@ -23,6 +23,8 @@ use function Filament\Support\generate_icon_html;
 
 class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.text-input';
+
     use CanStripCharactersFromState;
     use CanTrimState;
     use Concerns\CanBeAutocapitalized;
@@ -393,7 +395,11 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
         $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
 
+        $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
+        $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
+
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-data' => $xData,
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
@@ -410,6 +416,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         <div <?= $wrapperAttributes->toHtml() ?>>
             <?php if ($hasPrefix) { ?>
                 <div
+                    <?php if ($canClickPrefixAffix) { ?>x-on:click="$dispatch('focus-input')"<?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-prefix',
                         'fi-input-wrp-prefix-has-content' => true,
@@ -418,7 +425,10 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                     ])->toHtml() ?>
                 >
                     <?php if (count($prefixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickPrefixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
                             <?php foreach ($prefixActions as $prefixAction) { ?>
                                 <?= $prefixAction->toHtml() ?>
                             <?php } ?>
@@ -441,6 +451,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
             <?php if ($hasSuffix) { ?>
                 <div
+                    <?php if ($canClickSuffixAffix) { ?>x-on:click="$dispatch('focus-input')"<?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-suffix',
                         'fi-inline' => $isSuffixInline,
@@ -456,7 +467,10 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                     <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
 
                     <?php if (count($suffixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickSuffixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
                             <?php foreach ($suffixActions as $suffixAction) { ?>
                                 <?= $suffixAction->toHtml() ?>
                             <?php } ?>

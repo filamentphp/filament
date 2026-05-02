@@ -13,6 +13,8 @@ use LogicException;
 
 class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.markdown-editor';
+
     // Security: Like the rich editor, the markdown editor sends raw content
     // to the backend. When rendering in Blade views, always sanitize with
     // `sanitizeHtml()` and `markdown()` together. Never use `{!! !!}`
@@ -90,10 +92,12 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
 
         $extraAttributeBag = $this->getExtraAttributeBag();
         $key = $this->getKey();
+        $label = $this->getLabel();
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
                 'fi-fo-markdown-editor',
@@ -114,6 +118,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
                             canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
                             isLiveDebounced: <?= Js::from($this->isLiveDebounced()) ?>,
                             isLiveOnBlur: <?= Js::from($this->isLiveOnBlur()) ?>,
+                            label: <?= Js::from($label) ?>,
                             liveDebounce: <?= Js::from($this->getNormalizedLiveDebounce()) ?>,
                             maxHeight: <?= Js::from($this->getMaxHeight()) ?>,
                             minHeight: <?= Js::from($this->getMinHeight()) ?>,

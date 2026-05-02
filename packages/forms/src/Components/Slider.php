@@ -19,6 +19,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.slider';
+
     use HasExtraAlpineAttributes;
     use HasNestedRecursiveValidationRules;
     use HasStep;

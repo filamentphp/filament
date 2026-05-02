@@ -22,6 +22,8 @@ use function Filament\Support\generate_icon_html;
 
 class EmptyState extends Component implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.empty-state';
+
     use CanBeCompact;
     use CanBeContained;
     use HasDescription;

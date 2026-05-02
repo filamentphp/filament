@@ -23,6 +23,8 @@ use function Filament\Support\generate_icon_html;
 
 class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.tags-input';
+
     use CanStripCharactersFromState;
     use CanTrimState;
     use Concerns\HasAffixes;
@@ -247,6 +249,23 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         $suffixIconColor = $this->getSuffixIconColor();
         $suffixLabel = $this->getSuffixLabel();
 
+        $inputAttributes = $extraInputAttributeBag
+            ->merge([
+                'autocomplete' => 'off',
+                'autofocus' => $isAutofocused,
+                'disabled' => $isDisabled,
+                'id' => $id,
+                'list' => $id . '-suggestions',
+                'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                'type' => 'text',
+                'x-bind' => 'input',
+            ], escape: false)
+            ->class([
+                'fi-input',
+                'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+            ]);
+
         // Filter visible prefix/suffix actions
         $prefixActions = array_filter(
             $prefixActions,
@@ -260,8 +279,12 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
         $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
 
+        $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
+        $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
+
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
             ->merge($extraAttributes, escape: false)
+            ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
             ], escape: false)
@@ -274,8 +297,12 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
         $deleteLabel = __('filament-forms::components.tags_input.actions.delete.label');
 
-        // Badge color classes for the tag badges
-        $badgeColorClasses = (new ComponentAttributeBag)->color(BadgeComponent::class, $color)->getAttributes()['class'] ?? '';
+        $badgeAttributes = (new ComponentAttributeBag)
+            ->class([
+                'fi-badge',
+                'fi-size-medium',
+            ])
+            ->color(BadgeComponent::class, $color);
 
         $deleteIconHtml = generate_icon_html(
             Heroicon::XMark,
@@ -288,6 +315,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         <div <?= $wrapperAttributes->toHtml() ?>>
             <?php if ($hasPrefix) { ?>
                 <div
+                    <?php if ($canClickPrefixAffix) { ?>x-on:click="$dispatch('focus-input')"<?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-prefix',
                         'fi-input-wrp-prefix-has-content' => true,
@@ -296,7 +324,10 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
                     ])->toHtml() ?>
                 >
                     <?php if (count($prefixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickPrefixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
                             <?php foreach ($prefixActions as $prefixAction) { ?>
                                 <?= $prefixAction->toHtml() ?>
                             <?php } ?>
@@ -321,25 +352,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
                             })"
                     <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
                 >
-                    <input
-                        <?= $extraInputAttributeBag
-                            ->merge([
-                                'autocomplete' => 'off',
-                                'autofocus' => $isAutofocused,
-                                'disabled' => $isDisabled,
-                                'id' => $id,
-                                'list' => $id . '-suggestions',
-                                'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                                'type' => 'text',
-                                'x-bind' => 'input',
-                            ], escape: false)
-                            ->class([
-                                'fi-input',
-                                'fi-input-has-inline-prefix' => $isPrefixInline && $hasPrefix,
-                                'fi-input-has-inline-suffix' => $isSuffixInline && $hasSuffix,
-                            ])
-                            ->toHtml() ?>
-                    />
+                    <input <?= $inputAttributes->toHtml() ?> />
 
                     <datalist id="<?= e($id) ?>-suggestions">
                         <?php foreach ($this->getSuggestions() as $suggestion) { ?>
@@ -371,7 +384,9 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
                                             x-bind:x-sortable-item="index"
                                             x-sortable-handle
                                         <?php } ?>
-                                        class="fi-badge <?= e($badgeColorClasses) ?> <?php if ($isReorderable) { ?>fi-reorderable<?php } ?>"
+                                        <?= $badgeAttributes->class([
+                                            'fi-reorderable' => $isReorderable,
+                                        ])->toHtml() ?>
                                     >
                                         <span class="fi-badge-label-ctn">
                                             <span class="fi-badge-label">
@@ -399,6 +414,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
             <?php if ($hasSuffix) { ?>
                 <div
+                    <?php if ($canClickSuffixAffix) { ?>x-on:click="$dispatch('focus-input')"<?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-suffix',
                         'fi-inline' => $isSuffixInline,
@@ -412,7 +428,10 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
                     <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
 
                     <?php if (count($suffixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickSuffixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
                             <?php foreach ($suffixActions as $suffixAction) { ?>
                                 <?= $suffixAction->toHtml() ?>
                             <?php } ?>

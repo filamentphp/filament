@@ -16,6 +16,8 @@ use Filament\Support\Icons\Heroicon;
 
 class KeyValue extends Field implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.key-value';
+
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
 
@@ -385,6 +387,7 @@ class KeyValue extends Field implements HasEmbeddedView
         $valuePlaceholder = $this->getValuePlaceholder();
 
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+            ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
                 'fi-fo-key-value',
@@ -398,16 +401,17 @@ class KeyValue extends Field implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $wrapperAttributes->toHtml() ?>>
-            <div
-                x-load
-                x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms')) ?>"
-                x-data="keyValueFormComponent({
-                            state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
-                        })"
-                wire:ignore
-                wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled])), 0, 64)) ?>"
-                <?= $alpineDivAttributes->toHtml() ?>
-            >
+            <div class="fi-input-wrp-content-ctn">
+                <div
+                    x-load
+                    x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms')) ?>"
+                    x-data="keyValueFormComponent({
+                                state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                            })"
+                    wire:ignore
+                    wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled])), 0, 64)) ?>"
+                    <?= $alpineDivAttributes->toHtml() ?>
+                >
                 <table class="fi-fo-key-value-table">
                     <thead>
                         <tr>
@@ -506,6 +510,7 @@ class KeyValue extends Field implements HasEmbeddedView
                         <?= $this->getAction('add')->toHtml() ?>
                     </div>
                 <?php } ?>
+                </div>
             </div>
         </div>
 

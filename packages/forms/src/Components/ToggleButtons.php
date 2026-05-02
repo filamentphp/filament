@@ -24,6 +24,8 @@ use function Filament\Support\generate_icon_html;
 
 class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.toggle-buttons.index';
+
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
@@ -90,7 +92,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                         ->merge([
                             'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
                             'aria-label' => $areButtonLabelsHidden ? trim(strip_tags($label)) : null,
-                            'disabled' => $shouldOptionBeDisabled,
+                            'disabled' => $shouldOptionBeDisabled && blank($tooltip),
                             'for' => $inputId,
                         ], escape: false)
                         ->class([

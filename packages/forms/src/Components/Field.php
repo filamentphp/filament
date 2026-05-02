@@ -260,8 +260,9 @@ class Field extends Component implements Contracts\HasValidationRules
 
     /**
      * @param  array<string, mixed>  $extraWrapperAttributes
+     * @param  array<string> | null  $errorMessages
      */
-    public function wrapEmbeddedHtml(string $html, ?string $labelPrefix = null, ?string $labelSuffix = null, ?VerticalAlignment $inlineLabelVerticalAlignment = null, string $labelTag = 'label', array $extraWrapperAttributes = []): string
+    public function wrapEmbeddedHtml(string $html, ?string $labelPrefix = null, ?string $labelSuffix = null, ?VerticalAlignment $inlineLabelVerticalAlignment = null, string $labelTag = 'label', array $extraWrapperAttributes = [], bool $hasErrors = true, ?string $errorMessage = null, ?array $errorMessages = null): string
     {
         $fieldWrapperView = $this->getFieldWrapperView();
 
@@ -302,12 +303,9 @@ class Field extends Component implements Contracts\HasValidationRules
             ? view()->shared('errors')->getBag('default')
             : new \Illuminate\Support\MessageBag;
 
-        $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
+        $hasError = $hasErrors && (filled($errorMessage) || filled($errorMessages) || (filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))));
 
-        $errorMessage = null;
-        $errorMessages = [];
-
-        if ($hasError) {
+        if ($hasError && filled($statePath) && blank($errorMessage) && blank($errorMessages)) {
             if ($this->shouldShowAllValidationMessages()) {
                 $errorMessages = $errors->has($statePath)
                     ? $errors->get($statePath)

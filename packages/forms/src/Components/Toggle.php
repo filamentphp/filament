@@ -18,6 +18,8 @@ use function Filament\Support\get_component_color_classes;
 
 class Toggle extends Field implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.toggle';
+
     use Concerns\CanBeAccepted;
     use Concerns\CanBeInline;
     use Concerns\CanFixIndistinctState;

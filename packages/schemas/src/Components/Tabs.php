@@ -31,6 +31,8 @@ use function Filament\Support\generate_loading_indicator_html;
 
 class Tabs extends Component implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.tabs';
+
     use CanPersistTab;
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
@@ -312,39 +314,14 @@ class Tabs extends Component implements HasEmbeddedView
             $deferredBadgesXData = '{
                 deferredBadges: {},
                 isLoadingDeferredBadges: true,
-                unsubscribeLivewireHook: null,
 
-                async fetchDeferredBadges() {
-                    this.isLoadingDeferredBadges = true
-
+                async init() {
                     try {
                         const badges = await $wire.callSchemaComponentMethod(' . Js::from($tabsKey) . ', \'getDeferredTabBadges\')
                         this.deferredBadges = badges ?? {}
                     } finally {
                         this.isLoadingDeferredBadges = false
                     }
-                },
-
-                async init() {
-                    await this.fetchDeferredBadges()
-
-                    this.unsubscribeLivewireHook = Livewire.hook(\'commit\', ({ component, succeed }) => {
-                        succeed(() => {
-                            if (component.id !== $wire.__instance.id) {
-                                return
-                            }
-
-                            if (this.isLoadingDeferredBadges) {
-                                return
-                            }
-
-                            this.fetchDeferredBadges()
-                        })
-                    })
-                },
-
-                destroy() {
-                    this.unsubscribeLivewireHook?.()
                 },
             }';
 
@@ -391,10 +368,10 @@ class Tabs extends Component implements HasEmbeddedView
                 <?php foreach ($tabs as $index => $tab) {
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
@@ -463,8 +440,8 @@ class Tabs extends Component implements HasEmbeddedView
                             <?php foreach ($tabs as $index => $tab) {
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                                 $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
@@ -514,7 +491,9 @@ class Tabs extends Component implements HasEmbeddedView
                                 class="fi-tabs-item"
                                 x-show="isDropdownButtonVisible"
                             >
-                                <?= generate_icon_html(Heroicon::EllipsisHorizontal, alias: SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON)?->toHtml() ?>
+                                <span class="fi-tabs-item-label">
+                                    <?= generate_icon_html(Heroicon::EllipsisHorizontal, alias: SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON)?->toHtml() ?>
+                                </span>
                             </button>
                         </div>
 
@@ -530,8 +509,8 @@ class Tabs extends Component implements HasEmbeddedView
                                 <?php foreach ($tabs as $index => $tab) {
                                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
-                                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                                     $tabIcon = $tab->getIcon();
                                     $tabKey = $tab->getKey(isAbsolute: false);
                                     $tabLabel = $tab->getLabel();
@@ -539,7 +518,8 @@ class Tabs extends Component implements HasEmbeddedView
                                     $dropdownItemAttributes = (new ComponentAttributeBag)
                                         ->merge([
                                             'type' => 'button',
-                                            'x-bind:class' => "{ 'fi-selected': tab === '{$tabKey}' }",
+                                            'wire:loading.attr' => 'disabled',
+                                            'x-bind:class' => "{ 'fi-selected': tab === '" . e($tabKey) . "' }",
                                             'x-on:click' => "tab = '{$tabKey}'; close(\$event);",
                                             'x-show' => "{$index} >= withinDropdownIndex",
                                         ], escape: false)

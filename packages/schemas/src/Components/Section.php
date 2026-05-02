@@ -39,6 +39,8 @@ use function Filament\Support\is_slot_empty;
 
 class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.section';
+
     use CanBeCollapsed;
     use CanBeCompact;
     use CanBeContained;
@@ -267,7 +269,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $heading = $this->getHeading();
         $headingTag = $this->getHeadingTag();
         $icon = $this->getIcon();
-        $iconColor = $this->getIconColor();
+        $iconColor = $this->getIconColor() ?? 'gray';
         $iconSize = $this->getIconSize();
         $shouldPersistCollapsed = $this->shouldPersistCollapsed();
         $isSecondary = $this->isSecondary();
@@ -350,7 +352,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                 <?php if ($hasHeader) { ?>
                     <header
                         <?php if ($collapsible) { ?>
-                            x-on:click="isCollapsed = ! isCollapsed"
+                            x-on:click="if (! $event.target.closest('.fi-section-header-after-ctn')) isCollapsed = ! isCollapsed"
                         <?php } ?>
                         class="fi-section-header"
                     >
@@ -374,7 +376,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                         <?php } ?>
 
                         <?php if (filled($afterHeader?->toHtml())) { ?>
-                            <div x-on:click.stop class="fi-section-header-after-ctn">
+                            <div class="fi-section-header-after-ctn">
                                 <?= $afterHeader ?>
                             </div>
                         <?php } ?>

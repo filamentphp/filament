@@ -21,9 +21,12 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 
 class FusedGroup extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.fused-group';
+
     use CanBeMarkedAsRequired;
     use EntanglesStateWithSingularRelationship;
     use HasExtraFieldWrapperAttributes;
@@ -267,6 +270,31 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
 
         $hasError = filled($errorMessage) || filled($errorMessages);
 
+        // Inner content
+        $innerAttributes = (new ComponentAttributeBag)
+            ->merge(['id' => $this->getId()], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->class(['fi-sc-fused-group']);
+
+        $innerHtml = '<div ' . $innerAttributes->toHtml() . '>' . $this->getChildSchema()->toHtml() . '</div>';
+
+        $fieldWrapperView = $this->getFieldWrapperView();
+
+        if ($fieldWrapperView !== 'filament-forms::field-wrapper') {
+            $absoluteView = str($fieldWrapperView)->contains('::')
+                ? str($fieldWrapperView)->replaceFirst('::', '::components.')
+                : "components.{$fieldWrapperView}";
+
+            return view((string) $absoluteView, [
+                'field' => $this,
+                'slot' => new ComponentSlot($innerHtml),
+                'errorMessage' => $errorMessage,
+                'errorMessages' => $errorMessages,
+                'areHtmlErrorMessagesAllowed' => $areHtmlErrorMessagesAllowed,
+                'shouldShowAllValidationMessages' => filled($errorMessages),
+            ])->toHtml();
+        }
+
         // Field wrapper rendering (inline, same as Field::wrapEmbeddedHtml but with custom errors)
         $hasInlineLabel = $this->hasInlineLabel();
         $id = $this->getId();
@@ -293,14 +321,6 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                 'fi-fo-field-has-inline-label' => $hasInlineLabel,
             ]);
 
-        // Inner content
-        $innerAttributes = (new ComponentAttributeBag)
-            ->merge(['id' => $id], escape: false)
-            ->merge($this->getExtraAttributes(), escape: false)
-            ->class(['fi-sc-fused-group']);
-
-        $innerHtml = '<div ' . $innerAttributes->toHtml() . '>' . $this->getChildSchema()->toHtml() . '</div>';
-
         $inlineLabelVerticalAlignment = VerticalAlignment::Start;
 
         ob_start(); ?>
@@ -318,7 +338,12 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                     ])->toHtml() ?>
                 >
                     <?= $aboveLabelSchema?->toHtml() ?>
-                    <div class="fi-fo-field-label-ctn">
+                    <div
+                        <?= (new ComponentAttributeBag)->class([
+                            'fi-fo-field-label-ctn',
+                            ($label instanceof ComponentSlot) ? $label->attributes->get('class') : null,
+                        ])->toHtml() ?>
+                    >
                         <?= $beforeLabelSchema?->toHtml() ?>
                         <?php if (filled($label) && (! $labelSrOnly)) { ?>
                             <label for="<?= e($id) ?>" class="fi-fo-field-label">

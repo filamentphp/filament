@@ -16,6 +16,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Step extends Component implements CanConcealComponents, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.wizard.step';
+
     use HasLabel;
 
     protected ?Closure $afterValidation = null;

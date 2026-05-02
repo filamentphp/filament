@@ -13,6 +13,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class CodeEditor extends Field implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.code-editor';
+
     use CanWrap;
     use HasExtraAlpineAttributes;
 
@@ -43,6 +45,7 @@ class CodeEditor extends Field implements HasEmbeddedView
         $livewireKey = $this->getLivewireKey();
 
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
                 'fi-fo-code-editor',

@@ -8,6 +8,7 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Livewire extends Component implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.livewire';
 
     protected bool | Closure $isLazy = false;
 
@@ -119,11 +120,15 @@ class Livewire extends Component implements HasEmbeddedView
         $component = $this->getComponent();
         $properties = $this->getComponentProperties();
 
-        if (filled($key)) {
-            $livewireHtml = \Livewire\Livewire::mount($component, $properties, $key)->html();
-        } else {
-            $livewireHtml = \Livewire\Livewire::mount($component, $properties)->html();
+        if (blank($key)) {
+            // Synthesise a stable key when the user hasn't set one, mirroring
+            // the deterministic key the Blade `@livewire` directive used to
+            // inject. Without this, Livewire would assign a fresh random ID
+            // per render and break state continuity across re-renders.
+            $key = 'fi-schema-livewire.' . md5($component . ':' . ($this->getKey() ?? ''));
         }
+
+        $livewireHtml = \Livewire\Livewire::mount($component, $properties, $key);
 
         if ($hasWrapper) {
             $attributes = (new ComponentAttributeBag)

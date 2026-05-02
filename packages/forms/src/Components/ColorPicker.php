@@ -15,6 +15,8 @@ use function Filament\Support\generate_icon_html;
 
 class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.color-picker';
+
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
@@ -101,6 +103,9 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
         $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
 
+        $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
+        $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
+
         $tag = match ($format) {
             'hsl' => 'hsl-string',
             'rgb' => 'rgb-string',
@@ -126,6 +131,7 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
             ]);
 
         $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
             ], escape: false)
@@ -143,6 +149,7 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
         <div <?= $wrapperAttributes->toHtml() ?>>
             <?php if ($hasPrefix) { ?>
                 <div
+                    <?php if ($canClickPrefixAffix) { ?>x-on:click="$dispatch('focus-input')"<?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-prefix',
                         'fi-input-wrp-prefix-has-content' => true,
@@ -151,7 +158,10 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
                     ])->toHtml() ?>
                 >
                     <?php if (count($prefixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickPrefixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
                             <?php foreach ($prefixActions as $prefixAction) { ?>
                                 <?= $prefixAction->toHtml() ?>
                             <?php } ?>
@@ -168,52 +178,55 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
                 </div>
             <?php } ?>
 
-            <div
-                x-load
-                x-load-src="<?= e($alpineComponentSrc) ?>"
-                x-data="colorPickerFormComponent({
-                            isAutofocused: <?= Js::from($isAutofocused) ?>,
-                            isDisabled: <?= Js::from($isDisabled) ?>,
-                            isLive: <?= Js::from($isLive) ?>,
-                            isLiveDebounced: <?= Js::from($isLiveDebounced) ?>,
-                            isLiveOnBlur: <?= Js::from($isLiveOnBlur) ?>,
-                            liveDebounce: <?= Js::from($liveDebounce) ?>,
-                            state: $wire.$entangle('<?= e($statePath) ?>'),
-                        })"
-                x-on:keydown.esc="isOpen() && $event.stopPropagation()"
-                x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
-                <?= $this->getExtraAlpineAttributeBag()->class(['fi-input-wrp-content'])->toHtml() ?>
-            >
-                <input
-                    x-on:focus="$refs.panel.open($refs.input)"
-                    x-on:keydown.enter.prevent.stop="togglePanelVisibility()"
-                    x-ref="input"
-                    <?= $inputAttributes->toHtml() ?>
-                />
-
+            <div class="fi-input-wrp-content-ctn">
                 <div
-                    class="fi-fo-color-picker-preview my-auto me-3 size-5 shrink-0 rounded-full select-none"
-                    x-on:click="togglePanelVisibility()"
-                    x-bind:class="{
-                        'fi-empty': ! state,
-                    }"
-                    x-bind:style="{ 'background-color': state }"
-                ></div>
-
-                <div
-                    wire:ignore.self
-                    wire:key="<?= e($livewireKey) ?>.panel"
-                    x-cloak
-                    x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
-                    x-ref="panel"
-                    class="fi-fo-color-picker-panel"
+                    x-load
+                    x-load-src="<?= e($alpineComponentSrc) ?>"
+                    x-data="colorPickerFormComponent({
+                                isAutofocused: <?= Js::from($isAutofocused) ?>,
+                                isDisabled: <?= Js::from($isDisabled) ?>,
+                                isLive: <?= Js::from($isLive) ?>,
+                                isLiveDebounced: <?= Js::from($isLiveDebounced) ?>,
+                                isLiveOnBlur: <?= Js::from($isLiveOnBlur) ?>,
+                                liveDebounce: <?= Js::from($liveDebounce) ?>,
+                                state: $wire.$entangle('<?= e($statePath) ?>'),
+                            })"
+                    x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+                    x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
+                    <?= $this->getExtraAlpineAttributeBag()->class(['fi-input-wrp-content'])->toHtml() ?>
                 >
-                    <<?= $tag ?> x-ref="picker" color="<?= e($this->getState()) ?>" />
+                    <input
+                        x-on:focus="$refs.panel.open($refs.input)"
+                        x-on:keydown.enter.prevent.stop="togglePanelVisibility()"
+                        x-ref="input"
+                        <?= $inputAttributes->toHtml() ?>
+                    />
+
+                    <div
+                        class="fi-fo-color-picker-preview my-auto me-3 size-5 shrink-0 rounded-full select-none"
+                        x-on:click="togglePanelVisibility()"
+                        x-bind:class="{
+                            'fi-empty': ! state,
+                        }"
+                        x-bind:style="{ 'background-color': state }"
+                    ></div>
+
+                    <div
+                        wire:ignore.self
+                        wire:key="<?= e($livewireKey) ?>.panel"
+                        x-cloak
+                        x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                        x-ref="panel"
+                        class="fi-fo-color-picker-panel"
+                    >
+                        <<?= $tag ?> x-ref="picker" color="<?= e($this->getState()) ?>" />
+                    </div>
                 </div>
             </div>
 
             <?php if ($hasSuffix) { ?>
                 <div
+                    <?php if ($canClickSuffixAffix) { ?>x-on:click="$dispatch('focus-input')"<?php } ?>
                     <?= (new ComponentAttributeBag)->class([
                         'fi-input-wrp-suffix',
                         'fi-inline' => $isSuffixInline,
@@ -229,7 +242,10 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
                     <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
 
                     <?php if (count($suffixActions)) { ?>
-                        <div class="fi-input-wrp-actions">
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickSuffixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
                             <?php foreach ($suffixActions as $suffixAction) { ?>
                                 <?= $suffixAction->toHtml() ?>
                             <?php } ?>

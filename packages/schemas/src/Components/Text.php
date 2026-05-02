@@ -30,6 +30,8 @@ use function Filament\Support\generate_icon_html;
 
 class Text extends Component implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.text';
+
     use CanBeCopied;
     use HasColor;
     use HasFontFamily;
@@ -143,9 +145,18 @@ class Text extends Component implements HasEmbeddedView
                 $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
             }
 
+            if (! $size instanceof Size) {
+                $size = filled($size) ? (is_string($size) ? (Size::tryFrom($size) ?? $size) : $size) : null;
+            }
+
+            if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+                $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+            }
+
             $badgeAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
                 ->merge([
                     'type' => $isCopyable ? 'button' : null,
+                    'wire:loading.attr' => $isCopyable ? 'disabled' : null,
                 ], escape: false)
                 ->class([
                     'fi-sc-text',

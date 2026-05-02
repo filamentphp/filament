@@ -29,6 +29,8 @@ use function Filament\Support\generate_icon_html;
 
 class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.checkbox-list';
+
     use Concerns\CanAllowHtml;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;

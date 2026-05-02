@@ -12,6 +12,8 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class UnorderedList extends Component implements HasEmbeddedView
 {
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.unordered-list';
+
     protected TextSize | string | Closure | null $size = null;
 
     /**
