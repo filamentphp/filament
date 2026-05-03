@@ -12,6 +12,7 @@ use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Tables\CompaniesTable;
 use Filament\Tests\Fixtures\Tables\PostsTable;
 use Filament\Tests\Fixtures\Tables\TeamsTable;
 use Filament\Tests\Fixtures\Tables\UsersTable;
@@ -731,7 +732,7 @@ class TableSelectWithBelongsToThroughRelationship extends Component implements H
             ->schema([
                 TableSelect::make('company')
                     ->relationship('company', 'name')
-                    ->tableConfiguration(\Filament\Tests\Fixtures\Tables\CompaniesTable::class),
+                    ->tableConfiguration(CompaniesTable::class),
             ])
             ->model($this->record)
             ->statePath('data');
