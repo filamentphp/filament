@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\GridDirection;
@@ -21,6 +22,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
 use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
@@ -1200,7 +1202,49 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
      * @param  array<Block>  $blocks
      * @param  array<string, ?int> | int | null  $columns
      */
-    public static function renderBlockPickerHtml(
+    protected function renderBlockPicker(
+        Action $action,
+        array $blocks,
+        string $key,
+        string $triggerHtml,
+        Alignment | string | null $actionAlignment = null,
+        ?string $afterItem = null,
+        array | int | null $columns = null,
+        Width | string | null $width = null,
+    ): string {
+        /** @var view-string $publishedView */
+        $publishedView = 'filament-forms::components.builder.block-picker';
+
+        if (ViewComponent::hasPublishedEmbeddedViewOverride($publishedView)) {
+            return view($publishedView, [
+                'action' => $action,
+                'actionAlignment' => $actionAlignment,
+                'afterItem' => $afterItem,
+                'blocks' => $blocks,
+                'columns' => $columns,
+                'key' => $key,
+                'trigger' => new HtmlString($triggerHtml),
+                'width' => $width,
+            ])->render();
+        }
+
+        return $this->renderBlockPickerHtml(
+            action: $action,
+            blocks: $blocks,
+            key: $key,
+            triggerHtml: $triggerHtml,
+            actionAlignment: $actionAlignment,
+            afterItem: $afterItem,
+            columns: $columns,
+            width: $width,
+        );
+    }
+
+    /**
+     * @param  array<Block>  $blocks
+     * @param  array<string, ?int> | int | null  $columns
+     */
+    protected function renderBlockPickerHtml(
         Action $action,
         array $blocks,
         string $key,
@@ -1564,7 +1608,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                 <li class="fi-fo-builder-add-between-items-ctn">
                                     <div class="fi-fo-builder-add-between-items">
                                         <div class="fi-fo-builder-block-picker-ctn">
-                                            <?= static::renderBlockPickerHtml(
+                                            <?= $this->renderBlockPicker(
                                                 action: $addBetweenAction,
                                                 blocks: $blockPickerBlocks,
                                                 key: $key,
@@ -1589,7 +1633,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             <?php } ?>
 
             <?php if ($isAddable && $addAction->isVisible()) { ?>
-                <?= static::renderBlockPickerHtml(
+                <?= $this->renderBlockPicker(
                     action: $addAction,
                     blocks: $blockPickerBlocks,
                     key: $key,

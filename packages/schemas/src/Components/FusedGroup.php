@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Support\Htmlable;
@@ -285,13 +286,19 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $innerHtml = '<div ' . $innerAttributes->toHtml() . '>' . $this->getChildSchema()->toHtml() . '</div>';
 
         $fieldWrapperView = $this->getFieldWrapperView();
+        $isDefaultFieldWrapperView = $fieldWrapperView === 'filament-forms::field-wrapper';
 
-        if ($fieldWrapperView !== 'filament-forms::field-wrapper') {
-            $absoluteView = str($fieldWrapperView)->contains('::')
-                ? str($fieldWrapperView)->replaceFirst('::', '::components.')
-                : "components.{$fieldWrapperView}";
+        if (
+            (! $isDefaultFieldWrapperView)
+            || ViewComponent::hasPublishedEmbeddedViewOverride('filament-forms::components.field-wrapper')
+        ) {
+            $absoluteView = $isDefaultFieldWrapperView
+                ? 'filament-forms::components.field-wrapper'
+                : (string) (str($fieldWrapperView)->contains('::')
+                    ? str($fieldWrapperView)->replaceFirst('::', '::components.')
+                    : str("components.{$fieldWrapperView}"));
 
-            return view((string) $absoluteView, [
+            return view($absoluteView, [
                 'field' => $this,
                 'slot' => new ComponentSlot($innerHtml),
                 'errorMessage' => $errorMessage,

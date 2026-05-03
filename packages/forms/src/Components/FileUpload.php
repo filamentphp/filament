@@ -1065,7 +1065,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                                         . ' type="text"'
                                                         . ' class="fi-input"'
                                                         . ' />';
-                                                ?>
+                                            ?>
 
                                                 <?= $this->generateInputWrapperHtml(
                                                     $editorInputHtml,
@@ -1140,9 +1140,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                         type="button"
                                         x-on:click.prevent.stop="editor.reset()"
                                         <?= (new ComponentAttributeBag)
-                                        ->color(ButtonComponent::class, 'danger')
-                                        ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
-                                        ->toHtml() ?>
+                                            ->color(ButtonComponent::class, 'danger')
+                                            ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
+                                            ->toHtml() ?>
                                     >
                                         <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
                                     </button>
@@ -1151,9 +1151,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                         type="button"
                                         x-on:click.prevent="saveEditor"
                                         <?= (new ComponentAttributeBag)
-                                        ->color(ButtonComponent::class, 'success')
-                                        ->class(['fi-btn'])
-                                        ->toHtml() ?>
+                                            ->color(ButtonComponent::class, 'success')
+                                            ->class(['fi-btn'])
+                                            ->toHtml() ?>
                                     >
                                         <?= e(__('filament-forms::components.file_upload.editor.actions.save.label')) ?>
                                     </button>
@@ -1162,9 +1162,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                         type="button"
                                         x-on:click.prevent="saveEditor"
                                         <?= (new ComponentAttributeBag)
-                                        ->color(ButtonComponent::class, 'success')
-                                        ->class(['fi-btn'])
-                                        ->toHtml() ?>
+                                            ->color(ButtonComponent::class, 'success')
+                                            ->class(['fi-btn'])
+                                            ->toHtml() ?>
                                     >
                                         <?= e(__('filament-forms::components.file_upload.editor.actions.save.label')) ?>
                                     </button>

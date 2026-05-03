@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
@@ -286,13 +287,19 @@ class Field extends Component implements Contracts\HasValidationRules
     public function wrapEmbeddedHtml(string $html, ?string $labelPrefix = null, ?string $labelSuffix = null, ?VerticalAlignment $inlineLabelVerticalAlignment = null, string $labelTag = 'label', array $extraWrapperAttributes = [], bool $hasErrors = true, ?string $errorMessage = null, ?array $errorMessages = null): string
     {
         $fieldWrapperView = $this->getFieldWrapperView();
+        $isDefaultFieldWrapperView = $fieldWrapperView === 'filament-forms::field-wrapper';
 
-        if ($fieldWrapperView !== 'filament-forms::field-wrapper') {
-            $absoluteView = str($fieldWrapperView)->contains('::')
-                ? str($fieldWrapperView)->replaceFirst('::', '::components.')
-                : "components.{$fieldWrapperView}";
+        if (
+            (! $isDefaultFieldWrapperView)
+            || ViewComponent::hasPublishedEmbeddedViewOverride('filament-forms::components.field-wrapper')
+        ) {
+            $absoluteView = $isDefaultFieldWrapperView
+                ? 'filament-forms::components.field-wrapper'
+                : (string) (str($fieldWrapperView)->contains('::')
+                    ? str($fieldWrapperView)->replaceFirst('::', '::components.')
+                    : str("components.{$fieldWrapperView}"));
 
-            return view((string) $absoluteView, [
+            return view($absoluteView, [
                 'field' => $this,
                 'slot' => new ComponentSlot($html),
                 'labelPrefix' => $labelPrefix,

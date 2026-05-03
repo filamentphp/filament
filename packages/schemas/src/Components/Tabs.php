@@ -680,8 +680,8 @@ class Tabs extends Component implements HasEmbeddedView
 
                 <?php
                     $livewire = $this->getLivewire();
-                    $canGenerateTabLabel = method_exists($livewire, 'generateTabLabel');
-                ?>
+        $canGenerateTabLabel = method_exists($livewire, 'generateTabLabel');
+        ?>
 
                 <?php foreach ($tabs as $tabKey => $tab) {
                     $tabKey = strval($tabKey);

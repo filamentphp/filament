@@ -31,15 +31,14 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\IconButtonComponent;
 use Filament\Support\View\Components\SectionComponent\IconComponent;
 use Filament\Support\View\SupportIconAlias;
-use Illuminate\Support\HtmlString;
-
-use function Filament\Support\is_slot_empty;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
+use function Filament\Support\is_slot_empty;
 
 class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, HasEmbeddedView
 {

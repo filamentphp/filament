@@ -278,14 +278,17 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
             ->merge([
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
             ], escape: false)
-            ->class(['fi-fo-tags-input']);
+            ->class([
+                'fi-fo-tags-input',
+                'fi-disabled' => $isDisabled,
+            ]);
 
         $deleteLabel = __('filament-forms::components.tags_input.actions.delete.label');
 
         $badgeAttributes = (new ComponentAttributeBag)
             ->class([
                 'fi-badge',
-                'fi-size-medium',
+                'fi-size-md',
             ])
             ->color(BadgeComponent::class, $color);
 
