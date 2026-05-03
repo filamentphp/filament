@@ -29,6 +29,7 @@ class Checkbox extends Field implements HasEmbeddedView
     public function toEmbeddedHtml(): string
     {
         $statePath = $this->getStatePath();
+        $hasError = $this->hasErrorForPath($statePath);
 
         $attributes = (new ComponentAttributeBag)
             ->merge([
@@ -43,8 +44,8 @@ class Checkbox extends Field implements HasEmbeddedView
             ->merge($this->getExtraInputAttributes(), escape: false)
             ->class([
                 'fi-checkbox-input',
-                'fi-valid' => ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
-                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
+                'fi-valid' => ! $hasError,
+                'fi-invalid' => $hasError,
             ]);
 
         $inputHtml = '<input type="checkbox" ' . $attributes->toHtml() . ' />';

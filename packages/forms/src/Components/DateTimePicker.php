@@ -320,7 +320,7 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
                 suffixActions: $suffixActions,
                 suffixIcon: $suffixIcon,
                 suffixIconColor: $suffixIconColor,
-                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+                isValid: ! $this->hasErrorForPath($statePath),
             ),
             inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center,
         );

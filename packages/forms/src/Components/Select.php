@@ -2014,7 +2014,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 suffixActions: $suffixActions,
                 suffixIcon: $suffixIcon,
                 suffixIconColor: $suffixIconColor,
-                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+                isValid: ! $this->hasErrorForPath($statePath),
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-select-wrp'],
         );

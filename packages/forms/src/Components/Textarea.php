@@ -136,7 +136,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
                 $slotHtml,
                 attributes: $wrapperAttributes,
                 isDisabled: $isDisabled,
-                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+                isValid: ! $this->hasErrorForPath($statePath),
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-textarea-wrp'],
         );

@@ -141,7 +141,7 @@ class Text extends Component implements HasEmbeddedView
 
         if ($this->isBadge()) {
             if (! $size instanceof Size) {
-                $size = filled($size) ? (is_string($size) ? (Size::tryFrom($size) ?? $size) : $size) : null;
+                $size = filled($size) ? (is_string($size) ? (Size::tryFrom($size) ?? $size) : $size) : Size::Medium;
             }
 
             if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
@@ -156,7 +156,7 @@ class Text extends Component implements HasEmbeddedView
                 ->class([
                     'fi-sc-text',
                     'fi-badge',
-                    ($size instanceof BackedEnum) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+                    ($size instanceof BackedEnum) ? "fi-size-{$size->value}" : $size,
                 ])
                 ->color(BadgeComponent::class, $color);
 

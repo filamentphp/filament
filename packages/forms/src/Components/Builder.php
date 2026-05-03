@@ -1475,7 +1475,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                     <?php } ?>
 
                                     <?php
-                                        $blockIcon = $block->getIcon($item->getRawState(), $itemKey);
+                                        $blockIcon = $block->getIcon();
                                 ?>
 
                                     <?php if ($hasBlockIcons && filled($blockIcon)) { ?>

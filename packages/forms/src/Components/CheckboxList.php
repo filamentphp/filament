@@ -485,7 +485,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         $options = $this->getOptions();
         $livewireKey = $this->getLivewireKey();
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
-        $hasError = filled($statePath) && view()->shared('errors')?->has($statePath);
+        $hasError = $this->hasErrorForPath($statePath);
 
         $optionsAttributes = $this->getExtraAttributeBag()
             ->grid($this->getColumns(), $gridDirection)

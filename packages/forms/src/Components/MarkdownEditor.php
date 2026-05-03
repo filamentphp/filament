@@ -158,7 +158,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
             $this->generateInputWrapperHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
-                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+                isValid: ! $this->hasErrorForPath($statePath),
             ),
         );
     }

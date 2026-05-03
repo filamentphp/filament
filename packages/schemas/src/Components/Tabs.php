@@ -239,10 +239,10 @@ class Tabs extends Component implements HasEmbeddedView
         $isVertical = $this->isVertical();
         $label = $this->getLabel();
         $renderHookScopes = $this->getRenderHookScopes();
-        $tabs = array_filter(
+        $tabs = array_values(array_filter(
             $this->getChildSchema()->getComponents(),
             static fn ($component): bool => $component instanceof Tab,
-        );
+        ));
         $tabsKey = $this->getKey();
 
         $getTabVisibilityJs = static function (Tab $tab, ?int $index = null, ?string $mode = null) use ($isScrollable): ?string {

@@ -1546,163 +1546,162 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             textColors: <?= Js::from($this->getTextColorsForJs()) ?>,
                             uploadingFileMessage: <?= Js::from($this->getUploadingFileMessage()) ?>,
                         })"
-                x-bind:class="{
-                    'fi-fo-rich-editor-uploading-file': isUploadingFile,
-                }"
-                wire:ignore
-                wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
-            >
-                <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
-                    <div class="fi-fo-rich-editor-toolbar">
-                        <?php foreach ($toolbarButtons as $buttonGroup) { ?>
-                            <div class="fi-fo-rich-editor-toolbar-group">
-                                <?php foreach ($buttonGroup as $button) { ?>
-                                    <?php if (is_string($button)) { ?>
-                                        <?= ($tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found."))->toHtml() ?>
-                                    <?php } else { ?>
-                                        <?= $button->toHtml() ?>
-                                    <?php } ?>
+            x-bind:class="{
+                'fi-fo-rich-editor-uploading-file': isUploadingFile,
+            }"
+            wire:ignore
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
+        >
+            <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
+                <div class="fi-fo-rich-editor-toolbar">
+                    <?php foreach ($toolbarButtons as $buttonGroup) { ?>
+                        <div class="fi-fo-rich-editor-toolbar-group">
+                            <?php foreach ($buttonGroup as $button) { ?>
+                                <?php if (is_string($button)) { ?>
+                                    <?= ($tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found."))->toHtml() ?>
+                                <?php } else { ?>
+                                    <?= $button->toHtml() ?>
                                 <?php } ?>
-                            </div>
-                        <?php } ?>
-                    </div>
-                <?php } ?>
-
-                <div
-                    x-show="isUploadingFile"
-                    x-cloak
-                    class="fi-fo-rich-editor-uploading-file-message"
-                >
-                    <?= generate_loading_indicator_html()->toHtml() ?>
-
-                    <span><?= e($this->getUploadingFileMessage()) ?></span>
-                </div>
-
-                <div
-                    x-show="! isUploadingFile && fileValidationMessage"
-                    x-cloak
-                    class="fi-fo-rich-editor-file-validation-message"
-                >
-                    <span
-                        x-text="fileValidationMessage"
-                        x-show="! isUploadingFile && fileValidationMessage"
-                    ></span>
-                </div>
-
-                <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
-                    <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
-                        <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
-                            <div
-                                x-ref="floatingToolbar::<?= e($nodeName) ?>"
-                                class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
-                            >
-                                <?php foreach ($buttons as $button) { ?>
-                                    <?php if (is_string($button)) { ?>
-                                        <?= $tools[$button]->toHtml() ?>
-                                    <?php } else { ?>
-                                        <?= $button->toHtml() ?>
-                                    <?php } ?>
-                                <?php } ?>
-                            </div>
-                        <?php } ?>
-                    </div>
-
-                    <?php if (! $isDisabled) { ?>
-                        <div
-                            x-show="isPanelActive()"
-                            x-cloak
-                            class="fi-fo-rich-editor-panels"
-                        >
-                            <div
-                                x-show="isPanelActive('customBlocks')"
-                                x-cloak
-                                class="fi-fo-rich-editor-panel"
-                            >
-                                <div class="fi-fo-rich-editor-panel-header">
-                                    <p class="fi-fo-rich-editor-panel-heading">
-                                        <?= e(__('filament-forms::components.rich_editor.tools.custom_blocks')) ?>
-                                    </p>
-
-                                    <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                        <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
-                                            <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON)?->toHtml() ?>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="fi-fo-rich-editor-custom-blocks-ctn">
-                                    <?php foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks) { ?>
-                                        <?php if (filled($customBlockGroupLabel)) { ?>
-                                            <h4 class="fi-fo-rich-editor-custom-blocks-group-header">
-                                                <?= e($customBlockGroupLabel) ?>
-                                            </h4>
-                                        <?php } ?>
-
-                                        <div class="fi-fo-rich-editor-custom-blocks-list">
-                                            <?php foreach ($groupBlocks as $block) { ?>
-                                                <?php $blockId = $block::getId(); ?>
-                                                <button
-                                                    draggable="true"
-                                                    type="button"
-                                                    x-data="{ isLoading: false }"
-                                                    x-on:click="
-                                                        isLoading = true
-                                                        $wire.mountAction(
-                                                            'customBlock',
-                                                            { editorSelection, id: <?= Js::from($blockId) ?>, mode: 'insert' },
-                                                            { schemaComponent: <?= Js::from($key) ?> },
-                                                        )
-                                                    "
-                                                    x-on:dragstart="$event.dataTransfer.setData('customBlock', <?= Js::from($blockId) ?>)"
-                                                    x-on:open-modal.window="isLoading = false"
-                                                    x-on:run-rich-editor-commands.window="isLoading = false"
-                                                    class="fi-fo-rich-editor-custom-block-btn"
-                                                >
-                                                    <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
-                                                    <?= e($block::getLabel()) ?>
-                                                </button>
-                                            <?php } ?>
-                                        </div>
-                                    <?php } ?>
-                                </div>
-                            </div>
-
-                            <div
-                                x-show="isPanelActive('mergeTags')"
-                                x-cloak
-                                class="fi-fo-rich-editor-panel"
-                            >
-                                <div class="fi-fo-rich-editor-panel-header">
-                                    <p class="fi-fo-rich-editor-panel-heading">
-                                        <?= e(__('filament-forms::components.rich_editor.tools.merge_tags')) ?>
-                                    </p>
-
-                                    <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                        <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
-                                            <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON)?->toHtml() ?>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="fi-fo-rich-editor-merge-tags-list">
-                                    <?php foreach ($mergeTags as $tagId => $tagLabel) { ?>
-                                        <button
-                                            draggable="true"
-                                            type="button"
-                                            x-on:click="insertMergeTag(<?= Js::from($tagId) ?>)"
-                                            x-on:dragstart="$event.dataTransfer.setData('mergeTag', <?= Js::from($tagId) ?>)"
-                                            class="fi-fo-rich-editor-merge-tag-btn"
-                                        >
-                                            <span data-type="mergeTag" data-id="<?= e($tagId) ?>">
-                                                <?= e($tagLabel) ?>
-                                            </span>
-                                        </button>
-                                    <?php } ?>
-                                </div>
-                            </div>
+                            <?php } ?>
                         </div>
                     <?php } ?>
                 </div>
+            <?php } ?>
+
+            <div
+                x-show="isUploadingFile"
+                x-cloak
+                class="fi-fo-rich-editor-uploading-file-message"
+            >
+                <?= generate_loading_indicator_html()->toHtml() ?>
+
+                <span><?= e($this->getUploadingFileMessage()) ?></span>
+            </div>
+
+            <div
+                x-show="! isUploadingFile && fileValidationMessage"
+                x-cloak
+                class="fi-fo-rich-editor-file-validation-message"
+            >
+                <span
+                    x-text="fileValidationMessage"
+                    x-show="! isUploadingFile && fileValidationMessage"
+                ></span>
+            </div>
+
+            <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
+                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                    <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
+                        <div
+                            x-ref="floatingToolbar::<?= e($nodeName) ?>"
+                            class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
+                        >
+                            <?php foreach ($buttons as $button) { ?>
+                                <?php if (is_string($button)) { ?>
+                                    <?= $tools[$button]->toHtml() ?>
+                                <?php } else { ?>
+                                    <?= $button->toHtml() ?>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <?php if (! $isDisabled) { ?>
+                    <div
+                        x-show="isPanelActive()"
+                        x-cloak
+                        class="fi-fo-rich-editor-panels"
+                    >
+                        <div
+                            x-show="isPanelActive('customBlocks')"
+                            x-cloak
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    <?= e(__('filament-forms::components.rich_editor.tools.custom_blocks')) ?>
+                                </p>
+
+                                <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                        <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON)?->toHtml() ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-custom-blocks-ctn">
+                                <?php foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks) { ?>
+                                    <?php if (filled($customBlockGroupLabel)) { ?>
+                                        <h4 class="fi-fo-rich-editor-custom-blocks-group-header">
+                                            <?= e($customBlockGroupLabel) ?>
+                                        </h4>
+                                    <?php } ?>
+
+                                    <div class="fi-fo-rich-editor-custom-blocks-list">
+                                        <?php foreach ($groupBlocks as $block) { ?>
+                                            <?php $blockId = $block::getId(); ?>
+                                            <button
+                                                draggable="true"
+                                                type="button"
+                                                x-data="{ isLoading: false }"
+                                                x-on:click="
+                                                    isLoading = true
+                                                    $wire.mountAction(
+                                                        'customBlock',
+                                                        { editorSelection, id: <?= Js::from($blockId) ?>, mode: 'insert' },
+                                                        { schemaComponent: <?= Js::from($key) ?> },
+                                                    )
+                                                "
+                                                x-on:dragstart="$event.dataTransfer.setData('customBlock', <?= Js::from($blockId) ?>)"
+                                                x-on:open-modal.window="isLoading = false"
+                                                x-on:run-rich-editor-commands.window="isLoading = false"
+                                                class="fi-fo-rich-editor-custom-block-btn"
+                                            >
+                                                <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
+                                                <?= e($block::getLabel()) ?>
+                                            </button>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+
+                        <div
+                            x-show="isPanelActive('mergeTags')"
+                            x-cloak
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    <?= e(__('filament-forms::components.rich_editor.tools.merge_tags')) ?>
+                                </p>
+
+                                <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                        <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON)?->toHtml() ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-merge-tags-list">
+                                <?php foreach ($mergeTags as $tagId => $tagLabel) { ?>
+                                    <button
+                                        draggable="true"
+                                        type="button"
+                                        x-on:click="insertMergeTag(<?= Js::from($tagId) ?>)"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', <?= Js::from($tagId) ?>)"
+                                        class="fi-fo-rich-editor-merge-tag-btn"
+                                    >
+                                        <span data-type="mergeTag" data-id="<?= e($tagId) ?>">
+                                            <?= e($tagLabel) ?>
+                                        </span>
+                                    </button>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
         </div>
 
@@ -1713,7 +1712,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 $slotHtml,
                 attributes: $wrapperAttributes,
                 isDisabled: $isDisabled,
-                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+                isValid: ! $this->hasErrorForPath($statePath),
             ),
         );
     }

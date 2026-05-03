@@ -264,6 +264,21 @@ class Field extends Component implements Contracts\HasValidationRules
         return $schema;
     }
 
+    public function hasErrorForPath(?string $statePath): bool
+    {
+        if (blank($statePath)) {
+            return false;
+        }
+
+        $errors = view()->shared('errors');
+
+        if (! $errors instanceof ViewErrorBag) {
+            return false;
+        }
+
+        return $errors->has($statePath);
+    }
+
     /**
      * @param  array<string, mixed>  $extraWrapperAttributes
      * @param  array<string> | null  $errorMessages
@@ -280,6 +295,14 @@ class Field extends Component implements Contracts\HasValidationRules
             return view((string) $absoluteView, [
                 'field' => $this,
                 'slot' => new ComponentSlot($html),
+                'labelPrefix' => $labelPrefix,
+                'labelSuffix' => $labelSuffix,
+                'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
+                'labelTag' => $labelTag,
+                'attributes' => (new ComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
+                'hasErrors' => $hasErrors,
+                'errorMessage' => $errorMessage,
+                'errorMessages' => $errorMessages,
             ])->toHtml();
         }
 

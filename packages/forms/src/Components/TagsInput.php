@@ -228,7 +228,6 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
     public function toEmbeddedHtml(): string
     {
-        $extraAttributes = $this->getExtraAttributes();
         $extraInputAttributeBag = $this->getExtraInputAttributeBag();
         $color = $this->getColor() ?? 'primary';
         $id = $this->getId();
@@ -276,7 +275,6 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         );
 
         $wrapperAttributes = $this->getExtraAttributeBag()
-            ->merge($extraAttributes, escape: false)
             ->merge([
                 'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
             ], escape: false)
@@ -384,7 +382,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
                 suffixActions: $suffixActions,
                 suffixIcon: $suffixIcon,
                 suffixIconColor: $suffixIconColor,
-                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+                isValid: ! $this->hasErrorForPath($statePath),
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-tags-input-wrp'],
         );

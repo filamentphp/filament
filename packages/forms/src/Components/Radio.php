@@ -57,7 +57,7 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
         $statePath = $this->getStatePath();
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $isAutofocused = $this->isAutofocused();
-        $hasError = filled($statePath) && view()->shared('errors')?->has($statePath);
+        $hasError = $this->hasErrorForPath($statePath);
 
         $containerAttributes = $this->getExtraAttributeBag();
 

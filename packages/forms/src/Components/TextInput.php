@@ -413,7 +413,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 suffixActions: $suffixActions,
                 suffixIcon: $suffixIcon,
                 suffixIconColor: $suffixIconColor,
-                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+                isValid: ! $this->hasErrorForPath($statePath),
             ),
             inlineLabelVerticalAlignment: VerticalAlignment::Center,
         );
