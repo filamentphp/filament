@@ -1067,7 +1067,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                                         . ' />';
                                             ?>
 
-                                                <?= $this->generateInputWrapperHtml(
+                                                <?= $this->wrapInputHtml(
                                                     $editorInputHtml,
                                                     prefix: $input['label'],
                                                     suffix: $input['unit'],
