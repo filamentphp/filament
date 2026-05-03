@@ -238,6 +238,9 @@ class Entry extends Component
         return $schema;
     }
 
+    /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     */
     public function wrapEmbeddedHtml(string $html): string
     {
         $view = $this->getEntryWrapperAbsoluteView();

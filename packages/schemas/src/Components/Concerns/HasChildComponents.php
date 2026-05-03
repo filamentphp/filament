@@ -72,6 +72,10 @@ trait HasChildComponents
      */
     public function getChildSchema($key = null): ?Schema
     {
+        if (filled($key) && ! array_key_exists($key, $this->childComponents)) {
+            return ($this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())[$key] ?? null;
+        }
+
         if (filled($key) && array_key_exists($key, $this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())) {
             return $this->cachedDefaultChildSchemas[$key];
         }
