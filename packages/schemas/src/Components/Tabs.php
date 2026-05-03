@@ -377,9 +377,9 @@ class Tabs extends Component implements HasEmbeddedView
                     $tabItemAttributes = (new ComponentAttributeBag)
                         ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->merge([
-                            'aria-selected' => false,
                             'role' => 'tab',
                             'data-tab-key' => $tabKey,
+                            'x-bind:aria-selected' => "tab === '{$tabKey}'",
                             'x-on:click' => "tab = '{$tabKey}'",
                         ], escape: false)
                         ->class([
@@ -441,8 +441,8 @@ class Tabs extends Component implements HasEmbeddedView
                                 $triggerTabAttributes = (new ComponentAttributeBag)
                                     ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                                     ->merge([
-                                        'aria-selected' => false,
                                         'role' => 'tab',
+                                        'x-bind:aria-selected' => "tab === '{$tabKey}'",
                                     ], escape: false)
                                     ->class(['fi-tabs-item']);
 

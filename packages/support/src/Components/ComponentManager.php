@@ -124,20 +124,26 @@ class ComponentManager implements ScopedComponentManager
 
             $this->methodCache[$component::class] = [];
 
+            // The `static`-return filter only applies to first-party Filament
+            // classes, since their fluent setters are never called from any
+            // Blade view we ship. Third-party subclasses might legitimately
+            // call their own setters from a published view, so we leave their
+            // method lists untouched.
+            $shouldSkipFluentSetters = str_starts_with($component::class, 'Filament\\');
+
             foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
                 $name = $method->getName();
 
-                // Skip magic methods and fluent setter methods (return `static`)
-                // which are never called from Blade views. This roughly halves
-                // the number of closures created per component instance.
                 if (str_starts_with($name, '__')) {
                     continue;
                 }
 
-                $returnType = $method->getReturnType();
+                if ($shouldSkipFluentSetters) {
+                    $returnType = $method->getReturnType();
 
-                if ($returnType instanceof ReflectionNamedType && $returnType->getName() === 'static') {
-                    continue;
+                    if ($returnType instanceof ReflectionNamedType && $returnType->getName() === 'static') {
+                        continue;
+                    }
                 }
 
                 $this->methodCache[$component::class][] = $name;
