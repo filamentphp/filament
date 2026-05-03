@@ -188,6 +188,15 @@ describe('published view override', function (): void {
                 unlink($path);
             }
         }
+
+        foreach ([
+            resource_path('views/vendor/filament-forms/components'),
+            resource_path('views/vendor/filament-forms'),
+        ] as $directory) {
+            if (is_dir($directory)) {
+                @rmdir($directory);
+            }
+        }
     });
 
     it('returns the path declared in the property from `getPublishedViewOverrideCheckPath()`', function (): void {
