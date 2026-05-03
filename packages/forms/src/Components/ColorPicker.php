@@ -102,6 +102,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 
         $tag = match ($format) {
             'hsl' => 'hsl-string',
+            'hsla' => 'hsla-string',
             'rgb' => 'rgb-string',
             'rgba' => 'rgba-string',
             default => 'hex',

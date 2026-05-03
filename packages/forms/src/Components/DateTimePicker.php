@@ -190,7 +190,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                         x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms')) ?>"
                         x-data="dateTimePickerFormComponent({
                                     defaultFocusedDate: <?= Js::from($defaultFocusedDate) ?>,
-                                    displayFormat: '<?= convert_date_format($this->getDisplayFormat())->to('day.js') ?>',
+                                    displayFormat: <?= Js::from(convert_date_format($this->getDisplayFormat())->to('day.js')) ?>,
                                     firstDayOfWeek: <?= $this->getFirstDayOfWeek() ?>,
                                     isAutofocused: <?= Js::from($isAutofocused) ?>,
                                     locale: <?= Js::from($this->getLocale()) ?>,
