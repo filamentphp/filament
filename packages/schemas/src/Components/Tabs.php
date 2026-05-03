@@ -378,6 +378,7 @@ class Tabs extends Component implements HasEmbeddedView
                         ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->merge([
                             'role' => 'tab',
+                            'aria-selected' => 'false',
                             'data-tab-key' => $tabKey,
                             'x-bind:aria-selected' => "tab === '{$tabKey}'",
                             'x-on:click' => "tab = '{$tabKey}'",
@@ -442,6 +443,7 @@ class Tabs extends Component implements HasEmbeddedView
                                     ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                                     ->merge([
                                         'role' => 'tab',
+                                        'aria-selected' => 'false',
                                         'x-bind:aria-selected' => "tab === '{$tabKey}'",
                                     ], escape: false)
                                     ->class(['fi-tabs-item']);
@@ -479,6 +481,7 @@ class Tabs extends Component implements HasEmbeddedView
                             <button
                                 type="button"
                                 role="tab"
+                                aria-selected="false"
                                 class="fi-tabs-item"
                                 x-show="isDropdownButtonVisible"
                             >

@@ -1238,6 +1238,10 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             ? ('fi-align-' . $actionAlignment->value)
             : (is_string($actionAlignment) ? $actionAlignment : null);
 
+        if (is_string($width)) {
+            $width = Width::tryFrom($width) ?? $width;
+        }
+
         $widthClass = ($width instanceof Width)
             ? "fi-width-{$width->value}"
             : (is_string($width) ? $width : null);
