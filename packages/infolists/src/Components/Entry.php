@@ -238,7 +238,7 @@ class Entry extends Component
         return $schema;
     }
 
-    public function wrapEmbeddedHtml(string $html): string
+    public function wrapFieldHtml(string $html): string
     {
         $view = $this->getEntryWrapperAbsoluteView();
 

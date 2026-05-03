@@ -128,7 +128,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                 <?php } ?>
             </div>
 
-            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapFieldHtml(ob_get_clean());
         }
 
         $attributes = $attributes->grid($this->getGridColumns());
@@ -143,7 +143,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
             <?php } ?>
         </ul>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 
     protected function toEmbeddedTableHtml(): string
@@ -180,7 +180,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                 <?php } ?>
             </div>
 
-            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapFieldHtml(ob_get_clean());
         }
 
         ob_start(); ?>
@@ -240,6 +240,6 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
             </table>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 }

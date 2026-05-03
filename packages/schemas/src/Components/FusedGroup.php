@@ -308,7 +308,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
             ])->toHtml();
         }
 
-        // Field wrapper rendering (inline, same as Field::wrapEmbeddedHtml but with custom errors)
+        // Field wrapper rendering (inline, same as Field::wrapFieldHtml but with custom errors)
         $hasInlineLabel = $this->hasInlineLabel();
         $id = $this->getId();
         $isDisabled = $this->isDisabled();

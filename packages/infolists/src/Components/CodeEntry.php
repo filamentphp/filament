@@ -109,7 +109,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
                 <?php } ?>
             </div>
 
-            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapFieldHtml(ob_get_clean());
         }
 
         $phiki = new Phiki;
@@ -170,6 +170,6 @@ class CodeEntry extends Entry implements HasEmbeddedView
             ]) ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 }

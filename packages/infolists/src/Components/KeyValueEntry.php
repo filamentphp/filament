@@ -104,6 +104,6 @@ class KeyValueEntry extends Entry implements HasEmbeddedView
             </tbody>
         </table>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 }

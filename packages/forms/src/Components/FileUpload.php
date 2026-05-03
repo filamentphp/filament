@@ -1184,6 +1184,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
+        <?php return $this->wrapFieldHtml(ob_get_clean(), labelTag: 'div');
     }
 }
