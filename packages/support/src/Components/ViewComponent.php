@@ -27,7 +27,10 @@ abstract class ViewComponent extends Component implements Htmlable
 
     protected string $viewIdentifier;
 
-    protected View $viewInstance;
+    /**
+     * @var array<view-string, View>
+     */
+    protected array $viewInstances = [];
 
     protected ?string $publishedViewOverrideCheckPath = null;
 
@@ -181,16 +184,7 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function render(): View
     {
-        $this->viewInstance ??= view($this->getView(), [
-            ...$this->extractPublicMethods(),
-            ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
-        ]);
-
-        return $this->viewInstance->with([
-            'attributes' => new ComponentAttributeBag,
-            ...$this->getExtraViewData(),
-            ...$this->getViewData(),
-        ]);
+        return $this->renderView($this->getView());
     }
 
     /**
@@ -198,10 +192,12 @@ abstract class ViewComponent extends Component implements Htmlable
      */
     protected function renderView(string $view): View
     {
-        return view($view, [
+        $this->viewInstances[$view] ??= view($view, [
             ...$this->extractPublicMethods(),
             ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
-        ])->with([
+        ]);
+
+        return $this->viewInstances[$view]->with([
             'attributes' => new ComponentAttributeBag,
             ...$this->getExtraViewData(),
             ...$this->getViewData(),
