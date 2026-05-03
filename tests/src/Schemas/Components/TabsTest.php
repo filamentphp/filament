@@ -52,7 +52,7 @@ it('can return deferred tab badges with `getDeferredTabBadges()`', function (): 
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1);
             expect($badges)->toHaveKey('1');
-            expect($badges['1']['badge'])->toBe(42);
+            expect($badges['1']['badge'])->toBe('42');
             expect($badges)->not->toHaveKey('0');
 
             return true;
@@ -169,6 +169,29 @@ it('can set `livewireProperty()` with a `Closure`', function (): void {
         ->livewireProperty(static fn (): string => 'dynamicProp');
 
     expect($tabs->getLivewireProperty())->toBe('dynamicProp');
+});
+
+it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is set', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = 'all';
+    };
+
+    Schema::make($livewire)
+        ->components([
+            $tabs = Tabs::make()
+                ->livewireProperty('activeTab')
+                ->tabs([
+                    'all' => Tab::make('All'),
+                    'active' => Tab::make('Active'),
+                ]),
+        ])
+        ->fill();
+
+    $html = $tabs->toHtml();
+
+    expect($html)->toContain("\$set('activeTab', 'all')");
+    expect($html)->toContain("\$set('activeTab', 'active')");
 });
 
 it('returns fluent `$this` from `tabs()`', function (): void {

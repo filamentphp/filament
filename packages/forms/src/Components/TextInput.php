@@ -6,15 +6,16 @@ use Closure;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
-use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\RawJs;
 use LogicException;
 
-class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions
+class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, Contracts\HasAffixes, HasEmbeddedView
 {
     use CanStripCharactersFromState;
     use CanTrimState;
@@ -30,10 +31,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.text-input';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.text-input';
 
     protected string | RawJs | Closure | null $mask = null;
 
@@ -306,6 +304,106 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
             ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true])] : []),
         ];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAlpineAttributes = $this->getExtraAlpineAttributes();
+        $extraAttributeBag = $this->getExtraAttributeBag();
+        $id = $this->getId();
+        $isConcealed = $this->isConcealed();
+        $isDisabled = $this->isDisabled();
+        $isPasswordRevealable = $this->isPasswordRevealable();
+        $isPrefixInline = $this->isPrefixInline();
+        $isSuffixInline = $this->isSuffixInline();
+        $mask = $this->getMask();
+        $prefixActions = $this->getPrefixActions();
+        $prefixIcon = $this->getPrefixIcon();
+        $prefixIconColor = $this->getPrefixIconColor();
+        $prefixLabel = $this->getPrefixLabel();
+        $suffixActions = $this->getSuffixActions();
+        $suffixIcon = $this->getSuffixIcon();
+        $suffixIconColor = $this->getSuffixIconColor();
+        $suffixLabel = $this->getSuffixLabel();
+        $statePath = $this->getStatePath();
+        $placeholder = $this->getPlaceholder();
+
+        if ($isPasswordRevealable) {
+            $xData = '{ isPasswordRevealed: false }';
+        } elseif (count($extraAlpineAttributes) || filled($mask)) {
+            $xData = '{}';
+        } else {
+            $xData = null;
+        }
+
+        if ($isPasswordRevealable) {
+            $type = null;
+        } elseif (filled($mask)) {
+            $type = 'text';
+        } else {
+            $type = $this->getType();
+        }
+
+        $inputAttributes = $this->getExtraInputAttributeBag()
+            ->merge($extraAlpineAttributes, escape: false)
+            ->merge([
+                'autocapitalize' => $this->getAutocapitalize(),
+                'autocomplete' => $this->getAutocomplete(),
+                'autofocus' => $this->isAutofocused(),
+                'disabled' => $isDisabled,
+                'id' => $id,
+                'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'inputmode' => $this->getInputMode(),
+                'list' => ($datalistOptions = $this->getDatalistOptions()) ? $id . '-list' : null,
+                'max' => (! $isConcealed) ? $this->getMaxValue() : null,
+                'maxlength' => (! $isConcealed) ? $this->getMaxLength() : null,
+                'min' => (! $isConcealed) ? $this->getMinValue() : null,
+                'minlength' => (! $isConcealed) ? $this->getMinLength() : null,
+                'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                'readonly' => $this->isReadOnly(),
+                'required' => $this->isRequired() && (! $isConcealed),
+                'step' => $this->getStep(),
+                'type' => $type,
+                $this->applyStateBindingModifiers('wire:model') => $statePath,
+                'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
+                'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+            ], escape: false)
+            ->class([
+                'fi-input',
+                'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'fi-revealable' => $isPasswordRevealable,
+            ]);
+
+        $wrapperAttributes = $extraAttributeBag
+            ->merge([
+                'x-data' => $xData,
+                'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
+            ], escape: false)
+            ->class(['fi-fo-text-input']);
+
+        ob_start(); ?>
+
+        <input <?= $inputAttributes->toHtml() ?> />
+
+        <?php if ($datalistOptions) { ?>
+            <datalist id="<?= e($id) ?>-list">
+                <?php foreach ($datalistOptions as $option) { ?>
+                    <option value="<?= e($option) ?>"></option>
+                <?php } ?>
+            </datalist>
+        <?php } ?>
+
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->wrapInputHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+            ),
+            inlineLabelVerticalAlignment: VerticalAlignment::Center,
+        );
     }
 
     public function mutateDehydratedState(mixed $state): mixed

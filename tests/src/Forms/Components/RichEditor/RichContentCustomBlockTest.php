@@ -52,6 +52,24 @@ class TestBlockWithPreview extends RichContentCustomBlock
     }
 }
 
+class TestBlockWithProsePreview extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'prose-preview';
+    }
+
+    public static function toPreviewHtml(array $config): ?string
+    {
+        return '<h2>' . ($config['title'] ?? '') . '</h2>';
+    }
+
+    public static function shouldApplyProseStylingToPreview(array $config): bool
+    {
+        return true;
+    }
+}
+
 describe('`getLabel()` logic', function (): void {
     it('auto-generates label from kebab-case ID', function (): void {
         expect(TestCalloutBlock::getLabel())->toBe('Callout Block');
@@ -111,5 +129,20 @@ describe('`configureEditorAction()`', function (): void {
         $result = TestBlockWithPreview::configureEditorAction($action);
 
         expect($result)->toBe($action);
+    });
+});
+
+describe('`shouldApplyProseStylingToPreview()` logic', function (): void {
+    it('returns `false` by default', function (): void {
+        expect(TestCalloutBlock::shouldApplyProseStylingToPreview([]))->toBeFalse();
+    });
+
+    it('returns `true` when overridden', function (): void {
+        expect(TestBlockWithProsePreview::shouldApplyProseStylingToPreview([]))->toBeTrue();
+    });
+
+    it('receives `$config` parameter', function (): void {
+        // The method receives config, so subclasses can make conditional decisions
+        expect(TestBlockWithProsePreview::shouldApplyProseStylingToPreview(['title' => 'Test']))->toBeTrue();
     });
 });

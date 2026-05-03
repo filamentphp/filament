@@ -22,21 +22,30 @@ use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use LogicException;
 use Tiptap\Editor;
 
-class RichEditor extends Field implements Contracts\CanBeLengthConstrained
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\generate_loading_indicator_html;
+
+class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
     // Security: The rich editor outputs raw HTML. Attackers can intercept
     // the value and send arbitrary HTML to the backend. When rendering
@@ -54,10 +63,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
     use HasExtraAlpineAttributes;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.rich-editor';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.rich-editor';
 
     protected string | Closure | null $uploadingFileMessage = null;
 
@@ -98,6 +104,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
+
+    protected bool | Closure $shouldPreventFileAttachmentPathTampering = false;
+
+    protected ?Closure $allowFileAttachmentPathUsing = null;
 
     protected string | Closure | null $activePanel = null;
 
@@ -395,132 +405,218 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.clear_formatting'),
         ]);
 
-        $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
-            $fileAttachmentProvider = $component->getFileAttachmentProvider();
-
-            if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $record)) {
-                return;
-            }
-
-            $fileAttachmentIds = [];
-
-            $component->rawState(
-                $component->getTipTapEditor()
-                    ->setContent($rawState ?? [
-                        'type' => 'doc',
-                        'content' => [],
-                    ])
-                    ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                        if ($node->type !== 'image') {
-                            return;
-                        }
-
-                        if (blank($node->attrs->id ?? null)) {
-                            return;
-                        }
-
-                        $attachment = $component->getUploadedFileAttachment($node->attrs->id);
-
-                        if ($attachment) {
-                            $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
-                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
-
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
-
-                        if (blank($fileAttachmentIdFromAnotherRecord)) {
-                            $fileAttachmentIds[] = $node->attrs->id;
-
-                            return;
-                        }
-
-                        $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
-                        $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
-                    })
-                    ->getDocument(),
-            );
-
-            $fileAttachmentProvider?->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
+        $this->beforeStateDehydrated(static function (RichEditor $component): void {
+            $component->saveFileAttachments();
         }, shouldUpdateValidatedStateAfter: true);
 
-        $this->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, Model $record): void {
-            $fileAttachmentProvider = $component->getFileAttachmentProvider();
+        $this->saveRelationshipsUsing(static function (RichEditor $component): void {
+            $component->saveFileAttachmentsToRecord();
+        });
 
-            if (! $fileAttachmentProvider) {
-                return;
-            }
+        $this->rule(static function (RichEditor $component): Closure {
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component): void {
+                if (blank($value)) {
+                    return;
+                }
 
-            if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
-                return;
-            }
+                $originalPaths = $component->getOriginalFileAttachmentPaths();
+                $attachmentIds = [];
 
-            if (! $record->wasRecentlyCreated) {
-                return;
-            }
-
-            $fileAttachmentIds = [];
-
-            $component->rawState(
                 $component->getTipTapEditor()
-                    ->setContent($rawState ?? [
-                        'type' => 'doc',
-                        'content' => [],
-                    ])
-                    ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
+                    ->setContent($value)
+                    ->descendants(function (object $node) use (&$attachmentIds): void {
                         if ($node->type !== 'image') {
                             return;
                         }
 
-                        if (blank($node->attrs->id ?? null)) {
+                        $id = $node->attrs->id ?? null;
+
+                        if (blank($id)) {
                             return;
                         }
 
-                        $attachment = $component->getUploadedFileAttachment($node->attrs->id);
+                        $attachmentIds[] = $id;
+                    });
 
-                        if ($attachment) {
-                            $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
-                            $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
+                foreach ($attachmentIds as $id) {
+                    if ($component->getUploadedFileAttachment($id) !== null) {
+                        continue;
+                    }
 
-                            $fileAttachmentIds[] = $node->attrs->id;
+                    if ($component->isFileAttachmentPathAuthorized($id, $originalPaths)) {
+                        continue;
+                    }
 
-                            return;
-                        }
+                    $fail(__($component->getValidationMessages()['tampered'] ?? 'filament-forms::validation.tampered_file_path', ['attribute' => $component->getValidationAttribute()]));
 
-                        if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
-                            $fileAttachmentIds[] = $node->attrs->id;
+                    return;
+                }
+            };
+        }, static fn (RichEditor $component): bool => $component->shouldPreventFileAttachmentPathTampering());
+    }
 
-                            return;
-                        }
+    /**
+     * @return array<string>
+     */
+    public function resolveFileAttachmentIds(): array
+    {
+        $fileAttachmentIds = [];
 
-                        $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
+        $this->rawState(
+            $this->getTipTapEditor()
+                ->setContent($this->getRawState() ?? [
+                    'type' => 'doc',
+                    'content' => [],
+                ])
+                ->descendants(function (object &$node) use (&$fileAttachmentIds): void {
+                    if ($node->type !== 'image') {
+                        return;
+                    }
 
-                        if (blank($fileAttachmentIdFromAnotherRecord)) {
-                            $fileAttachmentIds[] = $node->attrs->id;
+                    if (blank($node->attrs->id ?? null)) {
+                        return;
+                    }
 
-                            return;
-                        }
+                    $attachment = $this->getUploadedFileAttachment($node->attrs->id);
 
-                        $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
-                        $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
-                    })
-                    ->getDocument(),
-            );
+                    if ($attachment) {
+                        $node->attrs->id = $this->saveUploadedFileAttachment($attachment);
+                        $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->id);
 
-            $record->setAttribute($component->getContentAttribute()->getName(), $component->getState());
-            $record->save();
+                        $fileAttachmentIds[] = $node->attrs->id;
 
-            $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
-        });
+                        return;
+                    }
+
+                    if (filled($this->getFileAttachmentUrl($node->attrs->id))) {
+                        $fileAttachmentIds[] = $node->attrs->id;
+
+                        return;
+                    }
+
+                    $fileAttachmentIdFromAnotherRecord = $this->saveFileAttachmentFromAnotherRecord($node->attrs->id);
+
+                    if (blank($fileAttachmentIdFromAnotherRecord)) {
+                        $fileAttachmentIds[] = $node->attrs->id;
+
+                        return;
+                    }
+
+                    $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
+                    $node->attrs->src = $this->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
+                })
+                ->getDocument(),
+        );
+
+        return $fileAttachmentIds;
+    }
+
+    public function preventFileAttachmentPathTampering(bool | Closure $condition = true, ?Closure $allowFilePathUsing = null): static
+    {
+        $this->shouldPreventFileAttachmentPathTampering = $condition;
+        $this->allowFileAttachmentPathUsing = $allowFilePathUsing;
+
+        return $this;
+    }
+
+    public function shouldPreventFileAttachmentPathTampering(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPreventFileAttachmentPathTampering);
+    }
+
+    /**
+     * @param  array<string> | null  $originalPaths
+     */
+    public function isFileAttachmentPathAuthorized(string $file, ?array $originalPaths = null): bool
+    {
+        if (in_array($file, $originalPaths ?? $this->getOriginalFileAttachmentPaths(), strict: true)) {
+            return true;
+        }
+
+        if ($this->allowFileAttachmentPathUsing) {
+            return (bool) $this->evaluate($this->allowFileAttachmentPathUsing, [
+                'file' => $file,
+            ]);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getOriginalFileAttachmentPaths(): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record instanceof Model) {
+            return [];
+        }
+
+        $attribute = $this->getName();
+
+        $originalContent = $record->getOriginal($attribute, $record->getAttribute($attribute));
+
+        if (blank($originalContent)) {
+            return [];
+        }
+
+        $ids = [];
+
+        $this->getTipTapEditor()
+            ->setContent($originalContent)
+            ->descendants(function (object $node) use (&$ids): void {
+                if ($node->type !== 'image') {
+                    return;
+                }
+
+                if (blank($node->attrs->id ?? null)) {
+                    return;
+                }
+
+                $ids[] = $node->attrs->id;
+            });
+
+        return $ids;
+    }
+
+    public function saveFileAttachments(): void
+    {
+        $fileAttachmentProvider = $this->getFileAttachmentProvider();
+
+        if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $this->getRecord())) {
+            return;
+        }
+
+        $fileAttachmentIds = $this->resolveFileAttachmentIds();
+
+        $fileAttachmentProvider?->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
+    }
+
+    public function saveFileAttachmentsToRecord(): void
+    {
+        $fileAttachmentProvider = $this->getFileAttachmentProvider();
+
+        if (! $fileAttachmentProvider) {
+            return;
+        }
+
+        if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
+            return;
+        }
+
+        $record = $this->getRecord();
+
+        if (! $record->wasRecentlyCreated) {
+            return;
+        }
+
+        $fileAttachmentIds = $this->resolveFileAttachmentIds();
+
+        $record->setAttribute($this->getContentAttribute()->getName(), $this->getState());
+        $record->save();
+
+        $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
     }
 
     public function isDehydrated(): bool
@@ -826,6 +922,39 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         }
 
         return $modifications;
+    }
+
+    protected function hasToolbarButtonInItem(object $item, string $button): bool
+    {
+        if ($item instanceof ToolbarButtonGroup) {
+            return in_array($button, $item->getButtons());
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  array<string>  $buttonsToDisable
+     */
+    protected function filterDisabledToolbarButtonsFromItem(object $item, array $buttonsToDisable): ?object
+    {
+        if (! ($item instanceof ToolbarButtonGroup)) {
+            return $item;
+        }
+
+        $buttons = array_values(array_filter(
+            $item->getButtons(),
+            static fn (string $button): bool => ! in_array($button, $buttonsToDisable),
+        ));
+
+        if (blank($buttons)) {
+            return null;
+        }
+
+        $item = clone $item;
+        $item->buttons($buttons);
+
+        return $item;
     }
 
     /**
@@ -1342,5 +1471,247 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function hasFileAttachmentsByDefault(): bool
     {
         return $this->hasToolbarButton('attachFiles');
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $groupedCustomBlocks = $this->getGroupedCustomBlocks();
+        $id = $this->getId();
+        $isDisabled = $this->isDisabled();
+        $label = $this->getLabel();
+        $livewireKey = $this->getLivewireKey();
+        $key = $this->getKey();
+        $mergeTags = $this->getMergeTags();
+        $statePath = $this->getStatePath();
+        $mentions = $this->getMentionsForJs();
+        $toolbarButtons = $this->getToolbarButtons();
+        $tools = $this->getTools();
+        $floatingToolbars = $this->getFloatingToolbars();
+        $linkProtocols = $this->getLinkProtocols();
+        $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
+        $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
+
+        $wrapperAttributes = $this->getExtraAttributeBag()
+            ->merge(['x-cloak' => true], escape: false)
+            ->class(['fi-fo-rich-editor']);
+
+        $deleteIconHtml = generate_icon_html(Heroicon::Trash, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON);
+        $editIconHtml = generate_icon_html(Heroicon::PencilSquare, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON);
+
+        ob_start(); ?>
+
+        <div
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
+            x-data="richEditorFormComponent({
+                            acceptedFileTypes: <?= Js::from($fileAttachmentsAcceptedFileTypes) ?>,
+                            acceptedFileTypesValidationMessage: <?= Js::from($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.rich_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null) ?>,
+                            activePanel: <?= Js::from($this->getActivePanel()) ?>,
+                            canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
+                            deleteCustomBlockButtonIconHtml: <?= Js::from($deleteIconHtml?->toHtml()) ?>,
+                            editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
+                            extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
+                            floatingToolbars: <?= Js::from($floatingToolbars) ?>,
+                            getMentionLabelsUsing: async (mentions) => {
+                                return await $wire.callSchemaComponentMethod(
+                                    <?= Js::from($key) ?>,
+                                    'getMentionLabelsForJs',
+                                    { mentions },
+                                )
+                            },
+                            getMentionSearchResultsUsing: async (query, char) => {
+                                return await $wire.callSchemaComponentMethod(
+                                    <?= Js::from($key) ?>,
+                                    'getMentionSearchResultsForJs',
+                                    { search: query, char },
+                                )
+                            },
+                            hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            isDisabled: <?= Js::from($isDisabled) ?>,
+                            label: <?= Js::from($label) ?>,
+                            isLiveDebounced: <?= Js::from($this->isLiveDebounced()) ?>,
+                            isLiveOnBlur: <?= Js::from($this->isLiveOnBlur()) ?>,
+                            key: <?= Js::from($key) ?>,
+                            linkProtocols: <?= Js::from($linkProtocols) ?>,
+                            liveDebounce: <?= Js::from($this->getNormalizedLiveDebounce()) ?>,
+                            livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
+                            maxFileSize: <?= Js::from($fileAttachmentsMaxSize) ?>,
+                            maxFileSizeValidationMessage: <?= Js::from($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.rich_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null) ?>,
+                            mentions: <?= Js::from($mentions) ?>,
+                            mergeTags: <?= Js::from($mergeTags) ?>,
+                            noMergeTagSearchResultsMessage: <?= Js::from($this->getNoMergeTagSearchResultsMessage()) ?>,
+                            placeholder: <?= Js::from($this->getPlaceholder()) ?>,
+                            state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) ?>,
+                            statePath: <?= Js::from($statePath) ?>,
+                            textColors: <?= Js::from($this->getTextColorsForJs()) ?>,
+                            uploadingFileMessage: <?= Js::from($this->getUploadingFileMessage()) ?>,
+                        })"
+            x-bind:class="{
+                'fi-fo-rich-editor-uploading-file': isUploadingFile,
+            }"
+            wire:ignore
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
+        >
+            <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
+                <div class="fi-fo-rich-editor-toolbar">
+                    <?php foreach ($toolbarButtons as $buttonGroup) { ?>
+                        <div class="fi-fo-rich-editor-toolbar-group">
+                            <?php foreach ($buttonGroup as $button) { ?>
+                                <?php if (is_string($button)) { ?>
+                                    <?= ($tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found."))->toHtml() ?>
+                                <?php } else { ?>
+                                    <?= $button->toHtml() ?>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <div
+                x-show="isUploadingFile"
+                x-cloak
+                class="fi-fo-rich-editor-uploading-file-message"
+            >
+                <?= generate_loading_indicator_html()->toHtml() ?>
+
+                <span><?= e($this->getUploadingFileMessage()) ?></span>
+            </div>
+
+            <div
+                x-show="! isUploadingFile && fileValidationMessage"
+                x-cloak
+                class="fi-fo-rich-editor-file-validation-message"
+            >
+                <span
+                    x-text="fileValidationMessage"
+                    x-show="! isUploadingFile && fileValidationMessage"
+                ></span>
+            </div>
+
+            <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
+                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                    <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
+                        <div
+                            x-ref="floatingToolbar::<?= e($nodeName) ?>"
+                            class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
+                        >
+                            <?php foreach ($buttons as $button) { ?>
+                                <?php if (is_string($button)) { ?>
+                                    <?= $tools[$button]->toHtml() ?>
+                                <?php } else { ?>
+                                    <?= $button->toHtml() ?>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <?php if (! $isDisabled) { ?>
+                    <div
+                        x-show="isPanelActive()"
+                        x-cloak
+                        class="fi-fo-rich-editor-panels"
+                    >
+                        <div
+                            x-show="isPanelActive('customBlocks')"
+                            x-cloak
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    <?= e(__('filament-forms::components.rich_editor.tools.custom_blocks')) ?>
+                                </p>
+
+                                <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                        <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON)?->toHtml() ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-custom-blocks-ctn">
+                                <?php foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks) { ?>
+                                    <?php if (filled($customBlockGroupLabel)) { ?>
+                                        <h4 class="fi-fo-rich-editor-custom-blocks-group-header">
+                                            <?= e($customBlockGroupLabel) ?>
+                                        </h4>
+                                    <?php } ?>
+
+                                    <div class="fi-fo-rich-editor-custom-blocks-list">
+                                        <?php foreach ($groupBlocks as $block) { ?>
+                                            <?php $blockId = $block::getId(); ?>
+                                            <button
+                                                draggable="true"
+                                                type="button"
+                                                x-data="{ isLoading: false }"
+                                                x-on:click="
+                                                    isLoading = true
+                                                    $wire.mountAction(
+                                                        'customBlock',
+                                                        { editorSelection, id: <?= Js::from($blockId) ?>, mode: 'insert' },
+                                                        { schemaComponent: <?= Js::from($key) ?> },
+                                                    )
+                                                "
+                                                x-on:dragstart="$event.dataTransfer.setData('customBlock', <?= Js::from($blockId) ?>)"
+                                                x-on:open-modal.window="isLoading = false"
+                                                x-on:run-rich-editor-commands.window="isLoading = false"
+                                                class="fi-fo-rich-editor-custom-block-btn"
+                                            >
+                                                <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
+                                                <?= e($block::getLabel()) ?>
+                                            </button>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+
+                        <div
+                            x-show="isPanelActive('mergeTags')"
+                            x-cloak
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    <?= e(__('filament-forms::components.rich_editor.tools.merge_tags')) ?>
+                                </p>
+
+                                <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                        <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON)?->toHtml() ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-merge-tags-list">
+                                <?php foreach ($mergeTags as $tagId => $tagLabel) { ?>
+                                    <button
+                                        draggable="true"
+                                        type="button"
+                                        x-on:click="insertMergeTag(<?= Js::from($tagId) ?>)"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', <?= Js::from($tagId) ?>)"
+                                        class="fi-fo-rich-editor-merge-tag-btn"
+                                    >
+                                        <span data-type="mergeTag" data-id="<?= e($tagId) ?>">
+                                            <?= e($tagLabel) ?>
+                                        </span>
+                                    </button>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->wrapInputHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+            ),
+        );
     }
 }

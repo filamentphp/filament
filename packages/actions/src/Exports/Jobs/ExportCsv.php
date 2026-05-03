@@ -63,6 +63,10 @@ class ExportCsv implements ShouldQueue
 
     public function handle(): void
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
+
         /** @var Authenticatable $user */
         $user = $this->export->user;
 

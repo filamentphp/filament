@@ -381,11 +381,17 @@ trait HasState
         $container = $this->getContainer();
 
         while ($parentComponent = $container->getParentComponent()) {
+            $parentContainer = $parentComponent->getContainer();
+
             if ($parentComponent->hasStatePath()) {
                 break;
             }
 
-            $container = $parentComponent->getContainer();
+            if ($parentContainer->getStatePath() !== $container->getStatePath()) {
+                break;
+            }
+
+            $container = $parentContainer;
         }
 
         foreach ($container->getFlatComponents(withActions: false, withHidden: true) as $component) {

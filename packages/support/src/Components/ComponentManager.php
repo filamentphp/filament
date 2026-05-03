@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 
 class ComponentManager implements ScopedComponentManager
 {
@@ -121,10 +122,32 @@ class ComponentManager implements ScopedComponentManager
         if (! isset($this->methodCache[$component::class])) {
             $reflection = new ReflectionClass($component);
 
-            $this->methodCache[$component::class] = array_map(
-                fn (ReflectionMethod $method): string => $method->getName(),
-                $reflection->getMethods(ReflectionMethod::IS_PUBLIC),
-            );
+            $this->methodCache[$component::class] = [];
+
+            // The `static`-return filter only applies to first-party Filament
+            // classes, since their fluent setters are never called from any
+            // Blade view we ship. Third-party subclasses might legitimately
+            // call their own setters from a published view, so we leave their
+            // method lists untouched.
+            $shouldSkipFluentSetters = str_starts_with($component::class, 'Filament\\');
+
+            foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                $name = $method->getName();
+
+                if (str_starts_with($name, '__')) {
+                    continue;
+                }
+
+                if ($shouldSkipFluentSetters) {
+                    $returnType = $method->getReturnType();
+
+                    if ($returnType instanceof ReflectionNamedType && $returnType->getName() === 'static') {
+                        continue;
+                    }
+                }
+
+                $this->methodCache[$component::class][] = $name;
+            }
         }
 
         $values = [];
