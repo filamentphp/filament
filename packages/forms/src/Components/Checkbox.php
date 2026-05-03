@@ -51,14 +51,14 @@ class Checkbox extends Field implements HasEmbeddedView
         $inputHtml = '<input type="checkbox" ' . $attributes->toHtml() . ' />';
 
         if ($this->isInline()) {
-            return $this->wrapEmbeddedHtml(
+            return $this->wrapFieldHtml(
                 '',
                 labelPrefix: $inputHtml,
                 inlineLabelVerticalAlignment: VerticalAlignment::Center,
             );
         }
 
-        return $this->wrapEmbeddedHtml(
+        return $this->wrapFieldHtml(
             $inputHtml,
             inlineLabelVerticalAlignment: VerticalAlignment::Center,
         );

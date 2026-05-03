@@ -512,7 +512,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                             . '="search" class="fi-input fi-input-has-inline-prefix" />';
                     ?>
 
-                    <?= $this->generateInputWrapperHtml(
+                    <?= $this->wrapInputHtml(
                         $searchInputHtml,
                         attributes: (new ComponentAttributeBag)->class(['fi-fo-checkbox-list-search-input-wrp']),
                         hasInlinePrefix: true,
@@ -618,6 +618,6 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 }

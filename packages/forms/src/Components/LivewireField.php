@@ -97,6 +97,6 @@ class LivewireField extends Field implements HasEmbeddedView
             $livewireHtml = '<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>';
         }
 
-        return $this->wrapEmbeddedHtml($livewireHtml);
+        return $this->wrapFieldHtml($livewireHtml);
     }
 }

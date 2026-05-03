@@ -1712,7 +1712,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 
     protected function toSimpleEmbeddedHtml(): string
@@ -1841,7 +1841,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 
     protected function toTableEmbeddedHtml(): string
@@ -2062,7 +2062,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 
     public function getLabelBetweenItems(): ?string

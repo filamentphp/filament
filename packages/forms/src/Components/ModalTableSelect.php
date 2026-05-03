@@ -955,7 +955,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapFieldHtml(ob_get_clean());
     }
 
     protected function generateBadgeHtml(string | Htmlable $label, ?string $color): string

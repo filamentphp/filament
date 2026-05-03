@@ -86,7 +86,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
                 <?= str($this->getState())->markdown($this->getCommonMarkOptions(), $this->getCommonMarkExtensions())->sanitizeHtml() ?>
             </div>
 
-            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapFieldHtml(ob_get_clean());
         }
 
         $key = $this->getKey();
@@ -154,8 +154,8 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapEmbeddedHtml(
-            $this->generateInputWrapperHtml(
+        return $this->wrapFieldHtml(
+            $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
                 isValid: ! $this->hasErrorForPath($statePath),

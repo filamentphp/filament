@@ -69,8 +69,8 @@ class CodeEditor extends Field implements HasEmbeddedView
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapEmbeddedHtml(
-            $this->generateInputWrapperHtml(
+        return $this->wrapFieldHtml(
+            $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
                 isDisabled: $isDisabled,

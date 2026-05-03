@@ -179,8 +179,8 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapEmbeddedHtml(
-            $this->generateInputWrapperHtml(
+        return $this->wrapFieldHtml(
+            $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
                 isDisabled: $isDisabled,

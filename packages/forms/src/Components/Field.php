@@ -284,7 +284,7 @@ class Field extends Component implements Contracts\HasValidationRules
      * @param  array<string, mixed>  $extraWrapperAttributes
      * @param  array<string> | null  $errorMessages
      */
-    public function wrapEmbeddedHtml(string $html, ?string $labelPrefix = null, ?string $labelSuffix = null, ?VerticalAlignment $inlineLabelVerticalAlignment = null, string $labelTag = 'label', array $extraWrapperAttributes = [], bool $hasErrors = true, ?string $errorMessage = null, ?array $errorMessages = null): string
+    public function wrapFieldHtml(string $html, ?string $labelPrefix = null, ?string $labelSuffix = null, ?VerticalAlignment $inlineLabelVerticalAlignment = null, string $labelTag = 'label', array $extraWrapperAttributes = [], bool $hasErrors = true, ?string $errorMessage = null, ?array $errorMessages = null): string
     {
         $fieldWrapperView = $this->getFieldWrapperView();
         $isDefaultFieldWrapperView = $fieldWrapperView === 'filament-forms::field-wrapper';
@@ -494,8 +494,8 @@ class Field extends Component implements Contracts\HasValidationRules
      * @param  string | array<string> | null  $suffixIconColor
      * @param  string | array<string> | null  $suffixIconAlias
      */
-    public function generateInputWrapperHtml(
-        string $slotHtml,
+    public function wrapInputHtml(
+        string $html,
         ?ComponentAttributeBag $attributes = null,
         ?string $alpineDisabled = null,
         ?string $alpineValid = null,
@@ -643,7 +643,7 @@ class Field extends Component implements Contracts\HasValidationRules
         }
         ?>
             <div <?= $contentCtnAttributes->toHtml() ?>>
-                <?= $slotHtml ?>
+                <?= $html ?>
             </div>
 
             <?php if ($hasSuffix) {

@@ -441,6 +441,6 @@ class TableSelect extends Field implements HasEmbeddedView
             ->merge(['id' => $id], escape: false)
             ->merge($extraAttributes, escape: false);
 
-        return $this->wrapEmbeddedHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>');
+        return $this->wrapFieldHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>');
     }
 }

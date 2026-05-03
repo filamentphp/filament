@@ -112,14 +112,14 @@ class Toggle extends Field implements HasEmbeddedView
         <?php $toggleHtml = ob_get_clean();
 
         if ($this->isInline()) {
-            return $this->wrapEmbeddedHtml(
+            return $this->wrapFieldHtml(
                 '',
                 labelPrefix: $toggleHtml,
                 inlineLabelVerticalAlignment: VerticalAlignment::Center,
             );
         }
 
-        return $this->wrapEmbeddedHtml(
+        return $this->wrapFieldHtml(
             $toggleHtml,
             inlineLabelVerticalAlignment: VerticalAlignment::Center,
         );

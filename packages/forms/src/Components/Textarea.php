@@ -131,8 +131,8 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapEmbeddedHtml(
-            $this->generateInputWrapperHtml(
+        return $this->wrapFieldHtml(
+            $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
                 isDisabled: $isDisabled,
