@@ -11,6 +11,7 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\SliderStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
 use Illuminate\Support\Arr;
@@ -572,7 +573,7 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
             <?= $attributes->toHtml() ?>
         ></div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: VerticalAlignment::Center);
     }
 
     /**
