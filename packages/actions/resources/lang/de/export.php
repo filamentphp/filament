@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Spalten',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Alle auswählen',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Alle abwählen',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Der Export ist zu groß',
             'body' => 'Nicht mehr als 1 Zeile auf einmal exportieren.|Nicht mehr als :count Zeilen auf einmal exportieren.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Es wurden keine Spalten ausgewählt',
+            'body' => 'Bitte wählen Sie mindestens eine Spalte zum Exportieren aus.',
         ],
 
         'started' => [

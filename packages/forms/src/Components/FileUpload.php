@@ -488,7 +488,7 @@ class FileUpload extends BaseFileUpload
     public function imageEditorMode(int $mode): static
     {
         if (! in_array($mode, [1, 2, 3])) {
-            throw new InvalidArgumentException("The file upload editor mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
+            throw new InvalidArgumentException("The file upload editor mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs/blob/v1/README.md#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
         }
 
         $this->imageEditorMode = $mode;

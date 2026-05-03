@@ -41,4 +41,5 @@ it('includes background color in the URL', function (): void {
     $url = $provider->get($user);
 
     expect($url)->toContain('background=');
+    expect($url)->toMatch('/background=%23([0-9a-f]{3}){1,2}$/');
 });

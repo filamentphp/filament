@@ -41,6 +41,14 @@ abstract class RichContentCustomBlock
         return null;
     }
 
+    /**
+     * @param  array<string, mixed>  $config
+     */
+    public static function shouldApplyProseStylingToPreview(array $config): bool
+    {
+        return false;
+    }
+
     public static function configureEditorAction(Action $action): Action
     {
         return $action->modalHidden();

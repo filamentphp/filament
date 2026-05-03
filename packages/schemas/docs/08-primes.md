@@ -289,6 +289,23 @@ Icon::make(Heroicon::ExclamationCircle)
 
 <AutoScreenshot name="primes/icon/color" alt="Icon in the danger color" version="4.x" />
 
+### Customizing the icon size
+
+The default icon size is `IconSize::Medium`, but you may customize the size to be either `IconSize::ExtraSmall`, `IconSize::Small`, `IconSize::Large`, `IconSize::ExtraLarge` or `IconSize::TwoExtraLarge`:
+
+```php
+use Filament\Schemas\Components\Icon;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Icons\Heroicon;
+
+Icon::make(Heroicon::Star)
+    ->size(IconSize::Large)
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="primes/icon/sizes" alt="Icons rendered at every available size for comparison" version="4.x" />
+
 ### Adding a tooltip to the icon
 
 You may add a tooltip to the icon using the `tooltip()` method:

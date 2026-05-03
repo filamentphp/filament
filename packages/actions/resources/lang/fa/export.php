@@ -14,6 +14,18 @@ return [
 
                 'label' => 'ستون ها',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'انتخاب همه',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'لغو انتخاب همه',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [

@@ -7,4 +7,6 @@ return [
         'only_one_must_be_selected' => 'Only one :attribute field must be selected.',
     ],
 
+    'tampered_file_path' => 'The :attribute field contains a file path that is not permitted.',
+
 ];

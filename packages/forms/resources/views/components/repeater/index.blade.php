@@ -91,7 +91,7 @@
             >
                 @foreach ($items as $itemKey => $item)
                     @php
-                        $itemLabel = $getItemLabel($itemKey);
+                        $itemLabel = $getItemLabel($itemKey, $loop->index);
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
                             fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),

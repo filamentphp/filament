@@ -1457,6 +1457,20 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             );
     }
 
+    public function filtersCustomRemoveAllAction(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                Filter::make('is_featured')
+                    ->label('Featured')
+                    ->default(),
+            ])
+            ->filtersRemoveAllAction(
+                fn (Action $action) => $action
+                    ->tooltip('Clear filters'),
+            );
+    }
+
     public function filtersGridColumns(Table $table): Table
     {
         return $this->filtersTable($table)

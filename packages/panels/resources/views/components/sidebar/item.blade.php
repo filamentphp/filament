@@ -120,8 +120,8 @@
                     $isChildActive = (! $isChildItemChildItemsActive) && $childItem->isActive();
                     $childItemActiveIcon = $childItem->getActiveIcon();
                     $childItemBadge = $childItem->getBadge();
-                    $childItemBadgeColor = $childItem->getBadgeColor();
-                    $childItemBadgeTooltip = $childItem->getBadgeTooltip();
+                    $childItemBadgeColor = $childItem->getBadgeColor($childItemBadge);
+                    $childItemBadgeTooltip = $childItem->getBadgeTooltip($childItemBadge);
                     $childItemIcon = $childItem->getIcon();
                     $shouldChildItemOpenUrlInNewTab = $childItem->shouldOpenUrlInNewTab();
                     $childItemUrl = $childItem->getUrl();

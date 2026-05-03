@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithCustomFiltersRemoveAllAction;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithTabs;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
@@ -155,7 +156,17 @@ it('can filter posts by `is_published`', function (): void {
     livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('is_published')
+        ->assertDontSee('Clear filters')
         ->assertCanSeeTableRecords($posts->where('is_published', true))
+        ->assertCanNotSeeTableRecords($posts->where('is_published', false));
+});
+
+it('can customize the `filtersRemoveAllAction()` for resource tables', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(ListPostsWithCustomFiltersRemoveAllAction::class)
+        ->filterTable('is_published')
+        ->assertSee('Clear filters')
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
 });
 

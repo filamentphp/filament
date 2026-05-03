@@ -10,6 +10,7 @@ use Filament\Tests\Fixtures\Livewire\UsersTable;
 use Filament\Tests\Fixtures\Livewire\UsersWithTeamTable;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Image;
+use Filament\Tests\Fixtures\Models\Language;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Profile;
 use Filament\Tests\Fixtures\Models\Setting;
@@ -1775,6 +1776,231 @@ describe('relationship columns', function (): void {
             ->searchTable($searchTheme)
             ->assertCanSeeTableRecords([$matchingPost])
             ->assertCanNotSeeTableRecords($nonMatchingPosts);
+    });
+
+    it('can sort records with `HasOneThrough` -> `BelongsTo` relationship', function (): void {
+        $languageNames = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon'];
+
+        foreach ($languageNames as $languageName) {
+            $language = Language::factory()->create(['name' => $languageName]);
+            User::factory()->has(
+                Profile::factory()->has(
+                    Setting::factory()->state(['language_id' => $language->id]),
+                    'setting'
+                ),
+                'profile'
+            )->create();
+        }
+
+        $sortedAsc = User::query()
+            ->orderBy(
+                Language::query()
+                    ->select('languages.name')
+                    ->join('settings', 'settings.language_id', '=', 'languages.id')
+                    ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                    ->whereColumn('profiles.user_id', 'users.id')
+                    ->limit(1)
+            )
+            ->orderBy('users.id')
+            ->get();
+
+        $sortedDesc = User::query()
+            ->orderByDesc(
+                Language::query()
+                    ->select('languages.name')
+                    ->join('settings', 'settings.language_id', '=', 'languages.id')
+                    ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                    ->whereColumn('profiles.user_id', 'users.id')
+                    ->limit(1)
+            )
+            ->orderBy('users.id')
+            ->get();
+
+        livewire(UsersTable::class)
+            ->sortTable('setting.language.name')
+            ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+            ->sortTable('setting.language.name', 'desc')
+            ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+    });
+
+    it('can sort records with nullable `HasOneThrough` -> `BelongsTo` relationship', function (): void {
+        // User with full chain
+        $language = Language::factory()->create(['name' => 'English']);
+        $userWithLanguage = User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['language_id' => $language->id]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+
+        // User with profile and setting but no language
+        $userWithSettingNoLanguage = User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['language_id' => null]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+
+        // User with profile but no setting
+        $userWithProfileNoSetting = User::factory()->has(
+            Profile::factory(),
+            'profile'
+        )->create();
+
+        // User without profile
+        $userWithoutProfile = User::factory()->create();
+
+        $allUsers = collect([$userWithLanguage, $userWithSettingNoLanguage, $userWithProfileNoSetting, $userWithoutProfile]);
+
+        livewire(UsersTable::class)
+            ->sortTable('setting.language.name')
+            ->assertCanSeeTableRecords($allUsers)
+            ->sortTable('setting.language.name', 'desc')
+            ->assertCanSeeTableRecords($allUsers);
+    });
+
+    it('can sort records with `BelongsTo` -> `HasOneThrough` -> `BelongsTo` relationship', function (): void {
+        $languageNames = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon'];
+
+        foreach ($languageNames as $languageName) {
+            $language = Language::factory()->create(['name' => $languageName]);
+            $user = User::factory()->has(
+                Profile::factory()->has(
+                    Setting::factory()->state(['language_id' => $language->id]),
+                    'setting'
+                ),
+                'profile'
+            )->create();
+            Post::factory()->create(['author_id' => $user->id]);
+        }
+
+        $sortedAsc = Post::query()
+            ->orderBy(
+                Language::query()
+                    ->select('languages.name')
+                    ->join('settings', 'settings.language_id', '=', 'languages.id')
+                    ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                    ->join('users', 'users.id', '=', 'profiles.user_id')
+                    ->whereColumn('users.id', 'posts.author_id')
+                    ->limit(1)
+            )
+            ->orderBy('posts.id')
+            ->get();
+
+        $sortedDesc = Post::query()
+            ->orderByDesc(
+                Language::query()
+                    ->select('languages.name')
+                    ->join('settings', 'settings.language_id', '=', 'languages.id')
+                    ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                    ->join('users', 'users.id', '=', 'profiles.user_id')
+                    ->whereColumn('users.id', 'posts.author_id')
+                    ->limit(1)
+            )
+            ->orderBy('posts.id')
+            ->get();
+
+        livewire(PostsTable::class)
+            ->sortTable('author.setting.language.name')
+            ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+            ->sortTable('author.setting.language.name', 'desc')
+            ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+    });
+
+    it('can sort records with `HasOne` relationship that uses a custom `where()` constraint', function (): void {
+        // User 1: has both published and unpublished posts; should sort by published
+        $user1 = User::factory()->create();
+        Post::factory()->create(['author_id' => $user1->id, 'is_published' => false, 'title' => 'Z Unpublished']);
+        Post::factory()->create(['author_id' => $user1->id, 'is_published' => true, 'title' => 'A Published']);
+
+        // User 2: only has unpublished posts; should sort as null
+        $user2 = User::factory()->create();
+        Post::factory()->create(['author_id' => $user2->id, 'is_published' => false, 'title' => 'B Unpublished']);
+
+        // User 3: has a published post
+        $user3 = User::factory()->create();
+        Post::factory()->create(['author_id' => $user3->id, 'is_published' => true, 'title' => 'M Published']);
+
+        $sortedAsc = User::query()
+            ->orderBy(
+                Post::query()
+                    ->select('posts.title')
+                    ->whereColumn('posts.author_id', 'users.id')
+                    ->where('posts.is_published', true)
+                    ->limit(1)
+            )
+            ->orderBy('users.id')
+            ->get();
+
+        $sortedDesc = User::query()
+            ->orderByDesc(
+                Post::query()
+                    ->select('posts.title')
+                    ->whereColumn('posts.author_id', 'users.id')
+                    ->where('posts.is_published', true)
+                    ->limit(1)
+            )
+            ->orderBy('users.id')
+            ->get();
+
+        livewire(UsersTable::class)
+            ->sortTable('publishedPost.title')
+            ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+            ->sortTable('publishedPost.title', 'desc')
+            ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+    });
+
+    it('can sort records with `HasOneThrough` -> `BelongsTo` relationship that uses `withTrashed()` when the related model is soft-deleted', function (): void {
+        $alphaLanguage = Language::factory()->create(['name' => 'Alpha']);
+        $betaLanguage = Language::factory()->create(['name' => 'Beta']);
+        $gammaLanguage = Language::factory()->create(['name' => 'Gamma']);
+
+        foreach ([$alphaLanguage, $betaLanguage, $gammaLanguage] as $language) {
+            User::factory()->has(
+                Profile::factory()->has(
+                    Setting::factory()->state(['language_id' => $language->id]),
+                    'setting'
+                ),
+                'profile'
+            )->create();
+        }
+
+        // Soft-delete the Gamma language
+        $gammaLanguage->delete();
+
+        $sortedAsc = User::query()
+            ->orderBy(
+                Language::query()
+                    ->withTrashed()
+                    ->select('languages.name')
+                    ->join('settings', 'settings.language_id', '=', 'languages.id')
+                    ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                    ->whereColumn('profiles.user_id', 'users.id')
+                    ->limit(1)
+            )
+            ->orderBy('users.id')
+            ->get();
+
+        $sortedDesc = User::query()
+            ->orderByDesc(
+                Language::query()
+                    ->withTrashed()
+                    ->select('languages.name')
+                    ->join('settings', 'settings.language_id', '=', 'languages.id')
+                    ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                    ->whereColumn('profiles.user_id', 'users.id')
+                    ->limit(1)
+            )
+            ->orderBy('users.id')
+            ->get();
+
+        livewire(UsersTable::class)
+            ->sortTable('setting.languageWithTrashed.name')
+            ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+            ->sortTable('setting.languageWithTrashed.name', 'desc')
+            ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
     });
 });
 

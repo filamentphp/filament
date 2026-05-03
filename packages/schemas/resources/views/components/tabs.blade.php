@@ -86,39 +86,14 @@
                 $hasDeferredBadges ? '{
                     deferredBadges: {},
                     isLoadingDeferredBadges: true,
-                    unsubscribeLivewireHook: null,
 
-                    async fetchDeferredBadges() {
-                        this.isLoadingDeferredBadges = true
-
+                    async init() {
                         try {
                             const badges = await $wire.callSchemaComponentMethod(' . \Illuminate\Support\Js::from($tabsKey) . ', \'getDeferredTabBadges\')
                             this.deferredBadges = badges ?? {}
                         } finally {
                             this.isLoadingDeferredBadges = false
                         }
-                    },
-
-                    async init() {
-                        await this.fetchDeferredBadges()
-
-                        this.unsubscribeLivewireHook = Livewire.hook(\'commit\', ({ component, succeed }) => {
-                            succeed(() => {
-                                if (component.id !== $wire.__instance.id) {
-                                    return
-                                }
-
-                                if (this.isLoadingDeferredBadges) {
-                                    return
-                                }
-
-                                this.fetchDeferredBadges()
-                            })
-                        })
-                    },
-
-                    destroy() {
-                        this.unsubscribeLivewireHook?.()
                     },
                 }' : null
             "
@@ -131,10 +106,10 @@
                 @php
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
@@ -173,8 +148,8 @@
                             @php
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                                 $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
@@ -213,8 +188,8 @@
                             @php
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
-                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                                 $tabIcon = $tab->getIcon();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
@@ -267,11 +242,8 @@
             x-data="{
                 deferredBadges: {},
                 isLoadingDeferredBadges: true,
-                unsubscribeLivewireHook: null,
 
-                async fetchDeferredBadges() {
-                    this.isLoadingDeferredBadges = true
-
+                async init() {
                     try {
                         const badges = await $wire.callSchemaComponentMethod(
                             @js($tabsKey),
@@ -282,37 +254,6 @@
                     } finally {
                         this.isLoadingDeferredBadges = false
                     }
-                },
-
-                async init() {
-                    await this.fetchDeferredBadges()
-
-                    this.unsubscribeLivewireHook = Livewire.hook(
-                        'commit',
-                        ({ component, commit, succeed }) => {
-                            succeed(() => {
-                                if (component.id !== $wire.__instance.id) {
-                                    return
-                                }
-
-                                if (this.isLoadingDeferredBadges) {
-                                    return
-                                }
-
-                                const updateKeys = Object.keys(commit.updates ?? {})
-
-                                if (updateKeys.length === 1 && updateKeys[0] === @js($livewireProperty)) {
-                                    return
-                                }
-
-                                this.fetchDeferredBadges()
-                            })
-                        },
-                    )
-                },
-
-                destroy() {
-                    this.unsubscribeLivewireHook?.()
                 },
             }"
         @endif
@@ -343,10 +284,10 @@
                 @php
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
-                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();

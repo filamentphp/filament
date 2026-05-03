@@ -833,7 +833,7 @@ it('can use `badge()` with a value to set badge content', function (): void {
     $action = Action::make('notifications')
         ->badge(5);
 
-    expect($action->getBadge())->toBe(5);
+    expect($action->getBadge())->toBe('5');
     expect($action->isBadge())->toBeFalse();
 });
 
@@ -1123,7 +1123,7 @@ describe('ActionGroup trigger views', function (): void {
         $group = ActionGroup::make([Action::make('edit')])
             ->badge(3);
 
-        expect($group->getBadge())->toBe(3);
+        expect($group->getBadge())->toBe('3');
         expect($group->isBadge())->toBeFalse();
     });
 });

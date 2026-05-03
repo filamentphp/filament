@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Illuminate\Database\Eloquent\Model;
@@ -149,6 +150,11 @@ trait HasActions
     public function prepareAction(Action $action): Action
     {
         return $action->schemaComponent($this);
+    }
+
+    public function prepareActionGroup(ActionGroup $group): ActionGroup
+    {
+        return $group->schemaComponent($this);
     }
 
     /**

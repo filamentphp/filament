@@ -48,6 +48,9 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Grouping\Group::make('author.image.url'),
                 Tables\Grouping\Group::make('author.profile.image.alt_text'),
                 Tables\Grouping\Group::make('author.setting.theme'),
+                Tables\Grouping\Group::make('author.setting.language.name'),
+                Tables\Grouping\Group::make('author.company.name'),
+                Tables\Grouping\Group::make('team.company.name'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
@@ -104,6 +107,10 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author.setting.theme')
                     ->label('Author Setting Theme (BelongsTo -> HasOneThrough)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.setting.language.name')
+                    ->label('Author Setting Language Name (BelongsTo -> HasOneThrough -> BelongsTo)')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')

@@ -28,6 +28,16 @@ class Import extends Model
     use Prunable;
 
     /**
+     * @var array<string, string>
+     */
+    protected array $columnMap = [];
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $options = [];
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -81,11 +91,50 @@ class Import extends Model
         array $columnMap,
         array $options,
     ): Importer {
+        $this->columnMap($columnMap);
+        $this->options($options);
+
         return app($this->importer, [
             'import' => $this,
             'columnMap' => $columnMap,
             'options' => $options,
         ]);
+    }
+
+    /**
+     * @param  array<string, string>  $columnMap
+     */
+    public function columnMap(array $columnMap): static
+    {
+        $this->columnMap = $columnMap;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getColumnMap(): array
+    {
+        return $this->columnMap;
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     */
+    public function options(array $options): static
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 
     public function getFailedRowsCount(): int

@@ -576,7 +576,7 @@ Repeater::make('members')
     Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 </Aside>
 
-<UtilityInjection set="formFields" version="4.x" extras="Item;;Filament\Schemas\Schema;;$item;;The schema object for the current repeater item.||Key;;string;;$key;;The key for the current repeater item.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current repeater item.">You can inject various utilities into the function passed to `itemLabel()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Item;;Filament\Schemas\Schema;;$item;;The schema object for the current repeater item.||Key;;string;;$key;;The key for the current repeater item.||Index;;int;;$index;;The zero-based index of the current repeater item.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current repeater item.">You can inject various utilities into the function passed to `itemLabel()` as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="4.x" />
 

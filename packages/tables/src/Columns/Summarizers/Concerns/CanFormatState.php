@@ -81,7 +81,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | Closure | null $locale = null): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | BackedEnum | Closure | null $locale = null): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
             if (blank($state)) {
@@ -109,6 +109,10 @@ trait CanFormatState
             }
 
             $locale = $summarizer->evaluate($locale) ?? $summarizer->getTable()->getDefaultNumberLocale() ?? config('app.locale');
+
+            if ($locale instanceof BackedEnum) {
+                $locale = (string) $locale->value;
+            }
 
             return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $locale);
         });

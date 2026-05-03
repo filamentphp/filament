@@ -552,6 +552,19 @@ public function panel(Panel $panel): Panel
 
 <AutoScreenshot name="panels/navigation/disabled-navigation" alt="Disabled navigation sidebar" version="4.x" />
 
+Alternatively, you may pass a closure that returns a boolean to decide dynamically. Returning `false` hides the navigation, while returning `true` renders the default auto-discovered navigation items. This is useful for flows such as onboarding or setup wizards where the navigation should only appear once the user has reached a particular state:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->navigation(fn (): bool => auth()->user()->hasCompletedOnboarding());
+}
+```
+
 ### Disabling the topbar
 
 You may disable topbar entirely by passing `false` to the `topbar()` method:

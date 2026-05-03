@@ -83,7 +83,7 @@ trait InteractsWithSchemas
         }
 
         if ($methodReflection->getAttributes(Renderless::class)) {
-            $this->skipRender();
+            app(PartialsComponentHook::class)->skipPartialRender($this);
         } else {
             $schema = $component->getContainer();
             $schemaToPartiallyRender = null;

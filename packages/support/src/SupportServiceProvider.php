@@ -18,6 +18,7 @@ use Filament\Support\Commands\OptimizeCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
+use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
@@ -25,6 +26,7 @@ use Filament\Support\Icons\IconManager;
 use Filament\Support\Livewire\Partials\DataStoreOverride;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Support\View\Components\Contracts\HasColor;
+use Filament\Support\View\DefaultLoadingIndicator;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
@@ -149,6 +151,7 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->bind(DataStore::class, DataStoreOverride::class);
+        $this->app->bind(LoadingIndicator::class, DefaultLoadingIndicator::class);
 
         $this->callAfterResolving(BladeIconsFactory::class, function (BladeIconsFactory $factory): void {
             $factory->add('filament', [

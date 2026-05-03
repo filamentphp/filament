@@ -6,9 +6,18 @@ use Closure;
 
 trait HasLabel
 {
+    protected bool | Closure $isLabelHidden = false;
+
     protected string | Closure | null $label = null;
 
     protected bool $shouldTranslateLabel = false;
+
+    public function hiddenLabel(bool | Closure $condition = true): static
+    {
+        $this->isLabelHidden = $condition;
+
+        return $this;
+    }
 
     public function label(string | Closure | null $label): static
     {
@@ -37,6 +46,11 @@ trait HasLabel
         }
 
         return $this->shouldTranslateLabel ? __($label) : $label;
+    }
+
+    public function isLabelHidden(): bool
+    {
+        return (bool) $this->evaluate($this->isLabelHidden);
     }
 
     public function getDefaultLabel(): ?string

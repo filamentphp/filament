@@ -44,6 +44,8 @@ return [
 
                     'invalid' => 'Annettu koodi on väärin.',
 
+                    'rate_limited' => 'Liian monta yritystä. Yritä myöhemmin uudelleen.',
+
                 ],
 
             ],

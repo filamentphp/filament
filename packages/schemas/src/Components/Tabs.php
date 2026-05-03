@@ -219,7 +219,7 @@ class Tabs extends Component
     }
 
     /**
-     * @return array<string, array{badge: string | int | float | null, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
+     * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
     #[ExposedLivewireMethod]
     #[Renderless]
@@ -236,7 +236,8 @@ class Tabs extends Component
                 continue;
             }
 
-            $badgeColor = $tab->getBadgeColor();
+            $badge = $tab->getBadge();
+            $badgeColor = $tab->getBadgeColor($badge);
 
             $badgeColorClasses = '';
             $badgeColorStyles = '';
@@ -248,20 +249,21 @@ class Tabs extends Component
                 $badgeColorClasses = implode(' ', FilamentColor::getComponentClasses(BadgeComponent::class, $badgeColor));
             }
 
-            $badgeIcon = $tab->getBadgeIcon();
+            $badgeIcon = $tab->getBadgeIcon($badge);
             $badgeIconHtml = $badgeIcon
                 ? generate_icon_html($badgeIcon, size: IconSize::Small)?->toHtml()
                 : null;
 
-            $badgeIconPosition = $tab->getBadgeIconPosition();
+            $badgeIconPosition = $tab->getBadgeIconPosition($badge);
+            $badgeTooltip = $tab->getBadgeTooltip($badge);
 
             $badges[strval($tabKey)] = [
-                'badge' => $tab->getBadge(),
+                'badge' => $badge,
                 'badgeColorClasses' => $badgeColorClasses,
                 'badgeColorStyles' => $badgeColorStyles,
                 'badgeIconHtml' => $badgeIconHtml,
                 'badgeIconPosition' => $badgeIconPosition instanceof IconPosition ? $badgeIconPosition->value : $badgeIconPosition,
-                'badgeTooltip' => $tab->getBadgeTooltip() ? strval($tab->getBadgeTooltip()) : null,
+                'badgeTooltip' => $badgeTooltip ? strval($badgeTooltip) : null,
             ];
         }
 

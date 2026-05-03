@@ -191,6 +191,213 @@ it('can load state from a `BelongsToMany` relationship inside a Repeater using e
     $undoRepeaterFake();
 });
 
+describe('loading relationships', function (): void {
+    it('returns early from `fillStateFromRelationship()` when state is already filled', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+        $otherTeam = Team::factory()->create();
+
+        livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($otherTeam): bool {
+                // Pre-fill the state, then call fillStateFromRelationship - it should not overwrite
+                $component->state((string) $otherTeam->id);
+                $component->fillStateFromRelationship();
+
+                expect((string) $component->getState())->toBe((string) $otherTeam->id);
+
+                return true;
+            });
+    });
+
+    it('loads state from a `HasOne` relationship', function (): void {
+        $user = User::factory()->create();
+        $publishedPost = Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
+
+        livewire(TableSelectWithHasOneRelationship::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'publishedPost' => (string) $publishedPost->id,
+            ]);
+    });
+
+    it('loads state from a `HasManyThrough` relationship', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+        $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+        livewire(TableSelectWithHasManyThroughRelationship::class, ['record' => $team])
+            ->assertSchemaStateSet(function (array $state) use ($posts): array {
+                expect(collect($state['posts'])->sort()->values()->all())
+                    ->toBe($posts->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+
+                return [];
+            });
+    });
+
+    it('loads state from a `BelongsToThrough` relationship', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->id]);
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        livewire(TableSelectWithBelongsToThroughRelationship::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'company' => (string) $company->id,
+            ]);
+    });
+});
+
+describe('saving relationships', function (): void {
+    it('can save selected options to a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+
+        livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all()])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(3);
+    });
+
+    it('can detach removed options from a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams);
+
+        livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => $teams->take(2)->pluck('id')->map(fn ($id) => (string) $id)->all()])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(2);
+    });
+
+    it('can save with `pivotData()` using `syncWithPivotValues()`', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+
+        livewire(TableSelectWithBelongsToManyRelationshipAndPivotData::class, ['record' => $user])
+            ->fillForm(['teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all()])
+            ->call('save');
+
+        $pivotRows = DB::table('team_user')
+            ->where('user_id', $user->id)
+            ->get();
+
+        expect($pivotRows)->toHaveCount(2);
+        expect($pivotRows->first()->role)->toBe('member');
+    });
+
+    it('associates a `BelongsTo` model when saving', function (): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+
+        livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
+            ->fillForm(['team_id' => (string) $team->id])
+            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($team): bool {
+                $component->saveStateToRelationship();
+
+                // associate() sets the foreign key on the in-memory model
+                expect($component->getRecord()->team_id)->toBe($team->id);
+
+                return true;
+            });
+    });
+
+    it('does not overwrite a `BelongsTo` foreign key that was already set on a recently created record', function (): void {
+        $teamA = Team::factory()->create();
+        $teamB = Team::factory()->create();
+
+        $user = User::factory()->create(['team_id' => $teamA->id]);
+
+        livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (TableSelect $component) use ($teamA, $teamB): bool {
+                // Mimic the post-create state where wasRecentlyCreated is true and the FK is already filled
+                $component->getRecord()->wasRecentlyCreated = true;
+                $component->getRecord()->team_id = $teamA->id;
+
+                $component->state((string) $teamB->id);
+                $component->saveStateToRelationship();
+
+                // Security guard kicks in: pre-existing FK is preserved on the in-memory model
+                expect($component->getRecord()->team_id)->toBe($teamA->id);
+
+                return true;
+            });
+
+        // The persisted record is unchanged too
+        expect($user->fresh()->team_id)->toBe($teamA->id);
+    });
+
+    it('nulls and re-associates foreign keys when saving a `HasMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $orphanPosts = Post::factory()->count(2)->create(['author_id' => null]);
+        $existingPost = Post::factory()->create(['author_id' => $user->id]);
+
+        livewire(TableSelectWithHasManyRelationship::class, ['record' => $user])
+            ->fillForm(['posts' => $orphanPosts->pluck('id')->map(fn ($id) => (string) $id)->all()])
+            ->call('save');
+
+        // Existing post should be detached (author_id nulled) and orphan posts re-associated
+        expect($existingPost->fresh()->author_id)->toBeNull();
+        foreach ($orphanPosts as $post) {
+            expect($post->fresh()->author_id)->toBe($user->id);
+        }
+    });
+
+    it('nulls and re-associates a foreign key when saving a `HasOne` relationship', function (): void {
+        $user = User::factory()->create();
+        $existingPost = Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
+        $orphanPost = Post::factory()->create(['author_id' => null, 'is_published' => true]);
+
+        livewire(TableSelectWithHasOneRelationship::class, ['record' => $user])
+            ->fillForm(['publishedPost' => (string) $orphanPost->id])
+            ->call('save');
+
+        expect($existingPost->fresh()->author_id)->toBeNull();
+        expect($orphanPost->fresh()->author_id)->toBe($user->id);
+    });
+
+    it('treats saving a `HasManyThrough` relationship as a no-op', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+        $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+        $loadedPostIds = $team->posts()->pluck('posts.id')->all();
+        expect($loadedPostIds)->toHaveCount(2);
+
+        livewire(TableSelectWithHasManyThroughRelationship::class, ['record' => $team])
+            ->assertFormComponentExists('posts', function (TableSelect $component) use ($posts): bool {
+                $component->state([$posts->first()->id]);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        // Posts and their author_id are unchanged - the early return prevents any mutation
+        foreach ($posts as $post) {
+            expect($post->fresh()->author_id)->toBe($user->id);
+        }
+    });
+
+    it('treats saving a `BelongsToThrough` relationship as a no-op', function (): void {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $companyA->id]);
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        // Sanity check via znck/eloquent-belongs-to-through
+        expect($user->company?->id)->toBe($companyA->id);
+
+        livewire(TableSelectWithBelongsToThroughRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('company', function (TableSelect $component) use ($companyB): bool {
+                $component->state((string) $companyB->id);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        expect($user->fresh()->company?->id)->toBe($companyA->id);
+    });
+});
+
 describe('properties', function (): void {
     it('defaults `isMultiple()` to `false`', function (): void {
         $select = TableSelect::make('team');
@@ -304,6 +511,50 @@ class TableSelectWithBelongsToManyRelationship extends Component implements HasA
             ->statePath('data');
     }
 
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TableSelectWithBelongsToManyRelationshipAndPivotData extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TableSelect::make('teams')
+                    ->relationship('teams')
+                    ->tableConfiguration(TeamsTable::class)
+                    ->pivotData(['role' => 'member'])
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
     public function render(): View
     {
         return view('livewire.form');
@@ -334,6 +585,11 @@ class TableSelectWithBelongsToRelationship extends Component implements HasActio
             ])
             ->model($this->record)
             ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 
     public function render(): View
@@ -367,6 +623,123 @@ class TableSelectWithHasManyRelationship extends Component implements HasActions
             ])
             ->model($this->record)
             ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TableSelectWithHasOneRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TableSelect::make('publishedPost')
+                    ->relationship('publishedPost')
+                    ->tableConfiguration(PostsTable::class),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TableSelectWithHasManyThroughRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public Team $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TableSelect::make('posts')
+                    ->relationship('posts', 'title')
+                    ->tableConfiguration(PostsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TableSelectWithBelongsToThroughRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TableSelect::make('company')
+                    ->relationship('company', 'name')
+                    ->tableConfiguration(\Filament\Tests\Fixtures\Tables\CompaniesTable::class),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 
     public function render(): View

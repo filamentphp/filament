@@ -361,6 +361,16 @@
         }
     }
 
+    &.fi-disabled {
+        [data-resize-handle] {
+            @apply hidden;
+        }
+
+        [data-resize-state='true'] [data-resize-wrapper] {
+            outline: none;
+        }
+    }
+
     & .tiptap.ProseMirror {
         /* https://defensivecss.dev/tip/input-zoom-safari */
         @supports (-webkit-touch-callout: none) {

@@ -753,6 +753,49 @@ public function configureXlsxWriterBeforeClose(Writer $writer): Writer
 }
 ```
 
+## Customizing the completion notification
+
+When an export finishes, Filament sends a notification to the user who started it. You can customize the title and body of that notification by overriding `getCompletedNotificationTitle()` and `getCompletedNotificationBody()` on your exporter:
+
+```php
+use Filament\Actions\Exports\Models\Export;
+
+public static function getCompletedNotificationTitle(Export $export): string
+{
+    return 'Your product export is ready';
+}
+
+public static function getCompletedNotificationBody(Export $export): string
+{
+    return $export->successful_rows . ' products were exported.';
+}
+```
+
+For anything beyond the title and body — for example, changing the notification color, adding extra actions, or replacing the icon — override `modifyCompletedNotification()`. You can either mutate the `Notification` passed in and return it, or build and return a completely new one:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Notifications\Notification;
+
+public static function modifyCompletedNotification(Notification $notification, Export $export): Notification
+{
+    $notification->icon('heroicon-o-shopping-bag');
+
+    if ($export->getOptions()['notifyTeam'] ?? false) {
+        $notification->actions([
+            ...$notification->getActions(),
+            Action::make('shareWithTeam')
+                ->url(route('exports.share', $export)),
+        ]);
+    }
+
+    return $notification;
+}
+```
+
+The `Export` model exposes the column mapping and options the user selected via `$export->getColumnMap()` and `$export->getOptions()`, so you can tailor the notification based on what the user exported.
+
 ## Customizing the export job
 
 The default job for processing exports is `Filament\Actions\Exports\Jobs\PrepareCsvExport`. If you want to extend this class and override any of its methods, you may replace the original class in the `register()` method of a service provider:

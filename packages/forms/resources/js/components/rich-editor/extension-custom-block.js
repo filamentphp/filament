@@ -93,8 +93,15 @@ export default Node.create({
 
             if (node.attrs.preview) {
                 const preview = document.createElement('div')
-                preview.className =
-                    'fi-fo-rich-editor-custom-block-preview fi-not-prose'
+                const previewClasses = [
+                    'fi-fo-rich-editor-custom-block-preview',
+                ]
+
+                if (!node.attrs.shouldApplyProseStylingToPreview) {
+                    previewClasses.push('fi-not-prose')
+                }
+
+                preview.className = previewClasses.join(' ')
                 preview.innerHTML = new TextDecoder().decode(
                     Uint8Array.from(atob(node.attrs.preview), (char) =>
                         char.charCodeAt(0),
@@ -149,6 +156,11 @@ export default Node.create({
             preview: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('data-preview'),
+                rendered: false,
+            },
+
+            shouldApplyProseStylingToPreview: {
+                default: false,
                 rendered: false,
             },
         }

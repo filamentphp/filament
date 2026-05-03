@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Sekunttia',
+                'minute' => 'Minuuttia',
+                'hour' => 'Tuntia',
+                'day' => 'Päivää',
+                'week' => 'Viikkoa',
+                'month' => 'Kuukautta',
+                'quarter' => 'Neljännestä',
+                'year' => 'Vuotta',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Edellinen vuosikymmen',
+                'past_5_years' => 'Edelliset 5 vuotta',
+                'past_2_years' => 'Edelliset 2 vuotta',
+                'past_year' => 'Edellinen vuosi',
+                'past_6_months' => 'Edelliset 6 kuukautta',
+                'past_quarter' => 'Edellinen neljännes',
+                'past_month' => 'Edellinen kuukausi',
+                'past_2_weeks' => 'Edelliset 2 viikkoa',
+                'past_week' => 'Edellinen viikko',
+                'past_hour' => 'Edellinen tunti',
+                'past_minute' => 'Edellinen minuutti',
+                'this_decade' => 'Tämä vuosikymmen',
+                'this_year' => 'Tämä vuosi',
+                'this_quarter' => 'Tämä neljännes',
+                'this_month' => 'Tämä kuukausi',
+                'today' => 'Tänään',
+                'this_hour' => 'Tämä tunti',
+                'this_minute' => 'Tämä minuutti',
+                'next_minute' => 'Seuraava minuutti',
+                'next_hour' => 'Seuraava tunti',
+                'next_week' => 'Seuraava viikko',
+                'next_2_weeks' => 'Seuraavat 2 viikkoa',
+                'next_month' => 'Seuraava kuukausi',
+                'next_quarter' => 'Seuraava neljännes',
+                'next_6_months' => 'Seuraavat 6 kuukautta',
+                'next_year' => 'Seuraava vuosi',
+                'next_2_years' => 'Seuraavat 2 vuotta',
+                'next_5_years' => 'Seuraavat 5 vuotta',
+                'next_decade' => 'Seuraava vuosikymmen',
+                'custom' => 'Mukautettu',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Vuosi',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Päivämäärän tyyppi',
+
+                    'options' => [
+                        'absolute' => 'Tietty päivä',
+                        'relative' => 'Liikkuva aikaväli',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Aikaväli',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Kuinka monta',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Yksikkö',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Aikamuoto',
+
+                    'options' => [
+                        'past' => 'Menneisyys',
+                        'future' => 'Tulevaisuus',
+                    ],
+
                 ],
 
             ],

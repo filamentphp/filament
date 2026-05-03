@@ -1,12 +1,18 @@
 <?php
 
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\MentionProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 uses(TestCase::class);
 
@@ -467,7 +473,7 @@ describe('merge tag output', function (): void {
             ->toBe('<p><span data-type="mergeTag" data-id="name">John</span></p>');
     });
 
-    it('strips `data-id` from the merge tag `<span>` via `toHtml()`', function (): void {
+    it('preserves `data-id` on the merge tag `<span>` via `toHtml()`', function (): void {
         $renderer = RichContentRenderer::make([
             'type' => 'doc',
             'content' => [
@@ -478,7 +484,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['name' => 'John']);
 
         expect($renderer->toHtml())
-            ->toBe('<p><span data-type="mergeTag">John</span></p>');
+            ->toBe('<p><span data-type="mergeTag" data-id="name">John</span></p>');
     });
 
     it('renders only the text value via `toText()` for a string merge tag', function (): void {
@@ -554,7 +560,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['name' => 'John']);
 
         expect($renderer->toHtml())
-            ->toBe('<p>Hello <span data-type="mergeTag">John</span>, welcome!</p>');
+            ->toBe('<p>Hello <span data-type="mergeTag" data-id="name">John</span>, welcome!</p>');
     });
 
     it('renders a string merge tag inline with surrounding text via `toText()`', function (): void {
@@ -708,7 +714,7 @@ describe('merge tag output', function (): void {
         ]);
 
         expect($renderer->toHtml())
-            ->toBe('<p><span data-type="mergeTag">Hello</span> <strong>Admin</strong></p>');
+            ->toBe('<p><span data-type="mergeTag" data-id="greeting">Hello</span> <strong>Admin</strong></p>');
     });
 
     it('renders mixed string and `Htmlable` merge tags inline via `toText()`', function (): void {
@@ -766,7 +772,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['null_val' => null, 'empty_str' => '']);
 
         expect($renderer->toHtml())
-            ->toBe('<p>A<span data-type="mergeTag"></span>B<span data-type="mergeTag"></span>C<span data-type="mergeTag"></span>D</p>');
+            ->toBe('<p>A<span data-type="mergeTag" data-id="null_val"></span>B<span data-type="mergeTag" data-id="empty_str"></span>C<span data-type="mergeTag" data-id="missing"></span>D</p>');
     });
 
     it('renders `null`, empty string, and missing merge tags as empty inline content via `toText()`', function (): void {
@@ -813,7 +819,7 @@ describe('merge tag output', function (): void {
         ]);
 
         expect($renderer->toHtml())
-            ->toBe('<p><span data-type="mergeTag"></span></p>');
+            ->toBe('<p><span data-type="mergeTag" data-id="name"></span></p>');
     });
 
     it('renders an unresolved merge tag as empty text via `toText()`', function (): void {
@@ -866,7 +872,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['name' => 'John', 'role' => new HtmlString('<em>admin</em>')]);
 
         expect($renderer->toHtml())
-            ->toBe('<p>Hello <span data-type="mergeTag">John</span></p><p>Your role is <em>admin</em>.</p>');
+            ->toBe('<p>Hello <span data-type="mergeTag" data-id="name">John</span></p><p>Your role is <em>admin</em>.</p>');
     });
 
     it('renders merge tags inline within each paragraph, with paragraph separators preserved via `toText()`', function (): void {
@@ -1904,5 +1910,190 @@ describe('fluent API', function (): void {
         expect($renderer->mentions(null))->toBe($renderer);
         expect($renderer->textColors(null))->toBe($renderer);
         expect($renderer->linkProtocols(null))->toBe($renderer);
+    });
+});
+
+describe('file attachment URLs', function (): void {
+    it('generates a temporary URL for a private file on disk', function (): void {
+        Storage::fake('attachments');
+        Storage::disk('attachments')->put('photos/avatar.jpg', 'binary');
+
+        $renderer = RichContentRenderer::make('')
+            ->fileAttachmentsDisk('attachments')
+            ->fileAttachmentsVisibility('private');
+
+        $url = $renderer->getFileAttachmentUrl('photos/avatar.jpg');
+
+        expect($url)->toBeString();
+        // Temporary URLs include a signature parameter under the `Storage::fake` driver.
+        expect($url)->toContain('photos/avatar.jpg');
+    });
+
+    it('generates a public URL for a file on a public disk', function (): void {
+        Storage::fake('public-attachments');
+        Storage::disk('public-attachments')->put('photos/logo.jpg', 'binary');
+
+        $renderer = RichContentRenderer::make('')
+            ->fileAttachmentsDisk('public-attachments')
+            ->fileAttachmentsVisibility('public');
+
+        $url = $renderer->getFileAttachmentUrl('photos/logo.jpg');
+
+        expect($url)->toBeString();
+        expect($url)->toContain('photos/logo.jpg');
+    });
+
+    it('returns `null` when the file does not exist on the configured disk', function (): void {
+        Storage::fake('attachments');
+
+        $renderer = RichContentRenderer::make('')
+            ->fileAttachmentsDisk('attachments')
+            ->fileAttachmentsVisibility('public');
+
+        expect($renderer->getFileAttachmentUrl('does-not-exist.jpg'))->toBeNull();
+    });
+
+    it('delegates URL generation to a configured `FileAttachmentProvider`', function (): void {
+        $provider = new class implements FileAttachmentProvider
+        {
+            public function getFileAttachmentUrl(mixed $file): ?string
+            {
+                return "provider://{$file}";
+            }
+
+            public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+            {
+                return null;
+            }
+
+            public function getDefaultFileAttachmentVisibility(): ?string
+            {
+                return 'private';
+            }
+
+            public function isExistingRecordRequiredToSaveNewFileAttachments(): bool
+            {
+                return false;
+            }
+
+            public function cleanUpFileAttachments(array $exceptIds): void {}
+
+            public function attribute(RichContentAttribute $attribute): static
+            {
+                return $this;
+            }
+        };
+
+        $renderer = RichContentRenderer::make('')
+            ->fileAttachmentProvider($provider);
+
+        expect($renderer->getFileAttachmentUrl('any-id'))->toBe('provider://any-id');
+    });
+
+    it('prefers a `FileAttachmentProvider` from a plugin over the default disk lookup', function (): void {
+        $plugin = new class implements HasFileAttachmentProvider, RichContentPlugin
+        {
+            public function getFileAttachmentProvider(): ?FileAttachmentProvider
+            {
+                return new class implements FileAttachmentProvider
+                {
+                    public function getFileAttachmentUrl(mixed $file): ?string
+                    {
+                        return "plugin://{$file}";
+                    }
+
+                    public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+                    {
+                        return null;
+                    }
+
+                    public function getDefaultFileAttachmentVisibility(): ?string
+                    {
+                        return null;
+                    }
+
+                    public function isExistingRecordRequiredToSaveNewFileAttachments(): bool
+                    {
+                        return false;
+                    }
+
+                    public function cleanUpFileAttachments(array $exceptIds): void {}
+
+                    public function attribute(RichContentAttribute $attribute): static
+                    {
+                        return $this;
+                    }
+                };
+            }
+
+            public function getTipTapPhpExtensions(): array
+            {
+                return [];
+            }
+
+            public function getTipTapJsExtensions(): array
+            {
+                return [];
+            }
+
+            public function getEditorTools(): array
+            {
+                return [];
+            }
+
+            public function getEditorActions(): array
+            {
+                return [];
+            }
+        };
+
+        $renderer = RichContentRenderer::make('')->plugins([$plugin]);
+
+        expect($renderer->getFileAttachmentUrl('x'))->toBe('plugin://x');
+    });
+
+    it('replaces image `src` with the resolved file attachment URL during `toHtml()`', function (): void {
+        Storage::fake('attachments');
+        Storage::disk('attachments')->put('photos/a.jpg', 'binary');
+
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'image',
+                            'attrs' => [
+                                'id' => 'photos/a.jpg',
+                                'src' => 'placeholder',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ])
+            ->fileAttachmentsDisk('attachments')
+            ->fileAttachmentsVisibility('public')
+            ->toHtml();
+
+        expect($html)->toContain('photos/a.jpg');
+        expect($html)->not->toContain('src="placeholder"');
+    });
+});
+
+describe('output sanitization', function (): void {
+    it('strips `<script>` tags from the rendered HTML via `sanitizeHtml`', function (): void {
+        $html = RichContentRenderer::make('<p>Hello</p><script>alert(1)</script>')->toHtml();
+
+        expect($html)->toContain('Hello');
+        expect($html)->not->toContain('<script');
+    });
+
+    it('keeps safe inline formatting marks through the sanitizer', function (): void {
+        $html = RichContentRenderer::make('<p><strong>bold</strong> <em>italic</em></p>')->toHtml();
+
+        expect($html)->toContain('<strong>bold</strong>');
+        expect($html)->toContain('<em>italic</em>');
     });
 });

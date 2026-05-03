@@ -3,13 +3,18 @@
 use Filament\Tables\Grouping\Group;
 use Filament\Tests\Fixtures\Livewire\GroupedCustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithoutSummarizers;
+use Filament\Tests\Fixtures\Livewire\TicketMessagesTable;
 use Filament\Tests\Fixtures\Livewire\UsersTable;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Image;
+use Filament\Tests\Fixtures\Models\Language;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Profile;
 use Filament\Tests\Fixtures\Models\Setting;
 use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Livewire\Features\SupportTesting\Testable;
@@ -662,4 +667,297 @@ it('returns fluent `$this` from callback setters', function (): void {
     expect($group->orderQueryUsing(static fn ($query) => $query))->toBe($group);
     expect($group->scopeQueryUsing(static fn ($query) => $query))->toBe($group);
     expect($group->scopeQueryByKeyUsing(static fn ($query) => $query))->toBe($group);
+});
+
+it('can group records by `BelongsTo` relationship that uses `withTrashed()` when the related model is soft-deleted', function (): void {
+    $ticketAlpha = Ticket::factory()->create();
+    $ticketBeta = Ticket::factory()->create();
+    $ticketGamma = Ticket::factory()->create();
+
+    TicketMessage::factory()->create(['ticket_id' => $ticketBeta->id]);
+    TicketMessage::factory()->create(['ticket_id' => $ticketAlpha->id]);
+    TicketMessage::factory()->create(['ticket_id' => $ticketGamma->id]);
+    TicketMessage::factory()->create(['ticket_id' => $ticketAlpha->id]);
+    TicketMessage::factory()->create(['ticket_id' => $ticketBeta->id]);
+
+    $ticketGamma->delete();
+
+    $sortedMessages = TicketMessage::query()
+        ->orderBy(
+            Ticket::query()
+                ->select('id')
+                ->withTrashed()
+                ->whereColumn('tickets.id', 'ticket_messages.ticket_id')
+                ->limit(1)
+        )
+        ->orderBy('ticket_messages.id')
+        ->get();
+
+    livewire(TicketMessagesTable::class)
+        ->set('tableGrouping', 'ticket.id')
+        ->assertCanSeeTableRecords($sortedMessages, inOrder: true);
+});
+
+it('can group records by `HasOne` relationship', function (): void {
+    $bios = ['Alpha bio', 'Beta bio', 'Gamma bio', 'Delta bio', 'Epsilon bio'];
+    foreach ($bios as $bio) {
+        User::factory()->has(
+            Profile::factory()->state(['bio' => $bio]),
+            'profile'
+        )->create();
+    }
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Profile::query()
+                ->select('bio')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'profile.bio')
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
+});
+
+it('can group records by `BelongsToThrough` relationship', function (): void {
+    $companyNames = ['Alpha Co', 'Beta Co', 'Gamma Co', 'Delta Co', 'Epsilon Co'];
+    foreach ($companyNames as $companyName) {
+        $company = Company::factory()->create(['name' => $companyName]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
+        User::factory()->create(['team_id' => $team->id]);
+    }
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Company::query()
+                ->select('companies.name')
+                ->join('teams', 'teams.company_id', '=', 'companies.id')
+                ->whereColumn('teams.id', 'users.team_id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'company.name')
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
+});
+
+it('can group records by `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
+    $companyNames = ['Acme Corp', 'Beta Inc', 'Gamma LLC', 'Delta Co', 'Epsilon Ltd'];
+    foreach ($companyNames as $companyName) {
+        $company = Company::factory()->create(['name' => $companyName]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
+        $user = User::factory()->create(['team_id' => $team->id]);
+        Post::factory()->create(['author_id' => $user->id]);
+    }
+
+    $sortedPosts = Post::query()
+        ->orderBy(
+            Company::query()
+                ->select('companies.name')
+                ->join('teams', 'teams.company_id', '=', 'companies.id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
+
+    livewire(PostsTableWithoutSummarizers::class)
+        ->set('tableGrouping', 'author.company.name')
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
+});
+
+it('can group records with nullable `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
+    // Post with author, team, and company
+    $company = Company::factory()->create(['name' => 'Acme Corp']);
+    $teamWithCompany = Team::factory()->create(['company_id' => $company->id]);
+    $userComplete = User::factory()->create(['team_id' => $teamWithCompany->id]);
+    $postComplete = Post::factory()->create(['author_id' => $userComplete->id]);
+
+    // Post with author and team but no company
+    $teamWithoutCompany = Team::factory()->create(['company_id' => null]);
+    $userNoCompany = User::factory()->create(['team_id' => $teamWithoutCompany->id]);
+    $postNoCompany = Post::factory()->create(['author_id' => $userNoCompany->id]);
+
+    // Post with author but no team
+    $userNoTeam = User::factory()->create(['team_id' => null]);
+    $postNoTeam = Post::factory()->create(['author_id' => $userNoTeam->id]);
+
+    // Post with no author
+    $postNoAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postComplete, $postNoCompany, $postNoTeam, $postNoAuthor]);
+
+    livewire(PostsTableWithoutSummarizers::class)
+        ->set('tableGrouping', 'author.company.name')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can group records by `HasOneThrough` -> `BelongsTo` relationship', function (): void {
+    $languageNames = ['Alpha Lang', 'Beta Lang', 'Gamma Lang', 'Delta Lang', 'Epsilon Lang'];
+    foreach ($languageNames as $languageName) {
+        $language = Language::factory()->create(['name' => $languageName]);
+        User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['language_id' => $language->id]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+    }
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Language::query()
+                ->select('languages.name')
+                ->join('settings', 'settings.language_id', '=', 'languages.id')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'setting.language.name')
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
+});
+
+it('can group records with nullable `HasOneThrough` -> `BelongsTo` relationship', function (): void {
+    // User with full chain
+    $language = Language::factory()->create(['name' => 'English']);
+    $userWithLanguage = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['language_id' => $language->id]),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    // User with profile and setting but no language
+    $userWithSettingNoLanguage = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['language_id' => null]),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    // User with profile but no setting
+    $userWithProfileNoSetting = User::factory()->has(
+        Profile::factory(),
+        'profile'
+    )->create();
+
+    // User without profile
+    $userWithoutProfile = User::factory()->create();
+
+    $allUsers = collect([$userWithLanguage, $userWithSettingNoLanguage, $userWithProfileNoSetting, $userWithoutProfile]);
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'setting.language.name')
+        ->assertCanSeeTableRecords($allUsers);
+});
+
+it('can group records by `BelongsTo` -> `HasOneThrough` -> `BelongsTo` relationship', function (): void {
+    $languageNames = ['Alpha Lang', 'Beta Lang', 'Gamma Lang', 'Delta Lang', 'Epsilon Lang'];
+    foreach ($languageNames as $languageName) {
+        $language = Language::factory()->create(['name' => $languageName]);
+        $user = User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['language_id' => $language->id]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+        Post::factory()->create(['author_id' => $user->id]);
+    }
+
+    $sortedPosts = Post::query()
+        ->orderBy(
+            Language::query()
+                ->select('languages.name')
+                ->join('settings', 'settings.language_id', '=', 'languages.id')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
+
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.setting.language.name')
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
+});
+
+it('can group records by `HasOne` relationship that uses a custom `where()` constraint', function (): void {
+    // User 1: has both published and unpublished posts; should group by published
+    $user1 = User::factory()->create();
+    Post::factory()->create(['author_id' => $user1->id, 'is_published' => false, 'title' => 'Z Unpublished']);
+    Post::factory()->create(['author_id' => $user1->id, 'is_published' => true, 'title' => 'A Published']);
+
+    // User 2: only has unpublished posts; should group as null
+    $user2 = User::factory()->create();
+    Post::factory()->create(['author_id' => $user2->id, 'is_published' => false, 'title' => 'B Unpublished']);
+
+    // User 3: has a published post
+    $user3 = User::factory()->create();
+    Post::factory()->create(['author_id' => $user3->id, 'is_published' => true, 'title' => 'M Published']);
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Post::query()
+                ->select('posts.title')
+                ->whereColumn('posts.author_id', 'users.id')
+                ->where('posts.is_published', true)
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'publishedPost.title')
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
+});
+
+it('can group records by `HasOneThrough` -> `BelongsTo` relationship that uses `withTrashed()` when the related model is soft-deleted', function (): void {
+    $alphaLanguage = Language::factory()->create(['name' => 'Alpha Lang']);
+    $betaLanguage = Language::factory()->create(['name' => 'Beta Lang']);
+    $gammaLanguage = Language::factory()->create(['name' => 'Gamma Lang']);
+
+    foreach ([$alphaLanguage, $betaLanguage, $gammaLanguage] as $language) {
+        User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['language_id' => $language->id]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+    }
+
+    // Soft-delete the Gamma language
+    $gammaLanguage->delete();
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Language::query()
+                ->withTrashed()
+                ->select('languages.name')
+                ->join('settings', 'settings.language_id', '=', 'languages.id')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'setting.languageWithTrashed.name')
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
 });

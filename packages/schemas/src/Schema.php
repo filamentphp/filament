@@ -98,7 +98,6 @@ class Schema extends ViewComponent implements HasEmbeddedView
         }
 
         return match ($parameterType) {
-            static::class, self::class => [$this],
             Model::class, $record::class => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };

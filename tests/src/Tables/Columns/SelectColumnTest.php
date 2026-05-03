@@ -10,6 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
@@ -805,6 +806,387 @@ class RenderSelectColumnWithLoadingMessage extends Component implements HasActio
         return $table->query(Post::query())->columns([
             SelectColumn::make('rating')->options([1 => '1'])->native(false)->optionsLoadingMessage('Please wait...'),
         ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+describe('relationship branch coverage', function (): void {
+    it('applies `modifyQueryUsing` inside `getOptionsFromRelationship()`', function (): void {
+        User::factory()->create(['name' => 'Alpha']);
+        User::factory()->create(['name' => 'Hidden']);
+        Post::factory()->create();
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $options = $column->getOptions();
+
+                expect(array_values($options))->toBe(['Alpha']);
+
+                return true;
+            });
+    });
+
+    it('respects a custom limit set inside `modifyQueryUsing()` for `getOptionsFromRelationship()`', function (): void {
+        User::factory()->count(20)->create();
+        Post::factory()->create();
+
+        livewire(TestTableWithLimitedRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                expect($column->getOptions())->toHaveCount(3);
+                expect($column->getOptionsLimit())->toBe(3);
+
+                return true;
+            });
+    });
+
+    it('preserves an existing `orderBy` from `modifyQueryUsing()` in `getOptionsFromRelationship()`', function (): void {
+        $beta = User::factory()->create(['name' => 'Beta']);
+        User::factory()->create(['name' => 'Alpha']);
+        User::factory()->create(['name' => 'Gamma']);
+        Post::factory()->create(['author_id' => $beta->id]);
+
+        livewire(TestTableWithOrderedRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $options = $column->getOptions();
+
+                expect(array_values($options))->toBe(['Gamma', 'Beta', 'Alpha']);
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionsFromRelationship()`', function (): void {
+        $alpha = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+        User::factory()->create(['name' => 'Beta', 'json' => ['nickname' => 'Bee']]);
+        Post::factory()->create(['author_id' => $alpha->id]);
+
+        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $options = $column->getOptions();
+
+                expect(array_values($options))->toEqualCanonicalizing(['Ace', 'Bee']);
+
+                return true;
+            });
+    });
+
+    it('applies `modifyQueryUsing` inside `getOptionsSearchResultsFromRelationship()`', function (): void {
+        User::factory()->create(['name' => 'Alpha Match']);
+        User::factory()->create(['name' => 'Hidden Match']);
+        Post::factory()->create();
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Match');
+
+                expect(array_values($results))->toBe(['Alpha Match']);
+
+                return true;
+            });
+    });
+
+    it('uses `getOptionLabelFromRecordUsing()` callback inside `getOptionsSearchResultsFromRelationship()`', function (): void {
+        $user = User::factory()->create(['name' => 'Custom User']);
+        Post::factory()->create();
+
+        livewire(TestTableWithCustomLabelRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($user): bool {
+                $results = $column->getOptionsSearchResults('Custom');
+
+                expect($results[$user->id])->toBe("Author: {$user->name}");
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionsSearchResultsFromRelationship()`', function (): void {
+        $alpha = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+        User::factory()->create(['name' => 'Beta', 'json' => ['nickname' => 'Bee']]);
+        Post::factory()->create(['author_id' => $alpha->id]);
+
+        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Ace');
+
+                expect(array_values($results))->toEqualCanonicalizing(['Ace']);
+
+                return true;
+            });
+    });
+
+    it('respects a custom limit inside `modifyQueryUsing()` for `getOptionsSearchResultsFromRelationship()`', function (): void {
+        User::factory()->count(10)->create(['name' => 'Match Me']);
+        Post::factory()->create();
+
+        livewire(TestTableWithLimitedSearchableRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Match');
+
+                expect($results)->toHaveCount(2);
+                expect($column->getOptionsLimit())->toBe(2);
+
+                return true;
+            });
+    });
+
+    it('preserves an existing `orderBy` from `modifyQueryUsing()` in `getOptionsSearchResultsFromRelationship()`', function (): void {
+        User::factory()->create(['name' => 'Match Beta']);
+        User::factory()->create(['name' => 'Match Alpha']);
+        User::factory()->create(['name' => 'Match Gamma']);
+        Post::factory()->create();
+
+        livewire(TestTableWithOrderedRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                $results = $column->getOptionsSearchResults('Match');
+
+                expect(array_values($results))->toBe(['Match Gamma', 'Match Beta', 'Match Alpha']);
+
+                return true;
+            });
+    });
+
+    it('returns the eager-loaded relation label without re-querying inside `getOptionLabelFromRelationship()`', function (): void {
+        $user = User::factory()->create(['name' => 'Eager Loaded']);
+        $post = Post::factory()->create(['author_id' => $user->id]);
+
+        livewire(TestTableWithRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $user): bool {
+                $post->setRelation('author', $user);
+                $column->record($post);
+
+                expect($column->getOptionLabel())->toBe('Eager Loaded');
+
+                return true;
+            });
+    });
+
+    it('falls back to a query when the eager-loaded relation key does not match the state inside `getOptionLabelFromRelationship()`', function (): void {
+        // The cached `$column->getState()` (from initial table render) returns `$dbAuthor->id`,
+        // but we manually set the eagerly-loaded relation to a different user. Because the loaded
+        // record's PK does not match the state, `getOptionLabelFromRelationship()` must fall back
+        // to a fresh query and return the actual database author.
+        $dbAuthor = User::factory()->create(['name' => 'From Database']);
+        $unrelated = User::factory()->create(['name' => 'Wrongly Loaded']);
+        $post = Post::factory()->create(['author_id' => $dbAuthor->id]);
+
+        livewire(TestTableWithRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $unrelated): bool {
+                $post->setRelation('author', $unrelated);
+                $column->record($post);
+
+                expect($column->getOptionLabel())->toBe('From Database');
+
+                return true;
+            });
+    });
+
+    it('returns `null` from `getOptionLabelFromRelationship()` when no record matches the state', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->create(['author_id' => $user->id]);
+
+        livewire(TestTableWithRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column): bool {
+                // Build a fresh post that was not part of the initial render so the state cache is empty,
+                // and point its `author_id` to a non-existent user.
+                $missingPost = new Post(['author_id' => 999999]);
+                $missingPost->id = 999999;
+                $column->record($missingPost);
+
+                expect($column->getOptionLabel(withDefault: false))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionLabelFromRelationship()`', function (): void {
+        $user = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+        $post = Post::factory()->create(['author_id' => $user->id]);
+
+        livewire(TestTableWithJsonPathRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post, $user): bool {
+                $post->setRelation('author', $user);
+                $column->record($post);
+
+                expect($column->getOptionLabel())->toBe('Ace');
+
+                return true;
+            });
+    });
+
+    it('applies `modifyQueryUsing()` inside `getOptionLabelFromRelationship()` fallback query', function (): void {
+        $hiddenUser = User::factory()->create(['name' => 'Hidden']);
+        $post = Post::factory()->create(['author_id' => $hiddenUser->id]);
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->assertTableColumnExists('author_id', function (SelectColumn $column) use ($post): bool {
+                $post->setRelation('author', null);
+                $column->record($post);
+
+                expect($column->getOptionLabel(withDefault: false))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('throws `LogicException` from `getOptionsRelationship()` when the relationship does not exist', function (): void {
+        $post = Post::factory()->create();
+
+        $column = SelectColumn::make('missing')
+            ->optionsRelationship('nonExistentRelationship', 'name')
+            ->record($post);
+
+        expect(fn () => $column->getOptionsRelationship())->toThrow(\LogicException::class);
+    });
+
+    it('returns `null` from `getOptionsRelationship()` when no relationship name is set', function (): void {
+        expect(SelectColumn::make('status')->getOptionsRelationship())->toBeNull();
+    });
+
+    it('returns options from a `BelongsToThrough` relationship', function (): void {
+        $team = Team::factory()->create(['name' => 'My Team']);
+        $author = User::factory()->create(['team_id' => $team->getKey()]);
+        $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+        livewire(TestTableWithBelongsToThroughRelationshipSelectColumn::class)
+            ->assertTableColumnExists('team_id', function (SelectColumn $column) use ($post, $team): bool {
+                $column->record($post->fresh());
+
+                $options = $column->getOptions();
+                expect($options[$team->getKey()])->toBe('My Team');
+
+                return true;
+            });
+    });
+});
+
+class TestTableWithFilteredRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                SelectColumn::make('author_id')
+                    ->optionsRelationship('author', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%')),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithLimitedRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                SelectColumn::make('author_id')
+                    ->optionsRelationship('author', 'name', modifyQueryUsing: fn ($query) => $query->limit(3)),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithOrderedRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                SelectColumn::make('author_id')
+                    ->optionsRelationship('author', 'name', modifyQueryUsing: fn ($query) => $query->orderBy('name', 'desc')),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithJsonPathRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                SelectColumn::make('author_id')
+                    ->optionsRelationship('author', 'json->nickname'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithLimitedSearchableRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                SelectColumn::make('author_id')
+                    ->optionsRelationship('author', 'name', modifyQueryUsing: fn ($query) => $query->limit(2)),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithBelongsToThroughRelationshipSelectColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                SelectColumn::make('team_id')
+                    ->optionsRelationship('team', 'name'),
+            ]);
     }
 
     public function render(): View

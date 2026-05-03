@@ -24,10 +24,15 @@ class UsersTable extends Component implements HasActions, HasSchemas, Tables\Con
             ->query(User::query())
             ->groups(fn () => [
                 Tables\Grouping\Group::make('name'),
+                Tables\Grouping\Group::make('profile.bio'),
                 Tables\Grouping\Group::make('profile.company.name'),
                 Tables\Grouping\Group::make('profile.setting.theme'),
                 Tables\Grouping\Group::make('image.url'),
                 Tables\Grouping\Group::make('setting.theme'),
+                Tables\Grouping\Group::make('setting.language.name'),
+                Tables\Grouping\Group::make('setting.languageWithTrashed.name'),
+                Tables\Grouping\Group::make('company.name'),
+                Tables\Grouping\Group::make('publishedPost.title'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('name')
@@ -62,6 +67,22 @@ class UsersTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->searchable(),
                 Tables\Columns\TextColumn::make('setting.language')
                     ->label('Setting Language (HasOneThrough)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('setting.language.name')
+                    ->label('Setting Language Name (HasOneThrough -> BelongsTo)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('setting.languageWithTrashed.name')
+                    ->label('Setting Language With Trashed (HasOneThrough -> BelongsTo with withTrashed)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('company.name')
+                    ->label('Company (BelongsToThrough)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('publishedPost.title')
+                    ->label('Published Post Title (HasOne with where())')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('posts_count')

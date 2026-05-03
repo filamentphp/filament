@@ -22,6 +22,8 @@ return [
 
                     'invalid' => 'Zadaný kód je neplatný.',
 
+                    'rate_limited' => 'Příliš mnoho pokusů. Zkuste to znovu později.',
+
                 ],
 
             ],

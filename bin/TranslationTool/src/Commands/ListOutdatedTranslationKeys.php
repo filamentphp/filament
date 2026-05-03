@@ -37,22 +37,26 @@ final class ListOutdatedTranslationKeys
             ->map(function (Collection $fileResults) use ($locale) {
                 return $fileResults
                     ->groupBy(fn (FileResult $result) => $result->file->getFilePath($locale))
-                    ->map(function (Collection $fileGroup, string $file) {
+                    ->map(function (Collection $fileGroup, string $file) use ($locale) {
                         /**
                          * @var FileResult $result
                          */
                         $result = $fileGroup->first();
 
-                        $missingTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->missingTranslations)->keys()->unique();
-                        $removedTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->removedTranslations)->keys()->unique();
+                        $file = $result->file;
 
-                        $missingTranslations = $missingTranslations->map(fn (string $key) => [
-                            'key' => $key,
+                        $missingTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->missingTranslations)->unique();
+                        $removedTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->removedTranslations)->unique();
+
+                        $missingTranslations = $missingTranslations->map(fn (array $value, string $key) => [
+                            'key' => createLink($file->getFileUrl('en', $value['line'] ?? null), $key),
+                            'line' => isset($value['line']) ? createLink($file->getFileUrl($locale, $value['line'] ?? null), $value['line']) : null,
                             'status' => 'Missing',
                         ]);
 
-                        $removedTranslations = $removedTranslations->map(fn (string $key) => [
-                            'key' => $key,
+                        $removedTranslations = $removedTranslations->map(fn (array $value, string $key) => [
+                            'key' => createLink($file->getFileUrl($locale, $value['line'] ?? null), $key),
+                            'line' => isset($value['line']) ? createLink($file->getFileUrl('en', $value['line'] ?? null), $value['line']) : null,
                             'status' => 'Removed',
                         ]);
 
@@ -63,9 +67,11 @@ final class ListOutdatedTranslationKeys
                             'file_exists' => $file->exists($locale),
                             'header' => "[{$result->package->name}] {$file->name} ⋅ " .
                                 (
-                                    $file->exists($locale)
-                                        ? createLink($file->getFileUrl($locale), '↗ Open file')
-                                        : 'Missing ⋅ ' . createLink($file->getFileUrl('en'), '↗ Open EN file')
+                                    ($file->exists($locale)
+                                        ? createLink($file->getFileUrl($locale), '↗ Open file') . ' | '
+                                        : \null)
+
+                                        . createLink($file->getFileUrl('en'), '↗ Open EN file')
                                 ),
                             'rows' => $missingTranslations->merge($removedTranslations)->toArray(),
                         ];
@@ -86,7 +92,7 @@ final class ListOutdatedTranslationKeys
                 Prompts\info($table['header']);
 
                 Prompts\table(
-                    ['Key', 'Status'],
+                    ['Key', 'Line', 'Status'],
                     $table['rows'],
                 );
             } else {

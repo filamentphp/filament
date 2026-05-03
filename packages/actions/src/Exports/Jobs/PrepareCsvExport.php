@@ -29,6 +29,10 @@ class PrepareCsvExport implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
+    public ?int $tries = 1;
+
+    public ?int $maxExceptions = 0;
+
     protected Exporter $exporter;
 
     /**
@@ -52,6 +56,10 @@ class PrepareCsvExport implements ShouldQueue
 
     public function handle(): void
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
+
         $csv = Writer::from(new SplTempFileObject);
         $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());

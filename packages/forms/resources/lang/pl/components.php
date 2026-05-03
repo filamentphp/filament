@@ -548,6 +548,35 @@ return [
 
                         'color' => [
                             'label' => 'Kolor',
+
+                            'options' => [
+                                'slate' => 'Ciemnoszary',
+                                'gray' => 'Szary',
+                                'zinc' => 'Cynk',
+                                'neutral' => 'Neutralny',
+                                'stone' => 'Kamień',
+                                'mauve' => 'Fiołkowy',
+                                'olive' => 'Oliwkowy',
+                                'mist' => 'Mgiełka',
+                                'taupe' => 'Taupe',
+                                'red' => 'Czerwony',
+                                'orange' => 'Pomarańczowy',
+                                'amber' => 'Bursztynowy',
+                                'yellow' => 'Żółty',
+                                'lime' => 'Limonkowy',
+                                'green' => 'Zielony',
+                                'emerald' => 'Szmaragdowy',
+                                'teal' => 'Turkusowy',
+                                'cyan' => 'Cyjan',
+                                'sky' => 'Niebo',
+                                'blue' => 'Niebieski',
+                                'indigo' => 'Indygo',
+                                'violet' => 'Fioletowy',
+                                'purple' => 'Purpurowy',
+                                'fuchsia' => 'Fuksja',
+                                'pink' => 'Różowy',
+                                'rose' => 'Różany',
+                            ],
                         ],
 
                         'custom_color' => [

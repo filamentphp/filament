@@ -22,6 +22,8 @@ return [
 
                 'messages' => [
                     'invalid' => 'Zadaný kód je neplatný.',
+
+                    'rate_limited' => 'Příliš mnoho pokusů. Zkuste to znovu později.',
                 ],
             ],
 
@@ -32,6 +34,8 @@ return [
 
                 'messages' => [
                     'invalid' => 'Zadaný obnovovací kód je neplatný.',
+
+                    'rate_limited' => 'Příliš mnoho pokusů. Zkuste to znovu později.',
                 ],
             ],
         ],

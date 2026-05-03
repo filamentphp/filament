@@ -284,9 +284,14 @@ class ImportAction extends Action
                         return;
                     }
 
+                    $import->columnMap($columnMap);
+                    $import->options($options);
+
                     $failedRowsCount = $import->getFailedRowsCount();
 
-                    Notification::make()
+                    $isSynchronous = ($jobConnection === 'sync') || (blank($jobConnection) && (config('queue.default') === 'sync'));
+
+                    $notification = Notification::make()
                         ->title($import->importer::getCompletedNotificationTitle($import))
                         ->body($import->importer::getCompletedNotificationBody($import))
                         ->when(
@@ -314,13 +319,17 @@ class ImportAction extends Action
                             ]),
                         )
                         ->when(
-                            ($jobConnection === 'sync') ||
-                            (blank($jobConnection) && (config('queue.default') === 'sync')),
-                            fn (Notification $notification) => $notification
-                                ->persistent()
-                                ->send(),
-                            fn (Notification $notification) => $notification->sendToDatabase($import->user, isEventDispatched: true),
+                            $isSynchronous,
+                            fn (Notification $notification) => $notification->persistent(),
                         );
+
+                    $notification = $import->importer::modifyCompletedNotification($notification, $import);
+
+                    if ($isSynchronous) {
+                        $notification->send();
+                    } else {
+                        $notification->sendToDatabase($import->user, isEventDispatched: true);
+                    }
                 })
                 ->dispatch();
 

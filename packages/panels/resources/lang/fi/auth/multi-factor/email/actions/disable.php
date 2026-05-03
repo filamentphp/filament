@@ -31,7 +31,7 @@ return [
                             ],
 
                             'throttled' => [
-                                'title' => 'Liian monta lähetyksen yritystä. Odota ennen seuraavaa yritystä.',
+                                'title' => 'Liian monta lähetyksen yritystä. Yritä myöhemmin uudelleen.',
                             ],
 
                         ],
@@ -43,6 +43,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Annettu koodi on väärin.',
+
+                    'rate_limited' => 'Liian monta yritystä. Yritä myöhemmin uudelleen.',
 
                 ],
 

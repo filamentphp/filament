@@ -257,6 +257,290 @@ describe('`BelongsToMany` relationship', function (): void {
     });
 });
 
+describe('options and search branches', function (): void {
+    it('caches relationship options on the component to avoid duplicate queries for repeated `getOptions()` calls', function (): void {
+        // Why this matters: a Select inside a Repeater can have `getOptions()` invoked many times during a
+        // render cycle (once per item lifecycle hook, validation, view rendering). Without caching, that
+        // becomes a query per repeater item. The cache keeps the load to a single query for the whole cycle.
+        Team::factory()->count(3)->create();
+
+        $select = Select::make('teams')
+            ->relationship('teams', 'name')
+            ->multiple()
+            ->preload()
+            ->container(
+                Schema::make(Livewire::make())
+                    ->model(User::class)
+                    ->statePath('data'),
+            );
+
+        DB::enableQueryLog();
+        DB::flushQueryLog();
+
+        $first = $select->getOptions();
+        $queriesAfterFirstCall = count(DB::getQueryLog());
+
+        DB::flushQueryLog();
+
+        $second = $select->getOptions();
+        $queriesAfterSecondCall = count(DB::getQueryLog());
+
+        DB::disableQueryLog();
+
+        expect($queriesAfterFirstCall)->toBeGreaterThan(0);
+        expect($queriesAfterSecondCall)->toBe(0);
+        expect($second)->toBe($first);
+    });
+
+    it('does not cache `getOptions()` when `modifyQueryUsing()` is set, since the closure can vary per repeater item', function (): void {
+        // Why this matters: `modifyQueryUsing` callbacks frequently inject `Get` / `$record` etc., which may
+        // produce different option lists for different sibling rows in a Repeater. Caching here would leak
+        // the first row's options to every other row, so the cache must be skipped.
+        Team::factory()->count(3)->create();
+
+        $select = Select::make('teams')
+            ->relationship('teams', 'name', modifyQueryUsing: fn ($query) => $query)
+            ->multiple()
+            ->preload()
+            ->container(
+                Schema::make(Livewire::make())
+                    ->model(User::class)
+                    ->statePath('data'),
+            );
+
+        DB::enableQueryLog();
+        DB::flushQueryLog();
+
+        $select->getOptions();
+        $select->getOptions();
+
+        $totalQueries = count(DB::getQueryLog());
+        DB::disableQueryLog();
+
+        expect($totalQueries)->toBeGreaterThan(1);
+    });
+
+    it('respects an explicit `limit` set on the relationship query inside `getSearchResults()`', function (): void {
+        Team::factory()->count(5)->create();
+
+        livewire(SelectWithBelongsToManyRelationshipAndExplicitLimit::class)
+            ->assertFormComponentExists('teams', function (Select $component): bool {
+                $results = $component->getSearchResults('');
+
+                expect($results)->toHaveCount(2);
+
+                return true;
+            });
+    });
+
+    it('skips re-applying `orderBy` when relationship query already has orders', function (): void {
+        Team::factory()->create(['name' => 'Bravo']);
+        Team::factory()->create(['name' => 'Alpha']);
+
+        livewire(SelectWithBelongsToManyRelationshipAndExistingOrder::class)
+            ->assertFormComponentExists('teams', function (Select $component): bool {
+                $results = $component->getSearchResults('');
+
+                // The custom DESC order must win because the method skips orderBy when orders exist
+                $names = array_values($results);
+                expect($names)->toBe(['Bravo', 'Alpha']);
+
+                return true;
+            });
+    });
+
+    it('uses `getOptionLabelFromRecord()` callback inside `getSearchResults()` when configured', function (): void {
+        Team::factory()->create(['name' => 'Alpha']);
+        Team::factory()->create(['name' => 'Beta']);
+
+        livewire(SelectWithBelongsToManyRelationshipAndOptionLabelFromRecord::class)
+            ->assertFormComponentExists('teams', function (Select $component): bool {
+                $results = $component->getSearchResults('');
+
+                expect(array_values($results))->toContain('Custom: Alpha');
+                expect(array_values($results))->toContain('Custom: Beta');
+
+                return true;
+            });
+    });
+
+    it('handles JSON-path `titleAttribute` (`->`) inside `getSearchResults()`', function (): void {
+        $author = User::factory()->create(['name' => 'Author']);
+        Post::factory()->create(['author_id' => $author->id, 'title' => 'Post A', 'json' => ['title' => 'JSON Title A']]);
+        Post::factory()->create(['author_id' => $author->id, 'title' => 'Post B', 'json' => ['title' => 'JSON Title B']]);
+
+        livewire(SelectWithJsonPathTitleAttribute::class, ['record' => $author])
+            ->assertFormComponentExists('posts', function (Select $component): bool {
+                $results = $component->getSearchResults('');
+
+                expect(array_values($results))->toContain('JSON Title A');
+                expect(array_values($results))->toContain('JSON Title B');
+
+                return true;
+            });
+    });
+});
+
+describe('save state branches', function (): void {
+    it('returns early from `fillStateFromRelationship()` when state is already filled', function (): void {
+        $teams = Team::factory()->count(2)->create();
+        $user = User::factory()->create(['team_id' => $teams->first()->id]);
+
+        livewire(SelectWithBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (Select $component) use ($teams): bool {
+                $component->state((string) $teams->last()->id);
+                $component->fillStateFromRelationship();
+
+                expect((string) $component->getState())->toBe((string) $teams->last()->id);
+
+                return true;
+            });
+    });
+
+    it('nulls and re-associates foreign keys when saving a `HasMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $existingPost = Post::factory()->create(['author_id' => $user->id]);
+        $orphanPosts = Post::factory()->count(2)->create(['author_id' => null]);
+
+        livewire(SelectWithHasManyRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('posts', function (Select $component) use ($orphanPosts): bool {
+                $component->state($orphanPosts->pluck('id')->map(fn ($id) => (string) $id)->all());
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        expect($existingPost->fresh()->author_id)->toBeNull();
+        foreach ($orphanPosts as $post) {
+            expect($post->fresh()->author_id)->toBe($user->id);
+        }
+    });
+
+    it('nulls and re-associates a foreign key when saving a `HasOne` relationship', function (): void {
+        $user = User::factory()->create();
+        $existingPost = Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
+        $orphanPost = Post::factory()->create(['author_id' => null, 'is_published' => true]);
+
+        livewire(SelectWithHasOneRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('publishedPost', function (Select $component) use ($orphanPost): bool {
+                $component->state((string) $orphanPost->id);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        expect($existingPost->fresh()->author_id)->toBeNull();
+        expect($orphanPost->fresh()->author_id)->toBe($user->id);
+    });
+
+    it('applies `modifyQueryUsing` when saving a `HasMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $modifyCallCount = 0;
+        SelectWithHasManyRelationshipAndModifyQuery::$onModify = static function () use (&$modifyCallCount): void {
+            $modifyCallCount++;
+        };
+
+        livewire(SelectWithHasManyRelationshipAndModifyQuery::class, ['record' => $user])
+            ->assertFormComponentExists('posts', function (Select $component): bool {
+                $component->state([]);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        expect($modifyCallCount)->toBeGreaterThan(0);
+    });
+
+    it('does not overwrite a `BelongsTo` foreign key on a recently created record', function (): void {
+        $teamA = Team::factory()->create();
+        $teamB = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $teamA->id]);
+
+        livewire(SelectWithBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (Select $component) use ($teamA, $teamB): bool {
+                $component->getRecord()->wasRecentlyCreated = true;
+                $component->getRecord()->team_id = $teamA->id;
+
+                $component->state((string) $teamB->id);
+                $component->saveStateToRelationship();
+
+                expect($component->getRecord()->team_id)->toBe($teamA->id);
+
+                return true;
+            });
+    });
+
+    it('treats saving a `HasManyThrough` relationship as a no-op', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+        $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+        livewire(SelectWithHasManyThroughRelationship::class, ['record' => $team])
+            ->assertFormComponentExists('posts', function (Select $component) use ($posts): bool {
+                $component->state([(string) $posts->first()->id]);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        foreach ($posts as $post) {
+            expect($post->fresh()->author_id)->toBe($user->id);
+        }
+    });
+
+    it('treats saving a `BelongsToThrough` relationship as a no-op', function (): void {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $companyA->id]);
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        livewire(SelectWithBelongsToThroughRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('company', function (Select $component) use ($companyB): bool {
+                $component->state((string) $companyB->id);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        expect($user->fresh()->company?->id)->toBe($companyA->id);
+    });
+
+    it('loads state from a `HasOne` relationship', function (): void {
+        $user = User::factory()->create();
+        $publishedPost = Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
+
+        livewire(SelectWithHasOneRelationship::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'publishedPost' => (string) $publishedPost->id,
+            ]);
+    });
+
+    it('loads state from a `BelongsToThrough` relationship', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->id]);
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        livewire(SelectWithBelongsToThroughRelationship::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'company' => (string) $company->id,
+            ]);
+    });
+
+    it('loads state from a `HasManyThrough` relationship via `HasOneOrManyThrough` branch', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+        $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+        livewire(SelectWithHasManyThroughRelationship::class, ['record' => $team])
+            ->assertSchemaStateSet(function (array $state) use ($posts): array {
+                expect(collect($state['posts'])->sort()->values()->all())
+                    ->toBe($posts->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+
+                return [];
+            });
+    });
+});
+
 describe('eager loading', function (): void {
     it('can load state from a `BelongsToMany` relationship using eager loaded data without additional queries', function (): void {
         $user = User::factory()->create();
@@ -3128,6 +3412,236 @@ class TestSelectWithBelongsToManyAndPivotData extends Component implements HasAc
     public function save(): void
     {
         $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class SelectWithHasOneRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('publishedPost')
+                    ->relationship('publishedPost', 'title')
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class SelectWithHasManyRelationshipAndModifyQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public static ?\Closure $onModify = null;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('posts')
+                    ->relationship(
+                        'posts',
+                        'title',
+                        modifyQueryUsing: function ($query) {
+                            (static::$onModify)?->__invoke();
+
+                            return $query;
+                        },
+                    )
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class SelectWithHasManyThroughRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public Team $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('posts')
+                    ->relationship('posts', 'title')
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class SelectWithBelongsToThroughRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('company')
+                    ->relationship('company', 'name')
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class SelectWithBelongsToManyRelationshipAndExplicitLimit extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship(
+                        'teams',
+                        'name',
+                        modifyQueryUsing: fn ($query) => $query->limit(2),
+                    )
+                    ->searchable()
+                    ->multiple(),
+            ])
+            ->model(User::class)
+            ->statePath('data');
+    }
+}
+
+class SelectWithBelongsToManyRelationshipAndExistingOrder extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship(
+                        'teams',
+                        'name',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('name', 'desc'),
+                    )
+                    ->searchable()
+                    ->multiple(),
+            ])
+            ->model(User::class)
+            ->statePath('data');
+    }
+}
+
+class SelectWithBelongsToManyRelationshipAndOptionLabelFromRecord extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Team $record): string => "Custom: {$record->name}")
+                    ->searchable()
+                    ->multiple(),
+            ])
+            ->model(User::class)
+            ->statePath('data');
+    }
+}
+
+class SelectWithJsonPathTitleAttribute extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('posts')
+                    ->relationship('posts', 'json->title')
+                    ->searchable()
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
     }
 
     public function render(): View

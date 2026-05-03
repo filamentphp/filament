@@ -27,8 +27,8 @@
                     @foreach ($navigationGroup->getItems() as $navigationItem)
                         @php
                             $navigationItemBadge = $navigationItem->getBadge();
-                            $navigationItemBadgeColor = $navigationItem->getBadgeColor();
-                            $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip();
+                            $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
+                            $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip($navigationItemBadge);
                             $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
                             $navigationItemUrl = $navigationItem->getUrl();
                             $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
@@ -61,8 +61,8 @@
                 @php
                     $isNavigationItemActive = $navigationItem->isActive();
                     $navigationItemBadge = $navigationItem->getBadge();
-                    $navigationItemBadgeColor = $navigationItem->getBadgeColor();
-                    $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip();
+                    $navigationItemBadgeColor = $navigationItem->getBadgeColor($navigationItemBadge);
+                    $navigationItemBadgeTooltip = $navigationItem->getBadgeTooltip($navigationItemBadge);
                     $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
                     $navigationItemUrl = $navigationItem->getUrl();
                     $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();

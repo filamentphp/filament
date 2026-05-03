@@ -7,11 +7,14 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
+use Filament\Tests\Fixtures\Livewire\Livewire as TestLivewireFixture;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
@@ -777,3 +780,726 @@ describe('placeholder', function (): void {
         expect($filter->getPlaceholder())->toBeString()->not->toBeEmpty();
     });
 });
+
+describe('relationship branch coverage', function (): void {
+    /**
+     * Wires the SelectFilter form field to a Schema with the table's model so that
+     * relationship-based methods like `getOptions()` can resolve the model instance.
+     */
+    $wireField = function (SelectFilter $filter, string $modelClass = Post::class): Select {
+        return $filter->getFormField()->container(
+            Schema::make(TestLivewireFixture::make())->model($modelClass),
+        );
+    };
+
+    it('returns relationship options via `getOptionsFromRelationship()` when preloaded', function () use ($wireField): void {
+        $author1 = User::factory()->create(['name' => 'Alpha']);
+        $author2 = User::factory()->create(['name' => 'Beta']);
+
+        livewire(TestTableWithPreloadedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author1, $author2, $wireField): bool {
+                $select = $wireField($filter);
+
+                $options = $filter->getOptionsFromRelationship($select);
+
+                expect($options)->toMatchArray([
+                    $author1->getKey() => 'Alpha',
+                    $author2->getKey() => 'Beta',
+                ]);
+
+                return true;
+            });
+    });
+
+    it('returns `null` from `getOptionsFromRelationship()` when searchable without preload', function () use ($wireField): void {
+        User::factory()->count(3)->create();
+
+        livewire(TestTableWithSearchableRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                expect($filter->getOptionsFromRelationship($select))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('includes the empty relationship option key in `getOptionsFromRelationship()` when `hasEmptyOption` is set', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha']);
+
+        livewire(TestTableWithPreloadedEmptyRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+
+                $options = $filter->getOptionsFromRelationship($select);
+
+                expect($options)->toHaveKey('__empty');
+                expect($options[$author->getKey()])->toBe('Alpha');
+
+                return true;
+            });
+    });
+
+    it('uses `getOptionLabelFromRecordUsing()` callback inside `getOptionsFromRelationship()`', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha', 'email' => 'a@example.com']);
+
+        livewire(TestTableWithCustomLabelPreloadedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+
+                $options = $filter->getOptionsFromRelationship($select);
+
+                expect($options[$author->getKey()])->toBe('Alpha (a@example.com)');
+
+                return true;
+            });
+    });
+
+    it('respects a custom limit set in `modifyQueryUsing()` for `getOptionsFromRelationship()`', function () use ($wireField): void {
+        User::factory()->count(20)->create();
+
+        livewire(TestTableWithLimitedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                expect($filter->getOptionsFromRelationship($select))->toHaveCount(3);
+                expect($filter->getOptionsLimit())->toBe(3);
+
+                return true;
+            });
+    });
+
+    it('preserves an existing `orderBy` from `modifyQueryUsing()` in `getOptionsFromRelationship()`', function () use ($wireField): void {
+        User::factory()->create(['name' => 'Beta']);
+        User::factory()->create(['name' => 'Alpha']);
+        User::factory()->create(['name' => 'Gamma']);
+
+        livewire(TestTableWithOrderedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                $options = $filter->getOptionsFromRelationship($select);
+
+                expect(array_values($options))->toBe(['Gamma', 'Beta', 'Alpha']);
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionsFromRelationship()`', function () use ($wireField): void {
+        User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+        User::factory()->create(['name' => 'Beta', 'json' => ['nickname' => 'Bee']]);
+
+        livewire(TestTableWithJsonPathRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                $options = $filter->getOptionsFromRelationship($select);
+
+                expect(array_values($options))->toEqualCanonicalizing(['Ace', 'Bee']);
+
+                return true;
+            });
+    });
+
+    it('returns search results via `getSearchResultsFromRelationship()` matching `applySearchConstraint`', function () use ($wireField): void {
+        User::factory()->create(['name' => 'Alpha']);
+        User::factory()->create(['name' => 'Beta']);
+        User::factory()->create(['name' => 'Aleph']);
+
+        livewire(TestTableWithSearchableRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                $results = $filter->getSearchResultsFromRelationship($select, 'Al');
+
+                expect(array_values($results))->toEqualCanonicalizing(['Alpha', 'Aleph']);
+
+                return true;
+            });
+    });
+
+    it('adds the empty relationship option key in `getSearchResultsFromRelationship()` when search matches the empty option label', function () use ($wireField): void {
+        User::factory()->create(['name' => 'Alpha']);
+
+        livewire(TestTableWithSearchableEmptyRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+                $emptyLabel = $filter->getEmptyRelationshipOptionLabel();
+
+                $results = $filter->getSearchResultsFromRelationship($select, $emptyLabel);
+
+                expect($results)->toHaveKey('__empty');
+
+                return true;
+            });
+    });
+
+    it('omits the empty relationship option key in `getSearchResultsFromRelationship()` when search does not match', function () use ($wireField): void {
+        User::factory()->create(['name' => 'Alpha']);
+
+        livewire(TestTableWithSearchableEmptyRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                $results = $filter->getSearchResultsFromRelationship($select, 'Alpha');
+
+                expect($results)->not->toHaveKey('__empty');
+
+                return true;
+            });
+    });
+
+    it('uses `getOptionLabelFromRecordUsing()` callback inside `getSearchResultsFromRelationship()`', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha', 'email' => 'a@example.com']);
+
+        livewire(TestTableWithCustomLabelSearchableRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+
+                $results = $filter->getSearchResultsFromRelationship($select, 'Alpha');
+
+                expect($results[$author->getKey()])->toBe('Alpha (a@example.com)');
+
+                return true;
+            });
+    });
+
+    it('respects a custom limit set in `modifyQueryUsing()` for `getSearchResultsFromRelationship()`', function () use ($wireField): void {
+        User::factory()->count(10)->create(['name' => 'Match Me']);
+
+        livewire(TestTableWithLimitedSearchableRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                $results = $filter->getSearchResultsFromRelationship($select, 'Match');
+
+                expect($results)->toHaveCount(2);
+                expect($filter->getOptionsLimit())->toBe(2);
+
+                return true;
+            });
+    });
+
+    it('returns the empty option label from `getOptionLabelFromRelationship()` when state is the empty option key', function () use ($wireField): void {
+        livewire(TestTableWithPreloadedEmptyRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+                $select->state('__empty');
+
+                expect($filter->getOptionLabelFromRelationship($select))->toBe($filter->getEmptyRelationshipOptionLabel());
+
+                return true;
+            });
+    });
+
+    it('returns `null` from `getOptionLabelFromRelationship()` when no record is selected', function () use ($wireField): void {
+        livewire(TestTableWithPreloadedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+                $select->state('999999');
+
+                expect($filter->getOptionLabelFromRelationship($select))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('returns the title attribute via `data_get` in `getOptionLabelFromRelationship()`', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha']);
+
+        livewire(TestTableWithPreloadedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+                $select->state((string) $author->getKey());
+
+                expect($filter->getOptionLabelFromRelationship($select))->toBe('Alpha');
+
+                return true;
+            });
+    });
+
+    it('uses `getOptionLabelFromRecordUsing()` callback inside `getOptionLabelFromRelationship()`', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha', 'email' => 'a@example.com']);
+
+        livewire(TestTableWithCustomLabelPreloadedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+                $select->state((string) $author->getKey());
+
+                expect($filter->getOptionLabelFromRelationship($select))->toBe('Alpha (a@example.com)');
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionLabelFromRelationship()`', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+
+        livewire(TestTableWithJsonPathRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+                $select->state((string) $author->getKey());
+
+                expect($filter->getOptionLabelFromRelationship($select))->toBe('Ace');
+
+                return true;
+            });
+    });
+
+    it('returns labels for matching keys via `getOptionLabelsFromRelationship()`', function () use ($wireField): void {
+        $author1 = User::factory()->create(['name' => 'Alpha']);
+        $author2 = User::factory()->create(['name' => 'Beta']);
+
+        livewire(TestTableWithMultiplePreloadedRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author1, $author2, $wireField): bool {
+                $select = $wireField($filter);
+
+                $labels = $filter->getOptionLabelsFromRelationship($select, [(string) $author1->getKey(), (string) $author2->getKey()]);
+
+                expect($labels)->toMatchArray([
+                    $author1->getKey() => 'Alpha',
+                    $author2->getKey() => 'Beta',
+                ]);
+
+                return true;
+            });
+    });
+
+    it('adds the empty option label inside `getOptionLabelsFromRelationship()` when the empty key is in values', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha']);
+
+        livewire(TestTableWithMultipleEmptyRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+
+                $labels = $filter->getOptionLabelsFromRelationship($select, ['__empty', (string) $author->getKey()]);
+
+                expect($labels)->toHaveKey('__empty');
+                expect($labels[$author->getKey()])->toBe('Alpha');
+
+                return true;
+            });
+    });
+
+    it('filters out the empty option key from query values inside `getOptionLabelsFromRelationship()`', function () use ($wireField): void {
+        livewire(TestTableWithMultipleEmptyRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($wireField): bool {
+                $select = $wireField($filter);
+
+                $labels = $filter->getOptionLabelsFromRelationship($select, ['__empty']);
+
+                expect($labels)->toBe(['__empty' => $filter->getEmptyRelationshipOptionLabel()]);
+
+                return true;
+            });
+    });
+
+    it('uses `getOptionLabelFromRecordUsing()` callback inside `getOptionLabelsFromRelationship()`', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha', 'email' => 'a@example.com']);
+
+        livewire(TestTableWithCustomLabelMultipleRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+
+                $labels = $filter->getOptionLabelsFromRelationship($select, [(string) $author->getKey()]);
+
+                expect($labels[$author->getKey()])->toBe('Alpha (a@example.com)');
+
+                return true;
+            });
+    });
+
+    it('handles JSON path `titleAttribute` in `getOptionLabelsFromRelationship()`', function () use ($wireField): void {
+        $author = User::factory()->create(['name' => 'Alpha', 'json' => ['nickname' => 'Ace']]);
+
+        livewire(TestTableWithJsonPathMultipleRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author, $wireField): bool {
+                $select = $wireField($filter);
+
+                $labels = $filter->getOptionLabelsFromRelationship($select, [(string) $author->getKey()]);
+
+                expect($labels[$author->getKey()])->toBe('Ace');
+
+                return true;
+            });
+    });
+
+    it('applies `modifyQueryUsing()` inside `getOptionLabelsFromRelationship()`', function () use ($wireField): void {
+        $author1 = User::factory()->create(['name' => 'Alpha']);
+        $author2 = User::factory()->create(['name' => 'Beta']);
+
+        livewire(TestTableWithFilteredMultipleRelationshipFilter::class)
+            ->assertTableFilterExists('author', function (SelectFilter $filter) use ($author1, $author2, $wireField): bool {
+                $select = $wireField($filter);
+
+                $labels = $filter->getOptionLabelsFromRelationship($select, [(string) $author1->getKey(), (string) $author2->getKey()]);
+
+                expect($labels)->toBe([$author1->getKey() => 'Alpha']);
+
+                return true;
+            });
+    });
+
+    it('filters by `BelongsToThrough` relationship via `apply()`', function (): void {
+        $team1 = Team::factory()->create();
+        $team2 = Team::factory()->create();
+
+        $user1 = User::factory()->create(['team_id' => $team1->getKey()]);
+        $user2 = User::factory()->create(['team_id' => $team2->getKey()]);
+
+        $postsForTeam1 = Post::factory()->count(2)->create(['author_id' => $user1->getKey()]);
+        $postsForTeam2 = Post::factory()->count(3)->create(['author_id' => $user2->getKey()]);
+
+        livewire(TestTableWithBelongsToThroughFilter::class)
+            ->assertCanSeeTableRecords($postsForTeam1->merge($postsForTeam2))
+            ->filterTable('team', $team1->getKey())
+            ->assertCanSeeTableRecords($postsForTeam1)
+            ->assertCanNotSeeTableRecords($postsForTeam2);
+    });
+});
+
+class TestTableWithPreloadedEmptyRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name', hasEmptyOption: true)
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithCustomLabelPreloadedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})")
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithLimitedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name', modifyQueryUsing: fn ($query) => $query->limit(3))
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithOrderedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name', modifyQueryUsing: fn ($query) => $query->orderBy('name', 'desc'))
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithJsonPathRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'json->nickname')
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithSearchableEmptyRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name', hasEmptyOption: true)
+                    ->searchable(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithCustomLabelSearchableRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})")
+                    ->searchable(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithLimitedSearchableRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name', modifyQueryUsing: fn ($query) => $query->limit(2))
+                    ->searchable(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithMultiplePreloadedRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->multiple()
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithCustomLabelMultipleRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})")
+                    ->multiple()
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithJsonPathMultipleRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'json->nickname')
+                    ->multiple()
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithFilteredMultipleRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('author')
+                    ->relationship('author', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'Alpha'))
+                    ->multiple()
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithBelongsToThroughFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->filters([
+                SelectFilter::make('team')
+                    ->relationship('team', 'id')
+                    ->preload(),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}

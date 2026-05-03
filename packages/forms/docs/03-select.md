@@ -1041,6 +1041,8 @@ ModalTableSelect::make('categories')
     ->badgeColor('success')
 ```
 
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Passing additional arguments to the table in a modal select
 
 You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:

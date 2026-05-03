@@ -4,6 +4,10 @@ namespace Filament\Support\Enums;
 
 enum Width: string
 {
+    case ThreeExtraSmall = '3xs';
+
+    case TwoExtraSmall = '2xs';
+
     case ExtraSmall = 'xs';
 
     case Small = 'sm';
@@ -26,6 +30,8 @@ enum Width: string
 
     case SevenExtraLarge = '7xl';
 
+    case None = 'none';
+
     case Full = 'full';
 
     case MinContent = 'min';
@@ -35,6 +41,8 @@ enum Width: string
     case FitContent = 'fit';
 
     case Prose = 'prose';
+
+    case Container = 'container';
 
     case ScreenSmall = 'screen-sm';
 

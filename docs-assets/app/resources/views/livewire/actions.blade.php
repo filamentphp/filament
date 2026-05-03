@@ -93,6 +93,10 @@
         {{ $this->slideOverAction }}
     </div>
 
+    <div id="slideOverStartAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->slideOverStartAction }}
+    </div>
+
     <div id="modalNoCloseButtonAction" class="p-16 flex items-center justify-center max-w-xl">
         {{ $this->modalNoCloseButtonAction }}
     </div>

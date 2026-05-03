@@ -4,6 +4,9 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersApplyAction;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersRemoveAllAction;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersTriggerAction;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 
@@ -111,9 +114,29 @@ it('can remove all table filters', function (): void {
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('is_published')
+        ->assertDontSee('Clear filters')
         ->assertCanNotSeeTableRecords($unpublishedPosts)
         ->removeTableFilters()
         ->assertCanSeeTableRecords($posts);
+});
+
+it('can customize the `filtersRemoveAllAction()`', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostsTableWithCustomFiltersRemoveAllAction::class)
+        ->filterTable('is_published')
+        ->assertSee('Clear filters')
+        ->assertCanNotSeeTableRecords($posts->where('is_published', false));
+});
+
+it('can customize the `filtersTriggerAction()`', function (): void {
+    livewire(PostsTableWithCustomFiltersTriggerAction::class)
+        ->assertSee('Show filters');
+});
+
+it('can customize the `filtersApplyAction()`', function (): void {
+    livewire(PostsTableWithCustomFiltersApplyAction::class)
+        ->assertSee('Apply filters');
 });
 
 it('can use a custom attribute for the `SelectFilter`', function (): void {

@@ -352,6 +352,21 @@ export default {
         },
         selector: '.fi-modal-window-ctn',
     },
+    'actions/modal/slide-over-start': {
+        url: 'actions',
+        viewport: {
+            width: 1280,
+            height: 720,
+            deviceScaleFactor: 2,
+        },
+        before: async (page) => {
+            await page.click('#slideOverStartAction button')
+            await page.waitForSelector('#modal h2')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+        selector: '.fi-modal-window-ctn',
+    },
     'actions/modal/no-close-button': {
         url: 'actions',
         viewport: {
@@ -462,11 +477,18 @@ export default {
                 document.body.style.overflow = 'hidden'
 
                 // Make the child modal's overlay more transparent so the parent slide-over is visible underneath.
+                // Disable the opacity transition first so the change applies instantly — otherwise the
+                // screenshot is captured mid-fade and the overlay looks darker than intended.
                 const overlays = document.querySelectorAll('.fi-modal-close-overlay')
                 if (overlays.length > 1) {
-                    overlays[overlays.length - 1].style.opacity = '0.4'
+                    const childOverlay = overlays[overlays.length - 1]
+                    childOverlay.style.transition = 'none'
+                    childOverlay.style.opacity = '0.4'
                 }
             })
+
+            // Wait one frame so the inline style takes effect before the screenshot.
+            await new Promise((resolve) => setTimeout(resolve, 100))
         },
     },
     'actions/modal/sticky-header': {
@@ -4110,6 +4132,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'primes/icon/sizes': {
+        url: 'primes',
+        selector: '#iconSizes',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'primes/icon/tooltip': {
         url: 'primes',
         selector: '#iconTooltip',
@@ -5083,6 +5114,20 @@ export default {
             width: 1080,
             height: 640,
             deviceScaleFactor: 3,
+        },
+    },
+    'tables/filters/custom-remove-all-action': {
+        url: 'tables?table=filtersCustomRemoveAllAction',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('.fi-ta-filter-indicators .fi-icon-btn')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
     'tables/filters/grid-columns': {

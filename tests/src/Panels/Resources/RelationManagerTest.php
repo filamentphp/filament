@@ -20,6 +20,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMixedSummaryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
@@ -358,4 +359,31 @@ it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `Relatio
         ->assertTableColumnSummarySet('name', 'name_count', 3)
         ->assertTableColumnSummarySet('quantity', 'quantity_sum', 60)
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000);
+});
+
+it('defers the tab badge loading when `$isBadgeDeferred` is `true`', function (): void {
+    $ticket = Ticket::factory()->create();
+
+    $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeTrue();
+});
+
+it('resolves the deferred tab badge value from `getBadge()`', function (): void {
+    $ticket = Ticket::factory()
+        ->hasAttached(Department::factory(3))
+        ->create();
+
+    $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeTrue()
+        ->and($tab->getBadge())->toBe('3');
+});
+
+it('does not defer the tab badge loading by default', function (): void {
+    $ticket = Ticket::factory()->create();
+
+    $tab = DepartmentsRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeFalse();
 });

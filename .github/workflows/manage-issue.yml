@@ -166,7 +166,7 @@ jobs:
             `.trim()
 
             const NO_REPRO_URL = ((! url) || (! url.includes('https://github.com/')) || (url.includes('https://github.com/filamentphp') && (! url.includes('https://github.com/filamentphp/demo'))))
-            const NO_REPRO_STEPS = reproSteps.length < 25
+            const NO_REPRO_STEPS = (! reproSteps) || reproSteps.length < 25
 
             if (NO_REPRO_URL || NO_REPRO_STEPS) {
                 let comment = `

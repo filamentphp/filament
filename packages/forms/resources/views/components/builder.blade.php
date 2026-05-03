@@ -181,7 +181,7 @@
                                             'fi-truncated' => $isBlockLabelTruncated,
                                         ])
                                     >
-                                        {{ $item->getParentComponent()->getLabel($item->getRawState(), $itemKey) }}
+                                        {{ $item->getParentComponent()->getLabel($item->getRawState(), $itemKey, $loop->index) }}
 
                                         @if ($hasBlockNumbers)
                                             {{ $loop->iteration }}
