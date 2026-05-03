@@ -1202,7 +1202,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
      * @param  array<Block>  $blocks
      * @param  array<string, ?int> | int | null  $columns
      */
-    protected function renderBlockPicker(
+    protected function generateBlockPickerHtml(
         Action $action,
         array $blocks,
         string $key,
@@ -1582,7 +1582,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                 <li class="fi-fo-builder-add-between-items-ctn">
                                     <div class="fi-fo-builder-add-between-items">
                                         <div class="fi-fo-builder-block-picker-ctn">
-                                            <?= $this->renderBlockPicker(
+                                            <?= $this->generateBlockPickerHtml(
                                                 action: $addBetweenAction,
                                                 blocks: $blockPickerBlocks,
                                                 key: $key,
@@ -1607,7 +1607,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             <?php } ?>
 
             <?php if ($isAddable && $addAction->isVisible()) { ?>
-                <?= $this->renderBlockPicker(
+                <?= $this->generateBlockPickerHtml(
                     action: $addAction,
                     blocks: $blockPickerBlocks,
                     key: $key,
