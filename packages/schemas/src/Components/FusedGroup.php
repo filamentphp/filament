@@ -267,6 +267,13 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
             }
         }
 
+        // A single message renders as `<p>`; only multiple messages render as
+        // `<ul><li>`, so collapse a one-element list into the scalar form.
+        if (count($errorMessages) === 1) {
+            $errorMessage = \Illuminate\Support\Arr::first($errorMessages);
+            $errorMessages = [];
+        }
+
         $hasError = filled($errorMessage) || filled($errorMessages);
 
         // Inner content

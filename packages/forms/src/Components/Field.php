@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -13,12 +14,17 @@ use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 use InvalidArgumentException;
+
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\generate_loading_indicator_html;
 
 class Field extends Component implements Contracts\HasValidationRules
 {
@@ -442,6 +448,214 @@ class Field extends Component implements Contracts\HasValidationRules
                         <?php } ?>
 
                         <?= $belowErrorMessageSchema?->toHtml() ?>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
+    }
+
+    /**
+     * @param  array<Action>  $prefixActions
+     * @param  string | array<string> | null  $prefixIconColor
+     * @param  string | array<string> | null  $prefixIconAlias
+     * @param  array<Action>  $suffixActions
+     * @param  string | array<string> | null  $suffixIconColor
+     * @param  string | array<string> | null  $suffixIconAlias
+     */
+    public function generateInputWrapperHtml(
+        string $slotHtml,
+        ?ComponentAttributeBag $attributes = null,
+        ?string $alpineDisabled = null,
+        ?string $alpineValid = null,
+        bool $isDisabled = false,
+        bool $hasInlinePrefix = false,
+        bool $hasInlineSuffix = false,
+        string | Htmlable | null $prefix = null,
+        array $prefixActions = [],
+        string | BackedEnum | Htmlable | null $prefixIcon = null,
+        string | array | null $prefixIconColor = 'gray',
+        string | array | null $prefixIconAlias = null,
+        string | Htmlable | null $suffix = null,
+        array $suffixActions = [],
+        string | BackedEnum | Htmlable | null $suffixIcon = null,
+        string | array | null $suffixIconColor = 'gray',
+        string | array | null $suffixIconAlias = null,
+        bool $isValid = true,
+    ): string {
+        $attributes ??= new ComponentAttributeBag;
+
+        $prefixActions = array_filter(
+            $prefixActions,
+            static fn (Action $prefixAction): bool => $prefixAction->isVisible(),
+        );
+        $suffixActions = array_filter(
+            $suffixActions,
+            static fn (Action $suffixAction): bool => $suffixAction->isVisible(),
+        );
+
+        $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
+        $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
+
+        $hasAlpineDisabledClasses = filled($alpineDisabled);
+        $hasAlpineValidClasses = filled($alpineValid);
+        $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
+
+        $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
+        $hasLoadingIndicator = filled($wireTarget);
+        $loadingIndicatorTarget = $hasLoadingIndicator ? html_entity_decode((string) $wireTarget, ENT_QUOTES) : null;
+        $loadingDelay = config('filament.livewire_loading_delay', 'default');
+
+        $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
+        $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
+        $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
+
+        $wrapperAttributes = $attributes
+            ->except(['wire:target', 'tabindex'])
+            ->class([
+                'fi-input-wrp',
+                'fi-disabled' => (! $hasAlpineClasses) && $isDisabled,
+                'fi-invalid' => (! $hasAlpineClasses) && (! $isValid),
+            ]);
+
+        if ($hasAlpineClasses) {
+            $alpineClassParts = [];
+
+            if ($hasAlpineDisabledClasses) {
+                $alpineClassParts[] = "'fi-disabled': {$alpineDisabled}";
+            }
+
+            if ($hasAlpineValidClasses) {
+                $alpineClassParts[] = "'fi-invalid': ! ({$alpineValid})";
+            }
+
+            $wrapperAttributes = $wrapperAttributes->merge([
+                'x-bind:class' => '{ ' . implode(', ', $alpineClassParts) . ' }',
+            ], escape: false);
+        }
+
+        ob_start(); ?>
+
+        <div <?= $wrapperAttributes->toHtml() ?>>
+            <?php if ($hasPrefix || $hasLoadingIndicator) {
+                $prefixDivAttributes = (new ComponentAttributeBag)->class([
+                    'fi-input-wrp-prefix',
+                    'fi-input-wrp-prefix-has-content' => $hasPrefix,
+                    'fi-inline' => $hasInlinePrefix,
+                    'fi-input-wrp-prefix-has-label' => filled($prefix),
+                ]);
+
+                if (! $hasPrefix) {
+                    $prefixDivAttributes = $prefixDivAttributes->merge([
+                        'wire:loading.delay.' . $loadingDelay . '.flex' => true,
+                        'wire:target' => $loadingIndicatorTarget,
+                        // Forces the loading indicator to hide once the request completes.
+                        'wire:key' => Str::random(),
+                    ], escape: false);
+                }
+
+                if ($canClickPrefixAffix) {
+                    $prefixDivAttributes = $prefixDivAttributes->merge([
+                        'x-on:click' => '$dispatch(\'focus-input\')',
+                    ], escape: false);
+                }
+                ?>
+                <div <?= $prefixDivAttributes->toHtml() ?>>
+                    <?php if (count($prefixActions)) { ?>
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickPrefixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
+                            <?php foreach ($prefixActions as $prefixAction) { ?>
+                                <?= $prefixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+
+                    <?= generate_icon_html(
+                        $prefixIcon,
+                        $prefixIconAlias,
+                        (new ComponentAttributeBag)
+                            ->merge([
+                                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                            ], escape: false)
+                            ->color(IconComponent::class, $prefixIconColor),
+                    )?->toHtml() ?>
+
+                    <?php if ($hasLoadingIndicator) { ?>
+                        <?= generate_loading_indicator_html((new ComponentAttributeBag([
+                            'wire:loading.delay.' . $loadingDelay => $hasPrefix,
+                            'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
+                        ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
+                    <?php } ?>
+
+                    <?php if (filled($prefix)) { ?>
+                        <span class="fi-input-wrp-label">
+                            <?= e($prefix) ?>
+                        </span>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <?php
+                $contentCtnAttributes = (new ComponentAttributeBag)->class([
+                    'fi-input-wrp-content-ctn',
+                    'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $hasInlinePrefix,
+                ]);
+
+        if ($hasLoadingIndicator && (! $hasPrefix)) {
+            $contentCtnAttributes = $contentCtnAttributes->merge([
+                'wire:target' => $loadingIndicatorTarget,
+                'wire:loading.delay.' . $loadingDelay . '.class.remove' => $hasInlinePrefix ? 'ps-3' : false,
+            ], escape: false);
+        }
+        ?>
+            <div <?= $contentCtnAttributes->toHtml() ?>>
+                <?= $slotHtml ?>
+            </div>
+
+            <?php if ($hasSuffix) {
+                $suffixDivAttributes = (new ComponentAttributeBag)->class([
+                    'fi-input-wrp-suffix',
+                    'fi-inline' => $hasInlineSuffix,
+                    'fi-input-wrp-suffix-has-label' => filled($suffix),
+                ]);
+
+                if ($canClickSuffixAffix) {
+                    $suffixDivAttributes = $suffixDivAttributes->merge([
+                        'x-on:click' => '$dispatch(\'focus-input\')',
+                    ], escape: false);
+                }
+                ?>
+                <div <?= $suffixDivAttributes->toHtml() ?>>
+                    <?php if (filled($suffix)) { ?>
+                        <span class="fi-input-wrp-label">
+                            <?= e($suffix) ?>
+                        </span>
+                    <?php } ?>
+
+                    <?= generate_icon_html(
+                        $suffixIcon,
+                        $suffixIconAlias,
+                        (new ComponentAttributeBag)
+                            ->merge([
+                                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                            ], escape: false)
+                            ->color(IconComponent::class, $suffixIconColor),
+                    )?->toHtml() ?>
+
+                    <?php if (count($suffixActions)) { ?>
+                        <div
+                            class="fi-input-wrp-actions"
+                            <?php if ($canClickSuffixAffix) { ?>x-on:click.stop<?php } ?>
+                        >
+                            <?php foreach ($suffixActions as $suffixAction) { ?>
+                                <?= $suffixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
                     <?php } ?>
                 </div>
             <?php } ?>

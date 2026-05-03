@@ -293,6 +293,36 @@ describe('rendering', function (): void {
             ->assertSeeHtml('Active')
             ->assertSeeHtml('Archived');
     });
+
+    it('emits `allowHTML: true` when an option tooltip is `Htmlable`', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->tooltips(['active' => new \Illuminate\Support\HtmlString('<strong>Tip</strong>')]),
+            ])
+            ->fill();
+
+        $html = $field->toHtml();
+
+        expect($html)->toContain('allowHTML: true');
+    });
+
+    it('emits `allowHTML: false` when an option tooltip is a plain string', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->tooltips(['active' => 'Plain tooltip']),
+            ])
+            ->fill();
+
+        $html = $field->toHtml();
+
+        expect($html)->toContain('allowHTML: false');
+    });
 });
 
 it('can render `ToggleButtons` in the browser', function (): void {

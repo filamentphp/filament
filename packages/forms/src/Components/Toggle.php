@@ -43,6 +43,7 @@ class Toggle extends Field implements HasEmbeddedView
         $offIcon = $this->getOffIcon();
         $onColor = $this->getOnColor() ?? 'primary';
         $onIcon = $this->getOnIcon();
+        $isOn = (bool) $this->getState();
 
         $stateExpression = '$wire.' . $this->applyStateBindingModifiers("\$entangle('{$statePath}')");
 
@@ -79,7 +80,9 @@ class Toggle extends Field implements HasEmbeddedView
             x-bind:aria-checked="state?.toString()"
             x-on:click="state = ! state"
             x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
-            x-cloak
+            <?php if ($isOn) { ?>
+                x-cloak
+            <?php } ?>
             role="switch"
             type="button"
             <?= $toggleAttributes->class(['fi-toggle'])->toHtml() ?>
@@ -90,19 +93,21 @@ class Toggle extends Field implements HasEmbeddedView
             </div>
         </button>
 
-        <div
-            x-cloak="inline-flex"
-            wire:ignore
-            <?= (new ComponentAttributeBag)->class([
-                'fi-toggle fi-toggle-on fi-hidden',
-                ...get_component_color_classes(ToggleComponent::class, $onColor),
-            ])->toHtml() ?>
-        >
-            <div>
-                <div aria-hidden="true"></div>
-                <div aria-hidden="true"><?= $onIconHtml ?></div>
+        <?php if ($isOn) { ?>
+            <div
+                x-cloak="inline-flex"
+                wire:ignore
+                <?= (new ComponentAttributeBag)->class([
+                    'fi-toggle fi-toggle-on fi-hidden',
+                    ...get_component_color_classes(ToggleComponent::class, $onColor),
+                ])->toHtml() ?>
+            >
+                <div>
+                    <div aria-hidden="true"></div>
+                    <div aria-hidden="true"><?= $onIconHtml ?></div>
+                </div>
             </div>
-        </div>
+        <?php } ?>
 
         <?php $toggleHtml = ob_get_clean();
 

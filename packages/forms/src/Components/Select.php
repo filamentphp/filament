@@ -23,7 +23,6 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
-use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -45,7 +44,6 @@ use Livewire\Attributes\Renderless;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
-use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
@@ -1852,57 +1850,22 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         );
 
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
-        $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
-
-        $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
-        $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
 
         $wrapperAttributes = $this->getExtraAttributeBag()
-            ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => $isNative
                     ? "\$el.querySelector('select')?.focus()"
                     : "\$el.querySelector('.fi-select-input-btn')?.focus()",
             ], escape: false)
             ->class([
-                'fi-input-wrp',
                 'fi-fo-select',
                 'fi-fo-select-has-inline-prefix' => $isPrefixInline && $hasPrefix,
                 'fi-fo-select-native' => $isNative,
-                'fi-disabled' => $isDisabled,
-                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
             ]);
 
         ob_start(); ?>
 
-        <div <?= $wrapperAttributes->toHtml() ?>>
-            <?php if ($hasPrefix) { ?>
-                <div
-                    <?php if ($canClickPrefixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
-                    <?= (new ComponentAttributeBag)->class([
-                        'fi-input-wrp-prefix',
-                        'fi-input-wrp-prefix-has-content' => true,
-                        'fi-inline' => $isPrefixInline,
-                        'fi-input-wrp-prefix-has-label' => filled($prefixLabel),
-                    ])->toHtml() ?>
-                >
-                    <?php if (count($prefixActions)) { ?>
-                        <div class="fi-input-wrp-actions" <?php if ($canClickPrefixAffix) { ?> x-on:click.stop <?php } ?>>
-                            <?php foreach ($prefixActions as $prefixAction) { ?>
-                                <?= $prefixAction->toHtml() ?>
-                            <?php } ?>
-                        </div>
-                    <?php } ?>
 
-                    <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
-
-                    <?php if (filled($prefixLabel)) { ?>
-                        <span class="fi-input-wrp-label"><?= e($prefixLabel) ?></span>
-                    <?php } ?>
-                </div>
-            <?php } ?>
-
-            <div class="fi-input-wrp-content-ctn">
                 <?php if ($isNative) { ?>
                     <select
                         <?= $extraInputAttributeBag
@@ -2033,34 +1996,27 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         <div x-ref="select"></div>
                     </div>
                 <?php } ?>
-            </div>
 
-            <?php if ($hasSuffix) { ?>
-                <div
-                    <?php if ($canClickSuffixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
-                    <?= (new ComponentAttributeBag)->class([
-                        'fi-input-wrp-suffix',
-                        'fi-inline' => $isSuffixInline,
-                        'fi-input-wrp-suffix-has-label' => filled($suffixLabel),
-                    ])->toHtml() ?>
-                >
-                    <?php if (filled($suffixLabel)) { ?>
-                        <span class="fi-input-wrp-label"><?= e($suffixLabel) ?></span>
-                    <?php } ?>
+        <?php $slotHtml = ob_get_clean();
 
-                    <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
-
-                    <?php if (count($suffixActions)) { ?>
-                        <div class="fi-input-wrp-actions" <?php if ($canClickSuffixAffix) { ?> x-on:click.stop <?php } ?>>
-                            <?php foreach ($suffixActions as $suffixAction) { ?>
-                                <?= $suffixAction->toHtml() ?>
-                            <?php } ?>
-                        </div>
-                    <?php } ?>
-                </div>
-            <?php } ?>
-        </div>
-
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-select-wrp']);
+        return $this->wrapEmbeddedHtml(
+            $this->generateInputWrapperHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+                isDisabled: $isDisabled,
+                hasInlinePrefix: $isPrefixInline,
+                hasInlineSuffix: $isSuffixInline,
+                prefix: $prefixLabel,
+                prefixActions: $prefixActions,
+                prefixIcon: $prefixIcon,
+                prefixIconColor: $prefixIconColor,
+                suffix: $suffixLabel,
+                suffixActions: $suffixActions,
+                suffixIcon: $suffixIcon,
+                suffixIconColor: $suffixIconColor,
+                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+            ),
+            extraWrapperAttributes: ['class' => 'fi-fo-select-wrp'],
+        );
     }
 }

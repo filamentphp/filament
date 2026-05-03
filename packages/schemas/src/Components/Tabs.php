@@ -225,20 +225,12 @@ class Tabs extends Component implements HasEmbeddedView
         return (bool) $this->evaluate($this->isVertical);
     }
 
-    /**
-     * @return view-string | null
-     */
-    public function getDefaultView(): ?string
-    {
-        if (filled($this->getLivewireProperty())) {
-            return 'filament-schemas::components.tabs';
-        }
-
-        return null;
-    }
-
     public function toEmbeddedHtml(): string
     {
+        if (filled($this->getLivewireProperty())) {
+            return $this->toEmbeddedHtmlForLivewireProperty();
+        }
+
         $activeTab = $this->getActiveTab();
         $hasDeferredBadges = $this->hasDeferredBadges();
         $id = $this->getId();
@@ -607,6 +599,146 @@ class Tabs extends Component implements HasEmbeddedView
                     <?= $tab->toHtml() ?>
                 <?php }
                 } ?>
+        </div>
+
+        <?php return ob_get_clean();
+    }
+
+    protected function toEmbeddedHtmlForLivewireProperty(): string
+    {
+        $livewireProperty = $this->getLivewireProperty();
+        $hasDeferredBadges = $this->hasDeferredBadges();
+        $id = $this->getId();
+        $isContained = $this->isContained();
+        $isVertical = $this->isVertical();
+        $label = $this->getLabel();
+        $renderHookScopes = $this->getRenderHookScopes();
+        $tabsKey = $this->getKey();
+
+        /** @var array<array-key, Tab> $tabs */
+        $tabs = array_filter(
+            $this->getChildSchema()->getComponents(withOriginalKeys: true),
+            static fn ($component): bool => $component instanceof Tab,
+        );
+
+        // Override each tab's auto-generated key with its array key, so the
+        // tab's `getKey()` matches the value written into the Livewire property.
+        foreach ($tabs as $tabKey => $tab) {
+            $tab->key(strval($tabKey));
+        }
+
+        $activeTab = strval($this->getLivewire()->{$livewireProperty});
+
+        $outerAttributes = (new ComponentAttributeBag)
+            ->merge([
+                'id' => $id,
+                'wire:key' => $this->getLivewireKey() . '.container',
+            ], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->class([
+                'fi-sc-tabs',
+                'fi-contained' => $isContained,
+                'fi-vertical' => $isVertical,
+            ]);
+
+        if ($hasDeferredBadges) {
+            $outerAttributes = $outerAttributes->merge([
+                'x-data' => '{
+                    deferredBadges: {},
+                    isLoadingDeferredBadges: true,
+
+                    async init() {
+                        try {
+                            const badges = await $wire.callSchemaComponentMethod(' . Js::from($tabsKey) . ', \'getDeferredTabBadges\')
+                            this.deferredBadges = badges ?? {}
+                        } finally {
+                            this.isLoadingDeferredBadges = false
+                        }
+                    },
+                }',
+            ], escape: false);
+        }
+
+        $navAttributes = (new ComponentAttributeBag)
+            ->merge([
+                'aria-label' => $label,
+                'role' => 'tablist',
+            ])
+            ->class([
+                'fi-tabs',
+                'fi-contained' => $isContained,
+                'fi-vertical' => $isVertical,
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $outerAttributes->toHtml() ?>>
+            <nav <?= $navAttributes->toHtml() ?>>
+                <?php foreach ($this->getStartRenderHooks() as $startRenderHook) { ?>
+                    <?= FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes)->toHtml() ?>
+                <?php } ?>
+
+                <?php foreach ($tabs as $tabKey => $tab) {
+                    $tabKey = strval($tabKey);
+                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon($tabBadge);
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition($tabBadge);
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip($tabBadge);
+                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                    $tabIcon = $tab->getIcon();
+                    $tabIconPosition = $tab->getIconPosition();
+                    $tabLabel = $tab->getLabel();
+                    $isActive = $activeTab === $tabKey;
+
+                    $wireClickValue = filled($tabKey)
+                        ? "\$set('{$livewireProperty}', '" . addslashes($tabKey) . "')"
+                        : "\$set('{$livewireProperty}', null)";
+
+                    $tabItemAttributes = (new ComponentAttributeBag)
+                        ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
+                        ->merge([
+                            'aria-selected' => $isActive ? 'true' : 'false',
+                            'role' => 'tab',
+                            'type' => 'button',
+                            'wire:click' => $wireClickValue,
+                            'wire:loading.attr' => 'disabled',
+                        ], escape: false)
+                        ->class([
+                            'fi-tabs-item',
+                            'fi-active' => $isActive,
+                        ]);
+                    ?>
+                    <button <?= $tabItemAttributes->toHtml() ?>>
+                        <?php if ($tabIcon && $tabIconPosition === IconPosition::Before) { ?>
+                            <?= generate_icon_html($tabIcon)?->toHtml() ?>
+                        <?php } ?>
+
+                        <span class="fi-tabs-item-label">
+                            <?= e($tabLabel) ?>
+                        </span>
+
+                        <?php if ($tabIcon && $tabIconPosition === IconPosition::After) { ?>
+                            <?= generate_icon_html($tabIcon)?->toHtml() ?>
+                        <?php } ?>
+
+                        <?php if (filled($tabBadge)) { ?>
+                            <?= $this->generateTabBadgeHtml($tabBadge, $tabBadgeColor, $tabBadgeIcon, $tabBadgeIconPosition, $tabBadgeTooltip) ?>
+                        <?php } elseif ($isTabBadgeDeferred) { ?>
+                            <?= $this->generateDeferredBadgePlaceholderHtml(Js::from($tabKey)) ?>
+                        <?php } ?>
+                    </button>
+                <?php } ?>
+
+                <?php foreach ($this->getEndRenderHooks() as $endRenderHook) { ?>
+                    <?= FilamentView::renderHook($endRenderHook, scopes: $renderHookScopes)->toHtml() ?>
+                <?php } ?>
+            </nav>
+
+            <?php foreach ($tabs as $tab) { ?>
+                <?= $tab->toHtml() ?>
+            <?php } ?>
         </div>
 
         <?php return ob_get_clean();

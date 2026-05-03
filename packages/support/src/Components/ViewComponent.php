@@ -130,9 +130,7 @@ abstract class ViewComponent extends Component implements Htmlable
                 filled($publishedViewOverrideCheckPath = $this->getPublishedViewOverrideCheckPath())
                 && static::hasPublishedEmbeddedViewOverride($publishedViewOverrideCheckPath)
             ) {
-                $this->view = $publishedViewOverrideCheckPath;
-
-                return $this->render()->render();
+                return $this->renderView($publishedViewOverrideCheckPath)->render();
             }
 
             return $this->toEmbeddedHtml();
@@ -189,6 +187,21 @@ abstract class ViewComponent extends Component implements Htmlable
         ]);
 
         return $this->viewInstance->with([
+            'attributes' => new ComponentAttributeBag,
+            ...$this->getExtraViewData(),
+            ...$this->getViewData(),
+        ]);
+    }
+
+    /**
+     * @param  view-string  $view
+     */
+    protected function renderView(string $view): View
+    {
+        return view($view, [
+            ...$this->extractPublicMethods(),
+            ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+        ])->with([
             'attributes' => new ComponentAttributeBag,
             ...$this->getExtraViewData(),
             ...$this->getViewData(),

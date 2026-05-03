@@ -960,8 +960,6 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
     protected function renderBadgeHtml(string | Htmlable $label, ?string $color): string
     {
-        $color ??= 'primary';
-
         $attributes = (new ComponentAttributeBag)
             ->class([
                 'fi-badge',

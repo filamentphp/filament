@@ -1261,32 +1261,32 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                 <?= $triggerHtml ?>
             </div>
 
-            <div <?= $panelAttributes->toHtml() ?>>
-                <div class="fi-dropdown-list">
-                    <div <?= (new ComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
-                        <?php foreach ($blocks as $block) { ?>
-                            <?php
+            <?php if (filled($blocks)) { ?>
+                <div <?= $panelAttributes->toHtml() ?>>
+                    <div class="fi-dropdown-list">
+                        <div <?= (new ComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
+                            <?php foreach ($blocks as $block) {
                                 $blockIcon = $block->getIcon();
 
-                            $wireClickArguments = ['block' => $block->getName()];
+                                $wireClickArguments = ['block' => $block->getName()];
 
-                            if (filled($afterItem)) {
-                                $wireClickArguments['afterItem'] = $afterItem;
-                            }
+                                if (filled($afterItem)) {
+                                    $wireClickArguments['afterItem'] = $afterItem;
+                                }
 
-                            $wireClick = "mountAction('{$action->getName()}', " . Js::from($wireClickArguments) . ", { schemaComponent: '{$key}' })";
+                                $wireClick = "mountAction('{$action->getName()}', " . Js::from($wireClickArguments) . ", { schemaComponent: '{$key}' })";
 
-                            $itemAttributes = (new ComponentAttributeBag)
-                                ->merge([
-                                    'x-on:click' => 'close',
-                                    'wire:click' => $wireClick,
-                                    'type' => 'button',
-                                    'wire:loading.attr' => 'disabled',
-                                    'wire:target' => $wireClick,
-                                ], escape: false)
-                                ->class(['fi-dropdown-list-item'])
-                                ->color(ItemComponent::class, 'gray');
-                            ?>
+                                $itemAttributes = (new ComponentAttributeBag)
+                                    ->merge([
+                                        'x-on:click' => 'close',
+                                        'wire:click' => $wireClick,
+                                        'type' => 'button',
+                                        'wire:loading.attr' => 'disabled',
+                                        'wire:target' => $wireClick,
+                                    ], escape: false)
+                                    ->class(['fi-dropdown-list-item'])
+                                    ->color(ItemComponent::class, 'gray');
+                                ?>
 
                             <button <?= $itemAttributes->toHtml() ?>>
                                 <?php if (filled($blockIcon)) { ?>
@@ -1305,10 +1305,11 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                     <?= e($block->getLabel()) ?>
                                 </span>
                             </button>
-                        <?php } ?>
+                            <?php } ?>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
         </div>
 
         <?php return ob_get_clean();
@@ -1317,6 +1318,14 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
     public function toEmbeddedHtml(): string
     {
         $items = $this->getItems();
+
+        // Filter before counting so `$itemCount` agrees with the loop's
+        // `$isFirst` / `$isLast` calculations.
+        $items = array_filter(
+            $items,
+            static fn ($item): bool => $item->getParentComponent() instanceof Block,
+        );
+
         $blockPickerBlocks = $this->getBlockPickerBlocks();
         $blockPickerColumns = $this->getBlockPickerColumns();
         $blockPickerWidth = $this->getBlockPickerWidth();
@@ -1400,13 +1409,9 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                     x-on:end.stop="$wire.mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '<?= e($key) ?>' })"
                     class="fi-fo-builder-items"
                 >
-                    <?php foreach ($items as $itemKey => $item) { ?>
-                        <?php
-                            $block = $item->getParentComponent();
-
-                        if (! $block instanceof Block) {
-                            continue;
-                        }
+                    <?php foreach ($items as $itemKey => $item) {
+                        /** @var Block $block */
+                        $block = $item->getParentComponent();
 
                         $itemIndex++;
                         $isFirst = $itemIndex === 1;
@@ -1480,9 +1485,9 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                     <?php if ($hasBlockLabels) { ?>
                                         <<?= e($blockLabelHeadingTag) ?>
                                             <?= (new ComponentAttributeBag)->class([
-                                            'fi-fo-builder-item-header-label',
-                                            'fi-truncated' => $isBlockLabelTruncated,
-                                        ])->toHtml() ?>
+                                                'fi-fo-builder-item-header-label',
+                                                'fi-truncated' => $isBlockLabelTruncated,
+                                            ])->toHtml() ?>
                                         >
                                             <?= e($block->getLabel($item->getRawState(), $itemKey, $itemIndex - 1)) ?>
                                             <?php if ($hasBlockNumbers) { ?>
@@ -1527,16 +1532,16 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                             <div
                                 x-show="! isCollapsed"
                                 <?= (new ComponentAttributeBag)->class([
-                                'fi-fo-builder-item-content',
-                                'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $block->hasPreview(),
+                                    'fi-fo-builder-item-content',
+                                    'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $block->hasPreview(),
                                 ])->toHtml() ?>
                             >
                                 <?php if ($hasBlockPreviews && $block->hasPreview()) { ?>
                                     <div
                                         <?= (new ComponentAttributeBag)->class([
-                                        'fi-fo-builder-item-preview',
-                                        'fi-interactive' => $hasInteractiveBlockPreviews,
-                                    ])->toHtml() ?>
+                                            'fi-fo-builder-item-preview',
+                                            'fi-interactive' => $hasInteractiveBlockPreviews,
+                                        ])->toHtml() ?>
                                     >
                                         <?= $block->renderPreview($item->getRawState())->render() ?>
                                     </div>

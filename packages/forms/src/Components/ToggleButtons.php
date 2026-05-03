@@ -15,6 +15,7 @@ use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\ButtonComponent;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -142,7 +143,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
                     <label
                         <?php if (filled($tooltip)) { ?>
-                            x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: false }"
+                            x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?> }"
                         <?php } ?>
                         <?= $buttonAttributes->toHtml() ?>
                     >
@@ -217,7 +218,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
                 <label
                     <?php if (filled($tooltip)) { ?>
-                        x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: false }"
+                        x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?> }"
                     <?php } ?>
                     <?= $buttonAttributes->toHtml() ?>
                 >

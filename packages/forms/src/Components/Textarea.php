@@ -112,7 +112,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
         <div <?= $wrapperAttributes->toHtml() ?>>
             <div class="fi-input-wrp-content-ctn">
-                <div wire:ignore.self style="height: '<?= e($initialHeight . 'rem') ?>'">
+                <div wire:ignore.self style="height: <?= e($initialHeight) ?>rem">
                     <textarea
                         x-load
                         x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms')) ?>"

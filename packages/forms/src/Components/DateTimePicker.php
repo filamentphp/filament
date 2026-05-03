@@ -15,12 +15,9 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
-use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
-
-use function Filament\Support\generate_icon_html;
 
 class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
 {
@@ -151,51 +148,15 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
         $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
 
-        $canClickPrefixAffix = $prefixIcon || filled($prefixLabel);
-        $canClickSuffixAffix = $suffixIcon || filled($suffixLabel);
-
         $wrapperAttributes = $extraAttributeBag
-            ->except(['wire:target', 'tabindex'])
             ->merge([
                 'x-on:focus-input.stop' => "\$el.querySelector('input:not([type=hidden])')?.focus()",
             ], escape: false)
-            ->class([
-                'fi-input-wrp',
-                'fi-fo-date-time-picker',
-                'fi-disabled' => $isDisabled,
-                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
-            ]);
+            ->class(['fi-fo-date-time-picker']);
 
         ob_start(); ?>
 
-        <div <?= $wrapperAttributes->toHtml() ?>>
-            <?php if ($hasPrefix) { ?>
-                <div
-                    <?php if ($canClickPrefixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
-                    <?= (new ComponentAttributeBag)->class([
-                        'fi-input-wrp-prefix',
-                        'fi-input-wrp-prefix-has-content' => true,
-                        'fi-inline' => $isPrefixInline,
-                        'fi-input-wrp-prefix-has-label' => filled($prefixLabel),
-                    ])->toHtml() ?>
-                >
-                    <?php if (count($prefixActions)) { ?>
-                        <div class="fi-input-wrp-actions" <?php if ($canClickPrefixAffix) { ?> x-on:click.stop <?php } ?>>
-                            <?php foreach ($prefixActions as $prefixAction) { ?>
-                                <?= $prefixAction->toHtml() ?>
-                            <?php } ?>
-                        </div>
-                    <?php } ?>
 
-                    <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
-
-                    <?php if (filled($prefixLabel)) { ?>
-                        <span class="fi-input-wrp-label"><?= e($prefixLabel) ?></span>
-                    <?php } ?>
-                </div>
-            <?php } ?>
-
-            <div class="fi-input-wrp-content-ctn">
                 <?php if ($isNative) { ?>
                     <input
                         <?= $extraInputAttributeBag
@@ -333,33 +294,6 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
                         </div>
                     </div>
                 <?php } ?>
-            </div>
-
-            <?php if ($hasSuffix) { ?>
-                <div
-                    <?php if ($canClickSuffixAffix) { ?> x-on:click="$dispatch('focus-input')" <?php } ?>
-                    <?= (new ComponentAttributeBag)->class([
-                        'fi-input-wrp-suffix',
-                        'fi-inline' => $isSuffixInline,
-                        'fi-input-wrp-suffix-has-label' => filled($suffixLabel),
-                    ])->toHtml() ?>
-                >
-                    <?php if (filled($suffixLabel)) { ?>
-                        <span class="fi-input-wrp-label"><?= e($suffixLabel) ?></span>
-                    <?php } ?>
-
-                    <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
-
-                    <?php if (count($suffixActions)) { ?>
-                        <div class="fi-input-wrp-actions" <?php if ($canClickSuffixAffix) { ?> x-on:click.stop <?php } ?>>
-                            <?php foreach ($suffixActions as $suffixAction) { ?>
-                                <?= $suffixAction->toHtml() ?>
-                            <?php } ?>
-                        </div>
-                    <?php } ?>
-                </div>
-            <?php } ?>
-        </div>
 
         <?php if ($datalistOptions) { ?>
             <datalist id="<?= e($id) ?>-list">
@@ -369,7 +303,27 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
             </datalist>
         <?php } ?>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center);
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->generateInputWrapperHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+                isDisabled: $isDisabled,
+                hasInlinePrefix: $isPrefixInline,
+                hasInlineSuffix: $isSuffixInline,
+                prefix: $prefixLabel,
+                prefixActions: $prefixActions,
+                prefixIcon: $prefixIcon,
+                prefixIconColor: $prefixIconColor,
+                suffix: $suffixLabel,
+                suffixActions: $suffixActions,
+                suffixIcon: $suffixIcon,
+                suffixIconColor: $suffixIconColor,
+                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+            ),
+            inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center,
+        );
     }
 
     /**
