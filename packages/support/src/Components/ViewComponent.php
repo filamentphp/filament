@@ -128,18 +128,17 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function toHtml(): string
     {
-        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
-            if (
-                filled($publishedViewOverrideCheckPath = $this->getPublishedViewOverrideCheckPath())
-                && static::hasPublishedEmbeddedViewOverride($publishedViewOverrideCheckPath)
-            ) {
-                return $this->renderView($publishedViewOverrideCheckPath)->render();
-            }
-
-            return $this->toEmbeddedHtml();
+        if ((! ($this instanceof HasEmbeddedView)) || $this->hasView()) {
+            return $this->render()->render();
         }
 
-        return $this->render()->render();
+        $publishedViewOverrideCheckPath = $this->getPublishedViewOverrideCheckPath();
+
+        if (filled($publishedViewOverrideCheckPath) && static::hasPublishedEmbeddedViewOverride($publishedViewOverrideCheckPath)) {
+            return $this->renderView($publishedViewOverrideCheckPath)->render();
+        }
+
+        return $this->toEmbeddedHtml();
     }
 
     public function getPublishedViewOverrideCheckPath(): ?string
