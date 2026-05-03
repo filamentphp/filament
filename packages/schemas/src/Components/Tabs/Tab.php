@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 class Tab extends Component implements CanConcealComponents, HasEmbeddedView
@@ -164,7 +165,7 @@ class Tab extends Component implements CanConcealComponents, HasEmbeddedView
             return '';
         }
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'aria-labelledby' => $id,
                 'id' => $id,

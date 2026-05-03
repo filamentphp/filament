@@ -19,6 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component as LivewireComponent;
 
@@ -358,7 +359,7 @@ class Wizard extends Component implements HasEmbeddedView
         );
         $isHeaderHidden = $this->isHeaderHidden();
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $this->getId(),
             ], escape: false)
@@ -430,7 +431,7 @@ class Wizard extends Component implements HasEmbeddedView
                                     <?= generate_icon_html(
                                         $completedIcon ?? Heroicon::OutlinedCheck,
                                         alias: filled($completedIcon) ? null : SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP,
-                                        attributes: new ComponentAttributeBag([
+                                        attributes: new FilamentComponentAttributeBag([
                                             'x-cloak' => 'x-cloak',
                                             'x-show' => "getStepIndex(step) > {$stepIndex}",
                                         ]),
@@ -440,7 +441,7 @@ class Wizard extends Component implements HasEmbeddedView
                                     <?php if (filled($icon = $step->getIcon())) { ?>
                                         <?= generate_icon_html(
                                             $icon,
-                                            attributes: new ComponentAttributeBag([
+                                            attributes: new FilamentComponentAttributeBag([
                                                 'x-cloak' => 'x-cloak',
                                                 'x-show' => "getStepIndex(step) <= {$stepIndex}",
                                             ]),

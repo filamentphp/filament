@@ -11,6 +11,7 @@ use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\View\Components\ToggleComponent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
@@ -47,7 +48,7 @@ class Toggle extends Field implements HasEmbeddedView
 
         $stateExpression = '$wire.' . $this->applyStateBindingModifiers("\$entangle('{$statePath}')");
 
-        $toggleAttributes = (new ComponentAttributeBag)
+        $toggleAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'aria-checked' => 'false',
                 'autofocus' => $this->isAutofocused(),
@@ -97,7 +98,7 @@ class Toggle extends Field implements HasEmbeddedView
             <div
                 x-cloak="inline-flex"
                 wire:ignore
-                <?= (new ComponentAttributeBag)->class([
+                <?= (new FilamentComponentAttributeBag)->class([
                     'fi-toggle fi-toggle-on fi-hidden',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),
                 ])->toHtml() ?>

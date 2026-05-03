@@ -12,6 +12,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 class Step extends Component implements CanConcealComponents, HasEmbeddedView
@@ -166,7 +167,7 @@ class Step extends Component implements CanConcealComponents, HasEmbeddedView
 
         $tag = filled($alpineSubmitHandler) ? 'form' : 'div';
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'aria-labelledby' => $id,
                 'id' => $id,

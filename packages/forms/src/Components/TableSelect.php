@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Support\Arr;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Livewire;
 use LogicException;
@@ -438,7 +439,7 @@ class TableSelect extends Field implements HasEmbeddedView
 
         $livewireHtml = Livewire::mount(TableSelectLivewireComponent::class, $properties, $this->getLivewireKey());
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge(['id' => $id], escape: false)
             ->merge($extraAttributes, escape: false);
 

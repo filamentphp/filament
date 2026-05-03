@@ -30,7 +30,7 @@
         width="md"
         class="fi-no-database"
         :attributes="
-            new \Illuminate\View\ComponentAttributeBag([
+            new \Filament\Support\View\ComponentAttributeBag([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? '' : false,
             ])
         "

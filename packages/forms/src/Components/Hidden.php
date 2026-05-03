@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 class Hidden extends Field implements HasEmbeddedView
@@ -18,7 +19,7 @@ class Hidden extends Field implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $this->getId(),
                 'type' => 'hidden',

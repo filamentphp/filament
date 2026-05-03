@@ -22,6 +22,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 
@@ -280,7 +281,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $hasError = filled($errorMessage) || filled($errorMessages);
 
         // Inner content
-        $innerAttributes = (new ComponentAttributeBag)
+        $innerAttributes = (new FilamentComponentAttributeBag)
             ->merge(['id' => $this->getId()], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-fused-group']);
@@ -329,7 +330,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $aboveErrorMessageSchema = $this->getChildSchema(static::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
         $belowErrorMessageSchema = $this->getChildSchema(static::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
 
-        $wrapperAttributes = (new ComponentAttributeBag)
+        $wrapperAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraFieldWrapperAttributes(), escape: false)
             ->class([
                 'fi-fo-field',
@@ -347,14 +348,14 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
 
             <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-field-label-col',
                         "fi-vertical-align-{$inlineLabelVerticalAlignment->value}" => $hasInlineLabel,
                     ])->toHtml() ?>
                 >
                     <?= $aboveLabelSchema?->toHtml() ?>
                     <div
-                        <?= (new ComponentAttributeBag)->class([
+                        <?= (new FilamentComponentAttributeBag)->class([
                             'fi-fo-field-label-ctn',
                             ($label instanceof ComponentSlot) ? $label->attributes->get('class') : null,
                         ])->toHtml() ?>

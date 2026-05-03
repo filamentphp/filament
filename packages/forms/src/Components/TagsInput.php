@@ -18,6 +18,7 @@ use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\SupportIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Js;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
@@ -287,7 +288,7 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
 
         $deleteLabel = __('filament-forms::components.tags_input.actions.delete.label');
 
-        $badgeAttributes = (new ComponentAttributeBag)
+        $badgeAttributes = (new FilamentComponentAttributeBag)
             ->class([
                 'fi-badge',
                 'fi-size-md',

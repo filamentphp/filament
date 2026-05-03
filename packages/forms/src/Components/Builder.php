@@ -25,6 +25,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Forms\array_move_after;
@@ -1248,7 +1249,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
         $xFloatDirective = 'x-float' . ($placement ? ".placement.{$placement}" : '') . '.flip.shift.offset';
 
-        $dropdownAttributes = (new ComponentAttributeBag)
+        $dropdownAttributes = (new FilamentComponentAttributeBag)
             ->merge(['x-data' => 'filamentDropdown'], escape: false)
             ->class([
                 'fi-dropdown',
@@ -1256,7 +1257,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                 $alignmentClass => filled($alignmentClass),
             ]);
 
-        $panelAttributes = (new ComponentAttributeBag)
+        $panelAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'x-cloak' => true,
                 'x-ref' => 'panel',
@@ -1286,7 +1287,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             <?php if (filled($blocks)) { ?>
                 <div <?= $panelAttributes->toHtml() ?>>
                     <div class="fi-dropdown-list">
-                        <div <?= (new ComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
+                        <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
                             <?php foreach ($blocks as $block) {
                                 $blockIcon = $block->getIcon();
 
@@ -1298,7 +1299,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
                                 $wireClick = "mountAction('{$action->getName()}', " . Js::from($wireClickArguments) . ", { schemaComponent: '{$key}' })";
 
-                                $itemAttributes = (new ComponentAttributeBag)
+                                $itemAttributes = (new FilamentComponentAttributeBag)
                                     ->merge([
                                         'x-on:click' => 'close',
                                         'wire:click' => $wireClick,
@@ -1312,13 +1313,13 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
                             <button <?= $itemAttributes->toHtml() ?>>
                                 <?php if (filled($blockIcon)) { ?>
-                                    <?= generate_icon_html($blockIcon, attributes: (new ComponentAttributeBag([
+                                    <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag([
                                         'wire:loading.remove.delay.' . $loadingDelay => true,
                                         'wire:target' => $wireClick,
                                     ]))->color(IconComponent::class, 'gray'))?->toHtml() ?>
                                 <?php } ?>
 
-                                <?= generate_loading_indicator_html((new ComponentAttributeBag([
+                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag([
                                     'wire:loading.delay.' . $loadingDelay => '',
                                     'wire:target' => $wireClick,
                                 ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
@@ -1385,7 +1386,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
         $isBlockLabelTruncated = $this->isBlockLabelTruncated();
         $labelBetweenItems = $this->getLabelBetweenItems();
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class([
                 'fi-fo-builder',
@@ -1405,7 +1406,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
         <div <?= $outerAttributes->toHtml() ?>>
             <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-builder-actions',
                         'fi-hidden' => $itemCount < 2,
                     ])->toHtml() ?>
@@ -1501,12 +1502,12 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                 ?>
 
                                     <?php if ($hasBlockIcons && filled($blockIcon)) { ?>
-                                        <?= generate_icon_html($blockIcon, attributes: (new ComponentAttributeBag)->class(['fi-fo-builder-item-header-icon']))?->toHtml() ?>
+                                        <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag)->class(['fi-fo-builder-item-header-icon']))?->toHtml() ?>
                                     <?php } ?>
 
                                     <?php if ($hasBlockLabels) { ?>
                                         <<?= e($blockLabelHeadingTag) ?>
-                                            <?= (new ComponentAttributeBag)->class([
+                                            <?= (new FilamentComponentAttributeBag)->class([
                                                 'fi-fo-builder-item-header-label',
                                                 'fi-truncated' => $isBlockLabelTruncated,
                                             ])->toHtml() ?>
@@ -1553,14 +1554,14 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
                             <div
                                 x-show="! isCollapsed"
-                                <?= (new ComponentAttributeBag)->class([
+                                <?= (new FilamentComponentAttributeBag)->class([
                                     'fi-fo-builder-item-content',
                                     'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $block->hasPreview(),
                                 ])->toHtml() ?>
                             >
                                 <?php if ($hasBlockPreviews && $block->hasPreview()) { ?>
                                     <div
-                                        <?= (new ComponentAttributeBag)->class([
+                                        <?= (new FilamentComponentAttributeBag)->class([
                                             'fi-fo-builder-item-preview',
                                             'fi-interactive' => $hasInteractiveBlockPreviews,
                                         ])->toHtml() ?>

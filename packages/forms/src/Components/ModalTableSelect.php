@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -907,7 +908,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
         $optionLabels = $isMultiple ? $this->getOptionLabels() : [];
         $placeholder = $this->getPlaceholder();
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge(['id' => $id], escape: false)
             ->merge($extraAttributes, escape: false)
             ->class([
@@ -960,7 +961,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
 
     protected function generateBadgeHtml(string | Htmlable $label, ?string $color): string
     {
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->class([
                 'fi-badge',
                 'fi-size-md',

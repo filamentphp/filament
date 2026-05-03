@@ -36,6 +36,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -1658,7 +1659,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                                 x-on:run-rich-editor-commands.window="isLoading = false"
                                                 class="fi-fo-rich-editor-custom-block-btn"
                                             >
-                                                <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
+                                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
                                                 <?= e($block::getLabel()) ?>
                                             </button>
                                         <?php } ?>

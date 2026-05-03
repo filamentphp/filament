@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
@@ -510,12 +511,12 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         >
             <?php if (! $isDisabled) { ?>
                 <?php if ($isSearchable) { ?>
-                    <div <?= (new ComponentAttributeBag)->class(['fi-input-wrp', 'fi-fo-checkbox-list-search-input-wrp'])->toHtml() ?>>
+                    <div <?= (new FilamentComponentAttributeBag)->class(['fi-input-wrp', 'fi-fo-checkbox-list-search-input-wrp'])->toHtml() ?>>
                         <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-inline">
                             <?= generate_icon_html(
                                 Heroicon::MagnifyingGlass,
                                 FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD,
-                                (new ComponentAttributeBag)->color(IconComponent::class, 'gray'),
+                                (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'),
                             )?->toHtml() ?>
                         </div>
 

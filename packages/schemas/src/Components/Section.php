@@ -35,6 +35,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
@@ -289,14 +290,14 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $hasHeader = $hasIcon || $hasHeading || $hasDescription || ($isCollapsible && (! $isAside)) || $hasAfterHeader;
 
         // Outer wrapper attributes (from schema section view)
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge(['id' => $id], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->merge($this->getExtraAlpineAttributes(), escape: false)
             ->class(['fi-sc-section']);
 
         // Inner section attributes
-        $sectionAttributes = (new ComponentAttributeBag)
+        $sectionAttributes = (new FilamentComponentAttributeBag)
             ->class([
                 'fi-section',
                 'fi-section-not-contained' => ! $isContained,
@@ -362,7 +363,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                         <?php } ?>
                         class="fi-section-header"
                     >
-                        <?= generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+                        <?= generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                             ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)?->toHtml() ?>
 
                         <?php if ($hasHeading || $hasDescription) { ?>
@@ -389,7 +390,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
 
                         <?php if ($collapsible) { ?>
                             <?php
-                                $collapseButtonAttributes = (new ComponentAttributeBag)
+                                $collapseButtonAttributes = (new FilamentComponentAttributeBag)
                                     ->merge([
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',

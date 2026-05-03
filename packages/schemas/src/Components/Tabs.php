@@ -23,6 +23,7 @@ use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconCompone
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
 
@@ -271,7 +272,7 @@ class Tabs extends Component implements HasEmbeddedView
             return $baseJs ? "{$baseJs} && {$dropdownJs}" : $dropdownJs;
         };
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $id,
                 'wire:key' => $this->getLivewireKey() . '.container',
@@ -284,7 +285,7 @@ class Tabs extends Component implements HasEmbeddedView
                 'fi-vertical' => $isVertical,
             ]);
 
-        $navAttributes = (new ComponentAttributeBag)
+        $navAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'aria-label' => $label,
                 'role' => 'tablist',
@@ -374,7 +375,7 @@ class Tabs extends Component implements HasEmbeddedView
                     $tabLabel = $tab->getLabel();
                     $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'inline');
 
-                    $tabItemAttributes = (new ComponentAttributeBag)
+                    $tabItemAttributes = (new FilamentComponentAttributeBag)
                         ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->merge([
                             'role' => 'tab',
@@ -439,7 +440,7 @@ class Tabs extends Component implements HasEmbeddedView
                                 $tabLabel = $tab->getLabel();
                                 $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'trigger');
 
-                                $triggerTabAttributes = (new ComponentAttributeBag)
+                                $triggerTabAttributes = (new FilamentComponentAttributeBag)
                                     ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                                     ->merge([
                                         'role' => 'tab',
@@ -509,7 +510,7 @@ class Tabs extends Component implements HasEmbeddedView
                                     $tabKey = $tab->getKey(isAbsolute: false);
                                     $tabLabel = $tab->getLabel();
 
-                                    $dropdownItemAttributes = (new ComponentAttributeBag)
+                                    $dropdownItemAttributes = (new FilamentComponentAttributeBag)
                                         ->merge([
                                             'type' => 'button',
                                             'wire:loading.attr' => 'disabled',
@@ -522,7 +523,7 @@ class Tabs extends Component implements HasEmbeddedView
                                     ?>
                                     <button <?= $dropdownItemAttributes->toHtml() ?>>
                                         <?php if ($tabIcon) { ?>
-                                            <?= generate_icon_html($tabIcon, attributes: (new ComponentAttributeBag)->color(IconComponent::class, 'gray'))?->toHtml() ?>
+                                            <?= generate_icon_html($tabIcon, attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'))?->toHtml() ?>
                                         <?php } ?>
 
                                         <span class="fi-dropdown-list-item-label">
@@ -538,7 +539,7 @@ class Tabs extends Component implements HasEmbeddedView
                                                         allowHTML: <?= Js::from($tabBadgeTooltip instanceof Htmlable) ?>,
                                                     }"
                                                 <?php } ?>
-                                                <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $tabBadgeColor ?? 'primary')->class(['fi-badge'])->toHtml() ?>
+                                                <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $tabBadgeColor ?? 'primary')->class(['fi-badge'])->toHtml() ?>
                                             >
                                                 <?= e($tabBadge) ?>
                                             </span>
@@ -632,7 +633,7 @@ class Tabs extends Component implements HasEmbeddedView
 
         $activeTab = strval($this->getLivewire()->{$livewireProperty});
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $id,
                 'wire:key' => $this->getLivewireKey() . '.container',
@@ -662,7 +663,7 @@ class Tabs extends Component implements HasEmbeddedView
             ], escape: false);
         }
 
-        $navAttributes = (new ComponentAttributeBag)
+        $navAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'aria-label' => $label,
                 'role' => 'tablist',
@@ -704,7 +705,7 @@ class Tabs extends Component implements HasEmbeddedView
                         ? "\$set('{$livewireProperty}', '" . addslashes($tabKey) . "')"
                         : "\$set('{$livewireProperty}', null)";
 
-                    $tabItemAttributes = (new ComponentAttributeBag)
+                    $tabItemAttributes = (new FilamentComponentAttributeBag)
                         ->merge($tabExtraAttributeBag->getAttributes(), escape: false)
                         ->merge([
                             'aria-selected' => $isActive ? 'true' : 'false',
@@ -766,7 +767,7 @@ class Tabs extends Component implements HasEmbeddedView
             $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : IconPosition::Before;
         }
 
-        $badgeAttributes = (new ComponentAttributeBag)
+        $badgeAttributes = (new FilamentComponentAttributeBag)
             ->class(['fi-badge', 'fi-size-sm'])
             ->color(BadgeComponent::class, $color ?? 'primary');
 
