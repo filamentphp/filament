@@ -339,7 +339,7 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
     {
         $classLoader = require 'vendor/autoload.php';
 
-        return collect($classLoader->getClassMap())
+        $classes = collect($classLoader->getClassMap())
             ->filter(function (string $file, string $class) use ($parentClass): bool {
                 if (! str($file)->startsWith(base_path('vendor' . DIRECTORY_SEPARATOR . 'composer/../../'))) {
                     return false;
@@ -357,6 +357,39 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
             })
             ->keys()
             ->all();
+
+        $modelsPath = app_path('Models');
+
+        if (is_dir($modelsPath)) {
+            $modelNamespace = app()->getNamespace() . 'Models\\';
+
+            $modelFiles = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($modelsPath, \FilesystemIterator::SKIP_DOTS),
+            );
+
+            foreach ($modelFiles as $fileInfo) {
+                if (! $fileInfo->isFile() || $fileInfo->getExtension() !== 'php') {
+                    continue;
+                }
+
+                $relativePath = str($fileInfo->getPathname())
+                    ->replace($modelsPath . DIRECTORY_SEPARATOR, '')
+                    ->replace(DIRECTORY_SEPARATOR, '\\')
+                    ->replace('.php', '');
+
+                $class = $modelNamespace . $relativePath;
+
+                try {
+                    if (blank($parentClass) || is_subclass_of($class, $parentClass)) {
+                        $classes[] = $class;
+                    }
+                } catch (Throwable) {
+                    // Ignore files that are not loadable PHP classes.
+                }
+            }
+        }
+
+        return array_values(array_unique($classes));
     }
 }
 
