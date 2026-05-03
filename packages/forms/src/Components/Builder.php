@@ -1228,32 +1228,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             ])->render();
         }
 
-        return $this->renderBlockPickerHtml(
-            action: $action,
-            blocks: $blocks,
-            key: $key,
-            triggerHtml: $triggerHtml,
-            actionAlignment: $actionAlignment,
-            afterItem: $afterItem,
-            columns: $columns,
-            width: $width,
-        );
-    }
-
-    /**
-     * @param  array<Block>  $blocks
-     * @param  array<string, ?int> | int | null  $columns
-     */
-    protected function renderBlockPickerHtml(
-        Action $action,
-        array $blocks,
-        string $key,
-        string $triggerHtml,
-        Alignment | string | null $actionAlignment = null,
-        ?string $afterItem = null,
-        array | int | null $columns = null,
-        Width | string | null $width = null,
-    ): string {
         $placement = match ($actionAlignment) {
             Alignment::Start, Alignment::Left => 'bottom-start',
             Alignment::End, Alignment::Right => 'bottom-end',
