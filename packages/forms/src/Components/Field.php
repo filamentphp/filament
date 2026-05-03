@@ -290,6 +290,7 @@ class Field extends Component implements Contracts\HasValidationRules
         array $extraWrapperAttributes = [],
         ?VerticalAlignment $inlineLabelVerticalAlignment = null,
         ?string $labelPrefix = null,
+        ?string $labelSuffix = null,
         string $labelTag = 'label',
     ): string {
         $statePath = $this->getStatePath();
@@ -340,6 +341,7 @@ class Field extends Component implements Contracts\HasValidationRules
                 'field' => $this,
                 'slot' => new ComponentSlot($html),
                 'labelPrefix' => $labelPrefix,
+                'labelSuffix' => $labelSuffix,
                 'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
                 'labelTag' => $labelTag,
                 'attributes' => (new ComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
@@ -395,7 +397,7 @@ class Field extends Component implements Contracts\HasValidationRules
                 </<?= $labelTag ?>>
             <?php } ?>
 
-            <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix) { ?>
+            <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix || $labelSuffix) { ?>
                 <div
                     <?= (new ComponentAttributeBag)->class([
                         'fi-fo-field-label-col',
@@ -412,7 +414,7 @@ class Field extends Component implements Contracts\HasValidationRules
                     >
                         <?= $beforeLabelSchema?->toHtml() ?>
 
-                        <?php if ((filled($label) && (! $labelSrOnly)) || $labelPrefix) { ?>
+                        <?php if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix) { ?>
                             <<?= $labelTag ?>
                                 <?php if ($labelTag === 'label') { ?>
                                     for="<?= e($id) ?>"
@@ -429,6 +431,8 @@ class Field extends Component implements Contracts\HasValidationRules
                                         <?php } ?>
                                     </span>
                                 <?php } ?>
+
+                                <?= $labelSuffix ?>
                             </<?= $labelTag ?>>
                         <?php } ?>
 
