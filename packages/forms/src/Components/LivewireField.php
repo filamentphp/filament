@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Livewire;
 
 class LivewireField extends Field implements HasEmbeddedView
 {
@@ -87,7 +88,7 @@ class LivewireField extends Field implements HasEmbeddedView
         $id = $this->getId();
         $hasWrapper = filled($id) || filled($extraAttributes);
 
-        $livewireHtml = \Livewire\Livewire::mount($this->getComponent(), $this->getComponentProperties(), $this->getLivewireKey());
+        $livewireHtml = Livewire::mount($this->getComponent(), $this->getComponentProperties(), $this->getLivewireKey());
 
         if ($hasWrapper) {
             $attributes = (new ComponentAttributeBag)
@@ -97,6 +98,6 @@ class LivewireField extends Field implements HasEmbeddedView
             $livewireHtml = '<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>';
         }
 
-        return $this->wrapFieldHtml($livewireHtml);
+        return $this->wrapEmbeddedHtml($livewireHtml);
     }
 }

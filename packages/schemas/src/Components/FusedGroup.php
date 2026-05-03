@@ -19,6 +19,8 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
@@ -219,10 +221,10 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     public function toEmbeddedHtml(): string
     {
         // Custom error collection from child fields
-        /** @var \Illuminate\Support\MessageBag $errors */
+        /** @var MessageBag $errors */
         $errors = view()->shared('errors') instanceof ViewErrorBag
             ? view()->shared('errors')->getBag('default')
-            : new \Illuminate\Support\MessageBag;
+            : new MessageBag;
 
         $errorMessage = null;
         $errorMessages = [];
@@ -271,7 +273,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         // A single message renders as `<p>`; only multiple messages render as
         // `<ul><li>`, so collapse a one-element list into the scalar form.
         if (count($errorMessages) === 1) {
-            $errorMessage = \Illuminate\Support\Arr::first($errorMessages);
+            $errorMessage = Arr::first($errorMessages);
             $errorMessages = [];
         }
 
@@ -308,7 +310,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
             ])->toHtml();
         }
 
-        // Field wrapper rendering (inline, same as Field::wrapFieldHtml but with custom errors)
+        // Field wrapper rendering (inline, same as `Field::wrapEmbeddedHtml()` but with custom errors)
         $hasInlineLabel = $this->hasInlineLabel();
         $id = $this->getId();
         $isDisabled = $this->isDisabled();

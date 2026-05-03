@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\View\FormsIconAlias;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
@@ -16,6 +17,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -1712,7 +1714,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
             <?php } ?>
         </div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
     protected function toSimpleEmbeddedHtml(): string
@@ -1841,7 +1843,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
             <?php } ?>
         </div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
     protected function toTableEmbeddedHtml(): string
@@ -1987,13 +1989,13 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                                 <?php foreach ($item->getComponents(withHidden: true) as $schemaComponent) { ?>
                                     <?php
                                     throw_unless(
-                                        $schemaComponent instanceof \Filament\Schemas\Components\Component,
+                                        $schemaComponent instanceof Component,
                                         new \Exception('Table repeaters must only contain schema components, but [' . $schemaComponent::class . '] was used.'),
                                     );
                                     ?>
 
                                     <?php if (count($tableColumns) > $counter) { ?>
-                                        <?php if ($schemaComponent instanceof \Filament\Forms\Components\Hidden) { ?>
+                                        <?php if ($schemaComponent instanceof Hidden) { ?>
                                             <?= $schemaComponent->toHtml() ?>
                                         <?php } else { ?>
                                             <?php
@@ -2006,7 +2008,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                                                 $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
                                                 $tdAttributes = (new ComponentAttributeBag)
                                                     ->class([
-                                                        ($columnVerticalAlignment instanceof \Filament\Support\Enums\VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
+                                                        ($columnVerticalAlignment instanceof VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
                                                     ]);
                                                 ?>
                                                 <td <?= $tdAttributes->toHtml() ?>>
@@ -2062,7 +2064,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
             <?php } ?>
         </div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
     public function getLabelBetweenItems(): ?string

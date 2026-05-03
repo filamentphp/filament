@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Support\Arr;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Livewire;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
@@ -435,12 +436,12 @@ class TableSelect extends Field implements HasEmbeddedView
             $this->applyStateBindingModifiers('wire:model') => $statePath,
         ];
 
-        $livewireHtml = \Livewire\Livewire::mount(TableSelectLivewireComponent::class, $properties, $this->getLivewireKey());
+        $livewireHtml = Livewire::mount(TableSelectLivewireComponent::class, $properties, $this->getLivewireKey());
 
         $attributes = (new ComponentAttributeBag)
             ->merge(['id' => $id], escape: false)
             ->merge($extraAttributes, escape: false);
 
-        return $this->wrapFieldHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>');
+        return $this->wrapEmbeddedHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>');
     }
 }

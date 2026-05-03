@@ -572,7 +572,7 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
             <?= $attributes->toHtml() ?>
         ></div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean(), inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center);
     }
 
     /**

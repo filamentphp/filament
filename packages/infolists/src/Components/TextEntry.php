@@ -210,7 +210,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 <?php } ?>
             </div>
 
-            <?php return $this->wrapFieldHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
         }
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
@@ -404,7 +404,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
             <?php } ?>
             </div>
 
-            <?php return $this->wrapFieldHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
         }
 
         $attributes = $attributes
@@ -516,7 +516,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 <?php } ?>
             </div>
 
-            <?php return $this->wrapFieldHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
         }
 
         ob_start(); ?>
@@ -546,7 +546,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
             <?php } ?>
         </ul>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
     public function canWrapByDefault(): bool

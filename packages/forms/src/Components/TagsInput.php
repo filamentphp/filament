@@ -3,24 +3,26 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
-use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\BadgeComponent;
+use Filament\Support\View\SupportIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
 
-class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
+class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
     use CanStripCharactersFromState;
     use CanTrimState;
@@ -267,11 +269,11 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         // Filter visible prefix/suffix actions
         $prefixActions = array_filter(
             $prefixActions,
-            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+            static fn (Action $action): bool => $action->isVisible(),
         );
         $suffixActions = array_filter(
             $suffixActions,
-            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+            static fn (Action $action): bool => $action->isVisible(),
         );
 
         $wrapperAttributes = $this->getExtraAttributeBag()
@@ -294,8 +296,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
         $deleteIconHtml = generate_icon_html(
             Heroicon::XMark,
-            alias: \Filament\Support\View\SupportIconAlias::BADGE_DELETE_BUTTON,
-            size: \Filament\Support\Enums\IconSize::ExtraSmall,
+            alias: SupportIconAlias::BADGE_DELETE_BUTTON,
+            size: IconSize::ExtraSmall,
         )?->toHtml();
 
         ob_start(); ?>
@@ -370,22 +372,10 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapFieldHtml(
+        return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
-                isDisabled: $isDisabled,
-                hasInlinePrefix: $isPrefixInline,
-                hasInlineSuffix: $isSuffixInline,
-                prefix: $prefixLabel,
-                prefixActions: $prefixActions,
-                prefixIcon: $prefixIcon,
-                prefixIconColor: $prefixIconColor,
-                suffix: $suffixLabel,
-                suffixActions: $suffixActions,
-                suffixIcon: $suffixIcon,
-                suffixIconColor: $suffixIconColor,
-                isValid: ! $this->hasErrorForPath($statePath),
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-tags-input-wrp'],
         );

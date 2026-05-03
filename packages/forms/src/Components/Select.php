@@ -8,7 +8,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
@@ -47,7 +46,7 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
+class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixes, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;
@@ -1999,22 +1998,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapFieldHtml(
+        return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
-                isDisabled: $isDisabled,
-                hasInlinePrefix: $isPrefixInline,
-                hasInlineSuffix: $isSuffixInline,
-                prefix: $prefixLabel,
-                prefixActions: $prefixActions,
-                prefixIcon: $prefixIcon,
-                prefixIconColor: $prefixIconColor,
-                suffix: $suffixLabel,
-                suffixActions: $suffixActions,
-                suffixIcon: $suffixIcon,
-                suffixIconColor: $suffixIconColor,
-                isValid: ! $this->hasErrorForPath($statePath),
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-select-wrp'],
         );

@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
-use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
@@ -16,7 +15,7 @@ use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\RawJs;
 use LogicException;
 
-class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions, HasEmbeddedView
+class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, Contracts\HasAffixes, HasEmbeddedView
 {
     use CanStripCharactersFromState;
     use CanTrimState;
@@ -398,22 +397,10 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapFieldHtml(
+        return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
-                isDisabled: $isDisabled,
-                hasInlinePrefix: $isPrefixInline,
-                hasInlineSuffix: $isSuffixInline,
-                prefix: $prefixLabel,
-                prefixActions: $prefixActions,
-                prefixIcon: $prefixIcon,
-                prefixIconColor: $prefixIconColor,
-                suffix: $suffixLabel,
-                suffixActions: $suffixActions,
-                suffixIcon: $suffixIcon,
-                suffixIconColor: $suffixIconColor,
-                isValid: ! $this->hasErrorForPath($statePath),
             ),
             inlineLabelVerticalAlignment: VerticalAlignment::Center,
         );

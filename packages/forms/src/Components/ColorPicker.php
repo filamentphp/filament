@@ -3,13 +3,14 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Actions\Action;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Js;
 
-class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
+class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 {
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
@@ -89,11 +90,11 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
         // Filter visible prefix/suffix actions
         $prefixActions = array_filter(
             $prefixActions,
-            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+            static fn (Action $action): bool => $action->isVisible(),
         );
         $suffixActions = array_filter(
             $suffixActions,
-            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+            static fn (Action $action): bool => $action->isVisible(),
         );
 
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
@@ -179,24 +180,12 @@ class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapFieldHtml(
+        return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
-                isDisabled: $isDisabled,
-                hasInlinePrefix: $isPrefixInline,
-                hasInlineSuffix: $isSuffixInline,
-                prefix: $prefixLabel,
-                prefixActions: $prefixActions,
-                prefixIcon: $prefixIcon,
-                prefixIconColor: $prefixIconColor,
-                suffix: $suffixLabel,
-                suffixActions: $suffixActions,
-                suffixIcon: $suffixIcon,
-                suffixIconColor: $suffixIconColor,
-                isValid: ! $this->hasErrorForPath($statePath),
             ),
-            inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center,
+            inlineLabelVerticalAlignment: VerticalAlignment::Center,
         );
     }
 }

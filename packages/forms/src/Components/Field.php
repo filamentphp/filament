@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -18,6 +17,7 @@ use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ComponentAttributeBag;
@@ -281,11 +281,48 @@ class Field extends Component implements Contracts\HasValidationRules
     }
 
     /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     *
      * @param  array<string, mixed>  $extraWrapperAttributes
-     * @param  array<string> | null  $errorMessages
      */
-    public function wrapFieldHtml(string $html, ?string $labelPrefix = null, ?string $labelSuffix = null, ?VerticalAlignment $inlineLabelVerticalAlignment = null, string $labelTag = 'label', array $extraWrapperAttributes = [], bool $hasErrors = true, ?string $errorMessage = null, ?array $errorMessages = null): string
-    {
+    public function wrapEmbeddedHtml(
+        string $html,
+        array $extraWrapperAttributes = [],
+        ?VerticalAlignment $inlineLabelVerticalAlignment = null,
+        ?string $labelPrefix = null,
+        string $labelTag = 'label',
+    ): string {
+        $statePath = $this->getStatePath();
+
+        $hasNestedRecursiveValidationRules = $this instanceof Contracts\HasNestedRecursiveValidationRules;
+
+        /** @var MessageBag $errors */
+        $errors = view()->shared('errors') instanceof ViewErrorBag
+            ? view()->shared('errors')->getBag('default')
+            : new MessageBag;
+
+        $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
+
+        $errorMessage = null;
+        $errorMessages = null;
+
+        if ($hasError) {
+            if ($this->shouldShowAllValidationMessages()) {
+                $errorMessages = $errors->has($statePath)
+                    ? $errors->get($statePath)
+                    : ($hasNestedRecursiveValidationRules ? $errors->get("{$statePath}.*") : []);
+
+                if (count($errorMessages) === 1) {
+                    $errorMessage = Arr::first($errorMessages);
+                    $errorMessages = [];
+                }
+            } else {
+                $errorMessage = $errors->has($statePath)
+                    ? $errors->first($statePath)
+                    : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
+            }
+        }
+
         $fieldWrapperView = $this->getFieldWrapperView();
         $isDefaultFieldWrapperView = $fieldWrapperView === 'filament-forms::field-wrapper';
 
@@ -303,11 +340,10 @@ class Field extends Component implements Contracts\HasValidationRules
                 'field' => $this,
                 'slot' => new ComponentSlot($html),
                 'labelPrefix' => $labelPrefix,
-                'labelSuffix' => $labelSuffix,
                 'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
                 'labelTag' => $labelTag,
                 'attributes' => (new ComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
-                'hasErrors' => $hasErrors,
+                'hasErrors' => $hasError,
                 'errorMessage' => $errorMessage,
                 'errorMessages' => $errorMessages,
             ])->toHtml();
@@ -319,7 +355,6 @@ class Field extends Component implements Contracts\HasValidationRules
         $label = $this->getLabel();
         $labelSrOnly = $this->isLabelHidden();
         $required = $this->isMarkedAsRequired();
-        $statePath = $this->getStatePath();
 
         $aboveLabelSchema = $this->getChildSchema(static::ABOVE_LABEL_SCHEMA_KEY)?->toHtmlString();
         $belowLabelSchema = $this->getChildSchema(static::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
@@ -331,32 +366,6 @@ class Field extends Component implements Contracts\HasValidationRules
         $afterContentSchema = $this->getChildSchema(static::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
         $aboveErrorMessageSchema = $this->getChildSchema(static::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
         $belowErrorMessageSchema = $this->getChildSchema(static::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
-
-        $hasNestedRecursiveValidationRules = $this instanceof Contracts\HasNestedRecursiveValidationRules;
-
-        /** @var \Illuminate\Support\MessageBag $errors */
-        $errors = view()->shared('errors') instanceof ViewErrorBag
-            ? view()->shared('errors')->getBag('default')
-            : new \Illuminate\Support\MessageBag;
-
-        $hasError = $hasErrors && (filled($errorMessage) || filled($errorMessages) || (filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))));
-
-        if ($hasError && filled($statePath) && blank($errorMessage) && blank($errorMessages)) {
-            if ($this->shouldShowAllValidationMessages()) {
-                $errorMessages = $errors->has($statePath)
-                    ? $errors->get($statePath)
-                    : ($hasNestedRecursiveValidationRules ? $errors->get("{$statePath}.*") : []);
-
-                if (count($errorMessages) === 1) {
-                    $errorMessage = Arr::first($errorMessages);
-                    $errorMessages = [];
-                }
-            } else {
-                $errorMessage = $errors->has($statePath)
-                    ? $errors->first($statePath)
-                    : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
-            }
-        }
 
         $areHtmlErrorMessagesAllowed = $this->areHtmlValidationMessagesAllowed();
 
@@ -386,7 +395,7 @@ class Field extends Component implements Contracts\HasValidationRules
                 </<?= $labelTag ?>>
             <?php } ?>
 
-            <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix || $labelSuffix) { ?>
+            <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix) { ?>
                 <div
                     <?= (new ComponentAttributeBag)->class([
                         'fi-fo-field-label-col',
@@ -403,7 +412,7 @@ class Field extends Component implements Contracts\HasValidationRules
                     >
                         <?= $beforeLabelSchema?->toHtml() ?>
 
-                        <?php if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix) { ?>
+                        <?php if ((filled($label) && (! $labelSrOnly)) || $labelPrefix) { ?>
                             <<?= $labelTag ?>
                                 <?php if ($labelTag === 'label') { ?>
                                     for="<?= e($id) ?>"
@@ -420,8 +429,6 @@ class Field extends Component implements Contracts\HasValidationRules
                                         <?php } ?>
                                     </span>
                                 <?php } ?>
-
-                                <?= $labelSuffix ?>
                             </<?= $labelTag ?>>
                         <?php } ?>
 
@@ -487,46 +494,41 @@ class Field extends Component implements Contracts\HasValidationRules
     }
 
     /**
-     * @param  array<Action>  $prefixActions
-     * @param  string | array<string> | null  $prefixIconColor
-     * @param  string | array<string> | null  $prefixIconAlias
-     * @param  array<Action>  $suffixActions
-     * @param  string | array<string> | null  $suffixIconColor
-     * @param  string | array<string> | null  $suffixIconAlias
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
      */
-    public function wrapInputHtml(
+    protected function wrapInputHtml(
         string $html,
-        ?ComponentAttributeBag $attributes = null,
         ?string $alpineDisabled = null,
         ?string $alpineValid = null,
-        bool $isDisabled = false,
-        bool $hasInlinePrefix = false,
-        bool $hasInlineSuffix = false,
-        string | Htmlable | null $prefix = null,
-        array $prefixActions = [],
-        string | BackedEnum | Htmlable | null $prefixIcon = null,
-        string | array | null $prefixIconColor = 'gray',
-        string | array | null $prefixIconAlias = null,
-        string | Htmlable | null $suffix = null,
-        array $suffixActions = [],
-        string | BackedEnum | Htmlable | null $suffixIcon = null,
-        string | array | null $suffixIconColor = 'gray',
-        string | array | null $suffixIconAlias = null,
-        bool $isValid = true,
+        ?ComponentAttributeBag $attributes = null,
     ): string {
         $attributes ??= new ComponentAttributeBag;
 
-        $prefixActions = array_filter(
-            $prefixActions,
+        $hasAffixes = $this instanceof Contracts\HasAffixes;
+
+        $prefix = $hasAffixes ? $this->getPrefixLabel() : null;
+        $prefixActions = $hasAffixes ? array_filter(
+            $this->getPrefixActions(),
             static fn (Action $prefixAction): bool => $prefixAction->isVisible(),
-        );
-        $suffixActions = array_filter(
-            $suffixActions,
+        ) : [];
+        $prefixIcon = $hasAffixes ? $this->getPrefixIcon() : null;
+        $prefixIconColor = ($hasAffixes ? $this->getPrefixIconColor() : null) ?? 'gray';
+        $suffix = $hasAffixes ? $this->getSuffixLabel() : null;
+        $suffixActions = $hasAffixes ? array_filter(
+            $this->getSuffixActions(),
             static fn (Action $suffixAction): bool => $suffixAction->isVisible(),
-        );
+        ) : [];
+        $suffixIcon = $hasAffixes ? $this->getSuffixIcon() : null;
+        $suffixIconColor = ($hasAffixes ? $this->getSuffixIconColor() : null) ?? 'gray';
 
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
         $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
+
+        $hasInlinePrefix = $hasAffixes && $hasPrefix && $this->isPrefixInline();
+        $hasInlineSuffix = $hasAffixes && $hasSuffix && $this->isSuffixInline();
+
+        $isDisabled = $this->isDisabled();
+        $isValid = ! $this->hasErrorForPath($this->getStatePath());
 
         $hasAlpineDisabledClasses = filled($alpineDisabled);
         $hasAlpineValidClasses = filled($alpineValid);
@@ -605,8 +607,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                     <?= generate_icon_html(
                         $prefixIcon,
-                        $prefixIconAlias,
-                        (new ComponentAttributeBag)
+                        attributes: (new ComponentAttributeBag)
                             ->merge([
                                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
@@ -668,8 +669,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                     <?= generate_icon_html(
                         $suffixIcon,
-                        $suffixIconAlias,
-                        (new ComponentAttributeBag)
+                        attributes: (new ComponentAttributeBag)
                             ->merge([
                                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,

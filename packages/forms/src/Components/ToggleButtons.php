@@ -155,7 +155,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             <?php } ?>
         </div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
     }
 
     protected function toGroupedEmbeddedHtml(): string
@@ -229,7 +229,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             <?php } ?>
         </div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static

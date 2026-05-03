@@ -131,12 +131,10 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapFieldHtml(
+        return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
-                isDisabled: $isDisabled,
-                isValid: ! $this->hasErrorForPath($statePath),
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-textarea-wrp'],
         );

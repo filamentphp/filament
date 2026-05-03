@@ -7,11 +7,12 @@ use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
-use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\DateTimeStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
@@ -19,7 +20,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
-class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
+class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 {
     use Concerns\CanBeNative;
     use Concerns\CanBeReadOnly;
@@ -138,11 +139,11 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
         // Filter visible prefix/suffix actions
         $prefixActions = array_filter(
             $prefixActions,
-            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+            static fn (Action $action): bool => $action->isVisible(),
         );
         $suffixActions = array_filter(
             $suffixActions,
-            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+            static fn (Action $action): bool => $action->isVisible(),
         );
 
         $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
@@ -305,24 +306,12 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
 
         <?php $slotHtml = ob_get_clean();
 
-        return $this->wrapFieldHtml(
+        return $this->wrapEmbeddedHtml(
             $this->wrapInputHtml(
                 $slotHtml,
                 attributes: $wrapperAttributes,
-                isDisabled: $isDisabled,
-                hasInlinePrefix: $isPrefixInline,
-                hasInlineSuffix: $isSuffixInline,
-                prefix: $prefixLabel,
-                prefixActions: $prefixActions,
-                prefixIcon: $prefixIcon,
-                prefixIconColor: $prefixIconColor,
-                suffix: $suffixLabel,
-                suffixActions: $suffixActions,
-                suffixIcon: $suffixIcon,
-                suffixIconColor: $suffixIconColor,
-                isValid: ! $this->hasErrorForPath($statePath),
             ),
-            inlineLabelVerticalAlignment: \Filament\Support\Enums\VerticalAlignment::Center,
+            inlineLabelVerticalAlignment: VerticalAlignment::Center,
         );
     }
 

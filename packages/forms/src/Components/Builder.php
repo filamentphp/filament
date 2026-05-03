@@ -1619,6 +1619,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             <?php } ?>
         </div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 }

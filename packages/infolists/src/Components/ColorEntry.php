@@ -54,7 +54,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
                 <?php } ?>
             </div>
 
-            <?php return $this->wrapFieldHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
         }
 
         $state = Arr::wrap($state);
@@ -115,7 +115,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
             <?php } ?>
         </div>
 
-        <?php return $this->wrapFieldHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
     public function canWrapByDefault(): bool
