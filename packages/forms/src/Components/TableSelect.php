@@ -435,17 +435,7 @@ class TableSelect extends Field implements HasEmbeddedView
             $this->applyStateBindingModifiers('wire:model') => $statePath,
         ];
 
-        $key = $this->getLivewireKey();
-
-        if (blank($key)) {
-            // Synthesize a stable key when the user hasn't set one, mirroring
-            // the deterministic key the Blade `@livewire` directive used to
-            // inject. Without this, Livewire would assign a fresh random ID
-            // per render and break state continuity across re-renders.
-            $key = 'fi-fo-table-select.' . md5($statePath);
-        }
-
-        $livewireHtml = \Livewire\Livewire::mount(TableSelectLivewireComponent::class, $properties, $key);
+        $livewireHtml = \Livewire\Livewire::mount(TableSelectLivewireComponent::class, $properties, $this->getLivewireKey());
 
         $attributes = (new ComponentAttributeBag)
             ->merge(['id' => $id], escape: false)

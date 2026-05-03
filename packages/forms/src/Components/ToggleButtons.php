@@ -68,14 +68,9 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
     public function toEmbeddedHtml(): string
     {
         if ($this->isGrouped()) {
-            return $this->toEmbeddedHtmlForGrouped();
+            return $this->toGroupedEmbeddedHtml();
         }
 
-        return $this->toEmbeddedHtmlForIndex();
-    }
-
-    protected function toEmbeddedHtmlForIndex(): string
-    {
         $gridDirection = $this->getGridDirection() ?? GridDirection::Column;
         $id = $this->getId();
         $isDisabled = $this->isDisabled();
@@ -112,7 +107,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 $icon = $this->getIcon($value);
                 $tooltip = $this->getTooltip($value);
 
-                // Simplified button rendering for label tags
                 $buttonAttributes = (new ComponentAttributeBag)
                     ->merge([
                         'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
@@ -164,7 +158,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
     }
 
-    protected function toEmbeddedHtmlForGrouped(): string
+    protected function toGroupedEmbeddedHtml(): string
     {
         $id = $this->getId();
         $isDisabled = $this->isDisabled();
@@ -189,7 +183,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 $icon = $this->getIcon($value);
                 $tooltip = $this->getTooltip($value);
 
-                // Inlined slice of `<x-filament::button tag="label" grouped>` for the grouped variant.
                 $buttonAttributes = (new ComponentAttributeBag)
                     ->merge([
                         'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,

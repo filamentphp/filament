@@ -87,11 +87,7 @@ class LivewireField extends Field implements HasEmbeddedView
         $id = $this->getId();
         $hasWrapper = filled($id) || filled($extraAttributes);
 
-        $component = $this->getComponent();
-        $properties = $this->getComponentProperties();
-        $key = $this->getLivewireKey() ?? $this->generateLivewireKeyFallback($component);
-
-        $livewireHtml = \Livewire\Livewire::mount($component, $properties, $key);
+        $livewireHtml = \Livewire\Livewire::mount($this->getComponent(), $this->getComponentProperties(), $this->getLivewireKey());
 
         if ($hasWrapper) {
             $attributes = (new ComponentAttributeBag)
@@ -102,16 +98,5 @@ class LivewireField extends Field implements HasEmbeddedView
         }
 
         return $this->wrapEmbeddedHtml($livewireHtml);
-    }
-
-    /**
-     * Synthesize a stable Livewire key when the user hasn't set one. This
-     * mirrors the deterministic key the Blade `@livewire(...)` directive used
-     * to inject from its call site — without it, Livewire mints a random ID
-     * per render and breaks state continuity across re-renders.
-     */
-    protected function generateLivewireKeyFallback(string $component): string
-    {
-        return 'fi-fo-livewire-field.' . md5($component . ':' . ($this->getKey() ?? $this->getStatePath() ?? ''));
     }
 }

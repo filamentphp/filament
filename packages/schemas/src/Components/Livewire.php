@@ -116,7 +116,7 @@ class Livewire extends Component implements HasEmbeddedView
 
         $component = $this->getComponent();
         $properties = $this->getComponentProperties();
-        $key = $this->getLivewireKey() ?? $this->generateLivewireKeyFallback($component);
+        $key = $this->getLivewireKey() ?? "{$this->getLivewire()->getId()}.{$component}";
 
         $livewireHtml = \Livewire\Livewire::mount($component, $properties, $key);
 
@@ -129,16 +129,5 @@ class Livewire extends Component implements HasEmbeddedView
         }
 
         return $livewireHtml;
-    }
-
-    /**
-     * Synthesize a stable Livewire key when the user hasn't set one. This
-     * mirrors the deterministic key the Blade `@livewire(...)` directive used
-     * to inject from its call site — without it, Livewire mints a random ID
-     * per render and breaks state continuity across re-renders.
-     */
-    protected function generateLivewireKeyFallback(string $component): string
-    {
-        return 'fi-sc-livewire.' . md5($component . ':' . ($this->getKey() ?? $this->getStatePath() ?? ''));
     }
 }

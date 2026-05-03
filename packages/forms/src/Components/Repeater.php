@@ -1487,18 +1487,13 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
     public function toEmbeddedHtml(): string
     {
         if ($this->isTable()) {
-            return $this->toEmbeddedHtmlForTable();
+            return $this->toTableEmbeddedHtml();
         }
 
         if ($this->isSimple()) {
-            return $this->toEmbeddedHtmlForSimple();
+            return $this->toSimpleEmbeddedHtml();
         }
 
-        return $this->toEmbeddedHtmlForIndex();
-    }
-
-    protected function toEmbeddedHtmlForIndex(): string
-    {
         $items = $this->getItems();
 
         $addAction = $this->getAction($this->getAddActionName());
@@ -1720,7 +1715,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
-    protected function toEmbeddedHtmlForSimple(): string
+    protected function toSimpleEmbeddedHtml(): string
     {
         $items = $this->getItems();
 
@@ -1849,7 +1844,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
-    protected function toEmbeddedHtmlForTable(): string
+    protected function toTableEmbeddedHtml(): string
     {
         $items = $this->getItems();
 
