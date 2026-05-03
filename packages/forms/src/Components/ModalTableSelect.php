@@ -923,13 +923,13 @@ class ModalTableSelect extends Field implements HasEmbeddedView
                 <?php if ($isMultiple && $hasBadges) { ?>
                     <div class="fi-fo-modal-table-select-badges-ctn">
                         <?php foreach ($optionLabels as $loopOptionLabel) { ?>
-                            <?= $this->renderBadgeHtml($loopOptionLabel, $badgeColor) ?>
+                            <?= $this->generateBadgeHtml($loopOptionLabel, $badgeColor) ?>
                         <?php } ?>
                     </div>
                 <?php } else { ?>
                     <div>
                         <?php if ($hasBadges) { ?>
-                            <?= $this->renderBadgeHtml($optionLabel, $badgeColor) ?>
+                            <?= $this->generateBadgeHtml($optionLabel, $badgeColor) ?>
                         <?php } elseif ($isMultiple) { ?>
                             <?php $isLastOption = false; ?>
                             <?php $optionLabelKeys = array_keys($optionLabels); ?>
@@ -958,7 +958,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
         <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
-    protected function renderBadgeHtml(string | Htmlable $label, ?string $color): string
+    protected function generateBadgeHtml(string | Htmlable $label, ?string $color): string
     {
         $attributes = (new ComponentAttributeBag)
             ->class([
