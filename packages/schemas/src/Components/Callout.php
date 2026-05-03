@@ -31,8 +31,6 @@ use function Filament\Support\generate_icon_html;
 
 class Callout extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.callout';
-
     use HasColor {
         color as baseColor;
         getColor as getBaseColor;
@@ -47,6 +45,8 @@ class Callout extends Component implements HasEmbeddedView
         getIconColor as getBaseIconColor;
     }
     use HasIconSize;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.callout';
 
     public const FOOTER_SCHEMA_KEY = 'footer';
 

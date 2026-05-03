@@ -47,8 +47,6 @@ use function Filament\Support\generate_loading_indicator_html;
 
 class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.rich-editor';
-
     // Security: The rich editor outputs raw HTML. Attackers can intercept
     // the value and send arbitrary HTML to the backend. When rendering
     // in Blade views, always sanitize using `sanitizeHtml()` or the
@@ -64,6 +62,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         Concerns\InteractsWithToolbarButtons::getToolbarButtons as getBaseToolbarButtons;
     }
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.rich-editor';
 
     protected string | Closure | null $uploadingFileMessage = null;
 
@@ -1476,7 +1476,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     public function toEmbeddedHtml(): string
     {
         $groupedCustomBlocks = $this->getGroupedCustomBlocks();
-        $extraAttributeBag = $this->getExtraAttributeBag();
         $id = $this->getId();
         $isDisabled = $this->isDisabled();
         $label = $this->getLabel();
@@ -1492,26 +1491,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
-        $wrapperAttributes = $extraAttributeBag
-            ->except(['wire:target', 'tabindex'])
-            ->class([
-                'fi-input-wrp',
-                'fi-fo-rich-editor',
-                'fi-disabled' => $isDisabled,
-                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
-            ]);
+        $wrapperAttributes = $this->getExtraAttributeBag()
+            ->merge(['x-cloak' => true], escape: false)
+            ->class(['fi-fo-rich-editor']);
 
         $deleteIconHtml = generate_icon_html(Heroicon::Trash, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON);
         $editIconHtml = generate_icon_html(Heroicon::PencilSquare, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON);
 
         ob_start(); ?>
 
-        <div x-cloak <?= $wrapperAttributes->toHtml() ?>>
-            <div class="fi-input-wrp-content-ctn">
-            <div
-                x-load
-                x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
-                x-data="richEditorFormComponent({
+        <div
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
+            x-data="richEditorFormComponent({
                             acceptedFileTypes: <?= Js::from($fileAttachmentsAcceptedFileTypes) ?>,
                             acceptedFileTypesValidationMessage: <?= Js::from($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.rich_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null) ?>,
                             activePanel: <?= Js::from($this->getActivePanel()) ?>,
@@ -1712,9 +1704,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                     <?php } ?>
                 </div>
             </div>
-            </div>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->generateInputWrapperHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+                isDisabled: $isDisabled,
+                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+            ),
+        );
     }
 }

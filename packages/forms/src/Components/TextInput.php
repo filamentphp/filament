@@ -18,8 +18,6 @@ use LogicException;
 
 class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.text-input';
-
     use CanStripCharactersFromState;
     use CanTrimState;
     use Concerns\CanBeAutocapitalized;
@@ -33,6 +31,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     use Concerns\HasPlaceholder;
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.text-input';
 
     protected string | RawJs | Closure | null $mask = null;
 

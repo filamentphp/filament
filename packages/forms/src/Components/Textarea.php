@@ -14,8 +14,6 @@ use Illuminate\Support\Js;
 
 class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.textarea';
-
     use CanDisableGrammarly;
     use CanStripCharactersFromState;
     use CanTrimState;
@@ -25,6 +23,8 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.textarea';
 
     protected int | Closure | null $cols = null;
 
@@ -70,7 +70,6 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
     public function toEmbeddedHtml(): string
     {
-        $extraAttributeBag = $this->getExtraAttributeBag();
         $isConcealed = $this->isConcealed();
         $isDisabled = $this->isDisabled();
         $rows = $this->getRows();
@@ -80,14 +79,10 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
         $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
 
-        $wrapperAttributes = $extraAttributeBag
-            ->except(['wire:target', 'tabindex'])
+        $wrapperAttributes = $this->getExtraAttributeBag()
             ->class([
-                'fi-input-wrp',
                 'fi-fo-textarea',
                 'fi-autosizable' => $shouldAutosize,
-                'fi-disabled' => $isDisabled,
-                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
             ]);
 
         $textareaAttributes = $this->getExtraInputAttributeBag()
@@ -110,35 +105,41 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
         ob_start(); ?>
 
-        <div <?= $wrapperAttributes->toHtml() ?>>
-            <div class="fi-input-wrp-content-ctn">
-                <div wire:ignore.self style="height: <?= e($initialHeight) ?>rem">
-                    <textarea
-                        x-load
-                        x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms')) ?>"
-                        x-data="textareaFormComponent({
-                                    initialHeight: <?= Js::from($initialHeight) ?>,
-                                    shouldAutosize: <?= Js::from($shouldAutosize) ?>,
-                                    state: $wire.$entangle('<?= e($statePath) ?>'),
-                                })"
-                        <?php if ($shouldAutosize) { ?>
-                            x-intersect.once="resize()"
-                            x-on:resize.window="resize()"
-                        <?php } ?>
-                        x-model="state"
-                        <?php if ($this->isGrammarlyDisabled()) { ?>
-                            data-gramm="false"
-                            data-gramm_editor="false"
-                            data-enable-grammarly="false"
-                        <?php } ?>
-                        <?= $alpineAttributes->toHtml() ?>
-                        <?= $textareaAttributes->toHtml() ?>
-                    ></textarea>
-                </div>
-            </div>
+        <div wire:ignore.self style="height: <?= e($initialHeight) ?>rem">
+            <textarea
+                x-load
+                x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms')) ?>"
+                x-data="textareaFormComponent({
+                            initialHeight: <?= Js::from($initialHeight) ?>,
+                            shouldAutosize: <?= Js::from($shouldAutosize) ?>,
+                            state: $wire.$entangle('<?= e($statePath) ?>'),
+                        })"
+                <?php if ($shouldAutosize) { ?>
+                    x-intersect.once="resize()"
+                    x-on:resize.window="resize()"
+                <?php } ?>
+                x-model="state"
+                <?php if ($this->isGrammarlyDisabled()) { ?>
+                    data-gramm="false"
+                    data-gramm_editor="false"
+                    data-enable-grammarly="false"
+                <?php } ?>
+                <?= $alpineAttributes->toHtml() ?>
+                <?= $textareaAttributes->toHtml() ?>
+            ></textarea>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-textarea-wrp']);
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->generateInputWrapperHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+                isDisabled: $isDisabled,
+                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+            ),
+            extraWrapperAttributes: ['class' => 'fi-fo-textarea-wrp'],
+        );
     }
 
     public function getDefaultStateCasts(): array

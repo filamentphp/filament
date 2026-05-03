@@ -31,12 +31,12 @@ use function Filament\Support\generate_loading_indicator_html;
 
 class Tabs extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.tabs';
-
     use CanPersistTab;
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
     use HasLabel;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.tabs';
 
     protected int | Closure $activeTab = 1;
 
@@ -678,6 +678,11 @@ class Tabs extends Component implements HasEmbeddedView
                     <?= FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes)->toHtml() ?>
                 <?php } ?>
 
+                <?php
+                    $livewire = $this->getLivewire();
+                    $canGenerateTabLabel = method_exists($livewire, 'generateTabLabel');
+                ?>
+
                 <?php foreach ($tabs as $tabKey => $tab) {
                     $tabKey = strval($tabKey);
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
@@ -689,7 +694,7 @@ class Tabs extends Component implements HasEmbeddedView
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
-                    $tabLabel = $tab->getLabel();
+                    $tabLabel = $tab->getLabel() ?? ($canGenerateTabLabel ? $livewire->generateTabLabel($tabKey) : null);
                     $isActive = $activeTab === $tabKey;
 
                     $wireClickValue = filled($tabKey)

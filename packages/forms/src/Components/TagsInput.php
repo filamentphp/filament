@@ -22,8 +22,6 @@ use function Filament\Support\generate_icon_html;
 
 class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.tags-input';
-
     use CanStripCharactersFromState;
     use CanTrimState;
     use Concerns\HasAffixes;
@@ -33,6 +31,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     use HasColor;
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.tags-input';
 
     protected bool | Closure $isReorderable = false;
 

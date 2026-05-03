@@ -12,10 +12,10 @@ use Illuminate\Support\Js;
 
 class Image extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.image';
-
     use HasAlignment;
     use HasTooltip;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.image';
 
     protected string | Closure $url;
 

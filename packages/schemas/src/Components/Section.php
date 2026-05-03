@@ -31,6 +31,9 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\IconButtonComponent;
 use Filament\Support\View\Components\SectionComponent\IconComponent;
 use Filament\Support\View\SupportIconAlias;
+use Illuminate\Support\HtmlString;
+
+use function Filament\Support\is_slot_empty;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
@@ -40,8 +43,6 @@ use function Filament\Support\generate_icon_html;
 
 class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.section';
-
     use CanBeCollapsed;
     use CanBeCompact;
     use CanBeContained;
@@ -57,6 +58,8 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     use HasIconColor;
     use HasIconSize;
     use HasLabel;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.section';
 
     protected bool | Closure | null $isAside = null;
 
@@ -283,7 +286,8 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $hasDescription = filled((string) $description);
         $hasHeading = filled($heading);
         $hasIcon = filled($icon);
-        $hasHeader = $hasIcon || $hasHeading || $hasDescription || ($isCollapsible && (! $isAside)) || filled($afterHeader?->toHtml());
+        $hasAfterHeader = ! is_slot_empty($afterHeader);
+        $hasHeader = $hasIcon || $hasHeading || $hasDescription || ($isCollapsible && (! $isAside)) || $hasAfterHeader;
 
         // Outer wrapper attributes (from schema section view)
         $outerAttributes = (new ComponentAttributeBag)
@@ -311,6 +315,8 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
 
         // Render child schema content
         $contentHtml = $this->getChildSchema()?->extraAttributes(['class' => 'fi-section-content'])->toHtml();
+        $hasContent = ! is_slot_empty(filled($contentHtml) ? new HtmlString($contentHtml) : null);
+        $hasFooter = ! is_slot_empty($footer);
 
         // Label schemas
         $label = $this->getLabel();
@@ -376,7 +382,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                             </div>
                         <?php } ?>
 
-                        <?php if (filled($afterHeader?->toHtml())) { ?>
+                        <?php if ($hasAfterHeader) { ?>
                             <div class="fi-section-header-after-ctn">
                                 <?= $afterHeader ?>
                             </div>
@@ -405,7 +411,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                     </header>
                 <?php } ?>
 
-                <?php if (filled($contentHtml) || filled($footer?->toHtml())) { ?>
+                <?php if ($hasContent || $hasFooter) { ?>
                     <div
                         <?php if ($collapsible) { ?>
                             x-bind:aria-expanded="(! isCollapsed).toString()"
@@ -417,7 +423,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                     >
                         <?= $contentHtml ?>
 
-                        <?php if (filled($footer?->toHtml())) { ?>
+                        <?php if ($hasFooter) { ?>
                             <footer class="fi-section-footer">
                                 <?= $footer ?>
                             </footer>

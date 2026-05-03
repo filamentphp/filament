@@ -23,13 +23,13 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Tab extends Component implements CanConcealComponents, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.tabs.tab';
-
     use HasBadge;
     use HasBadgeTooltip;
     use HasIcon;
     use HasIconPosition;
     use HasLabel;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.tabs.tab';
 
     protected ?Closure $modifyQueryUsing = null;
 

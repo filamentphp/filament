@@ -22,14 +22,14 @@ use function Filament\Support\generate_icon_html;
 
 class EmptyState extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.empty-state';
-
     use CanBeCompact;
     use CanBeContained;
     use HasDescription;
     use HasIcon;
     use HasIconColor;
     use HasIconSize;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.empty-state';
 
     protected string | Htmlable | Closure $heading;
 

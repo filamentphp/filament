@@ -24,13 +24,13 @@ use Illuminate\View\ComponentSlot;
 
 class FusedGroup extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.fused-group';
-
     use CanBeMarkedAsRequired;
     use EntanglesStateWithSingularRelationship;
     use HasExtraFieldWrapperAttributes;
     use HasHelperText;
     use HasLabel;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.fused-group';
 
     const ABOVE_LABEL_SCHEMA_KEY = 'above_label';
 

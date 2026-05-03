@@ -15,9 +15,9 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Form extends Component implements CanEntangleWithSingularRelationships, ExposesStateToActionData, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.form';
-
     use EntanglesStateWithSingularRelationship;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.form';
 
     protected string | Closure | null $livewireSubmitHandler = null;
 

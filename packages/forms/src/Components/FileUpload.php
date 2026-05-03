@@ -20,12 +20,12 @@ use function Filament\Support\generate_icon_html;
 
 class FileUpload extends BaseFileUpload implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.file-upload';
-
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasAlignment;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.file-upload';
 
     protected bool | Closure $shouldAutomaticallyCropImagesToAspectRatio = false;
 
@@ -1056,30 +1056,22 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                             ],
                                         ] as $input) { ?>
                                             <label>
-                                                <div class="fi-input-wrp">
-                                                    <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-input-wrp-prefix-has-label">
-                                                        <span class="fi-input-wrp-label">
-                                                            <?= e($input['label']) ?>
-                                                        </span>
-                                                    </div>
+                                                <?php
+                                                    $editorInputHtml = '<input'
+                                                        . ' x-on:keyup.enter.prevent.stop="editor && ' . $input['alpineSaveHandler'] . '"'
+                                                        . ' x-on:blur="editor && ' . $input['alpineSaveHandler'] . '"'
+                                                        . ' x-ref="' . e($input['ref']) . '"'
+                                                        . ' x-on:keydown.enter.prevent'
+                                                        . ' type="text"'
+                                                        . ' class="fi-input"'
+                                                        . ' />';
+                                                ?>
 
-                                                    <div class="fi-input-wrp-content-ctn">
-                                                        <input
-                                                            x-on:keyup.enter.prevent.stop="editor && <?= $input['alpineSaveHandler'] ?>"
-                                                            x-on:blur="editor && <?= $input['alpineSaveHandler'] ?>"
-                                                            x-ref="<?= e($input['ref']) ?>"
-                                                            x-on:keydown.enter.prevent
-                                                            type="text"
-                                                            class="fi-input"
-                                                        />
-                                                    </div>
-
-                                                    <div class="fi-input-wrp-suffix fi-input-wrp-suffix-has-label">
-                                                        <span class="fi-input-wrp-label">
-                                                            <?= e($input['unit']) ?>
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                                <?= $this->generateInputWrapperHtml(
+                                                    $editorInputHtml,
+                                                    prefix: $input['label'],
+                                                    suffix: $input['unit'],
+                                                ) ?>
                                             </label>
                                         <?php } ?>
                                     </div>

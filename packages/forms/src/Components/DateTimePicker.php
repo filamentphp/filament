@@ -21,8 +21,6 @@ use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.date-time-picker';
-
     use Concerns\CanBeNative;
     use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
@@ -31,6 +29,8 @@ class DateTimePicker extends Field implements HasAffixActions, HasEmbeddedView
     use Concerns\HasPlaceholder;
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.date-time-picker';
 
     protected string | Closure | null $displayFormat = null;
 

@@ -32,14 +32,14 @@ use function Filament\Support\generate_loading_indicator_html;
 
 class Builder extends Field implements CanConcealComponents, HasEmbeddedView, HasExtraItemActions
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.builder';
-
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.builder';
 
     protected string | Closure | null $addBetweenActionLabel = null;
 
@@ -1296,10 +1296,10 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                     ]))->color(IconComponent::class, 'gray'))?->toHtml() ?>
                                 <?php } ?>
 
-                                <?= generate_loading_indicator_html(new ComponentAttributeBag([
+                                <?= generate_loading_indicator_html((new ComponentAttributeBag([
                                     'wire:loading.delay.' . $loadingDelay => '',
                                     'wire:target' => $wireClick,
-                                ]))->toHtml() ?>
+                                ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
 
                                 <span class="fi-dropdown-list-item-label">
                                     <?= e($block->getLabel()) ?>

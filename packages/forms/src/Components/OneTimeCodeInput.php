@@ -8,12 +8,12 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class OneTimeCodeInput extends Field implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.one-time-code-input';
-
     use Concerns\CanBeReadOnly;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.one-time-code-input';
 
     protected int | Closure $length = 6;
 

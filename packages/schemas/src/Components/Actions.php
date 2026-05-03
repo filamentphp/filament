@@ -18,11 +18,11 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Actions extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.actions';
-
     use HasAlignment;
     use HasLabel;
     use HasVerticalAlignment;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.actions';
 
     protected bool | Closure $isSticky = false;
 

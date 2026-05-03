@@ -12,10 +12,10 @@ use Illuminate\Support\Js;
 
 class CodeEditor extends Field implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.code-editor';
-
     use CanWrap;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.code-editor';
 
     protected Language | Closure | null $language = null;
 
@@ -33,7 +33,6 @@ class CodeEditor extends Field implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
-        $extraAttributeBag = $this->getExtraAttributeBag();
         $isDisabled = $this->isDisabled();
         $isLive = $this->isLive();
         $isLiveOnBlur = $this->isLiveOnBlur();
@@ -43,41 +42,40 @@ class CodeEditor extends Field implements HasEmbeddedView
         $statePath = $this->getStatePath();
         $livewireKey = $this->getLivewireKey();
 
-        $wrapperAttributes = $extraAttributeBag
-            ->except(['wire:target', 'tabindex'])
-            ->class([
-                'fi-input-wrp',
-                'fi-fo-code-editor',
-                'fi-disabled' => $isDisabled,
-                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
-            ]);
+        $wrapperAttributes = $this->getExtraAttributeBag()
+            ->class(['fi-fo-code-editor']);
 
         ob_start(); ?>
 
-        <div <?= $wrapperAttributes->toHtml() ?>>
-            <div class="fi-input-wrp-content-ctn">
-                <div
-                    x-load
-                    x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms')) ?>"
-                    x-data="codeEditorFormComponent({
-                                canWrap: <?= Js::from($this->canWrap()) ?>,
-                                isDisabled: <?= Js::from($isDisabled) ?>,
-                                isLive: <?= Js::from($isLive) ?>,
-                                isLiveDebounced: <?= Js::from($isLiveDebounced) ?>,
-                                isLiveOnBlur: <?= Js::from($isLiveOnBlur) ?>,
-                                liveDebounce: <?= Js::from($liveDebounce) ?>,
-                                language: <?= Js::from($language?->value) ?>,
-                                state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) ?>,
-                            })"
-                    wire:ignore
-                    wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $language?->value])), 0, 64) ?>"
-                    <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
-                >
-                    <div x-ref="editor" x-cloak></div>
-                </div>
-            </div>
+        <div
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms')) ?>"
+            x-data="codeEditorFormComponent({
+                        canWrap: <?= Js::from($this->canWrap()) ?>,
+                        isDisabled: <?= Js::from($isDisabled) ?>,
+                        isLive: <?= Js::from($isLive) ?>,
+                        isLiveDebounced: <?= Js::from($isLiveDebounced) ?>,
+                        isLiveOnBlur: <?= Js::from($isLiveOnBlur) ?>,
+                        liveDebounce: <?= Js::from($liveDebounce) ?>,
+                        language: <?= Js::from($language?->value) ?>,
+                        state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) ?>,
+                    })"
+            wire:ignore
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $language?->value])), 0, 64) ?>"
+            <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
+        >
+            <div x-ref="editor" x-cloak></div>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->generateInputWrapperHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+                isDisabled: $isDisabled,
+                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+            ),
+        );
     }
 }

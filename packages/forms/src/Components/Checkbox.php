@@ -10,12 +10,12 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Checkbox extends Field implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.checkbox';
-
     use Concerns\CanBeAccepted;
     use Concerns\CanBeInline;
     use Concerns\CanFixIndistinctState;
     use Concerns\HasExtraInputAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.checkbox';
 
     protected function setUp(): void
     {

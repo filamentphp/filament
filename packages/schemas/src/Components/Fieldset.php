@@ -14,12 +14,12 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Fieldset extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.fieldset';
-
     use CanBeContained;
     use CanBeMarkedAsRequired;
     use EntanglesStateWithSingularRelationship;
     use HasLabel;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.fieldset';
 
     final public function __construct(string | Htmlable | Closure | null $label = null)
     {

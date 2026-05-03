@@ -18,12 +18,12 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Flex extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.flex';
-
     use EntanglesStateWithSingularRelationship;
     use HasAlignment;
     use HasFromBreakpoint;
     use HasVerticalAlignment;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.flex';
 
     /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $schema

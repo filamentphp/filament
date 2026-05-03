@@ -49,8 +49,6 @@ use function Filament\Support\generate_search_term_expression;
 
 class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.select';
-
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
@@ -68,6 +66,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.select';
 
     /**
      * @var array<Component | Action | ActionGroup> | Closure | null

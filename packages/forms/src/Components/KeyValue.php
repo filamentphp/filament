@@ -16,10 +16,10 @@ use Filament\Support\Icons\Heroicon;
 
 class KeyValue extends Field implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.key-value';
-
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.key-value';
 
     protected string | Closure | null $addActionLabel = null;
 
@@ -387,31 +387,23 @@ class KeyValue extends Field implements HasEmbeddedView
         $valuePlaceholder = $this->getValuePlaceholder();
 
         $wrapperAttributes = $this->getExtraAttributeBag()
-            ->except(['wire:target', 'tabindex'])
-            ->class([
-                'fi-input-wrp',
-                'fi-fo-key-value',
-                'fi-disabled' => $isDisabled,
-                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
-            ]);
+            ->class(['fi-fo-key-value']);
 
         $alpineDivAttributes = $this->getExtraAlpineAttributeBag()
             ->class(['fi-fo-key-value-table-ctn']);
 
         ob_start(); ?>
 
-        <div <?= $wrapperAttributes->toHtml() ?>>
-            <div class="fi-input-wrp-content-ctn">
-                <div
-                    x-load
-                    x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms')) ?>"
-                    x-data="keyValueFormComponent({
-                                state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
-                            })"
-                    wire:ignore
-                    wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled])), 0, 64)) ?>"
-                    <?= $alpineDivAttributes->toHtml() ?>
-                >
+        <div
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms')) ?>"
+            x-data="keyValueFormComponent({
+                        state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                    })"
+            wire:ignore
+            wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled])), 0, 64)) ?>"
+            <?= $alpineDivAttributes->toHtml() ?>
+        >
                 <table class="fi-fo-key-value-table">
                     <thead>
                         <tr>
@@ -502,19 +494,27 @@ class KeyValue extends Field implements HasEmbeddedView
                     </tbody>
                 </table>
 
-                <?php if ($isAddable && (! $isDisabled)) { ?>
-                    <div
-                        x-on:click="addRow"
-                        class="fi-fo-key-value-add-action-ctn"
-                    >
-                        <?= $this->getAction('add')->toHtml() ?>
-                    </div>
-                <?php } ?>
+            <?php if ($isAddable && (! $isDisabled)) { ?>
+                <div
+                    x-on:click="addRow"
+                    class="fi-fo-key-value-add-action-ctn"
+                >
+                    <?= $this->getAction('add')->toHtml() ?>
                 </div>
-            </div>
+            <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-key-value-wrp']);
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->generateInputWrapperHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+                isDisabled: $isDisabled,
+                isValid: ! (filled($statePath) && view()->shared('errors')?->has($statePath)),
+            ),
+            extraWrapperAttributes: ['class' => 'fi-fo-key-value-wrp'],
+        );
     }
 
     public function getDefaultStateCasts(): array

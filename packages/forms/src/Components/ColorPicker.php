@@ -11,12 +11,12 @@ use Illuminate\Support\Js;
 
 class ColorPicker extends Field implements HasAffixActions, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.color-picker';
-
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.color-picker';
 
     protected string | Closure $format = 'hex';
 

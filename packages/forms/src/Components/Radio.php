@@ -11,8 +11,6 @@ use Filament\Support\Enums\GridDirection;
 
 class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.radio';
-
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
@@ -20,6 +18,8 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasOptions;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.radio';
 
     protected bool | Closure $isInline = false;
 

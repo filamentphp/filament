@@ -14,7 +14,6 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
-use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -25,12 +24,8 @@ use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
-use function Filament\Support\generate_icon_html;
-
 class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.checkbox-list';
-
     use Concerns\CanAllowHtml;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
@@ -44,6 +39,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     use Concerns\HasOptions;
     use Concerns\HasPivotData;
     use HasExtraAlpineAttributes;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.checkbox-list';
 
     protected string | Closure | null $relationshipTitleAttribute = null;
 
@@ -509,36 +506,19 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         >
             <?php if (! $isDisabled) { ?>
                 <?php if ($isSearchable) { ?>
-                    <div
-                        <?= (new ComponentAttributeBag)
-                            ->class([
-                                'fi-input-wrp',
-                                'fi-fo-checkbox-list-search-input-wrp',
-                            ])->toHtml() ?>
-                    >
-                        <div
-                            <?= (new ComponentAttributeBag)->class([
-                                'fi-input-wrp-prefix',
-                                'fi-input-wrp-prefix-has-content' => true,
-                                'fi-inline' => true,
-                            ])->toHtml() ?>
-                        >
-                            <?= generate_icon_html(
-                                Heroicon::MagnifyingGlass,
-                                \Filament\Forms\View\FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD,
-                                (new ComponentAttributeBag)->color(IconComponent::class, 'gray'),
-                            )?->toHtml() ?>
-                        </div>
+                    <?php
+                        $searchInputHtml = '<input placeholder="' . e($this->getSearchPrompt())
+                            . '" type="search" x-model.debounce.' . $this->getSearchDebounce()
+                            . '="search" class="fi-input fi-input-has-inline-prefix" />';
+                    ?>
 
-                        <div class="fi-input-wrp-content-ctn">
-                            <input
-                                placeholder="<?= e($this->getSearchPrompt()) ?>"
-                                type="search"
-                                x-model.debounce.<?= $this->getSearchDebounce() ?>="search"
-                                class="fi-input fi-input-has-inline-prefix"
-                            />
-                        </div>
-                    </div>
+                    <?= $this->generateInputWrapperHtml(
+                        $searchInputHtml,
+                        attributes: (new ComponentAttributeBag)->class(['fi-fo-checkbox-list-search-input-wrp']),
+                        hasInlinePrefix: true,
+                        prefixIcon: Heroicon::MagnifyingGlass,
+                        prefixIconAlias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD,
+                    ) ?>
                 <?php } ?>
 
                 <?php if ($isBulkToggleable && count($options)) { ?>

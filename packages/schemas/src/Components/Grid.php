@@ -9,9 +9,9 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Grid extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.grid';
-
     use EntanglesStateWithSingularRelationship;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.grid';
 
     /**
      * @param  array<string, ?int> | int | null  $columns

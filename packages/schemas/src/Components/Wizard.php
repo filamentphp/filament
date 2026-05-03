@@ -26,11 +26,11 @@ use function Filament\Support\generate_icon_html;
 
 class Wizard extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.wizard';
-
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
     use HasLabel;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.wizard';
 
     protected string | Htmlable | null $cancelAction = null;
 

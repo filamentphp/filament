@@ -30,8 +30,6 @@ use function Filament\Support\generate_icon_html;
 
 class Text extends Component implements HasEmbeddedView
 {
-    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.text';
-
     use CanBeCopied;
     use HasColor;
     use HasFontFamily;
@@ -40,6 +38,8 @@ class Text extends Component implements HasEmbeddedView
     use HasIconSize;
     use HasTooltip;
     use HasWeight;
+
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.text';
 
     protected string | Htmlable | Closure | null $content;
 
