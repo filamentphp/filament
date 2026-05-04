@@ -62,18 +62,23 @@ it('autofocuses a text input when switching to its tab', function (): void {
     });
 });
 
-it('refocuses an `autofocus()` field when the `autofocus-form-fields` event is dispatched after `create another`', function (): void {
+it('refocuses an `autofocus()` field after `create another` is clicked on a `CreateRecord` page', function (): void {
     retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
+        $author = User::factory()->create();
+        $this->actingAs($author);
 
-        visit('/autofocus-after-create-another-browser-test')
-            ->waitForText('Email')
+        visit('/posts/create')
+            ->waitForText('Title')
             ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
-            ->click('input[wire\\:model="data.name"]')
+            ->fill('input[wire\\:model="data.title"]', 'First post')
+            ->fill('input[wire\\:model="data.rating"]', '5')
+            ->select('select[wire\\:model="data.author_id"]', (string) $author->getKey())
+            ->wait(0.3)
+            ->click('input[wire\\:model="data.rating"]')
             ->wait(0.1)
             ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
-            ->click('[data-testid="simulate-create-another"]')
-            ->wait(0.3)
+            ->click('button >> text=Create & create another')
+            ->wait(0.5)
             ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true);
     });
 });
