@@ -181,6 +181,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                 'wire:partial' => $this->shouldPartiallyRender() ? ('schema.' . $this->getKey()) : null,
                 'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ' })' : null,
                 'x-on:form-validation-error.window' => $isRoot ? 'handleFormValidationError' : null,
+                'x-on:autofocus-form-fields.window' => $isRoot ? 'autofocusFormFields' : null,
             ], escape: false)
             ->class([
                 'fi-sc',

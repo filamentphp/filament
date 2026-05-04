@@ -136,6 +136,9 @@ class CreateAction extends Action
                 $hydratedDefaultState = null;
                 $schema->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
 
+                $livewire = $this->getLivewire();
+                $livewire->dispatch('autofocus-form-fields', livewireId: $livewire->getId());
+
                 $this->halt();
 
                 return;

@@ -75,6 +75,24 @@ document.addEventListener('alpine:init', () => {
             })
         },
 
+        autofocusFormFields(event) {
+            if (event.detail.livewireId !== livewireId) {
+                return
+            }
+
+            this.$nextTick(() => {
+                const fields = this.$el.querySelectorAll('[autofocus]')
+
+                for (const field of fields) {
+                    field.focus()
+
+                    if (document.activeElement === field) {
+                        break
+                    }
+                }
+            })
+        },
+
         isStateChanged(state, old) {
             if (state === undefined) {
                 return false
