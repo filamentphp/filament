@@ -126,6 +126,24 @@ it('can create another', function (): void {
     expect($record2->tags)->toBe($newData2->tags);
 });
 
+it('dispatches `autofocus-form-fields` after `create another` so `autofocus()` fields refocus', function (): void {
+    $newData = Post::factory()->make();
+
+    $component = livewire(CreatePost::class)
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+        ])
+        ->call('create', true)
+        ->assertHasNoFormErrors()
+        ->assertNoRedirect();
+
+    $component->assertDispatched('autofocus-form-fields', livewireId: $component->instance()->getId());
+});
+
 it('can create another and preserve data', function (): void {
     $newData = Post::factory()->make();
     $newData2 = Post::factory()->make();

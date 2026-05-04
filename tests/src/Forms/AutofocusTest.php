@@ -61,3 +61,19 @@ it('autofocuses a text input when switching to its tab', function (): void {
             ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true);
     });
 });
+
+it('refocuses an `autofocus()` field when the `autofocus-form-fields` event is dispatched after `create another`', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/autofocus-after-create-another-browser-test')
+            ->waitForText('Email')
+            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true)
+            ->click('input[wire\\:model="data.name"]')
+            ->wait(0.1)
+            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', false)
+            ->click('[data-testid="simulate-create-another"]')
+            ->wait(0.3)
+            ->assertScript('document.activeElement === document.querySelector("[autofocus]")', true);
+    });
+});
