@@ -507,6 +507,57 @@ public static function table(Table $table): Table
 }
 ```
 
+### Searching using an action button
+
+Instead of automatically reloading the table contents while the user is typing, you may add a search button next to the search field. The table will only be searched when the user clicks the button or presses `Enter`, using the `searchOnAction()` method:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchOnAction();
+}
+```
+
+By default, `searchOnAction()` renders an outlined button with the label "Search" and a magnifying-glass icon. You may hide the label to render an icon-only button, or hide the icon to render a label-only button:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchOnAction(
+            label: false,
+            icon: true,
+        ); // Icon-only button with tooltip
+}
+```
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchOnAction(
+            label: true,
+            icon: false,
+        ); // Label-only button, no icon
+}
+```
+
 ### Persisting the search in the user's session
 
 To persist the table or individual column search in the user's session, use the `persistSearchInSession()` or `persistColumnSearchInSession()` method:

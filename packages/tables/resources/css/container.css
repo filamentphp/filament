@@ -48,6 +48,12 @@
             @apply flex items-center gap-x-4;
         }
 
+        & .fi-ta-search-field {
+            &.fi-ta-search-field-with-action {
+                @apply flex items-center gap-3;
+            }
+        }
+
         & > :nth-child(1) {
             @apply shrink-0;
         }

@@ -29,6 +29,12 @@ trait CanSearchRecords
 
     protected ?string $searchDebounce = null;
 
+    protected bool | Closure $isSearchOnAction = false;
+
+    protected bool | Closure $hasSearchActionLabel = true;
+
+    protected bool | Closure $hasSearchActionIcon = true;
+
     protected bool | Closure $isSearchOnBlur = false;
 
     protected bool | Closure $shouldSplitSearchTerms = true;
@@ -155,6 +161,33 @@ trait CanSearchRecords
     public function getSearchDebounce(): string
     {
         return $this->searchDebounce ?? '500ms';
+    }
+
+    public function searchOnAction(
+        bool | Closure $condition = true,
+        bool | Closure $icon = true,
+        bool | Closure $label = true,
+    ): static {
+        $this->isSearchOnAction = $condition;
+        $this->hasSearchActionIcon = $icon;
+        $this->hasSearchActionLabel = $label;
+
+        return $this;
+    }
+
+    public function isSearchOnAction(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchOnAction);
+    }
+
+    public function hasSearchActionLabel(): bool
+    {
+        return (bool) $this->evaluate($this->hasSearchActionLabel);
+    }
+
+    public function hasSearchActionIcon(): bool
+    {
+        return (bool) $this->evaluate($this->hasSearchActionIcon);
     }
 
     public function searchOnBlur(bool | Closure $condition = true): static

@@ -95,6 +95,9 @@
     $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
+    $isSearchOnAction = $isSearchOnAction();
+    $hasSearchActionLabel = $hasSearchActionLabel();
+    $hasSearchActionIcon = $hasSearchActionIcon();
     $isSearchOnBlur = $isSearchOnBlur();
     $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
     $selectsCurrentPageOnly = $selectsCurrentPageOnly();
@@ -497,6 +500,9 @@
 
                                 <x-filament-tables::search-field
                                     :debounce="$searchDebounce"
+                                    :has-search-action-icon="$hasSearchActionIcon"
+                                    :has-search-action-label="$hasSearchActionLabel"
+                                    :on-action="$isSearchOnAction"
                                     :on-blur="$isSearchOnBlur"
                                     :placeholder="$searchPlaceholder"
                                 />

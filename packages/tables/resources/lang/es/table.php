@@ -73,6 +73,9 @@ return [
             'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
             'indicator' => 'Buscar',
+            'action' => [
+                'label' => 'Buscar',
+            ],
         ],
 
     ],

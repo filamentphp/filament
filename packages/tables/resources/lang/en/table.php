@@ -73,6 +73,9 @@ return [
             'label' => 'Search',
             'placeholder' => 'Search',
             'indicator' => 'Search',
+            'action' => [
+                'label' => 'Search',
+            ],
         ],
 
     ],

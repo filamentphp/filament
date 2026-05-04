@@ -208,6 +208,22 @@ trait CanSearchRecords
         return filled($this->tableSearch);
     }
 
+    public function searchTable(): void
+    {
+        if ($this->getTable()->persistsSearchInSession()) {
+            session()->put(
+                $this->getTableSearchSessionKey(),
+                $this->tableSearch,
+            );
+        }
+
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
+            $this->deselectAllTableRecords();
+        }
+
+        $this->resetPage();
+    }
+
     public function resetTableSearch(): void
     {
         $this->tableSearch = '';
