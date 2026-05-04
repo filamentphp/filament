@@ -181,21 +181,12 @@ class TextColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * Checks whether the optimized rendering path can be used for a given
-     * state value. The optimized path avoids creating multiple
-     * `ComponentAttributeBag` instances and skips evaluating dozens of
-     * properties that are irrelevant for a plain text column with no
-     * special features configured.
-     *
-     * When adding a new property to `TextColumn` or one of its traits that
-     * affects the rendered cell HTML, add a `has*()` predicate to the trait
-     * that owns the property and reference it below. Add a parity case to
-     * `TextColumnOptimizedRenderingParityTest` to lock in equivalence with
-     * the standard rendering path.
+     * When adding a new property that affects the rendered cell HTML, add
+     * a `has*()` predicate to the trait that owns the property and reference
+     * it here.
      */
     protected function canRenderOptimized(mixed $state): bool
     {
-        // Must be a single scalar value (not array, Collection, or Htmlable)
         if (
             is_array($state) ||
             $state instanceof Collection ||
@@ -204,14 +195,10 @@ class TextColumn extends Column implements HasEmbeddedView
             return false;
         }
 
-        // Blank state needs the placeholder path
         if (blank($state)) {
             return false;
         }
 
-        // Bail if any rendering feature has been configured. The predicates
-        // read raw property state (not `evaluate()`) so default columns
-        // skip all the per-row evaluate() + attribute bag work.
         return ! $this->hasBadge()
             && ! $this->hasBulleted()
             && ! $this->hasListWithLineBreaks()
@@ -229,16 +216,8 @@ class TextColumn extends Column implements HasEmbeddedView
             && ! $this->hasExtraAttributes();
     }
 
-    /**
-     * Optimized rendering path for the common case: a single scalar value
-     * with default styling. Produces the same HTML output as the standard
-     * path but avoids creating `ComponentAttributeBag` instances and skips
-     * evaluating properties that are at their default values.
-     */
     protected function toOptimizedHtml(mixed $state): string
     {
-        // When no formatting features are configured, skip the entire
-        // formatState() call chain (which does ~7 evaluate() calls).
         $formattedState = $this->hasStateFormatting()
             ? e($this->formatState($state))
             : e($state);
@@ -264,10 +243,6 @@ class TextColumn extends Column implements HasEmbeddedView
     {
         $state = $this->getState();
 
-        // For the common case of a single scalar value with no special
-        // features (no badge, icon, description, copy, tooltip, color, font,
-        // weight, list, line clamp, etc.), skip all the heavy attribute bag
-        // construction and produce minimal HTML directly.
         if ($this->canRenderOptimized($state)) {
             return $this->toOptimizedHtml($state);
         }
