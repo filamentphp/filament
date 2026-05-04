@@ -3457,7 +3457,7 @@ class SelectWithHasManyRelationshipAndModifyQuery extends Component implements H
     use InteractsWithActions;
     use InteractsWithSchemas;
 
-    public static ?\Closure $onModify = null;
+    public static ?Closure $onModify = null;
 
     public $data = [];
 
