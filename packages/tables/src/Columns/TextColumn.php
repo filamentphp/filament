@@ -160,13 +160,40 @@ class TextColumn extends Column implements HasEmbeddedView
         return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
 
+    public function hasBadge(): bool
+    {
+        return $this->isBadge !== false;
+    }
+
+    public function hasBulleted(): bool
+    {
+        return $this->isBulleted !== false;
+    }
+
+    public function hasListWithLineBreaks(): bool
+    {
+        return $this->isListWithLineBreaks !== false;
+    }
+
+    public function hasSize(): bool
+    {
+        return $this->size !== null;
+    }
+
     /**
-     * Checks whether the fast rendering path can be used for a given state
-     * value. The fast path avoids creating multiple ComponentAttributeBag
-     * instances and skips evaluating dozens of properties that are irrelevant
-     * for a plain text column with no special features configured.
+     * Checks whether the optimized rendering path can be used for a given
+     * state value. The optimized path avoids creating multiple
+     * `ComponentAttributeBag` instances and skips evaluating dozens of
+     * properties that are irrelevant for a plain text column with no
+     * special features configured.
+     *
+     * When adding a new property to `TextColumn` or one of its traits that
+     * affects the rendered cell HTML, add a `has*()` predicate to the trait
+     * that owns the property and reference it below. Add a parity case to
+     * `TextColumnOptimizedRenderingParityTest` to lock in equivalence with
+     * the standard rendering path.
      */
-    protected function canUseFastPath(mixed $state): bool
+    protected function canRenderOptimized(mixed $state): bool
     {
         // Must be a single scalar value (not array, Collection, or Htmlable)
         if (
@@ -182,50 +209,39 @@ class TextColumn extends Column implements HasEmbeddedView
             return false;
         }
 
-        // Check that none of the expensive features are configured.
-        // We check the raw property values (not through evaluate()) because
-        // the defaults are all false/null scalars, so if they haven't been
-        // set via a setter, they'll still be their default values and we can
-        // skip all the evaluate() + attribute bag work.
-        return $this->isBadge === false
-            && $this->isBulleted === false
-            && $this->isListWithLineBreaks === false
-            && $this->icon === null
-            && $this->color === null
-            && $this->tooltip === null
-            && $this->isCopyable === false
-            && $this->weight === null
-            && $this->fontFamily === null
-            && $this->lineClamp === null
-            && $this->size === null
-            && $this->descriptionAbove === null
-            && $this->descriptionBelow === null
-            && $this->url === null
-            && empty($this->extraAttributes);
+        // Bail if any rendering feature has been configured. The predicates
+        // read raw property state (not `evaluate()`) so default columns
+        // skip all the per-row evaluate() + attribute bag work.
+        return ! $this->hasBadge()
+            && ! $this->hasBulleted()
+            && ! $this->hasListWithLineBreaks()
+            && ! $this->hasIcon()
+            && ! $this->hasColor()
+            && ! $this->hasTooltip()
+            && ! $this->hasCopyable()
+            && ! $this->hasWeight()
+            && ! $this->hasFontFamily()
+            && ! $this->hasLineClamp()
+            && ! $this->hasSize()
+            && ! $this->hasDescription()
+            && ! $this->hasUrl()
+            && ! $this->hasWrap()
+            && ! $this->hasExtraAttributes();
     }
 
     /**
-     * Fast rendering path for the common case: a single scalar value with
-     * default styling. Produces the same HTML output as the normal path but
-     * avoids creating ComponentAttributeBag instances and skips evaluating
-     * properties that are at their default values.
+     * Optimized rendering path for the common case: a single scalar value
+     * with default styling. Produces the same HTML output as the standard
+     * path but avoids creating `ComponentAttributeBag` instances and skips
+     * evaluating properties that are at their default values.
      */
-    protected function toFastPathHtml(mixed $state): string
+    protected function toOptimizedHtml(mixed $state): string
     {
         // When no formatting features are configured, skip the entire
         // formatState() call chain (which does ~7 evaluate() calls).
-        if (
-            $this->formatStateUsing === null
-            && $this->characterLimit === null
-            && $this->wordLimit === null
-            && $this->prefix === null
-            && $this->suffix === null
-            && $this->isHtml === false
-        ) {
-            $formattedState = e($state);
-        } else {
-            $formattedState = e($this->formatState($state));
-        }
+        $formattedState = $this->hasStateFormatting()
+            ? e($this->formatState($state))
+            : e($state);
 
         $classString = 'fi-ta-text fi-ta-text-item fi-size-sm';
 
@@ -248,12 +264,12 @@ class TextColumn extends Column implements HasEmbeddedView
     {
         $state = $this->getState();
 
-        // Fast path: for the common case of a single scalar value with no
-        // special features (no badge, icon, description, copy, tooltip, color,
-        // font, weight, list, line clamp, etc.), skip all the heavy attribute
-        // bag construction and produce minimal HTML directly.
-        if ($this->canUseFastPath($state)) {
-            return $this->toFastPathHtml($state);
+        // For the common case of a single scalar value with no special
+        // features (no badge, icon, description, copy, tooltip, color, font,
+        // weight, list, line clamp, etc.), skip all the heavy attribute bag
+        // construction and produce minimal HTML directly.
+        if ($this->canRenderOptimized($state)) {
+            return $this->toOptimizedHtml($state);
         }
 
         $isBadge = $this->isBadge();
@@ -305,8 +321,9 @@ class TextColumn extends Column implements HasEmbeddedView
         }
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
+        $hasStateFormatting = $this->hasStateFormatting();
 
-        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab): string {
+        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab, $hasStateFormatting): string {
             $url = $this->getUrl($stateItem);
 
             $item = '';
@@ -315,7 +332,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 $item .= '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>';
             }
 
-            $item .= e($this->formatState($stateItem));
+            $item .= $hasStateFormatting ? e($this->formatState($stateItem)) : e($stateItem);
 
             if (filled($url)) {
                 $item .= '</a>';
@@ -368,7 +385,7 @@ class TextColumn extends Column implements HasEmbeddedView
         $iconPosition = $this->getIconPosition();
         $isBulleted = $this->isBulleted();
 
-        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $lineClamp): array {
+        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $lineClamp, $hasStateFormatting): array {
             $color = $this->getColor($stateItem) ?? ($isBadge ? 'primary' : null);
             $iconColor = $this->getIconColor($stateItem);
 
@@ -384,7 +401,7 @@ class TextColumn extends Column implements HasEmbeddedView
             $isCopyable = $this->isCopyable($stateItem);
 
             if ($isCopyable) {
-                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $this->formatState($stateItem));
+                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? ($hasStateFormatting ? $this->formatState($stateItem) : $stateItem));
                 $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
                 $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
             }

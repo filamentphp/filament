@@ -50,4 +50,9 @@ trait HasTooltip
     {
         return $this->evaluate($this->emptyTooltip);
     }
+
+    public function hasTooltip(): bool
+    {
+        return $this->tooltip !== null;
+    }
 }

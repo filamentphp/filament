@@ -58,4 +58,9 @@ trait CanOpenUrl
     {
         return (bool) $this->evaluate($this->shouldOpenUrlInNewTab);
     }
+
+    public function hasUrl(): bool
+    {
+        return $this->url !== null;
+    }
 }

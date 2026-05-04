@@ -48,4 +48,9 @@ trait HasExtraAttributes
     {
         return new FilamentComponentAttributeBag($this->getExtraAttributes());
     }
+
+    public function hasExtraAttributes(): bool
+    {
+        return ! empty($this->extraAttributes);
+    }
 }
