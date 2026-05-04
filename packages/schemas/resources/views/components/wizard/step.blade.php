@@ -1,1 +1,0 @@
-{!! $schemaComponent->toEmbeddedHtml() !!}
