@@ -72,5 +72,4 @@ trait HasColor
 
         return $state->getColor();
     }
-
 }
