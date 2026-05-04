@@ -375,6 +375,10 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
+        if (! $this->hasStateFormatting()) {
+            return $state;
+        }
+
         $isHtml = $this->isHtml();
 
         $state = $this->evaluate($this->formatStateUsing ?? $state, [

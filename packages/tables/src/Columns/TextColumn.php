@@ -218,9 +218,7 @@ class TextColumn extends Column implements HasEmbeddedView
 
     protected function toOptimizedHtml(mixed $state): string
     {
-        $formattedState = $this->hasStateFormatting()
-            ? e($this->formatState($state))
-            : e($state);
+        $formattedState = e($this->formatState($state));
 
         $classString = 'fi-ta-text fi-ta-text-item fi-size-sm';
 
@@ -296,9 +294,8 @@ class TextColumn extends Column implements HasEmbeddedView
         }
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
-        $hasStateFormatting = $this->hasStateFormatting();
 
-        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab, $hasStateFormatting): string {
+        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab): string {
             $url = $this->getUrl($stateItem);
 
             $item = '';
@@ -307,7 +304,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 $item .= '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>';
             }
 
-            $item .= $hasStateFormatting ? e($this->formatState($stateItem)) : e($stateItem);
+            $item .= e($this->formatState($stateItem));
 
             if (filled($url)) {
                 $item .= '</a>';
@@ -360,7 +357,7 @@ class TextColumn extends Column implements HasEmbeddedView
         $iconPosition = $this->getIconPosition();
         $isBulleted = $this->isBulleted();
 
-        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $lineClamp, $hasStateFormatting): array {
+        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $lineClamp): array {
             $color = $this->getColor($stateItem) ?? ($isBadge ? 'primary' : null);
             $iconColor = $this->getIconColor($stateItem);
 
@@ -376,7 +373,7 @@ class TextColumn extends Column implements HasEmbeddedView
             $isCopyable = $this->isCopyable($stateItem);
 
             if ($isCopyable) {
-                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? ($hasStateFormatting ? $this->formatState($stateItem) : $stateItem));
+                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $this->formatState($stateItem));
                 $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
                 $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
             }
