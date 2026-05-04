@@ -262,6 +262,8 @@ Action::make('edit')
     ->authorizationTooltip()
 ```
 
+If the denial does not provide a message (for example, your policy returns plain `false`, or a `Gate::before()` hook short-circuits the check), the action is hidden instead. You can supply a fallback message with `authorizationMessage()` to keep the action visible in that case.
+
 <AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
 
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
@@ -275,27 +277,7 @@ Action::make('edit')
     ->authorizationNotification()
 ```
 
-If your policy sometimes returns a [response message](https://laravel.com/docs/authorization#policy-responses) and sometimes returns plain `false`, you can use `authorizationTooltipOrHidden()` to disable the action with a tooltip when a message is available, and hide the action otherwise:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('edit')
-    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-    ->authorize('update')
-    ->authorizationTooltipOrHidden()
-```
-
-Likewise, `authorizationNotificationOrHidden()` keeps the action clickable and sends a notification when a message is available, and hides the action otherwise:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('edit')
-    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-    ->authorize('update')
-    ->authorizationNotificationOrHidden()
-```
+As with `authorizationTooltip()`, the action is hidden if the denial does not provide a message, unless you supply a fallback with `authorizationMessage()`.
 
 ### Disabling a button
 

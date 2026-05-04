@@ -6,11 +6,11 @@ use Illuminate\Auth\Access\Response;
 
 uses(TestCase::class);
 
-describe('`authorizationNotificationOrHidden()`', function (): void {
+describe('`authorizationNotification()`', function (): void {
     it('shows the action when the user is allowed', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::allow())
-            ->authorizationNotificationOrHidden();
+            ->authorizationNotification();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeTrue();
         expect($action->isVisible())->toBeTrue();
@@ -19,7 +19,7 @@ describe('`authorizationNotificationOrHidden()`', function (): void {
     it('shows the action when denied with a message', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::deny('You cannot do that.'))
-            ->authorizationNotificationOrHidden();
+            ->authorizationNotification();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeTrue();
         expect($action->isVisible())->toBeTrue();
@@ -30,7 +30,7 @@ describe('`authorizationNotificationOrHidden()`', function (): void {
     it('hides the action when denied with `Response::deny()` and no message', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::deny())
-            ->authorizationNotificationOrHidden();
+            ->authorizationNotification();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeFalse();
         expect($action->isVisible())->toBeFalse();
@@ -39,7 +39,7 @@ describe('`authorizationNotificationOrHidden()`', function (): void {
     it('hides the action when the policy returns bare `false`', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): bool => false)
-            ->authorizationNotificationOrHidden();
+            ->authorizationNotification();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeFalse();
         expect($action->isVisible())->toBeFalse();
@@ -49,7 +49,7 @@ describe('`authorizationNotificationOrHidden()`', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): bool => false)
             ->authorizationMessage('Explicit message.')
-            ->authorizationNotificationOrHidden();
+            ->authorizationNotification();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeTrue();
         expect($action->isVisible())->toBeTrue();
@@ -59,10 +59,9 @@ describe('`authorizationNotificationOrHidden()`', function (): void {
     it('is a no-op when `condition: false` is passed', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): bool => false)
-            ->authorizationNotificationOrHidden(false);
+            ->authorizationNotification(false);
 
         expect($action->hasAuthorizationNotification())->toBeFalse();
-        expect($action->shouldHideAuthorizationFeedbackWithoutMessage())->toBeFalse();
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeFalse();
         expect($action->isVisible())->toBeFalse();
     });
@@ -70,18 +69,18 @@ describe('`authorizationNotificationOrHidden()`', function (): void {
     it('stays hidden when `visible(false)` is also set', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::deny('Has a message.'))
-            ->authorizationNotificationOrHidden()
+            ->authorizationNotification()
             ->visible(false);
 
         expect($action->isVisible())->toBeFalse();
     });
 });
 
-describe('`authorizationTooltipOrHidden()`', function (): void {
+describe('`authorizationTooltip()`', function (): void {
     it('shows the action when the user is allowed', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::allow())
-            ->authorizationTooltipOrHidden();
+            ->authorizationTooltip();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeTrue();
         expect($action->isVisible())->toBeTrue();
@@ -90,7 +89,7 @@ describe('`authorizationTooltipOrHidden()`', function (): void {
     it('shows the action with the deny message as a tooltip when denied with a message', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::deny('You cannot do that.'))
-            ->authorizationTooltipOrHidden();
+            ->authorizationTooltip();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeTrue();
         expect($action->isVisible())->toBeTrue();
@@ -101,7 +100,7 @@ describe('`authorizationTooltipOrHidden()`', function (): void {
     it('hides the action when denied with `Response::deny()` and no message', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::deny())
-            ->authorizationTooltipOrHidden();
+            ->authorizationTooltip();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeFalse();
         expect($action->isVisible())->toBeFalse();
@@ -110,7 +109,7 @@ describe('`authorizationTooltipOrHidden()`', function (): void {
     it('hides the action when the policy returns bare `false`', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): bool => false)
-            ->authorizationTooltipOrHidden();
+            ->authorizationTooltip();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeFalse();
         expect($action->isVisible())->toBeFalse();
@@ -120,7 +119,7 @@ describe('`authorizationTooltipOrHidden()`', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): bool => false)
             ->authorizationMessage('Explicit message.')
-            ->authorizationTooltipOrHidden();
+            ->authorizationTooltip();
 
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeTrue();
         expect($action->isVisible())->toBeTrue();
@@ -130,10 +129,9 @@ describe('`authorizationTooltipOrHidden()`', function (): void {
     it('is a no-op when `condition: false` is passed', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): bool => false)
-            ->authorizationTooltipOrHidden(false);
+            ->authorizationTooltip(false);
 
         expect($action->hasAuthorizationTooltip())->toBeFalse();
-        expect($action->shouldHideAuthorizationFeedbackWithoutMessage())->toBeFalse();
         expect($action->isAuthorizedOrNotHiddenWhenUnauthorized())->toBeFalse();
         expect($action->isVisible())->toBeFalse();
     });
@@ -141,29 +139,9 @@ describe('`authorizationTooltipOrHidden()`', function (): void {
     it('stays hidden when `visible(false)` is also set', function (): void {
         $action = Action::make('test')
             ->authorize(fn (): Response => Response::deny('Has a message.'))
-            ->authorizationTooltipOrHidden()
+            ->authorizationTooltip()
             ->visible(false);
 
         expect($action->isVisible())->toBeFalse();
-    });
-});
-
-describe('regression', function (): void {
-    it('still throws `LogicException` from `authorizationNotification()` when the deny has no message', function (): void {
-        $action = Action::make('test')
-            ->authorize(fn (): bool => false)
-            ->authorizationNotification();
-
-        expect(fn () => $action->getAuthorizationResponseWithMessage())
-            ->toThrow(LogicException::class, 'An authorization was denied without a message.');
-    });
-
-    it('still throws `LogicException` from `authorizationTooltip()` when the deny has no message', function (): void {
-        $action = Action::make('test')
-            ->authorize(fn (): bool => false)
-            ->authorizationTooltip();
-
-        expect(fn () => $action->getAuthorizationResponseWithMessage())
-            ->toThrow(LogicException::class, 'An authorization was denied without a message.');
     });
 });
