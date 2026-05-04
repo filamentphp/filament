@@ -12,6 +12,7 @@ use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Tables\CompaniesTable;
 use Filament\Tests\Fixtures\Tables\PostsTable;
 use Filament\Tests\Fixtures\Tables\TeamsTable;
 use Filament\Tests\Fixtures\Tables\UsersTable;
@@ -1219,7 +1220,7 @@ class ModalTableSelectWithBelongsToThroughRelationship extends Component impleme
             ->schema([
                 ModalTableSelect::make('company')
                     ->relationship('company', 'name')
-                    ->tableConfiguration(\Filament\Tests\Fixtures\Tables\CompaniesTable::class),
+                    ->tableConfiguration(CompaniesTable::class),
             ])
             ->model($this->record)
             ->statePath('data');
@@ -1279,7 +1280,7 @@ class ModalTableSelectWithBelongsToRelationshipAndModifyQuery extends Component 
     use InteractsWithActions;
     use InteractsWithSchemas;
 
-    public static ?\Closure $onModify = null;
+    public static ?Closure $onModify = null;
 
     public $data = [];
 
@@ -1321,7 +1322,7 @@ class ModalTableSelectWithBelongsToManyRelationshipAndModifyQueryThatCounts exte
     use InteractsWithActions;
     use InteractsWithSchemas;
 
-    public static ?\Closure $onModify = null;
+    public static ?Closure $onModify = null;
 
     public $data = [];
 
@@ -1364,7 +1365,7 @@ class ModalTableSelectWithHasManyRelationshipAndModifyQuery extends Component im
     use InteractsWithActions;
     use InteractsWithSchemas;
 
-    public static ?\Closure $onModify = null;
+    public static ?Closure $onModify = null;
 
     public $data = [];
 
