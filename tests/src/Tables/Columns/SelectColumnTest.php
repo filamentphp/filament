@@ -15,6 +15,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use LogicException;
 
 use function Filament\Tests\livewire;
 
@@ -1039,7 +1040,7 @@ describe('relationship branch coverage', function (): void {
             ->optionsRelationship('nonExistentRelationship', 'name')
             ->record($post);
 
-        expect(fn () => $column->getOptionsRelationship())->toThrow(\LogicException::class);
+        expect(fn () => $column->getOptionsRelationship())->toThrow(LogicException::class);
     });
 
     it('returns `null` from `getOptionsRelationship()` when no relationship name is set', function (): void {
