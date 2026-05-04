@@ -2226,30 +2226,16 @@
                                                             $column->rowLoop($loop->parent);
                                                             $column->recordKey($recordKey);
 
-                                                            // When the column has no action/URL configured, the wrapper tag
-                                                            // depends only on row-level $recordUrl/$recordAction — skip the
-                                                            // per-cell getUrl()/hasStateBasedUrls()/isClickDisabled() calls.
-                                                            if ($column->hasActionOrUrlConfigured()) {
-                                                                $columnAction = $column->getAction();
-                                                                $columnUrl = $column->getUrl();
-                                                                $columnHasStateBasedUrls = $column->hasStateBasedUrls();
-                                                                $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
+                                                            $columnAction = $column->getAction();
+                                                            $columnUrl = $column->getUrl();
+                                                            $columnHasStateBasedUrls = $column->hasStateBasedUrls();
+                                                            $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
 
-                                                                $columnWrapperTag = match (true) {
-                                                                    ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
-                                                                    ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
-                                                                    default => 'div',
-                                                                };
-                                                            } else {
-                                                                $columnAction = null;
-                                                                $columnUrl = null;
-
-                                                                $columnWrapperTag = match (true) {
-                                                                    $recordUrl && (! $isReordering) => 'a',
-                                                                    $recordAction && (! $isReordering) => 'button',
-                                                                    default => 'div',
-                                                                };
-                                                            }
+                                                            $columnWrapperTag = match (true) {
+                                                                ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
+                                                                ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
+                                                                default => 'div',
+                                                            };
 
                                                             if ($columnWrapperTag === 'button') {
                                                                 if ($columnAction instanceof \Filament\Actions\Action) {
@@ -2268,20 +2254,7 @@
 
                                                         <td
                                                             wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                                            @if ($cachedCellAttrHtml = $column->getCachedCellAttributeHtml())
-                                                                {!! $cachedCellAttrHtml !!}
-                                                            @else
-                                                                {{
-                                                                    $column->getExtraCellAttributeBag()->class([
-                                                                        'fi-ta-cell',
-                                                                        'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
-                                                                        ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                                        ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
-                                                                        (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                                        (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                                                    ])
-                                                                }}
-                                                            @endif
+                                                            {!! $column->getCachedCellAttributeHtml() !!}
                                                         >
                                                             {!! $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' !!}
                                                             <{{ $columnWrapperTag }}

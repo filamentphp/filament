@@ -48,4 +48,15 @@ trait HasExtraCellAttributes
     {
         return new FilamentComponentAttributeBag($this->getExtraCellAttributes());
     }
+
+    public function hasDynamicExtraCellAttributes(): bool
+    {
+        foreach ($this->extraCellAttributes as $attributes) {
+            if ($attributes instanceof Closure) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
