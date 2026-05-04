@@ -73,8 +73,4 @@ trait HasColor
         return $state->getColor();
     }
 
-    public function hasColor(): bool
-    {
-        return $this->color !== null;
-    }
 }

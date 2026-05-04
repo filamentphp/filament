@@ -15,6 +15,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent;
@@ -160,11 +161,6 @@ class TextColumn extends Column implements HasEmbeddedView
         return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
 
-    public function hasBadge(): bool
-    {
-        return $this->isBadge !== false;
-    }
-
     public function hasBulleted(): bool
     {
         return $this->isBulleted !== false;
@@ -199,11 +195,9 @@ class TextColumn extends Column implements HasEmbeddedView
             return false;
         }
 
-        return ! $this->hasBadge()
-            && ! $this->hasBulleted()
+        return ! $this->hasBulleted()
             && ! $this->hasListWithLineBreaks()
             && ! $this->hasIcon()
-            && ! $this->hasColor()
             && ! $this->hasTooltip()
             && ! $this->hasCopyable()
             && ! $this->hasWeight()
@@ -211,7 +205,6 @@ class TextColumn extends Column implements HasEmbeddedView
             && ! $this->hasLineClamp()
             && ! $this->hasSize()
             && ! $this->hasDescription()
-            && ! $this->hasUrl()
             && ! $this->hasWrap()
             && ! $this->hasExtraAttributes();
     }
@@ -220,7 +213,41 @@ class TextColumn extends Column implements HasEmbeddedView
     {
         $formattedState = e($this->formatState($state));
 
-        $classString = 'fi-ta-text fi-ta-text-item fi-size-sm';
+        $url = $this->getUrl($state);
+
+        if (filled($url)) {
+            $formattedState = '<a ' . generate_href_html($url, $this->shouldOpenUrlInNewTab())->toHtml() . '>' . $formattedState . '</a>';
+        }
+
+        $isBadge = $this->isBadge();
+        $color = $this->getColor($state);
+
+        if ($isBadge) {
+            $badgeColor = filled($color) ? $color : 'primary';
+
+            if (is_array($badgeColor)) {
+                $badgeStyle = implode('; ', FilamentColor::getComponentCustomStyles(BadgeComponent::class, $badgeColor));
+                $formattedState = '<span class="fi-badge fi-size-sm fi-color" style="' . $badgeStyle . '">' . $formattedState . '</span>';
+            } else {
+                $badgeColorClasses = implode(' ', FilamentColor::getComponentClasses(BadgeComponent::class, $badgeColor));
+                $formattedState = '<span class="fi-badge fi-size-sm ' . $badgeColorClasses . '">' . $formattedState . '</span>';
+            }
+        }
+
+        $classString = $isBadge
+            ? 'fi-ta-text fi-ta-text-item fi-ta-text-has-badges'
+            : 'fi-ta-text fi-ta-text-item fi-size-sm';
+
+        $styleString = '';
+
+        if ((! $isBadge) && filled($color)) {
+            if (is_array($color)) {
+                $classString .= ' fi-color';
+                $styleString = ' style="' . implode('; ', FilamentColor::getComponentCustomStyles(ItemComponent::class, $color)) . '"';
+            } else {
+                $classString .= ' ' . implode(' ', FilamentColor::getComponentClasses(ItemComponent::class, $color));
+            }
+        }
 
         if ($this->isInline()) {
             $classString .= ' fi-inline';
@@ -234,7 +261,7 @@ class TextColumn extends Column implements HasEmbeddedView
             $classString .= " {$alignment}";
         }
 
-        return '<div class="' . $classString . '">' . $formattedState . '</div>';
+        return '<div class="' . $classString . '"' . $styleString . '>' . $formattedState . '</div>';
     }
 
     public function toEmbeddedHtml(): string
