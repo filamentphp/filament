@@ -376,6 +376,10 @@ trait CanFormatState
     public function formatState(mixed $state): mixed
     {
         if (! $this->hasStateFormatting()) {
+            if ($state instanceof LabelInterface) {
+                return $state->getLabel();
+            }
+
             return $state;
         }
 

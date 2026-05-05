@@ -48,9 +48,4 @@ trait HasColor
     {
         return $this->color !== null || $this->defaultColor !== null;
     }
-
-    public function hasArrayColor(): bool
-    {
-        return is_array($this->color) || is_array($this->defaultColor);
-    }
 }

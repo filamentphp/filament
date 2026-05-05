@@ -236,11 +236,17 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
 
         $hasAppendableAttributeValues = false;
 
-        foreach ($attributeDefaults as $value) {
-            if ($value instanceof AppendableAttributeValue) {
-                $hasAppendableAttributeValues = true;
+        foreach ($attributeDefaults as $key => $value) {
+            if (! ($value instanceof AppendableAttributeValue)) {
+                continue;
+            }
 
-                break;
+            $hasAppendableAttributeValues = true;
+
+            $innerValue = $value->value;
+
+            if ($escape && $this->shouldEscapeAttributeValue($escape, $innerValue)) {
+                $attributeDefaults[$key] = new AppendableAttributeValue(e($innerValue));
             }
         }
 

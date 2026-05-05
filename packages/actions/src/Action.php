@@ -794,7 +794,6 @@ class Action extends ViewComponent implements Arrayable
     {
         return ($this->getView() === static::LINK_VIEW)
             && $this->hasSmallSizeDefault()
-            && ! $this->hasArrayColor()
             && ! $this->hasBadge()
             && ! $this->hasTooltip()
             && ! $this->hasIconPosition()
@@ -850,8 +849,15 @@ class Action extends ViewComponent implements Arrayable
     protected function toOptimizedLinkHtml(): string
     {
         $color = $this->getColor() ?? 'primary';
-        $colorClasses = implode(' ', FilamentColor::getComponentClasses(LinkComponent::class, $color));
-        $classString = "fi-ac-link-action fi-link fi-size-sm {$colorClasses}";
+
+        if (is_array($color)) {
+            $classString = 'fi-ac-link-action fi-link fi-size-sm fi-color';
+            $styleString = ' style="' . implode('; ', FilamentColor::getComponentCustomStyles(LinkComponent::class, $color)) . '"';
+        } else {
+            $colorClasses = implode(' ', FilamentColor::getComponentClasses(LinkComponent::class, $color));
+            $classString = "fi-ac-link-action fi-link fi-size-sm {$colorClasses}";
+            $styleString = '';
+        }
 
         $url = $this->getUrl();
         $icon = $this->getIcon();
@@ -861,13 +867,13 @@ class Action extends ViewComponent implements Arrayable
             $iconHtml = $icon ? generate_icon_html($icon, size: IconSize::Small)?->toHtml() : '';
             $href = e($url);
 
-            return "<a href=\"{$href}\" class=\"{$classString}\">{$iconHtml}{$label}</a>";
+            return "<a href=\"{$href}\" class=\"{$classString}\"{$styleString}>{$iconHtml}{$label}</a>";
         }
 
         $handler = $this->getLivewireClickHandler();
 
         if (blank($handler)) {
-            return "<span class=\"{$classString}\">{$label}</span>";
+            return "<span class=\"{$classString}\"{$styleString}>{$label}</span>";
         }
 
         $iconHtml = $icon ? generate_icon_html(
@@ -890,13 +896,12 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handler = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\" class=\"{$classString}\">{$iconHtml}{$loadingHtml}{$label}</button>";
+        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\" class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}{$label}</button>";
     }
 
     protected function canRenderOptimizedGrouped(): bool
     {
         return ($this->getView() === static::GROUPED_VIEW)
-            && ! $this->hasArrayColor()
             && ! $this->hasBadge()
             && ! $this->hasTooltip()
             && ! $this->hasIconSize()
@@ -920,8 +925,15 @@ class Action extends ViewComponent implements Arrayable
     protected function toOptimizedGroupedHtml(): string
     {
         $color = $this->getColor() ?? 'gray';
-        $colorClasses = implode(' ', FilamentColor::getComponentClasses(ItemComponent::class, $color));
-        $classString = "fi-dropdown-list-item fi-ac-grouped-action {$colorClasses}";
+
+        if (is_array($color)) {
+            $classString = 'fi-dropdown-list-item fi-ac-grouped-action fi-color';
+            $styleString = ' style="' . implode('; ', FilamentColor::getComponentCustomStyles(ItemComponent::class, $color)) . '"';
+        } else {
+            $colorClasses = implode(' ', FilamentColor::getComponentClasses(ItemComponent::class, $color));
+            $classString = "fi-dropdown-list-item fi-ac-grouped-action {$colorClasses}";
+            $styleString = '';
+        }
 
         $url = $this->getUrl();
         $icon = $this->getIcon(default: $this->getGroupedIcon());
@@ -934,13 +946,13 @@ class Action extends ViewComponent implements Arrayable
             )?->toHtml() : '';
             $href = e($url);
 
-            return "<a href=\"{$href}\" class=\"{$classString}\">{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
+            return "<a href=\"{$href}\" class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
         }
 
         $handler = $this->getLivewireClickHandler();
 
         if (blank($handler)) {
-            return "<button type=\"button\" class=\"{$classString}\"><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+            return "<button type=\"button\" class=\"{$classString}\"{$styleString}><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
         }
 
         $iconHtml = $icon ? generate_icon_html(
@@ -961,7 +973,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handlerEscaped = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handlerEscaped}\" class=\"{$classString}\">{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handlerEscaped}\" class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
     }
 
     protected function toBadgeHtml(): string

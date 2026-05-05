@@ -15,6 +15,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Contracts\HasIcon as HasIconInterface;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
@@ -186,7 +187,8 @@ class TextColumn extends Column implements HasEmbeddedView
         if (
             is_array($state) ||
             $state instanceof Collection ||
-            $state instanceof Htmlable
+            $state instanceof Htmlable ||
+            $state instanceof HasIconInterface
         ) {
             return false;
         }
