@@ -762,38 +762,6 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions" version="4.x">The `modalCloseButton()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-The `modalCloseButton()` method only controls whether the close button is shown.
-
-If dismissing the modal should also cancel parent actions, you can use the `modalDismissesParentActions()` method instead. This applies regardless of how the modal is dismissed, including the close button, pressing Escape, or clicking away. Pass `true` to cancel all parent actions, or pass an action name to cancel back to a specific parent action:
-
-```php
-use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
-
-Action::make('createPost')
-    ->schema([
-        TextInput::make('title')
-            ->required()
-            ->registerActions([
-                Action::make('confirmCreation')
-                    ->requiresConfirmation()
-                    ->modalDismissesParentActions()
-                    ->action(function (): void {
-                        // ...
-                    }),
-                Action::make('editPostMetadata')
-                    ->requiresConfirmation()
-                    ->modalDismissesParentActions('createPost')
-                    ->action(function (): void {
-                        // ...
-                    }),
-            ]),
-    ])
-    ->action(function (array $data): void {
-        // ...
-    })
-```
-
 If you'd like to hide the close button for all modals in the application, you can do so by calling `ModalComponent::closeButton(false)` inside a service provider or middleware:
 
 ```php
@@ -860,6 +828,45 @@ Action::make('editItems')
 In this example, when the user clicks the delete button on a repeater item, the confirmation dialog appears on top of the slide-over instead of the slide-over closing first. This creates a smoother experience, especially for actions inside slide-overs or complex forms where closing and reopening the parent would be disorienting.
 
 <AutoScreenshot name="actions/modal/overlaying-child" alt="Child confirmation modal overlaying a parent slide-over" version="4.x" />
+
+## Dismissing a modal to cancel parent actions
+
+When a modal is dismissed — whether by pressing Escape, clicking the backdrop, or using the close button — by default only that modal is closed, leaving any parent actions still mounted. You can use the `modalDismissesParentActions()` method to change this so that dismissing a child modal also cancels parent actions:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('createPost')
+    ->schema([
+        TextInput::make('title')
+            ->required()
+            ->registerActions([
+                Action::make('confirmCreation')
+                    ->requiresConfirmation()
+                    ->modalDismissesParentActions()
+                    ->action(function (): void {
+                        // ...
+                    }),
+            ]),
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+```
+
+You can also pass an action name to cancel back to a specific parent action rather than all of them:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('editPostMetadata')
+    ->requiresConfirmation()
+    ->modalDismissesParentActions('createPost')
+    ->action(function (): void {
+        // ...
+    })
+```
 
 ## Optimizing modal configuration methods
 
