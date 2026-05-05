@@ -93,6 +93,6 @@ trait HasIcon
 
     public function hasIcon(): bool
     {
-        return $this->icon !== null;
+        return $this->icon !== null && $this->icon !== false;
     }
 }
