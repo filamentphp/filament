@@ -140,9 +140,9 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalDismissesParentActions(bool | string | Closure | null $parentActionsToCancel = true): static
+    public function modalDismissesParentActions(bool | string | Closure | null $cancelParentActions = true): static
     {
-        $this->modalDismissesParentActions = $parentActionsToCancel;
+        $this->modalDismissesParentActions = $cancelParentActions;
 
         return $this;
     }
