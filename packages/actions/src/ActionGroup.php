@@ -109,13 +109,6 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected array $extraDropdownAttributes = [];
 
     /**
-     * Shared cache for trigger HTML and dropdown wrapper.
-     * PHP's shallow clone ensures all clones from the same template
-     * share this reference, enabling reuse across table rows.
-     */
-    protected ?\stdClass $triggerHtmlCache = null;
-
-    /**
      * @param  array<Action | ActionGroup>  $actions
      */
     public function __construct(array $actions)
@@ -509,27 +502,6 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $actionLists[] = $singleActions;
         }
 
-        ob_start();
-        foreach ($actionLists as $actions) { ?>
-            <div class="fi-dropdown-list">
-                <?php foreach ($actions as $action) { ?>
-                    <?= $action->toHtml() ?>
-                <?php } ?>
-            </div>
-        <?php }
-        $body = ob_get_clean();
-
-        return $this->getCachedDropdownPrefixHtml() . $body . '</div></div>';
-    }
-
-    protected function getCachedDropdownPrefixHtml(): string
-    {
-        $cache = $this->triggerHtmlCache;
-
-        if ($cache !== null && isset($cache->prefix)) {
-            return $cache->prefix;
-        }
-
         $maxHeight = $this->getDropdownMaxHeight();
         $width = $this->getDropdownWidth();
 
@@ -566,15 +538,17 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-transition:leave-end="fi-opacity-0"
                 <?= $panelAttributes->toHtml() ?>
             >
+                <?php foreach ($actionLists as $actions) { ?>
+                    <div class="fi-dropdown-list">
+                        <?php foreach ($actions as $action) { ?>
+                            <?= $action->toHtml() ?>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
 
-        <?php
-        $prefix = ob_get_clean();
-
-        if ($cache !== null) {
-            $cache->prefix = $prefix;
-        }
-
-        return $prefix;
+        <?php return ob_get_clean();
     }
 
     /**
@@ -747,8 +721,6 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public function getClone(): static
     {
-        $this->triggerHtmlCache ??= new \stdClass();
-
         $clone = clone $this;
         $clone->cloneActions();
 

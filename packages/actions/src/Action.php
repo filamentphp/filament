@@ -128,14 +128,6 @@ class Action extends ViewComponent implements Arrayable
 
     protected ?Action $parentAction = null;
 
-    /**
-     * Shared cache object for link HTML template rendering.
-     * PHP's shallow `clone` ensures all clones from the same
-     * template action share this object reference, enabling
-     * template reuse across table rows.
-     */
-    protected ?\stdClass $linkHtmlTemplateCache = null;
-
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -771,54 +763,6 @@ class Action extends ViewComponent implements Arrayable
             return $this->toEmbeddedHtml();
         }
 
-        $cache = $this->linkHtmlTemplateCache;
-
-        if ($cache === null) {
-            return $this->renderViewHtml();
-        }
-
-        $handler = e($this->getLivewireClickHandler() ?? '');
-        $url = e($this->getUrl() ?? '');
-
-        // Cache populated: swap per-row values into the cached HTML.
-        if (isset($cache->html)) {
-            // If a per-row attribute appears or disappears between rows, the
-            // HTML structure differs — fall back to a fresh render.
-            if (
-                ($handler === '') !== ($cache->handler === '')
-                || ($url === '') !== ($cache->url === '')
-            ) {
-                return $this->renderViewHtml();
-            }
-
-            $html = $cache->html;
-
-            if ($cache->handler !== '' && $handler !== $cache->handler) {
-                $html = str_replace($cache->handler, $handler, $html);
-            }
-
-            if ($cache->url !== '' && $url !== $cache->url) {
-                $html = str_replace($cache->url, $url, $html);
-            }
-
-            return $html;
-        }
-
-        // Skip caching when any rendered property may vary per row.
-        if ($this->hasDynamicRenderingProperties()) {
-            return $this->renderViewHtml();
-        }
-
-        $html = $this->renderViewHtml();
-        $cache->html = $html;
-        $cache->handler = $handler;
-        $cache->url = $url;
-
-        return $html;
-    }
-
-    protected function renderViewHtml(): string
-    {
         return match ($this->getView()) {
             static::BADGE_VIEW => $this->toBadgeHtml(),
             static::BUTTON_VIEW => $this->toButtonHtml(),
@@ -827,22 +771,6 @@ class Action extends ViewComponent implements Arrayable
             static::LINK_VIEW => $this->toLinkHtml(),
             default => $this->render()->render(),
         };
-    }
-
-    protected function hasDynamicRenderingProperties(): bool
-    {
-        return $this->isDisabled instanceof Closure
-            || $this->badge instanceof Closure
-            || $this->badgeColor instanceof Closure
-            || $this->color instanceof Closure
-            || $this->icon instanceof Closure
-            || $this->label instanceof Closure
-            || $this->isLabelHidden instanceof Closure
-            || $this->tooltip instanceof Closure
-            || $this->alpineClickHandler instanceof Closure
-            || $this->isLivewireClickHandlerEnabled instanceof Closure
-            || $this->shouldOpenUrlInNewTab instanceof Closure
-            || $this->shouldPostToUrl instanceof Closure;
     }
 
     protected function toBadgeHtml(): string
@@ -1025,8 +953,6 @@ class Action extends ViewComponent implements Arrayable
 
     public function getClone(): static
     {
-        $this->linkHtmlTemplateCache ??= new \stdClass();
-
         return clone $this;
     }
 
