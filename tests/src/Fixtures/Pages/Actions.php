@@ -116,26 +116,26 @@ class Actions extends Page
                         ])
                         ->action(fn () => null),
                 ]),
-            Action::make('grandparentWithModalCloseButtonCancellation')
+            Action::make('grandparentWithModalDismissalCancellation')
                 ->schema([
                     TextInput::make('grandparentValue')
                         ->required()
                         ->registerActions([
-                            Action::make('parentWithModalCloseButtonCancellation')
+                            Action::make('parentWithModalDismissalCancellation')
                                 ->schema([
                                     TextInput::make('parentValue')
                                         ->required()
                                         ->registerActions([
-                                            Action::make('closeButtonPreservesParentActions')
+                                            Action::make('modalDismissalPreservesParentActions')
                                                 ->requiresConfirmation()
                                                 ->action(fn () => null),
-                                            Action::make('closeButtonCancelsAllParentActions')
+                                            Action::make('modalDismissalCancelsAllParentActions')
                                                 ->requiresConfirmation()
-                                                ->modalCloseButton(cancelParentActions: true)
+                                                ->modalDismissesParentActions()
                                                 ->action(fn () => null),
-                                            Action::make('closeButtonCancelsToNamedParentAction')
+                                            Action::make('modalDismissalCancelsToNamedParentAction')
                                                 ->requiresConfirmation()
-                                                ->modalCloseButton(cancelParentActions: 'parentWithModalCloseButtonCancellation')
+                                                ->modalDismissesParentActions('parentWithModalDismissalCancellation')
                                                 ->action(fn () => null),
                                         ]),
                                 ])

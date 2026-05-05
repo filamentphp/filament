@@ -24,16 +24,20 @@
     $actionModalWidth = $action->getModalWidth();
     $actionLivewireCallMountedActionName = $action->hasFormWrapper() ? $action->getLivewireCallMountedActionName() : null;
     $actionModalWireKey = "{$this->getId()}.actions.{$action->getName()}.modal";
-    $actionModalCloseButtonEventHandler = $action->shouldModalCloseButtonCancelParentActions()
-        ? 'closeQuietly(); $wire.unmountAction(true)'
-        : null;
+    $actionParentActionsToCancelWhenModalIsDismissed = $action->getParentActionsToCancelWhenModalIsDismissed();
+    $actionModalClosedEventHandler = 'if ($event.detail.id === ' .
+        Js::from($actionModalId) .
+        ') $wire.unmountAction(' .
+        Js::from($action->shouldModalDismissParentActions()) .
+        ', ' .
+        Js::from($actionParentActionsToCancelWhenModalIsDismissed) .
+        ')';
 @endphp
 
 <x-filament::modal
     :alignment="$actionModalAlignment"
     :autofocus="$actionIsModalAutofocused"
     :close-button="$actionHasModalCloseButton"
-    :close-button-event-handler="$actionModalCloseButtonEventHandler"
     :close-by-clicking-away="$actionIsModalClosedByClickingAway"
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"
@@ -52,7 +56,7 @@
     :width="$actionModalWidth"
     :wire:key="$actionModalWireKey"
     :wire:submit.prevent="$actionLivewireCallMountedActionName"
-    :x-on:modal-closed="'if ($event.detail.id === ' . Js::from($actionModalId) . ') $wire.unmountAction(false)'"
+    :x-on:modal-closed="$actionModalClosedEventHandler"
 >
     {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CUSTOM_CONTENT_BEFORE, scopes: static::class, data: ['action' => $action]) }}
 

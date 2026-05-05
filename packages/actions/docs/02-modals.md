@@ -762,7 +762,9 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions" version="4.x">The `modalCloseButton()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-If closing the modal with the close button should also cancel parent actions, you can pass the `cancelParentActions` argument to `modalCloseButton()`. Pass `true` to cancel all parent actions, or pass an action name to cancel back to a specific parent action:
+The `modalCloseButton()` method only controls whether the close button is shown.
+
+If dismissing the modal should also cancel parent actions, you can use the `modalDismissesParentActions()` method instead. This applies regardless of how the modal is dismissed, including the close button, pressing Escape, or clicking away. Pass `true` to cancel all parent actions, or pass an action name to cancel back to a specific parent action:
 
 ```php
 use Filament\Actions\Action;
@@ -775,13 +777,13 @@ Action::make('createPost')
             ->registerActions([
                 Action::make('confirmCreation')
                     ->requiresConfirmation()
-                    ->modalCloseButton(cancelParentActions: true)
+                    ->modalDismissesParentActions()
                     ->action(function (): void {
                         // ...
                     }),
                 Action::make('editPostMetadata')
                     ->requiresConfirmation()
-                    ->modalCloseButton(cancelParentActions: 'createPost')
+                    ->modalDismissesParentActions('createPost')
                     ->action(function (): void {
                         // ...
                     }),
