@@ -9,9 +9,8 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Fieldset extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {

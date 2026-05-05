@@ -3,8 +3,8 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasRecordUrl

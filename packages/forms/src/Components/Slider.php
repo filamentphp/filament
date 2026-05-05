@@ -14,10 +14,9 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
 
 class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {

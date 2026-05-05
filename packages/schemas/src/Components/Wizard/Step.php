@@ -9,11 +9,10 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Wizard;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
 
 class Step extends Component implements CanConcealComponents, HasEmbeddedView
 {

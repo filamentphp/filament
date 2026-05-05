@@ -1,6 +1,6 @@
 @php
-    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
 @endphp
 
 @props([

@@ -7,7 +7,6 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
 
 class Checkbox extends Field implements HasEmbeddedView
 {

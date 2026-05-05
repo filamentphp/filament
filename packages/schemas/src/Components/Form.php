@@ -10,9 +10,8 @@ use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Form extends Component implements CanEntangleWithSingularRelationships, ExposesStateToActionData, HasEmbeddedView
 {

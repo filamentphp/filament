@@ -3,12 +3,11 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Filament\Support\Enums\IconSize;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\View\Components\Columns\Summarizers\CountComponent\IconComponent;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
 use function Filament\Support\generate_icon_html;

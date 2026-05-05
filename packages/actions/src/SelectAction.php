@@ -6,9 +6,8 @@ use Closure;
 use Filament\Actions\Concerns\HasId;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use Illuminate\Contracts\Support\Arrayable;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Contracts\Support\Arrayable;
 use UnitEnum;
 
 class SelectAction extends Action implements HasEmbeddedView

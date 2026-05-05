@@ -1,6 +1,6 @@
 @php
-    use Filament\Widgets\View\Components\ChartWidgetComponent;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Widgets\View\Components\ChartWidgetComponent;
 
     $color = $this->getColor();
     $heading = $this->getHeading();

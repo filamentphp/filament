@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
 use Livewire\Livewire;
 
 class LivewireField extends Field implements HasEmbeddedView

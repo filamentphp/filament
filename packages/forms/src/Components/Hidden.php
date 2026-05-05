@@ -4,7 +4,6 @@ namespace Filament\Forms\Components;
 
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
 
 class Hidden extends Field implements HasEmbeddedView
 {

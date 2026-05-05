@@ -8,9 +8,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Group extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {

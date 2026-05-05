@@ -23,7 +23,7 @@ use Illuminate\View\ComponentAttributeBag as BaseComponentAttributeBag;
 class ComponentAttributeBag extends BaseComponentAttributeBag
 {
     /**
-     * @param string $name
+     * @param  string  $name
      */
     public static function hasMacro($name): bool
     {
@@ -52,7 +52,7 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
     /**
      * When updating this method, also update the corresponding macro in `Filament\Support\SupportServiceProvider`.
      *
-     * @param string | array<string> | null $color
+     * @param  string | array<string> | null  $color
      */
     public function color(string | HasColor $component, string | array | null $color): static
     {
@@ -68,7 +68,7 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
     /**
      * When updating this method, also update the corresponding macro in `Filament\Support\SupportServiceProvider`.
      *
-     * @param array<string, ?int> | int | null $columns
+     * @param  array<string, ?int> | int | null  $columns
      */
     public function grid(array | int | null $columns = [], GridDirection $direction = GridDirection::Row): static
     {
@@ -105,9 +105,9 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
     /**
      * When updating this method, also update the corresponding macro in `Filament\Support\SupportServiceProvider`.
      *
-     * @param array<string, int | string | null> | int | string | null $span
-     * @param array<string, int | string | null> | int | string | null $start
-     * @param array<string, ?int> | int | string | null $order
+     * @param  array<string, int | string | null> | int | string | null  $span
+     * @param  array<string, int | string | null> | int | string | null  $start
+     * @param  array<string, ?int> | int | string | null  $order
      */
     public function gridColumn(array | int | string | null $span = [], array | int | string | null $start = [], array | int | string | null $order = [], bool $isHidden = false): static
     {
@@ -158,9 +158,9 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
             ->style([
                 ...array_map(
                     fn (string $breakpoint, int | string $span): string => '--col-span-' . str_replace('!', 'n', str_replace('@', 'c', $breakpoint)) . ': ' . match ($span) {
-                            'full' => '1 / -1',
-                            default => "span {$span} / span {$span}",
-                        },
+                        'full' => '1 / -1',
+                        default => "span {$span} / span {$span}",
+                    },
                     array_keys($span),
                     array_values($span),
                 ),

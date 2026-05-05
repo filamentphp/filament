@@ -15,11 +15,11 @@ use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Support\Concerns\HasWidth;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Tables\Columns\Concerns\HasTooltip;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use LogicException;
 
 use function Filament\Support\generate_href_html;

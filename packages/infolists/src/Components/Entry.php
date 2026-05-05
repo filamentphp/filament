@@ -14,9 +14,8 @@ use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\View\ComponentSlot;
 use LogicException;
 

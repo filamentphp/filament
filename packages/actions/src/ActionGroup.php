@@ -21,6 +21,7 @@ use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
 use Filament\Support\View\Concerns\CanGenerateButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
@@ -31,7 +32,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
@@ -272,6 +272,19 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     }
 
     public function isHidden(): bool
+    {
+        if (! $this->hasTable()) {
+            return $this->resolveIsHidden();
+        }
+
+        if (! $this->prepareVisibilityCache()) {
+            return $this->resolveIsHidden();
+        }
+
+        return $this->cachedIsHidden ??= $this->resolveIsHidden();
+    }
+
+    protected function resolveIsHidden(): bool
     {
         if ($this->baseIsHidden()) {
             return true;

@@ -85,6 +85,19 @@ trait CanBeAuthorized
 
     public function isAuthorized(): bool
     {
+        if (! $this->hasTable()) {
+            return $this->resolveIsAuthorized();
+        }
+
+        if (! $this->prepareVisibilityCache()) {
+            return $this->resolveIsAuthorized();
+        }
+
+        return $this->cachedIsAuthorized ??= $this->resolveIsAuthorized();
+    }
+
+    protected function resolveIsAuthorized(): bool
+    {
         if ($this->authorization === null) {
             return $this->getHasActionsLivewire()?->getDefaultActionAuthorizationResponse($this)?->allowed() ?? true;
         }
@@ -205,6 +218,19 @@ trait CanBeAuthorized
 
     public function isAuthorizedOrNotHiddenWhenUnauthorized(): bool
     {
+        if (! $this->hasTable()) {
+            return $this->resolveIsAuthorizedOrNotHiddenWhenUnauthorized();
+        }
+
+        if (! $this->prepareVisibilityCache()) {
+            return $this->resolveIsAuthorizedOrNotHiddenWhenUnauthorized();
+        }
+
+        return $this->cachedIsAuthorizedOrNotHiddenWhenUnauthorized ??= $this->resolveIsAuthorizedOrNotHiddenWhenUnauthorized();
+    }
+
+    protected function resolveIsAuthorizedOrNotHiddenWhenUnauthorized(): bool
+    {
         if ($this->hasAuthorizationTooltip()) {
             return true;
         }
@@ -249,5 +275,14 @@ trait CanBeAuthorized
     public function shouldAuthorizeIndividualRecords(): bool
     {
         return filled($this->authorizeIndividualRecords) && ($this->authorizeIndividualRecords !== false);
+    }
+
+    public function hasAuthorization(): bool
+    {
+        return $this->authorization !== null
+            || $this->authorizeIndividualRecords !== null
+            || $this->hasAuthorizationNotification !== false
+            || $this->hasAuthorizationTooltip !== false
+            || $this->authorizationMessage !== null;
     }
 }

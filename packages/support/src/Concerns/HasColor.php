@@ -43,4 +43,14 @@ trait HasColor
     {
         return $this->evaluate($this->color) ?? $this->evaluate($this->defaultColor);
     }
+
+    public function hasColor(): bool
+    {
+        return $this->color !== null || $this->defaultColor !== null;
+    }
+
+    public function hasArrayColor(): bool
+    {
+        return is_array($this->color) || is_array($this->defaultColor);
+    }
 }

@@ -3,6 +3,7 @@
     use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
@@ -14,7 +15,6 @@
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\View\TablesRenderHook;
     use Illuminate\Support\Str;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\View\ComponentAttributeBag;
 
     $defaultRecordActions = $getRecordActions();

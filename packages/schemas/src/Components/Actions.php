@@ -13,9 +13,8 @@ use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Actions extends Component implements HasEmbeddedView
 {

@@ -5,7 +5,6 @@ namespace Filament\Schemas\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Illuminate\View\ComponentAttributeBag;
 use Livewire\Livewire as LivewireFacade;
 
 class Livewire extends Component implements HasEmbeddedView

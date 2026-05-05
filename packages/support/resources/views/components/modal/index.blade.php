@@ -2,8 +2,8 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
-    use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\ModalComponent\IconComponent;
 @endphp
 
 @props([

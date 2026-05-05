@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\BadgeComponent;
 
     $notifications = $this->getNotifications();
     $unreadNotificationsCount = $this->getUnreadNotificationsCount();
