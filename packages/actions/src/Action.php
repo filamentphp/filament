@@ -773,34 +773,52 @@ class Action extends ViewComponent implements Arrayable
 
         $cache = $this->linkHtmlTemplateCache;
 
-        // Fast path: reuse cached HTML template, substituting the per-row wire handler.
-        // Works for all view types (button, iconButton, link, badge, grouped).
-        if ($cache !== null && isset($cache->template)) {
-            return str_replace(
-                $cache->placeholder,
-                e($this->getLivewireClickHandler() ?? ''),
-                $cache->template,
-            );
+        if ($cache === null) {
+            return $this->renderViewHtml();
         }
 
-        // Check if all rendered properties are static (non-Closure),
-        // meaning only the wire:click handler varies per row
-        if ($cache !== null
-            && ! ($this->isDisabled instanceof Closure)
-            && ! ($this->url instanceof Closure)
-            && ! ($this->badge instanceof Closure)
-            && ! ($this->badgeColor instanceof Closure)
-            && ! ($this->color instanceof Closure)
-            && ! ($this->icon instanceof Closure)
-            && ! ($this->label instanceof Closure)
-            && ! ($this->isLabelHidden instanceof Closure)
-            && ! ($this->tooltip instanceof Closure)
-            && ! ($this->alpineClickHandler instanceof Closure)
-        ) {
-            return $this->renderWithTemplateCache($cache);
+        $handler = e($this->getLivewireClickHandler() ?? '');
+        $url = e($this->getUrl() ?? '');
+
+        // Cache populated: swap per-row values into the cached HTML.
+        if (isset($cache->html)) {
+            // If a per-row attribute appears or disappears between rows, the
+            // HTML structure differs — fall back to a fresh render.
+            if (
+                ($handler === '') !== ($cache->handler === '')
+                || ($url === '') !== ($cache->url === '')
+            ) {
+                return $this->renderViewHtml();
+            }
+
+            $html = $cache->html;
+
+            if ($cache->handler !== '' && $handler !== $cache->handler) {
+                $html = str_replace($cache->handler, $handler, $html);
+            }
+
+            if ($cache->url !== '' && $url !== $cache->url) {
+                $html = str_replace($cache->url, $url, $html);
+            }
+
+            return $html;
         }
 
-        // Standard path: no caching (has Closures that vary per row)
+        // Skip caching when any rendered property may vary per row.
+        if ($this->hasDynamicRenderingProperties()) {
+            return $this->renderViewHtml();
+        }
+
+        $html = $this->renderViewHtml();
+        $cache->html = $html;
+        $cache->handler = $handler;
+        $cache->url = $url;
+
+        return $html;
+    }
+
+    protected function renderViewHtml(): string
+    {
         return match ($this->getView()) {
             static::BADGE_VIEW => $this->toBadgeHtml(),
             static::BUTTON_VIEW => $this->toButtonHtml(),
@@ -811,36 +829,20 @@ class Action extends ViewComponent implements Arrayable
         };
     }
 
-    /**
-     * Renders the action normally, then caches the output as a template
-     * by replacing the HTML-encoded wire:click handler with a placeholder.
-     * Shared by all view types (button, iconButton, link, badge, grouped).
-     */
-    protected function renderWithTemplateCache(\stdClass $cache): string
+    protected function hasDynamicRenderingProperties(): bool
     {
-        $html = match ($this->getView()) {
-            static::BADGE_VIEW => $this->toBadgeHtml(),
-            static::BUTTON_VIEW => $this->toButtonHtml(),
-            static::GROUPED_VIEW => $this->toGroupedHtml(),
-            static::ICON_BUTTON_VIEW => $this->toIconButtonHtml(),
-            static::LINK_VIEW => $this->toLinkHtml(),
-            default => $this->render()->render(),
-        };
-
-        // Replace the HTML-encoded wire:click handler value with a
-        // unique placeholder to create a reusable template.
-        // The encoded handler (e.g. mountAction(&#039;view&#039;,...))
-        // appears in wire:click, wire:target, and icon wire:target
-        // attributes — str_replace catches all occurrences.
-        $encodedHandler = e($this->getLivewireClickHandler() ?? '');
-
-        if ($encodedHandler !== '') {
-            $placeholder = '__FIL_WIRE_' . spl_object_id($cache) . '__';
-            $cache->template = str_replace($encodedHandler, $placeholder, $html);
-            $cache->placeholder = $placeholder;
-        }
-
-        return $html;
+        return $this->isDisabled instanceof Closure
+            || $this->badge instanceof Closure
+            || $this->badgeColor instanceof Closure
+            || $this->color instanceof Closure
+            || $this->icon instanceof Closure
+            || $this->label instanceof Closure
+            || $this->isLabelHidden instanceof Closure
+            || $this->tooltip instanceof Closure
+            || $this->alpineClickHandler instanceof Closure
+            || $this->isLivewireClickHandlerEnabled instanceof Closure
+            || $this->shouldOpenUrlInNewTab instanceof Closure
+            || $this->shouldPostToUrl instanceof Closure;
     }
 
     protected function toBadgeHtml(): string
