@@ -17,6 +17,8 @@ use Illuminate\View\ComponentAttributeBag as BaseComponentAttributeBag;
  * Laravel's `merge()` creates a Collection, partitions it with a
  * closure, maps with another closure, then merges — all to handle
  * class/style concatenation.
+ *
+ * @phpstan-consistent-constructor
  */
 class ComponentAttributeBag extends BaseComponentAttributeBag
 {
@@ -220,7 +222,7 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
 
     /**
      * @param  array<string, mixed>  $attributeDefaults
-     * @param bool $merge
+     * @param  bool  $escape
      */
     public function merge(array $attributeDefaults = [], $escape = true): static
     {
