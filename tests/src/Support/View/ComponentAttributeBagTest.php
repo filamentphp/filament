@@ -1,8 +1,11 @@
 <?php
 
+use Filament\Support\Enums\GridDirection;
 use Filament\Support\View\ComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Tests\TestCase;
+use Illuminate\Support\HtmlString;
+use Illuminate\View\ComponentAttributeBag as BaseComponentAttributeBag;
 
 uses(TestCase::class);
 
@@ -152,5 +155,220 @@ describe('`color()`', function (): void {
 
         expect($bag->get('class'))->toBeNull();
         expect($bag->get('style'))->toBeNull();
+    });
+});
+
+describe('`grid()`', function (): void {
+    it('emits a `fi-grid` class with a `--cols-default` row variable for a single int', function (): void {
+        $bag = (new ComponentAttributeBag)->grid(3);
+
+        // A bare int is interpreted as the `lg` breakpoint with `default` filled to `1`.
+        expect($bag->get('class'))
+            ->toContain('fi-grid')
+            ->toContain('lg:fi-grid-cols');
+        expect($bag->get('style'))
+            ->toContain('--cols-default: repeat(1, minmax(0, 1fr))')
+            ->toContain('--cols-lg: repeat(3, minmax(0, 1fr))');
+    });
+
+    it('emits per-breakpoint `fi-grid-cols` classes when given a breakpoint map', function (): void {
+        $bag = (new ComponentAttributeBag)->grid([
+            'sm' => 2,
+            'md' => 3,
+            'lg' => 4,
+        ]);
+
+        expect($bag->get('class'))
+            ->toContain('sm:fi-grid-cols')
+            ->toContain('md:fi-grid-cols')
+            ->toContain('lg:fi-grid-cols');
+        expect($bag->get('style'))
+            ->toContain('--cols-sm: repeat(2, minmax(0, 1fr))')
+            ->toContain('--cols-md: repeat(3, minmax(0, 1fr))')
+            ->toContain('--cols-lg: repeat(4, minmax(0, 1fr))');
+    });
+
+    it('emits the `fi-grid-cols` (no-prefix) class only when `default > 1`', function (): void {
+        // The `default` breakpoint is the unprefixed mobile-first value. A grid that defaults
+        // to 1 column on mobile (and 3 on `lg`) should NOT emit the bare `fi-grid-cols`.
+        $bag = (new ComponentAttributeBag)->grid(['default' => 1, 'lg' => 3]);
+        expect($bag->get('class'))->not->toMatch('/(?<![:-])fi-grid-cols/');
+
+        $bag = (new ComponentAttributeBag)->grid(['default' => 2]);
+        expect($bag->get('class'))->toMatch('/(?<![:-])fi-grid-cols/');
+    });
+
+    it('emits the `fi-grid-direction-col` modifier when given `GridDirection::Column`', function (): void {
+        $bag = (new ComponentAttributeBag)->grid(['default' => 4], GridDirection::Column);
+
+        expect($bag->get('class'))->toContain('fi-grid-direction-col');
+        // Column-direction CSS variables are bare integers, not `repeat()`.
+        expect($bag->get('style'))->toContain('--cols-default: 4');
+        expect($bag->get('style'))->not->toContain('repeat(');
+    });
+
+    it('substitutes `!` and `@` in breakpoint names so they are valid CSS identifiers', function (): void {
+        // The `!` -> `n`, `@` -> `c` substitution lets users write breakpoint queries like
+        // `'@md'` (container query) or `'!sm'` (negated) without breaking custom-property names.
+        $bag = (new ComponentAttributeBag)->grid([
+            '@md' => 2,
+            '!sm' => 3,
+        ]);
+
+        expect($bag->get('style'))
+            ->toContain('--cols-cmd: ')
+            ->toContain('--cols-nsm: ')
+            ->not->toContain('--cols-@md')
+            ->not->toContain('--cols-!sm');
+    });
+});
+
+describe('`gridColumn()`', function (): void {
+    it('emits per-breakpoint span classes and `--col-span-*` styles for an int span', function (): void {
+        $bag = (new ComponentAttributeBag)->gridColumn(2);
+
+        expect($bag->get('class'))
+            ->toContain('fi-grid-col')
+            ->toContain('lg:fi-grid-col-span');
+        expect($bag->get('style'))->toContain('--col-span-lg: span 2 / span 2');
+    });
+
+    it('renders a `full` span as a `1 / -1` CSS value', function (): void {
+        $bag = (new ComponentAttributeBag)->gridColumn('full');
+
+        expect($bag->get('style'))->toContain('--col-span-lg: 1 / -1');
+        // Should not also emit the `span N / span N` form.
+        expect($bag->get('style'))->not->toContain('span full');
+    });
+
+    it('adds `fi-hidden` when `isHidden: true` is passed', function (): void {
+        $bag = (new ComponentAttributeBag)->gridColumn(2, isHidden: true);
+
+        expect($bag->get('class'))->toContain('fi-hidden');
+    });
+
+    it('adds `fi-hidden` when the default-breakpoint span is the literal `"hidden"`', function (): void {
+        $bag = (new ComponentAttributeBag)->gridColumn(['default' => 'hidden']);
+
+        expect($bag->get('class'))->toContain('fi-hidden');
+    });
+
+    it('emits `--col-start-*` and `--col-order-*` for `start` and `order` breakpoint maps', function (): void {
+        $bag = (new ComponentAttributeBag)->gridColumn(
+            span: ['lg' => 4],
+            start: ['md' => 2],
+            order: ['sm' => 1],
+        );
+
+        expect($bag->get('class'))
+            ->toContain('md:fi-grid-col-start')
+            ->toContain('sm:fi-grid-col-order');
+        expect($bag->get('style'))
+            ->toContain('--col-start-md: 2')
+            ->toContain('--col-order-sm: 1');
+    });
+});
+
+describe('macros via `__call` / `hasMacro`', function (): void {
+    it('routes a macro registered on Laravel\'s base bag through the Filament subclass', function (): void {
+        // The override exists so user-registered macros on the Laravel base class still resolve
+        // when called on the Filament subclass — this is the fallback path in `ComponentAttributeBag::__call`.
+        try {
+            BaseComponentAttributeBag::macro('filamentTestMacro', function (string $value): string {
+                return "macro-said:{$value}";
+            });
+
+            expect(ComponentAttributeBag::hasMacro('filamentTestMacro'))->toBeTrue();
+            expect((new ComponentAttributeBag)->filamentTestMacro('hi'))->toBe('macro-said:hi');
+        } finally {
+            // Reset the static `$macros` array on the base class to avoid bleeding into other tests.
+            (function (): void {
+                unset(static::$macros['filamentTestMacro']);
+            })->bindTo(null, BaseComponentAttributeBag::class)();
+        }
+    });
+
+    it('binds `$this` inside a Closure macro to the Filament subclass instance', function (): void {
+        try {
+            BaseComponentAttributeBag::macro('filamentClassNameMacro', function (): string {
+                return static::class;
+            });
+
+            expect((new ComponentAttributeBag)->filamentClassNameMacro())->toBe(ComponentAttributeBag::class);
+        } finally {
+            (function (): void {
+                unset(static::$macros['filamentClassNameMacro']);
+            })->bindTo(null, BaseComponentAttributeBag::class)();
+        }
+    });
+});
+
+describe('`merge()` AppendableAttributeValue interactions', function (): void {
+    it('does not escape the inner value of `prepends()` when `escape: false` is passed', function (): void {
+        // Inverse of the M7 regression test: with `escape: false`, the inner appendable value
+        // must be passed through verbatim (the merge path falls back to parent with `escape: false`).
+        $bag = new ComponentAttributeBag(['data-foo' => 'existing']);
+        $result = $bag->merge([
+            'data-foo' => $bag->prepends('<not escaped>'),
+        ], escape: false);
+
+        expect($result->get('data-foo'))
+            ->toContain('<not escaped>')
+            ->not->toContain('&lt;');
+    });
+
+    it('escapes inner values across multiple AppendableAttributeValue keys', function (): void {
+        $bag = new ComponentAttributeBag(['data-foo' => 'a', 'data-bar' => 'b']);
+        $result = $bag->merge([
+            'data-foo' => $bag->prepends('<x>'),
+            'data-bar' => $bag->prepends('<y>'),
+        ]);
+
+        expect($result->get('data-foo'))->toContain('&lt;x&gt;')->not->toContain('<x>');
+        expect($result->get('data-bar'))->toContain('&lt;y&gt;')->not->toContain('<y>');
+    });
+});
+
+describe('`merge()` non-class/style attributes', function (): void {
+    it('preserves a `false` boolean default value through to `__toString()` (drops the attribute)', function (): void {
+        // Inline-rendered components emit `'wire:target' => false` to skip the directive entirely
+        // (e.g. CanGenerateBadgeHtml.php). `__toString()` must omit attributes whose final value
+        // is `false`. This is a hot-path used on every action-button render.
+        $bag = (new ComponentAttributeBag)->merge([
+            'wire:target' => false,
+            'data-keep' => 'yes',
+        ], escape: false);
+
+        $html = (string) $bag;
+
+        expect($html)
+            ->toContain('data-keep="yes"')
+            ->not->toContain('wire:target');
+    });
+});
+
+describe('`class()` array semantics', function (): void {
+    it('drops `null`-valued conditional class entries', function (): void {
+        // `class()` builds on `Arr::toCssClasses()` which drops both `false` and `null` values.
+        // The existing test only covers `false`; this pins the `null` branch too.
+        $bag = (new ComponentAttributeBag)->class([
+            'fi-keep',
+            'fi-conditional' => null,
+            'fi-also-keep' => true,
+        ]);
+
+        expect($bag->get('class'))
+            ->toContain('fi-keep')
+            ->toContain('fi-also-keep')
+            ->not->toContain('fi-conditional');
+    });
+
+    it('returns the same bag instance when given an `HtmlString` of empty content', function (): void {
+        // Defensive: passing an `HtmlString` whose value is empty should not mutate the bag.
+        $bag = new ComponentAttributeBag(['class' => 'fi-existing']);
+        $result = $bag->class(new HtmlString(''));
+
+        // Empty class list short-circuits to the same instance.
+        expect($result->get('class'))->toBe('fi-existing');
     });
 });

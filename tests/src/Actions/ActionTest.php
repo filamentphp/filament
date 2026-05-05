@@ -2,17 +2,26 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Pages\Actions;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
@@ -1869,3 +1878,136 @@ describe('rendering', function (): void {
         expect($html)->toContain('form="my-form"');
     });
 });
+
+describe('visibility cache', function (): void {
+    it('does NOT memoise `isHidden()` when the action has no table (every call re-evaluates)', function (): void {
+        // The cache is gated by `hasTable()` because page-level / schema-level actions
+        // don't have a stable record key to use as a cache identifier. Without a table,
+        // each `isHidden()` call must re-evaluate the closure.
+        $invocations = 0;
+        $action = Action::make('test')->hidden(function () use (&$invocations): bool {
+            $invocations++;
+
+            return false;
+        });
+
+        $action->isHidden();
+        $action->isHidden();
+        $action->isHidden();
+
+        expect($invocations)->toBe(3);
+    });
+
+    it('memoises `isHidden()` when bound to a table and a record', function (): void {
+        // For the same record on a table-bound action, repeated visibility checks should
+        // hit the cache. This is the hot path for table row rendering — every column
+        // potentially queries every row-action's visibility.
+        $component = livewire(VisibilityCacheHarness::class);
+        $post = Post::factory()->create();
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->hidden(function () use (&$invocations): bool {
+                $invocations++;
+
+                return false;
+            })
+            ->table($component->instance()->getTable())
+            ->record($post);
+
+        $action->isHidden();
+        $action->isHidden();
+        $action->isHidden();
+
+        expect($invocations)->toBe(1);
+    });
+
+    it('re-evaluates `isHidden()` when the record changes', function (): void {
+        // `record($x)` must clear the cache so a new row gets a fresh visibility decision.
+        // Without this, multi-record tables would render every row with row-1's verdict.
+        $component = livewire(VisibilityCacheHarness::class);
+        $postA = Post::factory()->create();
+        $postB = Post::factory()->create();
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->hidden(function () use (&$invocations): bool {
+                $invocations++;
+
+                return false;
+            })
+            ->table($component->instance()->getTable())
+            ->record($postA);
+
+        $action->isHidden(); // 1
+        $action->record($postB);
+        $action->isHidden(); // 2
+
+        expect($invocations)->toBe(2);
+    });
+
+    it('keys the visibility cache by `ArrayRecord` key when given an array record', function (): void {
+        // The cache supports both Eloquent models (keyed via `spl_object_id`) and arrays
+        // (keyed via the `ArrayRecord` key). Two different array records → two evaluations.
+        $component = livewire(VisibilityCacheHarness::class);
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->hidden(function () use (&$invocations): bool {
+                $invocations++;
+
+                return false;
+            })
+            ->table($component->instance()->getTable())
+            ->record(['__key' => '1', 'name' => 'Alice']);
+
+        $action->isHidden(); // 1
+        $action->isHidden(); // memoised
+        $action->record(['__key' => '2', 'name' => 'Bob']);
+        $action->isHidden(); // 2 (different cache key)
+        $action->isHidden(); // memoised
+
+        expect($invocations)->toBe(2);
+    });
+
+    it('memoises `isAuthorized()` alongside `isHidden()` under the same cache key', function (): void {
+        // Auth and visibility share the same cache slot keyed by the record. Two `isAuthorized()`
+        // calls on the same record must invoke the policy closure exactly once.
+        $component = livewire(VisibilityCacheHarness::class);
+        $post = Post::factory()->create();
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->authorize(function () use (&$invocations): bool {
+                $invocations++;
+
+                return true;
+            })
+            ->table($component->instance()->getTable())
+            ->record($post);
+
+        $action->isAuthorized();
+        $action->isAuthorized();
+
+        expect($invocations)->toBe(1);
+    });
+});
+
+class VisibilityCacheHarness extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Post::query())->columns([
+            TextColumn::make('title'),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
