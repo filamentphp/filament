@@ -109,9 +109,9 @@ class CreateAction extends Action
             $schema->model($record)->saveRelationships();
 
             if ($arguments['another'] ?? false) {
-                if ($this->shouldForceRenderAfterCreateAnother()) {
-                    $livewire = $this->getLivewire();
+                $livewire = $this->getLivewire();
 
+                if ($this->shouldForceRenderAfterCreateAnother()) {
                     if (method_exists($livewire, 'forceRender')) {
                         $livewire->forceRender();
                     }
@@ -135,6 +135,12 @@ class CreateAction extends Action
                 // Rebuild child schemas without double-firing `afterStateHydrated()` hooks.
                 $hydratedDefaultState = null;
                 $schema->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+
+                $livewire->dispatch(
+                    'reset-schema-component-state',
+                    livewireId: $livewire->getId(),
+                    schemaKey: $schema->getKey(),
+                );
 
                 $this->halt();
 
