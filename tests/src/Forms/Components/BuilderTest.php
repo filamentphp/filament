@@ -1100,6 +1100,58 @@ describe('UUID generation', function (): void {
     });
 });
 
+describe('`hydrateItems()`', function (): void {
+    it('rekeys items with UUIDs when hydrating from numeric-keyed `rawState`', function (): void {
+        livewire(TestComponentWithBuilderFilledFromMount::class, [
+            'initialData' => [
+                ['type' => 'one', 'data' => ['foo' => 'a']],
+                ['type' => 'one', 'data' => ['foo' => 'b']],
+            ],
+        ])->tap(function ($livewire): void {
+            $items = $livewire->get('data.builder');
+
+            expect($items)->toHaveCount(2);
+
+            foreach (array_keys($items) as $key) {
+                expect(is_numeric($key))->toBeFalse();
+                expect($key)->toBeString();
+            }
+        });
+    });
+
+    it('rekeys items with numeric keys when `generateUuidUsing(false)` is set', function (): void {
+        $undoBuilderFake = Builder::fake();
+
+        livewire(TestComponentWithBuilderFilledFromMount::class, [
+            'initialData' => [
+                'existing-uuid-a' => ['type' => 'one', 'data' => ['foo' => 'a']],
+                'existing-uuid-b' => ['type' => 'one', 'data' => ['foo' => 'b']],
+            ],
+        ])->tap(function ($livewire): void {
+            $items = $livewire->get('data.builder');
+
+            expect($items)->toHaveCount(2);
+            expect(array_keys($items))->toBe([0, 1]);
+        });
+
+        $undoBuilderFake();
+    });
+
+    it('produces an empty array when `hydrateItems()` runs against empty `rawState`', function (): void {
+        livewire(TestComponentWithBuilderFilledFromMount::class, ['initialData' => []])
+            ->tap(function ($livewire): void {
+                expect($livewire->get('data.builder'))->toBe([]);
+            });
+    });
+
+    it('produces an empty array when `hydrateItems()` runs against `null` `rawState`', function (): void {
+        livewire(TestComponentWithBuilderFilledFromMount::class, ['initialData' => null])
+            ->tap(function ($livewire): void {
+                expect($livewire->get('data.builder'))->toBe([]);
+            });
+    });
+});
+
 describe('item count limits', function (): void {
     it('returns `null` for `getMaxItems()` by default', function (): void {
         $builder = Builder::make('content');
@@ -1688,5 +1740,30 @@ class RenderBuilderWithClosureReorderable extends Livewire
         return $form->schema([
             Builder::make('content')->blocks([Builder\Block::make('one')->schema([TextInput::make('foo')])])->reorderable(static fn (): bool => false),
         ])->statePath('data');
+    }
+}
+
+class TestComponentWithBuilderFilledFromMount extends Livewire
+{
+    public mixed $initialData = null;
+
+    public function mount(): void
+    {
+        $this->form->fill(['builder' => $this->initialData]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('builder')
+                    ->blocks([
+                        Builder\Block::make('one')
+                            ->schema([
+                                TextInput::make('foo'),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
     }
 }

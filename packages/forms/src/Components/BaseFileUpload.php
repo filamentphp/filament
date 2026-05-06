@@ -118,26 +118,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         // (initial form load), not when state is later updated from a Livewire request.
         // It is therefore not a security boundary for submitted paths — see the note in
         // `saveUploadedFiles()` and the file upload documentation.
-        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $rawState): void {
-            $shouldFetchFileInformation = $component->shouldFetchFileInformation();
-
-            $component->rawState(
-                array_filter(Arr::wrap($rawState), static function (string $file) use ($component, $shouldFetchFileInformation): bool {
-                    if (blank($file)) {
-                        return false;
-                    }
-
-                    if (! $shouldFetchFileInformation) {
-                        return true;
-                    }
-
-                    try {
-                        return $component->getDisk()->exists($file);
-                    } catch (UnableToCheckFileExistence $exception) {
-                        return false;
-                    }
-                }),
-            );
+        $this->afterStateHydrated(static function (BaseFileUpload $component): void {
+            $component->hydrateFiles();
         });
 
         $this->beforeStateDehydrated(static function (BaseFileUpload $component): void {
@@ -145,42 +127,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         }, shouldUpdateValidatedStateAfter: true);
 
         $this->getUploadedFileUsing(static function (BaseFileUpload $component, string $file, string | array | null $storedFileNames): ?array {
-            /** @var FilesystemAdapter $storage */
-            $storage = $component->getDisk();
-
-            $shouldFetchFileInformation = $component->shouldFetchFileInformation();
-
-            if ($shouldFetchFileInformation) {
-                try {
-                    if (! $storage->exists($file)) {
-                        return null;
-                    }
-                } catch (UnableToCheckFileExistence $exception) {
-                    return null;
-                }
-            }
-
-            $url = null;
-
-            if ($component->getVisibility() === 'private') {
-                try {
-                    $url = $storage->temporaryUrl(
-                        $file,
-                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
-                    );
-                } catch (Throwable $exception) {
-                    // This driver does not support creating temporary URLs.
-                }
-            }
-
-            $url ??= $storage->url($file);
-
-            return [
-                'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
-                'size' => $shouldFetchFileInformation ? $storage->size($file) : 0,
-                'type' => $shouldFetchFileInformation ? $storage->mimeType($file) : null,
-                'url' => $url,
-            ];
+            return $component->getUploadedFile($file, $storedFileNames);
         });
 
         $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
@@ -188,37 +135,116 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         });
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
+            return $component->saveUploadedFile($file);
+        });
+    }
+
+    public function hydrateFiles(): void
+    {
+        $shouldFetchFileInformation = $this->shouldFetchFileInformation();
+
+        $this->rawState(
+            array_filter(Arr::wrap($this->getRawState()), function (string $file) use ($shouldFetchFileInformation): bool {
+                if (blank($file)) {
+                    return false;
+                }
+
+                if (! $shouldFetchFileInformation) {
+                    return true;
+                }
+
+                try {
+                    return $this->getDisk()->exists($file);
+                } catch (UnableToCheckFileExistence $exception) {
+                    return false;
+                }
+            }),
+        );
+    }
+
+    /**
+     * @param  string | array<string, string> | null  $storedFileNames
+     * @return array{name: string, size: int, type: ?string, url: ?string} | null
+     */
+    public function getUploadedFile(string $file, string | array | null $storedFileNames): ?array
+    {
+        /** @var FilesystemAdapter $storage */
+        $storage = $this->getDisk();
+
+        $shouldFetchFileInformation = $this->shouldFetchFileInformation();
+
+        if ($shouldFetchFileInformation) {
             try {
-                if (! $file->exists()) {
+                if (! $storage->exists($file)) {
                     return null;
                 }
             } catch (UnableToCheckFileExistence $exception) {
                 return null;
             }
+        }
 
-            if (
-                $component->shouldMoveFiles() &&
-                ($component->getDiskName() === (fn (): string => $this->disk)->call($file))
-            ) {
-                $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
+        $url = null;
 
-                $component->getDisk()->move((fn (): string => $this->path)->call($file), $newPath);
-
-                return $newPath;
+        if ($this->getVisibility() === 'private') {
+            try {
+                $url = $storage->temporaryUrl(
+                    $file,
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
             }
+        }
 
-            $path = $file->storeAs(
-                $component->getDirectory(),
-                $component->getUploadedFileNameForStorage($file),
-                $component->getDiskName(),
+        $url ??= $storage->url($file);
+
+        return [
+            'name' => ($this->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
+            'size' => $shouldFetchFileInformation ? $storage->size($file) : 0,
+            'type' => $shouldFetchFileInformation ? $storage->mimeType($file) : null,
+            'url' => $url,
+        ];
+    }
+
+    public function saveUploadedFile(TemporaryUploadedFile $file): ?string
+    {
+        try {
+            if (! $file->exists()) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
+            return null;
+        }
+
+        if (
+            $this->shouldMoveFiles() &&
+            ($this->getDiskName() === (function (): string {
+                return $this->disk;
+            })->call($file))
+        ) {
+            $newPath = trim($this->getDirectory() . '/' . $this->getUploadedFileNameForStorage($file), '/');
+
+            $this->getDisk()->move(
+                (function (): string {
+                    return $this->path;
+                })->call($file),
+                $newPath,
             );
 
-            if ($component->getVisibility() === 'public') {
-                rescue(fn () => $component->getDisk()->setVisibility($path, 'public'), report: false);
-            }
+            return $newPath;
+        }
 
-            return $path;
-        });
+        $path = $file->storeAs(
+            $this->getDirectory(),
+            $this->getUploadedFileNameForStorage($file),
+            $this->getDiskName(),
+        );
+
+        if ($this->getVisibility() === 'public') {
+            rescue(fn () => $this->getDisk()->setVisibility($path, 'public'), report: false);
+        }
+
+        return $path;
     }
 
     /**

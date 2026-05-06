@@ -9,6 +9,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -2488,3 +2489,184 @@ class TestComponentWithFileUploadRecordPreventingTamperingAndCustomMessage exten
         $this->record->update($this->form->getState());
     }
 }
+
+describe('`hydrateFiles()` branches', function (): void {
+    $makeField = function (callable $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $configure($field);
+
+        return $field;
+    };
+
+    it('filters out files that do not exist on disk when `shouldFetchFileInformation` is true', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/exists.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field->multiple());
+        $field->rawState(['uploads/exists.jpg', 'uploads/missing.jpg']);
+
+        $field->hydrateFiles();
+
+        expect(array_values($field->getRawState()))->toBe(['uploads/exists.jpg']);
+    });
+
+    it('filters out blank string files', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/file.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field->multiple());
+        $field->rawState(['uploads/file.jpg', '']);
+
+        $field->hydrateFiles();
+
+        expect(array_values($field->getRawState()))->toBe(['uploads/file.jpg']);
+    });
+
+    it('keeps all non-blank entries when `fetchFileInformation(false)` is set', function () use ($makeField): void {
+        // Don't create files on disk; with fetchFileInformation off, existence is not checked
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->multiple()
+            ->fetchFileInformation(false));
+        $field->rawState(['uploads/imaginary-1.jpg', 'uploads/imaginary-2.jpg']);
+
+        $field->hydrateFiles();
+
+        expect(array_values($field->getRawState()))->toBe(['uploads/imaginary-1.jpg', 'uploads/imaginary-2.jpg']);
+    });
+});
+
+describe('`getUploadedFile()` branches', function (): void {
+    $makeField = function (callable $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $configure($field);
+
+        return $field;
+    };
+
+    it('returns `null` when the file does not exist and `shouldFetchFileInformation` is true', function () use ($makeField): void {
+        Storage::fake('local');
+
+        $field = $makeField(static fn (FileUpload $field) => $field);
+
+        expect($field->getUploadedFile('uploads/missing.jpg', null))->toBeNull();
+    });
+
+    it('uses `storedFileNames[$file]` as the display name when the field is multiple', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/abc.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field->multiple());
+
+        $result = $field->getUploadedFile(
+            'uploads/abc.jpg',
+            ['uploads/abc.jpg' => 'pretty-name.jpg'],
+        );
+
+        expect($result['name'])->toBe('pretty-name.jpg');
+    });
+
+    it('uses `storedFileNames` as a string when the field is single', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/abc.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field);
+
+        $result = $field->getUploadedFile('uploads/abc.jpg', 'single-name.jpg');
+
+        expect($result['name'])->toBe('single-name.jpg');
+    });
+
+    it('returns `size: 0` and `type: null` when `fetchFileInformation(false)` is set', function () use ($makeField): void {
+        // Disk does not have the file; fetchFileInformation(false) skips existence + size + type
+        $field = $makeField(static fn (FileUpload $field) => $field->fetchFileInformation(false));
+
+        $result = $field->getUploadedFile('uploads/never-stored.jpg', null);
+
+        expect($result)->toBeArray();
+        expect($result['size'])->toBe(0);
+        expect($result['type'])->toBeNull();
+    });
+
+    it('falls back to `Storage::url()` for `private` visibility when `temporaryUrl()` is unsupported', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/private.jpg', 'data');
+
+        // The fake `local` disk does not support temporaryUrl; the catch falls back to url()
+        $field = $makeField(static fn (FileUpload $field) => $field->visibility('private'));
+
+        $result = $field->getUploadedFile('uploads/private.jpg', null);
+
+        expect($result)->toBeArray();
+        expect($result['url'])->not->toBeEmpty();
+    });
+});
+
+describe('`saveUploadedFile()` branches', function (): void {
+    $makeField = function (callable $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $configure($field);
+
+        return $field;
+    };
+
+    $makeTemporaryUploadedFile = function (string $filename = 'hello.txt', string $content = 'data'): TemporaryUploadedFile {
+        Storage::fake('tmp-for-tests');
+
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->create($filename),
+        );
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $content);
+
+        return TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+    };
+
+    it('uses `storeAs()` when disks differ between the field and the temp file', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        Storage::fake('public');
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('public')
+            ->directory('uploads'));
+
+        $temp = $makeTemporaryUploadedFile('hello.txt');
+        $path = $field->saveUploadedFile($temp);
+
+        expect($path)->toStartWith('uploads/');
+        expect(Storage::disk('public')->exists($path))->toBeTrue();
+    });
+
+    it('does not call `setVisibility(public)` when visibility is private', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        Storage::fake('local');
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('local')
+            ->directory('uploads')
+            ->visibility('private'));
+
+        $temp = $makeTemporaryUploadedFile('private-file.txt');
+        $path = $field->saveUploadedFile($temp);
+
+        expect($path)->toStartWith('uploads/');
+        expect(Storage::disk('local')->exists($path))->toBeTrue();
+    });
+
+    it('persists the file to the configured public disk when visibility is public', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        Storage::fake('public');
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('public')
+            ->directory('uploads')
+            ->visibility('public'));
+
+        $temp = $makeTemporaryUploadedFile('public-file.txt');
+        $path = $field->saveUploadedFile($temp);
+
+        expect($path)->toStartWith('uploads/');
+        expect(Storage::disk('public')->exists($path))->toBeTrue();
+    });
+});

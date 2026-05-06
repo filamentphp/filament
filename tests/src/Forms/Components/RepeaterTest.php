@@ -1234,6 +1234,123 @@ describe('nested singular relationships', function (): void {
     });
 });
 
+describe('hydrateItems branches', function (): void {
+    it('rekeys items with numeric keys when `generateUuidUsing(false)` is set', function (): void {
+        $undoFake = Repeater::fake();
+
+        livewire(TestComponentWithRepeaterFilledFromMount::class, [
+            'initialData' => [
+                ['title' => 'a'],
+                ['title' => 'b'],
+            ],
+        ])->tap(function ($livewire): void {
+            $items = $livewire->get('data.items');
+
+            expect($items)->toHaveCount(2);
+            expect(array_keys($items))->toBe([0, 1]);
+        });
+
+        $undoFake();
+    });
+
+    it('produces an empty array when `hydrateItems()` runs against empty `rawState`', function (): void {
+        livewire(TestComponentWithRepeaterFilledFromMount::class, ['initialData' => []])
+            ->tap(function ($livewire): void {
+                expect($livewire->get('data.items'))->toBe([]);
+            });
+    });
+
+    it('produces an empty array when `hydrateItems()` runs against `null` `rawState`', function (): void {
+        livewire(TestComponentWithRepeaterFilledFromMount::class, ['initialData' => null])
+            ->tap(function ($livewire): void {
+                expect($livewire->get('data.items'))->toBe([]);
+            });
+    });
+
+    it('returns early from `hydrateItems()` when `hydratedDefaultState` is already an array', function (): void {
+        // A repeater with defaultItems(2) and no provided initialData hydrates two empty defaults.
+        // `hydratedDefaultState` is set to that array, which short-circuits the rekey loop.
+        livewire(TestComponentWithRepeaterDefaultItems::class)
+            ->tap(function ($livewire): void {
+                $items = $livewire->get('data.items');
+
+                expect($items)->toHaveCount(2);
+            });
+    });
+});
+
+describe('saveToRelationship branches', function (): void {
+    it('writes the order column when `orderColumn()` is set', function (): void {
+        $user = User::factory()->create();
+
+        livewire(RepeaterWithHasManyRelationshipAndOrderColumn::class, ['record' => $user])
+            ->fillForm([
+                'posts' => [
+                    ['title' => 'First', 'rating' => 0],
+                    ['title' => 'Second', 'rating' => 0],
+                    ['title' => 'Third', 'rating' => 0],
+                ],
+            ])
+            ->call('save');
+
+        $posts = $user->fresh()->posts->sortBy('rating')->values();
+        expect($posts)->toHaveCount(3);
+        expect($posts->pluck('rating')->all())->toBe([1, 2, 3]);
+        expect($posts->pluck('title')->all())->toBe(['First', 'Second', 'Third']);
+    });
+
+    it('skips updating an existing record when `mutateRelationshipDataBeforeSave()` returns null', function (): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => $user->id, 'title' => 'Original Title']);
+
+        livewire(RepeaterWithMutateBeforeSaveReturnsNull::class, ['record' => $user])
+            ->fillForm([
+                'posts' => [
+                    "record-{$post->id}" => ['title' => 'New Title'],
+                ],
+            ])
+            ->call('save');
+
+        // The mutate callback returned null, so the record stayed at "Original Title"
+        expect($post->fresh()->title)->toBe('Original Title');
+    });
+
+    it('skips creating a new record when `mutateRelationshipDataBeforeCreate()` returns null', function (): void {
+        $user = User::factory()->create();
+
+        livewire(RepeaterWithMutateBeforeCreateReturnsNull::class, ['record' => $user])
+            ->fillForm([
+                'posts' => [
+                    ['title' => 'Should be skipped'],
+                ],
+            ])
+            ->call('save');
+
+        expect($user->fresh()->posts)->toHaveCount(0);
+    });
+
+    it('calls translatable content driver when `getFilamentTranslatableContentDriver()` is set', function (): void {
+        $user = User::factory()->create();
+        $existingPost = Post::factory()->create(['author_id' => $user->id, 'title' => 'Original']);
+
+        \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::reset();
+
+        livewire(RepeaterWithTranslatableContentDriver::class, ['record' => $user])
+            ->fillForm([
+                'posts' => [
+                    "record-{$existingPost->id}" => ['title' => 'Updated'],
+                    ['title' => 'New Post'],
+                ],
+            ])
+            ->call('save');
+
+        $log = \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::$callLog;
+
+        expect($log)->toContain('updateRecord:Updated');
+        expect($log)->toContain('makeRecord:New Post');
+    });
+});
+
 describe('saveRelationshipsUsing closure paths', function (): void {
     it('creates new records when items are added', function (): void {
         $user = User::factory()->create();
@@ -2404,5 +2521,207 @@ class RenderRepeaterWithTable extends Livewire
                     Repeater\TableColumn::make('email'),
                 ]),
         ])->statePath('data');
+    }
+}
+
+class TestComponentWithRepeaterFilledFromMount extends Livewire
+{
+    public mixed $initialData = null;
+
+    public function mount(): void
+    {
+        $this->form->fill(['items' => $this->initialData]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithRepeaterDefaultItems extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('title'),
+                    ])
+                    ->defaultItems(2),
+            ])
+            ->statePath('data');
+    }
+}
+
+class RepeaterWithHasManyRelationshipAndOrderColumn extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->orderColumn('rating')
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterWithMutateBeforeSaveReturnsNull extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->mutateRelationshipDataBeforeSaveUsing(static fn (?array $data): ?array => null)
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterWithMutateBeforeCreateReturnsNull extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->mutateRelationshipDataBeforeCreateUsing(static fn (?array $data): ?array => null)
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterWithTranslatableContentDriver extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function getFilamentTranslatableContentDriver(): ?string
+    {
+        return \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::class;
+    }
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
     }
 }

@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Загружаемые файлы должны быть типа: :values.',
+
+        'file_attachments_max_size_message' => 'Загружаемые файлы не должны превышать :max килобайт.',
+
         'tools' => [
             'attach_files' => 'Прикрепить файлы',
             'blockquote' => 'Цитата',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Сетка',
+
+                'modal' => [
+
+                    'heading' => 'Сетка',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Предустановка',
+
+                            'placeholder' => 'Отсутствует',
+
+                            'options' => [
+                                'two' => '2 колонки',
+                                'three' => '3 колонки',
+                                'four' => '4 колонки',
+                                'five' => '5 колонок',
+                                'two_start_third' => '2 колонки (1 / 2)',
+                                'two_end_third' => '2 колонки (2 / 1)',
+                                'two_start_fourth' => '2 колонки (1 / 3)',
+                                'two_end_fourth' => '2 колонки (3 / 1)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Колонки',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'От размера экрана',
+
+                            'options' => [
+                                'default' => 'Все',
+                                'sm' => 'Маленький',
+                                'md' => 'Средний',
+                                'lg' => 'Большой',
+                                'xl' => 'Очень большой',
+                                '2xl' => 'Сверхбольшой',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Две асимметричные колонки',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Ширина первой колонки',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Ширина второй колонки',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Изменить',
@@ -467,9 +536,72 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Цвет текста',
+
+                'modal' => [
+
+                    'heading' => 'Цвет текста',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Цвет',
+
+                            'options' => [
+                                'slate' => 'Серый (сланец)',
+                                'gray' => 'Серый',
+                                'zinc' => 'Серый (цинк)',
+                                'neutral' => 'Нейтральный',
+                                'stone' => 'Серый (камень)',
+                                'mauve' => 'Лилово-серый',
+                                'olive' => 'Оливковый',
+                                'mist' => 'Серый (туман)',
+                                'taupe' => 'Серо-коричневый',
+                                'red' => 'Красный',
+                                'orange' => 'Оранжевый',
+                                'amber' => 'Янтарный',
+                                'yellow' => 'Жёлтый',
+                                'lime' => 'Лайм',
+                                'green' => 'Зелёный',
+                                'emerald' => 'Изумрудный',
+                                'teal' => 'Бирюзовый',
+                                'cyan' => 'Голубой',
+                                'sky' => 'Небесный',
+                                'blue' => 'Синий',
+                                'indigo' => 'Индиго',
+                                'violet' => 'Фиолетовый',
+                                'purple' => 'Пурпурный',
+                                'fuchsia' => 'Фуксия',
+                                'pink' => 'Розовый',
+                                'rose' => 'Розово-красный',
+                            ],
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Произвольный цвет',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Загружаемые файлы должны быть типа: :values.',
+
+        'file_attachments_max_size_message' => 'Загружаемые файлы не должны превышать :max килобайт.',
+
         'no_merge_tag_search_results_message' => 'Нет результатов по тегам слияния.',
+
+        'mentions' => [
+            'no_options_message' => 'Нет доступных вариантов.',
+            'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
+            'search_prompt' => 'Введите текст для поиска...',
+            'searching_message' => 'Поиск...',
+        ],
 
         'tools' => [
             'align_center' => 'По центру',
@@ -485,9 +617,14 @@ return [
             'code_block' => 'Блок кода',
             'custom_blocks' => 'Блоки',
             'details' => 'Детали',
-            'h1' => 'Название',
-            'h2' => 'Заголовок',
-            'h3' => 'Подзаголовок',
+            'h1' => 'Заголовок 1',
+            'h2' => 'Заголовок 2',
+            'h3' => 'Заголовок 3',
+            'h4' => 'Заголовок 4',
+            'h5' => 'Заголовок 5',
+            'h6' => 'Заголовок 6',
+            'grid' => 'Сетка',
+            'grid_delete' => 'Удалить сетку',
             'highlight' => 'Выделение',
             'horizontal_rule' => 'Горизонтальная линия',
             'italic' => 'Курсив',
@@ -495,6 +632,7 @@ return [
             'link' => 'Ссылка',
             'merge_tags' => 'Теги слияния',
             'ordered_list' => 'Нумерованный список',
+            'paragraph' => 'Параграф',
             'redo' => 'Повторить',
             'small' => 'Мелкий текст',
             'strike' => 'Зачеркнутый',
@@ -511,6 +649,8 @@ return [
             'table_merge_cells' => 'Объединить ячейки',
             'table_split_cell' => 'Разделить ячейку',
             'table_toggle_header_row' => 'Переключить заголовок',
+            'table_toggle_header_cell' => 'Переключить ячейку заголовка',
+            'text_color' => 'Цвет текста',
             'underline' => 'Подчеркнутый',
             'undo' => 'Отменить',
         ],
@@ -578,6 +718,8 @@ return [
 
         'max_items_message' => 'Только :count можно выбрать.',
 
+        'no_options_message' => 'Нет доступных вариантов.',
+
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
 
         'placeholder' => 'Выбрать вариант',
@@ -589,6 +731,15 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Удалить',
+            ],
+
+        ],
+
         'placeholder' => 'Новый тег',
     ],
 

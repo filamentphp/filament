@@ -855,6 +855,173 @@ describe('saving HasMany relationships', function (): void {
     });
 });
 
+describe('relationship branch gaps', function (): void {
+    it('returns early from `fillStateFromRelationship()` when state is already filled', function (): void {
+        $teamA = Team::factory()->create();
+        $teamB = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $teamA->id]);
+
+        livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($teamB): bool {
+                $component->state((string) $teamB->id);
+                $component->fillStateFromRelationship();
+
+                expect((string) $component->getState())->toBe((string) $teamB->id);
+
+                return true;
+            });
+    });
+
+    it('loads state from a `HasOne` relationship', function (): void {
+        $user = User::factory()->create();
+        $publishedPost = Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
+
+        livewire(ModalTableSelectWithHasOneRelationship::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'publishedPost' => (string) $publishedPost->id,
+            ]);
+    });
+
+    it('loads state from a `BelongsToThrough` relationship', function (): void {
+        $company = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $company->id]);
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        livewire(ModalTableSelectWithBelongsToThroughRelationship::class, ['record' => $user])
+            ->assertSchemaStateSet([
+                'company' => (string) $company->id,
+            ]);
+    });
+
+    it('loads state from a `HasManyThrough` relationship', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+        $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+        livewire(ModalTableSelectWithHasManyThroughRelationship::class, ['record' => $team])
+            ->assertSchemaStateSet(function (array $state) use ($posts): array {
+                expect(collect($state['posts'])->sort()->values()->all())
+                    ->toBe($posts->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+
+                return [];
+            });
+    });
+
+    it('applies `modifyQueryUsing` inside `getSelectedRecord()`', function (): void {
+        $teams = Team::factory()->count(2)->create();
+        $user = User::factory()->create(['team_id' => $teams->first()->id]);
+
+        $modifyCallCount = 0;
+        ModalTableSelectWithBelongsToRelationshipAndModifyQuery::$onModify = static function () use (&$modifyCallCount): void {
+            $modifyCallCount++;
+        };
+
+        livewire(ModalTableSelectWithBelongsToRelationshipAndModifyQuery::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($teams): bool {
+                // Force fall-through past the relation-loaded shortcut by setting modifyQueryUsing
+                $record = $component->getSelectedRecord();
+                expect($record?->id)->toBe($teams->first()->id);
+
+                return true;
+            });
+
+        expect($modifyCallCount)->toBeGreaterThan(0);
+    });
+
+    it('applies `modifyQueryUsing` inside `getOptionLabels()`', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $modifyCallCount = 0;
+        ModalTableSelectWithBelongsToManyRelationshipAndModifyQueryThatCounts::$onModify = static function () use (&$modifyCallCount): void {
+            $modifyCallCount++;
+        };
+
+        // Detach the eager-loaded shortcut by NOT eager loading and using modifyQueryUsing
+        livewire(ModalTableSelectWithBelongsToManyRelationshipAndModifyQueryThatCounts::class, ['record' => $user])
+            ->assertFormComponentExists('teams', function (ModalTableSelect $component): bool {
+                $component->getOptionLabels();
+
+                return true;
+            });
+
+        expect($modifyCallCount)->toBeGreaterThan(0);
+    });
+
+    it('applies `modifyQueryUsing` when saving a `HasMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $modifyCallCount = 0;
+        ModalTableSelectWithHasManyRelationshipAndModifyQuery::$onModify = static function () use (&$modifyCallCount): void {
+            $modifyCallCount++;
+        };
+
+        livewire(ModalTableSelectWithHasManyRelationshipAndModifyQuery::class, ['record' => $user])
+            ->assertFormComponentExists('posts', function (ModalTableSelect $component): bool {
+                $component->state([]);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        expect($modifyCallCount)->toBeGreaterThan(0);
+    });
+
+    it('does not overwrite a `BelongsTo` foreign key on a recently created record', function (): void {
+        $teamA = Team::factory()->create();
+        $teamB = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $teamA->id]);
+
+        livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('team_id', function (ModalTableSelect $component) use ($teamA, $teamB): bool {
+                $component->getRecord()->wasRecentlyCreated = true;
+                $component->getRecord()->team_id = $teamA->id;
+
+                $component->state((string) $teamB->id);
+                $component->saveStateToRelationship();
+
+                expect($component->getRecord()->team_id)->toBe($teamA->id);
+
+                return true;
+            });
+    });
+
+    it('treats saving a `HasManyThrough` relationship as a no-op', function (): void {
+        $team = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $team->id]);
+        $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+        livewire(ModalTableSelectWithHasManyThroughRelationship::class, ['record' => $team])
+            ->assertFormComponentExists('posts', function (ModalTableSelect $component) use ($posts): bool {
+                $component->state([(string) $posts->first()->id]);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        foreach ($posts as $post) {
+            expect($post->fresh()->author_id)->toBe($user->id);
+        }
+    });
+
+    it('treats saving a `BelongsToThrough` relationship as a no-op', function (): void {
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+        $team = Team::factory()->create(['company_id' => $companyA->id]);
+        $user = User::factory()->create(['team_id' => $team->id]);
+
+        livewire(ModalTableSelectWithBelongsToThroughRelationship::class, ['record' => $user])
+            ->assertFormComponentExists('company', function (ModalTableSelect $component) use ($companyB): bool {
+                $component->state((string) $companyB->id);
+                $component->saveStateToRelationship();
+
+                return true;
+            });
+
+        expect($user->fresh()->company?->id)->toBe($companyA->id);
+    });
+});
+
 class ModalTableSelectWithBelongsToManyPivotData extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
@@ -987,6 +1154,251 @@ class ModalTableSelectWithCustomHasManyLabels extends Component implements HasAc
             ])
             ->model($this->record)
             ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithHasOneRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('publishedPost')
+                    ->relationship('publishedPost', 'title')
+                    ->tableConfiguration(PostsTable::class),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithBelongsToThroughRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('company')
+                    ->relationship('company', 'name')
+                    ->tableConfiguration(\Filament\Tests\Fixtures\Tables\CompaniesTable::class),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithHasManyThroughRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public Team $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('posts')
+                    ->relationship('posts', 'title')
+                    ->tableConfiguration(PostsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithBelongsToRelationshipAndModifyQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public static ?\Closure $onModify = null;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('team_id')
+                    ->relationship(
+                        'team',
+                        'name',
+                        modifyQueryUsing: function ($query) {
+                            (static::$onModify)?->__invoke();
+
+                            return $query;
+                        },
+                    )
+                    ->tableConfiguration(TeamsTable::class),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithBelongsToManyRelationshipAndModifyQueryThatCounts extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public static ?\Closure $onModify = null;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('teams')
+                    ->relationship(
+                        'teams',
+                        'name',
+                        modifyQueryUsing: function ($query) {
+                            (static::$onModify)?->__invoke();
+
+                            return $query;
+                        },
+                    )
+                    ->tableConfiguration(TeamsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithHasManyRelationshipAndModifyQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public static ?\Closure $onModify = null;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('posts')
+                    ->relationship(
+                        'posts',
+                        'title',
+                        modifyQueryUsing: function ($query) {
+                            (static::$onModify)?->__invoke();
+
+                            return $query;
+                        },
+                    )
+                    ->tableConfiguration(PostsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 
     public function render(): View

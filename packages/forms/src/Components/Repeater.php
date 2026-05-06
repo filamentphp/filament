@@ -11,7 +11,6 @@ use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
-use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Alignment;
@@ -134,35 +133,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $this->defaultItems(1);
 
-        $this->afterStateHydrated(static function (Repeater $component, ?array $rawState): void {
-            if (
-                is_array($component->hydratedDefaultState) &&
-                $component->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated
-            ) {
-                $component->mergeHydratedDefaultStateWithItemsState();
-            }
-
-            if (is_array($component->hydratedDefaultState)) {
-                return;
-            }
-
-            $items = [];
-
-            $simpleField = $component->getSimpleField();
-
-            foreach ($rawState ?? [] as $itemData) {
-                if ($simpleField) {
-                    $itemData = [$simpleField->getName() => $itemData];
-                }
-
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
-                } else {
-                    $items[] = $itemData;
-                }
-            }
-
-            $component->rawState($items);
+        $this->afterStateHydrated(static function (Repeater $component): void {
+            $component->hydrateItems();
         });
 
         $this->registerActions([
@@ -180,15 +152,56 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         ]);
 
         $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
-            if ($simpleField = $component->getSimpleField()) {
-                return collect($state ?? [])
-                    ->values()
-                    ->pluck($simpleField->getName())
-                    ->all();
+            return $component->dehydrateItems($state);
+        });
+    }
+
+    public function hydrateItems(): void
+    {
+        if (
+            is_array($this->hydratedDefaultState) &&
+            $this->shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated
+        ) {
+            $this->mergeHydratedDefaultStateWithItemsState();
+        }
+
+        if (is_array($this->hydratedDefaultState)) {
+            return;
+        }
+
+        $items = [];
+
+        $simpleField = $this->getSimpleField();
+
+        foreach ($this->getRawState() ?? [] as $itemData) {
+            if ($simpleField) {
+                $itemData = [$simpleField->getName() => $itemData];
             }
 
-            return array_values($state ?? []);
-        });
+            if ($uuid = $this->generateUuid()) {
+                $items[$uuid] = $itemData;
+            } else {
+                $items[] = $itemData;
+            }
+        }
+
+        $this->rawState($items);
+    }
+
+    /**
+     * @param  array<string, array<string, mixed>> | null  $state
+     * @return array<int, array<string, mixed>>
+     */
+    public function dehydrateItems(?array $state): array
+    {
+        if ($simpleField = $this->getSimpleField()) {
+            return collect($state ?? [])
+                ->values()
+                ->pluck($simpleField->getName())
+                ->all();
+        }
+
+        return array_values($state ?? []);
     }
 
     public function getAddAction(): Action
@@ -938,88 +951,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(static function (Repeater $component, HasSchemas $livewire, ?array $state): void {
-            if (! is_array($state)) {
-                $state = [];
-            }
-
-            $relationship = $component->getRelationship();
-
-            $existingRecords = $component->getCachedExistingRecords();
-
-            $recordsToDelete = [];
-
-            foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
-                if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
-                    continue;
-                }
-
-                $recordsToDelete[] = $keyToCheckForDeletion;
-                $existingRecords->forget("record-{$keyToCheckForDeletion}");
-            }
-
-            if (filled($recordsToDelete)) {
-                $relationship
-                    ->whereKey($recordsToDelete)
-                    ->get()
-                    ->each(static function (Model $record) use ($component): void {
-                        $record->delete();
-                        $component->callAfterDelete($record);
-                    });
-            }
-
-            $itemOrder = 1;
-            $orderColumn = $component->getOrderColumn();
-
-            $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
-
-            foreach ($component->getItems() as $itemKey => $item) {
-                $itemData = $item->getState(shouldCallHooksBefore: false);
-
-                if ($orderColumn) {
-                    $itemData[$orderColumn] = $itemOrder;
-
-                    $itemOrder++;
-                }
-
-                if ($record = ($existingRecords[$itemKey] ?? null)) {
-                    $itemData = $component->mutateRelationshipDataBeforeSave($itemData, record: $record);
-
-                    if ($itemData === null) {
-                        continue;
-                    }
-
-                    $translatableContentDriver ?
-                        $translatableContentDriver->updateRecord($record, $itemData) :
-                        $record->fill($itemData)->save();
-
-                    $component->callAfterUpdate($itemData, $record);
-
-                    continue;
-                }
-
-                $relatedModel = $component->getRelatedModel();
-
-                $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
-
-                if ($itemData === null) {
-                    continue;
-                }
-
-                if ($translatableContentDriver) {
-                    $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
-                } else {
-                    $record = new $relatedModel;
-                    $record->fill($itemData);
-                }
-
-                $record = $relationship->save($record);
-                $item->model($record)->saveRelationships();
-                $component->callAfterCreate($itemData, $record);
-                $existingRecords->push($record);
-            }
-
-            $component->getRecord()->setRelation($component->getRelationshipName(), $existingRecords);
+        $this->saveRelationshipsUsing(static function (Repeater $component): void {
+            $component->saveToRelationship();
         });
 
         $this->dehydrated(false);
@@ -1027,6 +960,93 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->reorderable(false);
 
         return $this;
+    }
+
+    public function saveToRelationship(): void
+    {
+        $state = $this->getState();
+
+        if (! is_array($state)) {
+            $state = [];
+        }
+
+        $relationship = $this->getRelationship();
+
+        $existingRecords = $this->getCachedExistingRecords();
+
+        $recordsToDelete = [];
+
+        foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
+            if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+                continue;
+            }
+
+            $recordsToDelete[] = $keyToCheckForDeletion;
+            $existingRecords->forget("record-{$keyToCheckForDeletion}");
+        }
+
+        if (filled($recordsToDelete)) {
+            $relationship
+                ->whereKey($recordsToDelete)
+                ->get()
+                ->each(function (Model $record): void {
+                    $record->delete();
+                    $this->callAfterDelete($record);
+                });
+        }
+
+        $itemOrder = 1;
+        $orderColumn = $this->getOrderColumn();
+
+        $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
+
+        foreach ($this->getItems() as $itemKey => $item) {
+            $itemData = $item->getState(shouldCallHooksBefore: false);
+
+            if ($orderColumn) {
+                $itemData[$orderColumn] = $itemOrder;
+
+                $itemOrder++;
+            }
+
+            if ($record = ($existingRecords[$itemKey] ?? null)) {
+                $itemData = $this->mutateRelationshipDataBeforeSave($itemData, record: $record);
+
+                if ($itemData === null) {
+                    continue;
+                }
+
+                $translatableContentDriver ?
+                    $translatableContentDriver->updateRecord($record, $itemData) :
+                    $record->fill($itemData)->save();
+
+                $this->callAfterUpdate($itemData, $record);
+
+                continue;
+            }
+
+            $relatedModel = $this->getRelatedModel();
+
+            $itemData = $this->mutateRelationshipDataBeforeCreate($itemData);
+
+            if ($itemData === null) {
+                continue;
+            }
+
+            if ($translatableContentDriver) {
+                $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
+            } else {
+                $record = new $relatedModel;
+                $record->fill($itemData);
+            }
+
+            $record = $relationship->save($record);
+            $item->model($record)->saveRelationships();
+            $this->callAfterCreate($itemData, $record);
+            $existingRecords->push($record);
+        }
+
+        $this->getRecord()->setRelation($this->getRelationshipName(), $existingRecords);
     }
 
     /**
