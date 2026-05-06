@@ -6,9 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       version_label:
-        description: 'Version label for the artifact (e.g. 4.0.5 or 4.x)'
-        required: false
-        default: '4.x'
+        description: 'Version label for the artifact (e.g. v4.0.5)'
+        required: true
 
 jobs:
   build-filament-issue:
@@ -26,7 +25,7 @@ jobs:
         id: version
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
-            label="${GITHUB_REF_NAME#v}"
+            label="${GITHUB_REF_NAME}"
           else
             label="${{ github.event.inputs.version_label }}"
           fi

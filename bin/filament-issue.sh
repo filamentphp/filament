@@ -25,9 +25,12 @@ php artisan key:generate
 
 touch database/database.sqlite
 
+mkdir -p packages
+cp -R "${FILAMENT_PACKAGES_PATH}/." packages/
+
 composer config minimum-stability dev
 composer config prefer-stable true
-composer config repositories.filament-monorepo "{\"type\": \"path\", \"url\": \"${FILAMENT_PACKAGES_PATH}/*\", \"options\": {\"symlink\": false}}"
+composer config repositories.filament-monorepo '{"type": "path", "url": "packages/*", "options": {"symlink": false}}'
 
 composer require filament/filament:"*" -W
 php artisan filament:install --panels --no-interaction
@@ -46,4 +49,4 @@ OUTPUT_DIR="filament-issue"
 PACKAGE_NAME="filament-issue-${VERSION_LABEL}"
 rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
-zip -r "$OUTPUT_DIR/$PACKAGE_NAME.zip" "app-filament-issue-${VERSION_LABEL}"
+zip -r "$OUTPUT_DIR/$PACKAGE_NAME.zip" "app-filament-issue-${VERSION_LABEL}" -x "*/node_modules/*"
