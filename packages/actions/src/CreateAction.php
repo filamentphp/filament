@@ -109,9 +109,9 @@ class CreateAction extends Action
             $schema->model($record)->saveRelationships();
 
             if ($arguments['another'] ?? false) {
-                $livewire = $this->getLivewire();
-
                 if ($this->shouldForceRenderAfterCreateAnother()) {
+                    $livewire = $this->getLivewire();
+
                     if (method_exists($livewire, 'forceRender')) {
                         $livewire->forceRender();
                     }
@@ -136,11 +136,7 @@ class CreateAction extends Action
                 $hydratedDefaultState = null;
                 $schema->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
 
-                $livewire->dispatch(
-                    'reset-schema-component-state',
-                    livewireId: $livewire->getId(),
-                    schemaKey: $schema->getKey(),
-                );
+                $schema->dispatchClientSideStateReset();
 
                 $this->halt();
 
