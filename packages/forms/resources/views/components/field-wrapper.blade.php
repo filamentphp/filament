@@ -24,6 +24,7 @@
 ])
 
 @php
+    use Filament\Support\Enums\HintPosition;
     use Illuminate\Support\Arr;
 
     if ($field) {
@@ -43,6 +44,9 @@
     $belowLabelSchema = $field?->getChildSchema($field::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
     $beforeLabelSchema = $field?->getChildSchema($field::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
     $afterLabelSchema = $field?->getChildSchema($field::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+    $hintPosition = (($field !== null) && method_exists($field, 'getHintPosition'))
+        ? $field->getHintPosition()
+        : HintPosition::AfterLabel;
     $aboveContentSchema = $field?->getChildSchema($field::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
     $belowContentSchema = $field?->getChildSchema($field::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
     $beforeContentSchema = $field?->getChildSchema($field::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
@@ -107,7 +111,7 @@
             >
                 {{ $beforeLabelSchema }}
 
-                @if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix)
+                @if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || (($hintPosition === HintPosition::Inline) && $afterLabelSchema))
                     <{{ $labelTag }}
                         @if ($labelTag === 'label')
                             for="{{ $id }}"
@@ -125,11 +129,17 @@
                             </span>
                         @endif
 
+                        @if ($hintPosition === HintPosition::Inline)
+                            {{ $afterLabelSchema }}
+                        @endif
+
                         {{ $labelSuffix }}
                     </{{ $labelTag }}>
                 @endif
 
-                {{ $afterLabelSchema }}
+                @if ($hintPosition !== HintPosition::Inline)
+                    {{ $afterLabelSchema }}
+                @endif
             </div>
 
             {{ $belowLabelSchema }}

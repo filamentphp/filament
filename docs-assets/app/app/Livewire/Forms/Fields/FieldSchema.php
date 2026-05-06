@@ -3,18 +3,22 @@
 namespace App\Livewire\Forms\Fields;
 
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\FusedGroup;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\HintPosition;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Component;
 
@@ -275,6 +279,38 @@ class FieldSchema
                             Icon::make(Heroicon::Star),
                             'This is the content after the field\'s label',
                         ])),
+                ]),
+            Group::make()
+                ->id('hintPositions')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-xl',
+                ])
+                ->schema([
+                    TextInput::make('email')
+                        ->label('Billing email')
+                        ->default('alex@example.com')
+                        ->hint('Invoices and updates.')
+                        ->hintPosition(HintPosition::AfterLabel),
+                    TextInput::make('locale')
+                        ->label('Locale')
+                        ->default('en_GB')
+                        ->hint('Localized messages.')
+                        ->hintPosition(HintPosition::BeforeLabel),
+                    TextInput::make('publicName')
+                        ->label('Public name')
+                        ->default('Alex Morgan')
+                        ->hint('Shared-space display.')
+                        ->hintInline(),
+                    Grid::make()
+                        ->schema([
+                            Checkbox::make('isPublic')
+                                ->label('Public')
+                                ->hintIcon(Heroicon::QuestionMarkCircle, 'Whether this user is shown to teammates in shared spaces.'),
+                            Radio::make('isPublicRadio')
+                                ->label('Private')
+                                ->hintIcon(Heroicon::QuestionMarkCircle, 'Whether this user is shown to teammates in shared spaces.')
+                                ->hintInline(),
+                        ]),
                 ]),
             Group::make()
                 ->id('belowLabel')

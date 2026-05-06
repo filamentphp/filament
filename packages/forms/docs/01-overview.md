@@ -128,6 +128,45 @@ TextInput::make('name')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `hiddenLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Positioning field hints
+
+Hints render after the label by default. You may use `hintPosition()` to place the existing hint before the label or inline with the label:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\HintPosition;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('email')
+    ->label('Billing email')
+    ->hintIcon(Heroicon::QuestionMarkCircle, 'Receives invoices and account updates.')
+    ->hintPosition(HintPosition::AfterLabel) // This is the default.
+
+TextInput::make('locale')
+    ->label('Locale')
+    ->hintIcon(Heroicon::QuestionMarkCircle, 'Controls translated messages and date formats.')
+    ->hintPosition(HintPosition::BeforeLabel)
+
+TextInput::make('public_name')
+    ->label('Public name')
+    ->hintIcon(Heroicon::QuestionMarkCircle, 'Shown to teammates in shared spaces.')
+    ->hintPosition(HintPosition::Inline)
+```
+
+For the common inline case, you may use the `hintInline()` shortcut:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('public_name')
+    ->label('Public name')
+    ->hintIcon(Heroicon::QuestionMarkCircle)
+    ->hintInline()
+```
+
+<AutoScreenshot name="forms/fields/hint-positions" alt="Form field hint positions" version="4.x" />
+
 ## Setting the default value of a field
 
 Fields may have a default value. The default is only used when a schema is loaded with no data. In a standard [panel resource](../resources), defaults are used on the Create page, not the Edit page. To define a default value, use the `default()` method:

@@ -8,6 +8,7 @@
 
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\HintPosition;
     use Illuminate\View\ComponentAttributeBag;
 
     if ($entry) {
@@ -26,6 +27,7 @@
 
     $beforeLabelContainer = $entry?->getChildSchema($entry::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
     $afterLabelContainer = $entry?->getChildSchema($entry::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+    $hintPosition = $entry?->getHintPosition() ?? HintPosition::AfterLabel;
     $beforeContentContainer = $entry?->getChildSchema($entry::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
     $afterContentContainer = $entry?->getChildSchema($entry::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
 @endphp
@@ -58,7 +60,7 @@
             >
                 {{ $beforeLabelContainer }}
 
-                @if ($label && (! $labelSrOnly))
+                @if (($label && (! $labelSrOnly)) || (($hintPosition === HintPosition::Inline) && $afterLabelContainer))
                     <div
                         {{
                             (
@@ -66,15 +68,24 @@
                                 ? $label->attributes
                                 : (new ComponentAttributeBag)
                             )
-                                ->class(['fi-in-entry-label'])
+                                ->class([
+                                    'fi-in-entry-label',
+                                    'fi-in-entry-label-has-inline-hint' => (($hintPosition === HintPosition::Inline) && $afterLabelContainer),
+                                ])
                         }}
                         role="term"
                     >
                         {{ $label }}
+
+                        @if ($hintPosition === HintPosition::Inline)
+                            {{ $afterLabelContainer }}
+                        @endif
                     </div>
                 @endif
 
-                {{ $afterLabelContainer }}
+                @if ($hintPosition !== HintPosition::Inline)
+                    {{ $afterLabelContainer }}
+                @endif
             </div>
         @endif
 

@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\HintPosition;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
@@ -81,6 +82,26 @@ describe('hint', function (): void {
             ->hintColor('danger');
 
         expect($entry->getHintColor())->toBe('danger');
+    });
+
+    it('defaults hints to after the label', function (): void {
+        $entry = TextEntry::make('title');
+
+        expect($entry->getHintPosition())->toBe(HintPosition::AfterLabel);
+    });
+
+    it('can position hints inline', function (): void {
+        $entry = TextEntry::make('title')
+            ->hintInline();
+
+        expect($entry->getHintPosition())->toBe(HintPosition::Inline);
+    });
+
+    it('can position hints using the enum', function (): void {
+        $entry = TextEntry::make('title')
+            ->hintPosition(HintPosition::BeforeLabel);
+
+        expect($entry->getHintPosition())->toBe(HintPosition::BeforeLabel);
     });
 });
 

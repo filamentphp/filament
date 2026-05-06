@@ -796,6 +796,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/hint-positions': {
+        url: 'forms/fields/field',
+        selector: '#hintPositions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/below-label': {
         url: 'forms/fields/field',
         selector: '#belowLabel',
@@ -3165,6 +3174,15 @@ export default {
     'infolists/entries/after-label/aligned-start': {
         url: 'infolists/entries/entry',
         selector: '#afterLabelAlignedStart',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/hint-positions': {
+        url: 'infolists/entries/entry',
+        selector: '#hintPositions',
         viewport: {
             width: 1920,
             height: 640,

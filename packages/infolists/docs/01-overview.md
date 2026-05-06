@@ -468,6 +468,45 @@ TextEntry::make('title')
 
 <AutoScreenshot name="infolists/entries/tooltips" alt="Entry with tooltip" version="4.x" />
 
+## Positioning entry hints
+
+Hints render after the label by default. You may use `hintPosition()` to place the existing hint before the label or inline with the label:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\HintPosition;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('billing_contact')
+    ->label('Billing contact')
+    ->hintIcon(Heroicon::QuestionMarkCircle, 'Receives invoices and payment reminders.')
+    ->hintPosition(HintPosition::AfterLabel) // This is the default.
+
+TextEntry::make('renewal_date')
+    ->label('Renewal date')
+    ->hintIcon(Heroicon::QuestionMarkCircle, 'Calculated from the current subscription term.')
+    ->hintPosition(HintPosition::BeforeLabel)
+
+TextEntry::make('plan_visibility')
+    ->label('Plan visibility')
+    ->hintIcon(Heroicon::QuestionMarkCircle, 'Visible to account owners and billing admins.')
+    ->hintPosition(HintPosition::Inline)
+```
+
+For the common inline case, you may use the `hintInline()` shortcut:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('plan_visibility')
+    ->label('Plan visibility')
+    ->hintIcon(Heroicon::QuestionMarkCircle)
+    ->hintInline()
+```
+
+<AutoScreenshot name="infolists/entries/hint-positions" alt="Infolist entry hint positions" version="4.x" />
+
 ## Aligning entry content
 
 You may align the content of an entry to the start (left in left-to-right interfaces, right in right-to-left interfaces), center, or end (right in left-to-right interfaces, left in right-to-left interfaces) using the `alignStart()`, `alignCenter()` or `alignEnd()` methods:

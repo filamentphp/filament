@@ -13,6 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\HintPosition;
 use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\View\ComponentAttributeBag;
@@ -270,6 +271,7 @@ class Entry extends Component
         $belowLabelSchema = $this->getChildSchema($this::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
         $beforeLabelSchema = $this->getChildSchema($this::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
         $afterLabelSchema = $this->getChildSchema($this::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $hintPosition = $this->getHintPosition();
         $beforeContentSchema = $this->getChildSchema($this::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
         $afterContentSchema = $this->getChildSchema($this::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
 
@@ -308,13 +310,19 @@ class Entry extends Component
                         <div class="fi-in-entry-label-ctn">
                             <?= $beforeLabelSchema?->toHtml() ?>
 
-                            <?php if (filled($label) && (! $labelSrOnly)) { ?>
-                                <div class="fi-in-entry-label" role="term">
+                            <?php if ((filled($label) && (! $labelSrOnly)) || (($hintPosition === HintPosition::Inline) && $afterLabelSchema)) { ?>
+                                <div class="fi-in-entry-label<?= (($hintPosition === HintPosition::Inline) && $afterLabelSchema) ? ' fi-in-entry-label-has-inline-hint' : '' ?>" role="term">
                                     <?= e($label) ?>
+
+                                    <?php if ($hintPosition === HintPosition::Inline) { ?>
+                                        <?= $afterLabelSchema?->toHtml() ?>
+                                    <?php } ?>
                                 </div>
                             <?php } ?>
 
-                            <?= $afterLabelSchema?->toHtml() ?>
+                            <?php if ($hintPosition !== HintPosition::Inline) { ?>
+                                <?= $afterLabelSchema?->toHtml() ?>
+                            <?php } ?>
                         </div>
                     <?php } ?>
 

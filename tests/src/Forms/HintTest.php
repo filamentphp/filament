@@ -3,6 +3,7 @@
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\HintPosition;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 
@@ -42,6 +43,31 @@ describe('hint icon tooltip', function (): void {
 
         expect($field->getHintIconTooltip())
             ->toBeNull();
+    });
+});
+
+describe('hint position', function (): void {
+    it('defaults hints to after the label', function (): void {
+        $field = TextInput::make('test')
+            ->container(Schema::make(Livewire::make()));
+
+        expect($field->getHintPosition())->toBe(HintPosition::AfterLabel);
+    });
+
+    it('can position hints inline', function (): void {
+        $field = TextInput::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintInline();
+
+        expect($field->getHintPosition())->toBe(HintPosition::Inline);
+    });
+
+    it('can position hints using the enum', function (): void {
+        $field = TextInput::make('test')
+            ->container(Schema::make(Livewire::make()))
+            ->hintPosition(HintPosition::BeforeLabel);
+
+        expect($field->getHintPosition())->toBe(HintPosition::BeforeLabel);
     });
 });
 

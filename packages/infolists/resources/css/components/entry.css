@@ -20,6 +20,10 @@
     & .fi-in-entry-label {
         @apply text-sm font-medium text-gray-950 dark:text-white;
 
+        &.fi-in-entry-label-has-inline-hint {
+            @apply flex items-start gap-x-3;
+        }
+
         &.fi-hidden {
             @apply hidden;
         }

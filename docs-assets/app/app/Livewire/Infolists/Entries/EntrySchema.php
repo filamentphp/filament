@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\HintPosition;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 
@@ -231,6 +232,28 @@ class EntrySchema
                             Icon::make(Heroicon::Star),
                             'This is the content after the entry\'s label',
                         ])),
+                ]),
+            Group::make()
+                ->id('hintPositions')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-xl',
+                ])
+                ->schema([
+                    TextEntry::make('billing_contact')
+                        ->label('Billing contact')
+                        ->state('Alex Morgan')
+                        ->hintIcon(Heroicon::QuestionMarkCircle, 'Receives invoices and payment reminders.')
+                        ->hintPosition(HintPosition::AfterLabel),
+                    TextEntry::make('renewal_date')
+                        ->label('Renewal date')
+                        ->state('June 15, 2026')
+                        ->hintIcon(Heroicon::QuestionMarkCircle, 'Calculated from the current subscription term.')
+                        ->hintPosition(HintPosition::BeforeLabel),
+                    TextEntry::make('plan_visibility')
+                        ->label('Plan visibility')
+                        ->state('Account owners')
+                        ->hintIcon(Heroicon::QuestionMarkCircle, 'Visible to account owners and billing admins.')
+                        ->hintInline(),
                 ]),
             Group::make()
                 ->id('belowLabel')
