@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION_LABEL=${1:-"4.x"}
+VERSION_LABEL=${1:?"Usage: $0 <version_label> (e.g. v4.0.5)"}
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FILAMENT_PACKAGES_PATH=${FILAMENT_PACKAGES_PATH:-"${REPO_ROOT}/packages"}
 REPRO_DIR="${REPO_ROOT}/app-filament-issue-${VERSION_LABEL}"
