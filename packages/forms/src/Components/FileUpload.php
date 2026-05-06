@@ -10,10 +10,10 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\ButtonComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 use InvalidArgumentException;
 
 use function Filament\Support\generate_icon_html;
@@ -1000,7 +1000,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                     x-on:click.stop=""
                     x-trap.noscroll="isEditorOpen"
                     x-on:keydown.escape.prevent.stop="closeEditor"
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-file-upload-editor',
                         'fi-fo-file-upload-editor-circle-cropper' => $hasCircleCropper,
                         'fi-fo-file-upload-editor-crop-only' => ! $isImageEditorExplicitlyEnabled,
@@ -1147,7 +1147,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                     <button
                                         type="button"
                                         x-on:click.prevent.stop="editor.reset()"
-                                        <?= (new ComponentAttributeBag)
+                                        <?= (new FilamentComponentAttributeBag)
                                             ->color(ButtonComponent::class, 'danger')
                                             ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
                                             ->toHtml() ?>
@@ -1158,7 +1158,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                     <button
                                         type="button"
                                         x-on:click.prevent="saveEditor"
-                                        <?= (new ComponentAttributeBag)
+                                        <?= (new FilamentComponentAttributeBag)
                                             ->color(ButtonComponent::class, 'success')
                                             ->class(['fi-btn'])
                                             ->toHtml() ?>
@@ -1169,7 +1169,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                     <button
                                         type="button"
                                         x-on:click.prevent="saveEditor"
-                                        <?= (new ComponentAttributeBag)
+                                        <?= (new FilamentComponentAttributeBag)
                                             ->color(ButtonComponent::class, 'success')
                                             ->class(['fi-btn'])
                                             ->toHtml() ?>

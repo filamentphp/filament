@@ -4,7 +4,7 @@ namespace Filament\Schemas\Components;
 
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Livewire\Livewire as LivewireFacade;
 
 class Livewire extends Component implements HasEmbeddedView
@@ -122,7 +122,7 @@ class Livewire extends Component implements HasEmbeddedView
         $livewireHtml = LivewireFacade::mount($component, $properties, $key);
 
         if ($hasWrapper) {
-            $attributes = (new ComponentAttributeBag)
+            $attributes = (new FilamentComponentAttributeBag)
                 ->merge(['id' => $id], escape: false)
                 ->merge($extraAttributes, escape: false);
 

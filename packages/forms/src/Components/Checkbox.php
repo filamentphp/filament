@@ -6,7 +6,7 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\VerticalAlignment;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
 class Checkbox extends Field implements HasEmbeddedView
 {
@@ -31,7 +31,7 @@ class Checkbox extends Field implements HasEmbeddedView
         $statePath = $this->getStatePath();
         $hasError = $this->hasErrorForPath($statePath);
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'autofocus' => $this->isAutofocused(),
                 'disabled' => $this->isDisabled(),

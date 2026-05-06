@@ -12,9 +12,9 @@ use Filament\Support\Concerns\HasFromBreakpoint;
 use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 class Flex extends Component implements HasEmbeddedView
 {
@@ -59,7 +59,7 @@ class Flex extends Component implements HasEmbeddedView
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class([
                 'fi-sc-flex',

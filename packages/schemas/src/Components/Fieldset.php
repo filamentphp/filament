@@ -9,8 +9,8 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\View\ComponentAttributeBag;
 
 class Fieldset extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
@@ -54,7 +54,7 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
         $isContained = $this->isContained();
         $isRequired = $this->isMarkedAsRequired();
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge(['id' => $id], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class([

@@ -13,8 +13,8 @@ use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\View\ComponentAttributeBag;
 
 class Actions extends Component implements HasEmbeddedView
 {
@@ -199,7 +199,7 @@ class Actions extends Component implements HasEmbeddedView
             fn ($action): bool => $action->isVisible(),
         );
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $this->getId(),
             ], escape: false)
@@ -242,7 +242,7 @@ class Actions extends Component implements HasEmbeddedView
 
             <?php if (filled($visibleActions)) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)
+                    <?= (new FilamentComponentAttributeBag)
                         ->merge([
                             'x-bind:style' => $isSticky ? 'isSticky ? `width: ${width}px;` : \'\'' : null,
                         ], escape: false)

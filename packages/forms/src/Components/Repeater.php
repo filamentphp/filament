@@ -20,6 +20,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +28,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
 use function Filament\Forms\array_move_after;
@@ -1530,14 +1530,14 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         $isItemLabelTruncated = $this->isItemLabelTruncated();
         $labelBetweenItems = $this->getLabelBetweenItems();
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class([
                 'fi-fo-repeater',
                 'fi-collapsible' => $isCollapsible,
             ]);
 
-        $itemsAttributes = (new ComponentAttributeBag)
+        $itemsAttributes = (new FilamentComponentAttributeBag)
             ->grid($this->getGridColumns())
             ->merge([
                 'data-sortable-animation-duration' => $this->getReorderAnimationDuration(),
@@ -1553,7 +1553,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         <div <?= $outerAttributes->toHtml() ?>>
             <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-repeater-actions',
                         'fi-hidden' => $itemCount < 2,
                     ])->toHtml() ?>
@@ -1607,7 +1607,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                             x-on:repeater-collapse.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = true)"
                             x-on:expand="isCollapsed = false"
                             x-sortable-item="<?= e($itemKey) ?>"
-                            <?= (new ComponentAttributeBag)->class([
+                            <?= (new FilamentComponentAttributeBag)->class([
                                 'fi-fo-repeater-item',
                                 'fi-fo-repeater-item-has-header' => $hasItemHeader,
                             ])->toHtml() ?>
@@ -1637,7 +1637,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
                                     <?php if (filled($itemLabel)) { ?>
                                         <<?= e($itemLabelHeadingTag) ?>
-                                            <?= (new ComponentAttributeBag)->class([
+                                            <?= (new FilamentComponentAttributeBag)->class([
                                                 'fi-fo-repeater-item-header-label',
                                                 'fi-truncated' => $isItemLabelTruncated,
                                             ])->toHtml() ?>
@@ -1704,7 +1704,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
             <?php if ($isAddable && $addAction->isVisible()) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-repeater-add',
                         ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                     ])->toHtml() ?>
@@ -1739,11 +1739,11 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         $key = $this->getKey();
         $statePath = $this->getStatePath();
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-fo-simple-repeater']);
 
-        $itemsAttributes = (new ComponentAttributeBag)
+        $itemsAttributes = (new FilamentComponentAttributeBag)
             ->grid($this->getGridColumns())
             ->merge([
                 'data-sortable-animation-duration' => $this->getReorderAnimationDuration(),
@@ -1833,7 +1833,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
             <?php if ($isAddable && $addAction->isVisible()) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-simple-repeater-add',
                         ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                     ])->toHtml() ?>
@@ -1872,14 +1872,14 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
         $isCompact = $this->isCompact();
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class([
                 'fi-fo-table-repeater',
                 'fi-compact' => $isCompact,
             ]);
 
-        $tbodyAttributes = (new ComponentAttributeBag)
+        $tbodyAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'data-sortable-animation-duration' => $this->getReorderAnimationDuration(),
                 'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
@@ -1905,7 +1905,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                                 <?php
                                     $columnAlignment = $column->getAlignment();
                                 $columnWidth = $column->getWidth();
-                                $thAttributes = (new ComponentAttributeBag)
+                                $thAttributes = (new FilamentComponentAttributeBag)
                                     ->class([
                                         'fi-wrapped' => $column->canHeaderWrap(),
                                         ($columnAlignment instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
@@ -2006,7 +2006,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                                                 <?php
                                                     $currentColumn = $tableColumns[$counter - 1] ?? null;
                                                 $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
-                                                $tdAttributes = (new ComponentAttributeBag)
+                                                $tdAttributes = (new FilamentComponentAttributeBag)
                                                     ->class([
                                                         ($columnVerticalAlignment instanceof VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
                                                     ]);
@@ -2054,7 +2054,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
             <?php if ($isAddable && $addAction->isVisible()) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-table-repeater-add',
                         ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                     ])->toHtml() ?>

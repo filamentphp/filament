@@ -10,8 +10,8 @@ use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\View\ComponentAttributeBag;
 
 class Form extends Component implements CanEntangleWithSingularRelationships, ExposesStateToActionData, HasEmbeddedView
 {
@@ -89,7 +89,7 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Ex
 
     public function toEmbeddedHtml(): string
     {
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $this->getId(),
                 'wire:submit' => $this->getLivewireSubmitHandler(),

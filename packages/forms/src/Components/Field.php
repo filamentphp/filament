@@ -14,6 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
@@ -344,7 +345,7 @@ class Field extends Component implements Contracts\HasValidationRules
                 'labelSuffix' => $labelSuffix,
                 'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
                 'labelTag' => $labelTag,
-                'attributes' => (new ComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
+                'attributes' => (new FilamentComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
                 'hasErrors' => $hasError,
                 'errorMessage' => $errorMessage,
                 'errorMessages' => $errorMessages,
@@ -371,7 +372,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
         $areHtmlErrorMessagesAllowed = $this->areHtmlValidationMessagesAllowed();
 
-        $wrapperAttributes = (new ComponentAttributeBag)
+        $wrapperAttributes = (new FilamentComponentAttributeBag)
             ->merge($extraWrapperAttributes, escape: false)
             ->merge($this->getExtraFieldWrapperAttributes(), escape: false)
             ->class([
@@ -399,7 +400,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
             <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix || $labelSuffix) { ?>
                 <div
-                    <?= (new ComponentAttributeBag)->class([
+                    <?= (new FilamentComponentAttributeBag)->class([
                         'fi-fo-field-label-col',
                         "fi-vertical-align-{$inlineLabelVerticalAlignment->value}" => $hasInlineLabel,
                     ])->toHtml() ?>
@@ -407,7 +408,7 @@ class Field extends Component implements Contracts\HasValidationRules
                     <?= $aboveLabelSchema?->toHtml() ?>
 
                     <div
-                        <?= (new ComponentAttributeBag)->class([
+                        <?= (new FilamentComponentAttributeBag)->class([
                             'fi-fo-field-label-ctn',
                             ($label instanceof ComponentSlot) ? $label->attributes->get('class') : null,
                         ])->toHtml() ?>
@@ -506,7 +507,7 @@ class Field extends Component implements Contracts\HasValidationRules
         ?string $alpineValid = null,
         ?ComponentAttributeBag $attributes = null,
     ): string {
-        $attributes ??= new ComponentAttributeBag;
+        $attributes ??= new FilamentComponentAttributeBag;
 
         $hasAffixes = $this instanceof Contracts\HasAffixes;
 
@@ -575,7 +576,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
         <div <?= $wrapperAttributes->toHtml() ?>>
             <?php if ($hasPrefix || $hasLoadingIndicator) {
-                $prefixDivAttributes = (new ComponentAttributeBag)->class([
+                $prefixDivAttributes = (new FilamentComponentAttributeBag)->class([
                     'fi-input-wrp-prefix',
                     'fi-input-wrp-prefix-has-content' => $hasPrefix,
                     'fi-inline' => $hasInlinePrefix,
@@ -611,7 +612,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                     <?= generate_icon_html(
                         $prefixIcon,
-                        attributes: (new ComponentAttributeBag)
+                        attributes: (new FilamentComponentAttributeBag)
                             ->merge([
                                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
@@ -620,7 +621,7 @@ class Field extends Component implements Contracts\HasValidationRules
                     )?->toHtml() ?>
 
                     <?php if ($hasLoadingIndicator) { ?>
-                        <?= generate_loading_indicator_html((new ComponentAttributeBag([
+                        <?= generate_loading_indicator_html((new FilamentComponentAttributeBag([
                             'wire:loading.delay.' . $loadingDelay => $hasPrefix,
                             'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                         ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
@@ -635,7 +636,7 @@ class Field extends Component implements Contracts\HasValidationRules
             <?php } ?>
 
             <?php
-                $contentCtnAttributes = (new ComponentAttributeBag)->class([
+                $contentCtnAttributes = (new FilamentComponentAttributeBag)->class([
                     'fi-input-wrp-content-ctn',
                     'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $hasInlinePrefix,
                 ]);
@@ -652,7 +653,7 @@ class Field extends Component implements Contracts\HasValidationRules
             </div>
 
             <?php if ($hasSuffix) {
-                $suffixDivAttributes = (new ComponentAttributeBag)->class([
+                $suffixDivAttributes = (new FilamentComponentAttributeBag)->class([
                     'fi-input-wrp-suffix',
                     'fi-inline' => $hasInlineSuffix,
                     'fi-input-wrp-suffix-has-label' => filled($suffix),
@@ -673,7 +674,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
                     <?= generate_icon_html(
                         $suffixIcon,
-                        attributes: (new ComponentAttributeBag)
+                        attributes: (new FilamentComponentAttributeBag)
                             ->merge([
                                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,

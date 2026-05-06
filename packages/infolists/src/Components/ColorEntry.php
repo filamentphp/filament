@@ -6,11 +6,11 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 class ColorEntry extends Entry implements HasEmbeddedView
 {
@@ -85,7 +85,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
                     : null;
                 ?>
 
-                <div <?= (new ComponentAttributeBag)
+                <div <?= (new FilamentComponentAttributeBag)
                     ->merge([
                         'x-on:click' => $isCopyable
                             ? <<<JS

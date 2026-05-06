@@ -2,8 +2,8 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
@@ -132,7 +132,7 @@
         x-show="isOpen"
         x-transition.duration.300ms.opacity
         {{
-            ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
+            ($extraModalOverlayAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
                 'fi-modal-close-overlay',
             ])
         }}
@@ -167,7 +167,7 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
+                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
                     'fi-modal-window',
                     'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
@@ -208,7 +208,7 @@
                         @if ($hasIcon)
                             <div class="fi-modal-icon-ctn">
                                 <div
-                                    {{ (new ComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
+                                    {{ (new FilamentComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
                                 >
                                     {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) }}
                                 </div>

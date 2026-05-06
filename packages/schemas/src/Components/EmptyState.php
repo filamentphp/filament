@@ -14,9 +14,9 @@ use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
 use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Enums\IconSize;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\SectionComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
 
@@ -104,11 +104,11 @@ class EmptyState extends Component implements HasEmbeddedView
         $hasDescription = filled((string) $description);
         $hasIcon = filled($icon);
 
-        $outerAttributes = (new ComponentAttributeBag)
+        $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-empty-state']);
 
-        $sectionAttributes = (new ComponentAttributeBag)
+        $sectionAttributes = (new FilamentComponentAttributeBag)
             ->class([
                 'fi-empty-state',
                 'fi-compact' => $isCompact,
@@ -122,12 +122,12 @@ class EmptyState extends Component implements HasEmbeddedView
                 <div class="fi-empty-state-content">
                     <?php if ($hasIcon) { ?>
                         <div
-                            <?= (new ComponentAttributeBag)->class([
+                            <?= (new FilamentComponentAttributeBag)->class([
                                 'fi-empty-state-icon-bg',
                                 'fi-color ' . ('fi-color-' . $iconColor) => $iconColor !== 'gray',
                             ])->toHtml() ?>
                         >
-                            <?= generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+                            <?= generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                                 ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)?->toHtml() ?>
                         </div>
                     <?php } ?>

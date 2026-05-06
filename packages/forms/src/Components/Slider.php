@@ -14,9 +14,9 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
@@ -523,7 +523,7 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
         $isDisabled = $this->isDisabled();
         $statePath = $this->getStatePath();
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'id' => $this->getId(),
             ], escape: false)

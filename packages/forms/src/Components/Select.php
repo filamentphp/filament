@@ -22,6 +22,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -38,7 +39,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -1987,7 +1987,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64) ?>"
                         x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                         x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
-                        <?= (new ComponentAttributeBag)
+                        <?= (new FilamentComponentAttributeBag)
                             ->merge($this->getExtraAlpineAttributes(), escape: false)
                             ->class(['fi-select-input'])
                             ->toHtml() ?>

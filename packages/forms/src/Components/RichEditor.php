@@ -30,13 +30,13 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
@@ -1658,7 +1658,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                                 x-on:run-rich-editor-commands.window="isLoading = false"
                                                 class="fi-fo-rich-editor-custom-block-btn"
                                             >
-                                                <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
+                                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
                                                 <?= e($block::getLabel()) ?>
                                             </button>
                                         <?php } ?>

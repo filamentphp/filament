@@ -14,10 +14,10 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\ButtonComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
 
@@ -107,7 +107,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 $icon = $this->getIcon($value);
                 $tooltip = $this->getTooltip($value);
 
-                $buttonAttributes = (new ComponentAttributeBag)
+                $buttonAttributes = (new FilamentComponentAttributeBag)
                     ->merge([
                         'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
                         'aria-label' => $areButtonLabelsHidden ? trim(strip_tags((string) $label)) : null,
@@ -183,7 +183,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 $icon = $this->getIcon($value);
                 $tooltip = $this->getTooltip($value);
 
-                $buttonAttributes = (new ComponentAttributeBag)
+                $buttonAttributes = (new FilamentComponentAttributeBag)
                     ->merge([
                         'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
                         'aria-label' => $areButtonLabelsHidden ? trim(strip_tags((string) $label)) : null,

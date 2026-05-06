@@ -10,7 +10,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\HtmlString;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('serial');
 
 describe('view', function (): void {
     it('returns the view set in the property', function (): void {
@@ -173,13 +173,15 @@ describe('HTML rendering', function (): void {
 });
 
 describe('published view override', function (): void {
-    beforeEach(function (): void {
+    $resetOverrideCache = function (): void {
         $cache = (new ReflectionClass(ViewComponent::class))
             ->getProperty('hasPublishedEmbeddedViewOverrideCache');
         $cache->setValue(null, []);
-    });
+    };
 
-    afterEach(function (): void {
+    beforeEach($resetOverrideCache);
+
+    afterEach(function () use ($resetOverrideCache): void {
         foreach ([
             resource_path('views/vendor/filament-forms/test-override.blade.php'),
             resource_path('views/vendor/filament-forms/components/text-input.blade.php'),
@@ -197,6 +199,8 @@ describe('published view override', function (): void {
                 @rmdir($directory);
             }
         }
+
+        $resetOverrideCache();
     });
 
     it('returns the path declared in the property from `getPublishedViewOverrideCheckPath()`', function (): void {

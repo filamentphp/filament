@@ -8,8 +8,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\View\ComponentAttributeBag;
 
 class Group extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
@@ -38,7 +38,7 @@ class Group extends Component implements CanEntangleWithSingularRelationships, H
 
     public function toEmbeddedHtml(): string
     {
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge(['id' => $this->getId()], escape: false)
             ->merge($this->getExtraAttributes(), escape: false);
 

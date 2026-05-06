@@ -20,6 +20,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Contracts\Support\Htmlable;
@@ -288,7 +289,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 
             $size = $this->getSize($stateItem);
 
-            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
+            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new FilamentComponentAttributeBag)
                 ->color(IconComponent::class, $iconColor), size: match ($size) {
                     TextSize::Medium => IconSize::Medium,
                     TextSize::Large => IconSize::Large,
@@ -306,7 +307,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
             $tooltip = $this->getTooltip($stateItem);
 
             return [
-                'attributes' => (new ComponentAttributeBag)
+                'attributes' => (new FilamentComponentAttributeBag)
                     ->class([
                         'fi-in-text-item',
                         'fi-prose' => $isProse || $isMarkdown,
@@ -325,7 +326,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                             ->color(ItemComponent::class, $color)
                     ),
                 'contentAttributes' => ($isBadge || $isCopyable || filled($tooltip))
-                    ? (new ComponentAttributeBag)
+                    ? (new FilamentComponentAttributeBag)
                         ->merge([
                             'x-on:click' => $isCopyable
                                 ? <<<JS

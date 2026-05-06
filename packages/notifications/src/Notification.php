@@ -17,6 +17,7 @@ use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +27,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 use PHPUnit\Framework\Assert;
 
 use function Filament\Support\generate_icon_html;
@@ -343,7 +343,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $body = $this->getBody();
         $hasBody = filled($body);
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'wire:key' => "{$this->getId()}.notifications.{$this->getId()}",
                 'x-on:close-notification.window' => "if (\$event.detail.id == '{$this->getId()}') close()",
@@ -367,7 +367,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         >
             <?= generate_icon_html(
                 $this->getIcon(),
-                attributes: (new ComponentAttributeBag)->color(IconComponent::class, $this->getIconColor())->class(['fi-no-notification-icon']),
+                attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $this->getIconColor())->class(['fi-no-notification-icon']),
                 size: $this->getIconSize(),
             )?->toHtml() ?>
 

@@ -1,8 +1,8 @@
 @php
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
-    use Illuminate\View\ComponentAttributeBag;
 
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
@@ -39,10 +39,10 @@
 
         @if ($description = $getDescription())
             <div
-                {{ (new ComponentAttributeBag)->color(DescriptionComponent::class, $descriptionColor)->class(['fi-wi-stats-overview-stat-description']) }}
+                {{ (new FilamentComponentAttributeBag)->color(DescriptionComponent::class, $descriptionColor)->class(['fi-wi-stats-overview-stat-description']) }}
             >
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
                 @endif
 
                 <span>
@@ -50,7 +50,7 @@
                 </span>
 
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
                 @endif
             </div>
         @endif
@@ -67,7 +67,7 @@
                             labels: @js(array_keys($chart)),
                             values: @js(array_values($chart)),
                         })"
-                {{ (new ComponentAttributeBag)->color(StatsOverviewWidgetStatChartComponent::class, $chartColor)->class(['fi-wi-stats-overview-stat-chart']) }}
+                {{ (new FilamentComponentAttributeBag)->color(StatsOverviewWidgetStatChartComponent::class, $chartColor)->class(['fi-wi-stats-overview-stat-chart']) }}
             >
                 <canvas x-ref="canvas"></canvas>
 

@@ -21,10 +21,10 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
 
@@ -198,7 +198,7 @@ class Text extends Component implements HasEmbeddedView
         }
 
         // Non-badge mode: simple span
-        $spanAttributes = (new ComponentAttributeBag)
+        $spanAttributes = (new FilamentComponentAttributeBag)
             ->color(TextComponent::class, $color)
             ->class([
                 'fi-sc-text',

@@ -5,6 +5,7 @@ namespace Filament\Support\View\Concerns;
 use BackedEnum;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\IconButtonComponent;
 use Illuminate\Contracts\Support\Htmlable;
@@ -134,18 +135,18 @@ trait CanGenerateIconButtonHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+            <?= $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
             ])), size: $iconSize)->toHtml() : '' ?>
-            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
+            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                 'wire:target' => $loadingIndicatorTarget,
             ])), size: $iconSize)->toHtml() : '' ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-icon-btn-badge-ctn">
-                    <span <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                    <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>

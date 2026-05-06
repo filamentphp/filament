@@ -14,12 +14,12 @@ use Filament\Support\Concerns\HasBadgeTooltip;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 
 class Tab extends Component implements CanConcealComponents, HasEmbeddedView
 {
@@ -164,7 +164,7 @@ class Tab extends Component implements CanConcealComponents, HasEmbeddedView
             return '';
         }
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'aria-labelledby' => $id,
                 'id' => $id,

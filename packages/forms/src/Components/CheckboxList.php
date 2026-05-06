@@ -15,6 +15,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,7 +24,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
 use function Filament\Support\generate_icon_html;
@@ -510,12 +510,12 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         >
             <?php if (! $isDisabled) { ?>
                 <?php if ($isSearchable) { ?>
-                    <div <?= (new ComponentAttributeBag)->class(['fi-input-wrp', 'fi-fo-checkbox-list-search-input-wrp'])->toHtml() ?>>
+                    <div <?= (new FilamentComponentAttributeBag)->class(['fi-input-wrp', 'fi-fo-checkbox-list-search-input-wrp'])->toHtml() ?>>
                         <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-inline">
                             <?= generate_icon_html(
                                 Heroicon::MagnifyingGlass,
                                 FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD,
-                                (new ComponentAttributeBag)->color(IconComponent::class, 'gray'),
+                                (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'),
                             )?->toHtml() ?>
                         </div>
 

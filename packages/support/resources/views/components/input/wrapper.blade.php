@@ -97,7 +97,7 @@
             @endif
 
             {{
-                \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
+                \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
                     ->merge([
                         'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
@@ -107,7 +107,7 @@
 
             @if ($hasLoadingIndicator)
                 {{
-                    \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
                         'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
                         'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                     ]))->color(IconComponent::class, 'gray'))
@@ -156,7 +156,7 @@
             @endif
 
             {{
-                \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
+                \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
                     ->merge([
                         'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,

@@ -8,6 +8,7 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Support\Arr;
-use Illuminate\View\ComponentAttributeBag;
 use Livewire\Livewire;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -438,7 +438,7 @@ class TableSelect extends Field implements HasEmbeddedView
 
         $livewireHtml = Livewire::mount(TableSelectLivewireComponent::class, $properties, $this->getLivewireKey());
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge(['id' => $id], escape: false)
             ->merge($extraAttributes, escape: false);
 

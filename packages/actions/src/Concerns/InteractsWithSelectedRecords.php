@@ -44,6 +44,11 @@ trait InteractsWithSelectedRecords
         return (bool) $this->evaluate($this->canAccessSelectedRecords);
     }
 
+    public function hasCanAccessSelectedRecords(): bool
+    {
+        return $this->canAccessSelectedRecords !== false;
+    }
+
     public function getSelectedRecords(): EloquentCollection | Collection | LazyCollection
     {
         if (! $this->canAccessSelectedRecords()) {

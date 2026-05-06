@@ -14,8 +14,8 @@ use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 use LogicException;
 
@@ -282,7 +282,7 @@ class Entry extends Component
                 'fi-in-entry-has-inline-label' => $hasInlineLabel,
             ]);
 
-        $contentAttributes = (new ComponentAttributeBag)
+        $contentAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'type' => ($wrapperTag === 'button') ? 'button' : null,
                 'wire:click' => $wireClickAction = $action?->getLivewireClickHandler(),
