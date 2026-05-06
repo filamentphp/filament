@@ -6,15 +6,8 @@ function create-app-filament-issue {
   repro_dir="app-filament-issue-${version_label}"
 
   rm -rf "$repro_dir"
-  composer create-project laravel/laravel "$repro_dir" --no-install
+  composer create-project laravel/laravel "$repro_dir"
   cd "$repro_dir"
-
-  composer config minimum-stability dev
-  composer config prefer-stable true
-  composer config repositories.filament-monorepo "{\"type\": \"path\", \"url\": \"${filament_packages_path}/*\", \"options\": {\"symlink\": false}}"
-
-  composer install
-  composer require filament/filament:"*" -W
 
   cp .env.example .env
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -26,6 +19,11 @@ function create-app-filament-issue {
 
   touch database/database.sqlite
 
+  composer config minimum-stability dev
+  composer config prefer-stable true
+  composer config repositories.filament-monorepo "{\"type\": \"path\", \"url\": \"${filament_packages_path}/*\", \"options\": {\"symlink\": false}}"
+
+  composer require filament/filament:"*" -W
   php artisan filament:install --panels --no-interaction
 
   install_auto_login
