@@ -1,8 +1,8 @@
 name: filament-issue
 
 on:
-  push:
-    tags: '*'
+  # push:
+  #   tags: '*'
   workflow_dispatch:
     inputs:
       version_label:
