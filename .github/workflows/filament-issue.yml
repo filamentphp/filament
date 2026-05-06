@@ -45,9 +45,7 @@ jobs:
         run: echo "time=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
 
       - name: Build Filament Issue app
-        run: |
-          chmod +x ./run
-          ./run create-app-filament-issue "${{ steps.version.outputs.label }}"
+        run: ./bin/filament-issue.sh "${{ steps.version.outputs.label }}"
 
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
