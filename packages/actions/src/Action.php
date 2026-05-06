@@ -36,6 +36,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Component;
 use Livewire\Drawer\Utils;
 
 class Action extends ViewComponent implements Arrayable
@@ -361,6 +362,23 @@ class Action extends ViewComponent implements Arrayable
         }
 
         return $this->getJsClickHandler();
+    }
+
+    protected function getLivewireKey(): ?string
+    {
+        $livewire = $this->getLivewire();
+
+        if (! $livewire instanceof Component) {
+            return null;
+        }
+
+        $key = md5(serialize([
+            $this->getContext(),
+            $this->getLivewireClickHandler(),
+            $this->getLivewireTarget(),
+        ]));
+
+        return "{$livewire->getId()}.actions.{$this->getName()}.grouped.{$key}";
     }
 
     public function getLivewireEventClickHandler(): ?string
@@ -857,6 +875,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
