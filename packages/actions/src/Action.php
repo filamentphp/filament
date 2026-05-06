@@ -368,7 +368,7 @@ class Action extends ViewComponent implements Arrayable
     {
         $livewire = $this->getLivewire();
 
-        if (! $livewire instanceof Component) {
+        if (! ($livewire instanceof Component)) {
             return null;
         }
 
