@@ -59,6 +59,9 @@ trait HasHint
         });
     }
 
+    /**
+     * @return array<Text | Icon | Action>
+     */
     protected function getHintComponents(): array
     {
         $components = [];
