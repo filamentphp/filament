@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
@@ -1333,7 +1334,7 @@ describe('saveToRelationship branches', function (): void {
         $user = User::factory()->create();
         $existingPost = Post::factory()->create(['author_id' => $user->id, 'title' => 'Original']);
 
-        \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::reset();
+        RecordingTranslatableContentDriver::reset();
 
         livewire(RepeaterWithTranslatableContentDriver::class, ['record' => $user])
             ->fillForm([
@@ -1344,7 +1345,7 @@ describe('saveToRelationship branches', function (): void {
             ])
             ->call('save');
 
-        $log = \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::$callLog;
+        $log = RecordingTranslatableContentDriver::$callLog;
 
         expect($log)->toContain('updateRecord:Updated');
         expect($log)->toContain('makeRecord:New Post');
@@ -2693,7 +2694,7 @@ class RepeaterWithTranslatableContentDriver extends Component implements HasActi
 
     public function getFilamentTranslatableContentDriver(): ?string
     {
-        return \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::class;
+        return RecordingTranslatableContentDriver::class;
     }
 
     public function mount(): void
