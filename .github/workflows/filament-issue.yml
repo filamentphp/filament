@@ -1,6 +1,9 @@
 name: filament-issue
 
 on:
+  # Running it manually for now. Probably a safer option is to call this workflow
+  # from the real release workflow (not running on a tag event)
+  #
   # push:
   #   tags: '*'
   workflow_dispatch:
