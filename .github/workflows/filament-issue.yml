@@ -54,12 +54,11 @@ jobs:
           retention-days: 90
 
       - name: Attach zip to release
-        if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ steps.version.outputs.label }}
           body: |
-            Filament Issue reproduction app for `${{ github.ref_name }}`.
+            Filament Issue reproduction app for `${{ steps.version.outputs.label }}`.
 
             Last generated on ${{ steps.current-time.outputs.time }}
           files: |
