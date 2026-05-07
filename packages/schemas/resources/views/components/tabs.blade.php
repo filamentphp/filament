@@ -47,8 +47,10 @@
         x-data="tabsSchemaComponent({
             activeTab: @js($activeTab),
             isScrollable: @js($isScrollable),
+            isTabPersisted: @js($isTabPersisted()),
             isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
             livewireId: @js($this->getId()),
+            schemaKey: @js($getRootContainer()->getKey()),
             tab: @if ($isTabPersisted() && filled($id)) $persist(null).as(@js($id)) @else @js(null) @endif,
             tabQueryStringKey: @js($getTabQueryStringKey()),
         })"

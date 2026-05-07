@@ -205,15 +205,17 @@ trait CanBeAuthorized
 
     public function isAuthorizedOrNotHiddenWhenUnauthorized(): bool
     {
-        if ($this->hasAuthorizationTooltip()) {
+        if (! $this->hasAuthorizationTooltip() && ! $this->hasAuthorizationNotification()) {
+            return $this->isAuthorized();
+        }
+
+        $response = $this->getAuthorizationResponse();
+
+        if ($response->allowed()) {
             return true;
         }
 
-        if ($this->hasAuthorizationNotification()) {
-            return true;
-        }
-
-        return $this->isAuthorized();
+        return filled($response->message()) || filled($this->getAuthorizationMessage());
     }
 
     public function authorizeIndividualRecords(bool | string | Closure | null $callback = true): static
