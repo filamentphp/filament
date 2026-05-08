@@ -87,6 +87,14 @@ document.addEventListener('alpine:init', () => {
                 const fields = this.$el.querySelectorAll('[autofocus]')
 
                 for (const field of fields) {
+                    // Skip fields hidden by an ancestor (e.g. an inactive
+                    // wizard step or tab) — the wizard/tab Alpine scope owns
+                    // its own `$watch` that refocuses once the active step
+                    // or tab is restored.
+                    if (field.offsetParent === null) {
+                        continue
+                    }
+
                     field.focus()
 
                     if (document.activeElement === field) {
