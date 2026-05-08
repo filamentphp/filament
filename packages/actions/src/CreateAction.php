@@ -138,6 +138,7 @@ class CreateAction extends Action
 
                 $livewire = $this->getLivewire();
                 $livewire->dispatch('autofocus-form-fields', livewireId: $livewire->getId());
+                $schema->dispatchClientSideStateReset();
 
                 $this->halt();
 

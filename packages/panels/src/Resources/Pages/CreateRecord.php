@@ -149,6 +149,7 @@ class CreateRecord extends Page
             // Rebuild child schemas without double-firing `afterStateHydrated()` hooks.
             $hydratedDefaultState = null;
             $this->form->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+            $this->form->dispatchClientSideStateReset();
 
             $this->dispatch('autofocus-form-fields', livewireId: $this->getId());
 
