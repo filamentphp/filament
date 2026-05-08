@@ -243,28 +243,28 @@
                             x-data="{
                                 hasValidationMessage: false,
                                 timeInputInvalid(event) {
-                                    const el = event.target;
+                                    const el = event.target
 
-                                    if (!isOpen()){
-                                        event.preventDefault();
-                                        togglePanelVisibility();
+                                    if (! isOpen()) {
+                                        event.preventDefault()
+                                        togglePanelVisibility()
                                     }
 
-                                    if (!this.hasValidationMessage) {
-                                        this.hasValidationMessage = true;
+                                    if (! this.hasValidationMessage) {
+                                        this.hasValidationMessage = true
 
                                         $nextTick(() => {
-                                            el.reportValidity();
-                                            this.hasValidationMessage = false;
-                                        });
+                                            el.reportValidity()
+                                            this.hasValidationMessage = false
+                                        })
                                     }
                                 },
                                 checkTimeInputValidity(event) {
-                                    const el = event.target;
-                                    if(isOpen() && !el.validity.valid) {
-                                        el.reportValidity();
+                                    const el = event.target
+                                    if (isOpen() && ! el.validity.valid) {
+                                        el.reportValidity()
                                     }
-                                }
+                                },
                             }"
                         >
                             <input
