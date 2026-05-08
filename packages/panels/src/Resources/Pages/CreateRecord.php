@@ -151,8 +151,6 @@ class CreateRecord extends Page
             $this->form->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
             $this->form->dispatchClientSideStateReset();
 
-            $this->dispatch('autofocus-form-fields', livewireId: $this->getId());
-
             $this->isCreating = false;
 
             return;

@@ -42,7 +42,7 @@ const findClosestLivewireComponent = (el) => {
 }
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.data('filamentSchema', ({ livewireId }) => ({
+    window.Alpine.data('filamentSchema', ({ livewireId, schemaKey }) => ({
         handleFormValidationError(event) {
             if (event.detail.livewireId !== livewireId) {
                 return
@@ -75,8 +75,11 @@ document.addEventListener('alpine:init', () => {
             })
         },
 
-        autofocusFormFields(event) {
-            if (event.detail.livewireId !== livewireId) {
+        handleClientSideStateReset(event) {
+            if (
+                event.detail.livewireId !== livewireId ||
+                event.detail.schemaKey !== schemaKey
+            ) {
                 return
             }
 
