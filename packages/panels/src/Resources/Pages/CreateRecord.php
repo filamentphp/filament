@@ -69,6 +69,11 @@ class CreateRecord extends Page
         abort_unless(static::getResource()::canCreate(), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     protected function fillForm(): void
     {
         $this->callHook('beforeFill');
