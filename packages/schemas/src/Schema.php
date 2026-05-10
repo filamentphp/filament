@@ -210,4 +210,15 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
         <?php return ob_get_clean();
     }
+
+    public function dispatchClientSideStateReset(): void
+    {
+        $livewire = $this->getLivewire();
+
+        $livewire->dispatch(
+            'reset-schema-component-state',
+            livewireId: $livewire->getId(),
+            schemaKey: $this->getKey(),
+        );
+    }
 }

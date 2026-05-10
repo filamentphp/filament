@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Редактирование',
 
+    'navigation_label' => 'Редактирование',
+
     'form' => [
 
         'actions' => [

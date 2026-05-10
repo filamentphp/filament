@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'هیچ نتیجه‌ای برای جستجوی برچسب ادغام یافت نشد.',
 
+        'mentions' => [
+            'no_options_message' => 'هیچ گزینه‌ای موجود نیست.',
+            'no_search_results_message' => 'هیچ نتیجه‌ای با جست‌وجوی شما مطابقت ندارد.',
+            'search_prompt' => 'برای جست‌وجو شروع به تایپ کنید...',
+            'searching_message' => 'در حال جست‌وجو...',
+        ],
+
         'tools' => [
             'align_center' => 'تراز وسط',
             'align_end' => 'تراز انتها',
@@ -594,6 +601,7 @@ return [
             'link' => 'لینک',
             'merge_tags' => 'برچسب‌های ادغام',
             'ordered_list' => 'لیست مرتب',
+            'paragraph' => 'پاراگراف',
             'redo' => 'جلو',
             'small' => 'متن کوچک',
             'strike' => 'خط زده',
@@ -679,6 +687,8 @@ return [
 
         'max_items_message' => 'تنها :count مورد می‌تواند انتخاب شود.',
 
+        'no_options_message' => 'هیچ گزینه‌ای موجود نیست.',
+
         'no_search_results_message' => 'هیچ گزینه‌ای با جستجوی شما مطابقت ندارد.',
 
         'placeholder' => 'یک گزینه را انتخاب کنید',
@@ -690,6 +700,15 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'حذف',
+            ],
+
+        ],
+
         'placeholder' => 'تگ جدید',
     ],
 
