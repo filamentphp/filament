@@ -56,6 +56,11 @@ abstract class RegisterTenant extends SimplePage
         $this->form->fill();
     }
 
+    public function hydrate(): void
+    {
+        abort_unless(static::canView(), 404);
+    }
+
     /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
