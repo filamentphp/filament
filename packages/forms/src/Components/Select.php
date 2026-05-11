@@ -1388,8 +1388,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationship->associate($state);
             $record->wasRecentlyCreated && $record->save();
 
-            $record->unsetRelation($relationshipName);
-
             return;
         }
 

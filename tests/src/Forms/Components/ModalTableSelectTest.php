@@ -273,6 +273,50 @@ class ModalTableSelectWithBelongsToManyRelationship extends Component implements
     }
 }
 
+class ModalTableSelectWithEagerLoadedBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->record->load('teams');
+        $this->form->fill([]);
+    }
+
+    public function hydrate(): void
+    {
+        $this->record->load('teams');
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('teams')
+                    ->relationship('teams', 'name')
+                    ->tableConfiguration(TeamsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
 class ModalTableSelectWithBelongsToManyRelationshipAndModifyQuery extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
@@ -813,6 +857,23 @@ describe('saving BelongsToMany relationships', function (): void {
         expect($pivotRows)->toHaveCount(2);
         expect($pivotRows->first()->role)->toBe('viewer');
         expect($pivotRows->last()->role)->toBe('viewer');
+    });
+
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $component = livewire(ModalTableSelectWithEagerLoadedBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => []])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0)
+            ->and($component->instance()->data['teams'])->toBe([]);
+
+        $component->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
     });
 });
 

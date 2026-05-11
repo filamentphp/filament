@@ -225,32 +225,20 @@ describe('`BelongsToMany` relationship', function (): void {
         expect($user->teams->pluck('id')->sort()->values()->all())->toBe($teams->take(2)->pluck('id')->sort()->values()->all());
     });
 
-    it('clears `BelongsToMany` relationship and form state when emptied, without re-attaching on a subsequent save', function (): void {
-        // Regression: after `saveStateToRelationship()` detaches rows, the next call to
-        // `loadStateFromRelationship()` was reading the in-memory eager-loaded relation
-        // (still containing the detached rows). The form state was repopulated from that
-        // stale cache, so the UI re-showed the detached rows and any subsequent save
-        // re-synced them back into the pivot. The fix invalidates the cached relation
-        // on `$record` after every relationship write.
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
         $user = User::factory()->create();
         $teams = Team::factory()->count(2)->create();
         $user->teams()->attach($teams);
 
-        expect($user->teams)->toHaveCount(2);
-
-        $component = livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
+        $component = livewire(TestComponentWithEagerLoadedBelongsToManyMultipleSelect::class, ['record' => $user])
             ->fillForm(['teams' => []])
             ->call('save');
 
-        // Pivot is empty.
-        expect($user->fresh()->teams)->toHaveCount(0);
+        expect($user->fresh()->teams)->toHaveCount(0)
+            ->and($component->instance()->data['teams'])->toBe([]);
 
-        // Form state reflects the cleared selection — otherwise the UI re-shows
-        // the detached options and the next save re-attaches them.
-        expect($component->instance()->data['teams'])->toBe([]);
-
-        // A subsequent unrelated save must not silently re-attach the rows.
         $component->call('save');
+
         expect($user->fresh()->teams)->toHaveCount(0);
     });
 
@@ -1037,6 +1025,50 @@ class TestComponentWithBelongsToManyMultipleSelect extends Component implements 
     public function mount(): void
     {
         $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithEagerLoadedBelongsToManyMultipleSelect extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->record->load('teams');
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function hydrate(): void
+    {
+        $this->record->load('teams');
     }
 
     public function form(Schema $form): Schema
