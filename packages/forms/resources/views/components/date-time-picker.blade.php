@@ -238,43 +238,15 @@
                     @endif
 
                     @if ($hasTime)
-                        <div
-                            class="fi-fo-date-time-picker-time-inputs"
-                            x-data="{
-                                hasValidationMessage: false,
-                                timeInputInvalid(event) {
-                                    const el = event.target
-
-                                    if (! isOpen()) {
-                                        event.preventDefault()
-                                        togglePanelVisibility()
-                                    }
-
-                                    if (! this.hasValidationMessage) {
-                                        this.hasValidationMessage = true
-
-                                        $nextTick(() => {
-                                            el.reportValidity()
-                                            this.hasValidationMessage = false
-                                        })
-                                    }
-                                },
-                                checkTimeInputValidity(event) {
-                                    const el = event.target
-                                    if (isOpen() && ! el.validity.valid) {
-                                        el.reportValidity()
-                                    }
-                                },
-                            }"
-                        >
+                        <div class="fi-fo-date-time-picker-time-inputs">
                             <input
                                 max="23"
                                 min="0"
                                 step="{{ $getHoursStep() }}"
                                 type="number"
                                 inputmode="numeric"
-                                @invalid="timeInputInvalid"
-                                @blur="checkTimeInputValidity"
+                                x-on:blur="checkTimeInputValidity"
+                                x-on:invalid="timeInputInvalid"
                                 x-model.debounce="hour"
                             />
 
@@ -290,8 +262,8 @@
                                 step="{{ $getMinutesStep() }}"
                                 type="number"
                                 inputmode="numeric"
-                                @invalid="timeInputInvalid"
-                                @blur="checkTimeInputValidity"
+                                x-on:blur="checkTimeInputValidity"
+                                x-on:invalid="timeInputInvalid"
                                 x-model.debounce="minute"
                             />
 
@@ -308,8 +280,8 @@
                                     step="{{ $getSecondsStep() }}"
                                     type="number"
                                     inputmode="numeric"
-                                    @invalid="timeInputInvalid"
-                                    @blur="checkTimeInputValidity"
+                                    x-on:blur="checkTimeInputValidity"
+                                    x-on:invalid="timeInputInvalid"
                                     x-model.debounce="second"
                                 />
                             @endif
