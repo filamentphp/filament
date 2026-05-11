@@ -133,6 +133,23 @@ it('does not render page if the related policy viewAny returns a denied response
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
 });
 
+it('re-authorizes viewAny on Livewire updates after the initial mount of a related records page', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+
+    $component = livewire(ManageTicketDepartments::class, ['record' => $ticket->getKey()]);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
+
+    $component
+        ->set('tableSearch', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {
     $policy = ($isTableAction || ($policyMethod === 'create')) ? DepartmentPolicy::class : TicketPolicy::class;
 
