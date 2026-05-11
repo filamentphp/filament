@@ -21,17 +21,67 @@ final class TranslationFile
         return $this->package->getLangFolder($locale) . DIRECTORY_SEPARATOR . $this->name;
     }
 
-    public function getFileUrl(Locale | string $locale): string
+    public function getFileUrl(Locale | string $locale, ?int $line = null): string
     {
-        return 'file://' . $this->getFilePath($locale);
+        return match (env('IDE')) {
+            'vscode' => $this->getVSCodeUrl($locale, $line),
+            'phpstorm' => $this->getPhpStormUrl($locale, $line),
+            default => $this->getDefaultFileUrl($locale, $line),
+        };
+    }
+
+    public function getDefaultFileUrl(Locale | string $locale, ?int $line = null): string
+    {
+        $url = 'file://' . $this->getFilePath($locale);
+        if ($line !== null) {
+            $url .= "#L{$line}";
+        }
+
+        return $url;
+    }
+
+    public function getVSCodeUrl(Locale | string $locale, ?int $line = null): string
+    {
+        $url = 'vscode://file/' . $this->getFilePath($locale);
+        if ($line !== null) {
+            $url .= ":{$line}";
+        }
+
+        return $url;
+    }
+
+    public function getPhpStormUrl(Locale | string $locale, ?int $line = null): string
+    {
+        $url = 'phpstorm://open?file=' . $this->getFilePath($locale);
+        if ($line !== null) {
+            $url .= "&line={$line}";
+        }
+
+        return $url;
     }
 
     public function getTranslations(Locale | string $locale): array
     {
-        if (! file_exists($this->getFilePath($locale))) {
+        $filePath = $this->getFilePath($locale);
+        if (! file_exists($filePath)) {
             return [];
         }
 
-        return Arr::dot(require $this->getFilePath($locale));
+        $translations = require $filePath;
+        $dotted = Arr::dot($translations);
+
+        // Build a map of full dotted key => line using PHP tokenizer
+        $keyLines = (new TranslationFileLineParser)->parse($filePath);
+
+        $result = [];
+
+        foreach ($dotted as $key => $value) {
+            $result[$key] = [
+                'line' => $keyLines[$key] ?? null,
+                'value' => $value,
+            ];
+        }
+
+        return $result;
     }
 }

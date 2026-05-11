@@ -80,6 +80,11 @@ class ViewRecord extends Page
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     protected function hasInfolist(): bool
     {
         return (bool) count($this->getSchema('infolist')->getComponents());
@@ -127,6 +132,11 @@ class ViewRecord extends Page
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // Security: All non-`$hidden` model attributes are sent to the
+        // browser via Livewire. Override this to `unset()` sensitive
+        // attributes (API keys, etc.) that should not be exposed
+        // to client-side JavaScript.
+
         return $data;
     }
 

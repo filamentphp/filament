@@ -1,6 +1,6 @@
 .fi-wi-chart {
     & .fi-wi-chart-canvas-ctn {
-        @apply mx-auto;
+        @apply mx-auto flex w-full justify-center;
 
         &:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
             @apply aspect-square;

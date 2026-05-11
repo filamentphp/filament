@@ -262,6 +262,8 @@ Action::make('edit')
     ->authorizationTooltip()
 ```
 
+If the denial does not provide a message (for example, your policy returns plain `false`, or a `Gate::before()` hook short-circuits the check), the action is hidden instead. You can supply a fallback message with `authorizationMessage()` to keep the action visible in that case.
+
 <AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
 
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
@@ -274,6 +276,8 @@ Action::make('edit')
     ->authorize('update')
     ->authorizationNotification()
 ```
+
+As with `authorizationTooltip()`, the action is hidden if the denial does not provide a message, unless you supply a fallback with `authorizationMessage()`.
 
 ### Disabling a button
 
@@ -342,7 +346,7 @@ Action::make('filter')
     ->badgeColor('success')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="actions/trigger-button/success-badged" alt="Trigger with green badge" version="4.x" />
 

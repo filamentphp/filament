@@ -123,14 +123,18 @@ class Tab extends Component implements CanConcealComponents
         return $this;
     }
 
-    public function getBadgeIcon(): string | BackedEnum | Htmlable | null
+    public function getBadgeIcon(?string $badge = null): string | BackedEnum | Htmlable | null
     {
-        return $this->evaluate($this->badgeIcon);
+        return $this->evaluate($this->badgeIcon, [
+            'badge' => $badge,
+        ]);
     }
 
-    public function getBadgeIconPosition(): IconPosition | string
+    public function getBadgeIconPosition(?string $badge = null): IconPosition | string
     {
-        return $this->evaluate($this->badgeIconPosition) ?? IconPosition::Before;
+        return $this->evaluate($this->badgeIconPosition, [
+            'badge' => $badge,
+        ]) ?? IconPosition::Before;
     }
 
     public function deferBadge(bool | Closure $condition = true): static
@@ -147,6 +151,11 @@ class Tab extends Component implements CanConcealComponents
 
     public function excludeQueryWhenResolvingRecord(bool | Closure $condition = true): static
     {
+        // Security: Do NOT use this on tabs that enforce authorization
+        // scopes (e.g. restricting records by tenant or user ownership).
+        // Excluding the query allows direct URL access to records
+        // that the tab's scope would otherwise prevent.
+
         $this->shouldExcludeQueryWhenResolvingRecord = $condition;
 
         return $this;

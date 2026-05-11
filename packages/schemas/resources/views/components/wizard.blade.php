@@ -14,6 +14,8 @@
                 isSkippable: @js($isSkippable()),
                 isStepPersistedInQueryString: @js($isStepPersistedInQueryString()),
                 key: @js($key),
+                livewireId: @js($this->getId()),
+                schemaKey: @js($getRootContainer()->getKey()),
                 startStep: @js($getStartStep()),
                 stepQueryStringKey: @js($getStepQueryStringKey()),
             })"
@@ -69,7 +71,6 @@
                         x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                         x-on:click="step = @js($step->getKey())"
                         x-bind:disabled="! isStepAccessible(@js($step->getKey())) || @js($previousAction->isDisabled())"
-                        role="step"
                         class="fi-sc-wizard-header-step-btn"
                     >
                         <div class="fi-sc-wizard-header-step-icon-ctn">

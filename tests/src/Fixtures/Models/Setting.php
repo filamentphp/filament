@@ -18,6 +18,16 @@ class Setting extends Model
         return $this->belongsTo(Profile::class);
     }
 
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(Language::class);
+    }
+
+    public function languageWithTrashed(): BelongsTo
+    {
+        return $this->belongsTo(Language::class, 'language_id')->withTrashed();
+    }
+
     protected static function newFactory()
     {
         return SettingFactory::new();

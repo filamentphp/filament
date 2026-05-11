@@ -362,7 +362,7 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you can use the [content renderer](#rendering-rich-content) to output HTML. This will automatically sanitize the HTML for you, so you don't need to worry about it.
 
 <Aside variant="danger">
-    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider implementing a more restrictive custom sanitizer. See the [security documentation](../advanced/security#html-sanitization) for details on how to customize the sanitizer.
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
 </Aside>
 
 ## Uploading images to the editor
@@ -397,6 +397,66 @@ RichContentRenderer::make($record->content)
     ->fileAttachmentsDisk('s3')
     ->fileAttachmentsVisibility('private')
     ->toHtml()
+```
+
+### Securing file attachment IDs
+
+The `data-id` attribute on an image node is an identifier for a file on the configured disk. When the content is rendered, Filament generates a URL for it — a signed temporary URL if the visibility is `private`. Like any other Livewire form field value, the content and its `data-id` attributes are controlled by the client: a request can be intercepted to change a `data-id` to any other identifier on the same disk. If the disk also stores files belonging to other users or records, an attacker could otherwise cause the rendered content to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that inserts an image from a pre-existing library, or a "copy from another record" button. If none of your editors rely on such a flow, call `preventFileAttachmentPathTampering()` on the field to enable a built-in check:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentPathTampering()
+```
+
+Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through.
+
+If you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection.
+
+<Aside variant="warning">
+    `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+To apply this check to every `RichEditor` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::configureUsing(function (RichEditor $component): void {
+    $component->preventFileAttachmentPathTampering();
+});
+```
+
+Individual fields can still opt out by calling `preventFileAttachmentPathTampering(false)`.
+
+#### Allowing additional `data-id` values with a callback
+
+If your application legitimately references an identifier that is not on the record — for example, a "copy from another record" action — pass the `allowFilePathUsing` argument to approve it. Approved identifiers bypass the validation error:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentPathTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
+The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentPathTampering()
+    ->validationMessages([
+        'tampered' => 'The content references an image that is not permitted.',
+    ])
 ```
 
 ### Validating uploaded images
@@ -598,6 +658,50 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Grouping custom blocks
+
+You can organize custom blocks into groups using string keys in the `customBlocks()` array. Blocks passed directly (without a string key) are ungrouped and appear first in the panel:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        AlertBlock::class,
+        DividerBlock::class,
+        'Marketing' => [
+            HeroBlock::class,
+            CallToActionBlock::class,
+            BannerBlock::class,
+        ],
+        'Media' => [
+            ImageGalleryBlock::class,
+            VideoEmbedBlock::class,
+        ],
+    ])
+```
+
+<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="4.x" />
+
+Groups are displayed in the order they are defined in the array, with sticky headings in the side panel.
+
+When rendering content with grouped blocks, you can pass the same grouped array structure to the `RichContentRenderer`. Groups are ignored during rendering — only the block classes are used:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->customBlocks([
+        'Marketing' => [
+            HeroBlock::class => [
+                'categoryUrl' => $record->category->getUrl(),
+            ],
+            CallToActionBlock::class,
+        ],
+    ])
+    ->toHtml()
+```
+
 ### Opening the custom blocks panel by default
 
 If you want the custom blocks panel to be open by default when the rich editor is loaded, you can use the `activePanel('customBlocks')` method:
@@ -611,6 +715,38 @@ RichEditor::make('content')
         CallToActionBlock::class,
     ])
     ->activePanel('customBlocks')
+```
+
+### Styling custom block previews with prose
+
+By default, custom block previews are displayed without prose styling to make styling easier. You can enable prose styling for a block's preview using the `shouldApplyProseStylingToPreview()` method. This is useful when you want the preview to display with typography styles like headings, paragraphs, and other prose elements:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+
+class HeadingBlock extends RichContentCustomBlock
+{
+    // ...
+
+    /**
+     * @param  array<string, mixed>  $config
+     */
+    public static function shouldApplyProseStylingToPreview(array $config): bool
+    {
+        return true;
+    }
+}
+```
+
+When `shouldApplyProseStylingToPreview()` returns `true`, the block's preview will be styled with the prose typography styles defined in the rich editor, including proper margins, font sizes, and other text formatting. By default, this method returns `false`, so previews are displayed with minimal styling.
+
+You can make this decision based on the block's configuration, allowing different blocks to have different preview styling:
+
+```php
+public static function shouldApplyProseStylingToPreview(array $config): bool
+{
+    return ($config['useProseStyle'] ?? false) === true;
+}
 ```
 
 ## Using merge tags
@@ -1169,3 +1305,89 @@ public function getTipTapJsExtensions(): array
     ];
 }
 ```
+
+#### Sharing the bundled TipTap/ProseMirror instance
+
+When custom JavaScript extensions import from `@tiptap/core` or `@tiptap/pm/*`, each compiled extension includes its own copy of these packages. This wastes around 150-200 KB per extension and — more importantly — creates multiple ProseMirror instances on the page. Because ProseMirror relies heavily on `instanceof` checks (for `Node`, `Mark`, `Plugin`, `DecorationSet`, etc.), extensions that bundle their own copy of these modules can fail to interoperate with the editor's core.
+
+To avoid this, Filament exposes the bundled TipTap and ProseMirror modules on `window.FilamentRichEditor.tiptap`:
+
+```js
+window.FilamentRichEditor.tiptap = {
+    core,     // @tiptap/core
+    pmState,  // @tiptap/pm/state
+    pmView,   // @tiptap/pm/view
+    pmModel,  // @tiptap/pm/model
+}
+```
+
+You can reference these modules directly in your extension:
+
+```javascript
+const { Node, mergeAttributes } = window.FilamentRichEditor.tiptap.core
+const { Plugin, PluginKey } = window.FilamentRichEditor.tiptap.pmState
+
+export default Node.create({
+    name: 'myExtension',
+    // ...
+})
+```
+
+Alternatively, you can configure your build to intercept imports of `@tiptap/core` and `@tiptap/pm/{state,view,model}` and resolve them from the global at runtime. This lets you keep writing normal `import` statements in your extension source — other `@tiptap/*` packages (like `@tiptap/extension-highlight`) continue to be bundled as usual. The following esbuild plugin inspects each intercepted package's real named exports at build time and rewrites the imports to read from `window.FilamentRichEditor.tiptap`:
+
+```bash
+npm install --save-dev @tiptap/core @tiptap/pm
+```
+
+```js
+// bin/build.js
+import * as esbuild from 'esbuild'
+
+const tiptapSharedPlugin = {
+    name: 'tiptap-shared',
+    setup(build) {
+        const keys = {
+            '@tiptap/core': 'core',
+            '@tiptap/pm/state': 'pmState',
+            '@tiptap/pm/view': 'pmView',
+            '@tiptap/pm/model': 'pmModel',
+        }
+
+        build.onResolve({ filter: /^@tiptap\/(core|pm\/(state|view|model))$/ }, (args) => ({
+            path: args.path,
+            namespace: 'tiptap-shared',
+        }))
+
+        build.onLoad({ filter: /.*/, namespace: 'tiptap-shared' }, async (args) => {
+            const realModule = await import(args.path)
+            const namedExports = Object.keys(realModule).filter(
+                (key) => key !== '__esModule' && key !== 'default',
+            )
+
+            const key = keys[args.path]
+            let code = `const __module = window.FilamentRichEditor.tiptap.${key};\n`
+
+            if (namedExports.length) {
+                code += `export const { ${namedExports.join(', ')} } = __module;\n`
+            }
+
+            code += `export default __module?.default ?? __module;\n`
+
+            return { contents: code, loader: 'js' }
+        })
+    },
+}
+
+esbuild.build({
+    // ...
+    plugins: [tiptapSharedPlugin],
+    entryPoints: ['./resources/js/filament/rich-content-plugins/my-extension.js'],
+    outfile: './resources/js/dist/filament/rich-content-plugins/my-extension.js',
+})
+```
+
+<Aside variant="info">
+    `window.FilamentRichEditor.tiptap` is assigned when the rich editor bundle loads, which happens before `getTipTapJsExtensions()` URLs are fetched. If you need to use the modules in a context where the rich editor has not yet loaded, bundle your own copies instead.
+
+    The esbuild plugin above reads the named exports from your locally-installed `@tiptap/core` and `@tiptap/pm` at build time, so keep those versions roughly in sync with the version bundled by Filament — otherwise a newer named export referenced in your extension may be `undefined` at runtime.
+</Aside>

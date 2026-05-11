@@ -19,6 +19,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\Size;
+use Filament\Support\Enums\SlideOverPosition;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Component;
@@ -298,6 +299,20 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
                     ->required(),
             ])
             ->slideOver()
+            ->action(fn () => null);
+    }
+
+    public function slideOverStartAction(): Action
+    {
+        return Action::make('slideOverStart')
+            ->label('Update author')
+            ->schema([
+                Select::make('authorId')
+                    ->label('Author')
+                    ->required(),
+            ])
+            ->slideOver()
+            ->slideOverPosition(SlideOverPosition::Start)
             ->action(fn () => null);
     }
 

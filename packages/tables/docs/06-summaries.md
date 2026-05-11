@@ -192,6 +192,28 @@ TextColumn::make('price')
     ->summarize(Sum::make()->label('Total'))
 ```
 
+### Hiding a summarizer's label
+
+It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the summarizer to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->hiddenLabel())
+```
+
+You can also conditionally hide the label:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->hiddenLabel(FeatureFlag::active()))
+```
+
 ## Scoping the dataset
 
 You may apply a database query scope to a summarizer's dataset using the `query()` method:

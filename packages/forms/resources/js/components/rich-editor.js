@@ -1,7 +1,23 @@
-import { Editor } from '@tiptap/core'
+import * as TipTapCore from '@tiptap/core'
+import * as TipTapPmState from '@tiptap/pm/state'
+import * as TipTapPmView from '@tiptap/pm/view'
+import * as TipTapPmModel from '@tiptap/pm/model'
 import getExtensions from './rich-editor/extensions'
-import { Selection } from '@tiptap/pm/state'
 import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
+
+const { Editor } = TipTapCore
+const { Selection } = TipTapPmState
+
+// Expose the bundled TipTap/ProseMirror modules so custom extensions loaded
+// via `RichContentPlugin::getTipTapJsExtensions()` can share the same
+// ProseMirror instance (required for `instanceof` checks across bundles).
+window.FilamentRichEditor = window.FilamentRichEditor || {}
+window.FilamentRichEditor.tiptap = {
+    core: TipTapCore,
+    pmState: TipTapPmState,
+    pmView: TipTapPmView,
+    pmModel: TipTapPmModel,
+}
 
 export default function richEditorFormComponent({
     acceptedFileTypes,
@@ -17,6 +33,7 @@ export default function richEditorFormComponent({
     isLiveDebounced,
     isLiveOnBlur,
     key,
+    label,
     linkProtocols,
     liveDebounce,
     livewireId,
@@ -56,6 +73,11 @@ export default function richEditorFormComponent({
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
+                editorProps: {
+                    attributes: {
+                        ...(label ? { 'aria-label': label } : {}),
+                    },
+                },
                 extensions: await getExtensions({
                     acceptedFileTypes,
                     acceptedFileTypesValidationMessage,

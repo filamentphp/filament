@@ -17,6 +17,9 @@ trait HasExtraAlpineAttributes
      */
     public function extraAlpineAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraAlpineAttributes[] = $attributes;
         } else {

@@ -166,7 +166,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return $this->getTriggerView() === static::BADGE_VIEW;
     }
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | Closure | null $badge = null): static
     {
         if (func_num_args() === 0) {
             /** @phpstan-ignore-next-line */
@@ -355,7 +355,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         $static->color($data['color'] ?? null);
-        $static->dropdown($data['hasDropdown'] ?? false);
+        $static->dropdown($data['hasDropdown'] ?? true);
         $static->dropdownFlip($data['hasDropdownFlip'] ?? false);
         $static->dropdownTeleport($data['hasDropdownTeleport'] ?? false);
         $static->dropdownMaxHeight($data['dropdownMaxHeight'] ?? null);
@@ -367,7 +367,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         $static->iconPosition($data['iconPosition'] ?? null);
         $static->iconSize($data['iconSize'] ?? null);
         $static->label($data['label'] ?? null);
-        $static->outlined($data['isOutlined'] ?? null);
+        $static->outlined($data['isOutlined'] ?? false);
         $static->tooltip($data['tooltip'] ?? null);
 
         return $static;
@@ -633,8 +633,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),
@@ -655,9 +655,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
-            badgeTooltip: $this->getBadgeTooltip(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
+            badgeTooltip: $this->getBadgeTooltip($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconSize: $this->getIconSize(),
@@ -673,8 +673,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconSize: $this->getIconSize(),
@@ -691,8 +691,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),
@@ -712,7 +712,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             [
                 'attributes' => new ComponentAttributeBag,
                 ...$this->extractPublicMethods(),
-                ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+                $this->viewIdentifier => $this,
                 ...$this->viewData,
             ],
         );
@@ -744,6 +744,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
      */
     public function extraDropdownAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraDropdownAttributes[] = $attributes;
         } else {

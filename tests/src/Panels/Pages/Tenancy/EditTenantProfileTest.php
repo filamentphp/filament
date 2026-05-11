@@ -29,6 +29,20 @@ it('denies the user access to the tenant profile page if the user is unauthorize
         ->assertNotFound();
 });
 
+it('re-authorizes the tenant profile page on Livewire updates after the initial mount', function (): void {
+    Filament::setTenant(Team::factory()->create());
+
+    Gate::policy(Team::class, TeamPolicyWithAccess::class);
+
+    $component = livewire(EditTeamProfile::class);
+
+    Gate::policy(Team::class, TeamPolicyWithoutAccess::class);
+
+    $component
+        ->set('data.name', 'foo')
+        ->assertStatus(404);
+});
+
 class EditTeamProfile extends EditTenantProfile
 {
     public static function getLabel(): string

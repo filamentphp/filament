@@ -22,6 +22,31 @@ Filament automatically checks [Laravel Model Policies](https://laravel.com/docs/
 
 However, Filament's automatic authorization only covers these built-in resource operations. Any custom functionality you add — custom actions, custom pages, custom Livewire components, API endpoints, or other business logic — must be authorized by you. Filament cannot know your application's authorization requirements beyond the standard CRUD operations it provides.
 
+### Authorization and the Livewire request lifecycle
+
+Filament re-runs authorization on every Livewire request — both on the initial page load and on every subsequent update (search, filter, pagination, action call, form interaction). This means that if a user's permissions change while they are using the panel, the next interaction they make will be authorized against the current policy state, not the policy state at the time the component was first mounted.
+
+This applies across every Livewire component Filament ships:
+
+- **Resource pages** (`ListRecords`, `CreateRecord`, `EditRecord`, `ViewRecord`, `ManageRelatedRecords`) — the resource-level `Resource::canAccess()` check (and parent resource's check, if any) re-runs on every request via the `CanAuthorizeResourceAccess` trait. The page-specific record-scoped checks (`canEdit($record)`, `canView($record)`, `canCreate()`, parameterized `canAccess(['record' => ...])`) re-run on every request via each page type's `hydrate()` method, mirroring the existing `mount()`-time call to `$this->authorizeAccess()`.
+- **Custom panel pages** (anything extending `Filament\Pages\Page`, including `SettingsPage`, the auth pages, the dashboard, cluster pages) — the page's `canAccess()` method re-runs on every request via the `CanAuthorizeAccess` trait.
+- **Relation managers** — the `canViewForRecord($ownerRecord, $pageClass)` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Resources\RelationManagers\Concerns`. Initial mount is gated by the parent page's render-time filter, so the trait only registers a hydrate-time check to avoid a duplicate call on the first request.
+- **Widgets** — the static `canView()` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Widgets\Concerns`. As with relation managers, the parent dashboard's render-time filter handles the initial-mount gate.
+- **Tenancy pages** (`RegisterTenant`, `EditTenantProfile`) — their `canView()` checks re-run on every Livewire request via a `hydrate()` method mirroring the existing `mount()`-time check.
+
+Panel-level access (`canAccessPanel`) is enforced by the panel's `Authenticate` middleware, which runs on every HTTP request (including Livewire updates) — so users who lose panel access mid-session are bounced at the middleware layer before any component-level authorization is consulted.
+
+When you build custom Livewire components on a Filament panel, be aware that **several Livewire activities run before Filament's authorization hooks fire**:
+
+- Public properties are deserialized from the request payload (Livewire's "synth" step) before any of your hooks run.
+- The `boot()` and `boot{TraitName}()` lifecycle hooks fire before authorization.
+- The user's `mount()` body runs before trait-level `mount{TraitName}` hooks on initial mount.
+- Per-property `hydrate{PropertyName}()` hooks fire after Filament's hydrate-time authorization but still complete before the request progresses to update or render.
+
+In practice this means **work that happens during these earlier hooks runs even when authorization will subsequently abort the request**. Filament aborts before the response is rendered or any update method is called, so unauthorized data is never returned to the user, but server-side side effects (database queries to resolve a record, audit log entries that fire on `SELECT`, dispatched events in custom hooks, etc.) can occur before the abort.
+
+If your component does anything significant that should not happen for an unauthorized user — emitting events, writing to the database, calling external services — do that work in a method or hook that runs **after** Filament's authorization has already fired (for example, in the `mount()` body **after** an explicit `$this->authorizeAccess()` call, or in an action method invoked via `wire:click`, which always runs post-authorization). Avoid putting such work in `boot()` or per-property hydrate hooks.
+
 ### Inline editable columns
 
 Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `disabled()` method with your own authorization logic. See the documentation for each [editable column type](../tables/columns/toggle) for more details.
@@ -55,7 +80,9 @@ TextColumn::make('website')
     })
 ```
 
-Similarly, the `icon()` method expects either a Blade icon name (like `heroicon-o-user`) or a valid image URL. If you pass unsanitized user input, it could be used to break out of HTML attributes. Always ensure icon values are either known icon names or validated URLs.
+The `icon()` method expects either a Blade icon name (like `heroicon-o-user`) or an image URL (any string containing `/`). Icon name strings are resolved via Blade's icon system, and URL strings are escaped before rendering into `src` attributes. However, passing an invalid icon name from user input will cause a rendering error, so you should still validate icon values against a known allowlist if they are user-controlled.
+
+Methods like `extraAttributes()`, `extraInputAttributes()`, `extraCellAttributes()`, and other `extra*Attributes()` methods render their values into HTML without escaping. This is by design, as these methods are often used to pass Alpine.js directives and Livewire attributes that must not be escaped. However, if you pass user-controlled data as attribute names or values, an attacker could break out of the HTML attribute and inject arbitrary markup, leading to XSS. Always ensure that any dynamic values passed to these methods are validated or sourced from trusted data.
 
 As a general rule: whenever you pass user-controlled data into a Filament configuration method, treat it with the same caution you would when rendering it directly in a Blade template.
 
@@ -65,37 +92,96 @@ When rendering HTML content via methods like `html()` or `markdown()` on compone
 
 ### Default sanitizer configuration
 
-Filament's default sanitizer configuration permits inline `style` attributes on all elements. This is necessary to support rich text formatting features from the rich editor, such as font colors, text highlighting, and image sizing. However, this means that CSS properties like `background: url(...)` (which can trigger external HTTP requests) or `position: fixed` (which can create phishing overlays) will not be stripped.
+Filament registers `HtmlSanitizerConfig` as a scoped binding in Laravel's service container with the following default configuration:
 
-If your application renders HTML content from untrusted users, you should consider replacing the default sanitizer with a more restrictive configuration.
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+(new HtmlSanitizerConfig)
+    ->allowSafeElements()
+    ->allowRelativeLinks()
+    ->allowRelativeMedias()
+    ->allowAttribute('class', allowedElements: '*')
+    ->allowAttribute('data-color', allowedElements: '*')
+    ->allowAttribute('data-cols', allowedElements: '*')
+    ->allowAttribute('data-col-span', allowedElements: '*')
+    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
+    ->allowAttribute('data-id', allowedElements: '*')
+    ->allowAttribute('data-type', allowedElements: '*')
+    ->allowAttribute('style', allowedElements: '*')
+    ->allowAttribute('width', allowedElements: 'img')
+    ->allowAttribute('height', allowedElements: 'img')
+    ->withMaxInputLength(500000)
+```
+
+The `data-*` attributes are used internally by Filament's rich editor for features such as text colors, grid layouts, merge tags, mentions, and custom blocks. The `style` attribute is necessary to support rich text formatting features such as font colors, text highlighting, and image sizing. However, this means that CSS properties like `background: url(...)` (which can trigger external HTTP requests) or `position: fixed` (which can create phishing overlays) will not be stripped.
+
+If your application renders HTML content from untrusted users, you should consider restricting the default configuration.
 
 ### Customizing the sanitizer
 
-Filament binds the sanitizer as `HtmlSanitizerInterface` in Laravel's service container. You can override it by rebinding this interface in a service provider:
+Since `HtmlSanitizerConfig` is bound in the service container, you can use `extend()` in a service provider to modify the default configuration without replacing it entirely.
+
+#### Adding allowed attributes
+
+To allow additional attributes through the sanitizer, extend the config:
 
 ```php
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 public function register(): void
 {
-    $this->app->scoped(
-        HtmlSanitizerInterface::class,
-        fn (): HtmlSanitizer => new HtmlSanitizer(
-            (new HtmlSanitizerConfig)
-                ->allowSafeElements()
-                ->allowRelativeLinks()
-                ->allowRelativeMedias()
-                ->allowAttribute('class', allowedElements: '*')
-                ->allowAttribute('style', allowedElements: '*')
-                ->withMaxInputLength(500000),
-        ),
+    $this->app->extend(
+        HtmlSanitizerConfig::class,
+        fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+            ->allowAttribute('data-custom', allowedElements: '*'),
     );
 }
 ```
 
-You can restrict which CSS properties are allowed in `style` attributes, remove the `style` attribute allowance entirely, or make any other adjustments supported by Symfony's HtmlSanitizer. Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
+#### Restricting allowed attributes
+
+To remove an attribute that Filament allows by default, use `dropAttribute()`:
+
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+public function register(): void
+{
+    $this->app->extend(
+        HtmlSanitizerConfig::class,
+        fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+            ->dropAttribute('style', '*'),
+    );
+}
+```
+
+<Aside variant="danger">
+    Removing attributes that Filament's rich editor depends on (such as `data-color`, `data-cols`, `data-id`, or `style`) may break rich text rendering. Only restrict attributes when you understand their impact on Filament's components.
+</Aside>
+
+#### Replacing the sanitizer configuration entirely
+
+If you need full control, you can rebind `HtmlSanitizerConfig` entirely in a service provider:
+
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+public function register(): void
+{
+    $this->app->scoped(
+        HtmlSanitizerConfig::class,
+        fn (): HtmlSanitizerConfig => (new HtmlSanitizerConfig)
+            ->allowSafeElements()
+            ->allowRelativeLinks()
+            ->allowRelativeMedias()
+            ->allowAttribute('class', allowedElements: '*')
+            ->withMaxInputLength(500000),
+    );
+}
+```
+
+Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
 
 ### Sanitizing in Blade views
 
@@ -117,6 +203,10 @@ By default, all `App\Models\User` records can access Filament panels in local en
 
 If your application has multiple panels (e.g. an admin panel and a user-facing panel), ensure that `canAccessPanel()` checks the `$panel` argument and returns the appropriate result for each one.
 
+### Multi-factor authentication
+
+Filament supports [multi-factor authentication](../users/multi-factor-authentication) via TOTP apps and email codes, but it is not enabled by default. MFA is enforced within the Filament panel authentication flow — if your application has other authentication paths (such as API routes or non-Filament login pages), MFA will not be enforced on those paths unless you implement it separately.
+
 ## Model attribute exposure
 
 Filament exposes all non-`$hidden` model attributes to JavaScript via Livewire's model binding. This is necessary for dynamic form functionality, and only attributes with corresponding form fields are actually editable — this is not a mass assignment vulnerability. However, if your model contains sensitive attributes that should not be visible in the browser (such as API keys or internal flags), you should either add them to the model's `$hidden` property or remove them using the `mutateFormDataBeforeFill()` method on your Edit or View page. See the [resources documentation](../resources/overview#protecting-model-attributes) for more details.
@@ -125,9 +215,43 @@ Filament exposes all non-`$hidden` model attributes to JavaScript via Livewire's
 
 Filament's `FileUpload` component uses Livewire's file upload mechanism. There are important security considerations when allowing users to upload files, particularly around file names, storage visibility, and accepted file types.
 
-By default, Filament generates random file names and stores files with `private` visibility. If you use `preserveFilenames()` or `storeFileNamesIn()` with local or public disks, an attacker could upload a PHP file with a deceptive MIME type that gets executed by your server. See the [file upload documentation](../forms/file-upload#security-implications-of-controlling-file-names) for a full explanation of these risks and recommended mitigations.
+By default, Filament generates random file names and stores files with `private` visibility. If you use `preserveFilenames()` or `getUploadedFileNameForStorageUsing()` with local or public disks, an attacker could upload a PHP file with a deceptive MIME type that gets executed by your server. The safer alternative is to use `storeFileNamesIn()`, which stores original file names in a separate database column while keeping randomly generated file names on disk. See the [file upload documentation](../forms/file-upload#security-implications-of-controlling-file-names) for a full explanation of these risks and recommended mitigations.
 
 You should always use `acceptedFileTypes()` to restrict the types of files users can upload, and validate file sizes with `maxSize()`. These constraints are enforced server-side, not just in the browser.
+
+## File path tampering
+
+The value of a `FileUpload` field is a string (or array of strings) pointing to a file on its configured disk. The `RichEditor` embeds images by storing their identifier in the `data-id` attribute of each image node, which is similarly resolved against a disk when the content is rendered. Like any other Livewire form field value, both are controlled by the client — a request can be intercepted to change a submitted path or `data-id` to any other file on the same disk. If the disk also stores files belonging to other users or records, an attacker can cause a record to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that sets a field to a pre-uploaded template file, or a "copy from another record" button. If your forms do not rely on such a flow, opt in to the built-in checks:
+
+- For `FileUpload` fields, call [`preventFilePathTampering()`](../forms/file-upload#authorizing-existing-file-paths) to fail validation when a submitted path does not match the original value on the record.
+- For `RichEditor` fields, call [`preventFileAttachmentPathTampering()`](../forms/rich-editor#securing-file-attachment-ids) to fail validation when a submitted `data-id` is not already present in the record's stored content.
+
+Both methods compare submitted values against the attribute on the record via `$record->getOriginal()`, and both accept an `allowFilePathUsing` callback for paths that are legitimately added outside the record (such as shared template files). Newly uploaded files and images always pass through unchanged.
+
+<Aside variant="warning">
+    These checks require a record on the form, so on create pages every submitted existing path fails validation unless the `allowFilePathUsing` callback approves it. New uploads are unaffected.
+</Aside>
+
+If you want these checks to apply across your entire application rather than remembering to add them to each field, enable them globally from a service provider's `boot()` method using `configureUsing()`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+
+FileUpload::configureUsing(function (FileUpload $component): void {
+    $component->preventFilePathTampering();
+});
+
+RichEditor::configureUsing(function (RichEditor $component): void {
+    $component->preventFileAttachmentPathTampering();
+});
+```
+
+Individual fields can still opt out by passing `false` to the corresponding method (for example, `preventFilePathTampering(false)`) when a specific form legitimately needs to accept paths that are not on the record.
+
+If your application isolates uploads per user or per record at the disk level — for example, by using a separate disk or directory for each tenant — this class of tampering is not exploitable and these methods are unnecessary. The `spatie/laravel-medialibrary` rich editor provider also performs an equivalent check implicitly by looking up each `data-id` against the record's own media collection.
 
 ## Scoping queries
 

@@ -100,6 +100,11 @@ class EditRecord extends Page
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     protected function fillForm(): void
     {
         /** @internal Read the DocBlock above the following method. */
@@ -142,6 +147,12 @@ class EditRecord extends Page
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // Security: All non-`$hidden` model attributes are sent to the
+        // browser via Livewire. Override this to `unset()` sensitive
+        // attributes (API keys, internal flags, etc.). Only form
+        // field attributes are writable — not a mass assignment
+        // issue, but a data exposure concern.
+
         return $data;
     }
 

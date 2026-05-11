@@ -101,6 +101,10 @@ export default async ({
         Lead,
         Link.configure({
             autolink: true,
+            HTMLAttributes: {
+                target: null,
+                rel: null,
+            },
             openOnClick: false,
             protocols: linkProtocols,
         }),

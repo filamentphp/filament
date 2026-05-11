@@ -219,7 +219,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
             try {
                 return $storage->temporaryUrl(
                     $state,
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
@@ -288,6 +288,9 @@ class ImageEntry extends Entry implements HasEmbeddedView
      */
     public function extraImgAttributes(array | Closure $attributes): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         $this->extraImgAttributes = $attributes;
 
         return $this;

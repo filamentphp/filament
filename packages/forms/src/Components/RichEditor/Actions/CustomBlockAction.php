@@ -53,6 +53,7 @@ class CustomBlockAction
                         'id' => $arguments['id'],
                         'label' => $block::getPreviewLabel($data),
                         'preview' => base64_encode($block::toPreviewHtml($data)),
+                        'shouldApplyProseStylingToPreview' => $block::shouldApplyProseStylingToPreview($data),
                     ],
                 ];
 
@@ -94,7 +95,7 @@ class CustomBlockAction
                 }
 
                 // Fixes an issue where the editor selection is sent as text instead of a node,
-                // which causes the block update to fail when though the block is selected.
+                // which causes the block update to fail even though the block is selected.
                 if (
                     (($arguments['mode'] ?? null) === 'edit') &&
                     ($arguments['editorSelection']['type'] !== 'node')

@@ -17,19 +17,43 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
+use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
 use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
+use Filament\Tests\Fixtures\Pages\CheckboxListTest;
+use Filament\Tests\Fixtures\Pages\CheckboxTest;
+use Filament\Tests\Fixtures\Pages\CodeEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\ColorPickerTest;
+use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
+use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
+use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
+use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
+use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
+use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
+use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
+use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
+use Filament\Tests\Fixtures\Pages\RadioTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
+use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
+use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
+use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
+use Filament\Tests\Fixtures\Pages\TextareaTest;
+use Filament\Tests\Fixtures\Pages\TextInputTest;
+use Filament\Tests\Fixtures\Pages\TimePickerBrowserTest;
+use Filament\Tests\Fixtures\Pages\ToggleButtonsTest;
 use Filament\Tests\Fixtures\Pages\ToggleTest;
+use Filament\Tests\Fixtures\Pages\WizardBrowserTest;
 use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource;
 use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
@@ -77,19 +101,43 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
                 Actions::class,
                 AfterStateUpdatedJsTest::class,
+                AuthorizableSettings::class,
                 AutofocusBasicBrowserTest::class,
                 AutofocusBrowserTest::class,
                 AutofocusSecondTabBrowserTest::class,
                 AutofocusWizardBrowserTest::class,
                 BuilderTest::class,
                 CalloutBrowserTest::class,
+                CheckboxListTest::class,
+                CodeEditorBrowserTest::class,
+                ColumnsBrowserTest::class,
+                CheckboxTest::class,
+                ColorPickerTest::class,
+                DatePickerBrowserTest::class,
+                DateTimePickerTest::class,
+                FileUploadBrowserTest::class,
+                InfolistEntriesBrowserTest::class,
                 KeyValueTest::class,
+                ManageSiteSettings::class,
+                MarkdownEditorBrowserTest::class,
+                OneTimeCodeInputBrowserTest::class,
+                PartialRenderingTest::class,
                 QueryBuilderTableTest::class,
+                RadioTest::class,
                 RepeaterTest::class,
+                RichEditorBrowserTest::class,
+                SectionBrowserTest::class,
                 SelectTest::class,
                 Settings::class,
+                SliderBrowserTest::class,
+                TabsBrowserTest::class,
                 TagsInputTest::class,
+                TextareaTest::class,
+                TextInputTest::class,
+                TimePickerBrowserTest::class,
+                ToggleButtonsTest::class,
                 ToggleTest::class,
+                WizardBrowserTest::class,
                 UserManagement::class,
                 ManageAdmins::class,
                 ManageStaff::class,
