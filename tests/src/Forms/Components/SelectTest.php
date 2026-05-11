@@ -225,6 +225,23 @@ describe('`BelongsToMany` relationship', function (): void {
         expect($user->teams->pluck('id')->sort()->values()->all())->toBe($teams->take(2)->pluck('id')->sort()->values()->all());
     });
 
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $component = livewire(TestComponentWithEagerLoadedBelongsToManyMultipleSelect::class, ['record' => $user])
+            ->fillForm(['teams' => []])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0)
+            ->and($component->instance()->data['teams'])->toBe([]);
+
+        $component->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
+    });
+
     it('can use `BelongsToMany` relationship as single select', function (): void {
         $user = User::factory()->create();
         $teams = Team::factory()->count(3)->create();
@@ -1008,6 +1025,50 @@ class TestComponentWithBelongsToManyMultipleSelect extends Component implements 
     public function mount(): void
     {
         $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithEagerLoadedBelongsToManyMultipleSelect extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->record->load('teams');
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function hydrate(): void
+    {
+        $this->record->load('teams');
     }
 
     public function form(Schema $form): Schema

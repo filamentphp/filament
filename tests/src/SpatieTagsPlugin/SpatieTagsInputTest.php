@@ -209,6 +209,19 @@ describe('integration', function (): void {
         expect($freshRecord->getRelationValue('tags'))->toBeEmpty();
     });
 
+    it('invalidates the cached tags relation after syncing so subsequent reads do not return stale data', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Old1', 'Old2']);
+
+        $component = livewire(SpatieTagsInputForm::class, ['record' => $record])
+            ->fillForm(['tags' => []])
+            ->call('saveOnly');
+
+        $liveRecord = $component->instance()->record;
+
+        expect($liveRecord->getRelationValue('tags'))->toBeEmpty();
+    });
+
     it('can load typed tags into form state', function (): void {
         $record = Article::factory()->create();
         $record->attachTag('Laravel', 'framework');
