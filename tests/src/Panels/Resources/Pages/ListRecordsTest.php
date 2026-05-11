@@ -274,6 +274,40 @@ it('does not render tickets page if the policy viewAny returns a denied response
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
+it('re-authorizes resource access on Livewire updates after the initial mount', function (): void {
+    Ticket::factory(10)
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+
+    $component = livewire(ListTickets::class);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
+
+    $component
+        ->set('tableSearch', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
+it('re-authorizes resource access on Livewire updates when the policy returns a denied response after mount', function (): void {
+    Ticket::factory(10)
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::allow());
+
+    $component = livewire(ListTickets::class);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::deny());
+
+    $component
+        ->set('tableSearch', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 

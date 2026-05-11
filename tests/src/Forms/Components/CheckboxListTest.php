@@ -445,6 +445,48 @@ class CheckboxListWithBelongsToManyRelationship extends Component implements Has
     }
 }
 
+class CheckboxListWithEagerLoadedBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->record->load('teams');
+        $this->form->fill([]);
+    }
+
+    public function hydrate(): void
+    {
+        $this->record->load('teams');
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                CheckboxList::make('teams')
+                    ->relationship('teams', 'name'),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
 class CheckboxListWithBelongsToManyRelationshipAndModifyQuery extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
@@ -472,6 +514,52 @@ class CheckboxListWithBelongsToManyRelationshipAndModifyQuery extends Component 
             ])
             ->model($this->record)
             ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class CheckboxListWithBelongsToManyRelationshipAndModifyQueryThatCounts extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public static ?Closure $onModify = null;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                CheckboxList::make('teams')
+                    ->relationship(
+                        'teams',
+                        'name',
+                        modifyQueryUsing: function ($query) {
+                            (static::$onModify)?->__invoke();
+
+                            return $query;
+                        },
+                    ),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 
     public function render(): View
@@ -1048,6 +1136,59 @@ describe('saving relationships', function (): void {
             ->call('save');
 
         expect($user->fresh()->teams)->toHaveCount(0);
+    });
+
+    it('applies `modifyQueryUsing` callback when saving a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+
+        $modifyCallCount = 0;
+        CheckboxListWithBelongsToManyRelationshipAndModifyQueryThatCounts::$onModify = static function () use (&$modifyCallCount): void {
+            $modifyCallCount++;
+        };
+
+        livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryThatCounts::class, ['record' => $user])
+            ->fillForm(['teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all()])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(3);
+        expect($modifyCallCount)->toBeGreaterThan(0);
+    });
+
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $component = livewire(CheckboxListWithEagerLoadedBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => []])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0)
+            ->and($component->instance()->data['teams'])->toBe([]);
+
+        $component->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
+    });
+});
+
+describe('loading relationships', function (): void {
+    it('loads attached `BelongsToMany` records when the relation is not eager-loaded', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(3)->create();
+        $user->teams()->attach($teams);
+
+        $freshUser = $user->fresh();
+        expect($freshUser->relationLoaded('teams'))->toBeFalse();
+
+        livewire(CheckboxListWithBelongsToManyRelationship::class, ['record' => $freshUser])
+            ->assertSchemaStateSet(function (array $state) use ($teams): array {
+                expect(collect($state['teams'])->sort()->values()->all())
+                    ->toBe($teams->pluck('id')->map(fn ($id) => (string) $id)->sort()->values()->all());
+
+                return [];
+            });
     });
 });
 
