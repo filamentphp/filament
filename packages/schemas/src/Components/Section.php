@@ -351,6 +351,9 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                     x-on:expand-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = false"
                     x-on:open-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = false"
                     x-on:toggle-section.window="if ($event.detail.id == (<?= Js::from($collapseId) ?> ?? $el.id)) isCollapsed = ! isCollapsed"
+                    <?php if (! $shouldPersistCollapsed) { ?>
+                        x-on:reset-schema-component-state.window="if (($event.detail.livewireId === <?= Js::from($this->getLivewire()->getId()) ?>) && ($event.detail.schemaKey === <?= Js::from($this->getRootContainer()->getKey()) ?>)) $nextTick(() => isCollapsed = <?= Js::from($isCollapsed) ?>)"
+                    <?php } ?>
                     x-bind:class="isCollapsed && 'fi-collapsed'"
                 <?php } ?>
                 <?= $sectionAttributes->toHtml() ?>

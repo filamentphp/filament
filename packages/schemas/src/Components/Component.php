@@ -178,6 +178,7 @@ class Component extends ViewComponent
             ], escape: false)
             ->class([
                 ($maxWidth instanceof Width) ? "fi-width-{$maxWidth->value}" : $maxWidth,
+                'fi-growable' => $container->isInline() && $this->canGrow(default: false),
             ]);
 
         ob_start(); ?>
