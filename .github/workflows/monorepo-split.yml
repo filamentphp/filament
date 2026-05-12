@@ -4,6 +4,9 @@ on:
   push:
     tags: '*'
 
+permissions:
+  contents: read
+
 jobs:
   split-monorepo:
     runs-on: ubuntu-latest
@@ -28,11 +31,13 @@ jobs:
           - widgets
           - upgrade
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        with:
+          persist-credentials: false
       - id: previous-tag
-        uses: 'WyriHaximus/github-action-get-previous-tag@master'
+        uses: WyriHaximus/github-action-get-previous-tag@04e8485ecb6487243907e330d522ff60f02283ce # v1.4.0
       - name: Monorepo Split of ${{ matrix.package }}
-        uses: danharrin/monorepo-split-github-action@v2.4.0
+        uses: danharrin/monorepo-split-github-action@19b2e0cbe3fe3de17309fd0fe95d4e05454f3ab3 # v2.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         with:

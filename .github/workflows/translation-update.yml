@@ -7,26 +7,35 @@ on:
     types:
       - closed
 
+permissions:
+  contents: read
+
 jobs:
   translation-update:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Get changed files
+      - name: Detect English translation changes
         id: changed-files
-        uses: tj-actions/changed-files@v46
-        with:
-          files: |
-            packages/**/resources/lang/en/**
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          if git diff --name-only "${BASE_SHA}" "${MERGE_SHA}" | grep -qE '^packages/[^/]+/resources/lang/en/'; then
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "any_changed=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Notify on Discord
         if: steps.changed-files.outputs.any_changed == 'true'
         env:
           DISCORD_WEBHOOK: ${{ secrets.TRANSLATION_BOT_DISCORD_WEBHOOK }}
-        uses: Ilshidur/action-discord@0.3.2
+        uses: Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9 # 0.3.2
         with:
           args: '<@&1026513157142872185> PR [#${{ github.event.number }}](${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.number }}/files) introduced translation changes.'

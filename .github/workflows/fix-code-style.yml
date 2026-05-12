@@ -3,34 +3,38 @@ name: fix-code-style
 on:
   push:
 
+permissions:
+  contents: write
+
 jobs:
   fix-code-style:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
+        # persist-credentials: true is required so `git-auto-commit-action` below
+        # can push reformatted files back. Trust boundary is CODEOWNERS review of
+        # composer.json / package.json script changes.
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0 # zizmor: ignore[artipacked]
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.composer/cache/files
           key: composer-cs-${{ hashFiles('composer.json') }}
           restore-keys: |
             composer-cs-
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.34.1
         with:
           php-version: 8.5
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: lts/*
           cache: npm
       - name: Install dependencies
         run: |
-          composer install --no-interaction
-          npm ci
+          composer install --no-interaction --no-scripts
+          npm ci --ignore-scripts
       - name: Run Rector
         run: composer rector
       - name: Run Pint
@@ -38,7 +42,7 @@ jobs:
       - name: Run Prettier
         run: npm run prettier
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.0.1
         with:
           commit_message: >
             chore: fix code style

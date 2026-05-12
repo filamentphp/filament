@@ -5,19 +5,25 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   sync-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout docs repository
-        uses: actions/checkout@v4
+        # persist-credentials: true is required so the final `git push` to
+        # filamentphp/mintlify-docs uses the GH_ACCESS_TOKEN written into
+        # docs/.git/config. Subsequent steps in this job are maintainer-controlled.
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0 # zizmor: ignore[artipacked]
         with:
           repository: filamentphp/mintlify-docs
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: docs
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '20'
 
@@ -27,6 +33,8 @@ jobs:
 
       - name: Commit and push changes
         working-directory: docs
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -34,6 +42,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Sync documentation from release ${{ github.event.release.tag_name }}"
+            git commit -m "Sync documentation from release ${RELEASE_TAG}"
             git push
           fi

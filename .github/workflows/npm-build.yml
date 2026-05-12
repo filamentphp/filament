@@ -7,25 +7,33 @@ on:
     types:
       - closed
 
+permissions:
+  contents: write
+
 jobs:
   npm-build:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        # persist-credentials: true is required so `git-auto-commit-action` below
+        # can push the rebuilt dist files. Same-repo-PR gate above means the
+        # merged code already went through CODEOWNERS review.
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0 # zizmor: ignore[artipacked]
         with:
           ref: 4.x
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: lts/*
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Build assets
         run: npm run build
       - name: Pull changes
         run: git pull
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.0.1
         with:
           branch: 4.x
           commit_message: >
