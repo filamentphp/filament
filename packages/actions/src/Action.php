@@ -378,16 +378,7 @@ class Action extends ViewComponent implements Arrayable
 
         $key = md5(serialize($this->getContext()));
 
-        $view = match ($this->getView()) {
-            static::BADGE_VIEW => 'badge',
-            static::BUTTON_VIEW => 'button',
-            static::GROUPED_VIEW => 'grouped',
-            static::ICON_BUTTON_VIEW => 'icon-button',
-            static::LINK_VIEW => 'link',
-            default => $this->getView(),
-        };
-
-        return "{$livewire->getId()}.actions.{$this->getName()}.{$view}.{$key}";
+        return "{$livewire->getId()}.actions.{$this->getName()}.{$key}";
     }
 
     public function getLivewireEventClickHandler(): ?string
