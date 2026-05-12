@@ -376,11 +376,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        $key = md5(serialize([
-            $this->getContext(),
-            $this->getLivewireClickHandler(),
-            $this->getLivewireTarget(),
-        ]));
+        $key = md5(serialize($this->getContext()));
 
         $view = match ($this->getView()) {
             static::BADGE_VIEW => 'badge',
