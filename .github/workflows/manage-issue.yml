@@ -4,11 +4,15 @@ on:
   issues:
     types: [opened, edited]
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   check-repro:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.0.1
         with:
           script: |
             const URL_REGEXP = /### Reproduction repository \(issue will be closed if this is not valid\)[\r\n]+([^#]+)###/m
@@ -51,7 +55,7 @@ jobs:
                     .join('\n')
                     .trim()
 
-                await github.issues.createComment({
+                await github.rest.issues.createComment({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -62,7 +66,7 @@ jobs:
             async function getGitHubActionComments() {
                 debug(`Loading existing comments...`)
 
-                const comments = await github.issues.listComments({
+                const comments = await github.rest.issues.listComments({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -75,7 +79,7 @@ jobs:
             }
 
             async function getIssueLabels() {
-                const issues = await github.issues.listLabelsOnIssue({
+                const issues = await github.rest.issues.listLabelsOnIssue({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -85,7 +89,7 @@ jobs:
             }
 
             async function updateIssue(state, state_reason = null) {
-                await github.issues.update({
+                await github.rest.issues.update({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     issue_number: context.issue.number,
@@ -111,7 +115,7 @@ jobs:
 
                 debug(`Missing required information`)
 
-                await github.issues.addLabels({
+                await github.rest.issues.addLabels({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -149,7 +153,7 @@ jobs:
 
                 debug(`Reopening closed issue`)
 
-                await github.issues.removeLabel({
+                await github.rest.issues.removeLabel({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,

@@ -1,18 +1,21 @@
 name: check-pr-maintainer-access
 
+# pull_request_target is safe here because this workflow never checks out
+# the PR's code — it only reads PR metadata via GraphQL and posts a comment.
 on:
-  pull_request_target:
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
     types:
       - opened
 
 permissions:
+  contents: read
   pull-requests: write
 
 jobs:
   notify-when-maintainers-cannot-edit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.0.1
         with:
           script: |
             const query = `
@@ -48,14 +51,14 @@ jobs:
                 if (! pullRequest.maintainerCanModify) {
                     console.log('PR not owned by filamentphp and does not have maintainer edits enabled')
 
-                    await github.issues.createComment({
+                    await github.rest.issues.createComment({
                         issue_number: pullNumber,
                         owner: 'filamentphp',
                         repo: 'filament',
                         body: 'Thanks for submitting a PR!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. If your fork belongs to a GitHub organization, please move the repository to your personal account and try again. If you\'re already using a personal fork, you can learn how to enable maintainer access [in the GitHub documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).'
                     })
 
-                    await github.issues.update({
+                    await github.rest.issues.update({
                         issue_number: pullNumber,
                         owner: 'filamentphp',
                         repo: context.repo.repo,

@@ -4,44 +4,53 @@ on:
   push:
     tags: '*'
 
+permissions:
+  contents: write
+
 jobs:
   take-screenshots:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      # persist-credentials: true is required so `git-auto-commit-action` below
+      # can push the new screenshots. Tag-only trigger means only maintainers
+      # invoke this workflow.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0 # zizmor: ignore[artipacked]
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.composer/cache/files
           key: composer-screenshots-${{ hashFiles('docs-assets/app/composer.json') }}
           restore-keys: |
             composer-screenshots-
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.34.1
         with:
           php-version: 8.5
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: lts/*
       - name: Cache Puppeteer browser
         id: puppeteer-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/puppeteer
           key: puppeteer-${{ runner.os }}-${{ hashFiles('docs-assets/screenshots/package-lock.json') }}
       - name: Install screenshot dependencies
         run: |
           cd docs-assets/screenshots
-          npm ci
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: ${{ steps.puppeteer-cache.outputs.cache-hit }}
+          npm ci --ignore-scripts
+      - name: Install Puppeteer browser
+        if: steps.puppeteer-cache.outputs.cache-hit != 'true'
+        run: |
+          cd docs-assets/screenshots
+          npx puppeteer browsers install chrome
       - name: Cache app npm dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: docs-assets/app/node_modules
           key: npm-screenshots-app-${{ hashFiles('docs-assets/app/package-lock.json') }}
@@ -49,7 +58,7 @@ jobs:
         run: |
           cd docs-assets/app
           composer install --no-interaction
-          npm ci && npm run build
+          npm ci --ignore-scripts && npm run build
           php artisan serve &
       - name: Take screenshots
         run: |
@@ -58,7 +67,7 @@ jobs:
       - name: Pull changes
         run: git pull
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.0.1
         with:
           commit_message: >
             chore: take docs screenshots
