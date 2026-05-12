@@ -18,7 +18,7 @@ jobs:
       # invoke this workflow.
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0 # zizmor: ignore[artipacked]
       - name: Cache Composer dependencies
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.composer/cache/files
           key: composer-screenshots-${{ hashFiles('docs-assets/app/composer.json') }}
@@ -36,7 +36,7 @@ jobs:
           node-version: lts/*
       - name: Cache Puppeteer browser
         id: puppeteer-cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.cache/puppeteer
           key: puppeteer-${{ runner.os }}-${{ hashFiles('docs-assets/screenshots/package-lock.json') }}
@@ -50,7 +50,7 @@ jobs:
           cd docs-assets/screenshots
           npx puppeteer browsers install chrome
       - name: Cache app npm dependencies
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: docs-assets/app/node_modules
           key: npm-screenshots-app-${{ hashFiles('docs-assets/app/package-lock.json') }}
