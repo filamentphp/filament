@@ -16,7 +16,7 @@ jobs:
       # persist-credentials: true is required so `git-auto-commit-action` below
       # can push the new screenshots. Tag-only trigger means only maintainers
       # invoke this workflow.
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0 # zizmor: ignore[artipacked]
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4.3.0 # zizmor: ignore[artipacked]
       - name: Cache Composer dependencies
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
