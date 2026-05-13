@@ -22,7 +22,9 @@ export default function builderItemFormComponent({
             this.isLoading = true
 
             try {
-                await this.$wire.callSchemaComponentMethod(key, 'loadItem', { itemKey, })
+                await this.$wire.callSchemaComponentMethod(key, 'loadItem', {
+                    itemKey,
+                })
                 this.isLoaded = true
             } finally {
                 this.isLoading = false
@@ -39,7 +41,9 @@ export default function builderItemFormComponent({
             this.isLoading = true
 
             try {
-                await this.$wire.callSchemaComponentMethod(key, 'unloadItem', { itemKey, })
+                await this.$wire.callSchemaComponentMethod(key, 'unloadItem', {
+                    itemKey,
+                })
                 this.isLoaded = false
             } finally {
                 this.isLoading = false
