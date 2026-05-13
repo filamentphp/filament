@@ -2,6 +2,7 @@
 
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Validation\ValidationException;
@@ -34,4 +35,18 @@ it('can report validation errors', function (): void {
         ->call('save')
         ->assertHasErrors(['name' => ['required']])
         ->assertNotified();
+});
+
+it('re-authorizes a custom page on Livewire updates after the initial mount', function (): void {
+    AuthorizableSettings::$canAccess = true;
+
+    $component = livewire(AuthorizableSettings::class);
+
+    AuthorizableSettings::$canAccess = false;
+
+    $component
+        ->set('name', 'foo')
+        ->assertStatus(403);
+
+    AuthorizableSettings::$canAccess = true;
 });

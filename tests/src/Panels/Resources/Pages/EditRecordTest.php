@@ -267,6 +267,40 @@ it('does not render page if the policy update returns a denied response', functi
     app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
 });
 
+it('re-authorizes update on Livewire updates after the initial mount', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
+
+    $component = livewire(EditTicket::class, ['record' => $ticket->getKey()]);
+
+    app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
+});
+
+it('re-authorizes viewAny on Livewire updates after the initial mount of an edit page', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+
+    $component = livewire(EditTicket::class, ['record' => $ticket->getKey()]);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 

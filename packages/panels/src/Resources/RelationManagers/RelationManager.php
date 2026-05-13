@@ -28,6 +28,7 @@ use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\RelationManagers\Concerns\CanAuthorizeAccess;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -52,6 +53,7 @@ use function Filament\authorize;
 
 class RelationManager extends Component implements HasActions, HasRenderHookScopes, HasSchemas, HasTable
 {
+    use CanAuthorizeAccess;
     use CanBeLazy;
     use InteractsWithActions;
     use InteractsWithRelationshipTable {

@@ -69,6 +69,11 @@ class CreateRecord extends Page
         abort_unless(static::getResource()::canCreate(), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     protected function fillForm(): void
     {
         $this->callHook('beforeFill');
@@ -149,6 +154,7 @@ class CreateRecord extends Page
             // Rebuild child schemas without double-firing `afterStateHydrated()` hooks.
             $hydratedDefaultState = null;
             $this->form->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+            $this->form->dispatchClientSideStateReset();
 
             $this->isCreating = false;
 
