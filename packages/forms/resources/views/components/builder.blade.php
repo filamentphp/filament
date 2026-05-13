@@ -1,6 +1,9 @@
 @php
     use Filament\Actions\Action;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Facades\FilamentAsset;
+    use function Filament\Support\generate_loading_indicator_html;
 
     $fieldWrapperView = $getFieldWrapperView();
     $items = $getItems();
@@ -9,6 +12,8 @@
     $blockPickerWidth = $getBlockPickerWidth();
     $hasBlockPreviews = $hasBlockPreviews();
     $hasInteractiveBlockPreviews = $hasInteractiveBlockPreviews();
+
+    $loadItemsWithErrors();
 
     $addAction = $getAction($getAddActionName());
     $addActionAlignment = $getAddActionAlignment();
@@ -100,6 +105,11 @@
 
                 @foreach ($items as $itemKey => $item)
                     @php
+                        $itemKeyString = (string) $itemKey;
+                        $itemIsLazy = $isLazy($item);
+                        $itemHasError = $itemHasErrors($itemKeyString);
+                        $itemIsLoaded = (! $itemIsLazy) || $isItemLoaded($itemKeyString) || $itemHasError;
+                        $itemUnloadOnCollapse = $shouldUnloadOnCollapse($item);
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
                             fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
@@ -121,12 +131,21 @@
                     <li
                         wire:ignore.self
                         wire:key="{{ $item->getLivewireKey() }}.item"
-                        x-data="{
+                        x-load
+                        x-load-src="{{ FilamentAsset::getAlpineComponentSrc('builder-item', 'filament/forms') }}"
+                        x-data="builderItemFormComponent({
+                            key: @js($key),
+                            itemKey: @js($itemKey),
                             isCollapsed: @if ($persistCollapsed) $persist(@js($isCollapsed($item))).as(`builder-${@js($key)}-${@js($itemKey)}-isCollapsed`) @else @js($isCollapsed($item)) @endif,
-                        }"
-                        x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
-                        x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
-                        x-on:expand="isCollapsed = false"
+                            isLoaded: @js($itemIsLoaded),
+                            unloadOnCollapse: @js($itemUnloadOnCollapse),
+                        })"
+                        @if ($itemHasError)
+                            x-init="isCollapsed = false"
+                        @endif
+                        x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && expand()"
+                        x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && collapse()"
+                        x-on:expand="expand()"
                         x-sortable-item="{{ $itemKey }}"
                         {{
                             $item->getParentComponent()->getExtraAttributeBag()
@@ -135,12 +154,13 @@
                                     'fi-fo-builder-item-has-header' => $hasItemHeader,
                                 ])
                         }}
-                        x-bind:class="{ 'fi-collapsed': isCollapsed }"
+                        x-bind:class="{ 'fi-collapsed': isCollapsed, 'fi-loading': isLoading }"
+                        x-bind:aria-busy="isLoading"
                     >
                         @if ($hasItemHeader)
                             <div
                                 @if ($isCollapsible)
-                                    x-on:click.stop="isCollapsed = !isCollapsed"
+                                    x-on:click.stop="toggleCollapsed()"
                                 @endif
                                 class="fi-fo-builder-item-header"
                             >
@@ -220,7 +240,7 @@
                                         @if ($isCollapsible)
                                             <li
                                                 class="fi-fo-builder-item-header-collapsible-actions"
-                                                x-on:click.stop="isCollapsed = !isCollapsed"
+                                                x-on:click.stop="toggleCollapsed()"
                                             >
                                                 <div
                                                     class="fi-fo-builder-item-header-collapse-action"
@@ -247,25 +267,31 @@
                                 'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $item->getParentComponent()->hasPreview(),
                             ])
                         >
-                            @if ($hasBlockPreviews && $item->getParentComponent()->hasPreview())
-                                <div
-                                    @class([
-                                        'fi-fo-builder-item-preview',
-                                        'fi-interactive' => $hasInteractiveBlockPreviews,
-                                    ])
-                                >
-                                    {{ $item->getParentComponent()->renderPreview($item->getRawState()) }}
-                                </div>
-
-                                @if ($editActionIsVisible && (! $hasInteractiveBlockPreviews))
+                            @if ($itemIsLoaded)
+                                @if ($hasBlockPreviews && $item->getParentComponent()->hasPreview())
                                     <div
-                                        class="fi-fo-builder-item-preview-edit-overlay"
-                                        role="button"
-                                        x-on:click.stop="{{ '$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })' }}"
-                                    ></div>
+                                        @class([
+                                            'fi-fo-builder-item-preview',
+                                            'fi-interactive' => $hasInteractiveBlockPreviews,
+                                        ])
+                                    >
+                                        {{ $item->getParentComponent()->renderPreview($item->getRawState()) }}
+                                    </div>
+
+                                    @if ($editActionIsVisible && (! $hasInteractiveBlockPreviews))
+                                        <div
+                                            class="fi-fo-builder-item-preview-edit-overlay"
+                                            role="button"
+                                            x-on:click.stop="{{ '$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })' }}"
+                                        ></div>
+                                    @endif
+                                @else
+                                    {{ $item }}
                                 @endif
                             @else
-                                {{ $item }}
+                                <div class="fi-fo-builder-item-placeholder">
+                                    {{ generate_loading_indicator_html(size: IconSize::Large) }}
+                                </div>
                             @endif
                         </div>
                     </li>

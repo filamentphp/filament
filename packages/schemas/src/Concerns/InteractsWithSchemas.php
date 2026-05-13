@@ -29,6 +29,11 @@ trait InteractsWithSchemas
      */
     public array $componentFileAttachments = [];
 
+    /**
+     * @var array<string, array<string>>
+     */
+    public array $loadedSchemaComponentItems = [];
+
     #[Locked]
     public bool $areSchemaStateUpdateHooksDisabledForTesting = false;
 

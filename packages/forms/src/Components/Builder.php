@@ -27,6 +27,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
+    use Concerns\CanLazyLoadItems;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
@@ -180,7 +181,11 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->rawState($items);
 
-                $component->getChildSchema($newUuid ?? array_key_last($items))->fill(filled($data) ? $data : null);
+                $newKey = $newUuid ?? array_key_last($items);
+
+                $component->getChildSchema($newKey)->fill(filled($data) ? $data : null);
+
+                $component->loadItem((string) $newKey);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -275,6 +280,10 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->getChildSchema($newKey)->fill(filled($data) ? $data : null);
 
+                if ($newKey !== null) {
+                    $component->loadItem((string) $newKey);
+                }
+
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
@@ -333,9 +342,14 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                     $items[$newUuid] = $items[$arguments['item']];
                 } else {
                     $items[] = $items[$arguments['item']];
+                    $newUuid = array_key_last($items);
                 }
 
                 $component->rawState($items);
+
+                if ($newUuid !== null) {
+                    $component->loadItem((string) $newUuid);
+                }
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -379,6 +393,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 unset($items[$arguments['item']]);
 
                 $component->rawState($items);
+
+                $component->unloadItem((string) $arguments['item']);
 
                 $component->callAfterStateUpdated();
 

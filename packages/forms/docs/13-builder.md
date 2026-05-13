@@ -429,6 +429,63 @@ Builder::make('content')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Lazy-loading items
+
+Builders that contain many items can be slow to render because every item's schema is built on initial page load. The `lazy()` method defers rendering each item's schema until it is expanded — the heavy form fields are only sent to the browser the first time a user opens the item:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->lazy()
+```
+
+Calling `lazy()` implies `collapsible()` and starts every item collapsed. Each item shows its header (with block label, icon, and actions); only when the user expands an item does Filament render its child schema.
+
+State for every item is always kept in the parent Livewire data array, so values are preserved when an item is collapsed, when a different item is rendered, or when the page is reloaded. Validation rules also still run for unopened items — if a required field is missing in a collapsed item, the item is automatically expanded and loaded on submit so the user can see and correct the error.
+
+To remove an item's schema from the page again when it is collapsed, pass `unloadOnCollapse: true`:
+
+```php
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->lazy(unloadOnCollapse: true)
+```
+
+This is useful for very long builders where you want both initial-render and steady-state DOM size to stay small.
+
+### Overriding the lazy behavior per block
+
+Individual blocks can override the builder-wide setting with `Block::lazy()`. Pass `false` to keep a block eager even when the builder is lazy, or `true` to make a single block lazy in an otherwise eager builder:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->lazy()
+    ->blocks([
+        Builder\Block::make('heading')
+            ->lazy(false) // Always rendered, even though the builder is lazy.
+            ->schema([
+                // ...
+            ]),
+        Builder\Block::make('rich-text')
+            ->schema([
+                // ...
+            ]),
+        Builder\Block::make('gallery')
+            ->lazy(unloadOnCollapse: true) // Unloaded again when collapsed.
+            ->schema([
+                // ...
+            ]),
+    ])
+```
+
 ## Cloning items
 
 You may allow builder items to be duplicated using the `cloneable()` method:
