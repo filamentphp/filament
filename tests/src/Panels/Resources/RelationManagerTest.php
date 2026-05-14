@@ -22,6 +22,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelati
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMixedSummaryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
@@ -358,6 +359,18 @@ it('can summarize pivot columns in a `BelongsToMany` `RelationManager`', functio
         ->assertSuccessful()
         ->assertTableColumnSummarySet('quantity', 'quantity_sum', 60)    // 10 + 20 + 30
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000); // 1000 + 2000 + 3000
+});
+
+it('preserves `modifyQueryUsing()` `addSelect()` subqueries when resolving a `BelongsToMany` record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsWithModifiedQueryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $department->getKey());
 });
 
 it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `RelationManager`', function (): void {
