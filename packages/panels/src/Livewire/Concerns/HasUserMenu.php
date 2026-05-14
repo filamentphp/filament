@@ -26,6 +26,19 @@ trait HasUserMenu
     }
 
     /**
+     * @return array<int, \Illuminate\Support\Collection<string, Action>>
+     */
+    public function getUserMenuItemGroupsAfterTheme(): array
+    {
+        return Filament::getCurrentPanel()?->getUserMenuItemGroupsAfterTheme() ?? [];
+    }
+
+    public function hasMultipleUserMenuItemGroups(): bool
+    {
+        return Filament::getCurrentPanel()?->hasMultipleUserMenuItemGroups() ?? false;
+    }
+
+    /**
      * @return array<Action>
      */
     protected function getUserMenuItems(): array
