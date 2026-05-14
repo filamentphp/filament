@@ -3,28 +3,44 @@ name: fix-code-style
 on:
   push:
 
+permissions:
+  contents: write
+
 jobs:
   fix-code-style:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        # persist-credentials: true is required so `git-auto-commit-action` below
+        # can push reformatted files back. Trigger is `push:`, so this only runs
+        # on code that already reached a base-repo branch.
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 # zizmor: ignore[artipacked]
+      - name: Cache Composer dependencies
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
-          ref: ${{ github.head_ref }}
+          path: ~/.composer/cache/files
+          key: composer-cs-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-cs-
+      - name: Set up PHP
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
+        with:
+          php-version: 8.2
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: lts/*
+          cache: npm
       - name: Install dependencies
         run: |
-          composer install --no-interaction
-          npm ci
+          composer install --no-interaction --no-scripts
+          npm ci --ignore-scripts
       - name: Run Pint
         run: composer pint
       - name: Run Prettier
         run: npm run prettier
-      - name: Pull changes
-        run: git pull
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
           commit_message: >
             chore: fix code style
