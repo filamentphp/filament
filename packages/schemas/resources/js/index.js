@@ -112,39 +112,52 @@ document.addEventListener('alpine:init', () => {
 
     window.Alpine.data('filamentActionsSchemaComponent', actions)
 
-    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
-        succeed(({ snapshot, effects }) => {
-            effects.dispatches?.forEach((dispatch) => {
-                if (!dispatch.params?.awaitSchemaComponent) {
-                    return
-                }
+    Livewire.hook(
+        'commit',
+        ({ component, message, commit, respond, succeed, fail }) => {
+            succeed(({ snapshot, effects }) => {
+                effects.dispatches?.forEach((dispatch) => {
+                    if (!dispatch.params?.awaitSchemaComponent) {
+                        return
+                    }
 
-                let els = Array.from(
-                    component.el.querySelectorAll(
-                        `[wire\\:partial="schema-component::${dispatch.params.awaitSchemaComponent}"]`,
-                    ),
-                ).filter((el) => findClosestLivewireComponent(el) === component)
+                    let livewireComponent = component ?? message?.component
 
-                if (els.length === 1) {
-                    return
-                }
+                    if (!livewireComponent) {
+                        return
+                    }
 
-                if (els.length > 1) {
-                    throw `Multiple schema components found with key [${dispatch.params.awaitSchemaComponent}].`
-                }
+                    let els = Array.from(
+                        livewireComponent.el.querySelectorAll(
+                            `[wire\\:partial="schema-component::${dispatch.params.awaitSchemaComponent}"]`,
+                        ),
+                    ).filter(
+                        (el) =>
+                            findClosestLivewireComponent(el) ===
+                            livewireComponent,
+                    )
 
-                window.addEventListener(
-                    `schema-component-${component.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
-                    () => {
-                        window.dispatchEvent(
-                            new CustomEvent(dispatch.name, {
-                                detail: dispatch.params,
-                            }),
-                        )
-                    },
-                    { once: true },
-                )
+                    if (els.length === 1) {
+                        return
+                    }
+
+                    if (els.length > 1) {
+                        throw `Multiple schema components found with key [${dispatch.params.awaitSchemaComponent}].`
+                    }
+
+                    window.addEventListener(
+                        `schema-component-${livewireComponent.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
+                        () => {
+                            window.dispatchEvent(
+                                new CustomEvent(dispatch.name, {
+                                    detail: dispatch.params,
+                                }),
+                            )
+                        },
+                        { once: true },
+                    )
+                })
             })
-        })
-    })
+        },
+    )
 })
