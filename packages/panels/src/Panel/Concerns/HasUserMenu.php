@@ -52,8 +52,10 @@ trait HasUserMenu
             return $this;
         }
 
-        if ($this->isNestedUserMenuItemGroups($items)) {
-            foreach ($items as $group) {
+        $registrationGroups = $this->splitUserMenuRegistrationGroups($items);
+
+        if ($registrationGroups !== null) {
+            foreach ($registrationGroups as $group) {
                 $this->userMenuItemGroups[] = $group;
             }
 
@@ -77,21 +79,26 @@ trait HasUserMenu
     }
 
     /**
-     * @param  array<int | string, Action | Closure | MenuItem>  $items
+     * @param  array<mixed>  $items
+     * @return list<array<int | string, Action | Closure | MenuItem>> | null
      */
-    protected function isNestedUserMenuItemGroups(array $items): bool
+    protected function splitUserMenuRegistrationGroups(array $items): ?array
     {
-        if (! array_is_list($items)) {
-            return false;
+        if (! array_is_list($items) || $items === []) {
+            return null;
         }
 
-        foreach ($items as $item) {
-            if (! is_array($item)) {
-                return false;
+        $groups = [];
+
+        foreach ($items as $entry) {
+            if (! is_array($entry)) {
+                return null;
             }
+
+            $groups[] = $entry;
         }
 
-        return true;
+        return $groups;
     }
 
     public function hasMultipleUserMenuItemGroups(): bool
@@ -122,7 +129,9 @@ trait HasUserMenu
                 ->map(fn (string $name): ?Action => $flatByName->get($name))
                 ->filter()
                 ->filter(fn (Action $action): bool => $action->isVisible() && $action->getSort() >= 0)
-                ->sortBy(fn (Action $action): int => $action->getSort());
+                ->sortBy(fn (Action $action): int => $action->getSort())
+                ->values()
+                ->keyBy(fn (Action $action): string => $action->getName());
 
             if ($groupActions->isNotEmpty()) {
                 $afterGroups[] = $groupActions;

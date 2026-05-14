@@ -5,10 +5,12 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 
+use function Pest\Laravel\actingAs;
+
 uses(TestCase::class);
 
 beforeEach(function (): void {
-    $this->actingAs(User::factory()->create());
+    actingAs(User::factory()->create());
 });
 
 describe('grouped user menu items', function (): void {
