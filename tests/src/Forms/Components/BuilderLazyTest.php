@@ -6,7 +6,9 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
@@ -158,3 +160,25 @@ class TestComponentWithLazyBuilderAndEagerBlock extends Livewire
             ->statePath('data');
     }
 }
+
+it('can render a lazy `Builder` in the browser', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        visit('/builder-lazy-browser-test')
+            ->assertPresent('[data-testid="lazy-builder"] .fi-fo-builder-item-placeholder')
+            ->assertNotPresent('[data-testid="lazy-builder"] input')
+            ->click('[data-testid="lazy-builder"] .fi-fo-builder-item-header')
+            ->waitForEvent('networkidle')
+            ->assertNotPresent('[data-testid="lazy-builder"] .fi-fo-builder-item-placeholder')
+            ->assertPresent('[data-testid="lazy-builder"] input')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/builder-lazy-browser-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+});
