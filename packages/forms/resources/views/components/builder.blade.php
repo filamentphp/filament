@@ -263,6 +263,7 @@
 
                         <div
                             x-show="! isCollapsed"
+                            x-cloak
                             @class([
                                 'fi-fo-builder-item-content',
                                 'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $item->getParentComponent()->hasPreview(),
