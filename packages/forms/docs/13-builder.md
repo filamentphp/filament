@@ -431,7 +431,7 @@ Builder::make('content')
 
 ## Lazy-loading items
 
-Builders that contain many items can be slow to render because every item's schema is built on initial page load. The `lazy()` method defers rendering each item's schema until it is expanded — the heavy form fields are only sent to the browser the first time a user opens the item:
+Builders that contain many items can be slow to render because every item's schema is built on initial page load. The `lazy()` method defers rendering each item's schema until it is expanded. The heavy form fields are only sent to the browser the first time a user opens the item:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -445,7 +445,7 @@ Builder::make('content')
 
 Calling `lazy()` implies `collapsible()` and starts every item collapsed. Each item shows its header (with block label, icon, and actions); only when the user expands an item does Filament render its child schema.
 
-State for every item is always kept in the parent Livewire data array, so values are preserved when an item is collapsed, when a different item is rendered, or when the page is reloaded. Validation rules also still run for unopened items — if a required field is missing in a collapsed item, the item is automatically expanded and loaded on submit so the user can see and correct the error.
+State for every item is always kept in the parent Livewire data array, so values are preserved when an item is collapsed, when a different item is rendered, or when the page is reloaded. Validation rules also still run for unopened items. If a required field is missing in a collapsed item, the item is automatically expanded and loaded on submit so the user can see and correct the error.
 
 To remove an item's schema from the page again when it is collapsed, pass `unloadOnCollapse: true`:
 
