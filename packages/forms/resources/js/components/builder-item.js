@@ -12,6 +12,13 @@ export default function builderItemFormComponent({
 
         isLoading: false,
 
+        init() {
+            // `$persistCollapsed` restored expanded state but schema not yet loaded — trigger load.
+            if (! this.isCollapsed && ! this.isLoaded) {
+                this.expand()
+            }
+        },
+
         async expand() {
             if (this.isLoading) return
 

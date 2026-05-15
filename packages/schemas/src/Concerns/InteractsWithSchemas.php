@@ -32,6 +32,7 @@ trait InteractsWithSchemas
     /**
      * @var array<string, array<string>>
      */
+    #[Locked]
     public array $loadedSchemaComponentItems = [];
 
     #[Locked]

@@ -13,6 +13,11 @@ trait CanLazyLoadItems
 
     protected bool | Closure $shouldUnloadOnCollapse = false;
 
+    /**
+     * @var array<string> | null
+     */
+    private ?array $cachedErrorBagKeys = null;
+
     public function lazy(bool | Closure $condition = true, bool | Closure $unloadOnCollapse = false): static
     {
         $this->isLazy = $condition;
@@ -38,6 +43,11 @@ trait CanLazyLoadItems
                 $blockIsLazy = $block->getIsLazy();
 
                 if ($blockIsLazy !== null) {
+                    // `Block::lazy(true)` on a non-lazy builder would spin forever — no-op it.
+                    if ($blockIsLazy && ! (bool) $this->evaluate($this->isLazy)) {
+                        return false;
+                    }
+
                     return $blockIsLazy;
                 }
             }
@@ -76,15 +86,15 @@ trait CanLazyLoadItems
 
     public function itemHasErrors(string $itemKey): bool
     {
-        $errorBag = $this->getLivewire()->getErrorBag();
+        $errorKeys = $this->getErrorBagKeys();
 
-        if (! $errorBag->any()) {
+        if (empty($errorKeys)) {
             return false;
         }
 
         $prefix = $this->getStatePath() . '.' . $itemKey . '.';
 
-        foreach ($errorBag->keys() as $errorKey) {
+        foreach ($errorKeys as $errorKey) {
             if (str_starts_with($errorKey, $prefix)) {
                 return true;
             }
@@ -99,16 +109,16 @@ trait CanLazyLoadItems
             return;
         }
 
-        $errorBag = $this->getLivewire()->getErrorBag();
+        $errorKeys = $this->getErrorBagKeys();
 
-        if (! $errorBag->any()) {
+        if (empty($errorKeys)) {
             return;
         }
 
         $prefix = $this->getStatePath() . '.';
         $itemKeys = [];
 
-        foreach ($errorBag->keys() as $errorKey) {
+        foreach ($errorKeys as $errorKey) {
             if (! str_starts_with($errorKey, $prefix)) {
                 continue;
             }
@@ -165,6 +175,19 @@ trait CanLazyLoadItems
             $loaded,
             static fn (string $loadedKey): bool => $loadedKey !== $itemKey,
         )));
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function getErrorBagKeys(): array
+    {
+        if (! isset($this->cachedErrorBagKeys)) {
+            $errorBag = $this->getLivewire()->getErrorBag();
+            $this->cachedErrorBagKeys = $errorBag->any() ? $errorBag->keys() : [];
+        }
+
+        return $this->cachedErrorBagKeys;
     }
 
     private function getLoadedItemsPath(): string

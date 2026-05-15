@@ -461,7 +461,7 @@ This is useful for very long builders where you want both initial-render and ste
 
 ### Overriding the lazy behavior per block
 
-Individual blocks can override the builder-wide setting with `Block::lazy()`. Pass `false` to keep a block eager even when the builder is lazy, or `true` to make a single block lazy in an otherwise eager builder:
+Individual blocks can override the builder-wide setting with `Block::lazy()`. Pass `false` to keep a specific block eager even when the builder is lazy:
 
 ```php
 use Filament\Forms\Components\Builder;
