@@ -137,7 +137,7 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 window.addEventListener(
-                    `schema-component-${component.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
+                    `schema-component-${message.component.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
                     () => {
                         window.dispatchEvent(
                             new CustomEvent(dispatch.name, {
