@@ -14,7 +14,7 @@ export default function builderItemFormComponent({
 
         init() {
             // `$persistCollapsed` restored expanded state but schema not yet loaded — trigger load.
-            if (! this.isCollapsed && ! this.isLoaded) {
+            if (!this.isCollapsed && !this.isLoaded) {
                 this.expand()
             }
         },
