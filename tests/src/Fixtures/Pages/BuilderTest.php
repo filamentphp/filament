@@ -47,6 +47,22 @@ class BuilderTest extends Page
                             ]),
                     ])
                     ->extraAttributes(['data-testid' => 'builder']),
+                Builder::make('lazyContent')
+                    ->label('Lazy Content')
+                    ->lazy()
+                    ->blocks([
+                        Builder\Block::make('paragraph')
+                            ->label('Paragraph')
+                            ->schema([
+                                TextInput::make('text')
+                                    ->label('Text')
+                                    ->required(),
+                            ]),
+                    ])
+                    ->default([
+                        ['type' => 'paragraph', 'data' => ['text' => 'Hello world']],
+                    ])
+                    ->extraAttributes(['data-testid' => 'lazy-builder']),
             ])
             ->statePath('data');
     }
