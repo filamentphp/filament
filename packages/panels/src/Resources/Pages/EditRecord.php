@@ -100,6 +100,11 @@ class EditRecord extends Page
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     protected function fillForm(): void
     {
         /** @internal Read the DocBlock above the following method. */

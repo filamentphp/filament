@@ -73,67 +73,71 @@ class ImportCsv implements ShouldQueue
 
         auth()->setUser($user);
 
-        $processedRows = 0;
-        $successfulRows = 0;
+        try {
+            $processedRows = 0;
+            $successfulRows = 0;
 
-        $rows = is_array($this->rows) ? $this->rows : unserialize(base64_decode($this->rows));
+            $rows = is_array($this->rows) ? $this->rows : unserialize(base64_decode($this->rows));
 
-        DB::transaction(function () use (&$processedRows, $rows, &$successfulRows): void {
-            foreach ($rows as $row) {
-                $row = $this->utf8Encode($row);
+            DB::transaction(function () use (&$processedRows, $rows, &$successfulRows): void {
+                foreach ($rows as $row) {
+                    $row = $this->utf8Encode($row);
 
-                try {
-                    ($this->importer)($row);
-                    $successfulRows++;
-                } catch (RowImportFailedException $exception) {
-                    $this->logFailedRow($row, $exception->getMessage());
-                } catch (ValidationException $exception) {
-                    $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
-                } catch (Throwable $exception) {
-                    report($exception);
+                    try {
+                        ($this->importer)($row);
+                        $successfulRows++;
+                    } catch (RowImportFailedException $exception) {
+                        $this->logFailedRow($row, $exception->getMessage());
+                    } catch (ValidationException $exception) {
+                        $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
+                    } catch (Throwable $exception) {
+                        report($exception);
 
-                    $this->logFailedRow($row);
+                        $this->logFailedRow($row);
+                    }
+
+                    $processedRows++;
                 }
 
-                $processedRows++;
-            }
+                $this->import::query()
+                    ->whereKey($this->import)
+                    ->lockForUpdate()
+                    ->update([
+                        'processed_rows' => new Expression('processed_rows + ' . $processedRows),
+                        'successful_rows' => new Expression('successful_rows + ' . $successfulRows),
+                    ]);
 
-            $this->import::query()
-                ->whereKey($this->import)
-                ->lockForUpdate()
-                ->update([
-                    'processed_rows' => new Expression('processed_rows + ' . $processedRows),
-                    'successful_rows' => new Expression('successful_rows + ' . $successfulRows),
-                ]);
+                $this->import::query()
+                    ->whereKey($this->import)
+                    ->whereColumn('processed_rows', '>', 'total_rows')
+                    ->lockForUpdate()
+                    ->update([
+                        'processed_rows' => new Expression('total_rows'),
+                    ]);
 
-            $this->import::query()
-                ->whereKey($this->import)
-                ->whereColumn('processed_rows', '>', 'total_rows')
-                ->lockForUpdate()
-                ->update([
-                    'processed_rows' => new Expression('total_rows'),
-                ]);
+                $this->import::query()
+                    ->whereKey($this->import)
+                    ->whereColumn('successful_rows', '>', 'total_rows')
+                    ->lockForUpdate()
+                    ->update([
+                        'successful_rows' => new Expression('total_rows'),
+                    ]);
 
-            $this->import::query()
-                ->whereKey($this->import)
-                ->whereColumn('successful_rows', '>', 'total_rows')
-                ->lockForUpdate()
-                ->update([
-                    'successful_rows' => new Expression('total_rows'),
-                ]);
+                $this->import->failedRows()->createMany($this->failedRows);
+            });
 
-            $this->import->failedRows()->createMany($this->failedRows);
-        });
+            $this->import->refresh();
 
-        $this->import->refresh();
-
-        event(new ImportChunkProcessed(
-            $this->import,
-            $this->columnMap,
-            $this->options,
-            $processedRows,
-            $successfulRows,
-        ));
+            event(new ImportChunkProcessed(
+                $this->import,
+                $this->columnMap,
+                $this->options,
+                $processedRows,
+                $successfulRows,
+            ));
+        } finally {
+            auth()->forgetGuards();
+        }
     }
 
     public function retryUntil(): ?CarbonInterface

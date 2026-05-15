@@ -244,6 +244,7 @@ class TableSelect extends Field
     {
         $relationship = $this->getRelationship();
         $record = $this->getRecord();
+        $relationshipName = $this->getRelationshipName();
         $state = $this->getState();
 
         if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
@@ -264,6 +265,8 @@ class TableSelect extends Field
                     ]);
                 });
             }
+
+            $record->unsetRelation($relationshipName);
 
             return;
         }
@@ -314,11 +317,13 @@ class TableSelect extends Field
 
         if ($pivotData === []) {
             $relationship->sync($state, detaching: false);
+            $record->unsetRelation($relationshipName);
 
             return;
         }
 
         $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
+        $record->unsetRelation($relationshipName);
     }
 
     public function relationshipName(string | Closure | null $name): static

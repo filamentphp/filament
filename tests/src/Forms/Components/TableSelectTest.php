@@ -397,6 +397,23 @@ describe('saving relationships', function (): void {
 
         expect($user->fresh()->company?->id)->toBe($companyA->id);
     });
+
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $component = livewire(TableSelectWithEagerLoadedBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => []])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0)
+            ->and($component->instance()->data['teams'])->toBe([]);
+
+        $component->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
+    });
 });
 
 describe('properties', function (): void {
@@ -497,6 +514,50 @@ class TableSelectWithBelongsToManyRelationship extends Component implements HasA
     public function mount(): void
     {
         $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TableSelect::make('teams')
+                    ->relationship('teams')
+                    ->tableConfiguration(TeamsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TableSelectWithEagerLoadedBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->record->load('teams');
+        $this->form->fill([]);
+    }
+
+    public function hydrate(): void
+    {
+        $this->record->load('teams');
     }
 
     public function form(Schema $form): Schema

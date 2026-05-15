@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'জোর পূর্বক মুছে ফেলুন',
+        'label' => 'স্থায়ীভাবে মুছে ফেলুন',
 
         'modal' => [
 
-            'heading' => ':label জোর পূর্বক মুছে ফেলুন',
+            'heading' => ':label স্থায়ীভাবে মুছে ফেলুন',
 
             'actions' => [
 
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'মুছে ফেলা হয়েছে',
+                'title' => 'মুছে ফেলা হয়েছে',
             ],
 
         ],
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'নির্বাচিত গুলো জোর পূর্বক মুছে ফেলুন',
+        'label' => 'নির্বাচিতগুলো স্থায়ীভাবে মুছে ফেলুন',
 
         'modal' => [
 
-            'heading' => ':label জোর পূর্বক মুছে ফেলুন',
+            'heading' => 'নির্বাচিত :label স্থায়ীভাবে মুছে ফেলুন',
 
             'actions' => [
 
@@ -51,7 +51,19 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'মুছে ফেলা হয়েছে',
+                'title' => 'মুছে ফেলা হয়েছে',
+            ],
+
+            'deleted_partial' => [
+                'title' => ':total এর মধ্যে :countটি স্থায়ীভাবে মুছে ফেলা হয়েছে',
+                'missing_authorization_failure_message' => 'আপনার :countটি স্থায়ীভাবে মুছে ফেলার অনুমতি নেই।',
+                'missing_processing_failure_message' => ':countটি স্থায়ীভাবে মুছে ফেলা সম্ভব হয়নি।',
+            ],
+
+            'deleted_none' => [
+                'title' => 'স্থায়ীভাবে মুছে ফেলতে ব্যর্থ হয়েছে',
+                'missing_authorization_failure_message' => 'আপনার :countটি স্থায়ীভাবে মুছে ফেলার অনুমতি নেই।',
+                'missing_processing_failure_message' => ':countটি স্থায়ীভাবে মুছে ফেলা সম্ভব হয়নি।',
             ],
 
         ],

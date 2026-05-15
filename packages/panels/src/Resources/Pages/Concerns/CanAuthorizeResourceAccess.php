@@ -9,6 +9,11 @@ trait CanAuthorizeResourceAccess
         static::authorizeResourceAccess();
     }
 
+    public function hydrateCanAuthorizeResourceAccess(): void
+    {
+        static::authorizeResourceAccess();
+    }
+
     public static function authorizeResourceAccess(): void
     {
         abort_unless(static::getResource()::canAccess(), 403);

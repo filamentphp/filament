@@ -103,6 +103,23 @@ describe('`toEmbeddedHtml()` rendering', function (): void {
         expect($html)->toContain('fi-inline');
     });
 
+    it('adds `fi-growable` to components with `grow()` in inline schemas', function (): void {
+        $growableSchema = Schema::make(Livewire::make())
+            ->components([
+                Text::make('Grows')->grow(),
+            ])
+            ->inline();
+
+        $schema = Schema::make(Livewire::make())
+            ->components([
+                Text::make('Does not grow'),
+            ])
+            ->inline();
+
+        expect($growableSchema->toEmbeddedHtml())->toContain('fi-growable')
+            ->and($schema->toEmbeddedHtml())->not->toContain('fi-growable');
+    });
+
     it('includes gap class when schema has gap', function (): void {
         $schema = Schema::make(Livewire::make())
             ->components([

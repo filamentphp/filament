@@ -21,6 +21,11 @@ trait InteractsWithRecord
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
+    public function hydrateCanAuthorizeAccess(): void
+    {
+        abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
+    }
+
     protected function resolveRecord(int | string $key): Model
     {
         $this->mountParentRecord();

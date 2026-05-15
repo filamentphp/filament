@@ -12,6 +12,7 @@ use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingRepeate
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePost;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
+use Filament\Tests\Fixtures\Resources\Tickets\Pages\CreateTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
@@ -374,4 +375,32 @@ it('does not render page if the policy create returns a denied response', functi
         ->assertForbidden();
 
     app()->bind(TicketPolicy::class . '::create', fn (): bool => true);
+});
+
+it('re-authorizes create on Livewire updates after the initial mount', function (): void {
+    app()->bind(TicketPolicy::class . '::create', fn (): bool => true);
+
+    $component = livewire(CreateTicket::class);
+
+    app()->bind(TicketPolicy::class . '::create', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::create', fn (): bool => true);
+});
+
+it('re-authorizes viewAny on Livewire updates after the initial mount of a create page', function (): void {
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+
+    $component = livewire(CreateTicket::class);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });

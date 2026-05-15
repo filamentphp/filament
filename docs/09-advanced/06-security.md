@@ -22,6 +22,31 @@ Filament automatically checks [Laravel Model Policies](https://laravel.com/docs/
 
 However, Filament's automatic authorization only covers these built-in resource operations. Any custom functionality you add — custom actions, custom pages, custom Livewire components, API endpoints, or other business logic — must be authorized by you. Filament cannot know your application's authorization requirements beyond the standard CRUD operations it provides.
 
+### Authorization and the Livewire request lifecycle
+
+Filament re-runs authorization on every Livewire request — both on the initial page load and on every subsequent update (search, filter, pagination, action call, form interaction). This means that if a user's permissions change while they are using the panel, the next interaction they make will be authorized against the current policy state, not the policy state at the time the component was first mounted.
+
+This applies across every Livewire component Filament ships:
+
+- **Resource pages** (`ListRecords`, `CreateRecord`, `EditRecord`, `ViewRecord`, `ManageRelatedRecords`) — the resource-level `Resource::canAccess()` check (and parent resource's check, if any) re-runs on every request via the `CanAuthorizeResourceAccess` trait. The page-specific record-scoped checks (`canEdit($record)`, `canView($record)`, `canCreate()`, parameterized `canAccess(['record' => ...])`) re-run on every request via each page type's `hydrate()` method, mirroring the existing `mount()`-time call to `$this->authorizeAccess()`.
+- **Custom panel pages** (anything extending `Filament\Pages\Page`, including `SettingsPage`, the auth pages, the dashboard, cluster pages) — the page's `canAccess()` method re-runs on every request via the `CanAuthorizeAccess` trait.
+- **Relation managers** — the `canViewForRecord($ownerRecord, $pageClass)` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Resources\RelationManagers\Concerns`. Initial mount is gated by the parent page's render-time filter, so the trait only registers a hydrate-time check to avoid a duplicate call on the first request.
+- **Widgets** — the static `canView()` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Widgets\Concerns`. As with relation managers, the parent dashboard's render-time filter handles the initial-mount gate.
+- **Tenancy pages** (`RegisterTenant`, `EditTenantProfile`) — their `canView()` checks re-run on every Livewire request via a `hydrate()` method mirroring the existing `mount()`-time check.
+
+Panel-level access (`canAccessPanel`) is enforced by the panel's `Authenticate` middleware, which runs on every HTTP request (including Livewire updates) — so users who lose panel access mid-session are bounced at the middleware layer before any component-level authorization is consulted.
+
+When you build custom Livewire components on a Filament panel, be aware that **several Livewire activities run before Filament's authorization hooks fire**:
+
+- Public properties are deserialized from the request payload (Livewire's "synth" step) before any of your hooks run.
+- The `boot()` and `boot{TraitName}()` lifecycle hooks fire before authorization.
+- The user's `mount()` body runs before trait-level `mount{TraitName}` hooks on initial mount.
+- Per-property `hydrate{PropertyName}()` hooks fire after Filament's hydrate-time authorization but still complete before the request progresses to update or render.
+
+In practice this means **work that happens during these earlier hooks runs even when authorization will subsequently abort the request**. Filament aborts before the response is rendered or any update method is called, so unauthorized data is never returned to the user, but server-side side effects (database queries to resolve a record, audit log entries that fire on `SELECT`, dispatched events in custom hooks, etc.) can occur before the abort.
+
+If your component does anything significant that should not happen for an unauthorized user — emitting events, writing to the database, calling external services — do that work in a method or hook that runs **after** Filament's authorization has already fired (for example, in the `mount()` body **after** an explicit `$this->authorizeAccess()` call, or in an action method invoked via `wire:click`, which always runs post-authorization). Avoid putting such work in `boot()` or per-property hydrate hooks.
+
 ### Inline editable columns
 
 Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `disabled()` method with your own authorization logic. See the documentation for each [editable column type](../tables/columns/toggle) for more details.

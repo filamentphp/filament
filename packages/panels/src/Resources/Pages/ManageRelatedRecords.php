@@ -99,6 +99,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     /**
      * @param  array<string, mixed>  $parameters
      */

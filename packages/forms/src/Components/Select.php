@@ -1325,6 +1325,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         $relationship = $this->getRelationship();
         $record = $this->getRecord();
+        $relationshipName = $this->getRelationshipName();
         $state = $this->getState();
 
         if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
@@ -1359,6 +1360,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     ]);
                 });
             }
+
+            $record->unsetRelation($relationshipName);
 
             return;
         }
@@ -1416,11 +1419,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         if ($pivotData === []) {
             $relationship->sync($state, detaching: false);
+            $record->unsetRelation($relationshipName);
 
             return;
         }
 
         $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
+        $record->unsetRelation($relationshipName);
     }
 
     /**

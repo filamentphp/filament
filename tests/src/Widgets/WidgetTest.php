@@ -6,6 +6,8 @@ use Filament\Tests\TestCase;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 
+use function Filament\Tests\livewire;
+
 uses(TestCase::class);
 
 it('returns `true` from `canView()` by default', function (): void {
@@ -83,6 +85,20 @@ it('returns empty array from `getDefaultProperties()` when `$isLazy` is `false`'
     expect(TestWidgetNotLazy::getDefaultProperties())->toBe([]);
 });
 
+it('re-authorizes the widget on Livewire updates after the initial mount', function (): void {
+    AuthorizableTestWidget::$canViewFlag = true;
+
+    $component = livewire(AuthorizableTestWidget::class);
+
+    AuthorizableTestWidget::$canViewFlag = false;
+
+    $component
+        ->set('name', 'foo')
+        ->assertStatus(403);
+
+    AuthorizableTestWidget::$canViewFlag = true;
+});
+
 class TestWidget extends Widget
 {
     protected string $view = 'filament-widgets::chart-widget';
@@ -146,6 +162,25 @@ class TestWidgetNotLazy extends Widget
     protected static bool $isLazy = false;
 
     protected string $view = 'filament-widgets::chart-widget';
+
+    protected function getViewData(): array
+    {
+        return [];
+    }
+}
+
+class AuthorizableTestWidget extends Widget
+{
+    public static bool $canViewFlag = true;
+
+    public ?string $name = null;
+
+    protected string $view = 'pages.settings';
+
+    public static function canView(): bool
+    {
+        return static::$canViewFlag;
+    }
 
     protected function getViewData(): array
     {

@@ -100,6 +100,23 @@ describe('rendering and authorization', function (): void {
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
     });
 
+    it('re-authorizes the relation manager on Livewire updates after the initial mount', function (): void {
+        $ticket = Ticket::factory()
+            ->create();
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+
+        $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class]);
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => false);
+
+        $component
+            ->set('tableSearch', 'foo')
+            ->assertStatus(403);
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+    });
+
     it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isBulkAction = false): void {
         app()->bind(DepartmentPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 

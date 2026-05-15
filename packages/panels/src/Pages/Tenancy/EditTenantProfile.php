@@ -73,6 +73,11 @@ abstract class EditTenantProfile extends Page
         $this->fillForm();
     }
 
+    public function hydrate(): void
+    {
+        abort_unless(static::canView($this->tenant), 404);
+    }
+
     protected function fillForm(): void
     {
         $data = $this->tenant->attributesToArray();

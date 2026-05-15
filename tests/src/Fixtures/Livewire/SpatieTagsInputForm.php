@@ -49,6 +49,12 @@ class SpatieTagsInputForm extends Component implements HasActions, HasSchemas
         $this->form->saveRelationships();
     }
 
+    public function saveOnly(): void
+    {
+        $this->record->load('tags');
+        $this->form->saveRelationships();
+    }
+
     public function render(): View
     {
         return view('livewire.form');
