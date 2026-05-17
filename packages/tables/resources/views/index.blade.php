@@ -1878,10 +1878,16 @@
                                                     ])
                                                 >
                                                     @if ($isIndividuallySearchable)
+                                                        @php
+                                                            // Avoid JavaScript reserved property conflicts (e.g., "length", "constructor", "prototype")
+                                                            $searchKey = in_array($columnName, ['length', 'constructor', 'prototype', 'toString', 'valueOf', '__proto__'])
+                                                                ? '_' . $columnName
+                                                                : $columnName;
+                                                        @endphp
                                                         <x-filament-tables::search-field
                                                             :debounce="$searchDebounce"
                                                             :on-blur="$isSearchOnBlur"
-                                                            :wire-model="'tableColumnSearches.' . $columnName"
+                                                            :wire-model="'tableColumnSearches.' . $searchKey"
                                                         />
                                                     @endif
                                                 </td>

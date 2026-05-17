@@ -21,6 +21,17 @@ trait CanSearchRecords
      */
     public $tableSearch = '';
 
+    /**
+     * Get the search key for a column, escaping JavaScript reserved property names.
+     */
+    protected function getSearchKeyForColumn(string $columnName): string
+    {
+        // Avoid JavaScript reserved property conflicts (e.g., "length", "constructor", "prototype")
+        $reservedProperties = ['length', 'constructor', 'prototype', 'toString', 'valueOf', '__proto__'];
+
+        return in_array($columnName, $reservedProperties) ? '_' . $columnName : $columnName;
+    }
+
     public function updatedTableSearch(): void
     {
         if ($this->getTable()->persistsSearchInSession()) {
