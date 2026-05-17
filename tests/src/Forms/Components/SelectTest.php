@@ -1652,7 +1652,7 @@ describe('browser interactions', function (): void {
         });
     });
 
-    it('leaves a native `Select` unselected after its selected option is removed in the browser', function (): void {
+    it('does not show another native `Select` option for a missing value in the browser', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
