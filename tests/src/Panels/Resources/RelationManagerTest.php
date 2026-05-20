@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMixedSummaryRelationManager;
@@ -29,6 +30,7 @@ use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 
 uses(TestCase::class);
 
@@ -244,6 +246,25 @@ describe('attaching records', function (): void {
                 'ticket_id' => $ticket->getKey(),
             ]);
         }
+    });
+
+    it('rejects out-of-scope `recordId` when `tableSelect()` is paired with `recordSelectOptionsQuery()`', function (): void {
+        $ticket = Ticket::factory()->create();
+        Department::factory()->create(['name' => 'Active Engineering']);
+        $outOfScopeDepartment = Department::factory()->create(['name' => 'Inactive Department']);
+
+        livewire(DepartmentsWithAttachTableSelectAndModifiedQueryRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->callAction(TestAction::make(AttachAction::class)->table(), [
+                'recordId' => $outOfScopeDepartment->getKey(),
+            ]);
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $outOfScopeDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
     });
 
     it('can attach records when some are already related', function (): void {
