@@ -174,7 +174,7 @@ it('rejects `javascript:` with every kind of obfuscation combined', function ():
 
 it('rejects `data:` with case and whitespace variants', function (): void {
     expect(Str::sanitizeUrl('DATA:text/html,foo'))->toBeNull()
-        ->and(Str::sanitizeUrl("  Data:text/html,foo"))->toBeNull()
+        ->and(Str::sanitizeUrl('  Data:text/html,foo'))->toBeNull()
         ->and(Str::sanitizeUrl("da\tta:text/html,foo"))->toBeNull();
 });
 
