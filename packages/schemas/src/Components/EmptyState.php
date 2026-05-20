@@ -102,6 +102,7 @@ class EmptyState extends Component implements HasEmbeddedView
         }
 
         $hasDescription = filled((string) $description);
+        $hasFooter = filled((string) $footer);
         $hasIcon = filled($icon);
 
         $outerAttributes = (new FilamentComponentAttributeBag)
@@ -141,9 +142,11 @@ class EmptyState extends Component implements HasEmbeddedView
                             <p class="fi-empty-state-description"><?= e($description) ?></p>
                         <?php } ?>
 
-                        <footer class="fi-empty-state-footer">
-                            <?= $footer?->toHtml() ?>
-                        </footer>
+                        <?php if ($hasFooter) { ?>
+                            <footer class="fi-empty-state-footer">
+                                <?= $footer->toHtml() ?>
+                            </footer>
+                        <?php } ?>
                     </div>
                 </div>
             </section>

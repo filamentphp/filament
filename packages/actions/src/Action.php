@@ -878,6 +878,9 @@ class Action extends ViewComponent implements Arrayable
             $styleString = '';
         }
 
+        $wireKey = $this->getLivewireKey();
+        $wireKeyAttribute = $wireKey === null ? '' : ' wire:key="' . e($wireKey) . '"';
+
         $url = $this->getUrl();
         $icon = $this->getIcon();
         $label = e($this->getLabel());
@@ -886,13 +889,13 @@ class Action extends ViewComponent implements Arrayable
             $iconHtml = $icon ? generate_icon_html($icon, size: IconSize::Small)?->toHtml() : '';
             $href = e($url);
 
-            return "<a href=\"{$href}\" class=\"{$classString}\"{$styleString}>{$iconHtml}{$label}</a>";
+            return "<a href=\"{$href}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$label}</a>";
         }
 
         $handler = $this->getLivewireClickHandler();
 
         if (blank($handler)) {
-            return "<span class=\"{$classString}\"{$styleString}>{$label}</span>";
+            return "<span{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$label}</span>";
         }
 
         $iconHtml = $icon ? generate_icon_html(
@@ -915,7 +918,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handler = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\" class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}{$label}</button>";
+        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}{$label}</button>";
     }
 
     protected function canRenderOptimizedGrouped(): bool
@@ -954,6 +957,9 @@ class Action extends ViewComponent implements Arrayable
             $styleString = '';
         }
 
+        $wireKey = $this->getLivewireKey();
+        $wireKeyAttribute = $wireKey === null ? '' : ' wire:key="' . e($wireKey) . '"';
+
         $url = $this->getUrl();
         $icon = $this->getIcon(default: $this->getGroupedIcon());
         $label = e($this->getLabel());
@@ -965,13 +971,13 @@ class Action extends ViewComponent implements Arrayable
             )?->toHtml() : '';
             $href = e($url);
 
-            return "<a href=\"{$href}\" class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
+            return "<a href=\"{$href}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
         }
 
         $handler = $this->getLivewireClickHandler();
 
         if (blank($handler)) {
-            return "<button type=\"button\" class=\"{$classString}\"{$styleString}><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+            return "<button type=\"button\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
         }
 
         $iconHtml = $icon ? generate_icon_html(
@@ -992,7 +998,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handlerEscaped = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handlerEscaped}\" class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
     }
 
     protected function toBadgeHtml(): string
