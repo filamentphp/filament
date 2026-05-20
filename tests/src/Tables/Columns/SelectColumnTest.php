@@ -1033,6 +1033,30 @@ describe('relationship branch coverage', function (): void {
             });
     });
 
+    it('rejects an `updateTableColumnState` call with a value excluded by `modifyQueryUsing`', function (): void {
+        $inScopeUser = User::factory()->create(['name' => 'Alpha User']);
+        $outOfScopeUser = User::factory()->create(['name' => 'Beta User']);
+        $post = Post::factory()->create(['author_id' => $inScopeUser->id]);
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->call('updateTableColumnState', 'author_id', (string) $post->getKey(), $outOfScopeUser->getKey());
+
+        // The validation error in `updateTableColumnState` is caught and returned as ['error' => …]
+        // (rather than thrown), so we assert the persisted state was not mutated.
+        expect($post->fresh()->author_id)->toBe($inScopeUser->id);
+    });
+
+    it('allows an `updateTableColumnState` call with a value matched by `modifyQueryUsing`', function (): void {
+        $inScopeUser = User::factory()->create(['name' => 'Alpha User']);
+        $anotherInScopeUser = User::factory()->create(['name' => 'Alpha Author']);
+        $post = Post::factory()->create(['author_id' => $inScopeUser->id]);
+
+        livewire(TestTableWithFilteredRelationshipSelectColumn::class)
+            ->call('updateTableColumnState', 'author_id', (string) $post->getKey(), $anotherInScopeUser->getKey());
+
+        expect($post->fresh()->author_id)->toBe($anotherInScopeUser->id);
+    });
+
     it('throws `LogicException` from `getOptionsRelationship()` when the relationship does not exist', function (): void {
         $post = Post::factory()->create();
 

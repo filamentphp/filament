@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => '復旧',
+        'label' => '復元',
 
         'modal' => [
 
-            'heading' => ':label 復旧',
+            'heading' => ':labelを復元',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => '復旧',
+                    'label' => '復元',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => '復旧しました',
+                'title' => '復元しました',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => '選択中を復旧',
+        'label' => '選択中を復元',
 
         'modal' => [
 
-            'heading' => '選択中の:labelを復旧',
+            'heading' => '選択中の::labelを復元',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => '復旧',
+                    'label' => '復元',
                 ],
 
             ],

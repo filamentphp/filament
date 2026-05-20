@@ -86,6 +86,83 @@ it('converts boolean default state to `int`', function (): void {
     expect($radio->getDefaultState())->toBe(0);
 });
 
+describe('validation', function (): void {
+    it('automatically validates against options array', function (): void {
+        livewire(TestComponentWithRadioValidation::class)
+            ->fillForm(['status' => 'active'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithRadioValidation::class)
+            ->fillForm(['status' => 'archived'])
+            ->call('save')
+            ->assertHasFormErrors(['status' => ['in']]);
+    });
+
+    it('rejects disabled options during validation', function (): void {
+        livewire(TestComponentWithDisabledRadioOption::class)
+            ->fillForm(['status' => 'active'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithDisabledRadioOption::class)
+            ->fillForm(['status' => 'archived'])
+            ->call('save')
+            ->assertHasFormErrors(['status' => ['in']]);
+    });
+
+    it('passes validation when state is blank', function (): void {
+        livewire(TestComponentWithRadioValidation::class)
+            ->fillForm(['status' => null])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+});
+
+class TestComponentWithRadioValidation extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Radio::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithDisabledRadioOption extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Radio::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                        'archived' => 'Archived',
+                    ])
+                    ->disableOptionWhen(static fn (string $value): bool => $value === 'archived'),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
 class TestComponentWithRadio extends Livewire
 {
     public function form(Schema $form): Schema

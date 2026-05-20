@@ -1,9 +1,13 @@
 <?php
 
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
+use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTableWithScopedAuthor;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;
+use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTableWithScopedPostsCount;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -634,6 +638,169 @@ describe('relationship constraints', function (): void {
             ]))
             ->assertCanSeeTableRecords($matchingPosts)
             ->assertCanNotSeeTableRecords($nonMatchingPosts);
+    });
+
+    it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing` is set', function (): void {
+        $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
+        $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
+
+        $inScopePosts = Post::factory()->count(2)->create(['author_id' => $inScopeAuthor->id]);
+        $outOfScopePosts = Post::factory()->count(2)->create(['author_id' => $outOfScopeAuthor->id]);
+
+        livewire(PostsQueryBuilderTableWithScopedAuthor::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'author',
+                    'data' => [
+                        'operator' => 'isRelatedTo',
+                        'settings' => ['value' => $inScopeAuthor->id],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords($inScopePosts)
+            ->assertCanNotSeeTableRecords($outOfScopePosts);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` inside the `whereHas` subquery to defend against a bypassed tampered value', function (): void {
+        // Defense-in-depth: form validation is the primary defense and would reject the
+        // out-of-scope value before reaching `apply()`. This test bypasses validation
+        // by invoking `apply()` directly to confirm the operator does not leak rows
+        // even if a tampered value did somehow reach query construction.
+        $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
+        $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
+
+        Post::factory()->count(2)->create(['author_id' => $inScopeAuthor->id]);
+        Post::factory()->count(2)->create(['author_id' => $outOfScopeAuthor->id]);
+
+        $constraint = RelationshipConstraint::make('author');
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->settings(['value' => $outOfScopeAuthor->id])
+            ->titleAttribute('name')
+            ->modifyRelationshipQueryUsing(fn ($query) => $query->where('name', 'like', 'Alpha%'));
+
+        $filtered = $operator->apply(Post::query(), 'author_id');
+
+        expect($filtered->count())->toBe(0);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` inside `IsEmptyOperator` count check', function (): void {
+        // Author A has 1 published + 0 unpublished — should NOT match isEmpty under the published-only scope.
+        // Author B has 0 published + 2 unpublished — SHOULD match isEmpty under the scope (no published posts).
+        // Author C has no posts at all — SHOULD match isEmpty.
+        $authorA = User::factory()->create(['name' => 'Author A']);
+        Post::factory()->create(['author_id' => $authorA->id, 'is_published' => true]);
+
+        $authorB = User::factory()->create(['name' => 'Author B']);
+        Post::factory()->count(2)->create(['author_id' => $authorB->id, 'is_published' => false]);
+
+        $authorC = User::factory()->create(['name' => 'Author C']);
+
+        livewire(UsersQueryBuilderTableWithScopedPostsCount::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts',
+                    'data' => [
+                        'operator' => 'isEmpty',
+                        'settings' => [],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$authorB, $authorC])
+            ->assertCanNotSeeTableRecords([$authorA]);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` inside `HasMinOperator` count check', function (): void {
+        $authorWithTwoPublished = User::factory()->create(['name' => 'Two Published']);
+        Post::factory()->count(2)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => true]);
+
+        $authorWithUnpublishedOnly = User::factory()->create(['name' => 'Unpublished Only']);
+        Post::factory()->count(3)->create(['author_id' => $authorWithUnpublishedOnly->id, 'is_published' => false]);
+
+        livewire(UsersQueryBuilderTableWithScopedPostsCount::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts',
+                    'data' => [
+                        'operator' => 'hasMin',
+                        'settings' => ['count' => 2],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$authorWithTwoPublished])
+            ->assertCanNotSeeTableRecords([$authorWithUnpublishedOnly]);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` inside `HasMaxOperator` count check', function (): void {
+        $authorWithOnePublished = User::factory()->create(['name' => 'One Published']);
+        Post::factory()->create(['author_id' => $authorWithOnePublished->id, 'is_published' => true]);
+        Post::factory()->count(5)->create(['author_id' => $authorWithOnePublished->id, 'is_published' => false]);
+
+        $authorWithThreePublished = User::factory()->create(['name' => 'Three Published']);
+        Post::factory()->count(3)->create(['author_id' => $authorWithThreePublished->id, 'is_published' => true]);
+
+        // hasMax: 1 — both `one published + 5 unpublished` and `three published` would match if the scope
+        // were dropped (since one has 6 total and the other has 3 total). With the scope applied, only the
+        // author with 1 published post matches.
+        livewire(UsersQueryBuilderTableWithScopedPostsCount::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts',
+                    'data' => [
+                        'operator' => 'hasMax',
+                        'settings' => ['count' => 1],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$authorWithOnePublished])
+            ->assertCanNotSeeTableRecords([$authorWithThreePublished]);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` inside `EqualsOperator` count check', function (): void {
+        $authorWithTwoPublished = User::factory()->create(['name' => 'Two Published']);
+        Post::factory()->count(2)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => true]);
+        Post::factory()->count(3)->create(['author_id' => $authorWithTwoPublished->id, 'is_published' => false]);
+
+        $authorWithFivePublished = User::factory()->create(['name' => 'Five Published']);
+        Post::factory()->count(5)->create(['author_id' => $authorWithFivePublished->id, 'is_published' => true]);
+
+        // equals: 2 — pre-fix, the `Two Published` author has 5 posts total, would NOT match.
+        // Post-fix (scope applied), they have exactly 2 published posts, so they DO match.
+        livewire(UsersQueryBuilderTableWithScopedPostsCount::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts',
+                    'data' => [
+                        'operator' => 'equals',
+                        'settings' => ['count' => 2],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$authorWithTwoPublished])
+            ->assertCanNotSeeTableRecords([$authorWithFivePublished]);
+    });
+
+    it('inverts the scope inside `whereDoesntHave` when `isRelatedTo.inverse` is used with `modifyRelationshipQueryUsing`', function (): void {
+        $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
+        $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
+
+        Post::factory()->count(2)->create(['author_id' => $inScopeAuthor->id]);
+        Post::factory()->count(2)->create(['author_id' => $outOfScopeAuthor->id]);
+
+        $constraint = RelationshipConstraint::make('author');
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->settings(['value' => $inScopeAuthor->id])
+            ->inverse()
+            ->titleAttribute('name')
+            ->modifyRelationshipQueryUsing(fn ($query) => $query->where('name', 'like', 'Alpha%'));
+
+        $filtered = $operator->apply(Post::query(), 'author_id');
+
+        // Only the out-of-scope posts (those NOT related to the in-scope author) remain.
+        expect($filtered->count())->toBe(2);
     });
 
     it('can filter records using relationship constraint with is not related to operator', function (): void {

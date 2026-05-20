@@ -939,6 +939,20 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+<Aside variant="tip">
+    The string returned from the `url()` closure is rendered directly into the `href` attribute of an `<a>` tag, so if any part of the URL is built from user input you should make sure it cannot resolve to a scheme like `javascript:` or `data:` that the browser would execute. The simplest way to guarantee this is to wrap the return value in Filament's [`Str::sanitizeUrl()`](../../advanced/security#validating-user-input) helper, which only allows `http`/`https` and relative URLs:
+
+    ```php
+    use Illuminate\Support\Str;
+
+    ->url(fn (string $id, string $label): ?string => Str::sanitizeUrl(
+        route('users.show', $id),
+    ))
+    ```
+
+    If you intentionally want to allow a `javascript:` URL (for example, to wire a mention to an Alpine.js handler), skip the helper and return the raw value — just make sure none of the components of that URL come from untrusted user input.
+</Aside>
+
 ## Registering rich content attributes
 
 There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [custom blocks](#using-custom-blocks), [merge tags](#using-merge-tags), [mentions](#using-mentions), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer. If a plugin implements `HasFileAttachmentProvider`, the file attachment provider is automatically resolved from the plugin, so you do not need to call `fileAttachmentProvider()` on the attribute or on the renderer.
