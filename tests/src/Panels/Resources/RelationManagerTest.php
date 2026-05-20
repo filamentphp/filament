@@ -23,6 +23,8 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAt
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMixedSummaryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithModifiedQueryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
@@ -379,6 +381,66 @@ it('can summarize pivot columns in a `BelongsToMany` `RelationManager`', functio
         ->assertSuccessful()
         ->assertTableColumnSummarySet('quantity', 'quantity_sum', 60)    // 10 + 20 + 30
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000); // 1000 + 2000 + 3000
+});
+
+it('preserves `modifyQueryUsing()` `addSelect()` subqueries when resolving a `BelongsToMany` record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsWithModifiedQueryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $department->getKey());
+});
+
+it('still resolves pivot columns on a single `BelongsToMany` record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 42, 'price' => 1234]);
+
+    livewire(DepartmentsWithPivotSummaryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertTableColumnStateSet('quantity', 42, $department->getKey())
+        ->assertTableColumnStateSet('pivot.price', 1234, $department->getKey());
+});
+
+it('resolves pivot columns alongside `modifyQueryUsing()` virtual columns on a single `BelongsToMany` record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create(['name' => 'Engineering']);
+    $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 99]);
+
+    livewire(DepartmentsWithPivotAndModifiedQueryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertTableColumnStateSet('name', 'Engineering', $department->getKey())
+        ->assertTableColumnStateSet('quantity', 7, $department->getKey())
+        ->assertTableColumnStateSet('pivot.price', 99, $department->getKey())
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $department->getKey());
+});
+
+it('resolves pivot columns and `modifyQueryUsing()` virtual columns across multiple `BelongsToMany` records', function (): void {
+    $ticket = Ticket::factory()->create();
+    $departments = Department::factory()->count(2)->create();
+    $ticket->departments()->attach($departments[0], ['quantity' => 10, 'price' => 100]);
+    $ticket->departments()->attach($departments[1], ['quantity' => 20, 'price' => 200]);
+
+    livewire(DepartmentsWithPivotAndModifiedQueryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords($departments)
+        ->assertTableColumnStateSet('quantity', 10, $departments[0]->getKey())
+        ->assertTableColumnStateSet('quantity', 20, $departments[1]->getKey())
+        ->assertTableColumnStateSet('pivot.price', 100, $departments[0]->getKey())
+        ->assertTableColumnStateSet('pivot.price', 200, $departments[1]->getKey())
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $departments[0]->getKey())
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $departments[1]->getKey());
 });
 
 it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `RelationManager`', function (): void {
