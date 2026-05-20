@@ -1,8 +1,11 @@
 <?php
 
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
+use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTableWithScopedAuthor;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
@@ -634,6 +637,73 @@ describe('relationship constraints', function (): void {
             ]))
             ->assertCanSeeTableRecords($matchingPosts)
             ->assertCanNotSeeTableRecords($nonMatchingPosts);
+    });
+
+    it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing` is set', function (): void {
+        $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
+        $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
+
+        $inScopePosts = Post::factory()->count(2)->create(['author_id' => $inScopeAuthor->id]);
+        $outOfScopePosts = Post::factory()->count(2)->create(['author_id' => $outOfScopeAuthor->id]);
+
+        livewire(PostsQueryBuilderTableWithScopedAuthor::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'author',
+                    'data' => [
+                        'operator' => 'isRelatedTo',
+                        'settings' => ['value' => $inScopeAuthor->id],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords($inScopePosts)
+            ->assertCanNotSeeTableRecords($outOfScopePosts);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` inside the `whereHas` subquery to defend against a bypassed tampered value', function (): void {
+        // Defense-in-depth: form validation is the primary defense and would reject the
+        // out-of-scope value before reaching `apply()`. This test bypasses validation
+        // by invoking `apply()` directly to confirm the operator does not leak rows
+        // even if a tampered value did somehow reach query construction.
+        $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
+        $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
+
+        Post::factory()->count(2)->create(['author_id' => $inScopeAuthor->id]);
+        Post::factory()->count(2)->create(['author_id' => $outOfScopeAuthor->id]);
+
+        $constraint = RelationshipConstraint::make('author');
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->settings(['value' => $outOfScopeAuthor->id])
+            ->titleAttribute('name')
+            ->modifyRelationshipQueryUsing(fn ($query) => $query->where('name', 'like', 'Alpha%'));
+
+        $filtered = $operator->apply(Post::query(), 'author_id');
+
+        expect($filtered->count())->toBe(0);
+    });
+
+    it('inverts the scope inside `whereDoesntHave` when `isRelatedTo.inverse` is used with `modifyRelationshipQueryUsing`', function (): void {
+        $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
+        $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
+
+        Post::factory()->count(2)->create(['author_id' => $inScopeAuthor->id]);
+        Post::factory()->count(2)->create(['author_id' => $outOfScopeAuthor->id]);
+
+        $constraint = RelationshipConstraint::make('author');
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->settings(['value' => $inScopeAuthor->id])
+            ->inverse()
+            ->titleAttribute('name')
+            ->modifyRelationshipQueryUsing(fn ($query) => $query->where('name', 'like', 'Alpha%'));
+
+        $filtered = $operator->apply(Post::query(), 'author_id');
+
+        // Only the out-of-scope posts (those NOT related to the in-scope author) remain.
+        expect($filtered->count())->toBe(2);
     });
 
     it('can filter records using relationship constraint with is not related to operator', function (): void {
