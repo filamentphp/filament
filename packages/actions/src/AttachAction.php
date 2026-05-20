@@ -326,9 +326,7 @@ class AttachAction extends Action
                     ]) ?? $relationshipQuery;
                 }
 
-                $record = $relationshipQuery
-                    ->where($relationship->getQualifiedRelatedKeyName(), $value)
-                    ->first();
+                $record = $relationshipQuery->find($value);
 
                 return $record ? $this->getRecordTitle($record) : null;
             })
@@ -344,9 +342,7 @@ class AttachAction extends Action
                     ]) ?? $relationshipQuery;
                 }
 
-                return $relationshipQuery
-                    ->whereIn($relationship->getQualifiedRelatedKeyName(), $values)
-                    ->get()
+                return $relationshipQuery->find($values)
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })
