@@ -86,9 +86,11 @@ class AssociateAction extends Action
             $record = $relationshipQuery->find($data['recordId']);
 
             foreach (($this->isMultiple ? $record : [$record]) as $record) {
-                if ($record instanceof Model) {
-                    $this->record($record);
+                if (! $record instanceof Model) {
+                    continue;
                 }
+
+                $this->record($record);
 
                 /** @var BelongsTo $inverseRelationship */
                 $inverseRelationship = $table->getInverseRelationshipFor($record);
