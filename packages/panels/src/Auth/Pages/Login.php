@@ -27,6 +27,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -36,6 +37,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Timebox;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use SensitiveParameter;
@@ -83,26 +85,40 @@ class Login extends SimplePage
 
         $authProvider = $authGuard->getProvider(); /** @phpstan-ignore-line */
         $credentials = $this->getCredentialsFromFormData($data);
+        $remember = $data['remember'] ?? false;
+        $timeboxDuration = (int) config('auth.timebox_duration', 200_000);
 
-        $user = $authProvider->retrieveByCredentials($credentials);
+        $user = app(Timebox::class)->call(function (Timebox $timebox) use ($authProvider, $authGuard, $credentials, $remember): Authenticatable {
+            $this->fireAttemptingEvent($authGuard, $credentials, $remember);
 
-        if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
-            $this->userUndertakingMultiFactorAuthentication = null;
+            $user = $authProvider->retrieveByCredentials($credentials);
 
-            $this->fireFailedEvent($authGuard, $user, $credentials);
-            $this->throwFailureValidationException();
-        }
+            if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
+                $this->userUndertakingMultiFactorAuthentication = null;
 
-        if (
-            filled($this->userUndertakingMultiFactorAuthentication) &&
-            (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
-        ) {
-            if ($this->isMultiFactorChallengeRateLimited($user)) {
-                return null;
+                $this->fireFailedEvent($authGuard, $user, $credentials);
+                $this->throwFailureValidationException();
             }
 
-            $this->multiFactorChallengeForm->validate();
-        } else {
+            $timebox->returnEarly();
+
+            return $user;
+        }, $timeboxDuration);
+
+        $needsMultiFactorChallenge = app(Timebox::class)->call(function (Timebox $timebox) use ($user): bool {
+            if (
+                filled($this->userUndertakingMultiFactorAuthentication) &&
+                (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
+            ) {
+                if ($this->isMultiFactorChallengeRateLimited($user)) {
+                    return true;
+                }
+
+                $this->multiFactorChallengeForm->validate();
+
+                return false;
+            }
+
             foreach (Filament::getMultiFactorAuthenticationProviders() as $multiFactorAuthenticationProvider) {
                 if (! $multiFactorAuthenticationProvider->isEnabled($user)) {
                     continue;
@@ -120,8 +136,14 @@ class Login extends SimplePage
             if (filled($this->userUndertakingMultiFactorAuthentication)) {
                 $this->multiFactorChallengeForm->fill();
 
-                return null;
+                return true;
             }
+
+            return false;
+        }, $timeboxDuration);
+
+        if ($needsMultiFactorChallenge) {
+            return null;
         }
 
         if (! $authGuard->attemptWhen($credentials, function (Authenticatable $user): bool {
@@ -130,12 +152,10 @@ class Login extends SimplePage
             }
 
             return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
-        }, $data['remember'] ?? false)) {
+        }, $remember)) {
             $this->fireFailedEvent($authGuard, $user, $credentials);
             $this->throwFailureValidationException();
         }
-
-        session()->regenerate();
 
         return app(LoginResponse::class);
     }
@@ -172,6 +192,14 @@ class Login extends SimplePage
                 'minutes' => $exception->minutesUntilAvailable,
             ]) : null)
             ->danger();
+    }
+
+    /**
+     * @param  array<string, mixed>  $credentials
+     */
+    protected function fireAttemptingEvent(Guard $guard, #[SensitiveParameter] array $credentials, bool $remember): void
+    {
+        event(app(Attempting::class, ['guard' => property_exists($guard, 'name') ? $guard->name : '', 'credentials' => $credentials, 'remember' => $remember]));
     }
 
     /**
