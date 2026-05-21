@@ -248,15 +248,14 @@ Filament supports [multi-factor authentication](../users/multi-factor-authentica
 
 Filament exposes all non-`$hidden` model attributes to JavaScript via Livewire's model binding. This is necessary for dynamic form functionality, and only attributes with corresponding form fields are actually editable — this is not a mass assignment vulnerability. However, if your model contains sensitive attributes that should not be visible in the browser (such as API keys or internal flags), you should either add them to the model's `$hidden` property or remove them using the `mutateFormDataBeforeFill()` method on your Edit or View page. See the [resources documentation](../resources/overview#protecting-model-attributes) for more details.
 
-## File uploads
+## File uploads and rich editor attachments
 
-Filament's `FileUpload` component uses Livewire's file upload mechanism. There are important security considerations when allowing users to upload files, particularly around file names, storage visibility, and accepted file types.
+Filament's `FileUpload` and `RichEditor` components both have their own security considerations — uploaded file names, storage visibility, accepted file types, and client-controlled file paths can each be abused if misconfigured. The relevant guidance lives alongside each component:
 
-By default, Filament generates random file names and stores files with `private` visibility. If you use `preserveFilenames()` or `getUploadedFileNameForStorageUsing()` with local or public disks, an attacker could upload a PHP file with a deceptive MIME type that gets executed by your server. The safer alternative is to use `storeFileNamesIn()`, which stores original file names in a separate database column while keeping randomly generated file names on disk. See the [file upload documentation](../forms/file-upload#security-implications-of-controlling-file-names) for a full explanation of these risks and recommended mitigations.
+- [File upload security](../forms/file-upload#security-implications-of-controlling-file-names) — file name preservation risks and the [authorizing existing file paths](../forms/file-upload#authorizing-existing-file-paths) flow.
+- [Rich editor file attachment IDs](../forms/rich-editor#securing-file-attachment-ids) — `data-id` tampering and how the default vs. `spatie/laravel-medialibrary` providers differ in scoping.
 
-You should always use `acceptedFileTypes()` to restrict the types of files users can upload, and validate file sizes with `maxSize()`. These constraints are enforced server-side, not just in the browser.
-
-## Restricting Livewire file uploads to schema components
+### Restricting Livewire file uploads to schema components
 
 Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, because the trait composes Livewire's `WithFileUploads` so that schema components like `FileUpload` and `MarkdownEditor` can use Livewire's standard file upload mechanism. By default, those RPC methods accept uploads to any Livewire property name — they do not check whether the property corresponds to a real upload field in the component's schemas. This means an attacker who can reach the page can tamper with a Livewire request to upload files to arbitrary property paths on any page that uses `InteractsWithSchemas`, even pages that do not display an upload field at all.
 
@@ -282,40 +281,6 @@ With the trait in place, an attacker tampering with a Livewire request to upload
 <Aside variant="tip">
     Hidden fields are not considered matchable targets. If a `FileUpload` field is conditionally hidden (`->visible(false)` or equivalent), uploads to its state path are rejected — only fields the user can actually see are valid upload targets.
 </Aside>
-
-## File path tampering
-
-The value of a `FileUpload` field is a string (or array of strings) pointing to a file on its configured disk. The `RichEditor` embeds images by storing their identifier in the `data-id` attribute of each image node, which is similarly resolved against a disk when the content is rendered. Like any other Livewire form field value, both are controlled by the client — a request can be intercepted to change a submitted path or `data-id` to any other file on the same disk. If the disk also stores files belonging to other users or records, an attacker can cause a record to reference (and serve a signed URL for) someone else's file.
-
-Filament allows this by default because legitimate features depend on it — for example, an action that sets a field to a pre-uploaded template file, or a "copy from another record" button. If your forms do not rely on such a flow, opt in to the built-in checks:
-
-- For `FileUpload` fields, call [`preventFilePathTampering()`](../forms/file-upload#authorizing-existing-file-paths) to fail validation when a submitted path does not match the original value on the record.
-- For `RichEditor` fields, call [`preventFileAttachmentPathTampering()`](../forms/rich-editor#securing-file-attachment-ids) to fail validation when a submitted `data-id` is not already present in the record's stored content.
-
-Both methods compare submitted values against the attribute on the record via `$record->getOriginal()`, and both accept an `allowFilePathUsing` callback for paths that are legitimately added outside the record (such as shared template files). Newly uploaded files and images always pass through unchanged.
-
-<Aside variant="warning">
-    These checks require a record on the form, so on create pages every submitted existing path fails validation unless the `allowFilePathUsing` callback approves it. New uploads are unaffected.
-</Aside>
-
-If you want these checks to apply across your entire application rather than remembering to add them to each field, enable them globally from a service provider's `boot()` method using `configureUsing()`:
-
-```php
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
-
-FileUpload::configureUsing(function (FileUpload $component): void {
-    $component->preventFilePathTampering();
-});
-
-RichEditor::configureUsing(function (RichEditor $component): void {
-    $component->preventFileAttachmentPathTampering();
-});
-```
-
-Individual fields can still opt out by passing `false` to the corresponding method (for example, `preventFilePathTampering(false)`) when a specific form legitimately needs to accept paths that are not on the record.
-
-If your application isolates uploads per user or per record at the disk level — for example, by using a separate disk or directory for each tenant — this class of tampering is not exploitable and these methods are unnecessary. The `spatie/laravel-medialibrary` rich editor provider also performs an equivalent check implicitly by looking up each `data-id` against the record's own media collection.
 
 ## Scoping queries
 
