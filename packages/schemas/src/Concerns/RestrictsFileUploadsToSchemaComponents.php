@@ -7,6 +7,7 @@ use Filament\Forms\Components\Concerns\HasFileAttachments;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Livewire\Attributes\Renderless;
 use Livewire\WithFileUploads;
 
 trait RestrictsFileUploadsToSchemaComponents
@@ -14,6 +15,8 @@ trait RestrictsFileUploadsToSchemaComponents
     use WithFileUploads {
         WithFileUploads::_startUpload as private baseStartUpload;
         WithFileUploads::_finishUpload as private baseFinishUpload;
+        WithFileUploads::_uploadErrored as private baseUploadErrored;
+        WithFileUploads::_removeUpload as private baseRemoveUpload;
     }
 
     /**
@@ -21,6 +24,7 @@ trait RestrictsFileUploadsToSchemaComponents
      * @param  array<mixed>  $fileInfo
      * @param  bool  $isMultiple
      */
+    #[Renderless]
     public function _startUpload($name, $fileInfo, $isMultiple): void
     {
         abort_unless($this->isFileUploadForSchemaComponent($name), 403);
@@ -34,11 +38,34 @@ trait RestrictsFileUploadsToSchemaComponents
      * @param  bool  $isMultiple
      * @param  bool  $append
      */
-    public function _finishUpload($name, $tmpPath, $isMultiple, $append = false): void
+    public function _finishUpload($name, $tmpPath, $isMultiple, $append = true): void
     {
         abort_unless($this->isFileUploadForSchemaComponent($name), 403);
 
         $this->baseFinishUpload($name, $tmpPath, $isMultiple, $append);
+    }
+
+    /**
+     * @param  string  $name
+     * @param  ?string  $errorsInJson
+     * @param  bool  $isMultiple
+     */
+    public function _uploadErrored($name, $errorsInJson, $isMultiple): void
+    {
+        abort_unless($this->isFileUploadForSchemaComponent($name), 403);
+
+        $this->baseUploadErrored($name, $errorsInJson, $isMultiple);
+    }
+
+    /**
+     * @param  string  $name
+     * @param  string  $tmpFilename
+     */
+    public function _removeUpload($name, $tmpFilename): void
+    {
+        abort_unless($this->isFileUploadForSchemaComponent($name), 403);
+
+        $this->baseRemoveUpload($name, $tmpFilename);
     }
 
     protected function isFileUploadForSchemaComponent(string $name): bool
