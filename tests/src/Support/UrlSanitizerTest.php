@@ -192,6 +192,26 @@ it('rejects URLs containing HTML5 named character entities for control character
     expect(Str::sanitizeUrl('java&NewLine;script:alert(1)'))->toBeNull();
 });
 
+it('passes legitimate URLs with multiple query parameters through unchanged', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?a=1&b=2'))->toBe('https://example.com/?a=1&b=2');
+    expect(Str::sanitizeUrl('https://example.com/search?q=hello&page=2&sort=desc'))
+        ->toBe('https://example.com/search?q=hello&page=2&sort=desc');
+});
+
+it('passes legitimate URLs containing escaped ampersand entities through unchanged', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?a=1&amp;b=2'))->toBe('https://example.com/?a=1&amp;b=2');
+});
+
+it('passes URLs whose query string literally contains the text `javascript:` through unchanged', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?q=javascript%3Aalert(1)'))
+        ->toBe('https://example.com/?q=javascript%3Aalert(1)');
+});
+
+it('does not recursively decode double-encoded entities — single decode matches browser behaviour', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?q=java&amp;#9;script:1'))
+        ->toBe('https://example.com/?q=java&amp;#9;script:1');
+});
+
 it('rejects `javascript:` with whitespace before the colon', function (): void {
     expect(Str::sanitizeUrl('javascript :alert(1)'))->toBeNull()
         ->and(Str::sanitizeUrl("javascript\t:alert(1)"))->toBeNull();

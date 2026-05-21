@@ -335,8 +335,8 @@ class SupportServiceProvider extends PackageServiceProvider
 
             // PHP's html_entity_decode() with ENT_HTML5 replaces control character entities with U+FFFD.
             // We manually decode ASCII numeric entities first so we can properly detect them.
-            $htmlDecoded = preg_replace_callback('/&#(?:x([0-9a-f]+)|([0-9]+));?/i', function (array $match) {
-                $code = (isset($match[1]) && $match[1] !== '') ? hexdec($match[1]) : (int) $match[2];
+            $htmlDecoded = preg_replace_callback('/&#(?:x([0-9a-f]+)|([0-9]+));?/i', function (array $match): string {
+                $code = ($match[1] !== '') ? hexdec($match[1]) : (int) $match[2];
 
                 // We only need to manually decode ASCII characters for control character checks.
                 return ($code >= 0 && $code <= 127) ? chr((int) $code) : $match[0];
@@ -351,7 +351,7 @@ class SupportServiceProvider extends PackageServiceProvider
             }
 
             // Decode URL encoding to unmask encoded control characters
-            $urlDecoded = urldecode($htmlDecoded);
+            $urlDecoded = rawurldecode($htmlDecoded);
 
             // Reject URLs containing control characters after URL decoding (excluding space)
             if (preg_match('/[\x00-\x1F\x7F]/', $urlDecoded)) {
