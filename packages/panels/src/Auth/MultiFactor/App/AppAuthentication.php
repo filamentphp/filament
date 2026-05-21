@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use LogicException;
@@ -197,24 +198,36 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     {
         $user ??= Filament::auth()->user();
 
-        $remainingCodes = [];
-        $isValid = false;
+        return DB::transaction(function () use ($user, $recoveryCode): bool {
+            $lockedUser = $user
+                ->newQuery() /** @phpstan-ignore-line */
+                ->whereKey($user->getKey()) /** @phpstan-ignore-line */
+                ->lockForUpdate()
+                ->first();
 
-        foreach ($this->getRecoveryCodes($user) as $hashedRecoveryCode) { /** @phpstan-ignore-line */
-            if (Hash::check($recoveryCode, $hashedRecoveryCode)) {
-                $isValid = true;
-
-                continue;
+            if ($lockedUser === null) {
+                return false;
             }
 
-            $remainingCodes[] = $hashedRecoveryCode;
-        }
+            $remainingCodes = [];
+            $isValid = false;
 
-        if ($isValid) {
-            $user->saveAppAuthenticationRecoveryCodes($remainingCodes);
-        }
+            foreach ($this->getRecoveryCodes($lockedUser) as $hashedRecoveryCode) { /** @phpstan-ignore-line */
+                if (Hash::check($recoveryCode, $hashedRecoveryCode)) {
+                    $isValid = true;
 
-        return $isValid;
+                    continue;
+                }
+
+                $remainingCodes[] = $hashedRecoveryCode;
+            }
+
+            if ($isValid) {
+                $lockedUser->saveAppAuthenticationRecoveryCodes($remainingCodes);
+            }
+
+            return $isValid;
+        });
     }
 
     /**
