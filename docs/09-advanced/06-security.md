@@ -65,18 +65,55 @@ Do not rely solely on Filament's built-in policy checks. Treat them as a helpful
 
 Many Filament configuration methods accept closures that can return dynamic values. Methods like `url()`, `icon()`, `html()`, and others are designed to be flexible, allowing developers to build rich, dynamic interfaces. However, when the values passed to these methods originate from user input or untrusted database content, it is your responsibility to validate and sanitize them appropriately.
 
-For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament:
+For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
+
+Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. It also normalizes obfuscation tricks such as leading whitespace, embedded control characters (`\t`, `\n`, `\r`, NUL bytes), and mixed-case schemes before checking — so values like `"\tJaVa\nScRiPt:alert(1)"` are rejected, and even on a safe URL the return value has those bytes stripped so they cannot reach the rendered HTML:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Str;
 
 TextColumn::make('website')
+    ->url(fn (string $state): ?string => Str::sanitizeUrl($state))
+```
+
+You can call the helper anywhere a URL is being passed to a Filament configuration method (`url()`, `image()`, `icon()` when given a URL, `openUrlInNewTab()` callbacks, and so on). Internally Filament already runs every file URL it emits from components like `FileUpload` and `SpatieMediaLibraryFileUpload` through this helper.
+
+If you need to allow additional schemes — for example `mailto:` or `tel:` — pass them in as the second argument. The default allowlist is replaced by what you pass, so include `http` and `https` if you still want them:
+
+```php
+TextColumn::make('contact')
+    ->url(fn (string $state): ?string => Str::sanitizeUrl(
+        $state,
+        allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+    ))
+```
+
+`Str::sanitizeUrl()` is a scheme allowlist designed to prevent XSS from dangerous URL schemes. It does not:
+
+- check that the host belongs to a domain you control (open-redirect protection),
+- check that the URL is safe for the server to fetch (SSRF protection),
+- decode percent-encoded or HTML-entity-encoded payloads (the browser's URL parser doesn't either, so this is intentional, but it means callers that decode the value before rendering need their own check on the decoded form),
+- validate that an `http(s)` URL is reachable or trusted in any other way.
+
+If you need any of those guarantees, layer your own check on top of the helper's return value.
+
+If you need a stricter allowlist (for example, only your own domains), wrap the helper:
+
+```php
+TextColumn::make('website')
     ->url(function (string $state): ?string {
-        if (! str_starts_with($state, 'http://') && ! str_starts_with($state, 'https://')) {
+        $sanitized = Str::sanitizeUrl($state);
+
+        if (blank($sanitized)) {
             return null;
         }
 
-        return $state;
+        $host = parse_url($sanitized, PHP_URL_HOST);
+
+        return in_array($host, ['example.com', 'cdn.example.com'], true)
+            ? $sanitized
+            : null;
     })
 ```
 

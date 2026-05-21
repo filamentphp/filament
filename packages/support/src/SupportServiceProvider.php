@@ -322,6 +322,35 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeHtml($this->value));
         });
 
+        Str::macro('sanitizeUrl', function (?string $url, array $allowedSchemes = ['http', 'https']): ?string {
+            if (blank($url)) {
+                return null;
+            }
+
+            // Reject whitespace and control characters instead of stripping
+            // them: browsers ignore those bytes when parsing URLs, so an
+            // input like "\tjavascript:..." would resolve to a scheme the
+            // visible string does not suggest.
+            if (preg_match('/[\s\x00-\x1F\x7F]/', $url)) {
+                return null;
+            }
+
+            if (preg_match('#^([a-z][a-z0-9+\-.]*):#i', $url, $matches)) {
+                $allowedSchemes = array_map(strtolower(...), $allowedSchemes);
+
+                if (! in_array(strtolower($matches[1]), $allowedSchemes, strict: true)) {
+                    return null;
+                }
+            }
+
+            return $url;
+        });
+
+        Stringable::macro('sanitizeUrl', function (array $allowedSchemes = ['http', 'https']): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::sanitizeUrl($this->value, $allowedSchemes));
+        });
+
         Str::macro('ucwords', function (string $value): string {
             return implode(' ', array_map(
                 [Str::class, 'ucfirst'],

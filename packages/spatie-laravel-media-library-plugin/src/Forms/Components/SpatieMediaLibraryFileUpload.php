@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
@@ -112,7 +113,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 'name' => $media?->getAttributeValue('name') ?? $media?->getAttributeValue('file_name'),
                 'size' => $media?->getAttributeValue('size'),
                 'type' => $media?->getAttributeValue('mime_type'),
-                'url' => $url,
+                'url' => Str::sanitizeUrl($url),
             ];
         });
 
