@@ -163,6 +163,35 @@ it('rejects `javascript:` with `\x7F` DEL inside the scheme', function (): void 
     expect(Str::sanitizeUrl("javascript\x7F:alert(1)"))->toBeNull();
 });
 
+it('rejects URLs containing whitespace after HTML entity decoding', function (): void {
+    expect(Str::sanitizeUrl('java&#x09;script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java&#10;script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java&#13;script:alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing encoded control characters', function (): void {
+    expect(Str::sanitizeUrl('java%09script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java%0Ascript:alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing raw control characters', function (): void {
+    expect(Str::sanitizeUrl("javascript\x7F:alert(1)"))->toBeNull();
+});
+
+it('rejects URLs containing HTML entity encoded separators', function (): void {
+    expect(Str::sanitizeUrl('javascript&colon;alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('javascript&#58;alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing control characters after HTML entity decoding', function (): void {
+    expect(Str::sanitizeUrl('javascript&#x7F;:alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing HTML5 named character entities for control characters', function (): void {
+    expect(Str::sanitizeUrl('java&Tab;script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java&NewLine;script:alert(1)'))->toBeNull();
+});
+
 it('rejects `javascript:` with whitespace before the colon', function (): void {
     expect(Str::sanitizeUrl('javascript :alert(1)'))->toBeNull()
         ->and(Str::sanitizeUrl("javascript\t:alert(1)"))->toBeNull();

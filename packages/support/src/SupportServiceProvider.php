@@ -327,18 +327,45 @@ class SupportServiceProvider extends PackageServiceProvider
                 return null;
             }
 
-            // Reject whitespace and control characters instead of stripping
-            // them: browsers ignore those bytes when parsing URLs, so an
-            // input like "\tjavascript:..." would resolve to a scheme the
-            // visible string does not suggest.
-            if (preg_match('/[\s\x00-\x1F\x7F]/', $url)) {
+            // Reject URLs containing raw control characters or spaces
+            // (Legitimate URLs must percent-encode spaces and should not contain raw control characters)
+            if (preg_match('/[\x00-\x20\x7F]/', $url)) {
                 return null;
             }
 
-            if (preg_match('#^([a-z][a-z0-9+\-.]*):#i', $url, $matches)) {
-                $allowedSchemes = array_map(strtolower(...), $allowedSchemes);
+            // PHP's html_entity_decode() with ENT_HTML5 replaces control character entities with U+FFFD.
+            // We manually decode ASCII numeric entities first so we can properly detect them.
+            $htmlDecoded = preg_replace_callback('/&#(?:x([0-9a-f]+)|([0-9]+));?/i', function (array $match) {
+                $code = (isset($match[1]) && $match[1] !== '') ? hexdec($match[1]) : (int) $match[2];
 
-                if (! in_array(strtolower($matches[1]), $allowedSchemes, strict: true)) {
+                // We only need to manually decode ASCII characters for control character checks.
+                return ($code >= 0 && $code <= 127) ? chr((int) $code) : $match[0];
+            }, $url);
+
+            // Decode named HTML entities
+            $htmlDecoded = html_entity_decode($htmlDecoded, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            // Reject URLs containing control characters after HTML decoding (excluding space, which is \x20)
+            if (preg_match('/[\x00-\x1F\x7F]/', $htmlDecoded)) {
+                return null;
+            }
+
+            // Decode URL encoding to unmask encoded control characters
+            $urlDecoded = urldecode($htmlDecoded);
+
+            // Reject URLs containing control characters after URL decoding (excluding space)
+            if (preg_match('/[\x00-\x1F\x7F]/', $urlDecoded)) {
+                return null;
+            }
+
+            // Extract the scheme and check against the allowed list.
+            // We parse the scheme from the HTML-decoded string, NOT the URL-decoded string,
+            // to match browser behavior (avoiding naive execution of percent-encoded schemes).
+            if (preg_match('/^([a-zA-Z][a-zA-Z0-9\+\-\.]*):/', $htmlDecoded, $matches)) {
+                $scheme = strtolower($matches[1]);
+                $allowed = array_map('strtolower', $allowedSchemes);
+
+                if (! in_array($scheme, $allowed, true)) {
                     return null;
                 }
             }
