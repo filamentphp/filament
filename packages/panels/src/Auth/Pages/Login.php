@@ -157,6 +157,8 @@ class Login extends SimplePage
             $this->throwFailureValidationException();
         }
 
+        session()->regenerateToken();
+
         return app(LoginResponse::class);
     }
 
