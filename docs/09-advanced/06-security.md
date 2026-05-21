@@ -67,7 +67,7 @@ Many Filament configuration methods accept closures that can return dynamic valu
 
 For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
 
-Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. It also normalizes obfuscation tricks such as leading whitespace, embedded control characters (`\t`, `\n`, `\r`, NUL bytes), and mixed-case schemes before checking — so values like `"\tJaVa\nScRiPt:alert(1)"` are rejected, and even on a safe URL the return value has those bytes stripped so they cannot reach the rendered HTML:
+Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. Before checking the scheme, it accounts for the obfuscation tricks that browsers silently undo when parsing an `href` value — HTML entity references (numeric like `&#9;`/`&#x09;` and named like `&Tab;`/`&NewLine;`/`&colon;`), percent-encoded control characters (`%09`, `%0A`), embedded raw control characters and whitespace (`\t`, `\n`, `\r`, NUL bytes), and mixed-case schemes — so values like `"\tJaVa\nScRiPt:alert(1)"` or `"java&#x09;script:alert(1)"` are rejected. The return value is the original input unchanged when it passes the check; the helper never rewrites a URL.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -93,7 +93,7 @@ TextColumn::make('contact')
 
 - check that the host belongs to a domain you control (open-redirect protection),
 - check that the URL is safe for the server to fetch (SSRF protection),
-- decode percent-encoded or HTML-entity-encoded payloads (the browser's URL parser doesn't either, so this is intentional, but it means callers that decode the value before rendering need their own check on the decoded form),
+- guarantee safety for non-standard rendering contexts — the safety analysis assumes the URL will be placed in an HTML attribute like `href`, where the browser performs a single HTML-entity decode and strips whitespace/control characters before parsing the scheme. If your code applies additional transformations to the return value before rendering (for example, calling `urldecode()` and then setting `location.href`), apply your own scheme check to the transformed value,
 - validate that an `http(s)` URL is reachable or trusted in any other way.
 
 If you need any of those guarantees, layer your own check on top of the helper's return value.
