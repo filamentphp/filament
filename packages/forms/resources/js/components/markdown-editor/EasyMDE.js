@@ -824,16 +824,18 @@ function toggleCodeBlock(editor) {
             next_line_indented =
                 next_line_last_tok &&
                 token_state(next_line_last_tok).indentedCode
-        if (next_line_indented) {
-            cm.replaceRange('\n', {
-                line: block_end + 1,
-                ch: 0,
-            })
-        }
+        cm.operation(function () {
+            if (next_line_indented) {
+                cm.replaceRange('\n', {
+                    line: block_end + 1,
+                    ch: 0,
+                })
+            }
 
-        for (var i = block_start; i <= block_end; i++) {
-            cm.indentLine(i, 'subtract') // TODO: this doesn't get tracked in the history, so can't be undone :(
-        }
+            for (var i = block_start; i <= block_end; i++) {
+                cm.indentLine(i, 'subtract')
+            }
+        })
         cm.focus()
     } else {
         // insert code formatting
