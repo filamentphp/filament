@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -198,7 +199,11 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     {
         $user ??= Filament::auth()->user();
 
-        return DB::transaction(function () use ($user, $recoveryCode): bool {
+        $lockKey = 'filament.app_authentication_recovery_codes.' . md5(
+            $user::class . ':' . (($user instanceof Authenticatable) ? $user->getAuthIdentifier() : spl_object_id($user)),
+        );
+
+        return Cache::lock($lockKey, 10)->block(10, fn (): bool => DB::transaction(function () use ($user, $recoveryCode): bool {
             $lockedUser = $user
                 ->newQuery() /** @phpstan-ignore-line */
                 ->whereKey($user->getKey()) /** @phpstan-ignore-line */
@@ -227,7 +232,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
             }
 
             return $isValid;
-        });
+        }));
     }
 
     /**
