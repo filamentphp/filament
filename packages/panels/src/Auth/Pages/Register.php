@@ -19,6 +19,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\EloquentUserProvider;
@@ -38,6 +39,7 @@ use LogicException;
  */
 class Register extends SimplePage
 {
+    use RestrictsFileUploadsToSchemaComponents;
     use CanUseDatabaseTransactions;
     use WithRateLimiting;
 
