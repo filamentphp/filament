@@ -20,6 +20,12 @@ it('can render', function (): void {
         ->assertSeeHtml('src="https://example.com/image.jpg"');
 });
 
+it('escapes `"` in `src`', function (): void {
+    livewire(TestComponentWithQuoteInImageEntry::class)
+        ->assertSuccessful()
+        ->assertSeeHtml('data:image/png,&quot;');
+});
+
 it('can render with circular style', function (): void {
     livewire(TestComponentWithCircularImageEntry::class)
         ->assertSuccessful()
@@ -391,6 +397,31 @@ class TestComponentWithImageEntry extends Component implements HasSchemas
         return $schema
             ->state([
                 'image' => 'https://example.com/image.jpg',
+            ])
+            ->components([
+                ImageEntry::make('image'),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
+    }
+}
+
+class TestComponentWithQuoteInImageEntry extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([
+                'image' => 'data:image/png,"',
             ])
             ->components([
                 ImageEntry::make('image'),
