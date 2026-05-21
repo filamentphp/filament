@@ -327,47 +327,44 @@ class SupportServiceProvider extends PackageServiceProvider
                 return null;
             }
 
-            // Reject URLs containing raw control characters or spaces
-            // (Legitimate URLs must percent-encode spaces and should not contain raw control characters)
+            // Reject URLs containing raw whitespace or control characters. Legitimate URLs
+            // percent-encode these; a raw byte here is either a typo or an obfuscation attempt.
             if (preg_match('/[\x00-\x20\x7F]/', $url)) {
                 return null;
             }
 
-            // PHP's html_entity_decode() with ENT_HTML5 replaces control character entities with U+FFFD.
-            // We manually decode ASCII numeric entities first so we can properly detect them.
-            $htmlDecoded = preg_replace_callback('/&#(?:x([0-9a-f]+)|([0-9]+));?/i', function (array $match): string {
-                $code = ($match[1] !== '') ? hexdec($match[1]) : (int) $match[2];
+            // Predict the scheme the browser will see after HTML-decoding the attribute value.
+            // We pre-decode ASCII numeric entities ourselves because `html_entity_decode(ENT_HTML5)`
+            // replaces "forbidden" C0 control character entities (e.g. `&#0;`) with U+FFFD, which
+            // would mask them from the control-character strip below.
+            $decoded = preg_replace_callback(
+                '/&#(?:x([0-9a-f]+)|([0-9]+));?/i',
+                function (array $match): string {
+                    $code = ($match[1] !== '') ? hexdec($match[1]) : (int) $match[2];
 
-                // We only need to manually decode ASCII characters for control character checks.
-                return ($code >= 0 && $code <= 127) ? chr((int) $code) : $match[0];
-            }, $url);
+                    return ($code <= 127) ? chr((int) $code) : $match[0];
+                },
+                $url,
+            );
+            $decoded = html_entity_decode($decoded, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-            // Decode named HTML entities
-            $htmlDecoded = html_entity_decode($htmlDecoded, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-            // Reject URLs containing control characters after HTML decoding (excluding space, which is \x20)
-            if (preg_match('/[\x00-\x1F\x7F]/', $htmlDecoded)) {
+            // Reject if either the HTML-decoded form or its percent-decoded form contains
+            // control characters — catches `%09`-style obfuscation that would be dangerous
+            // if the URL is later decoded by other code.
+            if (
+                preg_match('/[\x00-\x1F\x7F]/', $decoded) ||
+                preg_match('/[\x00-\x1F\x7F]/', rawurldecode($decoded))
+            ) {
                 return null;
             }
 
-            // Decode URL encoding to unmask encoded control characters
-            $urlDecoded = rawurldecode($htmlDecoded);
-
-            // Reject URLs containing control characters after URL decoding (excluding space)
-            if (preg_match('/[\x00-\x1F\x7F]/', $urlDecoded)) {
+            // Scheme check uses the HTML-decoded form only — the browser does NOT percent-decode
+            // the scheme, so a `%6A` literally in the scheme position is not dangerous.
+            if (
+                preg_match('/^([a-z][a-z0-9+\-.]*):/i', $decoded, $matches) &&
+                (! in_array(strtolower($matches[1]), array_map(strtolower(...), $allowedSchemes), strict: true))
+            ) {
                 return null;
-            }
-
-            // Extract the scheme and check against the allowed list.
-            // We parse the scheme from the HTML-decoded string, NOT the URL-decoded string,
-            // to match browser behavior (avoiding naive execution of percent-encoded schemes).
-            if (preg_match('/^([a-zA-Z][a-zA-Z0-9\+\-\.]*):/', $htmlDecoded, $matches)) {
-                $scheme = strtolower($matches[1]);
-                $allowed = array_map('strtolower', $allowedSchemes);
-
-                if (! in_array($scheme, $allowed, true)) {
-                    return null;
-                }
             }
 
             return $url;
