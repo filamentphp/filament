@@ -281,4 +281,76 @@ describe('integration', function (): void {
         expect($languageTags)->toContain('PHP');
         expect($frameworkTags)->toContain('Laravel');
     });
+
+    it('saves a tag as untyped when `type()` is `null`, and does not attach a privileged tag of the same name attached to the record', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('admin', 'role');
+
+        livewire(SpatieTagsInputForm::class, [
+            'record' => $record,
+            'useNullType' => true,
+        ])
+            ->fillForm([
+                'tags' => ['admin'],
+            ])
+            ->call('save');
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+        $allTags = $freshRecord->getRelationValue('tags');
+
+        $roleAdmin = $allTags->first(fn ($tag) => $tag->type === 'role' && $tag->name === 'admin');
+        $untypedAdmin = $allTags->first(fn ($tag) => $tag->type === null && $tag->name === 'admin');
+
+        expect($roleAdmin)->not->toBeNull();
+        expect($untypedAdmin)->not->toBeNull();
+        expect($untypedAdmin->getKey())->not->toBe($roleAdmin->getKey());
+    });
+
+    it('saves a tag as untyped when `type()` is `null`, and does not attach a privileged tag of the same name that exists in the database but is not attached to the record', function (): void {
+        $record = Article::factory()->create();
+        $existingRoleTag = Tag::findOrCreate('admin', 'role');
+
+        livewire(SpatieTagsInputForm::class, [
+            'record' => $record,
+            'useNullType' => true,
+        ])
+            ->fillForm([
+                'tags' => ['admin'],
+            ])
+            ->call('save');
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+        $attachedTagIds = $freshRecord->getRelationValue('tags')->pluck('id')->all();
+
+        expect($attachedTagIds)->not->toContain($existingRoleTag->getKey());
+
+        $attachedTags = $freshRecord->getRelationValue('tags');
+        expect($attachedTags)->toHaveCount(1);
+        expect($attachedTags->first()->type)->toBeNull();
+        expect($attachedTags->first()->name)->toBe('admin');
+    });
+
+    it('removes only untyped tags from the record when saving with `type()` set to `null`, preserving typed tags', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('admin', 'role');
+        $record->attachTag('outdated', null);
+
+        livewire(SpatieTagsInputForm::class, [
+            'record' => $record,
+            'useNullType' => true,
+        ])
+            ->fillForm([
+                'tags' => [],
+            ])
+            ->call('save');
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+        $allTags = $freshRecord->getRelationValue('tags');
+
+        $roleTagNames = $allTags->filter(fn ($tag) => $tag->type === 'role')->pluck('name')->values()->all();
+        $untypedTagNames = $allTags->filter(fn ($tag) => $tag->type === null)->pluck('name')->values()->all();
+
+        expect($roleTagNames)->toBe(['admin']);
+        expect($untypedTagNames)->toBe([]);
+    });
 });

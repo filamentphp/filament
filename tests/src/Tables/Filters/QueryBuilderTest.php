@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTableWithScopedAuthor;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTableWithScopedPostsCount;
+use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTableWithScopedPostsRatingAggregate;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -1776,6 +1777,77 @@ describe('relationship method constraints', function (): void {
                 ->call('applyTableFilters'))
             ->assertCanSeeTableRecords([$lowAvgUser])
             ->assertCanNotSeeTableRecords([$highAvgUser]);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` to the `sum` aggregate subquery, hiding scoped-out rows', function (): void {
+        $inScopeUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 5, 'is_published' => true]);
+        Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 3, 'is_published' => true]);
+
+        $outOfScopeUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $outOfScopeUser->id, 'rating' => 10, 'is_published' => false]);
+        Post::factory()->create(['author_id' => $outOfScopeUser->id, 'rating' => 10, 'is_published' => false]);
+
+        livewire(UsersQueryBuilderTableWithScopedPostsRatingAggregate::class)
+            ->assertCanSeeTableRecords([$inScopeUser, $outOfScopeUser])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 7, 'aggregate' => 'sum'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$inScopeUser])
+            ->assertCanNotSeeTableRecords([$outOfScopeUser]);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` to the `max` aggregate subquery, hiding scoped-out rows', function (): void {
+        $inScopeUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 8, 'is_published' => true]);
+
+        $outOfScopeUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $outOfScopeUser->id, 'rating' => 10, 'is_published' => false]);
+        Post::factory()->create(['author_id' => $outOfScopeUser->id, 'rating' => 2, 'is_published' => true]);
+
+        livewire(UsersQueryBuilderTableWithScopedPostsRatingAggregate::class)
+            ->assertCanSeeTableRecords([$inScopeUser, $outOfScopeUser])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 7, 'aggregate' => 'max'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$inScopeUser])
+            ->assertCanNotSeeTableRecords([$outOfScopeUser]);
+    });
+
+    it('applies `modifyRelationshipQueryUsing` to the `equals` aggregate subquery, hiding scoped-out rows', function (): void {
+        $inScopeUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 4, 'is_published' => true]);
+        Post::factory()->create(['author_id' => $inScopeUser->id, 'rating' => 4, 'is_published' => true]);
+
+        $outOfScopeUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $outOfScopeUser->id, 'rating' => 4, 'is_published' => false]);
+        Post::factory()->create(['author_id' => $outOfScopeUser->id, 'rating' => 4, 'is_published' => false]);
+
+        livewire(UsersQueryBuilderTableWithScopedPostsRatingAggregate::class)
+            ->assertCanSeeTableRecords([$inScopeUser, $outOfScopeUser])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'equals',
+                        'settings' => ['number' => 8, 'aggregate' => 'sum'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$inScopeUser])
+            ->assertCanNotSeeTableRecords([$outOfScopeUser]);
     });
 
 });

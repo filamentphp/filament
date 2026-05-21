@@ -157,7 +157,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $rawState): array {
             $uuids = array_filter(array_keys($rawState));
 
-            $recordMediaUuids = $record?->getRelationValue('media')?->pluck('uuid')->all() ?? [];
+            $collectionName = $component->getCollection() ?? 'default';
+
+            $recordMediaUuids = $record?->getRelationValue('media')
+                ?->where('collection_name', $collectionName)
+                ?->pluck('uuid')
+                ?->all() ?? [];
 
             $uuids = array_values(array_filter(
                 $uuids,
