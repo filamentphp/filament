@@ -419,7 +419,9 @@ public static function shouldRegisterNavigation(): bool
 }
 ```
 
-Please note that these methods do not control direct access to the resource or page. They only control whether the resource or page will show up in the navigation. If you want to also control access, then you should use [resource authorization](../resources#authorization) or [page authorization](custom-pages#authorization).
+<Aside variant="danger">
+    `shouldRegisterNavigation()` only hides the link from the sidebar — it does not prevent a user from typing the URL directly. To actually restrict access, use [resource authorization](../resources#authorization) or [page authorization](custom-pages#authorization).
+</Aside>
 
 ## Using top navigation
 

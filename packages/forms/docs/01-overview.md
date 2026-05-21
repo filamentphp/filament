@@ -1155,6 +1155,10 @@ TextInput::make('greetingResponse')
 
 The [`$state`](#injecting-the-current-state-of-the-field) and [`$get`](#injecting-the-state-of-another-field) utilities are available in this JavaScript context, so you can use them to access the state of the field and other fields in the schema.
 
+<Aside variant="danger">
+    The string passed to `JsContent` is evaluated in the browser, so you should never concatenate user input into it — that would lead to XSS. Values read at runtime via `$state` or `$get()` are safe to use as string values inside the expression, but should never be evaluated as JavaScript code themselves.
+</Aside>
+
 ## The basics of reactivity
 
 [Livewire](https://livewire.laravel.com) is a tool that allows Blade-rendered HTML to dynamically re-render without requiring a full page reload. Filament schemas are built on top of Livewire, so they are able to re-render dynamically, allowing their content to adapt after they are initially rendered.

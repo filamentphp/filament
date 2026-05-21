@@ -476,6 +476,37 @@ describe('integration', function (): void {
         expect($bMedia1->fresh()->order_column)->toBe($originalBOrder[$bMedia1->uuid]);
         expect($bMedia2->fresh()->order_column)->toBe($originalBOrder[$bMedia2->uuid]);
     });
+
+    it('does not reorder media in another collection on the same record when submitted UUIDs are tampered', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $record->addMediaFromString('a1')
+            ->usingFileName('a1.jpg')
+            ->toMediaCollection('avatars');
+
+        $doc1 = $record->addMediaFromString('d1')
+            ->usingFileName('d1.pdf')
+            ->toMediaCollection('documents');
+
+        $doc2 = $record->addMediaFromString('d2')
+            ->usingFileName('d2.pdf')
+            ->toMediaCollection('documents');
+
+        $originalDocumentsOrder = [
+            $doc1->uuid => $doc1->order_column,
+            $doc2->uuid => $doc2->order_column,
+        ];
+
+        livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->set('data.avatar', [
+                $doc2->uuid => $doc2->uuid,
+                $doc1->uuid => $doc1->uuid,
+            ])
+            ->call('save');
+
+        expect($doc1->fresh()->order_column)->toBe($originalDocumentsOrder[$doc1->uuid]);
+        expect($doc2->fresh()->order_column)->toBe($originalDocumentsOrder[$doc2->uuid]);
+    });
 });
 
 class ReorderableSpatieMediaLibraryFileUploadForm extends Component implements HasActions, HasSchemas

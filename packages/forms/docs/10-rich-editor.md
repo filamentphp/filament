@@ -414,7 +414,7 @@ RichEditor::make('content')
 
 Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through.
 
-If you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection.
+The default file attachment provider performs no per-record scoping — any `data-id` that resolves to a file on the configured disk is accepted unless you enable `preventFileAttachmentPathTampering()` (or isolate uploads at the disk/directory level). If instead you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection via `$media->has($file)`, so a `data-id` for another record's media is rejected automatically.
 
 <Aside variant="warning">
     `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
