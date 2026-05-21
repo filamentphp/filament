@@ -39,8 +39,8 @@ use LogicException;
  */
 class Register extends SimplePage
 {
-    use RestrictsFileUploadsToSchemaComponents;
     use CanUseDatabaseTransactions;
+    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     /**
