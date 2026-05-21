@@ -15,97 +15,97 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('blocks `_startUpload` when the schema has no file-upload components', function (): void {
-    livewire(TestComponentWithoutFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithoutFileUpload::class)
         ->call('_startUpload', 'data.text', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
 it('blocks `_startUpload` for a property path that does not map to any schema component', function (): void {
-    livewire(TestComponentWithFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_startUpload', 'data.somethingElse.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
 it('allows `_startUpload` for the exact state path of a `FileUpload` field', function (): void {
-    livewire(TestComponentWithFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_startUpload', 'data.photo', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertDispatched('upload:generatedSignedUrl');
 });
 
 it('allows `_startUpload` when the property path has a fileKey suffix appended to a `FileUpload` state path', function (): void {
-    livewire(TestComponentWithFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_startUpload', 'data.photo.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertDispatched('upload:generatedSignedUrl');
 });
 
 it('blocks `_startUpload` when the `FileUpload` field is hidden', function (): void {
-    livewire(TestComponentWithHiddenFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithHiddenFileUpload::class)
         ->call('_startUpload', 'data.photo.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
 it('allows `_startUpload` for a `FileUpload` field nested inside a layout component', function (): void {
-    livewire(TestComponentWithNestedFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithNestedFileUpload::class)
         ->call('_startUpload', 'data.section.photo.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertDispatched('upload:generatedSignedUrl');
 });
 
 it('blocks `_startUpload` for a layout component state path (`Section`) even though it has children with uploads', function (): void {
-    livewire(TestComponentWithNestedFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithNestedFileUpload::class)
         ->call('_startUpload', 'data.section.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
 it('blocks `_finishUpload` when no schema component matches', function (): void {
-    livewire(TestComponentWithFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_finishUpload', 'data.somethingElse.fileKey', ['livewire-tmp/tampered.jpg'], false)
         ->assertForbidden();
 });
 
 it('allows `_finishUpload` when the property path maps to a `FileUpload` field', function (): void {
-    livewire(TestComponentWithFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_finishUpload', 'data.photo.fileKey', ['livewire-tmp/legitimate.jpg'], false)
         ->assertDispatched('upload:finished');
 });
 
 it('allows `_startUpload` for `componentFileAttachments.{statePath}` uploads targeting a component that supports file attachments', function (): void {
-    livewire(TestComponentWithMarkdownEditor::class)
+    livewire(RestrictedUploadsTestComponentWithMarkdownEditor::class)
         ->call('_startUpload', 'componentFileAttachments.data.content', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertDispatched('upload:generatedSignedUrl');
 });
 
 it('allows `_startUpload` for `componentFileAttachments.{statePath}.{fileKey}` uploads targeting a component that supports file attachments', function (): void {
-    livewire(TestComponentWithMarkdownEditor::class)
+    livewire(RestrictedUploadsTestComponentWithMarkdownEditor::class)
         ->call('_startUpload', 'componentFileAttachments.data.content.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertDispatched('upload:generatedSignedUrl');
 });
 
 it('blocks `_startUpload` for `componentFileAttachments.{statePath}` when no component at that path supports file attachments', function (): void {
-    livewire(TestComponentWithFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_startUpload', 'componentFileAttachments.data.somethingElse', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
 it('blocks `_startUpload` when a component supporting file attachments has them explicitly disabled', function (): void {
-    livewire(TestComponentWithMarkdownEditorAttachmentsDisabled::class)
+    livewire(RestrictedUploadsTestComponentWithMarkdownEditorAttachmentsDisabled::class)
         ->call('_startUpload', 'componentFileAttachments.data.content', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
 it('allows `_finishUpload` for `componentFileAttachments.{statePath}` uploads targeting a component that supports file attachments', function (): void {
-    livewire(TestComponentWithMarkdownEditor::class)
+    livewire(RestrictedUploadsTestComponentWithMarkdownEditor::class)
         ->call('_finishUpload', 'componentFileAttachments.data.content', ['livewire-tmp/legitimate.jpg'], false)
         ->assertDispatched('upload:finished');
 });
 
 it('blocks `_finishUpload` for `componentFileAttachments.{statePath}` when the underlying component is unrelated', function (): void {
-    livewire(TestComponentWithFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_finishUpload', 'componentFileAttachments.data.tampered', ['livewire-tmp/tampered.jpg'], false)
         ->assertForbidden();
 });
 
 it('allows `_startUpload` for a `FileUpload` field inside a `Repeater` row at the dynamic state path', function (): void {
-    $component = livewire(TestComponentWithRepeaterFileUpload::class);
+    $component = livewire(RestrictedUploadsTestComponentWithRepeaterFileUpload::class);
 
     // Repeater rows have generated keys; grab the first row's key from state and target its `FileUpload`.
     $rows = $component->get('data.items');
@@ -117,24 +117,24 @@ it('allows `_startUpload` for a `FileUpload` field inside a `Repeater` row at th
 });
 
 it('blocks `_startUpload` targeting a `Repeater` row property that does not exist', function (): void {
-    livewire(TestComponentWithRepeaterFileUpload::class)
+    livewire(RestrictedUploadsTestComponentWithRepeaterFileUpload::class)
         ->call('_startUpload', 'data.items.nonexistent-row-key.photo.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
 it('resolves uploads across multiple schemas on the same Livewire component', function (): void {
-    livewire(TestComponentWithMultipleSchemas::class)
+    livewire(RestrictedUploadsTestComponentWithMultipleSchemas::class)
         ->call('_startUpload', 'photoForm.photo.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertDispatched('upload:generatedSignedUrl');
 });
 
 it('blocks `_startUpload` for a property name that exists on neither of the multiple schemas', function (): void {
-    livewire(TestComponentWithMultipleSchemas::class)
+    livewire(RestrictedUploadsTestComponentWithMultipleSchemas::class)
         ->call('_startUpload', 'photoForm.somethingElse.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
 });
 
-class TestComponentWithoutFileUpload extends Livewire
+class RestrictedUploadsTestComponentWithoutFileUpload extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
@@ -148,7 +148,7 @@ class TestComponentWithoutFileUpload extends Livewire
     }
 }
 
-class TestComponentWithFileUpload extends Livewire
+class RestrictedUploadsTestComponentWithFileUpload extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
@@ -162,7 +162,7 @@ class TestComponentWithFileUpload extends Livewire
     }
 }
 
-class TestComponentWithHiddenFileUpload extends Livewire
+class RestrictedUploadsTestComponentWithHiddenFileUpload extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
@@ -177,7 +177,7 @@ class TestComponentWithHiddenFileUpload extends Livewire
     }
 }
 
-class TestComponentWithNestedFileUpload extends Livewire
+class RestrictedUploadsTestComponentWithNestedFileUpload extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
@@ -196,7 +196,7 @@ class TestComponentWithNestedFileUpload extends Livewire
     }
 }
 
-class TestComponentWithMarkdownEditor extends Livewire
+class RestrictedUploadsTestComponentWithMarkdownEditor extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
@@ -210,7 +210,7 @@ class TestComponentWithMarkdownEditor extends Livewire
     }
 }
 
-class TestComponentWithMarkdownEditorAttachmentsDisabled extends Livewire
+class RestrictedUploadsTestComponentWithMarkdownEditorAttachmentsDisabled extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
@@ -225,7 +225,7 @@ class TestComponentWithMarkdownEditorAttachmentsDisabled extends Livewire
     }
 }
 
-class TestComponentWithRepeaterFileUpload extends Livewire
+class RestrictedUploadsTestComponentWithRepeaterFileUpload extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
@@ -249,7 +249,7 @@ class TestComponentWithRepeaterFileUpload extends Livewire
     }
 }
 
-class TestComponentWithMultipleSchemas extends Livewire
+class RestrictedUploadsTestComponentWithMultipleSchemas extends Livewire
 {
     use RestrictsFileUploadsToSchemaComponents;
 
