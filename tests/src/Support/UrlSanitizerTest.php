@@ -163,6 +163,124 @@ it('rejects `javascript:` with `\x7F` DEL inside the scheme', function (): void 
     expect(Str::sanitizeUrl("javascript\x7F:alert(1)"))->toBeNull();
 });
 
+it('rejects URLs containing whitespace after HTML entity decoding', function (): void {
+    expect(Str::sanitizeUrl('java&#x09;script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java&#10;script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java&#13;script:alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing encoded control characters', function (): void {
+    expect(Str::sanitizeUrl('java%09script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java%0Ascript:alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing raw control characters', function (): void {
+    expect(Str::sanitizeUrl("javascript\x7F:alert(1)"))->toBeNull();
+});
+
+it('rejects URLs containing HTML entity encoded separators', function (): void {
+    expect(Str::sanitizeUrl('javascript&colon;alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('javascript&#58;alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing control characters after HTML entity decoding', function (): void {
+    expect(Str::sanitizeUrl('javascript&#x7F;:alert(1)'))->toBeNull();
+});
+
+it('rejects URLs containing HTML5 named character entities for control characters', function (): void {
+    expect(Str::sanitizeUrl('java&Tab;script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java&NewLine;script:alert(1)'))->toBeNull();
+});
+
+it('passes legitimate URLs with multiple query parameters through unchanged', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?a=1&b=2'))->toBe('https://example.com/?a=1&b=2');
+    expect(Str::sanitizeUrl('https://example.com/search?q=hello&page=2&sort=desc'))
+        ->toBe('https://example.com/search?q=hello&page=2&sort=desc');
+});
+
+it('passes legitimate URLs containing escaped ampersand entities through unchanged', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?a=1&amp;b=2'))->toBe('https://example.com/?a=1&amp;b=2');
+});
+
+it('passes URLs whose query string literally contains the text `javascript:` through unchanged', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?q=javascript%3Aalert(1)'))
+        ->toBe('https://example.com/?q=javascript%3Aalert(1)');
+});
+
+it('does not recursively decode double-encoded entities — single decode matches browser behaviour', function (): void {
+    expect(Str::sanitizeUrl('https://example.com/?q=java&amp;#9;script:1'))
+        ->toBe('https://example.com/?q=java&amp;#9;script:1');
+});
+
+it('rejects schemes assembled entirely from numeric HTML entities', function (): void {
+    // &#106; is `j`, &#x61; is `a`, etc. Defends against an attacker
+    // disguising the whole scheme name in entities so it doesn't read as
+    // "javascript" in the raw source.
+    expect(Str::sanitizeUrl('&#106;&#x61;v&#97;script:alert(1)'))->toBeNull();
+});
+
+it('rejects schemes assembled from mixed entity and percent encoding', function (): void {
+    // `java&#9;script%3Aalert(1)` — entity decodes to TAB (control-char
+    // rejection); percent-encoded colon is irrelevant because the TAB
+    // rejection fires first.
+    expect(Str::sanitizeUrl('java&#9;script%3Aalert(1)'))->toBeNull();
+});
+
+it('rejects NULL byte hidden in a numeric entity', function (): void {
+    // &#0; decodes to NUL via the manual pre-decode (html_entity_decode
+    // would otherwise replace it with U+FFFD and hide the attack).
+    expect(Str::sanitizeUrl('java&#0;script:alert(1)'))->toBeNull();
+    expect(Str::sanitizeUrl('java&#x00;script:alert(1)'))->toBeNull();
+});
+
+it('does not decode named HTML entities that require a trailing semicolon when the semicolon is missing', function (): void {
+    // `&Tab` without trailing `;` is not a valid HTML5 entity (only legacy
+    // entities like `&amp` decode without the semicolon). Both the browser
+    // and `html_entity_decode(ENT_HTML5)` leave it as literal text, so the
+    // URL passes through. We document the behaviour either way.
+    $result = Str::sanitizeUrl('https://example.com/?q=&Tab');
+    expect($result)->toBe('https://example.com/?q=&Tab');
+});
+
+it('rejects schemes containing `+` that are not on the allowlist', function (): void {
+    // RFC 3986 allows `+` in schemes (e.g. `coap+tcp`, `git+ssh`). Make sure
+    // unusual but valid-looking schemes are still gated by the allowlist.
+    expect(Str::sanitizeUrl('git+ssh://example.com/repo.git'))->toBeNull();
+    expect(Str::sanitizeUrl('coap+tcp://example.com/'))->toBeNull();
+});
+
+it('passes through URLs whose path or fragment legitimately contains a literal `:`', function (): void {
+    // A `:` inside a path segment isn't a scheme delimiter — only the
+    // first `:` matters, and our regex correctly anchors with `^`.
+    expect(Str::sanitizeUrl('https://example.com/path:with:colons'))
+        ->toBe('https://example.com/path:with:colons');
+    expect(Str::sanitizeUrl('https://example.com/#section:1'))
+        ->toBe('https://example.com/#section:1');
+});
+
+it('handles URLs that consist of only a scheme and colon, with no body', function (): void {
+    expect(Str::sanitizeUrl('https:'))->toBe('https:');
+    expect(Str::sanitizeUrl('javascript:'))->toBeNull();
+});
+
+it('returns `null` when the allowlist is empty and the URL has an absolute scheme', function (): void {
+    expect(Str::sanitizeUrl('https://example.com', []))->toBeNull();
+    expect(Str::sanitizeUrl('http://example.com', []))->toBeNull();
+});
+
+it('does not catastrophically backtrack on long pathological inputs', function (): void {
+    // Sanity check against accidental ReDoS: a long URL of just allowed
+    // scheme characters should complete in well under a millisecond.
+    $long = 'https://example.com/' . str_repeat('a', 10000);
+
+    $start = hrtime(true);
+    $result = Str::sanitizeUrl($long);
+    $elapsedMs = (hrtime(true) - $start) / 1_000_000;
+
+    expect($result)->toBe($long);
+    expect($elapsedMs)->toBeLessThan(50.0);
+});
+
 it('rejects `javascript:` with whitespace before the colon', function (): void {
     expect(Str::sanitizeUrl('javascript :alert(1)'))->toBeNull()
         ->and(Str::sanitizeUrl("javascript\t:alert(1)"))->toBeNull();

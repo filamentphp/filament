@@ -23,6 +23,8 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use LogicException;
@@ -197,24 +199,40 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     {
         $user ??= Filament::auth()->user();
 
-        $remainingCodes = [];
-        $isValid = false;
+        $lockKey = 'filament.app_authentication_recovery_codes.' . md5(
+            $user::class . ':' . (($user instanceof Authenticatable) ? $user->getAuthIdentifier() : spl_object_id($user)),
+        );
 
-        foreach ($this->getRecoveryCodes($user) as $hashedRecoveryCode) { /** @phpstan-ignore-line */
-            if (Hash::check($recoveryCode, $hashedRecoveryCode)) {
-                $isValid = true;
+        return Cache::lock($lockKey, 10)->block(10, fn (): bool => DB::transaction(function () use ($user, $recoveryCode): bool {
+            $lockedUser = $user
+                ->newQuery() /** @phpstan-ignore-line */
+                ->whereKey($user->getKey()) /** @phpstan-ignore-line */
+                ->lockForUpdate()
+                ->first();
 
-                continue;
+            if ($lockedUser === null) {
+                return false;
             }
 
-            $remainingCodes[] = $hashedRecoveryCode;
-        }
+            $remainingCodes = [];
+            $isValid = false;
 
-        if ($isValid) {
-            $user->saveAppAuthenticationRecoveryCodes($remainingCodes);
-        }
+            foreach ($this->getRecoveryCodes($lockedUser) as $hashedRecoveryCode) { /** @phpstan-ignore-line */
+                if (Hash::check($recoveryCode, $hashedRecoveryCode)) {
+                    $isValid = true;
 
-        return $isValid;
+                    continue;
+                }
+
+                $remainingCodes[] = $hashedRecoveryCode;
+            }
+
+            if ($isValid) {
+                $lockedUser->saveAppAuthenticationRecoveryCodes($remainingCodes); /** @phpstan-ignore-line */
+            }
+
+            return $isValid;
+        }));
     }
 
     /**
