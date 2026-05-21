@@ -40,6 +40,7 @@ use Illuminate\Support\Js;
 use Illuminate\Validation\Rules\Password;
 use League\Uri\Components\Query;
 use LogicException;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -153,7 +154,7 @@ class EditProfile extends Page
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function mutateFormDataBeforeSave(#[SensitiveParameter] array $data): array
     {
         return $data;
     }
@@ -232,7 +233,7 @@ class EditProfile extends Page
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function handleRecordUpdate(Model $record, array $data): Model
+    protected function handleRecordUpdate(Model $record, #[SensitiveParameter] array $data): Model
     {
         if (Filament::hasEmailChangeVerification() && array_key_exists('email', $data)) {
             $this->sendEmailChangeVerification($record, $data['email']);
@@ -374,8 +375,8 @@ class EditProfile extends Page
             ->rule(Password::default())
             ->showAllValidationMessages()
             ->autocomplete('new-password')
-            ->dehydrated(fn ($state): bool => filled($state))
-            ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+            ->dehydrated(fn (#[SensitiveParameter] $state): bool => filled($state))
+            ->dehydrateStateUsing(fn (#[SensitiveParameter] $state): string => Hash::make($state))
             ->live(debounce: 500)
             ->same('passwordConfirmation');
     }
