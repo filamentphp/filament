@@ -127,7 +127,7 @@ trait HasQuery
             ];
         }
 
-        $query->select($columns);
+        $query->addSelect($columns);
 
         return $query;
     }

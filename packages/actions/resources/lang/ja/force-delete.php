@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => '強制削除',
+        'label' => '完全に削除',
 
         'modal' => [
 
-            'heading' => ':label 強制削除',
+            'heading' => ':labelを完全に削除',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => '削除',
+                    'label' => '完全に削除',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => '削除しました',
+                'title' => '完全に削除しました',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => '選択中を強制削除',
+        'label' => '選択中を完全に削除',
 
         'modal' => [
 
-            'heading' => '選択中の:labelを強制削除',
+            'heading' => '選択中の:labelを完全に削除',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => '削除',
+                    'label' => '完全に削除',
                 ],
 
             ],
@@ -51,19 +51,19 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => '削除しました',
+                'title' => '完全に削除しました',
             ],
 
             'deleted_partial' => [
-                'title' => ':total件中:count件を削除しました',
-                'missing_authorization_failure_message' => ':count件を削除する権限がありません。',
-                'missing_processing_failure_message' => ':count件を削除できませんでした。',
+                'title' => ':total件中:count件を完全に削除しました',
+                'missing_authorization_failure_message' => ':count件を完全に削除する権限がありません。',
+                'missing_processing_failure_message' => ':count件を完全に削除できませんでした。',
             ],
 
             'deleted_none' => [
-                'title' => '削除に失敗しました',
-                'missing_authorization_failure_message' => ':count件を削除する権限がありません。',
-                'missing_processing_failure_message' => ':count件を削除できませんでした。',
+                'title' => '完全な削除に失敗しました',
+                'missing_authorization_failure_message' => ':count件を完全な削除する権限がありません。',
+                'missing_processing_failure_message' => ':count件を完全な削除できませんでした。',
             ],
 
         ],

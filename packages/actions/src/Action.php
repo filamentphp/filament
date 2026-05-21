@@ -36,6 +36,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Component;
 use Livewire\Drawer\Utils;
 
 class Action extends ViewComponent implements Arrayable
@@ -361,6 +362,23 @@ class Action extends ViewComponent implements Arrayable
         }
 
         return $this->getJsClickHandler();
+    }
+
+    protected function getLivewireKey(): ?string
+    {
+        if (! ($this->getRecord(withDefault: false) && $this->getTable())) {
+            return null;
+        }
+
+        $livewire = $this->getLivewire();
+
+        if (! ($livewire instanceof Component)) {
+            return null;
+        }
+
+        $key = md5(serialize($this->getContext()));
+
+        return "{$livewire->getId()}.actions.{$this->getName()}.{$key}";
     }
 
     public function getLivewireEventClickHandler(): ?string
@@ -784,6 +802,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
@@ -818,6 +837,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
@@ -857,6 +877,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
@@ -890,6 +911,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
@@ -925,6 +947,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))

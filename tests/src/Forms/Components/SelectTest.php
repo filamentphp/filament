@@ -191,6 +191,68 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasNoFormErrors();
     });
+
+    it('rejects an in-scope value but excluded by `modifyQueryUsing` on a `BelongsTo` relationship', function (): void {
+        $inScope = User::factory()->create(['name' => 'Alpha User']);
+        $outOfScope = User::factory()->create(['name' => 'Beta User']);
+
+        livewire(TestComponentWithBelongsToRelationshipAndModifyQueryValidation::class)
+            ->fillForm(['author_id' => (string) $inScope->id])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithBelongsToRelationshipAndModifyQueryValidation::class)
+            ->fillForm(['author_id' => (string) $outOfScope->id])
+            ->call('save')
+            ->assertHasFormErrors(['author_id' => ['in']]);
+    });
+
+    it('rejects an existing value excluded by `modifyQueryUsing` on a searchable `BelongsTo` relationship', function (): void {
+        $inScope = User::factory()->create(['name' => 'Alpha User']);
+        $outOfScope = User::factory()->create(['name' => 'Beta User']);
+
+        livewire(TestComponentWithSearchableBelongsToRelationshipAndModifyQueryValidation::class)
+            ->fillForm(['author_id' => (string) $inScope->id])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithSearchableBelongsToRelationshipAndModifyQueryValidation::class)
+            ->fillForm(['author_id' => (string) $outOfScope->id])
+            ->call('save')
+            ->assertHasFormErrors(['author_id' => ['in']]);
+    });
+
+    it('rejects existing values excluded by `modifyQueryUsing` on a multiple `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $inScope = Team::factory()->create(['name' => 'Alpha Team']);
+        $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
+
+        livewire(TestComponentWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id]])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id, (string) $outOfScope->id]])
+            ->call('save')
+            ->assertHasFormErrors(['teams.1' => ['in']]);
+    });
+
+    it('rejects existing values excluded by `modifyQueryUsing` on a searchable multiple `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $inScope = Team::factory()->create(['name' => 'Alpha Team']);
+        $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
+
+        livewire(TestComponentWithSearchableBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id]])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithSearchableBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id, (string) $outOfScope->id]])
+            ->call('save')
+            ->assertHasFormErrors(['teams.1' => ['in']]);
+    });
 });
 
 describe('`BelongsToMany` relationship', function (): void {
@@ -2611,6 +2673,152 @@ class TestComponentWithSearchableBelongsToManyRelationshipValidation extends Com
             ->schema([
                 Select::make('teams')
                     ->relationship('teams', 'name')
+                    ->multiple()
+                    ->searchable(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithBelongsToRelationshipAndModifyQueryValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'))
+                    ->preload(),
+            ])
+            ->model(Post::class)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithSearchableBelongsToRelationshipAndModifyQueryValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'))
+                    ->searchable(),
+            ])
+            ->model(Post::class)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithBelongsToManyRelationshipAndModifyQueryValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'))
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithSearchableBelongsToManyRelationshipAndModifyQueryValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'))
                     ->multiple()
                     ->searchable(),
             ])
