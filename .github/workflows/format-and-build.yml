@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   format-and-build:
-    if: ${{ !startsWith(github.event.head_commit.message, 'chore: format and build') }}
+    if: "${{ !startsWith(github.event.head_commit.message, 'chore: format and build') }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
