@@ -83,6 +83,8 @@ public static function canEdit(): bool
 }
 ```
 
+> Note: `canEdit()` only gates saving — it does not prevent a user from loading the page and reading every field's current value. If the settings themselves are sensitive (API keys, internal flags, etc.), restrict viewing with `canAccess()` (and/or route middleware) instead of relying on `canEdit()`.
+
 ## Publishing translations
 
 If you wish to translate the package, you may publish the language files using:
