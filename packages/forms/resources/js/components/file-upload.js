@@ -173,6 +173,29 @@ export default function fileUploadFormComponent({
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
                 allowImageTransform: shouldTransformImage,
+                beforeAddFile: async (fileItem) => {
+                    if (!automaticallyOpenImageEditorForAspectRatio) {
+                        return true
+                    }
+
+                    if (!(fileItem.file instanceof File)) {
+                        return true
+                    }
+
+                    if (!fileItem.file.type.startsWith('image/')) {
+                        return true
+                    }
+
+                    if (await this.checkImageAspectRatio(fileItem.file)) {
+                        return true
+                    }
+
+                    this.isEditorOpenedForAspectRatio = true
+
+                    this.loadEditor(fileItem.file)
+
+                    return false
+                },
                 credits: false,
                 files: await this.getFiles(),
                 imageCropAspectRatio: automaticallyCropImagesAspectRatio,
@@ -426,24 +449,6 @@ export default function fileUploadFormComponent({
             }
 
             this.pond.on('removefile', () => (this.error = null))
-
-            if (automaticallyOpenImageEditorForAspectRatio) {
-                this.pond.on('addfile', (error, fileItem) => {
-                    if (error) {
-                        return
-                    }
-
-                    if (!(fileItem.file instanceof File)) {
-                        return
-                    }
-
-                    if (!fileItem.file.type.startsWith('image/')) {
-                        return
-                    }
-
-                    this.checkImageAspectRatio(fileItem.file)
-                })
-            }
 
             this.isInitializing = false
         },
@@ -809,16 +814,18 @@ export default function fileUploadFormComponent({
 
             croppedCanvas.toBlob(
                 (croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
-                            )?.id,
-                        { revert: true },
-                    )
+                    const editingFileItem = this.pond
+                        .getFiles()
+                        .find(
+                            (uploadedFile) =>
+                                uploadedFile.filename === this.editingFile.name,
+                        )
+
+                    if (editingFileItem) {
+                        this.pond.removeFile(editingFileItem.id, {
+                            revert: true,
+                        })
+                    }
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
@@ -888,34 +895,35 @@ export default function fileUploadFormComponent({
 
         checkImageAspectRatio(file) {
             if (!automaticallyOpenImageEditorForAspectRatio) {
-                return
+                return Promise.resolve(true)
             }
 
-            const img = new Image()
-            const objectUrl = URL.createObjectURL(file)
+            return new Promise((resolve) => {
+                const img = new Image()
+                const objectUrl = URL.createObjectURL(file)
 
-            img.onload = () => {
-                URL.revokeObjectURL(objectUrl)
+                img.onload = () => {
+                    URL.revokeObjectURL(objectUrl)
 
-                const imageRatio = img.width / img.height
-                const tolerance = 0.01
+                    const imageRatio = img.width / img.height
+                    const tolerance = 0.01
 
-                if (
-                    Math.abs(
-                        imageRatio - automaticallyOpenImageEditorForAspectRatio,
-                    ) > tolerance
-                ) {
-                    this.isEditorOpenedForAspectRatio = true
-
-                    this.loadEditor(file)
+                    resolve(
+                        Math.abs(
+                            imageRatio -
+                                automaticallyOpenImageEditorForAspectRatio,
+                        ) <= tolerance,
+                    )
                 }
-            }
 
-            img.onerror = () => {
-                URL.revokeObjectURL(objectUrl)
-            }
+                img.onerror = () => {
+                    URL.revokeObjectURL(objectUrl)
 
-            img.src = objectUrl
+                    resolve(true)
+                }
+
+                img.src = objectUrl
+            })
         },
     }
 }
