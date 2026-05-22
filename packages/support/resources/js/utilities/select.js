@@ -1362,17 +1362,35 @@ export class Select {
         return false
     }
 
+    usesFixedDropdownPositioning() {
+        const fixedPositioningContext = this.selectButton.closest(
+            '.fi-fixed-positioning-context',
+        )
+        const absolutePositioningContext = this.selectButton.closest(
+            '.fi-absolute-positioning-context',
+        )
+
+        if (
+            fixedPositioningContext !== null &&
+            absolutePositioningContext === null
+        ) {
+            return true
+        }
+
+        const modal = this.selectButton.closest('.fi-modal')
+
+        return (
+            modal !== null &&
+            (modal.parentElement?.closest('.fi-modal') ?? null) !== null
+        )
+    }
+
     async openDropdown() {
         // Make dropdown visible but with position absolute by default, or fixed in containers with .fi-fixed-positioning-context class, and opacity 0 for measurement
         this.dropdown.style.display = 'block'
         this.dropdown.style.opacity = '0'
 
-        // Check if the select is inside a container that opts in to fixed positioning
-        const useFixedPositioning =
-            this.selectButton.closest('.fi-fixed-positioning-context') !==
-                null &&
-            this.selectButton.closest('.fi-absolute-positioning-context') ===
-                null
+        const useFixedPositioning = this.usesFixedDropdownPositioning()
         this.dropdown.style.position = useFixedPositioning
             ? 'fixed'
             : 'absolute'
@@ -1530,12 +1548,7 @@ export class Select {
             middleware.push(flip()) // Flip to top if not enough space at bottom
         }
 
-        // Check if the select is inside a container that opts in to fixed positioning
-        const useFixedPositioning =
-            this.selectButton.closest('.fi-fixed-positioning-context') !==
-                null &&
-            this.selectButton.closest('.fi-absolute-positioning-context') ===
-                null
+        const useFixedPositioning = this.usesFixedDropdownPositioning()
 
         computePosition(this.selectButton, this.dropdown, {
             placement: placement,
