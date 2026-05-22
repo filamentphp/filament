@@ -1,27 +1,33 @@
-name: fix-code-style
+name: format-and-build
 
 on:
   push:
+    branches:
+      - 5.x
 
 permissions:
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  fix-code-style:
+  format-and-build:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore: format and build') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        # persist-credentials: true is required so `git-auto-commit-action` below
-        # can push reformatted files back. Trust boundary is CODEOWNERS review of
-        # composer.json / package.json script changes.
+        # persist-credentials: true is required so `git-auto-commit-action` can push back.
+        # Trigger restricts to the maintenance branch; concurrency cancels superseded runs.
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 # zizmor: ignore[artipacked]
       - name: Cache Composer dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.composer/cache/files
-          key: composer-cs-${{ hashFiles('composer.json') }}
+          key: composer-format-${{ hashFiles('composer.json') }}
           restore-keys: |
-            composer-cs-
+            composer-format-
       - name: Set up PHP
         uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
         with:
@@ -35,14 +41,13 @@ jobs:
         run: |
           composer install --no-interaction --no-scripts
           npm ci --ignore-scripts
-      - name: Run Rector
-        run: composer rector
-      - name: Run Pint
-        run: composer pint
-      - name: Run Prettier
-        run: npm run prettier
+      - name: Run code style fixes
+        run: composer cs
+      - name: Build assets
+        run: npm run build
+      - name: Pull changes
+        run: git pull --rebase
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
-          commit_message: >
-            chore: fix code style
+          commit_message: 'chore: format and build'
