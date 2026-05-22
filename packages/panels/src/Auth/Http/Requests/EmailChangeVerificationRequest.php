@@ -34,20 +34,33 @@ class EmailChangeVerificationRequest extends FormRequest
         return [];
     }
 
-    public function fulfill(): void
+    public function fulfill(): bool
     {
         /** @var Model $user */
         $user = $this->user();
 
-        $user->update([
-            'email' => decrypt($this->route('email')),
-        ]);
+        $newEmail = decrypt($this->route('email'));
+
+        $isEmailTaken = $user::query()
+            ->whereKeyNot($user->getKey())
+            ->where('email', $newEmail)
+            ->exists();
 
         cache()->forget($this->query('signature'));
+
+        if ($isEmailTaken) {
+            return false;
+        }
+
+        $user->update([
+            'email' => $newEmail,
+        ]);
 
         if (method_exists($user, 'markEmailAsVerified')) {
             $user->markEmailAsVerified();
         }
+
+        return true;
     }
 
     public function withValidator(Validator $validator): Validator

@@ -1009,7 +1009,7 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateBadgeHtml(
             attributes: (new FilamentComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
                 'wire:key' => $this->getLivewireKey(),
@@ -1044,7 +1044,7 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateButtonHtml(
             attributes: (new FilamentComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
                 'wire:key' => $this->getLivewireKey(),
@@ -1084,7 +1084,7 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateDropdownItemHtml(
             attributes: (new FilamentComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
                 'wire:key' => $this->getLivewireKey(),
@@ -1118,7 +1118,7 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateIconButtonHtml(
             attributes: (new FilamentComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
                 'wire:key' => $this->getLivewireKey(),
@@ -1154,7 +1154,7 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateLinkHtml(
             attributes: (new FilamentComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
                 'wire:key' => $this->getLivewireKey(),

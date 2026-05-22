@@ -79,7 +79,7 @@
         $attributes
             ->merge([
                 'aria-disabled' => $disabled ? 'true' : null,
-                'aria-label' => $label,
+                'aria-label' => e($label),
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
                 'type' => $tag === 'button' ? $type : null,
