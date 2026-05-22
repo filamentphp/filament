@@ -25,7 +25,7 @@ jobs:
           restore-keys: |
             composer-screenshots-
       - name: Set up PHP
-        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
         with:
           php-version: 8.5
           extensions: mbstring, pdo, pdo_sqlite
