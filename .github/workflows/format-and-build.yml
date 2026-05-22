@@ -21,13 +21,50 @@ jobs:
         # persist-credentials: true is required so `git-auto-commit-action` can push back.
         # Trigger restricts to the maintenance branch; concurrency cancels superseded runs.
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 # zizmor: ignore[artipacked]
-      - name: Cache Composer dependencies
+      - name: Cache Composer package downloads
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.composer/cache/files
-          key: composer-format-${{ hashFiles('composer.json') }}
+          key: composer-files-${{ hashFiles('composer.json') }}
           restore-keys: |
-            composer-format-
+            composer-files-
+      - name: Cache vendor
+        id: vendor-cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Cache Pint cache
+        # SHA in primary key always saves a fresh cache. Restore-keys fall back only
+        # within the same composer.lock hash so a composer update invalidates the cache.
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: .pint.cache
+          key: pint-${{ github.ref_name }}-${{ hashFiles('composer.lock') }}-${{ github.sha }}
+          restore-keys: |
+            pint-${{ github.ref_name }}-${{ hashFiles('composer.lock') }}-
+      - name: Cache Prettier cache
+        # Same pattern, keyed on package-lock.json so an npm install invalidates the cache.
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: .prettiercache
+          key: prettier-${{ github.ref_name }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            prettier-${{ github.ref_name }}-${{ hashFiles('package-lock.json') }}-
+      - name: Cache Rector cache
+        # Same pattern as Pint; rector.php sets cacheDirectory to .rector.cache.
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: .rector.cache
+          key: rector-${{ github.ref_name }}-${{ hashFiles('composer.lock') }}-${{ github.sha }}
+          restore-keys: |
+            rector-${{ github.ref_name }}-${{ hashFiles('composer.lock') }}-
       - name: Set up PHP
         uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
         with:
@@ -37,10 +74,12 @@ jobs:
         with:
           node-version: lts/*
           cache: npm
-      - name: Install dependencies
-        run: |
-          composer install --no-interaction --no-scripts
-          npm ci --ignore-scripts
+      - name: Install Composer dependencies
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
+        run: composer install --no-interaction --no-scripts
+      - name: Install npm dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci --ignore-scripts
       - name: Run code style fixes
         run: composer cs
       - name: Build assets

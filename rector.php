@@ -12,6 +12,9 @@ return RectorConfig::configure()
         __DIR__ . '/packages',
         __DIR__ . '/tests',
     ])
+    ->withCache(
+        cacheDirectory: __DIR__ . '/.rector.cache',
+    )
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0);
