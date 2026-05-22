@@ -21,6 +21,7 @@
     }
 
     $hasDescription = filled((string) $description);
+    $hasFooter = filled((string) $footer);
     $hasIcon = filled($icon);
 @endphp
 
@@ -59,9 +60,11 @@
                 </p>
             @endif
 
-            <footer class="fi-empty-state-footer">
-                {{ $footer }}
-            </footer>
+            @if ($hasFooter)
+                <footer class="fi-empty-state-footer">
+                    {{ $footer }}
+                </footer>
+            @endif
         </div>
     </div>
 </section>

@@ -54,6 +54,22 @@ class EqualsOperator extends Operator
 
     public function applyToBaseQuery(Builder $query): Builder
     {
-        return $query->has($this->getConstraint()->getRelationshipName(), $this->isInverse() ? '!=' : '=', intval($this->getSettings()['count']));
+        $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
+
+        return $query->has(
+            $this->getConstraint()->getRelationshipName(),
+            $this->isInverse() ? '!=' : '=',
+            intval($this->getSettings()['count']),
+            'and',
+            function (Builder $query) use ($modifyRelationshipQueryUsing): Builder {
+                if ($modifyRelationshipQueryUsing) {
+                    $query = $this->evaluate($modifyRelationshipQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                return $query;
+            },
+        );
     }
 }

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use LogicException;
+use SensitiveParameter;
 
 class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenticationProvider
 {
@@ -110,7 +111,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         return str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 
-    public function verifyCode(string $code): bool
+    public function verifyCode(#[SensitiveParameter] string $code): bool
     {
         $codeHash = session('filament_email_authentication_code');
         $codeExpiresAt = session('filament_email_authentication_code_expires_at');
@@ -215,7 +216,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                     }))
                 ->required()
                 ->rule(function (): Closure {
-                    return function (string $attribute, $value, Closure $fail): void {
+                    return function (string $attribute, #[SensitiveParameter] $value, Closure $fail): void {
                         if ($this->verifyCode($value)) {
                             return;
                         }

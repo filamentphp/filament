@@ -395,6 +395,22 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasNoFormErrors();
     });
+
+    it('rejects existing values excluded by `modifyQueryUsing` on a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $inScope = Team::factory()->create(['name' => 'Alpha Team']);
+        $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
+
+        livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id]])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id, (string) $outOfScope->id]])
+            ->call('save')
+            ->assertHasFormErrors(['teams.1' => ['in']]);
+    });
 });
 
 describe('action names', function (): void {
@@ -730,6 +746,42 @@ class CheckboxListWithBelongsToManyRelationshipValidation extends Component impl
             ->schema([
                 CheckboxList::make('teams')
                     ->relationship('teams', 'name'),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                CheckboxList::make('teams')
+                    ->relationship('teams', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%')),
             ])
             ->model($this->record)
             ->statePath('data');

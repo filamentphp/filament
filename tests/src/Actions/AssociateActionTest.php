@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithAssociateActionRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithModifiedAssociateQueryRelationManager;
+use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithMultipleModifiedAssociateQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithPreloadedAssociateRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 
@@ -191,6 +192,53 @@ describe('record select options', function (): void {
             });
     });
 
+    it('rejects a `recordId` excluded by `recordSelectOptionsQuery()` when submitted directly', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->create(['title' => 'Published Article', 'author_id' => null]);
+        $outOfScopePost = Post::factory()->create(['title' => 'Draft Post', 'author_id' => null]);
+
+        livewire(PostsWithModifiedAssociateQueryRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => $outOfScopePost->getKey(),
+            ])
+            ->assertHasActionErrors(['recordId']);
+
+        expect($outOfScopePost->refresh()->author_id)->toBeNull();
+    });
+
+    it('rejects a multi-associate batch containing an out-of-scope `recordId`', function (): void {
+        $user = User::factory()->create();
+        $inScopePost = Post::factory()->create(['title' => 'Published Article', 'author_id' => null]);
+        $outOfScopePost = Post::factory()->create(['title' => 'Draft Post', 'author_id' => null]);
+
+        livewire(PostsWithMultipleModifiedAssociateQueryRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => [$inScopePost->getKey(), $outOfScopePost->getKey()],
+            ])
+            ->assertHasActionErrors();
+
+        expect($outOfScopePost->refresh()->author_id)->toBeNull();
+        expect($inScopePost->refresh()->author_id)->toBeNull();
+    });
+
+    it('applies `recordSelectOptionsQuery()` to search results', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->create(['title' => 'Published Article', 'author_id' => null]);
+        Post::factory()->create(['title' => 'Draft Article', 'author_id' => null]);
+
+        livewire(PostsWithModifiedAssociateQueryRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                $results = $select->getSearchResults('Article');
+
+                expect($results)->toHaveCount(1);
+                expect(array_values($results))->toContain('Published Article');
+                expect(array_values($results))->not->toContain('Draft Article');
+
+                return true;
+            });
+    });
+
     it('respects `optionsLimit()` on record select', function (): void {
         $user = User::factory()->create();
         Post::factory()->count(10)->create(['author_id' => null]);
@@ -234,6 +282,39 @@ describe('option labels', function (): void {
                 expect($labels)->toHaveCount(2);
                 expect(array_values($labels))->toContain($posts[0]->title);
                 expect(array_values($labels))->toContain($posts[1]->title);
+
+                return true;
+            });
+    });
+
+    it('returns `null` from `getOptionLabel()` when `recordSelectOptionsQuery()` excludes the record', function (): void {
+        $user = User::factory()->create();
+        $outOfScopePost = Post::factory()->create(['title' => 'Draft Post', 'author_id' => null]);
+
+        livewire(PostsWithModifiedAssociateQueryRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->fillForm(['recordId' => $outOfScopePost->getKey()])
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                expect($select->getOptionLabel(withDefault: false))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('omits out-of-scope records from `getOptionLabels()` when `recordSelectOptionsQuery()` excludes them', function (): void {
+        $user = User::factory()->create();
+        $inScopePost = Post::factory()->create(['title' => 'Published Article', 'author_id' => null]);
+        $outOfScopePost = Post::factory()->create(['title' => 'Draft Post', 'author_id' => null]);
+
+        livewire(PostsWithMultipleModifiedAssociateQueryRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->fillForm(['recordId' => [$inScopePost->getKey(), $outOfScopePost->getKey()]])
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($inScopePost, $outOfScopePost): bool {
+                $labels = $select->getOptionLabels(withDefaults: false);
+
+                expect($labels)->toHaveCount(1);
+                expect($labels)->toHaveKey($inScopePost->getKey());
+                expect($labels)->not->toHaveKey($outOfScopePost->getKey());
 
                 return true;
             });
