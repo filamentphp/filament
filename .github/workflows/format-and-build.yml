@@ -80,6 +80,10 @@ jobs:
       - name: Install npm dependencies
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
+      - name: Ensure Rector cache directory exists
+        # Defensive: rector should create this via withCache(), but it's
+        # silently missing in CI. Pre-creating costs nothing.
+        run: mkdir -p .rector.cache
       - name: Run code style fixes
         run: composer cs
       - name: Build assets

@@ -82,7 +82,7 @@
             "pint",
             "npm run prettier"
         ],
-        "pint": "pint --config pint-strict-imports.json",
+        "pint": "pint --config pint-strict-imports.json --cache-file=.pint.cache",
         "rector": "rector",
         "test:pest": "pest --parallel --exclude-group=commands",
         "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=commands",
