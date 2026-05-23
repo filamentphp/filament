@@ -57,6 +57,7 @@ namespace App\Livewire;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
 use Filament\Schemas\Schema;
@@ -65,6 +66,7 @@ use Livewire\Component;
 class CreatePost extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
     
     public ?array $data = [];
     
