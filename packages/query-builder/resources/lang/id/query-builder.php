@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Detik',
+                'minute' => 'Menit',
+                'hour' => 'Jam',
+                'day' => 'Hari',
+                'week' => 'Minggu',
+                'month' => 'Bulan',
+                'quarter' => 'Kuartal',
+                'year' => 'Tahun',
+            ],
+
+            'presets' => [
+                'past_decade' => '10 tahun yang lalu',
+                'past_5_years' => '5 tahun yang lalu',
+                'past_2_years' => '2 tahun yang lalu',
+                'past_year' => 'Tahun yang lalu',
+                'past_6_months' => '6 bulan yang lalu',
+                'past_quarter' => 'Kuartal yang lalu',
+                'past_month' => 'Bulan yang lalu',
+                'past_2_weeks' => '2 minggu yang lalu',
+                'past_week' => 'Minggu yang lalu',
+                'past_hour' => 'Jam yang lalu',
+                'past_minute' => 'Menit yang lalu',
+                'this_decade' => '10 tahun ini',
+                'this_year' => 'Tahun ini',
+                'this_quarter' => 'Kuartal ini',
+                'this_month' => 'Bulan ini',
+                'today' => 'Hari ini',
+                'this_hour' => 'Jam ini',
+                'this_minute' => 'Menit ini',
+                'next_minute' => 'Menit berikutnya',
+                'next_hour' => 'Jam berikutnya',
+                'next_week' => 'Minggu berikutnya',
+                'next_2_weeks' => '2 minggu berikutnya',
+                'next_month' => 'Bulan berikutnya',
+                'next_quarter' => 'Kuartal berikutnya',
+                'next_6_months' => '6 bulan berikutnya',
+                'next_year' => 'Tahun berikutnya',
+                'next_2_years' => '2 tahun berikutnya',
+                'next_5_years' => '5 tahun berikutnya',
+                'next_decade' => '10 tahun berikutnya',
+                'custom' => 'Kustom',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Tahun',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Jenis tanggal',
+
+                    'options' => [
+                        'absolute' => 'Tanggal tertentu',
+                        'relative' => 'Jendela bergulir',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Periode waktu',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Jumlah',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Satuan waktu',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Kala',
+
+                    'options' => [
+                        'past' => 'Lampau',
+                        'future' => 'Mendatang',
+                    ],
+
                 ],
 
             ],
