@@ -57,6 +57,7 @@ namespace App\Livewire;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
 use Filament\Schemas\Schema;
@@ -65,6 +66,7 @@ use Livewire\Component;
 class CreatePost extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
     
     public ?array $data = [];
     
@@ -343,3 +345,7 @@ Filament is also able to guess which form fields you want in the schema, based o
 ```bash
 php artisan make:filament-livewire-form Products/CreateProduct --generate
 ```
+
+## Security considerations for file uploads
+
+The `InteractsWithSchemas` trait exposes Livewire's file upload RPC methods on every component that uses it — whether or not the form contains an upload field. If your Livewire component is reachable to users you do not want uploading arbitrary files, add the `RestrictsFileUploadsToSchemaComponents` trait. See [Restricting Livewire file uploads to schema components](../advanced/security#restricting-livewire-file-uploads-to-schema-components) for details.

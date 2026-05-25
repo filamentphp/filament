@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'در حال بارگذاری...',
 
+            'no_options_message' => 'هیچ گزینه‌ای موجود نیست.',
+
             'no_search_results_message' => 'هیچ گزینه‌ای با جستجوی شما مطابقت ندارد.',
 
             'placeholder' => 'یک گزینه را انتخاب کنید',
@@ -199,7 +201,6 @@ return [
 
             'group' => [
                 'label' => 'گروه‌بندی براساس',
-                'placeholder' => 'گروه‌بندی براساس',
             ],
 
             'direction' => [

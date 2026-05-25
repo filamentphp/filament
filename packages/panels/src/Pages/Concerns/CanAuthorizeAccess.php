@@ -9,6 +9,11 @@ trait CanAuthorizeAccess
         abort_unless(static::canAccess(), 403);
     }
 
+    public function hydrateCanAuthorizeAccess(): void
+    {
+        abort_unless(static::canAccess(), 403);
+    }
+
     public static function canAccess(): bool
     {
         // Security: Custom pages default to allowing access for all

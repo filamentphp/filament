@@ -728,6 +728,13 @@ it('can set `blockPickerColumns()` with responsive breakpoints', function (): vo
     expect($builder->getBlockPickerColumns('xl'))->toBeNull();
 });
 
+it('can set `blockPickerColumns()` with a `Closure`', function (): void {
+    $builder = Builder::make('content')
+        ->blockPickerColumns(static fn (): int => 2);
+
+    expect($builder->getBlockPickerColumns('lg'))->toBe(2);
+});
+
 it('can set `addActionLabel()` with a `Closure`', function (): void {
     $builder = Builder::make('content')
         ->addActionLabel(static fn (): string => 'Add custom block');

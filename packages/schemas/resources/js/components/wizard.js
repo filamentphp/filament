@@ -2,10 +2,13 @@ export default function wizardSchemaComponent({
     isSkippable,
     isStepPersistedInQueryString,
     key,
+    livewireId,
+    schemaKey,
     startStep,
     stepQueryStringKey,
 }) {
     return {
+        boundResetHandler: null,
         step: null,
 
         init() {
@@ -17,6 +20,25 @@ export default function wizardSchemaComponent({
             })
 
             this.autofocusFields(true)
+
+            this.boundResetHandler = (event) => {
+                if (
+                    event.detail.livewireId !== livewireId ||
+                    event.detail.schemaKey !== schemaKey ||
+                    isStepPersistedInQueryString
+                ) {
+                    return
+                }
+
+                this.$nextTick(() => {
+                    this.step = this.getSteps().at(startStep - 1) ?? this.step
+                })
+            }
+
+            window.addEventListener(
+                'reset-schema-component-state',
+                this.boundResetHandler,
+            )
         },
 
         async requestNextStep() {
@@ -140,6 +162,15 @@ export default function wizardSchemaComponent({
             url.searchParams.set(stepQueryStringKey, this.step)
 
             history.replaceState(null, document.title, url.toString())
+        },
+
+        destroy() {
+            if (this.boundResetHandler) {
+                window.removeEventListener(
+                    'reset-schema-component-state',
+                    this.boundResetHandler,
+                )
+            }
         },
     }
 }

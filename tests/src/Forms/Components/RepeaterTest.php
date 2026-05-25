@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\PostMetadata;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
@@ -360,6 +361,40 @@ describe('relationships', function (): void {
         expect($queriesWithEagerLoading)->toBe($queriesWithoutEagerLoading);
 
         $undoRepeaterFake();
+    });
+
+    it('does not delete out-of-scope records when clearing a Repeater bound to a scoped relationship', function (): void {
+        $undoRepeaterFake = Repeater::fake();
+
+        $user = User::factory()->create();
+        $publishedPost = Post::factory()->create([
+            'author_id' => $user->id,
+            'is_published' => true,
+            'title' => 'Published Title',
+        ]);
+        $outOfScopePost = Post::factory()->create([
+            'author_id' => $user->id,
+            'is_published' => false,
+            'title' => 'Unpublished Title',
+        ]);
+
+        $component = livewire(RepeaterWithPublishedPostsRelationship::class, ['record' => $user]);
+
+        // Clear all repeater items, simulating a user emptying the field.
+        $component->set('data.posts', []);
+        $component->call('save');
+
+        $undoRepeaterFake();
+
+        // The in-scope post was deleted (intended behavior — it was in the visible set
+        // and the user removed it from state).
+        expect(Post::query()->whereKey($publishedPost->id)->exists())->toBeFalse();
+
+        // The out-of-scope post must NOT be deleted — it was never in `$existingRecords`
+        // because `modifyQueryUsing` filtered it out, so the deletion loop never sees it.
+        expect(Post::query()->whereKey($outOfScopePost->id)->exists())->toBeTrue();
+        expect($outOfScopePost->fresh()->title)->toBe('Unpublished Title');
+        expect($outOfScopePost->fresh()->is_published)->toBeFalse();
     });
 
     it('throws an exception for a missing relationship', function (): void {
@@ -989,6 +1024,55 @@ class RepeaterWithHasManyRelationshipAndModifyQuery extends Component implements
             ->statePath('data');
     }
 
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterWithPublishedPostsRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship(
+                        'posts',
+                        modifyQueryUsing: fn ($query) => $query->where('is_published', true),
+                    )
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
     public function render(): View
     {
         return view('livewire.form');
@@ -1333,7 +1417,7 @@ describe('saveToRelationship branches', function (): void {
         $user = User::factory()->create();
         $existingPost = Post::factory()->create(['author_id' => $user->id, 'title' => 'Original']);
 
-        \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::reset();
+        RecordingTranslatableContentDriver::reset();
 
         livewire(RepeaterWithTranslatableContentDriver::class, ['record' => $user])
             ->fillForm([
@@ -1344,7 +1428,7 @@ describe('saveToRelationship branches', function (): void {
             ])
             ->call('save');
 
-        $log = \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::$callLog;
+        $log = RecordingTranslatableContentDriver::$callLog;
 
         expect($log)->toContain('updateRecord:Updated');
         expect($log)->toContain('makeRecord:New Post');
@@ -2693,7 +2777,7 @@ class RepeaterWithTranslatableContentDriver extends Component implements HasActi
 
     public function getFilamentTranslatableContentDriver(): ?string
     {
-        return \Filament\Tests\Fixtures\Translatable\RecordingTranslatableContentDriver::class;
+        return RecordingTranslatableContentDriver::class;
     }
 
     public function mount(): void

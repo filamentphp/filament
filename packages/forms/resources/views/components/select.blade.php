@@ -8,6 +8,7 @@
     $isReorderable = $isReorderable();
     $isSearchable = $isSearchable();
     $hasInitialNoOptionsMessage = $hasInitialNoOptionsMessage();
+    $hasDynamicOptions = $hasDynamicOptions();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
@@ -59,6 +60,10 @@
         "
     >
         @if ($isNative)
+            @php
+                $options = $getOptions();
+            @endphp
+
             <select
                 {{
                     $extraInputAttributeBag
@@ -67,6 +72,7 @@
                             'disabled' => $isDisabled,
                             'id' => $id,
                             'required' => $isRequired && (! $isConcealed),
+                            'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                         ->class([
@@ -83,7 +89,7 @@
                     </option>
                 @endif
 
-                @foreach ($getOptions() as $value => $label)
+                @foreach ($options as $value => $label)
                     @if (is_array($label))
                         <optgroup label="{{ $value }}">
                             @foreach ($label as $groupedValue => $groupedLabel)
@@ -156,7 +162,7 @@
                                     { search },
                                 )
                             },
-                            hasDynamicOptions: @js($hasDynamicOptions()),
+                            hasDynamicOptions: @js($hasDynamicOptions),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             hasInitialNoOptionsMessage: @js($hasInitialNoOptionsMessage),
                             initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
