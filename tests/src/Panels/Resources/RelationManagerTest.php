@@ -446,13 +446,6 @@ it('resolves pivot columns and `modifyQueryUsing()` virtual columns across multi
 });
 
 it('resolves a `BelongsToMany` record with the related model\'s primary key when `modifyQueryUsing()` adds a subquery via `addSelect()`', function (): void {
-    // `addSelect(['alias' => $queryable])` triggers Laravel's `Query\Builder::addSelect()`
-    // to prepend `departments.*` before the subquery is appended. Without the fix, the
-    // related table's wildcard then comes before the pivot table's wildcard in the final
-    // SELECT, so `PDO::FETCH_ASSOC` resolves the `id` column to the pivot row's `id`
-    // instead of the related model's `id`. Seeding two unrelated departments first
-    // forces the attached department's PK to diverge from the pivot row's PK, so the
-    // wrong value becomes detectable.
     Department::factory()->count(2)->create();
     $department = Department::factory()->create();
     $ticket = Ticket::factory()->create();
