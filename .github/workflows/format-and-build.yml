@@ -89,7 +89,7 @@ jobs:
       - name: Build assets
         run: npm run build
       - name: Pull changes
-        run: git pull --rebase
+        run: git pull --rebase --autostash
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
