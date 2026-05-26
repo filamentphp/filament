@@ -44,16 +44,24 @@ jobs:
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
           echo "skip=false" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout Filament source
+      - name: Checkout workflow source
+        if: steps.resolve.outputs.skip == 'false'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Checkout Filament source at target branch
         if: steps.resolve.outputs.skip == 'false'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ steps.resolve.outputs.branch }}
+          path: filament-source
           persist-credentials: false
 
       - name: Capture Filament source SHA
         if: steps.resolve.outputs.skip == 'false'
         id: source
+        working-directory: filament-source
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Initialise template repository working tree
@@ -61,25 +69,19 @@ jobs:
         env:
           TARGET_BRANCH: ${{ steps.resolve.outputs.branch }}
           TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-        # actions/checkout would 404 on a freshly created template repository with
-        # no default branch yet. Initialising the working tree manually means we
-        # don't depend on any precondition state on filamentphp/issue-reproduction-template:
-        # the workflow happily seeds a brand new repository OR adds a commit to an
-        # existing target branch.
+        # Manual git init (instead of actions/checkout) so a freshly created
+        # template repository with no default branch is handled the same way as
+        # an existing one.
         run: |
           mkdir -p template-repo
           cd template-repo
           git init -b "$TARGET_BRANCH"
           git remote add origin https://github.com/filamentphp/issue-reproduction-template.git
-          # Stash the PAT in a scoped extra-header (the same shape actions/checkout
-          # writes) so the final `git push` authenticates without a token-in-URL.
           auth_header=$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')
           git config "http.https://github.com/filamentphp/issue-reproduction-template.git/.extraheader" "AUTHORIZATION: basic $auth_header"
           if git ls-remote --exit-code --heads origin "$TARGET_BRANCH" >/dev/null 2>&1; then
             git fetch --depth 1 origin "$TARGET_BRANCH"
             git reset --hard FETCH_HEAD
-          else
-            echo "Target branch $TARGET_BRANCH does not exist yet — first commit will create it"
           fi
 
       - name: Set up PHP
@@ -95,6 +97,7 @@ jobs:
         if: steps.resolve.outputs.skip == 'false'
         env:
           BRANCH: ${{ steps.resolve.outputs.branch }}
+          FILAMENT_PACKAGES_PATH: ${{ github.workspace }}/filament-source/packages
         run: ./bin/issue-reproduction-template.sh "$BRANCH"
 
       - name: Sync generated app into template repo working tree

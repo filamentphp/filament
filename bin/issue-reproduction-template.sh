@@ -8,7 +8,6 @@ if [[ ! "$FILAMENT_BRANCH" =~ ^([0-9]+)\.x$ ]]; then
   exit 1
 fi
 FILAMENT_MAJOR="${BASH_REMATCH[1]}"
-FILAMENT_VERSION_STAMP="${FILAMENT_MAJOR}.0.0"
 FILAMENT_CONSTRAINT="^${FILAMENT_MAJOR}.0"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -16,8 +15,6 @@ FILAMENT_PACKAGES_PATH=${FILAMENT_PACKAGES_PATH:-"${REPO_ROOT}/packages"}
 STUBS_DIR="${REPO_ROOT}/bin/issue-reproduction-template/stubs"
 REPRO_DIR="${REPO_ROOT}/issue-reproduction-template"
 
-# Pull the highest Laravel that this Filament checkout accepts, by reading
-# Filament's own `illuminate/contracts` constraint.
 LARAVEL_CONSTRAINT=$(jq -r '.require."illuminate/contracts" // empty' "${FILAMENT_PACKAGES_PATH}/support/composer.json")
 if [[ -z "$LARAVEL_CONSTRAINT" ]]; then
   echo "::error::Could not extract illuminate/contracts constraint from packages/support/composer.json"
@@ -36,33 +33,13 @@ rm -rf "$REPRO_DIR"
 composer create-project laravel/laravel "$REPRO_DIR" "$LARAVEL_CONSTRAINT"
 cd "$REPRO_DIR"
 
-# Set APP_NAME in `.env.example` so that the user's eventual `.env` (created by
-# `composer setup` from `.env.example`) carries it. Then copy to `.env` for the
-# build-time artisan commands below; the build-time `.env` is gitignored and
-# never ships in the template.
+# Set on `.env.example` first so the user's eventual `cp .env.example .env`
+# (run by `composer setup`) inherits the customisation.
 sed_in_place 's/^APP_NAME=.*/APP_NAME=Filament/' .env.example
 cp .env.example .env
 php artisan key:generate
 
 touch database/database.sqlite
-
-mkdir -p packages
-cp -R "${FILAMENT_PACKAGES_PATH}/." packages/
-
-# Stamp every bundled Filament package with a major-aligned version. Filament's
-# package composer.json files have no version field upstream (versions come from
-# git tags) and we strip `.git` when bundling — so without this stamp the path
-# repo would advertise the packages as `dev-master`, and `^4.0` wouldn't resolve.
-# Stamping uniformly also keeps the inter-package `"self.version"` constraints
-# consistent across the bundled set.
-for pkg_composer in packages/*/composer.json; do
-  tmp=$(mktemp)
-  jq --arg ver "$FILAMENT_VERSION_STAMP" '.version = $ver' "$pkg_composer" > "$tmp" && mv "$tmp" "$pkg_composer"
-done
-
-composer config minimum-stability dev
-composer config prefer-stable true
-composer config repositories.filament-monorepo '{"type": "path", "url": "packages/*", "options": {"symlink": false}}'
 
 composer require filament/filament:"$FILAMENT_CONSTRAINT" -W
 php artisan filament:install --panels --no-interaction
@@ -73,19 +50,15 @@ cp "${STUBS_DIR}/Login.php" app/Filament/Pages/Auth/Login.php
 sed_in_place "s/->login()/->login(\\\\App\\\\Filament\\\\Pages\\\\Auth\\\\Login::class)/" app/Providers/Filament/AdminPanelProvider.php
 sed_in_place "s|return view('welcome');|return redirect('/admin');|" routes/web.php
 
-# Replace Laravel's default README with the template's README.
 cp "${STUBS_DIR}/README.md" README.md
 
-# Inject `--seed` into the `composer setup` script's migrate step so cloning the
-# template and running `composer setup` produces a working app with the test user
-# already seeded.
 sed_in_place 's|"@php artisan migrate --force"|"@php artisan migrate --seed --force"|' composer.json
 
-# Clear Laravel caches that bake in build-time paths.
+# Drop build-time path bakings before stripping vendor.
 php artisan optimize:clear || true
 
-# Strip dependency trees and lockfiles so `composer install` (via `composer setup`)
-# resolves fresh on the user's machine against their PHP + Node versions at clone time.
+# Ship without vendor + lockfiles so `composer install` (run by `composer setup`)
+# re-resolves on the user's machine at clone time.
 rm -rf vendor node_modules
 rm -f composer.lock package-lock.json
 
