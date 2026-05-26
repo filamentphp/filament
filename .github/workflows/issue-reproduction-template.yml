@@ -1,0 +1,119 @@
+name: issue-reproduction-template
+
+on:
+  push:
+    tags: '*'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Filament branch to build from (e.g. 4.x)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish-issue-reproduction-template:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Resolve target branch
+        id: resolve
+        env:
+          DISPATCH_BRANCH: ${{ github.event.inputs.branch }}
+          PUSH_TAG: ${{ github.ref_name }}
+        run: |
+          if [[ -n "$DISPATCH_BRANCH" ]]; then
+            branch="$DISPATCH_BRANCH"
+          else
+            tag="$PUSH_TAG"
+            if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Skipping tag '$tag' — not a stable vX.Y.Z release"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            major="${tag#v}"
+            major="${major%%.*}"
+            branch="${major}.x"
+          fi
+          if [[ ! "$branch" =~ ^[0-9]+\.x$ ]]; then
+            echo "::error::Resolved branch '$branch' is not in the form '<major>.x'"
+            exit 1
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Filament source
+        if: steps.resolve.outputs.skip == 'false'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ steps.resolve.outputs.branch }}
+          persist-credentials: false
+
+      - name: Capture Filament source SHA
+        if: steps.resolve.outputs.skip == 'false'
+        id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout issue-reproduction-template repository
+        if: steps.resolve.outputs.skip == 'false'
+        # persist-credentials: true (default) is required so the final `git push` to
+        # filamentphp/issue-reproduction-template uses the GH_ACCESS_TOKEN written
+        # into template-repo/.git/config. Subsequent steps in this job are
+        # maintainer-controlled.
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 # zizmor: ignore[artipacked]
+        with:
+          repository: filamentphp/issue-reproduction-template
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          path: template-repo
+          fetch-depth: 1
+
+      - name: Switch template repo to target branch (orphan if missing)
+        if: steps.resolve.outputs.skip == 'false'
+        working-directory: template-repo
+        env:
+          TARGET_BRANCH: ${{ steps.resolve.outputs.branch }}
+        run: |
+          if git ls-remote --exit-code --heads origin "$TARGET_BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$TARGET_BRANCH" --depth 1
+            git checkout "$TARGET_BRANCH"
+          else
+            echo "Creating orphan branch $TARGET_BRANCH"
+            git checkout --orphan "$TARGET_BRANCH"
+            git rm -rf . || true
+          fi
+
+      - name: Set up PHP
+        if: steps.resolve.outputs.skip == 'false'
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: '8.3'
+          extensions: intl, sqlite3, pdo_sqlite, mbstring, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Build issue reproduction template
+        if: steps.resolve.outputs.skip == 'false'
+        run: ./bin/issue-reproduction-template.sh
+
+      - name: Sync generated app into template repo working tree
+        if: steps.resolve.outputs.skip == 'false'
+        run: rsync -a --delete --exclude='.git' issue-reproduction-template/ template-repo/
+
+      - name: Commit and push to issue-reproduction-template repository
+        if: steps.resolve.outputs.skip == 'false'
+        working-directory: template-repo
+        env:
+          BRANCH: ${{ steps.resolve.outputs.branch }}
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update from filament ${BRANCH} @ ${SOURCE_SHA:0:7}"
+            git push -u origin "$BRANCH"
+          fi
