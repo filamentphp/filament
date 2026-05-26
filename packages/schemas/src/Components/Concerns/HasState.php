@@ -441,8 +441,6 @@ trait HasState
 
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
-     */
-    /**
      * @param  array<string, true>  $appliedStateCastPaths
      */
     public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true, bool $shouldApplyStateCasts = true, array &$appliedStateCastPaths = []): void
