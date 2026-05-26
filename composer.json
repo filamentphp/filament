@@ -26,7 +26,7 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^2.1",
         "pragmarx/google2fa": "^8.0|^9.0",
-        "pragmarx/google2fa-qrcode": "^3.0",
+        "pragmarx/google2fa-qrcode": "^3.0|^4.0",
         "rector/rector": "^2.0",
         "spatie/laravel-google-fonts": "^1.5",
         "spatie/laravel-medialibrary": "^11.21",
