@@ -82,31 +82,8 @@ jobs:
       - name: Install npm dependencies
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
-      - name: Ensure Rector cache directory exists
-        # Defensive: rector should create this via withCache(), but it's
-        # silently missing in CI. Pre-creating costs nothing.
-        run: mkdir -p .rector.cache
       - name: Run code style fixes
         run: composer cs
-      - name: Inspect tool caches after composer cs (temporary diagnostic)
-        if: always()
-        run: |
-          echo "=== after composer cs ==="
-          du -sh .rector.cache 2>&1 || true
-          find .rector.cache -type f 2>/dev/null | wc -l
-          ls -la .pint.cache 2>&1 || true
-          echo
-          echo "=== write-permission probe ==="
-          touch .rector.cache/.probe && echo "wrote .probe ok" || echo "WRITE FAILED"
-          ls -la .rector.cache/.probe 2>&1 || true
-          rm -f .rector.cache/.probe
-          echo
-          echo "=== dry-run rector with --debug, capture tail ==="
-          # Dry-run won't modify files; --debug prints per-file path. We just need to
-          # see whether any cache writes happen / where rector thinks the cache lives.
-          vendor/bin/rector process --dry-run --debug 2>&1 | tail -20 || true
-          echo "--- .rector.cache after dry-run ---"
-          find .rector.cache -type f 2>/dev/null | wc -l
       - name: Build assets
         run: npm run build
       - name: Pull changes
