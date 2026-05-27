@@ -104,7 +104,7 @@
         "prettier-plugin-tailwindcss": "^0.6.10",
         "pusher-js": "^7.4.0",
         "sortablejs": "^1.15.0",
-        "tailwindcss": "^4.0.0",
+        "tailwindcss": "^4.3.0",
         "tippy.js": "^6.3.7",
         "vanilla-colorful": "^0.7.2"
     }
