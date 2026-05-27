@@ -548,6 +548,35 @@ return [
 
                         'color' => [
                             'label' => 'Warna',
+
+                            'options' => [
+                                'slate' => 'Slate',
+                                'gray' => 'Abu-abu',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Netral',
+                                'stone' => 'Stone',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Mist',
+                                'taupe' => 'Taupe',
+                                'red' => 'Merah',
+                                'orange' => 'Oranye',
+                                'amber' => 'Amber',
+                                'yellow' => 'Kuning',
+                                'lime' => 'Lime',
+                                'green' => 'Hijau',
+                                'emerald' => 'Emerald',
+                                'teal' => 'Teal',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Sky',
+                                'blue' => 'Biru',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violet',
+                                'purple' => 'Ungu',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Pink',
+                                'rose' => 'Rose',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -568,6 +597,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'Tidak ada tag gabungan yang ditemukan.',
 
+        'mentions' => [
+            'no_options_message' => 'Tidak ada pilihan yang tersedia.',
+            'no_search_results_message' => 'Tidak ada hasil yang sesuai dengan pencarian Anda.',
+            'search_prompt' => 'Ketik untuk mencari...',
+            'searching_message' => 'Sedang mencari...',
+        ],
+
         'tools' => [
             'align_center' => 'Rata tengah',
             'align_end' => 'Rata akhir',
@@ -585,6 +621,9 @@ return [
             'h1' => 'Judul',
             'h2' => 'Sub judul',
             'h3' => 'Anak judul',
+            'h4' => 'Judul 4',
+            'h5' => 'Judul 5',
+            'h6' => 'Judul 6',
             'grid' => 'Grid',
             'grid_delete' => 'Hapus grid',
             'highlight' => 'Sorot',
@@ -594,6 +633,7 @@ return [
             'link' => 'Tautan',
             'merge_tags' => 'Tag gabungan',
             'ordered_list' => 'Daftar berurut',
+            'paragraph' => 'Paragraf',
             'redo' => 'Kembalikan',
             'small' => 'Teks kecil',
             'strike' => 'Coret',
@@ -610,6 +650,7 @@ return [
             'table_merge_cells' => 'Gabungkan sel',
             'table_split_cell' => 'Pisahkan sel',
             'table_toggle_header_row' => 'Alihkan Baris Judul',
+            'table_toggle_header_cell' => 'Alihkan sel judul',
             'text_color' => 'Warna teks',
             'underline' => 'Garis bawah',
             'undo' => 'Batalkan',
@@ -691,6 +732,15 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Hapus',
+            ],
+
+        ],
+
         'placeholder' => 'Tag baru',
     ],
 
