@@ -52,7 +52,7 @@
         "@tiptap/extension-horizontal-rule": "^3.0.0",
         "@tiptap/extension-image": "^3.0.0",
         "@tiptap/extension-italic": "^3.0.0",
-        "@tiptap/extension-link": "^3.0.0",
+        "@tiptap/extension-link": "^3.23.5",
         "@tiptap/extension-list": "^3.0.0",
         "@tiptap/extension-mention": "^3.0.0",
         "@tiptap/extension-paragraph": "^3.0.0",
