@@ -79,7 +79,7 @@
         "codemirror-v6": "npm:codemirror@^6.0.0",
         "cropperjs": "^1.5.13",
         "dayjs": "^1.10.6",
-        "easymde": "^2.18.0",
+        "easymde": "^2.21.0",
         "esbuild": "^0.25.0",
         "esbuild-postcss": "^0.0.4",
         "filepond": "^4.32.7",
