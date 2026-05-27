@@ -68,7 +68,7 @@
         "@tiptap/extension-text-align": "^3.0.0",
         "@tiptap/extension-underline": "^3.0.0",
         "@tiptap/extensions": "^3.0.0",
-        "@tiptap/pm": "^3.0.0",
+        "@tiptap/pm": "^3.23.5",
         "@tiptap/suggestion": "^3.0.0",
         "alpine-lazy-load-assets": "^1.3.0",
         "alpinejs": "^3.10.4",
