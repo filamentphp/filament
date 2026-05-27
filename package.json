@@ -16,7 +16,7 @@
     "devDependencies": {
         "@awcodes/alpine-floating-ui": "^3.4.0",
         "@babel/runtime": "^7.15.3",
-        "@codemirror/commands": "^6.8.1",
+        "@codemirror/commands": "^6.10.3",
         "@codemirror/lang-cpp": "^6.0.3",
         "@codemirror/lang-css": "^6.3.1",
         "@codemirror/lang-go": "^6.0.1",
