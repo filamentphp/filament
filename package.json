@@ -16,7 +16,7 @@
         "prettier": "npx prettier --write --cache --cache-location=.prettiercache ."
     },
     "devDependencies": {
-        "@awcodes/alpine-floating-ui": "^3.4.0",
+        "@awcodes/alpine-floating-ui": "^3.6.4",
         "@babel/runtime": "^7.15.3",
         "@danharrin/alpine-mousetrap": "^0.1.6",
         "@ryangjchandler/alpine-tooltip": "^2.0",
