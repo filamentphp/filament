@@ -61,7 +61,7 @@
         "@tiptap/extension-subscript": "^3.0.0",
         "@tiptap/extension-superscript": "^3.0.0",
         "@tiptap/extension-table": "^3.0.0",
-        "@tiptap/extension-table-cell": "^3.0.0",
+        "@tiptap/extension-table-cell": "^3.23.5",
         "@tiptap/extension-table-header": "^3.0.0",
         "@tiptap/extension-table-row": "^3.0.0",
         "@tiptap/extension-text": "^3.0.0",
