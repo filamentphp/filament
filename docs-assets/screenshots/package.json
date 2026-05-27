@@ -1,7 +1,7 @@
 {
   "type": "module",
   "dependencies": {
-    "puppeteer": "^22.15.0",
+    "puppeteer": "^25.0.4",
     "sharp": "^0.32.1"
   }
 }
