@@ -58,7 +58,7 @@
         "@tiptap/extension-paragraph": "^3.0.0",
         "@tiptap/extension-placeholder": "^3.0.0",
         "@tiptap/extension-strike": "^3.0.0",
-        "@tiptap/extension-subscript": "^3.0.0",
+        "@tiptap/extension-subscript": "^3.23.5",
         "@tiptap/extension-superscript": "^3.0.0",
         "@tiptap/extension-table": "^3.0.0",
         "@tiptap/extension-table-cell": "^3.0.0",
