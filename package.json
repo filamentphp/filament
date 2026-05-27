@@ -39,7 +39,7 @@
         "@ryangjchandler/alpine-tooltip": "^2.0",
         "@tailwindcss/cli": "^4.1.10",
         "@tiptap/core": "^3.0.0",
-        "@tiptap/extension-blockquote": "^3.0.0",
+        "@tiptap/extension-blockquote": "^3.23.5",
         "@tiptap/extension-bold": "^3.0.0",
         "@tiptap/extension-bubble-menu": "^3.0.0",
         "@tiptap/extension-code": "^3.0.0",
