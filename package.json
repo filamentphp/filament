@@ -26,7 +26,7 @@
         "alpinejs": "^3.10.4",
         "async-alpine": "^2.0",
         "autoprefixer": "^10.4.0",
-        "chart.js": "^3.6.0",
+        "chart.js": "^4.5.1",
         "chartjs-adapter-luxon": "^1.3.1",
         "choices.js": "^10.1.0",
         "codemirror": "^5.65.8",
