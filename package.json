@@ -93,7 +93,6 @@
         "filepond-plugin-image-transform": "^3.8.7",
         "js-md5": "^0.8.3",
         "laravel-echo": "^1.14.0",
-        "laravel-mix": "^6.0.37",
         "luxon": "^3.4.3",
         "mime": "^4.0.4",
         "nouislider": "^15.8.1",
