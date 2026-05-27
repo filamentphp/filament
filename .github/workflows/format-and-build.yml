@@ -18,9 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        # persist-credentials: true is required so `git-auto-commit-action` can push back.
-        # Trigger restricts to the maintenance branch; concurrency cancels superseded runs.
+        # Uses a maintainer PAT so the auto-commit push can bypass branch protection;
+        # the default GITHUB_TOKEN pushes as `github-actions[bot]` and gets rejected.
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 # zizmor: ignore[artipacked]
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Cache Composer package downloads
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
