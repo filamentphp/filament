@@ -159,6 +159,13 @@ describe('width', function (): void {
 
         expect($column->getWidth())->toBe('200px');
     });
+
+    it('escapes `"` in `getWidth()`', function (): void {
+        $column = TextColumn::make('title')
+            ->width('200px"> <div>xss</div');
+
+        expect($column->getWidth())->toBe('200px&quot;&gt; &lt;div&gt;xss&lt;/div');
+    });
 });
 
 describe('grow', function (): void {

@@ -19,10 +19,14 @@ trait HasWidth
     {
         $width = $this->evaluate($this->width);
 
+        if (is_null($width)) {
+            return null;
+        }
+
         if (is_int($width)) {
             $width = "{$width}px";
         }
 
-        return $width;
+        return e($width);
     }
 }
