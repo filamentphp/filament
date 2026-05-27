@@ -2,6 +2,6 @@
   "type": "module",
   "dependencies": {
     "puppeteer": "^22.15.0",
-    "sharp": "^0.32.1"
+    "sharp": "^0.34.5"
   }
 }
