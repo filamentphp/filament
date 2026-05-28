@@ -8,9 +8,7 @@
         "enabled": true,
         "labels": ["dependencies"]
     },
-    "packageRules": [
-        { "matchPackageNames": ["*"], "enabled": false }
-    ],
+    "packageRules": [{ "matchPackageNames": ["*"], "enabled": false }],
     "onboarding": false,
     "requireConfig": "optional",
     "dependencyDashboard": true
