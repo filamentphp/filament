@@ -4,6 +4,7 @@ use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
@@ -26,6 +27,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMi
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Str;
@@ -441,6 +443,38 @@ it('resolves pivot columns and `modifyQueryUsing()` virtual columns across multi
         ->assertTableColumnStateSet('pivot.price', 200, $departments[1]->getKey())
         ->assertTableColumnStateSet('virtual_label', 'preserved', $departments[0]->getKey())
         ->assertTableColumnStateSet('virtual_label', 'preserved', $departments[1]->getKey());
+});
+
+it('resolves a `BelongsToMany` record with the related model\'s primary key when `modifyQueryUsing()` adds a subquery via `addSelect()`', function (): void {
+    Department::factory()->count(2)->create();
+    $department = Department::factory()->create();
+    $ticket = Ticket::factory()->create();
+    $ticket->departments()->attach($department);
+
+    $resolved = livewire(DepartmentsWithSubquerySelectAndDetachRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->instance()
+        ->getTableRecord((string) $department->getKey());
+
+    expect($resolved)->not->toBeNull();
+    expect($resolved->getKey())->toBe($department->getKey());
+});
+
+it('passes the related model with the correct primary key into a `BelongsToMany` `DetachAction` when `modifyQueryUsing()` adds a subquery via `addSelect()`', function (): void {
+    Department::factory()->count(2)->create();
+    $department = Department::factory()->create();
+    $ticket = Ticket::factory()->create();
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsWithSubquerySelectAndDetachRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(DetachAction::class)->table($department));
+
+    expect($ticket->refresh()->departments)->toHaveCount(0);
 });
 
 it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `RelationManager`', function (): void {

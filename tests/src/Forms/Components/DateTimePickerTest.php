@@ -1,11 +1,19 @@
 <?php
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Profile;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
@@ -1262,5 +1270,128 @@ class RenderDateTimePickerWithPlaceholder extends Livewire
                     ->placeholder('Pick a date and time...'),
             ])
             ->statePath('data');
+    }
+}
+
+it('does not double-apply the `timezone()` conversion when nested under a relationship', function (): void {
+    config(['app.timezone' => 'UTC']);
+
+    $user = User::factory()->create();
+    Profile::factory()->create([
+        'user_id' => $user->id,
+        'created_at' => '2026-04-08 21:00:00',
+        'updated_at' => '2026-04-08 21:00:00',
+    ]);
+
+    livewire(DateTimePickerInRelationshipSection::class, ['record' => $user->fresh()])
+        ->assertSchemaStateSet(function (array $state): array {
+            // 21:00 UTC == 17:00 EDT (`America/New_York` is UTC-4 in April).
+            expect($state['profile']['created_at'])->toBe('2026-04-08 17:00:00');
+
+            return [];
+        });
+});
+
+class DateTimePickerInRelationshipSection extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Section::make('Profile')
+                    ->relationship('profile')
+                    ->schema([
+                        DateTimePicker::make('created_at')
+                            ->timezone('America/New_York'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+it('applies a `default()` value AND casts the `timezone()` exactly once when no related record exists', function (): void {
+    config(['app.timezone' => 'UTC']);
+
+    $user = User::factory()->create();
+
+    livewire(DateTimePickerInRelationshipSectionWithDefault::class, ['record' => $user->fresh()])
+        ->assertSchemaStateSet(function (array $state): array {
+            // Default `'2026-04-08 21:00:00'` UTC == `17:00` EDT.
+            expect($state['profile']['created_at'])->toBe('2026-04-08 17:00:00');
+
+            return [];
+        });
+});
+
+it('uses the related record value over `default()` and casts the `timezone()` exactly once', function (): void {
+    config(['app.timezone' => 'UTC']);
+
+    $user = User::factory()->create();
+    Profile::factory()->create([
+        'user_id' => $user->id,
+        'created_at' => '2026-04-09 14:00:00',
+        'updated_at' => '2026-04-09 14:00:00',
+    ]);
+
+    livewire(DateTimePickerInRelationshipSectionWithDefault::class, ['record' => $user->fresh()])
+        ->assertSchemaStateSet(function (array $state): array {
+            // Record's `2026-04-09 14:00:00` UTC == `10:00` EDT.
+            expect($state['profile']['created_at'])->toBe('2026-04-09 10:00:00');
+
+            return [];
+        });
+});
+
+class DateTimePickerInRelationshipSectionWithDefault extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Section::make('Profile')
+                    ->relationship('profile')
+                    ->schema([
+                        DateTimePicker::make('created_at')
+                            ->timezone('America/New_York')
+                            ->default('2026-04-08 21:00:00'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
     }
 }

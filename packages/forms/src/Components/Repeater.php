@@ -1187,6 +1187,10 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
             return $this->cachedExistingRecords;
         }
 
+        if (! $this->getModelInstance()?->exists) {
+            return $this->cachedExistingRecords = new Collection;
+        }
+
         $relationship = $this->getRelationship();
         $relatedKeyName = $relationship->getRelated()->getKeyName();
 

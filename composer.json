@@ -26,7 +26,7 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^2.1",
         "pragmarx/google2fa": "^8.0|^9.0",
-        "pragmarx/google2fa-qrcode": "^3.0",
+        "pragmarx/google2fa-qrcode": "^3.0|^4.0",
         "rector/rector": "^2.0",
         "spatie/laravel-google-fonts": "^1.5",
         "spatie/laravel-medialibrary": "^11.21",
@@ -79,10 +79,10 @@
     "scripts": {
         "cs": [
             "rector",
-            "pint",
+            "pint --cache-file=.pint.cache",
             "npm run prettier"
         ],
-        "pint": "pint --config pint-strict-imports.json",
+        "pint": "pint --config pint-strict-imports.json --cache-file=.pint.cache",
         "rector": "rector",
         "test:pest": "pest --parallel --exclude-group=serial",
         "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=serial",
