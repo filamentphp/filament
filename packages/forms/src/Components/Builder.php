@@ -99,9 +99,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     protected Width | string | Closure | null $blockPickerWidth = null;
 
-    protected bool $hasPartiallyRenderAfterActionsCalledBeenConfigured = false;
-
-    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
+    protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     protected function setUp(): void
     {
@@ -1206,10 +1204,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         $rules["{$this->getStatePath()}.*.type"] = ['required'];
     }
 
-    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    public function partiallyRenderAfterActionsCalled(bool | Closure | null $condition = true): static
     {
-        $this->hasPartiallyRenderAfterActionsCalledBeenConfigured = true;
-
         $this->shouldPartiallyRenderAfterActionsCalled = $condition;
 
         return $this;
@@ -1217,22 +1213,19 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     public function shouldPartiallyRenderAfterActionsCalled(): bool
     {
-        if (
-            (! $this->hasPartiallyRenderAfterActionsCalledBeenConfigured) &&
-            ($this->shouldPartiallyRenderAfterActionsCalled === true)
-        ) {
-            if (is_bool($this->isLive)) {
-                return ! $this->isLive;
-            }
-
-            if (! isset($this->container)) {
-                return true;
-            }
-
-            return ! $this->isLive();
+        if (($condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled)) !== null) {
+            return (bool) $condition;
         }
 
-        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+        if (is_bool($this->isLive)) {
+            return ! $this->isLive;
+        }
+
+        if (! isset($this->container)) {
+            return true;
+        }
+
+        return ! $this->isLive();
     }
 
     public function blockHeaders(bool | Closure $condition = true): static

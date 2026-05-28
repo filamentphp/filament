@@ -125,9 +125,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
-    protected bool $hasPartiallyRenderAfterActionsCalledBeenConfigured = false;
-
-    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
+    protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     protected function setUp(): void
     {
@@ -1525,10 +1523,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return 1;
     }
 
-    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    public function partiallyRenderAfterActionsCalled(bool | Closure | null $condition = true): static
     {
-        $this->hasPartiallyRenderAfterActionsCalledBeenConfigured = true;
-
         $this->shouldPartiallyRenderAfterActionsCalled = $condition;
 
         return $this;
@@ -1536,21 +1532,18 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     public function shouldPartiallyRenderAfterActionsCalled(): bool
     {
-        if (
-            (! $this->hasPartiallyRenderAfterActionsCalledBeenConfigured) &&
-            ($this->shouldPartiallyRenderAfterActionsCalled === true)
-        ) {
-            if (is_bool($this->isLive)) {
-                return ! $this->isLive;
-            }
-
-            if (! isset($this->container)) {
-                return true;
-            }
-
-            return ! $this->isLive();
+        if (($condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled)) !== null) {
+            return (bool) $condition;
         }
 
-        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+        if (is_bool($this->isLive)) {
+            return ! $this->isLive;
+        }
+
+        if (! isset($this->container)) {
+            return true;
+        }
+
+        return ! $this->isLive();
     }
 }
