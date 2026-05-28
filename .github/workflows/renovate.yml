@@ -2,7 +2,7 @@ name: renovate
 
 on:
   schedule:
-    - cron: '0 3 * * *'   # daily, 03:00 UTC
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       dryRun:
