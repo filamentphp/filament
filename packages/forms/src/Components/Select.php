@@ -1842,6 +1842,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $statePath = $this->getStatePath();
         $state = $this->getRawState();
         $livewireKey = $this->getLivewireKey();
+        $hasDynamicOptions = $this->hasDynamicOptions();
 
         // Filter visible prefix/suffix actions
         $prefixActions = array_filter(
@@ -1871,6 +1872,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
 
                 <?php if ($isNative) { ?>
+                    <?php $options = $this->getOptions(); ?>
+
                     <select
                         <?= $extraInputAttributeBag
                             ->merge([
@@ -1878,6 +1881,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                 'disabled' => $isDisabled,
                                 'id' => $id,
                                 'required' => $isRequired && (! $isConcealed),
+                                'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
                                 $this->applyStateBindingModifiers('wire:model') => $statePath,
                             ], escape: false)
                             ->class([
@@ -1894,7 +1898,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                             </option>
                         <?php } ?>
 
-                        <?php foreach ($this->getOptions() as $value => $label) { ?>
+                        <?php foreach ($options as $value => $label) { ?>
                             <?php if (is_array($label)) { ?>
                                 <optgroup label="<?= e($value) ?>">
                                     <?php foreach ($label as $groupedValue => $groupedLabel) { ?>
@@ -1959,7 +1963,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                             { search },
                                         )
                                     },
-                                    hasDynamicOptions: <?= Js::from($this->hasDynamicOptions()) ?>,
+                                    hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
                                     hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,
                                     initialOptionLabel: <?= Js::from((blank($state) || $isMultiple) ? null : $this->getOptionLabel()) ?>,

@@ -284,12 +284,12 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
 
                             <?php if ($hasTime) { ?>
                                 <div class="fi-fo-date-time-picker-time-inputs">
-                                    <input max="23" min="0" step="<?= $this->getHoursStep() ?>" type="number" inputmode="numeric" x-model.debounce="hour" />
+                                    <input max="23" min="0" step="<?= $this->getHoursStep() ?>" type="number" inputmode="numeric" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="hour" />
                                     <span class="fi-fo-date-time-picker-time-input-separator">:</span>
-                                    <input max="59" min="0" step="<?= $this->getMinutesStep() ?>" type="number" inputmode="numeric" x-model.debounce="minute" />
+                                    <input max="59" min="0" step="<?= $this->getMinutesStep() ?>" type="number" inputmode="numeric" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="minute" />
                                     <?php if ($hasSeconds) { ?>
                                         <span class="fi-fo-date-time-picker-time-input-separator">:</span>
-                                        <input max="59" min="0" step="<?= $this->getSecondsStep() ?>" type="number" inputmode="numeric" x-model.debounce="second" />
+                                        <input max="59" min="0" step="<?= $this->getSecondsStep() ?>" type="number" inputmode="numeric" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="second" />
                                     <?php } ?>
                                 </div>
                             <?php } ?>
