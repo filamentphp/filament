@@ -1,6 +1,5 @@
 version: 2
 updates:
-  # ---------- 4.x (default branch) ----------
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -10,63 +9,8 @@ updates:
       default-days: 7
     labels:
       - dependencies
-      - github_actions
     milestone: 9
 
-  # composer / npm blocks use open-pull-requests-limit: 0 so dependabot opens
-  # security-update PRs only (driven by GitHub security advisories). Version
-  # updates are disabled — security PRs still inherit labels/milestone from here.
-  - package-ecosystem: composer
-    directory: /
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - composer
-    milestone: 9
-
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 9
-
-  - package-ecosystem: composer
-    directory: /docs-assets/app
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - composer
-    milestone: 9
-
-  - package-ecosystem: npm
-    directory: /docs-assets/app
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 9
-
-  - package-ecosystem: npm
-    directory: /docs-assets/screenshots
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 9
-
-  # ---------- 5.x ----------
   - package-ecosystem: github-actions
     directory: /
     target-branch: 5.x
@@ -77,65 +21,8 @@ updates:
       default-days: 7
     labels:
       - dependencies
-      - github_actions
     milestone: 10
 
-  - package-ecosystem: composer
-    directory: /
-    target-branch: 5.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - composer
-    milestone: 10
-
-  - package-ecosystem: npm
-    directory: /
-    target-branch: 5.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 10
-
-  - package-ecosystem: composer
-    directory: /docs-assets/app
-    target-branch: 5.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - composer
-    milestone: 10
-
-  - package-ecosystem: npm
-    directory: /docs-assets/app
-    target-branch: 5.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 10
-
-  - package-ecosystem: npm
-    directory: /docs-assets/screenshots
-    target-branch: 5.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 10
-
-  # ---------- 3.x ----------
   - package-ecosystem: github-actions
     directory: /
     target-branch: 3.x
@@ -146,60 +33,16 @@ updates:
       default-days: 7
     labels:
       - dependencies
-      - github_actions
     milestone: 2
 
-  - package-ecosystem: composer
+  - package-ecosystem: github-actions
     directory: /
-    target-branch: 3.x
+    target-branch: 2.x
     schedule:
       interval: weekly
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
-      - composer
-    milestone: 2
-
-  - package-ecosystem: npm
-    directory: /
-    target-branch: 3.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 2
-
-  - package-ecosystem: composer
-    directory: /docs-assets/app
-    target-branch: 3.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - composer
-    milestone: 2
-
-  - package-ecosystem: npm
-    directory: /docs-assets/app
-    target-branch: 3.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 2
-
-  - package-ecosystem: npm
-    directory: /docs-assets/screenshots
-    target-branch: 3.x
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 0
-    labels:
-      - dependencies
-      - javascript
-    milestone: 2
+    milestone: 1

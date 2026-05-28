@@ -6,7 +6,7 @@ on:
       - 4.x
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,6 +16,8 @@ jobs:
   format-and-build:
     if: "${{ !startsWith(github.event.head_commit.message, 'chore: format and build') }}"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         # Uses a maintainer PAT so the auto-commit push can bypass branch protection;
