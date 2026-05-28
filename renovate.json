@@ -1,0 +1,17 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:recommended"],
+    "enabledManagers": ["composer", "npm"],
+    "baseBranchPatterns": ["5.x", "4.x", "3.x"],
+    "osvVulnerabilityAlerts": true,
+    "vulnerabilityAlerts": {
+        "enabled": true,
+        "labels": ["dependencies"]
+    },
+    "packageRules": [
+        { "matchPackageNames": ["*"], "enabled": false }
+    ],
+    "onboarding": false,
+    "requireConfig": "optional",
+    "dependencyDashboard": true
+}
