@@ -1750,7 +1750,6 @@ export class Select {
                     if (found) break
                 } else if (option.value === value) {
                     labels[value] = option.label
-                    found = true
                     break
                 }
             }
