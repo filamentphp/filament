@@ -11,6 +11,28 @@ updates:
       - dependencies
     milestone: 9
 
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    cooldown:
+      default-days: 7
+    labels:
+      - dependencies
+    milestone: 9
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    cooldown:
+      default-days: 7
+    labels:
+      - dependencies
+    milestone: 9
+
   - package-ecosystem: github-actions
     directory: /
     target-branch: 5.x
