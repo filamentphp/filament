@@ -1,7 +1,10 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -581,6 +584,387 @@ describe('extra Alpine attributes', function (): void {
         expect($section->getExtraAlpineAttributes())->toBe(['x-data' => '{}']);
     });
 });
+describe('header actions', function (): void {
+    it('returns an empty array from `getHeaderActions()` by default', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->getHeaderActions())->toBe([]);
+    });
+
+    it('can register an `Action`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                Action::make('first'),
+                Action::make('second'),
+            ]);
+
+        $headerActions = $section->getHeaderActions();
+
+        expect($headerActions)->toHaveCount(2);
+        expect($headerActions[0])->toBeInstanceOf(Action::class);
+        expect($headerActions[0]->getName())->toBe('first');
+        expect($headerActions[1])->toBeInstanceOf(Action::class);
+        expect($headerActions[1]->getName())->toBe('second');
+    });
+
+    it('sets the schema component on a registered `Action`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                Action::make('first'),
+            ]);
+
+        expect($section->getHeaderActions()[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can resolve an `Action` returned from a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                fn (): Action => Action::make('lazy'),
+            ]);
+
+        $headerActions = $section->getHeaderActions();
+
+        expect($headerActions)->toHaveCount(1);
+        expect($headerActions[0])->toBeInstanceOf(Action::class);
+        expect($headerActions[0]->getName())->toBe('lazy');
+        expect($headerActions[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can resolve an array of `Action` instances returned from a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                fn (): array => [
+                    Action::make('first'),
+                    Action::make('second'),
+                ],
+            ]);
+
+        $headerActions = $section->getHeaderActions();
+
+        expect($headerActions)->toHaveCount(2);
+        expect($headerActions[0]->getName())->toBe('first');
+        expect($headerActions[1]->getName())->toBe('second');
+    });
+
+    it('merges successive calls to `headerActions()`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                Action::make('first'),
+            ])
+            ->headerActions([
+                Action::make('second'),
+            ]);
+
+        $headerActions = $section->getHeaderActions();
+
+        expect($headerActions)->toHaveCount(2);
+        expect($headerActions[0]->getName())->toBe('first');
+        expect($headerActions[1]->getName())->toBe('second');
+    });
+
+    it('can register an `ActionGroup`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                ActionGroup::make([
+                    Action::make('first'),
+                    Action::make('second'),
+                ]),
+            ]);
+
+        $headerActions = $section->getHeaderActions();
+
+        expect($headerActions)->toHaveCount(1);
+        expect($headerActions[0])->toBeInstanceOf(ActionGroup::class);
+    });
+
+    it('sets the schema component on a registered `ActionGroup`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                ActionGroup::make([
+                    Action::make('first'),
+                ]),
+            ]);
+
+        expect($section->getHeaderActions()[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can register a mix of `Action` and `ActionGroup` instances', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                Action::make('standalone'),
+                ActionGroup::make([
+                    Action::make('grouped'),
+                ]),
+            ]);
+
+        $headerActions = $section->getHeaderActions();
+
+        expect($headerActions)->toHaveCount(2);
+        expect($headerActions[0])->toBeInstanceOf(Action::class);
+        expect($headerActions[1])->toBeInstanceOf(ActionGroup::class);
+    });
+
+    it('can resolve an `ActionGroup` returned from a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->headerActions([
+                fn (): ActionGroup => ActionGroup::make([
+                    Action::make('lazy'),
+                ]),
+            ]);
+
+        $headerActions = $section->getHeaderActions();
+
+        expect($headerActions)->toHaveCount(1);
+        expect($headerActions[0])->toBeInstanceOf(ActionGroup::class);
+        expect($headerActions[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can call a registered `Action`', function (): void {
+        livewire(SectionWithHeaderActions::class)
+            ->callAction([
+                TestAction::make('standaloneInsert')->schemaComponent('testSection'),
+            ])
+            ->assertDispatched('standalone-insert-called');
+    });
+
+    it('can call an `Action` nested inside a registered `ActionGroup`', function (): void {
+        livewire(SectionWithHeaderActions::class)
+            ->callAction([
+                TestAction::make('groupedInsert')->schemaComponent('testSection'),
+            ])
+            ->assertDispatched('grouped-insert-called');
+    });
+});
+
+describe('footer actions', function (): void {
+    it('returns an empty array from `getFooterActions()` by default', function (): void {
+        $section = Section::make('Test');
+
+        expect($section->getFooterActions())->toBe([]);
+    });
+
+    it('can register an `Action`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                Action::make('first'),
+                Action::make('second'),
+            ]);
+
+        $footerActions = $section->getFooterActions();
+
+        expect($footerActions)->toHaveCount(2);
+        expect($footerActions[0])->toBeInstanceOf(Action::class);
+        expect($footerActions[0]->getName())->toBe('first');
+        expect($footerActions[1])->toBeInstanceOf(Action::class);
+        expect($footerActions[1]->getName())->toBe('second');
+    });
+
+    it('sets the schema component on a registered `Action`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                Action::make('first'),
+            ]);
+
+        expect($section->getFooterActions()[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can resolve an `Action` returned from a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                fn (): Action => Action::make('lazy'),
+            ]);
+
+        $footerActions = $section->getFooterActions();
+
+        expect($footerActions)->toHaveCount(1);
+        expect($footerActions[0])->toBeInstanceOf(Action::class);
+        expect($footerActions[0]->getName())->toBe('lazy');
+        expect($footerActions[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can resolve an array of `Action` instances returned from a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                fn (): array => [
+                    Action::make('first'),
+                    Action::make('second'),
+                ],
+            ]);
+
+        $footerActions = $section->getFooterActions();
+
+        expect($footerActions)->toHaveCount(2);
+        expect($footerActions[0]->getName())->toBe('first');
+        expect($footerActions[1]->getName())->toBe('second');
+    });
+
+    it('merges successive calls to `footerActions()`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                Action::make('first'),
+            ])
+            ->footerActions([
+                Action::make('second'),
+            ]);
+
+        $footerActions = $section->getFooterActions();
+
+        expect($footerActions)->toHaveCount(2);
+        expect($footerActions[0]->getName())->toBe('first');
+        expect($footerActions[1]->getName())->toBe('second');
+    });
+
+    it('can register an `ActionGroup`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                ActionGroup::make([
+                    Action::make('first'),
+                    Action::make('second'),
+                ]),
+            ]);
+
+        $footerActions = $section->getFooterActions();
+
+        expect($footerActions)->toHaveCount(1);
+        expect($footerActions[0])->toBeInstanceOf(ActionGroup::class);
+    });
+
+    it('sets the schema component on a registered `ActionGroup`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                ActionGroup::make([
+                    Action::make('first'),
+                ]),
+            ]);
+
+        expect($section->getFooterActions()[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can register a mix of `Action` and `ActionGroup` instances', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                Action::make('standalone'),
+                ActionGroup::make([
+                    Action::make('grouped'),
+                ]),
+            ]);
+
+        $footerActions = $section->getFooterActions();
+
+        expect($footerActions)->toHaveCount(2);
+        expect($footerActions[0])->toBeInstanceOf(Action::class);
+        expect($footerActions[1])->toBeInstanceOf(ActionGroup::class);
+    });
+
+    it('can resolve an `ActionGroup` returned from a `Closure`', function (): void {
+        $section = Section::make('Test')
+            ->footerActions([
+                fn (): ActionGroup => ActionGroup::make([
+                    Action::make('lazy'),
+                ]),
+            ]);
+
+        $footerActions = $section->getFooterActions();
+
+        expect($footerActions)->toHaveCount(1);
+        expect($footerActions[0])->toBeInstanceOf(ActionGroup::class);
+        expect($footerActions[0]->getSchemaComponent())->toBe($section);
+    });
+
+    it('can call a registered `Action`', function (): void {
+        livewire(SectionWithFooterActions::class)
+            ->callAction([
+                TestAction::make('standaloneFooter')->schemaComponent('testSection'),
+            ])
+            ->assertDispatched('standalone-footer-called');
+    });
+
+    it('can call an `Action` nested inside a registered `ActionGroup`', function (): void {
+        livewire(SectionWithFooterActions::class)
+            ->callAction([
+                TestAction::make('groupedFooter')->schemaComponent('testSection'),
+            ])
+            ->assertDispatched('grouped-footer-called');
+    });
+});
+
+class SectionWithHeaderActions extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Section::make('Test')
+                    ->key('testSection')
+                    ->schema([
+                        TextInput::make('name'),
+                    ])
+                    ->headerActions([
+                        Action::make('standaloneInsert')
+                            ->action(fn () => $this->dispatch('standalone-insert-called')),
+                        ActionGroup::make([
+                            Action::make('groupedInsert')
+                                ->action(fn () => $this->dispatch('grouped-insert-called')),
+                        ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class SectionWithFooterActions extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Section::make('Test')
+                    ->key('testSection')
+                    ->schema([
+                        TextInput::make('name'),
+                    ])
+                    ->footerActions([
+                        Action::make('standaloneFooter')
+                            ->action(fn () => $this->dispatch('standalone-footer-called')),
+                        ActionGroup::make([
+                            Action::make('groupedFooter')
+                                ->action(fn () => $this->dispatch('grouped-footer-called')),
+                        ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
 
 class SectionWithHasOneRelationship extends Component implements HasActions, HasSchemas
 {

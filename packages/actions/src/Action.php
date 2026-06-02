@@ -36,6 +36,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Component;
 use Livewire\Drawer\Utils;
 
 class Action extends ViewComponent implements Arrayable
@@ -73,6 +74,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasData;
+    use Concerns\HasExtraModalOverlayAttributes;
     use Concerns\HasExtraModalWindowAttributes;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
@@ -260,7 +262,7 @@ class Action extends ViewComponent implements Arrayable
         return $this->getView() === static::BADGE_VIEW;
     }
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | Closure | null $badge = null): static
     {
         if (func_num_args() === 0) {
             /** @phpstan-ignore-next-line */
@@ -309,6 +311,9 @@ class Action extends ViewComponent implements Arrayable
 
     public function alpineClickHandler(string | Closure | null $handler): static
     {
+        // Security: This JavaScript expression is evaluated on the client.
+        // Never pass user input — only developer-defined expressions.
+
         $this->alpineClickHandler = $handler;
         $this->livewireClickHandlerEnabled(blank($handler));
 
@@ -317,6 +322,9 @@ class Action extends ViewComponent implements Arrayable
 
     public function actionJs(string | Closure | null $action): static
     {
+        // Security: This JavaScript expression is evaluated on the client.
+        // Never pass user input — only developer-defined expressions.
+
         $this->alpineClickHandler($action);
 
         return $this;
@@ -354,6 +362,23 @@ class Action extends ViewComponent implements Arrayable
         }
 
         return $this->getJsClickHandler();
+    }
+
+    protected function getLivewireKey(): ?string
+    {
+        if (! ($this->getRecord(withDefault: false) && $this->getTable())) {
+            return null;
+        }
+
+        $livewire = $this->getLivewire();
+
+        if (! ($livewire instanceof Component)) {
+            return null;
+        }
+
+        $key = md5(serialize($this->getContext()));
+
+        return "{$livewire->getId()}.actions.{$this->getName()}.{$key}";
     }
 
     public function getLivewireEventClickHandler(): ?string
@@ -774,9 +799,10 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateBadgeHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
@@ -808,16 +834,17 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateButtonHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -847,17 +874,18 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateDropdownItemHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
-            badgeTooltip: $this->getBadgeTooltip(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
+            badgeTooltip: $this->getBadgeTooltip($badge),
             color: $this->getColor(),
             href: ($isDisabled || $shouldPostToUrl) ? null : $url,
             icon: $this->getIcon(default: $this->getGroupedIcon()),
@@ -880,16 +908,17 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateIconButtonHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -915,16 +944,17 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateLinkHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
                 'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),

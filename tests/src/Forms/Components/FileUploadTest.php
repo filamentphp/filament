@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
@@ -8,6 +9,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -280,6 +282,249 @@ describe('validation', function (): void {
             ])
             ->call('save')
             ->assertHasNoFormErrors(['files.test']);
+    });
+
+    it('rejects a `.php` client filename when `acceptedFileTypes()` is used', function (): void {
+        Storage::fake('local');
+
+        livewire(TestComponentWithAcceptedFileTypesUpload::class)
+            ->fillForm([
+                'avatar' => UploadedFile::fake()->image('shell.php'),
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['avatar']);
+    });
+});
+
+describe('preventing existing file path tampering', function (): void {
+    it('allows a tampered string value to overwrite the record when `preventFilePathTampering()` is not used', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecord::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save');
+
+        expect($user->refresh()->status)->toBe('uploads/tampered.jpg');
+    });
+
+    it('fails validation for a tampered string value when using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save')
+            ->assertHasFormErrors(['status']);
+
+        expect($user->refresh()->status)->toBe('uploads/original.jpg');
+    });
+
+    it('leaves an unchanged string value alone when using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/original.jpg'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($user->refresh()->status)->toBe('uploads/original.jpg');
+    });
+
+    it('fails validation when a tampered path is mixed with originals in a multi-file value using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['json' => ['uploads/a.jpg', 'uploads/b.jpg']]);
+
+        livewire(TestComponentWithMultipleFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.json', ['uploads/a.jpg', 'uploads/b.jpg', 'uploads/evil.jpg'])
+            ->call('save')
+            ->assertHasFormErrors(['json']);
+
+        expect($user->refresh()->json)->toBe(['uploads/a.jpg', 'uploads/b.jpg']);
+    });
+
+    it('allows the file to be cleared when using `preventFilePathTampering()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', null)
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($user->refresh()->status)->toBeNull();
+    });
+
+    it('fails validation for all string values when no record is bound and `preventFilePathTampering()` is used', function (): void {
+        livewire(TestComponentWithFileUploadPreventingTamperingWithoutRecord::class)
+            ->set('data.status', ['uploads/anything.jpg'])
+            ->call('save')
+            ->assertHasFormErrors(['status']);
+    });
+
+    it('keeps a submitted path when the `allowFilePathUsing` callback returns `true`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordAllowingTemplateFilePaths::class, ['record' => $user])
+            ->set('data.status', ['templates/brochure.pdf'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($user->refresh()->status)->toBe('templates/brochure.pdf');
+    });
+
+    it('fails validation when the `allowFilePathUsing` callback returns `false`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordAllowingTemplateFilePaths::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save')
+            ->assertHasFormErrors(['status']);
+
+        expect($user->refresh()->status)->toBe('uploads/original.jpg');
+    });
+
+    it('uses a custom validation message when `tampered` is defined in `validationMessages()`', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordPreventingTamperingAndCustomMessage::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save')
+            ->assertHasFormErrors(['status' => 'The selected attachment is not permitted.']);
+    });
+
+    it('returns `null` for tampered paths from `getUploadedFiles()` when using `preventFilePathTampering()`', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
+
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        $component = livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $uploadedFiles = $field->getUploadedFiles();
+
+        expect($uploadedFiles)->toBe([0 => null]);
+    });
+
+    it('does not gate `getUploadedFiles()` when `preventFilePathTampering()` is not used', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
+
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        $component = livewire(TestComponentWithFileUploadRecord::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $uploadedFiles = $field->getUploadedFiles();
+
+        expect($uploadedFiles[0])->not->toBeNull();
+    });
+});
+
+describe('openable and downloadable URLs', function (): void {
+    $makeField = function (Closure $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'))
+            ->multiple()
+            ->getUploadedFileUsing(static fn (BaseFileUpload $component, string $file): array => [
+                'name' => $file,
+                'size' => 0,
+                'type' => null,
+                'url' => "https://cdn.example.com/{$file}",
+            ]);
+
+        $configure($field);
+
+        $field->rawState(['key1' => 'doc.pdf']);
+
+        return $field;
+    };
+
+    it('populates `openableUrl` when `openable()` and `getOpenableFileUrlUsing()` are set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->openable()
+            ->getOpenableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/open/{$file}"));
+
+        expect($field->getUploadedFiles())
+            ->toBe([
+                'key1' => [
+                    'name' => 'doc.pdf',
+                    'size' => 0,
+                    'type' => null,
+                    'url' => 'https://cdn.example.com/doc.pdf',
+                    'openableUrl' => 'https://signed.example.com/open/doc.pdf',
+                ],
+            ]);
+    });
+
+    it('populates `downloadableUrl` when `downloadable()` and `getDownloadableFileUrlUsing()` are set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->downloadable()
+            ->getDownloadableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/download/{$file}"));
+
+        expect($field->getUploadedFiles())
+            ->toBe([
+                'key1' => [
+                    'name' => 'doc.pdf',
+                    'size' => 0,
+                    'type' => null,
+                    'url' => 'https://cdn.example.com/doc.pdf',
+                    'downloadableUrl' => 'https://signed.example.com/download/doc.pdf',
+                ],
+            ]);
+    });
+
+    it('does not populate `openableUrl` when `openable()` is disabled', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->getOpenableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/open/{$file}"));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('openableUrl');
+    });
+
+    it('does not populate `downloadableUrl` when `downloadable()` is disabled', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->getDownloadableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/download/{$file}"));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('downloadableUrl');
+    });
+
+    it('does not populate URL keys when the callbacks are not set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field->openable()->downloadable());
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('openableUrl')
+            ->not->toHaveKey('downloadableUrl');
+    });
+
+    it('preserves `null` entries when `getUploadedFileUsing()` returns `null` even with openable URL callback set', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->openable()
+            ->getUploadedFileUsing(static fn (): ?array => null)
+            ->getOpenableFileUrlUsing(static fn (string $file): string => "https://signed.example.com/open/{$file}"));
+
+        expect($field->getUploadedFiles())
+            ->toBe(['key1' => null]);
+    });
+
+    it('omits `openableUrl` when `getOpenableFileUrlUsing()` returns `null`', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->openable()
+            ->getOpenableFileUrlUsing(static fn (): ?string => null));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('openableUrl');
+    });
+
+    it('omits `downloadableUrl` when `getDownloadableFileUrlUsing()` returns `null`', function () use ($makeField): void {
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->downloadable()
+            ->getDownloadableFileUrlUsing(static fn (): ?string => null));
+
+        expect($field->getUploadedFiles()['key1'])
+            ->not->toHaveKey('downloadableUrl');
     });
 });
 
@@ -2065,3 +2310,363 @@ class RenderFileUploadWithNoFetchFileInfo extends Livewire
         return $form->schema([FileUpload::make('file')->fetchFileInformation(false)])->statePath('data');
     }
 }
+
+class TestComponentWithFileUploadRecord extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithFileUploadRecordPreventingTampering extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithFileUploadPreventingTamperingWithoutRecord extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithFileUploadRecordAllowingTemplateFilePaths extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(
+                        allowFilePathUsing: static fn (string $file): bool => str_starts_with($file, 'templates/'),
+                    ),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithAcceptedFileTypesUpload extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('avatar')
+                    ->disk('local')
+                    ->directory('avatars')
+                    ->acceptedFileTypes(['image/png']),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithMultipleFileUploadRecordPreventingTampering extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('json')
+                    ->multiple()
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithFileUploadRecordPreventingTamperingAndCustomMessage extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering()
+                    ->validationMessages([
+                        'tampered' => 'The selected attachment is not permitted.',
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+describe('`hydrateFiles()` branches', function (): void {
+    $makeField = function (callable $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $configure($field);
+
+        return $field;
+    };
+
+    it('filters out files that do not exist on disk when `shouldFetchFileInformation` is true', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/exists.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field->multiple());
+        $field->rawState(['uploads/exists.jpg', 'uploads/missing.jpg']);
+
+        $field->hydrateFiles();
+
+        expect(array_values($field->getRawState()))->toBe(['uploads/exists.jpg']);
+    });
+
+    it('filters out blank string files', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/file.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field->multiple());
+        $field->rawState(['uploads/file.jpg', '']);
+
+        $field->hydrateFiles();
+
+        expect(array_values($field->getRawState()))->toBe(['uploads/file.jpg']);
+    });
+
+    it('keeps all non-blank entries when `fetchFileInformation(false)` is set', function () use ($makeField): void {
+        // Don't create files on disk; with fetchFileInformation off, existence is not checked
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->multiple()
+            ->fetchFileInformation(false));
+        $field->rawState(['uploads/imaginary-1.jpg', 'uploads/imaginary-2.jpg']);
+
+        $field->hydrateFiles();
+
+        expect(array_values($field->getRawState()))->toBe(['uploads/imaginary-1.jpg', 'uploads/imaginary-2.jpg']);
+    });
+});
+
+describe('`getUploadedFile()` branches', function (): void {
+    $makeField = function (callable $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $configure($field);
+
+        return $field;
+    };
+
+    it('returns `null` when the file does not exist and `shouldFetchFileInformation` is true', function () use ($makeField): void {
+        Storage::fake('local');
+
+        $field = $makeField(static fn (FileUpload $field) => $field);
+
+        expect($field->getUploadedFile('uploads/missing.jpg', null))->toBeNull();
+    });
+
+    it('uses `storedFileNames[$file]` as the display name when the field is multiple', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/abc.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field->multiple());
+
+        $result = $field->getUploadedFile(
+            'uploads/abc.jpg',
+            ['uploads/abc.jpg' => 'pretty-name.jpg'],
+        );
+
+        expect($result['name'])->toBe('pretty-name.jpg');
+    });
+
+    it('uses `storedFileNames` as a string when the field is single', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/abc.jpg', 'data');
+
+        $field = $makeField(static fn (FileUpload $field) => $field);
+
+        $result = $field->getUploadedFile('uploads/abc.jpg', 'single-name.jpg');
+
+        expect($result['name'])->toBe('single-name.jpg');
+    });
+
+    it('returns `size: 0` and `type: null` when `fetchFileInformation(false)` is set', function () use ($makeField): void {
+        // Disk does not have the file; fetchFileInformation(false) skips existence + size + type
+        $field = $makeField(static fn (FileUpload $field) => $field->fetchFileInformation(false));
+
+        $result = $field->getUploadedFile('uploads/never-stored.jpg', null);
+
+        expect($result)->toBeArray();
+        expect($result['size'])->toBe(0);
+        expect($result['type'])->toBeNull();
+    });
+
+    it('falls back to `Storage::url()` for `private` visibility when `temporaryUrl()` is unsupported', function () use ($makeField): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/private.jpg', 'data');
+
+        // The fake `local` disk does not support temporaryUrl; the catch falls back to url()
+        $field = $makeField(static fn (FileUpload $field) => $field->visibility('private'));
+
+        $result = $field->getUploadedFile('uploads/private.jpg', null);
+
+        expect($result)->toBeArray();
+        expect($result['url'])->not->toBeEmpty();
+    });
+});
+
+describe('`saveUploadedFile()` branches', function (): void {
+    $makeField = function (callable $configure): FileUpload {
+        $field = FileUpload::make('document')
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $configure($field);
+
+        return $field;
+    };
+
+    $makeTemporaryUploadedFile = function (string $filename = 'hello.txt', string $content = 'data'): TemporaryUploadedFile {
+        Storage::fake('tmp-for-tests');
+
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->create($filename),
+        );
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $content);
+
+        return TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+    };
+
+    it('uses `storeAs()` when disks differ between the field and the temp file', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        Storage::fake('public');
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('public')
+            ->directory('uploads'));
+
+        $temp = $makeTemporaryUploadedFile('hello.txt');
+        $path = $field->saveUploadedFile($temp);
+
+        expect($path)->toStartWith('uploads/');
+        expect(Storage::disk('public')->exists($path))->toBeTrue();
+    });
+
+    it('does not call `setVisibility(public)` when visibility is private', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        Storage::fake('local');
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('local')
+            ->directory('uploads')
+            ->visibility('private'));
+
+        $temp = $makeTemporaryUploadedFile('private-file.txt');
+        $path = $field->saveUploadedFile($temp);
+
+        expect($path)->toStartWith('uploads/');
+        expect(Storage::disk('local')->exists($path))->toBeTrue();
+    });
+
+    it('persists the file to the configured public disk when visibility is public', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        Storage::fake('public');
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('public')
+            ->directory('uploads')
+            ->visibility('public'));
+
+        $temp = $makeTemporaryUploadedFile('public-file.txt');
+        $path = $field->saveUploadedFile($temp);
+
+        expect($path)->toStartWith('uploads/');
+        expect(Storage::disk('public')->exists($path))->toBeTrue();
+    });
+});

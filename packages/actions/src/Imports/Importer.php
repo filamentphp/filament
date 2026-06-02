@@ -6,6 +6,7 @@ use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
@@ -14,6 +15,13 @@ use Illuminate\Validation\ValidationException;
 
 abstract class Importer
 {
+    // Security: Imports do not perform per-record authorization checks.
+    // Each CSV row is processed by `resolveRecord()`, `fillRecord()`,
+    // and `saveRecord()` without consulting Laravel policies. Add
+    // manual checks in lifecycle hooks (`beforeCreate()`, etc.)
+    // if needed. Failure CSVs contain original data unchanged —
+    // formula injection risk applies to those files too.
+
     /** @var array<ImportColumn> */
     protected array $cachedColumns;
 
@@ -145,6 +153,9 @@ abstract class Importer
 
     public function resolveRecord(): ?Model
     {
+        // Security: This method runs without policy checks.
+        // Override to add authorization logic if needed.
+
         $keyName = app(static::getModel())->getKeyName();
         $keyColumnName = $this->columnMap[$keyName] ?? $keyName;
 
@@ -301,6 +312,11 @@ abstract class Importer
     public static function getCompletedNotificationTitle(Import $import): string
     {
         return __('filament-actions::import.notifications.completed.title');
+    }
+
+    public static function modifyCompletedNotification(Notification $notification, Import $import): Notification
+    {
+        return $notification;
     }
 
     /**

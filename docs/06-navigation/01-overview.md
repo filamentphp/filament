@@ -419,7 +419,9 @@ public static function shouldRegisterNavigation(): bool
 }
 ```
 
-Please note that these methods do not control direct access to the resource or page. They only control whether the resource or page will show up in the navigation. If you want to also control access, then you should use [resource authorization](../resources#authorization) or [page authorization](custom-pages#authorization).
+<Aside variant="danger">
+    `shouldRegisterNavigation()` only hides the link from the sidebar — it does not prevent a user from typing the URL directly. To actually restrict access, use [resource authorization](../resources#authorization) or [page authorization](custom-pages#authorization).
+</Aside>
 
 ## Using top navigation
 
@@ -551,6 +553,19 @@ public function panel(Panel $panel): Panel
 ```
 
 <AutoScreenshot name="panels/navigation/disabled-navigation" alt="Disabled navigation sidebar" version="4.x" />
+
+Alternatively, you may pass a closure that returns a boolean to decide dynamically. Returning `false` hides the navigation, while returning `true` renders the default auto-discovered navigation items. This is useful for flows such as onboarding or setup wizards where the navigation should only appear once the user has reached a particular state:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->navigation(fn (): bool => auth()->user()->hasCompletedOnboarding());
+}
+```
 
 ### Disabling the topbar
 

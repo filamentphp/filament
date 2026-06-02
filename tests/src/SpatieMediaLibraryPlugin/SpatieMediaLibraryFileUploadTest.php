@@ -1,13 +1,21 @@
 <?php
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
 use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Filament\Tests\livewire;
@@ -436,4 +444,108 @@ describe('integration', function (): void {
         expect($record->getMedia('documents'))->toHaveCount(1);
         expect($record->getMedia('avatars'))->toHaveCount(1);
     });
+
+    it('does not reorder media belonging to other records when submitted UUIDs are tampered', function (): void {
+        $recordA = MediaPost::factory()->create();
+        $recordB = MediaPost::factory()->create();
+
+        $recordA->addMediaFromString('a1')
+            ->usingFileName('a1.jpg')
+            ->toMediaCollection('avatars');
+
+        $bMedia1 = $recordB->addMediaFromString('b1')
+            ->usingFileName('b1.jpg')
+            ->toMediaCollection('avatars');
+
+        $bMedia2 = $recordB->addMediaFromString('b2')
+            ->usingFileName('b2.jpg')
+            ->toMediaCollection('avatars');
+
+        $originalBOrder = [
+            $bMedia1->uuid => $bMedia1->order_column,
+            $bMedia2->uuid => $bMedia2->order_column,
+        ];
+
+        livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
+            ->set('data.avatar', [
+                $bMedia2->uuid => $bMedia2->uuid,
+                $bMedia1->uuid => $bMedia1->uuid,
+            ])
+            ->call('save');
+
+        expect($bMedia1->fresh()->order_column)->toBe($originalBOrder[$bMedia1->uuid]);
+        expect($bMedia2->fresh()->order_column)->toBe($originalBOrder[$bMedia2->uuid]);
+    });
+
+    it('does not reorder media in another collection on the same record when submitted UUIDs are tampered', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $record->addMediaFromString('a1')
+            ->usingFileName('a1.jpg')
+            ->toMediaCollection('avatars');
+
+        $doc1 = $record->addMediaFromString('d1')
+            ->usingFileName('d1.pdf')
+            ->toMediaCollection('documents');
+
+        $doc2 = $record->addMediaFromString('d2')
+            ->usingFileName('d2.pdf')
+            ->toMediaCollection('documents');
+
+        $originalDocumentsOrder = [
+            $doc1->uuid => $doc1->order_column,
+            $doc2->uuid => $doc2->order_column,
+        ];
+
+        livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->set('data.avatar', [
+                $doc2->uuid => $doc2->uuid,
+                $doc1->uuid => $doc1->uuid,
+            ])
+            ->call('save');
+
+        expect($doc1->fresh()->order_column)->toBe($originalDocumentsOrder[$doc1->uuid]);
+        expect($doc2->fresh()->order_column)->toBe($originalDocumentsOrder[$doc2->uuid]);
+    });
 });
+
+class ReorderableSpatieMediaLibraryFileUploadForm extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use WithFileUploads;
+
+    public $data = [];
+
+    public MediaPost $record;
+
+    public function mount(MediaPost $record): void
+    {
+        $this->record = $record;
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->collection('avatars')
+                    ->multiple()
+                    ->reorderable(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}

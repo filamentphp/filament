@@ -12,6 +12,11 @@ use LogicException;
 
 trait CanBeAuthorized
 {
+    // Security: Actions do not have automatic policy-based authorization.
+    // Authorization defaults to `null` (allowed for all users).
+    // You must explicitly use `authorize()`, `visible()`, or
+    // `hidden()` to restrict access to custom actions.
+
     protected mixed $authorization = null;
 
     protected string | Closure | null $authorizationMessage = null;
@@ -200,15 +205,17 @@ trait CanBeAuthorized
 
     public function isAuthorizedOrNotHiddenWhenUnauthorized(): bool
     {
-        if ($this->hasAuthorizationTooltip()) {
+        if (! $this->hasAuthorizationTooltip() && ! $this->hasAuthorizationNotification()) {
+            return $this->isAuthorized();
+        }
+
+        $response = $this->getAuthorizationResponse();
+
+        if ($response->allowed()) {
             return true;
         }
 
-        if ($this->hasAuthorizationNotification()) {
-            return true;
-        }
-
-        return $this->isAuthorized();
+        return filled($response->message()) || filled($this->getAuthorizationMessage());
     }
 
     public function authorizeIndividualRecords(bool | string | Closure | null $callback = true): static

@@ -21,6 +21,10 @@ FileUpload::make('attachment')
     Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library) for more information.
 </Aside>
 
+<Aside variant="danger">
+    By default, `FileUpload` accepts any string path within the configured disk — the field value is a client-controlled string and a tampered request can submit any other file on the same disk. If your disk holds files for more than one user, tenant, or record, either call [`->preventFilePathTampering()`](#authorizing-existing-file-paths) on the field (or apply it globally with `FileUpload::configureUsing()`), or isolate uploads at the disk or directory level so the field can only ever address files belonging to the current owner.
+</Aside>
+
 ## Configuring the storage disk and directory
 
 By default, files will be uploaded to the storage disk defined in the [configuration file](../introduction/installation#publishing-configuration). You can also set the `FILESYSTEM_DISK` environment variable to change this.
@@ -41,6 +45,10 @@ FileUpload::make('attachment')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `disk()`, `directory()` and `visibility()` methods accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters. </UtilityInjection>
+
+<Aside variant="warning">
+    The default visibility is decided by a literal string match against the disk name: a disk literally named `public` is treated as publicly visible, and any other disk name defaults to `private`. A custom disk that happens to be named `public` will therefore be treated as public even if its underlying configuration is private, and a custom publicly-visible disk under a different name will default to private. To avoid confusion, either give custom disks unambiguous names or set `visibility()` explicitly on each field.
+</Aside>
 
 <Aside variant="info">
     It is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
@@ -183,6 +191,64 @@ FileUpload::make('attachments')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `storeFileNamesIn()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Authorizing existing file paths
+
+The value of a `FileUpload` field is a string, or an array of strings, containing the path to the file on the configured disk. Like any other Livewire form field value, it is controlled by the client: a request can be intercepted to change the submitted path to any other file on the same disk. If the field points at a resource that must not be accessible to other users — a private document on a shared disk, or a per-user directory — an attacker could otherwise cause the record to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that sets the field to a pre-uploaded template file, or a "copy from another record" button. If none of your fields rely on such a flow, call `preventFilePathTampering()` on the field to enable a built-in check:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering()
+```
+
+Filament compares every submitted string path against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
+
+<Aside variant="warning">
+    `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path fails validation unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+To apply this check to every `FileUpload` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::configureUsing(function (FileUpload $component): void {
+    $component->preventFilePathTampering();
+});
+```
+
+Individual fields can still opt out by calling `preventFilePathTampering(false)`.
+
+### Allowing additional file paths with a callback
+
+If your application legitimately references a path that is not on the record — for example, a button that selects a pre-uploaded template file — pass the `allowFilePathUsing` argument to approve it. Approved paths bypass the validation error:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
+The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering()
+    ->validationMessages([
+        'tampered' => 'The selected attachment is not permitted.',
+    ])
+```
+
 ## Avatar mode
 
 You can enable avatar mode for your file upload field using the `avatar()` method:
@@ -265,7 +331,7 @@ FileUpload::make('image')
 
 ### Setting the image editor's mode
 
-You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs#viewmode):
+You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs/blob/v1/README.md#viewmode):
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -521,6 +587,23 @@ FileUpload::make('attachments')
 
 <AutoScreenshot name="forms/fields/file-upload/openable" alt="File upload with openable files" version="4.x" />
 
+### Customizing the URL used when opening a file
+
+By default, the "open" button links to the same URL that is used to display the file in FilePond. If you need a different URL — for example, a signed URL, a URL on a different domain, or a URL for a derived file such as a PDF thumbnail generated by [Spatie Media Library's image generators](https://spatie.be/docs/laravel-medialibrary/v11/converting-other-file-types/using-image-generators#pdf) — you can use the `getOpenableFileUrlUsing()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->openable()
+    ->getOpenableFileUrlUsing(fn (string $file): string => Storage::disk('s3')->temporaryUrl($file, now()->addMinutes(5)))
+```
+
+The function receives the stored `$file` path and must return the URL that should be used when the "open" button is clicked. Returning `null` falls back to the default URL.
+
+<UtilityInjection set="formFields" version="4.x">The `getOpenableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
+
 ## Downloading files
 
 If you wish to add a download button to each file instead, you can use the `downloadable()` method:
@@ -546,6 +629,23 @@ FileUpload::make('attachments')
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `downloadable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/file-upload/downloadable" alt="File upload with downloadable files" version="4.x" />
+
+### Customizing the URL used when downloading a file
+
+By default, the download button links to the same URL that is used to display the file in FilePond. If you need a different URL — for example, a signed URL with a `Content-Disposition: attachment` header, or a URL to the original file when the preview renders a derived image — you can use the `getDownloadableFileUrlUsing()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->downloadable()
+    ->getDownloadableFileUrlUsing(fn (string $file): string => route('attachments.download', ['path' => $file]))
+```
+
+The function receives the stored `$file` path and must return the URL that should be used when the download button is clicked. Returning `null` falls back to the default URL.
+
+<UtilityInjection set="formFields" version="4.x">The `getDownloadableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
 
 ## Previewing files
 
@@ -678,6 +778,10 @@ Since Filament is powered by Livewire and uses its file upload system, you will 
 </Aside>
 
 ### File type validation
+
+<Aside variant="danger">
+    By default, a `FileUpload` accepts **any file type**, the same way Laravel's `file` validation rule does. On a `local` or `public` disk served by a PHP-executing web server, this means a user can upload a `.php` file and have it executed as code — remote code execution. You should **always** call `acceptedFileTypes()` (or `image()`) with an explicit list of MIME types unless you have a specific reason not to. Doing so also activates Laravel's built-in block on PHP-family extensions (`.php`, `.phtml`, `.phar`, etc.) via the `mimetypes` validation rule, rejecting files whose client-supplied filename would otherwise land on disk as executable code.
+</Aside>
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types.
 

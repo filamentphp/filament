@@ -52,7 +52,7 @@ it('can return deferred tab badges with `getDeferredTabBadges()`', function (): 
         ->assertReturned(function (array $badges): bool {
             expect($badges)->toHaveCount(1);
             expect($badges)->toHaveKey('1');
-            expect($badges['1']['badge'])->toBe(42);
+            expect($badges['1']['badge'])->toBe('42');
             expect($badges)->not->toHaveKey('0');
 
             return true;

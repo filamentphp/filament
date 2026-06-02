@@ -98,7 +98,6 @@ class Schema extends ViewComponent implements HasEmbeddedView
         }
 
         return match ($parameterType) {
-            static::class, self::class => [$this],
             Model::class, $record::class => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
@@ -210,5 +209,16 @@ class Schema extends ViewComponent implements HasEmbeddedView
         </div>
 
         <?php return ob_get_clean();
+    }
+
+    public function dispatchClientSideStateReset(): void
+    {
+        $livewire = $this->getLivewire();
+
+        $livewire->dispatch(
+            'reset-schema-component-state',
+            livewireId: $livewire->getId(),
+            schemaKey: $this->getKey(),
+        );
     }
 }

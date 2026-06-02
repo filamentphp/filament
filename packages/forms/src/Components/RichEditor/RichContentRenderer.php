@@ -155,6 +155,14 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentUrl(mixed $file): ?string
     {
+        // The `$file` value comes from a `data-id` attribute on an image node in
+        // client-submitted rich editor content, and is not authorized here before
+        // being passed to the filesystem. Applications whose disk stores files
+        // belonging to multiple users or records must supply a custom file
+        // attachment provider (or use the Spatie Media Library provider) that
+        // validates the id against records the current user is allowed to read.
+        // See the "Securing file attachment IDs" section of the rich editor
+        // documentation.
         $fileAttachmentProvider = $this->getFileAttachmentProvider();
 
         if ($fileAttachmentProvider) {
@@ -178,7 +186,7 @@ class RichContentRenderer implements Htmlable
             try {
                 return $storage->temporaryUrl(
                     $file,
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
@@ -279,6 +287,72 @@ class RichContentRenderer implements Htmlable
                 ],
             ];
         });
+    }
+
+    protected function flattenMergeTagsForText(Editor $editor): void
+    {
+        $editor->descendants(function (object &$node): void {
+            if (! isset($node->content) || ! is_array($node->content)) {
+                return;
+            }
+
+            $hasMergeTags = false;
+
+            foreach ($node->content as $child) {
+                if (in_array($child->type, ['mergeTag', 'rawHtmlMergeTag'])) {
+                    $hasMergeTags = true;
+
+                    break;
+                }
+            }
+
+            if (! $hasMergeTags) {
+                return;
+            }
+
+            $merged = [];
+
+            foreach ($node->content as $child) {
+                foreach ($this->resolveTextNodesFromMergeTag($child) as $textNode) {
+                    $last = end($merged);
+
+                    if ($last && $last->type === 'text' && $textNode->type === 'text') {
+                        $last->text .= $textNode->text;
+                    } else {
+                        $merged[] = $textNode;
+                    }
+                }
+            }
+
+            $node->content = $merged;
+        });
+    }
+
+    /**
+     * @return array<object>
+     */
+    protected function resolveTextNodesFromMergeTag(object $node): array
+    {
+        if ($node->type === 'mergeTag') {
+            return $node->content ?? [];
+        }
+
+        if ($node->type === 'rawHtmlMergeTag') {
+            $text = trim(preg_replace('/\s+/', ' ', strip_tags($node->html ?? '')));
+
+            if ($text === '') {
+                return [];
+            }
+
+            return [
+                (object) [
+                    'type' => 'text',
+                    'text' => $text,
+                ],
+            ];
+        }
+
+        return [$node];
     }
 
     protected function processMentions(Editor $editor): void
@@ -485,6 +559,9 @@ class RichContentRenderer implements Htmlable
 
     public function toUnsafeHtml(): string
     {
+        // Security: This method returns unsanitized HTML. Only use for
+        // internal processing — never render in Blade. Use `toHtml()`.
+
         $editor = $this->getEditor();
 
         $this->processCustomBlocks($editor);
@@ -498,6 +575,10 @@ class RichContentRenderer implements Htmlable
 
     public function toHtml(): string
     {
+        // Security: Always use `toHtml()` (not `toUnsafeHtml()`) when
+        // rendering user-provided rich content. This applies
+        // Symfony's `HtmlSanitizer` to prevent XSS.
+
         return Str::sanitizeHtml($this->toUnsafeHtml());
     }
 
@@ -506,6 +587,7 @@ class RichContentRenderer implements Htmlable
         $editor = $this->getEditor();
 
         $this->processMergeTags($editor);
+        $this->flattenMergeTagsForText($editor);
 
         return $editor->getText();
     }

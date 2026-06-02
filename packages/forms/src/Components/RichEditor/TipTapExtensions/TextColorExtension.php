@@ -76,7 +76,7 @@ class TextColorExtension extends Mark
 
         if ($config instanceof TextColor) {
             $cssVars = "--color: {$config->getColor()}; --dark-color: {$config->getDarkColor()}";
-        } elseif (filled($colorName)) {
+        } elseif (filled($colorName) && preg_match('/^[\sA-Za-z0-9.,%\/+\-#_()]+$/', (string) $colorName)) {
             $cssVars = "--color: {$colorName}; --dark-color: {$colorName}";
         } else {
             $cssVars = null;

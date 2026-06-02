@@ -278,6 +278,13 @@ it('can access correct block state from `extraItemActions()`', function (): void
     $undoBuilderFake();
 });
 
+it('can save a builder block containing a repeater and hidden field', function (): void {
+    livewire(TestComponentWithBuilderRepeaterAndHiddenField::class)
+        ->assertSuccessful()
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
+
 class TestComponentWithActionInBuilder extends Livewire
 {
     public function mount(): void
@@ -339,6 +346,47 @@ class TestComponentWithExtraItemActionInBuilder extends Livewire
                     ]),
             ])
             ->statePath('data');
+    }
+}
+
+class TestComponentWithBuilderRepeaterAndHiddenField extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('builder')
+                    ->blocks([
+                        Builder\Block::make('services')
+                            ->schema([
+                                Repeater::make('items')
+                                    ->schema([
+                                        TextInput::make('service')
+                                            ->required(),
+                                    ]),
+                                TextInput::make('hidden')
+                                    ->visible(false),
+                            ]),
+                    ])
+                    ->default([
+                        [
+                            'type' => 'services',
+                            'data' => [
+                                'items' => [
+                                    [
+                                        'service' => 'Service 1',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 }
 
@@ -678,6 +726,13 @@ it('can set `blockPickerColumns()` with responsive breakpoints', function (): vo
     expect($builder->getBlockPickerColumns('sm'))->toBe(2);
     expect($builder->getBlockPickerColumns('lg'))->toBe(3);
     expect($builder->getBlockPickerColumns('xl'))->toBeNull();
+});
+
+it('can set `blockPickerColumns()` with a `Closure`', function (): void {
+    $builder = Builder::make('content')
+        ->blockPickerColumns(static fn (): int => 2);
+
+    expect($builder->getBlockPickerColumns('lg'))->toBe(2);
 });
 
 it('can set `addActionLabel()` with a `Closure`', function (): void {
@@ -1052,6 +1107,58 @@ describe('UUID generation', function (): void {
     });
 });
 
+describe('`hydrateItems()`', function (): void {
+    it('rekeys items with UUIDs when hydrating from numeric-keyed `rawState`', function (): void {
+        livewire(TestComponentWithBuilderFilledFromMount::class, [
+            'initialData' => [
+                ['type' => 'one', 'data' => ['foo' => 'a']],
+                ['type' => 'one', 'data' => ['foo' => 'b']],
+            ],
+        ])->tap(function ($livewire): void {
+            $items = $livewire->get('data.builder');
+
+            expect($items)->toHaveCount(2);
+
+            foreach (array_keys($items) as $key) {
+                expect(is_numeric($key))->toBeFalse();
+                expect($key)->toBeString();
+            }
+        });
+    });
+
+    it('rekeys items with numeric keys when `generateUuidUsing(false)` is set', function (): void {
+        $undoBuilderFake = Builder::fake();
+
+        livewire(TestComponentWithBuilderFilledFromMount::class, [
+            'initialData' => [
+                'existing-uuid-a' => ['type' => 'one', 'data' => ['foo' => 'a']],
+                'existing-uuid-b' => ['type' => 'one', 'data' => ['foo' => 'b']],
+            ],
+        ])->tap(function ($livewire): void {
+            $items = $livewire->get('data.builder');
+
+            expect($items)->toHaveCount(2);
+            expect(array_keys($items))->toBe([0, 1]);
+        });
+
+        $undoBuilderFake();
+    });
+
+    it('produces an empty array when `hydrateItems()` runs against empty `rawState`', function (): void {
+        livewire(TestComponentWithBuilderFilledFromMount::class, ['initialData' => []])
+            ->tap(function ($livewire): void {
+                expect($livewire->get('data.builder'))->toBe([]);
+            });
+    });
+
+    it('produces an empty array when `hydrateItems()` runs against `null` `rawState`', function (): void {
+        livewire(TestComponentWithBuilderFilledFromMount::class, ['initialData' => null])
+            ->tap(function ($livewire): void {
+                expect($livewire->get('data.builder'))->toBe([]);
+            });
+    });
+});
+
 describe('item count limits', function (): void {
     it('returns `null` for `getMaxItems()` by default', function (): void {
         $builder = Builder::make('content');
@@ -1408,6 +1515,16 @@ describe('labels with `Closure`', function (): void {
     });
 });
 
+describe('block labels', function (): void {
+    it('injects the `$index` of the item into the `Block::label()` `Closure`', function (): void {
+        $block = Builder\Block::make('content')
+            ->label(static fn (?int $index, ?array $state): string => "Block {$index}: {$state['title']}");
+
+        expect($block->getLabel(['title' => 'first'], 'item-0', 0))->toBe('Block 0: first');
+        expect($block->getLabel(['title' => 'second'], 'item-1', 1))->toBe('Block 1: second');
+    });
+});
+
 describe('`blockPickerColumns()` default behavior', function (): void {
     it('returns default column values when no breakpoint is requested', function (): void {
         $builder = Builder::make('content');
@@ -1630,5 +1747,30 @@ class RenderBuilderWithClosureReorderable extends Livewire
         return $form->schema([
             Builder::make('content')->blocks([Builder\Block::make('one')->schema([TextInput::make('foo')])])->reorderable(static fn (): bool => false),
         ])->statePath('data');
+    }
+}
+
+class TestComponentWithBuilderFilledFromMount extends Livewire
+{
+    public mixed $initialData = null;
+
+    public function mount(): void
+    {
+        $this->form->fill(['builder' => $this->initialData]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('builder')
+                    ->blocks([
+                        Builder\Block::make('one')
+                            ->schema([
+                                TextInput::make('foo'),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
     }
 }

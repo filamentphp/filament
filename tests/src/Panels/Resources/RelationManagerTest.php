@@ -4,6 +4,7 @@ use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
@@ -19,15 +20,21 @@ use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMixedSummaryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithModifiedQueryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotAndModifiedQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithSubquerySelectAndDetachRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 
 uses(TestCase::class);
 
@@ -95,6 +102,23 @@ describe('rendering and authorization', function (): void {
         expect(
             DepartmentsRelationManager::canViewForRecord($ticket, EditTicket::class),
         )->toBeFalse();
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+    });
+
+    it('re-authorizes the relation manager on Livewire updates after the initial mount', function (): void {
+        $ticket = Ticket::factory()
+            ->create();
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
+
+        $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class]);
+
+        app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => false);
+
+        $component
+            ->set('tableSearch', 'foo')
+            ->assertStatus(403);
 
         app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
     });
@@ -228,6 +252,25 @@ describe('attaching records', function (): void {
         }
     });
 
+    it('rejects out-of-scope `recordId` when `tableSelect()` is paired with `recordSelectOptionsQuery()`', function (): void {
+        $ticket = Ticket::factory()->create();
+        Department::factory()->create(['name' => 'Active Engineering']);
+        $outOfScopeDepartment = Department::factory()->create(['name' => 'Inactive Department']);
+
+        livewire(DepartmentsWithAttachTableSelectAndModifiedQueryRelationManager::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->callAction(TestAction::make(AttachAction::class)->table(), [
+                'recordId' => $outOfScopeDepartment->getKey(),
+            ]);
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $outOfScopeDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+    });
+
     it('can attach records when some are already related', function (): void {
         $ticket = Ticket::factory()->create();
         $alreadyAttachedDepartment = Department::factory()->create();
@@ -342,6 +385,98 @@ it('can summarize pivot columns in a `BelongsToMany` `RelationManager`', functio
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000); // 1000 + 2000 + 3000
 });
 
+it('preserves `modifyQueryUsing()` `addSelect()` subqueries when resolving a `BelongsToMany` record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsWithModifiedQueryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $department->getKey());
+});
+
+it('still resolves pivot columns on a single `BelongsToMany` record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department, ['quantity' => 42, 'price' => 1234]);
+
+    livewire(DepartmentsWithPivotSummaryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertTableColumnStateSet('quantity', 42, $department->getKey())
+        ->assertTableColumnStateSet('pivot.price', 1234, $department->getKey());
+});
+
+it('resolves pivot columns alongside `modifyQueryUsing()` virtual columns on a single `BelongsToMany` record', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create(['name' => 'Engineering']);
+    $ticket->departments()->attach($department, ['quantity' => 7, 'price' => 99]);
+
+    livewire(DepartmentsWithPivotAndModifiedQueryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertTableColumnStateSet('name', 'Engineering', $department->getKey())
+        ->assertTableColumnStateSet('quantity', 7, $department->getKey())
+        ->assertTableColumnStateSet('pivot.price', 99, $department->getKey())
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $department->getKey());
+});
+
+it('resolves pivot columns and `modifyQueryUsing()` virtual columns across multiple `BelongsToMany` records', function (): void {
+    $ticket = Ticket::factory()->create();
+    $departments = Department::factory()->count(2)->create();
+    $ticket->departments()->attach($departments[0], ['quantity' => 10, 'price' => 100]);
+    $ticket->departments()->attach($departments[1], ['quantity' => 20, 'price' => 200]);
+
+    livewire(DepartmentsWithPivotAndModifiedQueryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords($departments)
+        ->assertTableColumnStateSet('quantity', 10, $departments[0]->getKey())
+        ->assertTableColumnStateSet('quantity', 20, $departments[1]->getKey())
+        ->assertTableColumnStateSet('pivot.price', 100, $departments[0]->getKey())
+        ->assertTableColumnStateSet('pivot.price', 200, $departments[1]->getKey())
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $departments[0]->getKey())
+        ->assertTableColumnStateSet('virtual_label', 'preserved', $departments[1]->getKey());
+});
+
+it('resolves a `BelongsToMany` record with the related model\'s primary key when `modifyQueryUsing()` adds a subquery via `addSelect()`', function (): void {
+    Department::factory()->count(2)->create();
+    $department = Department::factory()->create();
+    $ticket = Ticket::factory()->create();
+    $ticket->departments()->attach($department);
+
+    $resolved = livewire(DepartmentsWithSubquerySelectAndDetachRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->instance()
+        ->getTableRecord((string) $department->getKey());
+
+    expect($resolved)->not->toBeNull();
+    expect($resolved->getKey())->toBe($department->getKey());
+});
+
+it('passes the related model with the correct primary key into a `BelongsToMany` `DetachAction` when `modifyQueryUsing()` adds a subquery via `addSelect()`', function (): void {
+    Department::factory()->count(2)->create();
+    $department = Department::factory()->create();
+    $ticket = Ticket::factory()->create();
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsWithSubquerySelectAndDetachRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(DetachAction::class)->table($department));
+
+    expect($ticket->refresh()->departments)->toHaveCount(0);
+});
+
 it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `RelationManager`', function (): void {
     $ticket = Ticket::factory()->create();
     $departments = Department::factory()->count(3)->create();
@@ -358,4 +493,31 @@ it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `Relatio
         ->assertTableColumnSummarySet('name', 'name_count', 3)
         ->assertTableColumnSummarySet('quantity', 'quantity_sum', 60)
         ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000);
+});
+
+it('defers the tab badge loading when `$isBadgeDeferred` is `true`', function (): void {
+    $ticket = Ticket::factory()->create();
+
+    $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeTrue();
+});
+
+it('resolves the deferred tab badge value from `getBadge()`', function (): void {
+    $ticket = Ticket::factory()
+        ->hasAttached(Department::factory(3))
+        ->create();
+
+    $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeTrue()
+        ->and($tab->getBadge())->toBe('3');
+});
+
+it('does not defer the tab badge loading by default', function (): void {
+    $ticket = Ticket::factory()->create();
+
+    $tab = DepartmentsRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeFalse();
 });

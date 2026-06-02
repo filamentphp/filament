@@ -47,7 +47,7 @@ Notification::make()
 The title text can contain basic, safe HTML elements. To generate safe HTML with Markdown, you can use the [`Str::markdown()` helper](https://laravel.com/docs/strings#method-str-markdown): `title(Str::markdown('Saved **successfully**'))`
 
 <Aside variant="danger">
-    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider implementing a more restrictive custom sanitizer. See the [security documentation](../advanced/security#html-sanitization) for details on how to customize the sanitizer.
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
 </Aside>
 
 Or with JavaScript:
@@ -308,7 +308,7 @@ new FilamentNotification()
 ```
 
 <Aside variant="danger">
-    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks.
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
 </Aside>
 
 ### Dispatching Livewire events from notification actions

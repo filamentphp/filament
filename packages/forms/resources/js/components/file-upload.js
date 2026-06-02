@@ -173,6 +173,29 @@ export default function fileUploadFormComponent({
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
                 allowImageTransform: shouldTransformImage,
+                beforeAddFile: async (fileItem) => {
+                    if (!automaticallyOpenImageEditorForAspectRatio) {
+                        return true
+                    }
+
+                    if (!(fileItem.file instanceof File)) {
+                        return true
+                    }
+
+                    if (!fileItem.file.type.startsWith('image/')) {
+                        return true
+                    }
+
+                    if (await this.checkImageAspectRatio(fileItem.file)) {
+                        return true
+                    }
+
+                    this.isEditorOpenedForAspectRatio = true
+
+                    this.loadEditor(fileItem.file)
+
+                    return false
+                },
                 credits: false,
                 files: await this.getFiles(),
                 imageCropAspectRatio: automaticallyCropImagesAspectRatio,
@@ -427,24 +450,6 @@ export default function fileUploadFormComponent({
 
             this.pond.on('removefile', () => (this.error = null))
 
-            if (automaticallyOpenImageEditorForAspectRatio) {
-                this.pond.on('addfile', (error, fileItem) => {
-                    if (error) {
-                        return
-                    }
-
-                    if (!(fileItem.file instanceof File)) {
-                        return
-                    }
-
-                    if (!fileItem.file.type.startsWith('image/')) {
-                        return
-                    }
-
-                    this.checkImageAspectRatio(fileItem.file)
-                })
-            }
-
             this.isInitializing = false
         },
 
@@ -497,6 +502,10 @@ export default function fileUploadFormComponent({
                 files.push({
                     source: uploadedFile.url,
                     options: {
+                        metadata: {
+                            openableUrl: uploadedFile.openableUrl,
+                            downloadableUrl: uploadedFile.downloadableUrl,
+                        },
                         type: 'local',
                         ...(!uploadedFile.type ||
                         (isPreviewable &&
@@ -553,30 +562,31 @@ export default function fileUploadFormComponent({
         },
 
         getDownloadLink(file) {
-            let fileSource = file.source
+            let downloadableUrl =
+                file.getMetadata('downloadableUrl') ?? file.source
 
-            if (!fileSource) {
+            if (!downloadableUrl) {
                 return
             }
 
             const anchor = document.createElement('a')
             anchor.className = 'filepond--download-icon'
-            anchor.href = fileSource
+            anchor.href = downloadableUrl
             anchor.download = file.file.name
 
             return anchor
         },
 
         getOpenLink(file) {
-            let fileSource = file.source
+            let openableUrl = file.getMetadata('openableUrl') ?? file.source
 
-            if (!fileSource) {
+            if (!openableUrl) {
                 return
             }
 
             const anchor = document.createElement('a')
             anchor.className = 'filepond--open-icon'
-            anchor.href = fileSource
+            anchor.href = openableUrl
             anchor.target = '_blank'
 
             return anchor
@@ -804,16 +814,18 @@ export default function fileUploadFormComponent({
 
             croppedCanvas.toBlob(
                 (croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
-                            )?.id,
-                        { revert: true },
-                    )
+                    const editingFileItem = this.pond
+                        .getFiles()
+                        .find(
+                            (uploadedFile) =>
+                                uploadedFile.filename === this.editingFile.name,
+                        )
+
+                    if (editingFileItem) {
+                        this.pond.removeFile(editingFileItem.id, {
+                            revert: true,
+                        })
+                    }
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
@@ -883,34 +895,35 @@ export default function fileUploadFormComponent({
 
         checkImageAspectRatio(file) {
             if (!automaticallyOpenImageEditorForAspectRatio) {
-                return
+                return Promise.resolve(true)
             }
 
-            const img = new Image()
-            const objectUrl = URL.createObjectURL(file)
+            return new Promise((resolve) => {
+                const img = new Image()
+                const objectUrl = URL.createObjectURL(file)
 
-            img.onload = () => {
-                URL.revokeObjectURL(objectUrl)
+                img.onload = () => {
+                    URL.revokeObjectURL(objectUrl)
 
-                const imageRatio = img.width / img.height
-                const tolerance = 0.01
+                    const imageRatio = img.width / img.height
+                    const tolerance = 0.01
 
-                if (
-                    Math.abs(
-                        imageRatio - automaticallyOpenImageEditorForAspectRatio,
-                    ) > tolerance
-                ) {
-                    this.isEditorOpenedForAspectRatio = true
-
-                    this.loadEditor(file)
+                    resolve(
+                        Math.abs(
+                            imageRatio -
+                                automaticallyOpenImageEditorForAspectRatio,
+                        ) <= tolerance,
+                    )
                 }
-            }
 
-            img.onerror = () => {
-                URL.revokeObjectURL(objectUrl)
-            }
+                img.onerror = () => {
+                    URL.revokeObjectURL(objectUrl)
 
-            img.src = objectUrl
+                    resolve(true)
+                }
+
+                img.src = objectUrl
+            })
         },
     }
 }
@@ -926,6 +939,7 @@ import de from 'filepond/locale/de-de'
 import el from 'filepond/locale/el-el'
 import en from 'filepond/locale/en-en'
 import es from 'filepond/locale/es-es'
+import et from 'filepond/locale/et-ee'
 import fa from 'filepond/locale/fa_ir'
 import fi from 'filepond/locale/fi-fi'
 import fr from 'filepond/locale/fr-fr'
@@ -968,6 +982,7 @@ const locales = {
     el,
     en,
     es,
+    et,
     fa,
     fi,
     fr,
