@@ -6,7 +6,7 @@ on:
       - 4.x
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,11 +16,15 @@ jobs:
   format-and-build:
     if: "${{ !startsWith(github.event.head_commit.message, 'chore: format and build') }}"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
-        # persist-credentials: true is required so `git-auto-commit-action` can push back.
-        # Trigger restricts to the maintenance branch; concurrency cancels superseded runs.
+        # Uses a maintainer PAT so the auto-commit push can bypass branch protection;
+        # the default GITHUB_TOKEN pushes as `github-actions[bot]` and gets rejected.
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 # zizmor: ignore[artipacked]
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Cache Composer package downloads
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
@@ -80,16 +84,12 @@ jobs:
       - name: Install npm dependencies
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
-      - name: Ensure Rector cache directory exists
-        # Defensive: rector should create this via withCache(), but it's
-        # silently missing in CI. Pre-creating costs nothing.
-        run: mkdir -p .rector.cache
       - name: Run code style fixes
         run: composer cs
       - name: Build assets
         run: npm run build
       - name: Pull changes
-        run: git pull --rebase
+        run: git pull --rebase --autostash
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
