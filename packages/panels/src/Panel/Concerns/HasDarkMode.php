@@ -2,13 +2,17 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
+
 trait HasDarkMode
 {
-    protected bool $hasDarkMode = true;
+    protected bool | Closure $hasDarkMode = true;
 
     protected bool $hasDarkModeForced = false;
 
-    public function darkMode(bool $condition = true, bool $isForced = false): static
+    protected bool | Closure $hasDarkModeToggle = true;
+
+    public function darkMode(bool | Closure $condition = true, bool $isForced = false): static
     {
         $this->hasDarkMode = $condition;
         $this->hasDarkModeForced = $isForced;
@@ -16,13 +20,25 @@ trait HasDarkMode
         return $this;
     }
 
+    public function darkModeToggle(bool | Closure $condition = true): static
+    {
+        $this->hasDarkModeToggle = $condition;
+
+        return $this;
+    }
+
     public function hasDarkMode(): bool
     {
-        return $this->hasDarkMode;
+        return (bool) $this->evaluate($this->hasDarkMode);
     }
 
     public function hasDarkModeForced(): bool
     {
         return $this->hasDarkModeForced;
+    }
+
+    public function hasDarkModeToggle(): bool
+    {
+        return (bool) $this->evaluate($this->hasDarkModeToggle);
     }
 }
