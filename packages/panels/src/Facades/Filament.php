@@ -135,6 +135,7 @@ use Livewire\Component;
  * @method static bool hasCollapsibleNavigationGroups()
  * @method static bool hasDarkMode()
  * @method static bool hasDarkModeForced()
+ * @method static bool hasDarkModeToggle()
  * @method static bool hasDatabaseNotifications()
  * @method static bool hasLazyLoadedDatabaseNotifications()
  * @method static bool hasEmailChangeVerification()
