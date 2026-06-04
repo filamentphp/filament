@@ -112,7 +112,7 @@ trait CanExportRecords
                     $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
                     $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
-                    $columns = $action->getExporter()::getColumns();
+                    $columns = $action->getExporter()::getVisibleColumns();
                     $hasMultipleToggleableColumns = count($columns) > 1;
 
                     return [
