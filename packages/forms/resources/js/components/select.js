@@ -70,6 +70,7 @@ export default function selectFormComponent({
                 noSearchResultsMessage,
                 onStateChange: (newState) => {
                     this.state = newState
+                    this.$wire.set(statePath, newState, false)
                 },
                 options,
                 optionsLimit,
