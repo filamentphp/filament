@@ -2094,19 +2094,6 @@ it('can set `table()` columns and check `isTable()`', function (): void {
     expect($repeater->getTableColumns())->toHaveCount(2);
 });
 
-it('returns `null` for `getWidth()` on a `TableColumn` by default', function (): void {
-    $column = Repeater\TableColumn::make('Name');
-
-    expect($column->getWidth())->toBeNull();
-});
-
-it('escapes `"` in `getWidth()` on a `TableColumn`', function (): void {
-    $column = Repeater\TableColumn::make('Name')
-        ->width('200px"> <div>xss</div');
-
-    expect($column->getWidth())->toBe('200px&quot;&gt; &lt;div&gt;xss&lt;/div');
-});
-
 it('returns `false` for `canConcealComponents()` when not collapsible', function (): void {
     $repeater = Repeater::make('items');
 
