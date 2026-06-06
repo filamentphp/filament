@@ -512,8 +512,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
                         : null,
                 ], escape: false)
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml()
                 . ' />';
@@ -539,8 +539,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,
                 ])
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml() ?>>
                     +<?= $stateOverLimitCount ?>

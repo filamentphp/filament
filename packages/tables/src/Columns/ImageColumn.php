@@ -504,8 +504,8 @@ class ImageColumn extends Column implements HasEmbeddedView
                         : null,
                 ], escape: false)
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml()
                 . ' />';
@@ -531,8 +531,8 @@ class ImageColumn extends Column implements HasEmbeddedView
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,
                 ])
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml() ?>>
                     +<?= $stateOverLimitCount ?>

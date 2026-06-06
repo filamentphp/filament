@@ -1916,7 +1916,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                                     ]);
 
                                 if (filled($columnWidth)) {
-                                    $thAttributes = $thAttributes->style(['width: ' . $columnWidth]);
+                                    $thAttributes = $thAttributes->style(['width: ' . e($columnWidth)]);
                                 }
                                 ?>
                                 <th <?= $thAttributes->toHtml() ?>>
