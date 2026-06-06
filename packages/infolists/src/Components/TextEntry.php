@@ -373,6 +373,8 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
             fn (Action $suffixAction): bool => $suffixAction->isVisible(),
         );
 
+        $hasAffixActions = ((bool) $prefixActions) || ((bool) $suffixActions);
+
         if (
             ($stateCount === 1) &&
             (! $isBulleted) &&
@@ -414,7 +416,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 'fi-in-text-has-line-breaks' => $isListWithLineBreaks,
             ]);
 
-        if ($stateOverListLimitCount || $prefixActions || $suffixActions) {
+        if ($stateOverListLimitCount || $hasAffixActions) {
             $attributes = $attributes
                 ->merge([
                     'x-data' => $isLimitedListExpandable
@@ -422,7 +424,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                         : null,
                 ], escape: false)
                 ->class([
-                    'fi-in-text-affixed' => $prefixActions || $suffixActions,
+                    'fi-in-text-affixed' => $hasAffixActions,
                     'fi-in-text-list-limited' => $stateOverListLimitCount,
                 ]);
 
@@ -437,7 +439,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                     </div>
                 <?php } ?>
 
-                <?php if ($prefixActions || $suffixActions) { ?>
+                <?php if ($hasAffixActions) { ?>
                     <div class="fi-in-text-affixed-content">
                 <?php } ?>
 
@@ -504,7 +506,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                     </div>
                 <?php } ?>
 
-                <?php if ($prefixActions || $suffixActions) { ?>
+                <?php if ($hasAffixActions) { ?>
                     </div>
                 <?php } ?>
 
