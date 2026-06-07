@@ -196,7 +196,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                                     (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
                                 ]) ?>"
                                 <?php if (filled($columnWidth = $column->getWidth())) { ?>
-                                    style="width: <?= $columnWidth ?>"
+                                    style="width: <?= e($columnWidth) ?>"
                                 <?php } ?>
                             >
                                 <?php if (! $column->isHeaderLabelHidden()) { ?>
