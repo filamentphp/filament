@@ -99,7 +99,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     protected Width | string | Closure | null $blockPickerWidth = null;
 
-    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
+    protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     protected function setUp(): void
     {
@@ -1204,7 +1204,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         $rules["{$this->getStatePath()}.*.type"] = ['required'];
     }
 
-    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    public function partiallyRenderAfterActionsCalled(bool | Closure | null $condition = true): static
     {
         $this->shouldPartiallyRenderAfterActionsCalled = $condition;
 
@@ -1213,7 +1213,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     public function shouldPartiallyRenderAfterActionsCalled(): bool
     {
-        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+        $condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+
+        if ($condition !== null) {
+            return (bool) $condition;
+        }
+
+        return ! $this->isLive();
     }
 
     public function blockHeaders(bool | Closure $condition = true): static
