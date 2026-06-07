@@ -1213,16 +1213,10 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     public function shouldPartiallyRenderAfterActionsCalled(): bool
     {
-        if (($condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled)) !== null) {
+        $condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+
+        if ($condition !== null) {
             return (bool) $condition;
-        }
-
-        if (is_bool($this->isLive)) {
-            return ! $this->isLive;
-        }
-
-        if (! isset($this->container)) {
-            return true;
         }
 
         return ! $this->isLive();

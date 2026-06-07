@@ -1994,10 +1994,10 @@ describe('properties', function (): void {
     });
 
     it('defaults `shouldPartiallyRenderAfterActionsCalled()` based on `live()`', function (): void {
-        $default = Repeater::make('items');
-        $live = Repeater::make('items')->live();
-        [$conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
+        [$default, $live, $conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
             ->components([
+                Repeater::make('default'),
+                Repeater::make('live')->live(),
                 Repeater::make('conditionallyLive')->live(condition: static fn (): bool => true),
                 Repeater::make('conditionallyNotLive')->live(condition: static fn (): bool => false),
             ])

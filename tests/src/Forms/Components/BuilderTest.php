@@ -968,10 +968,10 @@ describe('boolean properties', function (): void {
     });
 
     it('defaults `shouldPartiallyRenderAfterActionsCalled()` based on `live()`', function (): void {
-        $default = Builder::make('content');
-        $live = Builder::make('content')->live();
-        [$conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
+        [$default, $live, $conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
             ->components([
+                Builder::make('default'),
+                Builder::make('live')->live(),
                 Builder::make('conditionallyLive')->live(condition: static fn (): bool => true),
                 Builder::make('conditionallyNotLive')->live(condition: static fn (): bool => false),
             ])
