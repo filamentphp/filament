@@ -15,7 +15,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Livewire\WithFileUploads;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 use function Filament\Tests\livewire;
@@ -513,7 +512,6 @@ class ReorderableSpatieMediaLibraryFileUploadForm extends Component implements H
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
-    use WithFileUploads;
 
     public $data = [];
 

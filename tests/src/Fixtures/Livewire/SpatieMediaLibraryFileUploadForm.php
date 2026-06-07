@@ -11,13 +11,11 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Models\MediaPost;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 
 class SpatieMediaLibraryFileUploadForm extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
-    use WithFileUploads;
 
     public $data = [];
 
