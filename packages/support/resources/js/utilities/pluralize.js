@@ -75,7 +75,7 @@ export default (text, number, variables) => {
 
     const value = extract(segments, number)
 
-    if (value !== null && value !== undefined) {
+    if (value !== undefined) {
         return replace(value.trim(), variables)
     }
 
