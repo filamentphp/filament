@@ -70,7 +70,10 @@ export default function selectFormComponent({
                 noSearchResultsMessage,
                 onStateChange: (newState) => {
                     this.state = newState
-                    this.$wire.set(statePath, newState, false)
+
+                    // Dispatch a change event so Alpine.js watchers update immediately
+                    // This ensures state syncs before form validation
+                    this.$dispatch('change')
                 },
                 options,
                 optionsLimit,

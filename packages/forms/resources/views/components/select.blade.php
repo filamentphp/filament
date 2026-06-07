@@ -188,7 +188,7 @@
                             searchingMessage: @js($getSearchingMessage()),
                             searchPrompt: @js($getSearchPrompt()),
                             searchableOptionFields: @js($getSearchableOptionFields()),
-                            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+                            state: @js($state),
                             statePath: @js($statePath),
                         })"
                 wire:ignore
@@ -200,6 +200,7 @@
                 }}"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
+                @change="$wire.set(@js($statePath), state, false)"
                 {{
                     $attributes
                         ->merge($getExtraAlpineAttributes(), escape: false)
