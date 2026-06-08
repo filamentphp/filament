@@ -51,6 +51,7 @@ sed_in_place "s/->login()/->login(\\\\App\\\\Filament\\\\Pages\\\\Auth\\\\Login:
 sed_in_place "s|return view('welcome');|return redirect('/admin');|" routes/web.php
 
 cp "${STUBS_DIR}/README.md" README.md
+sed_in_place "s/{{BRANCH_VERSION}}/${FILAMENT_BRANCH}/g" README.md
 
 sed_in_place 's|"@php artisan migrate --force"|"@php artisan migrate --seed --force"|' composer.json
 
