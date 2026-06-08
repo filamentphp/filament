@@ -1,9 +1,13 @@
 const scrollPositions = new Map()
 
-let isHistoryNavigation = false
+let pendingHistoryRestoreKey = null
 
 function getPageKey() {
     return window.location.pathname + window.location.search
+}
+
+function getPageKeyFromUrl(url) {
+    return url.pathname + url.search
 }
 
 function getPageScrollPosition() {
@@ -36,30 +40,47 @@ function restorePageScrollPosition(position) {
 
     setTimeout(apply, 0)
     setTimeout(apply, 50)
+    setTimeout(apply, 150)
 }
 
-window.addEventListener('popstate', () => {
-    isHistoryNavigation = true
-})
-
 document.addEventListener('livewire:navigate', (event) => {
-    saveCurrentPageScrollPosition()
+    if (event.detail?.history) {
+        pendingHistoryRestoreKey = getPageKeyFromUrl(event.detail.url)
 
-    isHistoryNavigation = event.detail?.history ?? isHistoryNavigation
-})
-
-document.addEventListener('livewire:navigated', () => {
-    if (!isHistoryNavigation) {
         return
     }
 
-    isHistoryNavigation = false
+    saveCurrentPageScrollPosition()
+    pendingHistoryRestoreKey = null
+})
 
-    const position = scrollPositions.get(getPageKey())
+document.addEventListener('livewire:navigating', (event) => {
+    if (!pendingHistoryRestoreKey) {
+        return
+    }
+
+    const restoreKey = pendingHistoryRestoreKey
+    const position = scrollPositions.get(restoreKey)
 
     if (!position) {
         return
     }
 
-    restorePageScrollPosition(position)
+    event.detail.onSwap(() => {
+        restorePageScrollPosition(position)
+    })
+})
+
+document.addEventListener('livewire:navigated', () => {
+    if (!pendingHistoryRestoreKey) {
+        return
+    }
+
+    const position = scrollPositions.get(pendingHistoryRestoreKey)
+
+    if (position) {
+        restorePageScrollPosition(position)
+    }
+
+    pendingHistoryRestoreKey = null
 })
