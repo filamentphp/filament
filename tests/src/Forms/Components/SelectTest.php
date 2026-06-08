@@ -1490,6 +1490,29 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('syncs `multiple()` and `searchable()` select state before form validation when submitting immediately in the browser', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/select-test')
+                ->assertSee('Required Multiple Searchable Select')
+                ->click('[data-testid="required-multiple-searchable-select"] .fi-select-input-btn')
+                ->click('Apple')
+                ->click('Save')
+                ->assertDontSee('The required multiple searchable status field is required.')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/select-test')
+                ->inDarkMode()
+                ->click('[data-testid="required-multiple-searchable-select"] .fi-select-input-btn')
+                ->click('Cherry')
+                ->click('Save')
+                ->assertDontSee('The required multiple searchable status field is required.')
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
     it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

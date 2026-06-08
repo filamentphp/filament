@@ -37,11 +37,19 @@ export default function selectFormComponent({
     statePath,
 }) {
     return {
+        isMultiple,
+
         select: null,
 
         state,
 
+        wireSelect: null,
+
         init() {
+            this.wireSelect = this.$root
+                .closest('.fi-fo-select')
+                ?.querySelector('[data-wire-select]')
+
             this.select = new Select({
                 canOptionLabelsWrap,
                 canSelectPlaceholder,
@@ -71,9 +79,7 @@ export default function selectFormComponent({
                 onStateChange: (newState) => {
                     this.state = newState
 
-                    // Dispatch a change event so Alpine.js watchers update immediately
-                    // This ensures state syncs before form validation
-                    this.$dispatch('change')
+                    this.syncToWireSelect(newState)
                 },
                 options,
                 optionsLimit,
@@ -87,6 +93,16 @@ export default function selectFormComponent({
                 statePath,
             })
 
+            this.syncToWireSelect(this.state, false)
+
+            this.$wire.watch(statePath, (newState) => {
+                if (
+                    JSON.stringify(newState) !== JSON.stringify(this.state)
+                ) {
+                    this.state = newState
+                }
+            })
+
             this.$watch('state', (newState) => {
                 this.$nextTick(() => {
                     if (this.select && this.select.state !== newState) {
@@ -96,6 +112,70 @@ export default function selectFormComponent({
                     }
                 })
             })
+        },
+
+        normalizeStateToValues(newState) {
+            if (this.isMultiple) {
+                if (! Array.isArray(newState)) {
+                    return []
+                }
+
+                return newState.map((value) => String(value))
+            }
+
+            if (
+                newState === null ||
+                newState === undefined ||
+                newState === ''
+            ) {
+                return []
+            }
+
+            return [String(newState)]
+        },
+
+        ensureWireSelectOptions(newState) {
+            if (! this.wireSelect) {
+                return
+            }
+
+            this.normalizeStateToValues(newState).forEach((value) => {
+                if (
+                    ! [...this.wireSelect.options].some(
+                        (option) => option.value === value,
+                    )
+                ) {
+                    const option = document.createElement('option')
+
+                    option.value = value
+
+                    this.wireSelect.appendChild(option)
+                }
+            })
+        },
+
+        syncToWireSelect(newState, shouldDispatch = true) {
+            if (! this.wireSelect) {
+                return
+            }
+
+            const values = this.normalizeStateToValues(newState)
+
+            this.ensureWireSelectOptions(newState)
+
+            if (this.isMultiple) {
+                ;[...this.wireSelect.options].forEach((option) => {
+                    option.selected = values.includes(option.value)
+                })
+            } else {
+                this.wireSelect.value = values[0] ?? ''
+            }
+
+            if (shouldDispatch) {
+                this.wireSelect.dispatchEvent(
+                    new Event('input', { bubbles: true }),
+                )
+            }
         },
 
         destroy() {

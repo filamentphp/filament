@@ -120,6 +120,64 @@
                 @endforeach
             </select>
         @else
+            @php
+                $options = $getOptions();
+            @endphp
+
+            <select
+                data-wire-select
+                {{
+                    $extraInputAttributeBag
+                        ->merge([
+                            'disabled' => $isDisabled,
+                            'id' => $id,
+                            'multiple' => $isMultiple,
+                            'required' => $isRequired && (! $isConcealed),
+                            'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
+                            $applyStateBindingModifiers('wire:model') => $statePath,
+                        ], escape: false)
+                        ->class(['fi-hidden'])
+                }}
+            >
+                @if ($canSelectPlaceholder && ! $isMultiple)
+                    <option value="">
+                        @if (! $isDisabled)
+                            {{ $getPlaceholder() }}
+                        @endif
+                    </option>
+                @endif
+
+                @foreach ($options as $value => $label)
+                    @if (is_array($label))
+                        <optgroup label="{{ $value }}">
+                            @foreach ($label as $groupedValue => $groupedLabel)
+                                <option
+                                    @disabled($isOptionDisabled($groupedValue, $groupedLabel))
+                                    value="{{ $groupedValue }}"
+                                >
+                                    @if ($isHtmlAllowed)
+                                        {!! $groupedLabel !!}
+                                    @else
+                                        {{ $groupedLabel }}
+                                    @endif
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @else
+                        <option
+                            @disabled($isOptionDisabled($value, $label))
+                            value="{{ $value }}"
+                        >
+                            @if ($isHtmlAllowed)
+                                {!! $label !!}
+                            @else
+                                {{ $label }}
+                            @endif
+                        </option>
+                    @endif
+                @endforeach
+            </select>
+
             <div
                 class="fi-hidden"
                 x-data="{
@@ -200,7 +258,6 @@
                 }}"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
-                @change="$wire.set(@js($statePath), state, false)"
                 {{
                     $attributes
                         ->merge($getExtraAlpineAttributes(), escape: false)

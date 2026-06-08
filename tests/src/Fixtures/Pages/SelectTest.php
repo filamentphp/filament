@@ -50,6 +50,18 @@ class SelectTest extends Page
                     ->multiple()
                     ->extraAttributes(['data-testid' => 'multiple-select']),
 
+                Select::make('required_multiple_searchable_status')
+                    ->label('Required Multiple Searchable Select')
+                    ->options([
+                        'apple' => 'Apple',
+                        'banana' => 'Banana',
+                        'cherry' => 'Cherry',
+                    ])
+                    ->multiple()
+                    ->searchable()
+                    ->required()
+                    ->extraAttributes(['data-testid' => 'required-multiple-searchable-select']),
+
                 Select::make('searchable_status')
                     ->label('Searchable Select')
                     ->options([
