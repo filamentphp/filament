@@ -1435,6 +1435,12 @@ describe('rendering', function (): void {
             ->assertSeeHtml('Active')
             ->assertSeeHtml('Archived');
     });
+
+    it('can render option values containing double quotes', function (): void {
+        livewire(RenderCheckboxListWithQuotedOptionValues::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('value="1/2&quot; wrench"');
+    });
 });
 
 it('can render `CheckboxList` in the browser', function (): void {
@@ -1979,6 +1985,37 @@ class RenderCheckboxListWithDisabledOptionWhen extends Component implements HasA
                         'archived' => 'Archived',
                     ])
                     ->disableOptionWhen(static fn (string $value): bool => $value === 'archived'),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RenderCheckboxListWithQuotedOptionValues extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                CheckboxList::make('items')
+                    ->options([
+                        '1/2" wrench' => '1/2" wrench',
+                        '3/8" wrench' => '3/8" wrench',
+                    ]),
             ])
             ->statePath('data');
     }
