@@ -166,7 +166,7 @@ Notification::make()
             ->button()
             ->markAsRead(),
     ])
-    ->send();
+    ->sendToDatabase($recipient);
 ```
 
 Alternatively, you may use the `markAsUnread()` method to mark a notification as unread:
@@ -184,7 +184,7 @@ Notification::make()
             ->button()
             ->markAsUnread(),
     ])
-    ->send();
+    ->sendToDatabase($recipient);
 ```
 
 ## Opening the database notifications modal
