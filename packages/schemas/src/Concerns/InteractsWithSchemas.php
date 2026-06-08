@@ -25,10 +25,7 @@ use ReflectionNamedType;
 trait InteractsWithSchemas
 {
     use ResolvesDynamicLivewireProperties;
-    use WithFileUploads {
-        WithFileUploads::_startUpload as baseStartUpload;
-        WithFileUploads::_finishUpload as baseFinishUpload;
-    }
+    use WithFileUploads;
 
     /**
      * @var array <string, TemporaryUploadedFile | array<TemporaryUploadedFile> | null>
@@ -505,37 +502,8 @@ trait InteractsWithSchemas
         return array_key_first($this->getCachedSchemas());
     }
 
-    /**
-     * @param  string  $name
-     * @param  array<mixed>  $fileInfo
-     * @param  bool  $isMultiple
-     */
-    public function _startUpload($name, $fileInfo, $isMultiple): void
+    public function isFileUploadForSchemaComponent(string $name): bool
     {
-        abort_unless($this->isFileUploadAuthorizedForSchemaComponent($name), 403);
-
-        $this->baseStartUpload($name, $fileInfo, $isMultiple);
-    }
-
-    /**
-     * @param  string  $name
-     * @param  array<string>  $tmpPath
-     * @param  bool  $isMultiple
-     * @param  bool  $append
-     */
-    public function _finishUpload($name, $tmpPath, $isMultiple, $append = false): void
-    {
-        abort_unless($this->isFileUploadAuthorizedForSchemaComponent($name), 403);
-
-        $this->baseFinishUpload($name, $tmpPath, $isMultiple, $append);
-    }
-
-    protected function isFileUploadAuthorizedForSchemaComponent(string $name): bool
-    {
-        if (! (method_exists($this, 'shouldRestrictFileUploadsToSchemaComponents') && $this->shouldRestrictFileUploadsToSchemaComponents())) {
-            return true;
-        }
-
         if (str_starts_with($name, 'componentFileAttachments.')) {
             $name = substr($name, strlen('componentFileAttachments.'));
         }
