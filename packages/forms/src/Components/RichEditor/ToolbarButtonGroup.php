@@ -128,7 +128,7 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
             ->merge([
                 'type' => 'button',
                 'tabindex' => -1,
-                'aria-label' => $label,
+                'aria-label' => e($label),
                 'aria-haspopup' => 'menu',
                 'x-on:click' => 'open = !open',
                 'x-bind:aria-expanded' => 'open',
@@ -200,7 +200,7 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
                     'tabindex' => -1,
                     'type' => 'button',
                     'role' => 'menuitem',
-                    'aria-label' => $buttonLabel,
+                    'aria-label' => e($buttonLabel),
                     'x-on:click' => $button->getJsHandler() . '; open = false',
                     'x-bind:class' => '{ \'fi-active\': ' . $activeExpression . ' }',
                     ...($isTextual ? [] : [
