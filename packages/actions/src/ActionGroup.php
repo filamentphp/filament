@@ -511,7 +511,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 'fi-scrollable' => $maxHeight,
             ])
             ->style([
-                "max-height: {$maxHeight}" => $maxHeight,
+                ('max-height: ' . e($maxHeight)) => $maxHeight,
             ]);
 
         ob_start(); ?>

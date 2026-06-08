@@ -57,7 +57,7 @@
                 'fi-scrollable' => $maxHeight || $size,
             ])
             @style([
-                "max-height: {$maxHeight}" => $maxHeight,
+                ('max-height: ' . e($maxHeight)) => $maxHeight,
             ])
         >
             {{ $slot }}

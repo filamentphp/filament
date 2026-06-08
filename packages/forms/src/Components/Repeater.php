@@ -125,7 +125,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
-    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
+    protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     protected function setUp(): void
     {
@@ -1523,7 +1523,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return 1;
     }
 
-    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    public function partiallyRenderAfterActionsCalled(bool | Closure | null $condition = true): static
     {
         $this->shouldPartiallyRenderAfterActionsCalled = $condition;
 
@@ -1532,6 +1532,12 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     public function shouldPartiallyRenderAfterActionsCalled(): bool
     {
-        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+        $condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+
+        if ($condition !== null) {
+            return (bool) $condition;
+        }
+
+        return ! $this->isLive();
     }
 }

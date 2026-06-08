@@ -1986,9 +1986,27 @@ describe('properties', function (): void {
     it('can set `partiallyRenderAfterActionsCalled()` and check `shouldPartiallyRenderAfterActionsCalled()`', function (): void {
         $enabled = Repeater::make('items')->partiallyRenderAfterActionsCalled();
         $disabled = Repeater::make('items')->partiallyRenderAfterActionsCalled(false);
+        $liveEnabled = Repeater::make('items')->live()->partiallyRenderAfterActionsCalled();
 
         expect($enabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
         expect($disabled->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($liveEnabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+    });
+
+    it('defaults `shouldPartiallyRenderAfterActionsCalled()` based on `live()`', function (): void {
+        [$default, $live, $conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
+            ->components([
+                Repeater::make('default'),
+                Repeater::make('live')->live(),
+                Repeater::make('conditionallyLive')->live(condition: static fn (): bool => true),
+                Repeater::make('conditionallyNotLive')->live(condition: static fn (): bool => false),
+            ])
+            ->getComponents();
+
+        expect($default->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+        expect($live->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyLive->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyNotLive->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
     });
 
     it('can set `addActionAlignment()` and get with `getAddActionAlignment()`', function (): void {
