@@ -29,9 +29,9 @@
                     ->merge([
                         'autofocus' => $loop->first && $isAutofocused(),
                         'disabled' => $isDisabled || $isOptionDisabled($value, $label),
-                        'id' => $id . '-' . $value,
+                        'id' => e($id . '-' . $value),
                         'name' => $id,
-                        'value' => $value,
+                        'value' => e($value),
                         $wireModelAttribute => $statePath,
                     ], escape: false);
             @endphp
