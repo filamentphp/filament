@@ -110,9 +110,9 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 $buttonAttributes = (new FilamentComponentAttributeBag)
                     ->merge([
                         'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
-                        'aria-label' => $areButtonLabelsHidden ? trim(strip_tags((string) $label)) : null,
+                        'aria-label' => $areButtonLabelsHidden ? e(trim(strip_tags((string) $label))) : null,
                         'disabled' => $shouldOptionBeDisabled && blank($tooltip),
-                        'for' => $inputId,
+                        'for' => e($inputId),
                     ], escape: false)
                     ->class([
                         'fi-btn',
@@ -186,9 +186,9 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 $buttonAttributes = (new FilamentComponentAttributeBag)
                     ->merge([
                         'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
-                        'aria-label' => $areButtonLabelsHidden ? trim(strip_tags((string) $label)) : null,
+                        'aria-label' => $areButtonLabelsHidden ? e(trim(strip_tags((string) $label))) : null,
                         'disabled' => $shouldOptionBeDisabled && blank($tooltip),
-                        'for' => $inputId,
+                        'for' => e($inputId),
                     ], escape: false)
                     ->class([
                         'fi-btn',
