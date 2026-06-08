@@ -2341,6 +2341,24 @@ describe('item labels', function (): void {
         expect($repeater->getItemLabel($itemKeys[2], 2))->toBe('Item 2: third');
     });
 
+    it('returns `null` for `getItemLabel()` when the child schema is missing for the given key', function (): void {
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $repeater = Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name'),
+                    ])
+                    ->itemLabel(static fn (array $state): string => "Item: {$state['name']}")
+                    ->default([
+                        ['name' => 'first'],
+                    ]),
+            ])
+            ->fill();
+
+        expect($repeater->getItemLabel('this-key-has-no-cached-child-schema', 0))->toBeNull();
+    });
+
     it('can set `itemNumbers()` with a `Closure`', function (): void {
         $repeater = Repeater::make('items')
             ->itemNumbers(static fn (): bool => true);

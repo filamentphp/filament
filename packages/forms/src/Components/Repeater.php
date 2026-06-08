@@ -1231,6 +1231,10 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $container = $this->getChildSchema($key);
 
+        if ($container === null) {
+            return null;
+        }
+
         return $this->evaluate($this->itemLabel, [
             'container' => $container,
             'item' => $container,
