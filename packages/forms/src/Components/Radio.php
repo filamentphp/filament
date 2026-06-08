@@ -80,9 +80,9 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
                         ->merge([
                             'autofocus' => $first && $isAutofocused,
                             'disabled' => $isDisabled || $this->isOptionDisabled($value, $label),
-                            'id' => $id . '-' . $value,
+                            'id' => e($id . '-' . $value),
                             'name' => $id,
-                            'value' => $value,
+                            'value' => e($value),
                             $wireModelAttribute => $statePath,
                         ], escape: false)
                         ->class([
