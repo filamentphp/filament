@@ -21,6 +21,12 @@ it('blocks `_startUpload` when the schema has no file-upload components', functi
         ->assertForbidden();
 });
 
+it('does not restrict `_startUpload` when the component does not use `RestrictsFileUploadsToSchemaComponents`', function (): void {
+    livewire(UnrestrictedUploadsTestComponent::class)
+        ->call('_startUpload', 'data.text', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
+        ->assertDispatched('upload:generatedSignedUrl');
+});
+
 it('blocks `_startUpload` for a property path that does not map to any schema component', function (): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
         ->call('_startUpload', 'data.somethingElse.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
@@ -158,6 +164,18 @@ it('allows `_removeUpload` when the property path maps to a `FileUpload` field',
         ->call('_removeUpload', 'data.photo.fileKey', 'absent.jpg')
         ->assertOk();
 });
+
+class UnrestrictedUploadsTestComponent extends Livewire
+{
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('text'),
+            ])
+            ->statePath('data');
+    }
+}
 
 class RestrictedUploadsTestComponentWithoutFileUpload extends Livewire
 {
