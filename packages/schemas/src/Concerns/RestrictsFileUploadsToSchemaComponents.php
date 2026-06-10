@@ -4,7 +4,7 @@ namespace Filament\Schemas\Concerns;
 
 trait RestrictsFileUploadsToSchemaComponents
 {
-    protected function shouldRestrictFileUploadsToSchemaComponents(): bool
+    public function shouldRestrictFileUploadsToSchemaComponents(): bool
     {
         return true;
     }

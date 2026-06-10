@@ -328,6 +328,12 @@ describe('rendering', function (): void {
             ->assertSeeHtml('On')
             ->assertSeeHtml('Off');
     });
+
+    it('can render option values containing double quotes', function (): void {
+        livewire(RenderRadioWithQuotedOptionValues::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('value="1/2&quot; wrench"');
+    });
 });
 
 it('can render `Radio` in the browser', function (): void {
@@ -401,6 +407,20 @@ class RenderRadioWithCustomBooleanLabels extends Livewire
         return $form->schema([
             Radio::make('active')
                 ->boolean(trueLabel: 'On', falseLabel: 'Off'),
+        ])->statePath('data');
+    }
+}
+
+class RenderRadioWithQuotedOptionValues extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Radio::make('size')
+                ->options([
+                    '1/2" wrench' => '1/2" wrench',
+                    '3/8" wrench' => '3/8" wrench',
+                ]),
         ])->statePath('data');
     }
 }
