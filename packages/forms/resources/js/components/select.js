@@ -96,9 +96,7 @@ export default function selectFormComponent({
             this.syncToWireSelect(this.state, false)
 
             this.$wire.watch(statePath, (newState) => {
-                if (
-                    JSON.stringify(newState) !== JSON.stringify(this.state)
-                ) {
+                if (JSON.stringify(newState) !== JSON.stringify(this.state)) {
                     this.state = newState
                 }
             })
@@ -116,7 +114,7 @@ export default function selectFormComponent({
 
         normalizeStateToValues(newState) {
             if (this.isMultiple) {
-                if (! Array.isArray(newState)) {
+                if (!Array.isArray(newState)) {
                     return []
                 }
 
@@ -135,13 +133,13 @@ export default function selectFormComponent({
         },
 
         ensureWireSelectOptions(newState) {
-            if (! this.wireSelect) {
+            if (!this.wireSelect) {
                 return
             }
 
             this.normalizeStateToValues(newState).forEach((value) => {
                 if (
-                    ! [...this.wireSelect.options].some(
+                    ![...this.wireSelect.options].some(
                         (option) => option.value === value,
                     )
                 ) {
@@ -155,7 +153,7 @@ export default function selectFormComponent({
         },
 
         syncToWireSelect(newState, shouldDispatch = true) {
-            if (! this.wireSelect) {
+            if (!this.wireSelect) {
                 return
             }
 
