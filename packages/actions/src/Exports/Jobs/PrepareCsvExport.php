@@ -96,8 +96,11 @@ class PrepareCsvExport implements ShouldQueue
                 $firstOrder = $originalOrders->first();
 
                 if (($firstOrder['type'] ?? null) === 'Raw') {
+                    /** @var literal-string $sql */
+                    $sql = $firstOrder['sql'];
+
                     $query->reorder();
-                    $query->orderByRaw($firstOrder['sql']);
+                    $query->orderByRaw($sql);
                 } else {
                     $query->reorder($firstOrder['column'], $firstOrder['direction']);
                 }
@@ -109,7 +112,10 @@ class PrepareCsvExport implements ShouldQueue
 
             foreach ($originalOrders as $order) {
                 if (($order['type'] ?? null) === 'Raw') {
-                    $query->orderByRaw($order['sql']);
+                    /** @var literal-string $orderSql */
+                    $orderSql = $order['sql'];
+
+                    $query->orderByRaw($orderSql);
                 } elseif (filled($order['column'] ?? null) && filled($order['direction'] ?? null)) {
                     $query->orderBy($order['column'], $order['direction']);
                 }
