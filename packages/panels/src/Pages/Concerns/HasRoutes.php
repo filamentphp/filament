@@ -27,10 +27,16 @@ trait HasRoutes
 
     public static function routes(Panel $panel): void
     {
-        Route::get(static::getRoutePath(), static::class)
+        $routePath = static::getRoutePath();
+
+        $route = Route::get($routePath, static::class)
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name(static::getRelativeRouteName());
+
+        if ($panel->hasTenancy() && blank($panel->getTenantDomain()) && ($routePath === '/')) {
+            $route->fallback();
+        }
     }
 
     public static function getRoutePath(): string
