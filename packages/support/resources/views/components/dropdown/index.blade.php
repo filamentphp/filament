@@ -78,7 +78,7 @@
                 'overflow-y-auto' => $maxHeight || $size,
             ])
             @style([
-                "max-height: {$maxHeight}" => $maxHeight,
+                ('max-height: ' . e($maxHeight)) => $maxHeight,
             ])
         >
             {{ $slot }}

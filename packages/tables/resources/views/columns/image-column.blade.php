@@ -93,8 +93,8 @@
                                     $ringClasses,
                                 ])
                                 ->style([
-                                    "height: {$height}" => $height,
-                                    "width: {$width}" => $width,
+                                    ('height: ' . e($height)) => $height,
+                                    ('width: ' . e($width)) => $width,
                                 ])
                         }}
                     />
@@ -109,8 +109,8 @@
                             $ringClasses,
                         ])
                         @style([
-                            "height: {$height}" => $height,
-                            "width: {$width}" => $width,
+                            ('height: ' . e($height)) => $height,
+                            ('width: ' . e($width)) => $width,
                         ])
                     >
                         <span class="-ms-0.5">
