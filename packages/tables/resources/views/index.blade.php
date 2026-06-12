@@ -859,7 +859,7 @@
                                             $getHiddenClasses($column),
                                         ])
                                         ->style([
-                                            ('width: ' . $columnWidth) => filled($columnWidth),
+                                            ('width: ' . e($columnWidth)) => filled($columnWidth),
                                         ])
                                 "
                             >

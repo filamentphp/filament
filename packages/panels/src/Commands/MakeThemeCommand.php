@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Process\Process;
 
 use function Laravel\Prompts\select;
 
@@ -31,25 +32,26 @@ class MakeThemeCommand extends Command
 
         $pm = $this->option('pm') ?? 'npm';
 
-        exec("{$pm} -v", $pmVersion, $pmVersionExistCode);
+        $process = new Process([$pm, '-v']);
+        $process->run();
 
-        if ($pmVersionExistCode !== 0) {
+        if (! $process->isSuccessful()) {
             $this->error('Node.js is not installed. Please install before continuing.');
 
             return static::FAILURE;
         }
 
-        $this->info("Using {$pm} v{$pmVersion[0]}");
+        $this->info("Using {$pm} v" . trim($process->getOutput()));
 
-        $installCommand = match ($pm) {
-            'yarn' => 'yarn add',
-            default => "{$pm} install",
+        $installArguments = match ($pm) {
+            'yarn' => [$pm, 'add'],
+            default => [$pm, 'install'],
         };
 
         if ($shouldInstallTailwindV3) {
-            exec("{$installCommand} tailwindcss@3 @tailwindcss/forms @tailwindcss/typography postcss postcss-nesting autoprefixer --save-dev");
+            (new Process([...$installArguments, 'tailwindcss@3', '@tailwindcss/forms', '@tailwindcss/typography', 'postcss', 'postcss-nesting', 'autoprefixer', '--save-dev']))->run();
         } else {
-            exec("{$installCommand} @tailwindcss/forms @tailwindcss/typography --save-dev");
+            (new Process([...$installArguments, '@tailwindcss/forms', '@tailwindcss/typography', '--save-dev']))->run();
         }
 
         $panel = $this->argument('panel');

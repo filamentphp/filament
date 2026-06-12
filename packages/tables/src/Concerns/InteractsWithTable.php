@@ -63,7 +63,7 @@ trait InteractsWithTable
             return;
         }
 
-        if (! count($this->toggledTableColumns ?? [])) {
+        if (! count($this->toggledTableColumns)) {
             $this->getTableColumnToggleForm()->fill(session()->get(
                 $this->getTableColumnToggleFormStateSessionKey(),
                 $this->getDefaultTableColumnToggleState()
@@ -139,7 +139,7 @@ trait InteractsWithTable
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
-            $this->tableColumnSearches ?? [],
+            $this->tableColumnSearches,
         );
 
         if ($shouldPersistColumnSearchesInSession) {

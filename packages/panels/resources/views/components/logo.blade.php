@@ -12,7 +12,7 @@
         'hidden dark:flex' => $hasDarkModeBrandLogo && $isDarkMode,
     ]);
 
-    $logoStyles = "height: {$brandLogoHeight}";
+    $logoStyles = 'height: ' . e($brandLogoHeight);
 @endphp
 
 @capture($content, $logo, $isDarkMode = false)

@@ -143,7 +143,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             return new HtmlString('');
         }
 
-        $html = "href=\"{$url}\"";
+        $html = 'href="' . e($url) . '"';
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
