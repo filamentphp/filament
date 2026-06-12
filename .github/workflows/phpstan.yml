@@ -18,15 +18,13 @@ jobs:
       fail-fast: false
       matrix:
         php: [8.3, 8.2]
-        laravel: [12.*, 11.*, 10.*]
+        laravel: [12.*, 11.*]
         dependency-version: [prefer-stable]
         include:
           - laravel: 12.*
             testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
-          - laravel: 10.*
-            testbench: 8.*
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
