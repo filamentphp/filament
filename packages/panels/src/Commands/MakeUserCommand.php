@@ -3,6 +3,7 @@
 namespace Filament\Commands;
 
 use Filament\Facades\Filament;
+use Filament\Support\Commands\Concerns\HasPanel;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -22,6 +23,8 @@ use function Laravel\Prompts\text;
 ])]
 class MakeUserCommand extends Command
 {
+    use HasPanel;
+
     protected $description = 'Create a new Filament user';
 
     protected $name = 'make:filament-user';
@@ -58,6 +61,12 @@ class MakeUserCommand extends Command
                 mode: InputOption::VALUE_REQUIRED,
                 description: 'The password for the user (min. 8 characters)',
             ),
+            new InputOption(
+                name: 'panel',
+                shortcut: null,
+                mode: InputOption::VALUE_REQUIRED,
+                description: 'The panel to create the user in',
+            ),
         ];
     }
 
@@ -70,7 +79,9 @@ class MakeUserCommand extends Command
     {
         $this->options = $this->options();
 
-        if (! Filament::getCurrentOrDefaultPanel()) {
+        $this->configurePanel(question: 'Which panel would you like to create the user in?');
+
+        if (! $this->panel && ! Filament::getCurrentOrDefaultPanel()) {
             $this->error('Filament has not been installed yet: php artisan filament:install --panels');
 
             return static::FAILURE;
@@ -120,14 +131,17 @@ class MakeUserCommand extends Command
 
     protected function sendSuccessMessage(Model & Authenticatable $user): void
     {
-        $loginUrl = Filament::getLoginUrl();
+        $panel = $this->panel ?? Filament::getCurrentOrDefaultPanel();
+        $loginUrl = $panel?->getLoginUrl() ?? Filament::getLoginUrl();
 
         $this->components->info('Success! ' . ($user->getAttribute('email') ?? $user->getAttribute('username') ?? 'You') . " may now log in at {$loginUrl}");
     }
 
     protected function getAuthGuard(): Guard
     {
-        return Filament::auth();
+        $panel = $this->panel ?? Filament::getCurrentOrDefaultPanel();
+
+        return $panel?->auth() ?? Filament::auth();
     }
 
     protected function getUserProvider(): UserProvider
