@@ -45,6 +45,10 @@ trait HasColumns
             return null;
         }
 
+        if ($column->isHidden()) {
+            return null;
+        }
+
         $record = $this->getTableRecord($record);
 
         if (! $record) {

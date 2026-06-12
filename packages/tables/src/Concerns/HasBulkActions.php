@@ -286,10 +286,9 @@ trait HasBulkActions
 
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             $records = $this->getTable()->selectsCurrentPageOnly() ?
-                /** @phpstan-ignore-next-line */
                 $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
-                    ->pluck($query->getModel()->getKeyName()) :
+                    ->pluck($query->getModel()->getKeyName()) : /** @phpstan-ignore method.notFound */
                 $query->pluck($query->getModel()->getQualifiedKeyName());
 
             return $records

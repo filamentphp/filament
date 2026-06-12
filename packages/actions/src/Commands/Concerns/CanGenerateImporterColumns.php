@@ -111,6 +111,7 @@ trait CanGenerateImporterColumns
 
             // Configuration
             foreach ($columnData as $methodName => $parameters) {
+                /** @var array<array-key, mixed> $parameters */
                 $output .= PHP_EOL;
                 $output .= '    ->';
                 $output .= $methodName;
@@ -118,9 +119,7 @@ trait CanGenerateImporterColumns
                 $output .= collect($parameters)
                     ->map(function (mixed $parameterValue, int | string $parameterName): string {
                         $parameterValue = match (true) {
-                            /** @phpstan-ignore-next-line */
                             is_bool($parameterValue) => $parameterValue ? 'true' : 'false',
-                            /** @phpstan-ignore-next-line */
                             is_null($parameterValue) => 'null',
                             is_numeric($parameterValue) => $parameterValue,
                             is_array($parameterValue) => '[\'' . implode('\', \'', $parameterValue) . '\']',

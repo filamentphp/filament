@@ -6,7 +6,6 @@ use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\HasFileAttachments;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Form;
 use Livewire\WithFileUploads;
 
 trait RestrictsFileUploadsToFormComponents
@@ -65,10 +64,6 @@ trait RestrictsFileUploadsToFormComponents
     protected function getFormComponentForFileUpload(string $statePath): ?Component
     {
         foreach ($this->getCachedForms() as $form) {
-            if (! $form instanceof Form) {
-                continue;
-            }
-
             foreach ($form->getFlatComponents() as $component) {
                 if (! $component instanceof Field) {
                     continue;

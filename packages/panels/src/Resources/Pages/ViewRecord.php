@@ -70,6 +70,11 @@ class ViewRecord extends Page
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     protected function hasInfolist(): bool
     {
         return (bool) count($this->getInfolist('infolist')->getComponents());

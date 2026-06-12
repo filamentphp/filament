@@ -70,67 +70,71 @@ class ImportCsv implements ShouldQueue
             auth()->setUser($user);
         }
 
-        $exceptions = [];
+        try {
+            $exceptions = [];
 
-        $processedRows = 0;
-        $successfulRows = 0;
+            $processedRows = 0;
+            $successfulRows = 0;
 
-        if (! is_array($this->rows)) {
-            $rows = unserialize(base64_decode($this->rows));
-        }
-
-        foreach (($rows ?? $this->rows) as $row) {
-            $row = $this->utf8Encode($row);
-
-            try {
-                DB::transaction(fn () => ($this->importer)($row));
-                $successfulRows++;
-            } catch (RowImportFailedException $exception) {
-                $this->logFailedRow($row, $exception->getMessage());
-            } catch (ValidationException $exception) {
-                $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
-            } catch (Throwable $exception) {
-                $exceptions[$exception::class] = $exception;
-
-                $this->logFailedRow($row);
+            if (! is_array($this->rows)) {
+                $rows = unserialize(base64_decode($this->rows), ['allowed_classes' => false]);
             }
 
-            $processedRows++;
+            foreach (($rows ?? $this->rows) as $row) {
+                $row = $this->utf8Encode($row);
+
+                try {
+                    DB::transaction(fn () => ($this->importer)($row));
+                    $successfulRows++;
+                } catch (RowImportFailedException $exception) {
+                    $this->logFailedRow($row, $exception->getMessage());
+                } catch (ValidationException $exception) {
+                    $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
+                } catch (Throwable $exception) {
+                    $exceptions[$exception::class] = $exception;
+
+                    $this->logFailedRow($row);
+                }
+
+                $processedRows++;
+            }
+
+            $this->import::query()
+                ->whereKey($this->import)
+                ->update([
+                    'processed_rows' => DB::raw('processed_rows + ' . $processedRows),
+                    'successful_rows' => DB::raw('successful_rows + ' . $successfulRows),
+                ]);
+
+            $this->import::query()
+                ->whereKey($this->import)
+                ->whereColumn('processed_rows', '>', 'total_rows')
+                ->update([
+                    'processed_rows' => DB::raw('total_rows'),
+                ]);
+
+            $this->import::query()
+                ->whereKey($this->import)
+                ->whereColumn('successful_rows', '>', 'total_rows')
+                ->update([
+                    'successful_rows' => DB::raw('total_rows'),
+                ]);
+
+            $this->import->refresh();
+
+            event(new ImportChunkProcessed(
+                $this->import,
+                $this->columnMap,
+                $this->options,
+                $processedRows,
+                $successfulRows,
+                $exceptions,
+            ));
+
+            $this->handleExceptions($exceptions);
+        } finally {
+            auth()->forgetGuards();
         }
-
-        $this->import::query()
-            ->whereKey($this->import)
-            ->update([
-                'processed_rows' => DB::raw('processed_rows + ' . $processedRows),
-                'successful_rows' => DB::raw('successful_rows + ' . $successfulRows),
-            ]);
-
-        $this->import::query()
-            ->whereKey($this->import)
-            ->whereColumn('processed_rows', '>', 'total_rows')
-            ->update([
-                'processed_rows' => DB::raw('total_rows'),
-            ]);
-
-        $this->import::query()
-            ->whereKey($this->import)
-            ->whereColumn('successful_rows', '>', 'total_rows')
-            ->update([
-                'successful_rows' => DB::raw('total_rows'),
-            ]);
-
-        $this->import->refresh();
-
-        event(new ImportChunkProcessed(
-            $this->import,
-            $this->columnMap,
-            $this->options,
-            $processedRows,
-            $successfulRows,
-            $exceptions,
-        ));
-
-        $this->handleExceptions($exceptions);
     }
 
     public function retryUntil(): ?CarbonInterface

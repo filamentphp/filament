@@ -12,6 +12,7 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\RelationManagers\Concerns\CanAuthorizeAccess;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
@@ -28,6 +29,7 @@ use function Filament\authorize;
 class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
+    use CanAuthorizeAccess;
     use CanBeLazy;
     use Forms\Concerns\InteractsWithForms;
     use Infolists\Concerns\InteractsWithInfolists;
