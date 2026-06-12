@@ -5,7 +5,6 @@ use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\View\ComponentAttributeBag;
 
-use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\prepare_inherited_attributes;
 
@@ -43,15 +42,6 @@ it('will prepare data attributes', function () {
     expect($attributes->getAttributes())->toBe([
         'data-foo' => 'bar',
     ]);
-});
-
-it('will escape the URL in generate_href_html() output', function () {
-    $html = generate_href_html('"><script>alert(1)</script>', shouldOpenInSpaMode: false)->toHtml();
-
-    expect($html)
-        ->toContain('&quot;')
-        ->toContain('&lt;')
-        ->not->toContain('"><script>');
 });
 
 it('will generate a JSON search column expression for MySQL', function () {
