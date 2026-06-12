@@ -3,11 +3,12 @@
 namespace Filament\Tests\Upgrade;
 
 use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class RectorTest extends AbstractRectorTestCase
 {
-    /** @dataProvider provideData */
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);
