@@ -2,6 +2,7 @@
 title: Validation
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -11,6 +12,8 @@ Validation rules may be added to any [field](overview#available-fields).
 In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
 
 Filament includes many [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
+
+<AutoScreenshot name="forms/validation" alt="A form with validation errors" version="4.x" />
 
 <Aside variant="warning">
     Some default Laravel validation rules rely on the correct attribute names and won't work when passed via `rule()`/`rules()`. Use the dedicated validation methods whenever you can.
@@ -671,18 +674,20 @@ TextInput::make('password')
     ->allowHtmlValidationMessages()
 ```
 
-Be aware that you will need to ensure that the HTML in all validation messages is safe to render, otherwise your application will be vulnerable to XSS attacks.
+<Aside variant="danger">
+    Enabling this opts out of escaping for validation messages on this field. Make sure every message — including those from custom rules or translations — is safe to render. Untrusted content can lead to XSS.
+</Aside>
 
-## Disabling validation when fields are not dehydrated
+## Disabling validation when fields are not saved
 
-When a field is [not dehydrated](overview#preventing-a-field-from-being-dehydrated), it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
+When a field is [not saved](overview#preventing-a-field-from-being-saved), it is still validated. To disable validation for fields that are not saved, use the `validatedWhenNotDehydrated()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
     ->required()
-    ->dehydrated(false)
+    ->saved(false)
     ->validatedWhenNotDehydrated(false)
 ```
 

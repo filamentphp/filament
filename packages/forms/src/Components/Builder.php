@@ -56,6 +56,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     protected bool | Closure $hasBlockIcons = false;
 
+    protected bool | Closure $hasBlockHeaders = true;
+
     protected bool | Closure $hasBlockPreviews = false;
 
     protected bool | Closure $hasInteractiveBlockPreviews = false;
@@ -91,11 +93,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     protected bool | Closure $isBlockLabelTruncated = true;
 
     /**
-     * @var array<string, ?int> | null
+     * @var array<string | int, int | Closure | null> | null
      */
     protected ?array $blockPickerColumns = [];
 
     protected Width | string | Closure | null $blockPickerWidth = null;
+
+    protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     protected function setUp(): void
     {
@@ -103,18 +107,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
         $this->default([]);
 
-        $this->afterStateHydrated(static function (Builder $component, ?array $rawState): void {
-            $items = [];
-
-            foreach ($rawState ?? [] as $itemData) {
-                if ($uuid = $component->generateUuid()) {
-                    $items[$uuid] = $itemData;
-                } else {
-                    $items[] = $itemData;
-                }
-            }
-
-            $component->rawState($items);
+        $this->afterStateHydrated(static function (Builder $component): void {
+            $component->hydrateItems();
         });
 
         $this->registerActions([
@@ -135,6 +129,21 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
             return array_values($state ?? []);
         });
+    }
+
+    public function hydrateItems(): void
+    {
+        $items = [];
+
+        foreach ($this->getRawState() ?? [] as $itemData) {
+            if ($uuid = $this->generateUuid()) {
+                $items[$uuid] = $itemData;
+            } else {
+                $items[] = $itemData;
+            }
+        }
+
+        $this->rawState($items);
     }
 
     /**
@@ -189,7 +198,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
-                    return $component->getBlock($arguments['block'])->getDefaultChildComponents();
+                    return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
         }
 
@@ -270,7 +279,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -284,7 +293,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
-                    return $component->getBlock($arguments['block'])->getDefaultChildComponents();
+                    return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
         }
 
@@ -332,7 +341,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -373,7 +382,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -413,7 +422,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -453,7 +462,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -503,7 +512,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -667,6 +676,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             })
             ->schema(function (array $arguments, Builder $component) {
                 return $component->getChildSchema($arguments['item'])
+                    ->getClone()
                     ->getComponents(withHidden: true);
             })
             ->action(function (array $arguments, Builder $component, $data): void {
@@ -680,7 +690,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->icon(Heroicon::Cog6Tooth)
@@ -1052,10 +1062,16 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     }
 
     /**
-     * @param  array<string, ?int> | int | null  $columns
+     * @param  array<string, int | Closure | null> | int | Closure | null  $columns
      */
-    public function blockPickerColumns(array | int | null $columns = 2): static
+    public function blockPickerColumns(array | int | Closure | null $columns = 2): static
     {
+        if ($columns instanceof Closure) {
+            $this->blockPickerColumns[] = $columns;
+
+            return $this;
+        }
+
         if (! is_array($columns)) {
             $columns = [
                 'lg' => $columns,
@@ -1083,6 +1099,37 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             'xl' => null,
             '2xl' => null,
         ];
+
+        foreach ($this->blockPickerColumns ?? [] as $columnBreakpoint => $column) {
+            $column = $this->evaluate($column);
+
+            if (is_array($column)) {
+                $columns = [
+                    ...$columns,
+                    ...$column,
+                ];
+
+                unset($columns[$columnBreakpoint]);
+
+                continue;
+            }
+
+            if (blank($columnBreakpoint)) {
+                unset($columns[$columnBreakpoint]);
+
+                continue;
+            }
+
+            if (! is_string($columnBreakpoint)) {
+                $columns['lg'] = $column;
+
+                unset($columns[$columnBreakpoint]);
+
+                continue;
+            }
+
+            $columns[$columnBreakpoint] = $column;
+        }
 
         if ($breakpoint !== null) {
             return $columns[$breakpoint] ?? null;
@@ -1135,7 +1182,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
      */
     public function getRawItemState(string $key): array
     {
-        return $this->getChildSchema($key)->getRawState();
+        return $this->getChildSchema($key)->getStateSnapshot();
     }
 
     public function getHeadingsCount(): int
@@ -1155,5 +1202,35 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         parent::dehydrateValidationRules($rules);
 
         $rules["{$this->getStatePath()}.*.type"] = ['required'];
+    }
+
+    public function partiallyRenderAfterActionsCalled(bool | Closure | null $condition = true): static
+    {
+        $this->shouldPartiallyRenderAfterActionsCalled = $condition;
+
+        return $this;
+    }
+
+    public function shouldPartiallyRenderAfterActionsCalled(): bool
+    {
+        $condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+
+        if ($condition !== null) {
+            return (bool) $condition;
+        }
+
+        return ! $this->isLive();
+    }
+
+    public function blockHeaders(bool | Closure $condition = true): static
+    {
+        $this->hasBlockHeaders = $condition;
+
+        return $this;
+    }
+
+    public function hasBlockHeaders(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockHeaders);
     }
 }

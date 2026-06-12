@@ -8,6 +8,7 @@ use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -33,7 +34,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     protected bool | Closure $isSquare = false;
 
-    protected string | Closure $visibility = 'private';
+    protected string | Closure | null $visibility = null;
 
     protected int | string | Closure | null $width = null;
 
@@ -116,7 +117,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
         return $this;
     }
 
-    public function visibility(string | Closure $visibility): static
+    public function visibility(string | Closure | null $visibility): static
     {
         $this->visibility = $visibility;
 
@@ -147,28 +148,22 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function getDiskName(): string
     {
-        $name = $this->getCustomDiskName();
+        $name = $this->evaluate($this->diskName);
 
         if (filled($name)) {
             return $name;
         }
 
-        $name = config('filament.default_filesystem_disk');
+        $defaultName = config('filament.default_filesystem_disk');
 
-        if ($name !== 'public') {
-            return $name;
+        if (
+            ($defaultName === 'public')
+            && ($this->getCustomVisibility() === 'private')
+        ) {
+            return 'local';
         }
 
-        if ($this->getVisibility() !== 'private') {
-            return $name;
-        }
-
-        return 'local';
-    }
-
-    public function getCustomDiskName(): ?string
-    {
-        return $this->evaluate($this->diskName);
+        return $defaultName;
     }
 
     public function getImageHeight(): ?string
@@ -224,7 +219,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
             try {
                 return $storage->temporaryUrl(
                     $state,
-                    now()->addMinutes(30)->endOfHour(),
+                    now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
@@ -241,17 +236,18 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function getVisibility(): string
     {
-        $visibility = $this->evaluate($this->visibility);
+        $visibility = $this->getCustomVisibility();
 
-        if ($visibility !== 'private') {
+        if (filled($visibility)) {
             return $visibility;
         }
 
-        if ($this->getCustomDiskName() !== 'public') {
-            return $visibility;
-        }
+        return ($this->getDiskName() === 'public') ? 'public' : 'private';
+    }
 
-        return 'public';
+    public function getCustomVisibility(): ?string
+    {
+        return $this->evaluate($this->visibility);
     }
 
     public function getImageWidth(): ?string
@@ -292,6 +288,9 @@ class ImageEntry extends Entry implements HasEmbeddedView
      */
     public function extraImgAttributes(array | Closure $attributes): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         $this->extraImgAttributes = $attributes;
 
         return $this;
@@ -431,6 +430,12 @@ class ImageEntry extends Entry implements HasEmbeddedView
                 'fi-in-image',
             ]);
 
+        $defaultImageUrl = $this->getDefaultImageUrl();
+
+        if (blank($state) && filled($defaultImageUrl)) {
+            $state = [null];
+        }
+
         if (blank($state)) {
             $attributes = $attributes
                 ->merge([
@@ -438,6 +443,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
+
                         }'
                         : null,
                 ], escape: false);
@@ -447,7 +454,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)) { ?>
+                <?php if (filled($placeholder)) { ?>
                     <p class="fi-in-placeholder">
                         <?= e($placeholder) ?>
                     </p>
@@ -479,8 +486,6 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $height = $this->getImageHeight() ?? ($isStacked ? '2.5rem' : '8rem');
         $width = $this->getImageWidth() ?? (($isCircular || $isSquare) ? $height : null);
 
-        $defaultImageUrl = $this->getDefaultImageUrl();
-
         $attributes = $attributes
             ->class([
                 'fi-circular' => $isCircular,
@@ -496,17 +501,18 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
-                    'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
+                    'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                         : null,
                 ], escape: false)
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml()
                 . ' />';
@@ -532,8 +538,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,
                 ])
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml() ?>>
                     +<?= $stateOverLimitCount ?>

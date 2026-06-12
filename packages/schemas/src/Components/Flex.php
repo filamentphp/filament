@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
+use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasFromBreakpoint;
 use Filament\Support\Concerns\HasVerticalAlignment;
 use Illuminate\Contracts\Support\Htmlable;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\Support\Htmlable;
 class Flex extends Component
 {
     use EntanglesStateWithSingularRelationship;
+    use HasAlignment;
     use HasFromBreakpoint;
     use HasVerticalAlignment;
 

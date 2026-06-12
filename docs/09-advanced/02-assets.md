@@ -1,6 +1,7 @@
 ---
 title: Registering assets
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -22,11 +23,11 @@ use Filament\Support\Facades\FilamentAsset;
 public function boot(): void
 {
     // ...
-    
+
     FilamentAsset::register([
         // ...
     ]);
-    
+
     // ...
 }
 ```
@@ -68,22 +69,19 @@ Now, when the `php artisan filament:assets` command is run, this CSS file is cop
 
 Typically, registering CSS files is used to register custom stylesheets for your application. If you want to process these files using Tailwind CSS, you need to consider the implications of that, especially if you are a plugin developer.
 
-Tailwind builds are unique to every application - they contain a minimal set of utility classes, only the ones that you are actually using in your application. This means that if you are a plugin developer, you probably should not be building your Tailwind CSS files into your plugin. Instead, you should provide the raw CSS files and instruct the user that they should build the Tailwind CSS file themselves. To do this, they probably just need to add your vendor directory into the `content` array of their `tailwind.config.js` file:
+Tailwind builds are unique to every application - they contain a minimal set of utility classes, only the ones that you are actually using in your application. This means that if you are a plugin developer, you probably should not be building your Tailwind CSS files into your plugin. Instead, you should provide the raw CSS files and instruct the user that they should build the Tailwind CSS file themselves. To do this, they need to add your vendor directory to their custom theme's CSS file using the `@source` directive. In their [custom theme](../styling#creating-a-custom-theme) CSS file (e.g., `resources/css/filament/admin/theme.css`), they should add:
 
-```js
-export default {
-    content: [
-        './resources/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
-        './vendor/danharrin/filament-blog/resources/views/**/*.blade.php', // Your plugin's vendor directory
-    ],
-    // ...
-}
+```css
+@import "tailwindcss";
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/danharrin/filament-blog/resources/views/**/*'; /* Your plugin's vendor directory */
 ```
 
 This means that when they build their Tailwind CSS file, it will include all the utility classes that are used in your plugin's views, as well as the utility classes that are used in their application and the Filament core.
 
-However, with this technique, there might be extra complications for users who use your plugin with the [Panel Builder](../panels). If they have a [custom theme](../panels/themes), they will be fine, since they are building their own CSS file anyway using Tailwind CSS. However, if they are using the default stylesheet which is shipped with the Panel Builder, you might have to be careful about the utility classes that you use in your plugin's views. For instance, if you use a utility class that is not included in the default stylesheet, the user is not compiling it themselves, and it will not be included in the final CSS file. This means that your plugin's views might not look as expected. This is one of the few situations where I would recommend compiling and [registering](#registering-css-files) a Tailwind CSS-compiled stylesheet in your plugin.
+However, with this technique, there might be extra complications for users who use your plugin with the [Panel Builder](../panel-configuration). If they have a [custom theme](../styling#creating-a-custom-theme), they will be fine, since they are building their own CSS file anyway using Tailwind CSS. However, if they are using the default stylesheet which is shipped with the Panel Builder, you might have to be careful about the utility classes that you use in your plugin's views. For instance, if you use a utility class that is not included in the default stylesheet, the user is not compiling it themselves, and it will not be included in the final CSS file. This means that your plugin's views might not look as expected. This is one of the few situations where I would recommend compiling and [registering](#registering-css-files) a Tailwind CSS-compiled stylesheet in your plugin.
 
 ### Lazy loading CSS
 
@@ -282,13 +280,13 @@ export default function testComponent({
 }) {
     return {
         state,
-        
+
         // You can define any other Alpine.js properties here.
 
         init() {
             // Initialise the Alpine component here, if you need to.
         },
-        
+
         // You can define any other Alpine.js functions here.
     }
 }
@@ -333,7 +331,7 @@ Finally, you can load this asynchronous Alpine component in your view using `x-l
 </div>
 ```
 
-This example is for a [custom form field](../forms/custom). It passes the `state` in as a parameter to the `testComponent()` function, which is entangled with a Livewire component property. You can pass in any parameters you want, and access them in the `testComponent()` function. If you're not using a custom form field, you can ignore the `state` parameter in this example.
+This example is for a [custom form field](../forms/custom-fields). It passes the `state` in as a parameter to the `testComponent()` function, which is entangled with a Livewire component property. You can pass in any parameters you want, and access them in the `testComponent()` function. If you're not using a custom form field, you can ignore the `state` parameter in this example.
 
 The `x-load` attributes come from the [Async Alpine](https://async-alpine.dev/docs/strategies) package, and any features of that package can be used here.
 
@@ -362,6 +360,7 @@ window.filamentData.user.name // 'Dan Harrin'
 If you want to register a JavaScript file from a URL, you may do so. These assets will be loaded on every page as normal, but not copied into the `/public` directory when the `php artisan filament:assets` command is run. This is useful for registering external scripts from a CDN, or scripts that you are already compiling directly into the `/public` directory:
 
 ```php
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\Js;
 
 FilamentAsset::register([
@@ -369,3 +368,50 @@ FilamentAsset::register([
     Js::make('example-local-script', asset('js/local.js')),
 ]);
 ```
+
+### Using Vite-compiled JavaScript files
+
+The `php artisan filament:assets` command copies files as-is into the `/public` directory without bundling or resolving dependencies. This means that if your JavaScript file uses `import` statements to pull in npm packages, the browser will not be able to resolve them. To use JavaScript files that require bundling, you should compile them with [Vite](https://vitejs.dev) first, and then register the compiled output as a URL-based asset.
+
+First, add your JavaScript file as an entry point in your `vite.config.js`:
+
+```js
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/js/timezone.js', // Your custom script
+            ],
+        }),
+    ],
+})
+```
+
+Then, compile the assets using Vite:
+
+```bash
+npm run build
+```
+
+Finally, register the compiled asset using `Vite::asset()` to resolve the versioned URL:
+
+```php
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\Vite;
+
+FilamentAsset::register([
+    Js::make('timezone', Vite::asset('resources/js/timezone.js')),
+]);
+```
+
+This approach also works for TypeScript files or any other JavaScript that needs a build step. Since `Vite::asset()` returns a URL, the asset will not be copied by `php artisan filament:assets` — it is served directly from Vite's build output.
+
+<Aside variant="info">
+    If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
+</Aside>

@@ -55,6 +55,10 @@ return [
             'title' => 'Uložené',
         ],
 
+        'throttled' => [
+            'title' => 'Príliš veľa požiadaviek. Skúste to znova za :seconds sekúnd.',
+            'body' => 'Skúste to znova za :seconds sekúnd.',
+        ],
     ],
 
     'actions' => [

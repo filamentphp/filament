@@ -3,6 +3,8 @@
 use App\Providers\AppServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\Filament\NavDemoPanelProvider;
+use App\Providers\Filament\TenancyDemoPanelProvider;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
@@ -220,6 +222,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         EventServiceProvider::class,
         AdminPanelProvider::class,
+        NavDemoPanelProvider::class,
+        TenancyDemoPanelProvider::class,
         RouteServiceProvider::class,
 
     ],

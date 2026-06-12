@@ -14,6 +14,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
+use ReflectionUnionType;
 use Throwable;
 
 use function Livewire\store;
@@ -96,7 +98,9 @@ trait InteractsWithActions
 
         // Boot the InteractsWithTable trait first so the table object is available.
         if (! ($this instanceof HasTable)) {
-            $this->cacheMountedActions($this->mountedActions);
+            if (empty($this->cacheMountedActions($this->mountedActions))) {
+                $this->mountedActions = [];
+            }
         }
     }
 
@@ -163,11 +167,17 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
+            $this->unmountAction(canCancelParentActions: false);
+
             return null;
         } catch (Cancel $exception) {
             $this->unmountAction(canCancelParentActions: false);
 
             return null;
+        } catch (ValidationException $exception) {
+            $this->unmountAction(canCancelParentActions: false);
+
+            throw $exception;
         }
 
         if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
@@ -191,6 +201,8 @@ trait InteractsWithActions
         if (! $action) {
             return null;
         }
+
+        $originalActionArguments = $action->getArguments();
 
         $action->mergeArguments($arguments);
 
@@ -261,7 +273,7 @@ trait InteractsWithActions
 
             $result = $action->callAfter() ?? $result;
 
-            $this->afterActionCalled();
+            $this->afterActionCalled($action);
 
             (match ($action->getStatus()) {
                 ActionStatus::Success => function () use ($action): void {
@@ -287,7 +299,7 @@ trait InteractsWithActions
             $action->rollBackDatabaseTransaction();
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
-                $action->resetArguments();
+                $action->arguments($originalActionArguments);
                 $action->resetData();
 
                 $this->unmountAction();
@@ -308,7 +320,9 @@ trait InteractsWithActions
             return $result;
         }
 
-        $action->resetArguments();
+        $this->partiallyRenderActionParentSchema($action);
+
+        $action->arguments($originalActionArguments);
         $action->resetData();
 
         $onlyActionNamesAndContexts = fn (array $actions): array => collect($actions)
@@ -328,7 +342,34 @@ trait InteractsWithActions
         return $result;
     }
 
-    protected function afterActionCalled(): void {}
+    public function forceRender(): void
+    {
+        app(PartialsComponentHook::class)->forceRender($this);
+    }
+
+    protected function partiallyRenderActionParentSchema(Action $action): void
+    {
+        $actionSchema = $action->getSchemaContainer() ?? $action->getSchemaComponent()?->getContainer();
+        $schemaToPartiallyRender = null;
+
+        while ($actionSchema !== null) {
+            if ($actionSchema->shouldPartiallyRender()) {
+                $schemaToPartiallyRender = $actionSchema;
+            }
+
+            $actionSchema = $actionSchema->getParentComponent()?->getContainer();
+        }
+
+        if (! $schemaToPartiallyRender) {
+            return;
+        }
+
+        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+            "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
+        ]);
+    }
+
+    protected function afterActionCalled(Action $action): void {}
 
     /**
      * @param  array<string, mixed>  $arguments
@@ -441,14 +482,18 @@ trait InteractsWithActions
      */
     protected function cacheMountedActions(array $mountedActions): array
     {
-        return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+        try {
+            return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+        } catch (ActionNotResolvableException) {
+            return $this->cachedMountedActions = [];
+        }
     }
 
     /**
      * @param  array<array<string, mixed>>  $actions
      * @return array<Action>
      */
-    protected function resolveActions(array $actions): array
+    protected function resolveActions(array $actions, bool $isMounting = true): array
     {
         $resolvedActions = [];
 
@@ -469,15 +514,21 @@ trait InteractsWithActions
                 continue;
             }
 
+            if (filled($action['arguments'] ?? [])) {
+                $resolvedAction->mergeArguments($action['arguments']);
+            }
+
             $resolvedAction->nestingIndex($actionNestingIndex);
             $resolvedAction->boot();
 
             $resolvedActions[] = $resolvedAction;
 
-            $this->cacheSchema(
-                "mountedActionSchema{$actionNestingIndex}",
-                $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
-            );
+            if ($isMounting) {
+                $this->cacheSchema(
+                    "mountedActionSchema{$actionNestingIndex}",
+                    $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
+                );
+            }
         }
 
         return $resolvedActions;
@@ -512,13 +563,13 @@ trait InteractsWithActions
                 return null;
             }
 
-            if (! $returnTypeReflection instanceof ReflectionNamedType) {
-                return null;
-            }
+            $returnTypes = $returnTypeReflection instanceof ReflectionUnionType ? $returnTypeReflection->getTypes() : [$returnTypeReflection];
 
-            $type = $returnTypeReflection->getName();
+            $hasActionReturnType = collect($returnTypes)
+                ->filter(fn ($returnType) => $returnType instanceof ReflectionNamedType)
+                ->contains(fn (ReflectionNamedType $returnType) => is_a($returnType->getName(), Action::class, allow_string: true));
 
-            if (! is_a($type, Action::class, allow_string: true)) {
+            if (! $hasActionReturnType) {
                 return null;
             }
 
@@ -544,21 +595,24 @@ trait InteractsWithActions
             throw new ActionNotResolvableException('Failed to resolve table action for Livewire component without the [' . HasTable::class . '] trait.');
         }
 
-        $resolvedAction = null;
-
         if (count($parentActions)) {
             $parentAction = Arr::last($parentActions);
-            $resolvedAction = $parentAction->getModalAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
-        } else {
-            if ($action['context']['bulk'] ?? false) {
-                $resolvedAction = $this->getTable()->getBulkAction($action['name']);
-            }
 
-            $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
+            return $parentAction->getModalAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
         }
+
+        if ($action['context']['bulk'] ?? false) {
+            $resolvedAction = $this->getTable()->getBulkAction($action['name']);
+        }
+
+        $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
 
         if (filled($action['context']['recordKey'] ?? null)) {
             $record = $this->getTableRecord($action['context']['recordKey']);
+
+            if (! $record) {
+                throw new ActionNotResolvableException("Record [{$action['context']['recordKey']}] no longer exists.");
+            }
 
             $resolvedAction->getRootGroup()?->record($record) ?? $resolvedAction->record($record);
         }
@@ -599,16 +653,16 @@ trait InteractsWithActions
     }
 
     /**
-     * @param  string | array<string>  $actions
+     * @param  string | array<string | array<string, mixed>>  $actions
      */
-    public function getAction(string | array $actions): ?Action
+    public function getAction(string | array $actions, bool $isMounting = true): ?Action
     {
         $actions = array_map(
             fn (string | array $action): array => is_array($action) ? $action : ['name' => $action],
             Arr::wrap($actions),
         );
 
-        return Arr::last($this->resolveActions($actions));
+        return Arr::last($this->resolveActions($actions, $isMounting));
     }
 
     public function getMountedActionSchemaName(): ?string
@@ -636,7 +690,11 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model(fn (): Model | array | string | null => $mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
+                ->model(function () use ($mountedAction): Model | array | string | null {
+                    $schemaComponent = $mountedAction->getSchemaComponent();
+
+                    return $mountedAction->getRecord(withDefault: blank($schemaComponent)) ?? $mountedAction->getModel(withDefault: blank($schemaComponent)) ?? $schemaComponent?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel();
+                })
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(
@@ -715,7 +773,12 @@ trait InteractsWithActions
 
     protected function syncActionModals(): void
     {
-        $this->dispatch('sync-action-modals', id: $this->getId(), newActionNestingIndex: array_key_last($this->mountedActions));
+        $this->dispatch(
+            'sync-action-modals',
+            id: $this->getId(),
+            newActionNestingIndex: array_key_last($this->mountedActions),
+            shouldOverlayParentActions: $this->getMountedAction()?->shouldOverlayParentActions() ?? false,
+        );
     }
 
     public function getOriginallyMountedActionIndex(): ?int

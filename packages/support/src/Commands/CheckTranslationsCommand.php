@@ -62,6 +62,7 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
         $this->scan('forms');
         $this->scan('infolists');
         $this->scan('notifications');
+        $this->scan('query-builder');
         $this->scan('schemas');
         $this->scan('spark-billing-provider');
         $this->scan('spatie-laravel-google-fonts-plugin');

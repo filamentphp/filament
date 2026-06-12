@@ -109,7 +109,7 @@ class MakeLivewireFormCommand extends Command
                 name: 'model-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_REQUIRED,
-                description: 'The namespace of the model class, [App\\Models] by default',
+                description: 'The namespace of the model class, [' . app()->getNamespace() . 'Models] by default',
             ),
             new InputOption(
                 name: 'force',
@@ -166,7 +166,7 @@ class MakeLivewireFormCommand extends Command
                 ->studly()
                 ->replace('/', '\\');
 
-            $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
+            $modelNamespace = $this->option('model-namespace') ?? app()->getNamespace() . 'Models';
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
 
@@ -196,7 +196,7 @@ class MakeLivewireFormCommand extends Command
                     fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
                 );
             },
-            placeholder: 'App\\Models\\BlogPost',
+            placeholder: app()->getNamespace() . 'Models\\BlogPost',
             required: true,
         );
 

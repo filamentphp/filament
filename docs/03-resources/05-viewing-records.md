@@ -1,6 +1,9 @@
 ---
 title: Viewing records
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
+<AutoScreenshot name="panels/resources/viewing" alt="Resource view page" version="4.x" />
 
 ## Creating a resource with a View page
 
@@ -30,7 +33,7 @@ public static function infolist(Schema $schema): Schema
 }
 ```
 
-The `components()` method is used to define the structure of your infolist. It is an array of [entries](../infolists#available-entries) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your infolist.
+The `components()` method is used to define the structure of your infolist. It is an array of [entries](../infolists/overview#available-entries) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your infolist.
 
 Check out the Infolists docs for a [guide](../infolists) on how to build infolists with Filament.
 

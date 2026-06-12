@@ -3,6 +3,7 @@
 namespace Filament\Resources\Resource\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -10,10 +11,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use ReflectionProperty;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait HasGlobalSearch
 {
     protected static int $globalSearchResultsLimit = 50;
@@ -24,9 +29,22 @@ trait HasGlobalSearch
 
     protected static bool $isGloballySearchable = true;
 
+    protected static ?int $globalSearchSort = null;
+
     public static function canGloballySearch(): bool
     {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
+        $isGloballySearchable = static::$isGloballySearchable;
+
+        if (
+            $isGloballySearchable &&
+            Filament::getCurrentOrDefaultPanel()?->isGlobalSearchResourceOptIn()
+        ) {
+            $isGloballySearchable = (new ReflectionProperty(static::class, 'isGloballySearchable'))
+                ->getDeclaringClass()
+                ->getName() === static::class;
+        }
+
+        return $isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
     }
 
     /**
@@ -66,6 +84,13 @@ trait HasGlobalSearch
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
+        // In the future, Filament will support global search in nested resources.
+        // For now, you must specify custom global search result URLs to do so,
+        // since there are missing URL parameters from the parent records.
+        if (static::getParentResourceRegistration()) {
+            return null;
+        }
+
         $canView = static::canView($record);
 
         if (static::hasPage('view') && $canView) {
@@ -151,22 +176,24 @@ trait HasGlobalSearch
         $search = generate_search_term_expression($search, static::isGlobalSearchForcedCaseInsensitive(), $databaseConnection);
 
         if (! static::shouldSplitGlobalSearchTerms()) {
-            $isFirst = true;
+            $query->where(function (Builder $query) use ($search): void {
+                $isFirst = true;
 
-            foreach (static::getGloballySearchableAttributes() as $attributes) {
-                static::applyGlobalSearchAttributeConstraint(
-                    query: $query,
-                    search: $search,
-                    searchAttributes: Arr::wrap($attributes),
-                    isFirst: $isFirst,
-                );
-            }
+                foreach (static::getGloballySearchableAttributes() as $attributes) {
+                    static::applyGlobalSearchAttributeConstraint(
+                        query: $query,
+                        search: $search,
+                        searchAttributes: Arr::wrap($attributes),
+                        isFirst: $isFirst,
+                    );
+                }
+            });
 
             return;
         }
 
         $searchWords = array_filter(
-            str_getcsv(preg_replace('/\s+/', ' ', $search), separator: ' ', escape: '\\'),
+            str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
 
@@ -224,8 +251,21 @@ trait HasGlobalSearch
         return $query;
     }
 
+    /**
+     * @return Builder<TModel>
+     */
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGlobalSearchSort(): ?int
+    {
+        return static::$globalSearchSort;
+    }
+
+    public static function globalSearchSort(?int $sort): void
+    {
+        static::$globalSearchSort = $sort;
     }
 }

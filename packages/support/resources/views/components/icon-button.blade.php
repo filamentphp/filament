@@ -65,19 +65,20 @@
     @endif
     @if ($keyBindings)
         x-bind:id="$id('key-bindings')"
-        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
+        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id)?.click()"
     @endif
     @if ($hasTooltip)
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
+            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
         }"
     @endif
     {{
         $attributes
             ->merge([
                 'aria-disabled' => $disabled ? 'true' : null,
-                'aria-label' => $label,
+                'aria-label' => e($label),
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
                 'type' => $tag === 'button' ? $type : null,

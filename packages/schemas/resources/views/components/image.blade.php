@@ -15,7 +15,7 @@
     alt="{{ $getAlt() }}"
     src="{{ $getUrl() }}"
     @if (filled($tooltip))
-        x-tooltip="{ content: @js($tooltip), theme: $store.theme }"
+        x-tooltip="{ content: @js($tooltip), theme: $store.theme, allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable) }"
     @endif
     {{
         $getExtraAttributeBag()
@@ -24,8 +24,8 @@
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ])
             ->style([
-                "height: {$height}" => $height,
-                "width: {$width}" => $width,
+                ('height: ' . e($height)) => $height,
+                ('width: ' . e($width)) => $width,
             ])
     }}
 />

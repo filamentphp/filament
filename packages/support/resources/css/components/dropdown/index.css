@@ -3,7 +3,7 @@
 }
 
 & .fi-dropdown-panel {
-    @apply absolute z-10 w-screen max-w-[14rem]! rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10;
+    @apply absolute z-20 w-screen max-w-[14rem]! rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10;
 
     &:not(.fi-dropdown-list) {
         @apply divide-y divide-gray-100 dark:divide-white/5;
@@ -11,6 +11,14 @@
 
     &.fi-opacity-0 {
         @apply opacity-0;
+    }
+
+    &.fi-width-3xs {
+        @apply max-w-3xs!;
+    }
+
+    &.fi-width-2xs {
+        @apply max-w-2xs!;
     }
 
     &.fi-width-xs {
@@ -55,6 +63,14 @@
 
     &.fi-width-7xl {
         @apply max-w-7xl!;
+    }
+
+    &.fi-width-none {
+        @apply max-w-none!;
+    }
+
+    &.fi-width-container {
+        @apply container!;
     }
 
     &.fi-scrollable {

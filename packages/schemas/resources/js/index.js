@@ -24,6 +24,10 @@ const resolveRelativeStatePath = function (containerPath, path, isAbsolute) {
         return path
     }
 
+    if (['', null, undefined].includes(path)) {
+        return containerPathCopy
+    }
+
     return `${containerPathCopy}.${path}`
 }
 
@@ -70,24 +74,34 @@ document.addEventListener('alpine:init', () => {
                 )
             })
         },
+
+        isStateChanged(state, old) {
+            if (state === undefined) {
+                return false
+            }
+
+            try {
+                return JSON.stringify(state) !== JSON.stringify(old)
+            } catch {
+                return state !== old
+            }
+        },
     }))
 
     window.Alpine.data(
         'filamentSchemaComponent',
-        ({ path, containerPath, isLive, $wire }) => ({
+        ({ path, containerPath, $wire }) => ({
             $statePath: path,
             $get: (path, isAbsolute) => {
                 return $wire.$get(
                     resolveRelativeStatePath(containerPath, path, isAbsolute),
                 )
             },
-            $set: (path, state, isAbsolute, isUpdateLive = null) => {
-                isUpdateLive ??= isLive
-
+            $set: (path, state, isAbsolute, isLive = false) => {
                 return $wire.$set(
                     resolveRelativeStatePath(containerPath, path, isAbsolute),
                     state,
-                    isUpdateLive,
+                    isLive,
                 )
             },
             get $state() {

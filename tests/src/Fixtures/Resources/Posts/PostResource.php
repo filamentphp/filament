@@ -33,6 +33,8 @@ class PostResource extends Resource
 
     protected static int $globalSearchResultsLimit = 3;
 
+    protected static ?int $globalSearchSort = 10;
+
     public static function form(Schema $form): Schema
     {
         return $form

@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'یەکەم',
+        ],
+
         'go_to_page' => [
             'label' => 'بڕۆ بۆ پەڕەی :page',
+        ],
+
+        'last' => [
+            'label' => 'دوایین',
         ],
 
         'next' => [
@@ -31,7 +39,7 @@ return [
         ],
 
         'previous' => [
-            'label' => 'پێشوو',
+            'label' => 'پێشتر',
         ],
 
     ],

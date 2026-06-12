@@ -4,11 +4,16 @@ on:
   issues:
     types: [opened, edited]
 
+permissions:
+  contents: read
+
 jobs:
   check-repro:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const URL_REGEXP = /### Reproduction repository \(issue will be closed if this is not valid\)[\r\n]+([^#]+)###/m
@@ -51,7 +56,7 @@ jobs:
                     .join('\n')
                     .trim()
 
-                await github.issues.createComment({
+                await github.rest.issues.createComment({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -62,7 +67,7 @@ jobs:
             async function getGitHubActionComments() {
                 debug(`Loading existing comments...`)
 
-                const comments = await github.issues.listComments({
+                const comments = await github.rest.issues.listComments({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -75,7 +80,7 @@ jobs:
             }
 
             async function getIssueLabels() {
-                const issues = await github.issues.listLabelsOnIssue({
+                const issues = await github.rest.issues.listLabelsOnIssue({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -85,7 +90,7 @@ jobs:
             }
 
             async function updateIssue(state, state_reason = null) {
-                await github.issues.update({
+                await github.rest.issues.update({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     issue_number: context.issue.number,
@@ -111,7 +116,7 @@ jobs:
 
                 debug(`Missing required information`)
 
-                await github.issues.addLabels({
+                await github.rest.issues.addLabels({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -149,7 +154,7 @@ jobs:
 
                 debug(`Reopening closed issue`)
 
-                await github.issues.removeLabel({
+                await github.rest.issues.removeLabel({
                     issue_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -166,7 +171,7 @@ jobs:
             `.trim()
 
             const NO_REPRO_URL = ((! url) || (! url.includes('https://github.com/')) || (url.includes('https://github.com/filamentphp') && (! url.includes('https://github.com/filamentphp/demo'))))
-            const NO_REPRO_STEPS = reproSteps.length < 25
+            const NO_REPRO_STEPS = (! reproSteps) || reproSteps.length < 25
 
             if (NO_REPRO_URL || NO_REPRO_STEPS) {
                 let comment = `
@@ -179,6 +184,8 @@ jobs:
                         However, it looks like you forgot to fill in the reproduction repository URL. Can you edit your original post and then we'll look at your issue?
 
                         We need a public GitHub repository which contains a Laravel app with the minimal amount of Filament code to reproduce the problem. **Please do not link to your actual project**, what we need instead is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn\'t matter if your real project is private / confidential, since we want a link to a separate, isolated reproduction. That would allow us to download it and review your bug much easier, so it can be fixed quicker. Please make sure to include a database seeder with everything we need to set the app up quickly.
+
+                        Need a starting point? Use our [issue reproduction template](https://github.com/filamentphp/issue-reproduction-template) — pick the branch matching your Filament major version.
                     `
                 }
 

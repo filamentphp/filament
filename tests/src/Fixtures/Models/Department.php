@@ -13,6 +13,8 @@ class Department extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $guarded = [];
+
     protected static function newFactory()
     {
         return DepartmentFactory::new();

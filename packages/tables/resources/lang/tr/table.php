@@ -6,12 +6,38 @@ return [
 
         'heading' => 'Sütunlar',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Sütunları uygula',
+            ],
+
+            'reset' => [
+                'label' => 'Sıfırla',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
 
         'actions' => [
             'label' => 'İşlem|İşlemler',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Yükleniyor...',
+
+            'no_search_results_message' => 'Arama kriterlerinize uyan seçenek yok.',
+
+            'placeholder' => 'Bir seçenek seçin',
+
+            'searching_message' => 'Aranıyor...',
+
+            'search_prompt' => 'Aramak için yazmaya başlayın...',
+
         ],
 
         'text' => [
@@ -173,8 +199,7 @@ return [
         'fields' => [
 
             'group' => [
-                'label' => 'Grupla',
-                'placeholder' => 'Grupla',
+                'label' => 'Şuna göre grupla',
             ],
 
             'direction' => [

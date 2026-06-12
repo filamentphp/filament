@@ -33,14 +33,20 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Url;
 
 use function Filament\authorize;
 
+/**
+ * @template TModel of Model = Model
+ */
 class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
     use InteractsWithRelationshipTable;
 
     public ?string $previousUrl = null;
@@ -91,6 +97,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     protected function authorizeAccess(): void
     {
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
+    }
+
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
     }
 
     /**
@@ -180,6 +191,10 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public function getDefaultActionRecord(Action $action): ?Model
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }
@@ -187,8 +202,42 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
+    public function getDefaultActionRelationship(Action $action): ?Relation
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getRelationship();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return ?class-string<Model>
+     */
+    public function getDefaultActionModel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModel();
+        }
+
+        return parent::getDefaultActionModel($action);
+    }
+
+    public function getDefaultActionModelLabel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModelLabel();
+        }
+
+        return parent::getDefaultActionModelLabel($action);
+    }
+
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }
@@ -256,23 +305,28 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             return null;
         }
 
+        $actionModel = $action->getModel();
+
         if (
             ($action instanceof CreateAction) &&
-            ($relatedResource::hasPage('create'))
+            ($relatedResource::hasPage('create')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('create', shouldGuessMissingParameters: true);
         }
 
         if (
             ($action instanceof EditAction) &&
-            ($relatedResource::hasPage('edit'))
+            ($relatedResource::hasPage('edit')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('edit', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }
 
         if (
             ($action instanceof ViewAction) &&
-            ($relatedResource::hasPage('view'))
+            ($relatedResource::hasPage('view')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('view', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }
@@ -290,5 +344,13 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             'label' => $this->getRecordTitle(),
             'relationship' => static::getRelationshipTitle(),
         ]);
+    }
+
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
+    {
+        return $this->getBaseRecord();
     }
 }

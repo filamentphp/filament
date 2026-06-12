@@ -51,7 +51,7 @@ class CustomBlockExtension extends Node
                 'rendered' => false,
             ],
             'preview' => [
-                'parseHTML' => fn ($DOMNode) => base64_decode($DOMNode->getAttribute('data-preview') ?: null),
+                'parseHTML' => fn ($DOMNode) => base64_decode($DOMNode->getAttribute('data-preview') ?: ''),
                 'rendered' => false,
             ],
         ];

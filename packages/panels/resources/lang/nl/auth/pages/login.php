@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Verifieer je identiteit',
+
+        'subheading' => 'Om inloggen te voltooien, moet je je identiteit verifiëren.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Hoe wil je verifiëren?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Verifiëren',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Onjuiste inloggegevens.',

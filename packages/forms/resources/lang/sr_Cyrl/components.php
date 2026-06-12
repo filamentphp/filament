@@ -280,6 +280,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Датотеке морају бити типа: :values.',
+
+        'file_attachments_max_size_message' => 'Датотека не сме бити већа од :max kb.',
+
         'tools' => [
             'attach_files' => 'Додај датотеке',
             'blockquote' => 'Цитат',
@@ -439,6 +443,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Мрежа',
+
+                'modal' => [
+
+                    'heading' => 'Мрежа',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Предефинисано',
+
+                            'placeholder' => 'Ништа',
+
+                            'options' => [
+                                'two' => 'Један',
+                                'three' => 'Три',
+                                'four' => 'Четири',
+                                'five' => 'Пет',
+                                'two_start_third' => 'Два (почетак трећина)',
+                                'two_end_third' => 'Два (крај трећина)',
+                                'two_start_fourth' => 'Два (почетак четвртина)',
+                                'two_end_fourth' => 'Два (крај четвртина)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Колоне',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'За величине екрана',
+
+                            'options' => [
+                                'default' => 'Све',
+                                'sm' => 'Мале',
+                                'md' => 'Средње',
+                                'lg' => 'Велике',
+                                'xl' => 'Екстра велике',
+                                '2xl' => '2x екстра велике',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Две асиметричне колоне',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Почетак распона',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Крај распона',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Измени',
@@ -463,7 +532,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Боја текста',
+
+                'modal' => [
+
+                    'heading' => 'Боја текста',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Боја',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Произвољна боја',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'Датотеке морају бити типа: :values.',
+
+        'file_attachments_max_size_message' => 'Датотека не сме бити већа од :max kb.',
 
         'no_merge_tag_search_results_message' => 'Без резултата спојених ознака.',
 
@@ -484,6 +581,8 @@ return [
             'h1' => 'Наслов',
             'h2' => 'Заглавље',
             'h3' => 'Поднаслов',
+            'grid' => 'Мрежа',
+            'grid_delete' => 'Избриши мрежу',
             'highlight' => 'Означи',
             'horizontal_rule' => 'Хоризонтална линија',
             'italic' => 'Накошено',
@@ -507,9 +606,12 @@ return [
             'table_merge_cells' => 'Споји ћелије',
             'table_split_cell' => 'Раздели ћелију',
             'table_toggle_header_row' => 'Прикажи/скриј ред заглавља',
+            'text_color' => 'Боја текста',
             'underline' => 'Подвучено',
             'undo' => 'Поништи',
         ],
+
+        'uploading_file_message' => 'Отпремање датотеке...',
 
     ],
 
@@ -589,6 +691,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Копирај',
+                'message' => 'Копирано',
+            ],
 
             'hide_password' => [
                 'label' => 'Сакриј лозинку',

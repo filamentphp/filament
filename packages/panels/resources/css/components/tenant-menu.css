@@ -33,3 +33,9 @@
 .fi-tenant-menu-trigger-tenant-name {
     @apply text-gray-950 dark:text-white;
 }
+
+.fi-sidebar {
+    & .fi-tenant-menu {
+        @apply mx-4 mt-3;
+    }
+}

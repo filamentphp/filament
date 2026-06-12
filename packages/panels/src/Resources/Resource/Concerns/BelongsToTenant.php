@@ -2,26 +2,48 @@
 
 namespace Filament\Resources\Resource\Concerns;
 
-use Exception;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use LogicException;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait BelongsToTenant
 {
+    // Security: Tenant query scoping is applied via global scopes registered
+    // after tenant identification in middleware. Queries before identification
+    // (early middleware, service providers) will NOT be scoped. Custom queries
+    // outside the panel must be manually scoped. Laravel's `unique()` /
+    // `exists()` validation rules bypass global scopes — use
+    // `scopedUnique()` / `scopedExists()` instead. Filament does
+    // not guarantee multi-tenant security; it is your
+    // responsibility to implement correctly.
+
     protected static bool $isScopedToTenant = true;
 
     protected static ?string $tenantOwnershipRelationshipName = null;
 
     protected static ?string $tenantRelationshipName = null;
 
+    /**
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
+     */
     public static function scopeEloquentQueryToTenant(Builder $query, ?Model $tenant): Builder
     {
         $tenant ??= Filament::getTenant();
+
+        if ($query->getModel()::class === $tenant::class) {
+            return $query->whereKey($tenant);
+        }
 
         $tenantOwnershipRelationship = static::getTenantOwnershipRelationship($query->getModel());
         $tenantOwnershipRelationshipName = static::getTenantOwnershipRelationshipName();
@@ -49,6 +71,10 @@ trait BelongsToTenant
 
     public static function scopeToTenant(bool $condition = true): void
     {
+        // Security: Disabling tenant scoping means this resource's queries
+        // will not be filtered by tenant. All tenants' data will be
+        // accessible. Only disable for shared / cross-tenant resources.
+
         static::$isScopedToTenant = $condition;
     }
 
@@ -66,11 +92,11 @@ trait BelongsToTenant
     {
         $relationshipName = static::getTenantOwnershipRelationshipName();
 
-        if (! $record->isRelation($relationshipName)) {
+        if ($record->hasAttribute($relationshipName) || (! $record->isRelation($relationshipName))) {
             $resourceClass = static::class;
             $recordClass = $record::class;
 
-            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.");
+            throw new LogicException("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.");
         }
 
         return $record->{$relationshipName}();
@@ -88,11 +114,11 @@ trait BelongsToTenant
     {
         $relationshipName = static::getTenantRelationshipName();
 
-        if (! $tenant->isRelation($relationshipName)) {
+        if ($tenant->hasAttribute($relationshipName) || (! $tenant->isRelation($relationshipName))) {
             $resourceClass = static::class;
             $tenantClass = $tenant::class;
 
-            throw new Exception("The model [{$tenantClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by setting it as the [\$tenantRelationshipName] static property on the [{$resourceClass}] resource class.");
+            throw new LogicException("The model [{$tenantClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by setting it as the [\$tenantRelationshipName] static property on the [{$resourceClass}] resource class.");
         }
 
         return $tenant->{$relationshipName}();
@@ -115,7 +141,7 @@ trait BelongsToTenant
         }
 
         $model::addGlobalScope($panel->getTenancyScopeName(), function (Builder $query) use ($panel): void {
-            if (Filament::getCurrentOrDefaultPanel() !== $panel) {
+            if (Filament::getCurrentPanel() !== $panel) {
                 return;
             }
 
@@ -142,7 +168,7 @@ trait BelongsToTenant
         }
 
         $model::creating(function (Model $record) use ($panel): void {
-            if (Filament::getCurrentOrDefaultPanel() !== $panel) {
+            if (Filament::getCurrentPanel() !== $panel) {
                 return;
             }
 
@@ -160,7 +186,7 @@ trait BelongsToTenant
         });
 
         $model::created(function (Model $record) use ($panel): void {
-            if (Filament::getCurrentOrDefaultPanel() !== $panel) {
+            if (Filament::getCurrentPanel() !== $panel) {
                 return;
             }
 
@@ -172,7 +198,13 @@ trait BelongsToTenant
 
             $relationship = static::getTenantOwnershipRelationship($record);
 
-            if ($relationship instanceof BelongsTo) {
+            if ($relationship instanceof BelongsTo || $relationship instanceof BelongsToThrough) {
+                return;
+            }
+
+            if ($relationship instanceof BelongsToMany) {
+                $relationship->syncWithoutDetaching([$tenant]);
+
                 return;
             }
 

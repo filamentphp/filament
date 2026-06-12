@@ -6,9 +6,41 @@ return [
 
         'heading' => 'Kolonner',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Bruk kolonner',
+            ],
+
+            'reset' => [
+                'label' => 'Nullstill',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Handling|Handlinger',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Laster...',
+
+            'no_options_message' => 'Ingen alternativer tilgjengelig.',
+
+            'no_search_results_message' => 'Ingen alternativer samsvarer med søket ditt.',
+
+            'placeholder' => 'Velg et alternativ',
+
+            'searching_message' => 'Søker...',
+
+            'search_prompt' => 'Skriv for å søke...',
+
+        ],
 
         'text' => [
 
@@ -141,7 +173,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Alle',
+
+            'relationship' => [
+                'empty_option_label' => 'Ingen',
+            ],
+
         ],
 
         'trashed' => [
@@ -164,7 +202,6 @@ return [
 
             'group' => [
                 'label' => 'Grupper etter',
-                'placeholder' => 'Grupper etter',
             ],
 
             'direction' => [
@@ -224,5 +261,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'post',
 
 ];

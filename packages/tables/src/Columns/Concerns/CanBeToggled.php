@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Filament\Tables\Columns\ColumnGroup;
 
 trait CanBeToggled
 {
@@ -34,6 +35,12 @@ trait CanBeToggled
     {
         if ($this->isHidden()) {
             return false;
+        }
+
+        // When a column label is blank, it must be toggleable so that
+        // column groups can be collectively toggled on/off.
+        if ($this->getGroup() instanceof ColumnGroup && blank($this->getLabel())) {
+            return true;
         }
 
         return (bool) $this->evaluate($this->isToggleable);

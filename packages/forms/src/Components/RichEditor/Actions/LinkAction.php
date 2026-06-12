@@ -24,14 +24,14 @@ class LinkAction
             ->schema([
                 TextInput::make('url')
                     ->label(__('filament-forms::components.rich_editor.actions.link.modal.form.url.label'))
-                    ->url(),
+                    ->inputMode('url'),
                 Checkbox::make('shouldOpenInNewTab')
                     ->label(__('filament-forms::components.rich_editor.actions.link.modal.form.should_open_in_new_tab.label')),
             ])
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 $isSingleCharacterSelection = ($arguments['editorSelection']['head'] ?? null) === ($arguments['editorSelection']['anchor'] ?? null);
 
-                if (blank($data['url'])) {
+                if (blank($data['url'] ?? null)) {
                     $component->runCommands(
                         [
                             ...($isSingleCharacterSelection ? [EditorCommand::make(

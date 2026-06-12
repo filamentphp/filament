@@ -144,7 +144,7 @@ class Stat extends Component
         return $this->chartColor ?? $this->getColor();
     }
 
-    public function getIcon(): string | BackedEnum | null
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->icon;
     }
@@ -157,7 +157,7 @@ class Stat extends Component
         return $this->descriptionColor ?? $this->getColor();
     }
 
-    public function getDescriptionIcon(): string | BackedEnum | null
+    public function getDescriptionIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->descriptionIcon;
     }

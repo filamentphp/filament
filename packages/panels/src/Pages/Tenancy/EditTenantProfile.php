@@ -73,6 +73,11 @@ abstract class EditTenantProfile extends Page
         $this->fillForm();
     }
 
+    public function hydrate(): void
+    {
+        abort_unless(static::canView($this->tenant), 404);
+    }
+
     protected function fillForm(): void
     {
         $data = $this->tenant->attributesToArray();
@@ -243,17 +248,13 @@ abstract class EditTenantProfile extends Page
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
                     ->fullWidth($this->hasFullWidthFormActions())
-                    ->sticky($this->areFormActionsSticky()),
+                    ->sticky($this->areFormActionsSticky())
+                    ->key('form-actions'),
             ]);
     }
 
     protected function hasFullWidthFormActions(): bool
     {
         return false;
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

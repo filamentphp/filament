@@ -302,6 +302,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Selecionar',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Selecionar',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -459,6 +481,7 @@ return [
             'bold' => 'Negrito',
             'bullet_list' => 'Lista',
             'clear_formatting' => 'Limpar formatação',
+            'code' => 'Código',
             'code_block' => 'Bloco de código',
             'custom_blocks' => 'Blocos',
             'details' => 'Detalhes',
@@ -491,6 +514,8 @@ return [
             'underline' => 'Sublinhado',
             'undo' => 'Desfazer',
         ],
+
+        'uploading_file_message' => 'A carregar ficheiro...',
 
     ],
 
@@ -570,6 +595,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
 
             'hide_password' => [
                 'label' => 'Esconder a palavra-passe',

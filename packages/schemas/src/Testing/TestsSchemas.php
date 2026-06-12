@@ -84,6 +84,64 @@ class TestsSchemas
         };
     }
 
+    public function assertSchemaComponentVisible(): Closure
+    {
+        return function (string $key, ?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
+            $this->assertSchemaComponentExists($key, $schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            $components = $schemaInstance->getFlatComponents(withHidden: false);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayHasKey(
+                $key,
+                $components,
+                "Failed asserting that a component [{$key}] is visible on the schema with the name [{$schema}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertSchemaComponentHidden(): Closure
+    {
+        return function (string $key, ?string $schema = null): static {
+            if ($this->instance() instanceof HasActions) {
+                $schema ??= $this->instance()->getMountedActionSchemaName();
+            }
+
+            $schema ??= $this->instance()->getDefaultTestingSchemaName();
+
+            /** @phpstan-ignore-next-line */
+            $this->assertSchemaComponentExists($key, $schema);
+
+            /** @var Schema $schemaInstance */
+            $schemaInstance = $this->instance()->{$schema};
+
+            $components = $schemaInstance->getFlatComponents(withHidden: false);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayNotHasKey(
+                $key,
+                $components,
+                "Failed asserting that a component [{$key}] is hidden on the schema with the name [{$schema}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
     public function assertSchemaExists(): Closure
     {
         return function (string $name): static {

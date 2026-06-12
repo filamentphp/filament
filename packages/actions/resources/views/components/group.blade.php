@@ -3,6 +3,7 @@
     'badge' => null,
     'badgeColor' => null,
     'button' => false,
+    'buttonGroup' => null,
     'color' => null,
     'dropdownMaxHeight' => null,
     'dropdownOffset' => null,
@@ -45,6 +46,10 @@
             ->button()
             ->iconPosition($attributes->get('iconPosition') ?? $attributes->get('icon-position'))
             ->outlined($attributes->get('outlined') ?? false);
+    }
+
+    if ($buttonGroup) {
+        $group->buttonGroup();
     }
 
     if ($iconButton) {

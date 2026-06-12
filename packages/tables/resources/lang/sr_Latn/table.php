@@ -26,6 +26,20 @@ return [
             'label' => 'Akcija|Akcije',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Učitavanje...',
+
+            'no_search_results_message' => 'Nijedna opcija ne se podudara.',
+
+            'placeholder' => 'Izaberite opciju',
+
+            'searching_message' => 'Pretraga...',
+
+            'search_prompt' => 'Započnite unos za pretragu...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -184,7 +198,6 @@ return [
 
             'group' => [
                 'label' => 'Grupišite po',
-                'placeholder' => 'Grupišite po',
             ],
 
             'direction' => [

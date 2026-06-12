@@ -40,15 +40,23 @@ trait BelongsToModel
             return;
         }
 
+        $isDisabled = $this->isDisabled();
+        $isHidden = $this->isHidden();
+        $isSaved = $this->isSaved();
+
+        if ($isDisabled && (! $this->shouldSaveRelationshipsWhenDisabled()) && (! $isSaved)) {
+            return;
+        }
+
+        if ($isHidden && (! $this->shouldSaveRelationshipsWhenHidden())) {
+            return;
+        }
+
+        if ((! $isDisabled) && (! $isHidden) && (! $isSaved)) {
+            return;
+        }
+
         if (! ($this->getRecord()?->exists)) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenDisabled()) && $this->isDisabled()) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenHidden()) && $this->isHidden()) {
             return;
         }
 
@@ -63,15 +71,23 @@ trait BelongsToModel
             return;
         }
 
+        $isDisabled = $this->isDisabled();
+        $isHidden = $this->isHidden();
+        $isSaved = $this->isSaved();
+
+        if ($isDisabled && (! $this->shouldSaveRelationshipsWhenDisabled()) && (! $isSaved)) {
+            return;
+        }
+
+        if ($isHidden && (! $this->shouldSaveRelationshipsWhenHidden())) {
+            return;
+        }
+
+        if ((! $isDisabled) && (! $isHidden) && (! $isSaved)) {
+            return;
+        }
+
         if (! ($this->getRecord()?->exists)) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenDisabled()) && $this->isDisabled()) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenHidden()) && $this->isHidden()) {
             return;
         }
 
@@ -93,13 +109,35 @@ trait BelongsToModel
         $this->evaluate($callback);
 
         if ($shouldHydrate) {
+            $this->castStateAfterLoadingFromRelationships();
+
             $this->callAfterStateHydrated();
 
-            foreach ($this->getChildSchemas() as $childSchema) {
+            foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
                 $childSchema->callAfterStateHydrated();
             }
 
             $this->fillStateWithNull();
+        }
+    }
+
+    public function castStateAfterLoadingFromRelationships(): void
+    {
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            foreach ($childSchema->getComponents(withActions: false, withHidden: true) as $component) {
+                $component->castStateAfterLoadingFromRelationships();
+            }
+        }
+
+        $rawState = $this->getRawState();
+        $originalRawState = $rawState;
+
+        foreach ($this->getStateCasts() as $stateCast) {
+            $rawState = $stateCast->set($rawState);
+        }
+
+        if ($rawState !== $originalRawState) {
+            $this->rawState($rawState);
         }
     }
 

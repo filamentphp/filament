@@ -1,17 +1,62 @@
 export default () => ({
     isSticky: false,
 
+    width: 0,
+
+    resizeObserver: null,
+
+    boundUpdateWidth: null,
+
     init() {
-        this.evaluatePageScrollPosition()
+        const parent = this.$el.parentElement
+
+        if (!parent) {
+            return
+        }
+
+        this.updateWidth()
+
+        this.resizeObserver = new ResizeObserver(() => this.updateWidth())
+        this.resizeObserver.observe(parent)
+
+        this.boundUpdateWidth = this.updateWidth.bind(this)
+        window.addEventListener('resize', this.boundUpdateWidth)
     },
 
-    evaluatePageScrollPosition() {
-        const rect = this.$el.getBoundingClientRect()
+    enableSticky() {
+        this.isSticky = this.$el.getBoundingClientRect().top > 0
+    },
 
-        const isBelowViewport = rect.top > window.innerHeight
-        const isPartiallyVisible =
-            rect.top < window.innerHeight && rect.bottom > window.innerHeight
+    disableSticky() {
+        this.isSticky = false
+    },
 
-        this.isSticky = isBelowViewport || isPartiallyVisible
+    updateWidth() {
+        const parent = this.$el.parentElement
+
+        if (!parent) {
+            return
+        }
+
+        const actionsComputedStyle = getComputedStyle(
+            this.$root.querySelector('.fi-ac'),
+        )
+
+        this.width =
+            parent.offsetWidth +
+            parseInt(actionsComputedStyle.marginInlineStart, 10) * -1 +
+            parseInt(actionsComputedStyle.marginInlineEnd, 10) * -1
+    },
+
+    destroy() {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect()
+            this.resizeObserver = null
+        }
+
+        if (this.boundUpdateWidth) {
+            window.removeEventListener('resize', this.boundUpdateWidth)
+            this.boundUpdateWidth = null
+        }
     },
 })

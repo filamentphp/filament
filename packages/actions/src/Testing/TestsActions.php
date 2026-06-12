@@ -4,7 +4,6 @@ namespace Filament\Actions\Testing;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ActionName;
@@ -15,6 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
+use LogicException;
 use ReflectionClass;
 
 use function Livewire\store;
@@ -42,14 +42,6 @@ class TestsActions
                     $action['arguments'] ?? [],
                     $action['context'] ?? [],
                 );
-            }
-
-            if (store($this->instance())->has('redirect')) {
-                return $this;
-            }
-
-            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count($actions))) {
-                return $this;
             }
 
             return $this;
@@ -91,10 +83,24 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($actions, $arguments);
 
+            /** @var array<array<string, mixed>> $parsedActions */
+            /** @phpstan-ignore-next-line */
+            $parsedActions = $this->parseNestedActions($actions, $arguments);
+
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
 
             if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count(Arr::wrap($actions)))) {
+                return $this;
+            }
+
+            $lastParsedAction = Arr::last($parsedActions);
+            $lastMountedActionIndex = count($this->instance()->mountedActions) - 1;
+
+            if (
+                $lastMountedActionIndex >= 0 &&
+                ($this->instance()->mountedActions[$lastMountedActionIndex]['name'] ?? null) !== ($lastParsedAction['name'] ?? null)
+            ) {
                 return $this;
             }
 
@@ -124,10 +130,6 @@ class TestsActions
             }
 
             $this->call('callMountedAction', $arguments);
-
-            if (store($this->instance())->has('redirect')) {
-                return $this;
-            }
 
             return $this;
         };
@@ -507,6 +509,90 @@ class TestsActions
         };
     }
 
+    public function assertMountedActionModalSee(): Closure
+    {
+        return function (string | array $values, $escape = true) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringContainsString(
+                    $escape ? e($value) : $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertMountedActionModalDontSee(): Closure
+    {
+        return function (string | array $values, bool $escape = true) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringNotContainsString(
+                    $escape ? e($value) : $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertMountedActionModalSeeHtml(): Closure
+    {
+        return function (string | array $values) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringContainsString(
+                    $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertMountedActionModalDontSeeHtml(): Closure
+    {
+        return function (string | array $values) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringNotContainsString(
+                    $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
     public function assertActionHalted(): Closure
     {
         return $this->assertActionMounted();
@@ -631,7 +717,7 @@ class TestsActions
                     $action = $action->toArray(defaultSchema: ($initialMountedActionsCount + $actionNestingIndex) ? ('mountedActionSchema' . ($initialMountedActionsCount + $actionNestingIndex - 1)) : $this->instance()->getDefaultTestingSchemaName());
                 }
 
-                $actionName = $action['name'] ?? throw new Exception("Action name at index [{$actionNestingIndex}] is not specified.");
+                $actionName = $action['name'] ?? throw new LogicException("Action name at index [{$actionNestingIndex}] is not specified.");
 
                 if (
                     class_exists($actionName) &&
@@ -653,10 +739,7 @@ class TestsActions
 
                         $areArgumentsKeyedByActionName = true;
                     } elseif (! $areArgumentsKeyedByActionName) {
-                        $action['arguments'] = [
-                            ...$arguments,
-                            ...$action['arguments'] ?? [],
-                        ];
+                        $action['arguments'] = $arguments;
                     }
                 }
 
@@ -672,6 +755,31 @@ class TestsActions
             }
 
             return $actions;
+        };
+    }
+
+    /**
+     * @internal
+     */
+    public function getMountedActionModalHtml(): Closure
+    {
+        return function (): string {
+            $partials = data_get($this->lastState->getEffects(), 'partials', []);
+
+            $partialName = 'action-modals';
+
+            if (array_key_exists($partialName, $partials)) {
+                return $partials[$partialName];
+            }
+
+            $nestingIndex = count($this->instance()->mountedActions) - 1;
+            $partialName = "{$partialName}.{$nestingIndex}";
+
+            if (array_key_exists($partialName, $partials)) {
+                return $partials[$partialName];
+            }
+
+            Assert::fail('No mounted action modal content was found.');
         };
     }
 }

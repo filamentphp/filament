@@ -185,6 +185,40 @@ it('does not render tickets page if the policy view returns a denied response', 
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
+it('re-authorizes view on Livewire updates after the initial mount', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
+
+    $component = livewire(ViewTicket::class, ['record' => $ticket->getKey()]);
+
+    app()->bind(TicketPolicy::class . '::view', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
+});
+
+it('re-authorizes viewAny on Livewire updates after the initial mount of a view page', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+
+    $component = livewire(ViewTicket::class, ['record' => $ticket->getKey()]);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 
@@ -225,3 +259,99 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning false' => fn (): array => [ReplicateAction::class, 'replicate', false, false],
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
+
+it('header action with custom model different from page record receives null record', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(ViewPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->callAction('actionWithCustomModel', data: [
+            'name' => 'Test Name',
+        ])
+        ->assertHasNoFormErrors()
+        ->assertDispatched(
+            'action-with-custom-model-called',
+            fn (string $event, array $data): bool => $data[0]['recordIsNull'] === true && $data[0]['modelIsUser'] === true
+        );
+});
+
+it('header action with same model as page record receives the record', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(ViewPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->callAction('actionWithSameModel', data: [
+            'title' => 'Test Title',
+        ])
+        ->assertHasNoFormErrors()
+        ->assertDispatched(
+            'action-with-same-model-called',
+            fn (string $event, array $data): bool => $data[0]['recordIsPost'] === true && $data[0]['modelIsPost'] === true
+        );
+});
+
+it('header action without custom model receives the page record', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(ViewPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->callAction('actionWithoutCustomModel', data: [
+            'title' => 'Test Title',
+        ])
+        ->assertHasNoFormErrors()
+        ->assertDispatched(
+            'action-without-custom-model-called',
+            fn (string $event, array $data): bool => $data[0]['recordIsPost'] === true && $data[0]['modelIsPost'] === true
+        );
+});
+
+it('modal action does not return URL when modal is explicitly set', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(ViewPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->assertActionExists('createUserWithModal', function (CreateAction $action): bool {
+            return $action->hasModal() === true && $action->getUrl() === null;
+        });
+});
+
+it('create action with custom model and modal opens modal instead of redirecting', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(ViewPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->mountAction('createUserWithModal')
+        ->assertActionMounted('createUserWithModal')
+        ->assertSchemaStateSet([
+            'name' => '',
+        ]);
+});
+
+it('create action with custom model returns null for record', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(ViewPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->assertActionExists('createUserWithModal', function (CreateAction $action): bool {
+            return $action->getRecord() === null;
+        });
+});
+
+it('action with modal and custom model can be called without relationship errors', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(ViewPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->callAction('simpleModalAction', data: [
+            'name' => 'Test Name',
+        ])
+        ->assertHasNoFormErrors()
+        ->assertDispatched('simple-modal-action-called');
+});

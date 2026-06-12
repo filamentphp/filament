@@ -6,12 +6,38 @@ return [
 
         'heading' => 'Colunas',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Aplicar colunas',
+            ],
+
+            'reset' => [
+                'label' => 'Redefinir',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
 
         'actions' => [
             'label' => 'Ação|Ações',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Carregando...',
+
+            'no_search_results_message' => 'Nenhuma opção corresponde à sua busca.',
+
+            'placeholder' => 'Selecione uma opção',
+
+            'searching_message' => 'Buscando...',
+
+            'search_prompt' => 'Digite para buscar...',
+
         ],
 
         'text' => [
@@ -110,6 +136,7 @@ return [
         'heading' => 'Sem registros',
 
         'description' => 'Crie um :model para começar.',
+
     ],
 
     'filters' => [
@@ -173,7 +200,6 @@ return [
 
             'group' => [
                 'label' => 'Agrupar por',
-                'placeholder' => 'Agrupar por',
             ],
 
             'direction' => [
@@ -204,7 +230,7 @@ return [
             ],
 
             'deselect_all' => [
-                'label' => 'Desselecionar todos',
+                'label' => 'Desmarcar todos',
             ],
 
         ],
@@ -221,7 +247,7 @@ return [
 
             'direction' => [
 
-                'label' => 'Direção de ordenação',
+                'label' => 'Direção da ordenação',
 
                 'options' => [
                     'asc' => 'Ascendente',
@@ -233,5 +259,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'registro',
 
 ];

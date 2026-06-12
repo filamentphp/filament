@@ -87,6 +87,6 @@ class Actions extends Component implements HasActions, HasSchemas
 
     public function render(): View
     {
-        return view('livewire.form-actions');
+        return view('livewire.form');
     }
 }

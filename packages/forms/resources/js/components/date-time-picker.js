@@ -37,6 +37,8 @@ export default function dateTimePickerFormComponent({
 
         focusedYear: null,
 
+        hasValidationMessage: false,
+
         hour: null,
 
         isClearingState: false,
@@ -250,6 +252,13 @@ export default function dateTimePickerFormComponent({
 
                 this.setDisplayText()
             })
+        },
+
+        checkTimeInputValidity(event) {
+            const el = event.target
+            if (this.isOpen() && !el.validity.valid) {
+                el.reportValidity()
+            }
         },
 
         clearState() {
@@ -493,6 +502,24 @@ export default function dateTimePickerFormComponent({
             this.setDisplayText()
         },
 
+        timeInputInvalid(event) {
+            const el = event.target
+
+            if (!this.isOpen()) {
+                event.preventDefault()
+                this.togglePanelVisibility()
+            }
+
+            if (!this.hasValidationMessage) {
+                this.hasValidationMessage = true
+
+                this.$nextTick(() => {
+                    el.reportValidity()
+                    this.hasValidationMessage = false
+                })
+            }
+        },
+
         isOpen() {
             return this.$refs.panel?.style.display === 'block'
         },
@@ -516,6 +543,7 @@ const locales = {
     fa: require('dayjs/locale/fa'),
     fi: require('dayjs/locale/fi'),
     fr: require('dayjs/locale/fr'),
+    he: require('dayjs/locale/he'),
     hi: require('dayjs/locale/hi'),
     hu: require('dayjs/locale/hu'),
     hy: require('dayjs/locale/hy-am'),
@@ -536,6 +564,7 @@ const locales = {
     pt_BR: require('dayjs/locale/pt-br'),
     ro: require('dayjs/locale/ro'),
     ru: require('dayjs/locale/ru'),
+    sl: require('dayjs/locale/sl'),
     sr_Cyrl: require('dayjs/locale/sr-cyrl'),
     sr_Latn: require('dayjs/locale/sr'),
     sv: require('dayjs/locale/sv'),
@@ -545,5 +574,6 @@ const locales = {
     ur: require('dayjs/locale/ur'),
     vi: require('dayjs/locale/vi'),
     zh_CN: require('dayjs/locale/zh-cn'),
+    zh_HK: require('dayjs/locale/zh-hk'),
     zh_TW: require('dayjs/locale/zh-tw'),
 }

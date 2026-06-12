@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
         'tools' => [
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Cuadrícula',
+
+                'modal' => [
+
+                    'heading' => 'Cuadrícula',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Preestablecido',
+
+                            'placeholder' => 'Ninguno',
+
+                            'options' => [
+                                'two' => 'Dos',
+                                'three' => 'Tres',
+                                'four' => 'Cuatro',
+                                'five' => 'Cinco',
+                                'two_start_third' => 'Dos (Comienzo del tercio)',
+                                'two_end_third' => 'Dos (Final del tercio)',
+                                'two_start_fourth' => 'Dos (Comienzo del cuarto)',
+                                'two_end_fourth' => 'Dos (Final del cuarto)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Columnas',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Desde el punto de quiebre',
+
+                            'options' => [
+                                'default' => 'Todos',
+                                'sm' => 'Pequeño',
+                                'md' => 'Mediano',
+                                'lg' => 'Grande',
+                                'xl' => 'Extra grande',
+                                '2xl' => 'Doble extra grande',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dos columnas asimétricas',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Extensión inicial',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Extensión final',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Editar',
@@ -467,9 +536,73 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Color de texto',
+
+                'modal' => [
+
+                    'heading' => 'Color de texto',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Color',
+
+                            'options' => [
+                                'slate' => 'Gris pizarra',
+                                'gray' => 'Gris',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Gris neutral',
+                                'stone' => 'Piedra',
+                                'mauve' => 'Malva',
+                                'olive' => 'Oliva',
+                                'mist' => 'Neblina',
+                                'taupe' => 'Gris topo',
+                                'red' => 'Rojo',
+                                'orange' => 'Naranja',
+                                'amber' => 'Ámbar',
+                                'yellow' => 'Amarillo',
+                                'lime' => 'Lima',
+                                'green' => 'Verde',
+                                'emerald' => 'Verde esmeralda',
+                                'teal' => 'Verde azulado',
+                                'cyan' => 'Turquesa',
+                                'sky' => 'Cielo',
+                                'blue' => 'Azul',
+                                'indigo' => 'Índigo',
+                                'violet' => 'Violeta',
+                                'purple' => 'Púrpura',
+                                'fuchsia' => 'Fucsia',
+                                'pink' => 'Rosado',
+                                'rose' => 'Rosa',
+                            ],
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Color personalizado',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
         'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
+
+        'mentions' => [
+            'no_options_message' => 'No hay opciones disponibles.',
+            'no_search_results_message' => 'No hay resultados que coincidan con su búsqueda.',
+            'search_prompt' => 'Comience a escribir para buscar...',
+            'searching_message' => 'Buscando...',
+        ],
 
         'tools' => [
             'align_center' => 'Alinear al centro',
@@ -486,8 +619,13 @@ return [
             'custom_blocks' => 'Bloques',
             'details' => 'Detalles',
             'h1' => 'Título',
-            'h2' => 'Encabezado',
-            'h3' => 'Subencabezado',
+            'h2' => 'Encabezado 2',
+            'h3' => 'Encabezado 3',
+            'h4' => 'Encabezado 4',
+            'h5' => 'Encabezado 5',
+            'h6' => 'Encabezado 6',
+            'grid' => 'Cuadrícula',
+            'grid_delete' => 'Eliminar cuadrícula',
             'highlight' => 'Resaltar',
             'horizontal_rule' => 'Línea horizontal',
             'italic' => 'Cursiva',
@@ -495,6 +633,7 @@ return [
             'link' => 'Enlace',
             'merge_tags' => 'Etiquetas dinámicas',
             'ordered_list' => 'Lista numerada',
+            'paragraph' => 'Párrafo',
             'redo' => 'Rehacer',
             'small' => 'Texto pequeño',
             'strike' => 'Tachar',
@@ -511,9 +650,13 @@ return [
             'table_merge_cells' => 'Combinar celdas',
             'table_split_cell' => 'Dividir celda',
             'table_toggle_header_row' => 'Alternar fila de encabezado',
+            'table_toggle_header_cell' => 'Alternar celda de encabezado',
+            'text_color' => 'Color de texto',
             'underline' => 'Subrayar',
             'undo' => 'Deshacer',
         ],
+
+        'uploading_file_message' => 'Cargando archivo...',
 
     ],
 
@@ -576,6 +719,8 @@ return [
 
         'max_items_message' => 'Solo :count pueden ser seleccionados.',
 
+        'no_options_message' => 'No hay opciones disponibles.',
+
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
 
         'placeholder' => 'Seleccione una opción',
@@ -587,12 +732,27 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Eliminar',
+            ],
+
+        ],
+
         'placeholder' => 'Nueva etiqueta',
+
     ],
 
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
 
             'hide_password' => [
                 'label' => 'Ocultar contraseña',

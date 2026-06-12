@@ -2,6 +2,7 @@
 
 namespace Filament\Actions\Exports\Concerns;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Support\Str;
 
@@ -62,9 +63,17 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
+        // Security: Export values are written to CSV/XLSX as-is after
+        // formatting. Use `formatStateUsing()` to sanitize values that
+        // may trigger formula injection (`=`, `+`, `-`, `@`).
+
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
 
         if ($characterLimit = $this->getCharacterLimit()) {
             $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());

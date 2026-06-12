@@ -30,6 +30,10 @@ return [
                                 'title' => 'We\'ve sent you a new code by email',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Too many resend attempts. Please wait before requesting another code.',
+                            ],
+
                         ],
 
                     ],
@@ -39,6 +43,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'The code you entered is invalid.',
+
+                    'rate_limited' => 'Too many attempts. Please try again later.',
 
                 ],
 

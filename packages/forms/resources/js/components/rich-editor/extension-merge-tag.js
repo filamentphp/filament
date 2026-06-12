@@ -62,6 +62,7 @@ export default Node.create({
 
     addStorage() {
         return {
+            mergeTags: [],
             suggestions: [],
             getSuggestionFromChar: () => null,
         }
@@ -71,7 +72,7 @@ export default Node.create({
         return {
             HTMLAttributes: {},
             renderText({ node }) {
-                return `{{ ${node.attrs.label ?? node.attrs.id} }}`
+                return `{{ ${this.mergeTags[node.attrs.id]} }}`
             },
             deleteTriggerWithBackspace: false,
             renderHTML({ options, node }) {
@@ -81,7 +82,7 @@ export default Node.create({
                         this.HTMLAttributes,
                         options.HTMLAttributes,
                     ),
-                    `${node.attrs.label ?? node.attrs.id}`,
+                    `${this.mergeTags[node.attrs.id]}`,
                 ]
             },
             suggestions: [],
@@ -109,20 +110,6 @@ export default Node.create({
 
                     return {
                         'data-id': attributes.id,
-                    }
-                },
-            },
-
-            label: {
-                default: null,
-                parseHTML: (element) => element.getAttribute('data-label'),
-                renderHTML: (attributes) => {
-                    if (!attributes.label) {
-                        return {}
-                    }
-
-                    return {
-                        'data-label': attributes.label,
                     }
                 },
             },

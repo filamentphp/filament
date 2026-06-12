@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Դիտել',
 
+    'navigation_label' => 'Դիտել',
+
     'content' => [
 
         'tab' => [

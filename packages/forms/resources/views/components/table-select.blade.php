@@ -22,9 +22,10 @@
             'model' => $getModel(),
             'record' => $getRecord(),
             'relationshipName' => $getRelationshipName(),
+            'shouldIgnoreRelatedRecords' => $shouldIgnoreRelatedRecords(),
             'tableConfiguration' => base64_encode($getTableConfiguration()),
             'tableArguments' => $getTableArguments(),
-            'wire:model' => $getStatePath(),
+            $applyStateBindingModifiers('wire:model') => $getStatePath(),
         ], key($getLivewireKey()))
     </div>
 </x-dynamic-component>

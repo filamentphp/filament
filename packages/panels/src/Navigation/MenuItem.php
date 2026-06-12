@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Support\Components\Component;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use Laravel\SerializableClosure\Serializers\Native;
 
@@ -16,7 +17,7 @@ class MenuItem extends Component
 {
     protected string | Closure | null $color = null;
 
-    protected string | BackedEnum | Closure | null $icon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $icon = null;
 
     protected string | Closure | null $label = null;
 
@@ -49,7 +50,7 @@ class MenuItem extends Component
         return $this;
     }
 
-    public function icon(string | BackedEnum | Closure | null $icon): static
+    public function icon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -77,9 +78,16 @@ class MenuItem extends Component
         return $this;
     }
 
-    public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function url(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
-        $this->openUrlInNewTab($shouldOpenInNewTab);
+        // Security: If this URL is derived from user input, validate it
+        // to prevent XSS via `javascript:` protocol URLs rendered
+        // in `href` attributes.
+
+        if ($shouldOpenInNewTab !== null) {
+            $this->openUrlInNewTab($shouldOpenInNewTab);
+        }
+
         $this->url = $url;
 
         return $this;
@@ -125,7 +133,7 @@ class MenuItem extends Component
         return $this->evaluate($this->color);
     }
 
-    public function getIcon(): string | BackedEnum | null
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->icon);
     }

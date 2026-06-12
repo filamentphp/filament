@@ -45,7 +45,7 @@ There are 5 main tasks when adding a form to a Livewire component class. Each on
 
 1) Implement the `HasSchemas` interface and use the `InteractsWithSchemas` trait.
 2) Define a public Livewire property to store your form's data. In our example, we'll call this `$data`, but you can call it whatever you want.
-3) Add a `form()` method, which is where you configure the form. [Add the form's schema](getting-started#form-schemas), and tell Filament to store the form data in the `$data` property (using `statePath('data')`).
+3) Add a `form()` method, which is where you configure the form. [Add the form's schema](../forms/overview#form-schemas), and tell Filament to store the form data in the `$data` property (using `statePath('data')`).
 4) Initialize the form with `$this->form->fill()` in `mount()`. This is imperative for every form that you build, even if it doesn't have any initial data.
 5) Define a method to handle the form submission. In our example, we'll call this `create()`, but you can call it whatever you want. Inside that method, you can validate and get the form's data using `$this->form->getState()`. It's important that you use this method instead of accessing the `$this->data` property directly, because the form's data needs to be validated and transformed into a useful format before being returned.
 
@@ -57,6 +57,7 @@ namespace App\Livewire;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
 use Filament\Schemas\Schema;
@@ -65,6 +66,7 @@ use Livewire\Component;
 class CreatePost extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
     
     public ?array $data = [];
     
@@ -114,7 +116,7 @@ Finally, in your Livewire component's view, render the form:
 ```
 
 <Aside variant="info">
-    `<x-filament-actions::modals />` is used to render form component [action modals](../schemas/actions). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
+    `<x-filament-actions::modals />` is used to render form component [action modals](../actions/modals). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
 </Aside>
 
 Visit your Livewire component in the browser, and you should see the form components from `components()`:
@@ -162,8 +164,8 @@ It's important that you use the `$this->form->fill()` method instead of assignin
 
 Giving the `$form` access to a model is useful for a few reasons:
 
-- It allows fields within that form to load information from that model. For example, select fields can [load their options from the database](fields/select#integrating-with-an-eloquent-relationship) automatically.
-- The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](fields/repeater#integrating-with-an-eloquent-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
+- It allows fields within that form to load information from that model. For example, select fields can [load their options from the database](../forms/select#integrating-with-an-eloquent-relationship) automatically.
+- The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](../forms/repeater#integrating-with-an-eloquent-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
 - Validation rules like `exists()` and `unique()` can automatically retrieve the database table name from the model.
 
 It is advised to always pass the model to the form when there is one. As explained, it unlocks many new powers of Filament's form system.
@@ -246,24 +248,16 @@ public function form(Schema $schema): Schema
 
 ## Using multiple forms
 
-By default, the `InteractsWithForms` trait only handles one form per Livewire component - `form()`. To add more forms to the Livewire component, you can define them in the `getForms()` method, and return an array containing the name of each form:
-
-```php
-protected function getForms(): array
-{
-    return [
-        'editPostForm',
-        'createCommentForm',
-    ];
-}
-```
-
-Each of these forms can now be defined within the Livewire component, using a method with the same name:
+Many forms can be defined using the `InteractsWithSchemas` trait. Each of the forms should use a method with the same name:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+
+public ?array $postData = [];
+
+public ?array $commentData = [];
 
 public function editPostForm(Schema $schema): Schema
 {
@@ -298,12 +292,7 @@ public function createCommentForm(Schema $schema): Schema
 
 Now, each form is addressable by its name instead of `form`. For example, to fill the post form, you can use `$this->editPostForm->fill([...])`, or to get the data from the comment form you can use `$this->createCommentForm->getState()`.
 
-You'll notice that each form has its own unique `statePath()`. Each form will write its state to a different array on your Livewire component, so it's important to define these:
-
-```php
-public ?array $postData = [];
-public ?array $commentData = [];
-```
+You'll notice that each form has its own unique `statePath()`. Each form will write its state to a different array on your Livewire component, so it's important to define the public properties, `$postData` and `$commentData` in this example.
 
 ## Resetting a form's data
 
@@ -356,3 +345,7 @@ Filament is also able to guess which form fields you want in the schema, based o
 ```bash
 php artisan make:filament-livewire-form Products/CreateProduct --generate
 ```
+
+## Security considerations for file uploads
+
+The `InteractsWithSchemas` trait exposes Livewire's file upload RPC methods on every component that uses it — whether or not the form contains an upload field. If your Livewire component is reachable to users you do not want uploading arbitrary files, add the `RestrictsFileUploadsToSchemaComponents` trait. See [Restricting Livewire file uploads to schema components](../advanced/security#restricting-livewire-file-uploads-to-schema-components) for details.

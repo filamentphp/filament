@@ -70,7 +70,7 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
         return static::$layout;
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return $this->heading ?? $this->getTitle();
     }

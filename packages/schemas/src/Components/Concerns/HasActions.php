@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ trait HasActions
     /**
      * @var Model|class-string<Model>|null
      */
-    protected Model | string | null $actionSchemaModel = null;
+    protected Model | string | Closure | null $actionSchemaModel = null;
 
     protected ?Action $action = null;
 
@@ -151,10 +152,15 @@ trait HasActions
         return $action->schemaComponent($this);
     }
 
+    public function prepareActionGroup(ActionGroup $group): ActionGroup
+    {
+        return $group->schemaComponent($this);
+    }
+
     /**
-     * @param  Model|class-string<Model>|null  $model
+     * @param  Model | class-string<Model> | Closure | null  $model
      */
-    public function actionSchemaModel(Model | string | null $model): static
+    public function actionSchemaModel(Model | string | Closure | null $model): static
     {
         $this->actionSchemaModel = $model;
 
@@ -166,7 +172,7 @@ trait HasActions
      */
     public function getActionSchemaModel(): Model | array | string | null
     {
-        return $this->actionSchemaModel ?? $this->getRecord() ?? $this->getModel();
+        return $this->evaluate($this->actionSchemaModel) ?? $this->getRecord() ?? $this->getModel();
     }
 
     public function hasAction(string $name): bool

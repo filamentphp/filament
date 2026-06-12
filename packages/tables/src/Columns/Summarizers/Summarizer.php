@@ -77,9 +77,19 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
         $column = $this->getColumn();
         $attribute = $column->getName();
-        $query = $this->getQuery()->clone();
+        $query = $this->getQuery()?->clone();
 
-        if ($column->hasRelationship($query->getModel())) {
+        $hasRelationship = $query && $column->hasRelationship($query->getModel());
+
+        if ($this->hasQueryModification() && $hasRelationship) {
+            $baseQueryForModification = $query->toBase();
+            $this->evaluate($this->modifyQueryUsing, [
+                'attribute' => $attribute,
+                'query' => $baseQueryForModification,
+            ]);
+        }
+
+        if ($hasRelationship) {
             $relationship = $column->getRelationship($query->getModel());
             $attribute = $column->getFullAttributeName($query->getModel());
 
@@ -103,33 +113,45 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
                         return $relatedQuery;
                     },
                 );
-        } elseif (str($attribute)->startsWith('pivot.')) {
+        } elseif ($query) {
             // https://github.com/filamentphp/filament/issues/12501
+            // Handle pivot columns in `BelongsToMany` context.
+            // This handles two cases:
+            // 1. Columns defined as `pivot.quantity` (direct pivot access)
+            // 2. Columns defined as `quantity` in a `RelationManager` (implicit pivot column)
 
-            $pivotAttribute = (string) str($attribute)
-                ->after('pivot.')
-                ->prepend('pivot_');
+            $pivotAttribute = str($attribute)->startsWith('pivot.')
+                ? (string) str($attribute)->after('pivot.')->prepend('pivot_')
+                : 'pivot_' . $attribute;
 
             $isPivotAttributeSelected = collect($query->getQuery()->getColumns())
                 ->contains(fn (string $column): bool => str($column)->endsWith(" as {$pivotAttribute}"));
 
-            $attribute = $isPivotAttributeSelected ? $pivotAttribute : $attribute;
-
-            // Avoid duplicate columns in the subquery by selecting pivot columns individually.
             if ($isPivotAttributeSelected) {
+                $attribute = $pivotAttribute;
+            }
+
+            // Remove the join table's wildcard to prevent duplicate column
+            // errors (e.g., both tables have `id`) when the query is used
+            // as a subquery in MySQL. This applies to all columns in a
+            // `BelongsToMany` context, not just pivot columns.
+            $hasPivotColumns = collect($query->getQuery()->getColumns())
+                ->contains(fn (string $column): bool => str($column)->contains(' as pivot_'));
+
+            if ($hasPivotColumns && ($joinTable = ($query->getQuery()->joins[0]->table ?? null))) {
                 $query->getQuery()->columns = array_filter(
                     $query->getQuery()->columns,
-                    fn (mixed $column): bool => $column !== "{$query->getQuery()->joins[0]->table}.*",
+                    fn (mixed $column): bool => ! is_string($column) || $column !== "{$joinTable}.*",
                 );
             }
         }
 
-        $asName = (string) str($query->getModel()->getTable())->afterLast('.');
+        $asName = (string) str($query?->getModel()->getTable())->afterLast('.');
 
-        $query = $query->getModel()->resolveConnection($query->getModel()->getConnectionName())
+        $query = $query?->getModel()->resolveConnection($query->getModel()->getConnectionName())
             ->table($query->toBase(), $asName);
 
-        if ($this->hasQueryModification()) {
+        if ($this->hasQueryModification() && ! $hasRelationship) {
             $query = $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
                 'query' => $query,
@@ -184,20 +206,23 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
+        $label = $this->getLabel();
+        $isLabelHidden = $this->isLabelHidden();
+
         $attributes = $this->getExtraAttributeBag()
             ->class(['fi-ta-text-summary']);
 
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?php if (filled($label = $this->getLabel())) { ?>
-                <span class="fi-ta-text-summary-label">
-                    <?= $label ?>
+            <?php if (filled($label)) { ?>
+                <span class="fi-ta-text-summary-label<?= $isLabelHidden ? ' fi-sr-only' : '' ?>">
+                    <?= e($label) ?>
                 </span>
             <?php } ?>
 
             <span>
-                <?= $this->formatState($this->getState()) ?>
+                <?= e($this->formatState($this->getState())) ?>
             </span>
         </div>
 

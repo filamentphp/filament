@@ -20,6 +20,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @template TModel of Model = Model
+ *
  * @property-read Schema $form
  */
 class ViewRecord extends Page
@@ -27,7 +29,9 @@ class ViewRecord extends Page
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
 
     /**
      * @var array<string, mixed> | null
@@ -74,6 +78,11 @@ class ViewRecord extends Page
     protected function authorizeAccess(): void
     {
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
+    }
+
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
     }
 
     protected function hasInfolist(): bool
@@ -123,13 +132,18 @@ class ViewRecord extends Page
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // Security: All non-`$hidden` model attributes are sent to the
+        // browser via Livewire. Override this to `unset()` sensitive
+        // attributes (API keys, etc.) that should not be exposed
+        // to client-side JavaScript.
+
         return $data;
     }
 
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => static::getResource()::form($schema->columns(2)),
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => static::getResource()::form($schema->hasCustomColumns() ? $schema : $schema->columns(2)),
             $action instanceof ViewAction => fn (Schema $schema): Schema => $this->hasInfolist() ? $schema->components([EmbeddedSchema::make('infolist')]) : $schema->components([EmbeddedSchema::make('form')]),
             default => null,
         };
@@ -148,8 +162,11 @@ class ViewRecord extends Page
 
     public function defaultForm(Schema $schema): Schema
     {
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
         return $schema
-            ->columns($this->hasInlineLabels() ? 1 : 2)
             ->disabled()
             ->inlineLabel($this->hasInlineLabels())
             ->model($this->getRecord())
@@ -164,8 +181,11 @@ class ViewRecord extends Page
 
     public function defaultInfolist(Schema $schema): Schema
     {
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
         return $schema
-            ->columns($this->hasInlineLabels() ? 1 : 2)
             ->inlineLabel($this->hasInlineLabels())
             ->record($this->getRecord());
     }
@@ -232,6 +252,14 @@ class ViewRecord extends Page
 
     public function getDefaultTestingSchemaName(): ?string
     {
-        return $this->hasInfolist() ? 'infolist' : 'form';
+        return $this->hasInfolist() ? 'infolist' : parent::getDefaultTestingSchemaName();
+    }
+
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
+    {
+        return $this->getBaseRecord();
     }
 }

@@ -63,12 +63,20 @@ trait CanBeValidated
 
     public function validate(mixed $input): void
     {
-        Validator::make(
-            ['input' => $input],
-            ['input' => $this->getRules()],
-            ['input' => $this->getValidationMessages()],
-            ['input' => $this->getValidationAttribute()],
-        )->validate();
+        $originalState = $this->getGetStateUsingCallback();
+
+        $this->getStateUsing($input);
+
+        try {
+            Validator::make(
+                ['input' => $input],
+                ['input' => $this->getRules()],
+                ['input' => $this->getValidationMessages()],
+                ['input' => $this->getValidationAttribute()],
+            )->validate();
+        } finally {
+            $this->getStateUsing($originalState);
+        }
     }
 
     public function getValidationAttribute(): string

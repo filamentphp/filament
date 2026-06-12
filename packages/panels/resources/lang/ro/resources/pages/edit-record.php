@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Editare',
 
+    'navigation_label' => 'Editare',
+
     'form' => [
 
         'actions' => [

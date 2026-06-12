@@ -5,10 +5,12 @@ use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\actingAs;
@@ -25,102 +27,124 @@ beforeEach(function (): void {
     Notification::fake();
 });
 
-it('can disable authentication when valid challenge code is used', function (): void {
-    /** @var EmailAuthentication $emailAuthentication */
-    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+describe('disabling authentication', function (): void {
+    it('can disable authentication when valid challenge code is used', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    expect($user->hasEmailAuthentication())
-        ->toBeTrue();
+        expect($user->hasEmailAuthentication())
+            ->toBeTrue();
 
-    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $emailAuthentication->generateCodesUsing(fn (): string => $code);
 
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableEmailAuthentication')
-                ->schemaComponent('email_code', schema: 'content'),
-            ['code' => $code],
-        )
-        ->assertHasNoFormErrors();
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableEmailAuthentication')
+                    ->schemaComponent('email_code', schema: 'content'),
+                ['code' => $code],
+            )
+            ->assertHasNoFormErrors();
 
-    expect($user->hasEmailAuthentication())
-        ->toBeFalse();
+        expect($user->hasEmailAuthentication())
+            ->toBeFalse();
 
-    Notification::assertSentTo($user, VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($code, $emailAuthentication): bool {
-        if ($notification->codeExpiryMinutes !== $emailAuthentication->getCodeExpiryMinutes()) {
-            return false;
-        }
+        Notification::assertSentTo($user, VerifyEmailAuthentication::class, function (VerifyEmailAuthentication $notification) use ($code, $emailAuthentication): bool {
+            if ($notification->codeExpiryMinutes !== $emailAuthentication->getCodeExpiryMinutes()) {
+                return false;
+            }
 
-        return $notification->code === $code;
+            return $notification->code === $code;
+        });
     });
-});
 
-it('can resend the code to the user', function (): void {
-    $this->travelTo(now()->subMinute());
+    it('can resend the code to the user', function (): void {
+        $this->travelTo(now()->subMinute());
 
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('disableEmailAuthentication')
-            ->schemaComponent('email_code', schema: 'content'));
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'));
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
-    $this->travelBack();
+        $this->travelBack();
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.resent.title'))
+                    ->success()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
-});
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+    });
 
-it('can resend the code to the user more than twice per minute', function (): void {
-    $this->travelTo(now()->subMinute());
+    it('can resend the code to the user more than twice per minute', function (): void {
+        $this->travelTo(now()->subMinute());
 
-    $livewire = livewire(EditProfile::class)
-        ->mountAction(TestAction::make('disableEmailAuthentication')
-            ->schemaComponent('email_code', schema: 'content'));
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'));
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.resent.title'))
+                    ->success()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.throttled.title'))
+                    ->danger()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
-    $this->travelBack();
+        $this->travelBack();
 
-    $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+        $livewire
+            ->callAction(TestAction::make('resend')
+                ->schemaComponent('code'))
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.resent.title'))
+                    ->success()
+            );
 
-    Notification::assertSentTimes(VerifyEmailAuthentication::class, 3);
-});
+        Notification::assertSentTimes(VerifyEmailAuthentication::class, 3);
+    });
 
-it('will not disable authentication when an invalid code is used', function (): void {
-    $user = auth()->user();
+    it('will not disable authentication when an invalid code is used', function (): void {
+        $user = auth()->user();
 
-    expect($user->hasEmailAuthentication())
-        ->toBeTrue();
+        expect($user->hasEmailAuthentication())
+            ->toBeTrue();
 
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableEmailAuthentication')
-                ->schemaComponent('email_code', schema: 'content'),
-            ['code' => str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT)],
-        )
-        ->assertHasFormErrors();
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableEmailAuthentication')
+                    ->schemaComponent('email_code', schema: 'content'),
+                ['code' => str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT)],
+            )
+            ->assertHasFormErrors();
 
-    expect($user->hasEmailAuthentication())
-        ->toBeTrue();
+        expect($user->hasEmailAuthentication())
+            ->toBeTrue();
+    });
 });
 
 test('codes are required', function (): void {
@@ -158,6 +182,35 @@ test('codes must be 6 digits', function (): void {
         ->assertHasFormErrors([
             'code' => 'digits',
         ]);
+
+    expect($user->hasEmailAuthentication())
+        ->toBeTrue();
+});
+
+it('can throttle code verification attempts per user', function (): void {
+    /** @var EmailAuthentication $emailAuthentication */
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $user = auth()->user();
+
+    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+    $rateLimitingKey = 'filament-disable-email-authentication:' . $user->getAuthIdentifier();
+
+    foreach (range(1, 5) as $i) {
+        RateLimiter::hit($rateLimitingKey);
+    }
+
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+
+    // Even with a valid code, the rate limit should block the attempt
+    livewire(EditProfile::class)
+        ->callAction(
+            TestAction::make('disableEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'),
+            ['code' => $code],
+        )
+        ->assertHasFormErrors(['code']);
 
     expect($user->hasEmailAuthentication())
         ->toBeTrue();

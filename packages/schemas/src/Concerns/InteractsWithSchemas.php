@@ -5,10 +5,14 @@ namespace Filament\Schemas\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\BaseFileUpload;
+use Filament\Forms\Components\Concerns\HasFileAttachments;
+use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Contracts\TranslatableContentDriver;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
@@ -61,6 +65,10 @@ trait InteractsWithSchemas
      */
     public function callSchemaComponentMethod(string $componentKey, string $method, array $arguments = []): mixed
     {
+        // Security: This method is callable from the frontend and dispatches
+        // to `#[ExposedLivewireMethod]` methods on schema components.
+        // Only methods marked with that attribute are allowed.
+
         $component = $this->getSchemaComponent($componentKey);
 
         if (! $component) {
@@ -78,7 +86,24 @@ trait InteractsWithSchemas
         }
 
         if ($methodReflection->getAttributes(Renderless::class)) {
-            $this->skipRender();
+            app(PartialsComponentHook::class)->skipPartialRender($this);
+        } else {
+            $schema = $component->getContainer();
+            $schemaToPartiallyRender = null;
+
+            while ($schema !== null) {
+                if ($schema->shouldPartiallyRender()) {
+                    $schemaToPartiallyRender = $schema;
+                }
+
+                $schema = $schema->getParentComponent()?->getContainer();
+            }
+
+            if ($schemaToPartiallyRender) {
+                app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+                    "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
+                ]);
+            }
         }
 
         return $component->{$method}(...$arguments);
@@ -143,6 +168,8 @@ trait InteractsWithSchemas
         }
 
         $this->areSchemaStateUpdateHooksDisabledForTesting = true;
+
+        $this->skipRender();
     }
 
     public function enableSchemaStateUpdateHooksForTesting(): void
@@ -152,9 +179,14 @@ trait InteractsWithSchemas
         }
 
         $this->areSchemaStateUpdateHooksDisabledForTesting = false;
+
+        $this->skipRender();
     }
 
-    public function getSchemaComponent(string $key, bool $withHidden = false, ?Component $skipComponentChildContainersWhileSearching = null): Component | Action | ActionGroup | null
+    /**
+     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     */
+    public function getSchemaComponent(string $key, bool $withHidden = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null
     {
         if (! str($key)->contains('.')) {
             return null;
@@ -164,7 +196,7 @@ trait InteractsWithSchemas
 
         $schema = $this->getSchema($schemaName);
 
-        return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching);
+        return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentsChildContainersWhileSearching: $skipComponentsChildContainersWhileSearching);
     }
 
     protected function cacheSchema(string $name, Schema | Closure | null $schema = null): ?Schema
@@ -178,7 +210,8 @@ trait InteractsWithSchemas
                 return $this->cachedSchemas[$name] = $schema->key($name);
             }
 
-            // If null was explicitly passed as the schema, unset the cached schema.
+            // If null was explicitly passed as the schema,
+            // unset the cached schema.
             if (func_num_args() === 2) {
                 unset($this->cachedSchemas[$name]);
 
@@ -195,7 +228,7 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            $methodReflection = new ReflectionMethod($this, $name);
+            $methodReflection = new ReflectionMethod($this, $methodName);
             $parameterReflection = $methodReflection->getParameters()[0] ?? null;
 
             if (! $parameterReflection) {
@@ -430,6 +463,8 @@ trait InteractsWithSchemas
 
             $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value, $statePath, $schemaStatePath);
         }
+
+        $this->skipRender();
     }
 
     /**
@@ -442,7 +477,7 @@ trait InteractsWithSchemas
             $currentStatePath .= ".{$key}";
 
             if (
-                is_numeric($key) &&
+                (is_numeric($key) || array_is_list($state)) &&
                 (! array_key_exists($key, $state)) &&
                 str($currentStatePath)->startsWith($schemaStatePath)
             ) {
@@ -465,5 +500,57 @@ trait InteractsWithSchemas
     public function getDefaultTestingSchemaName(): ?string
     {
         return array_key_first($this->getCachedSchemas());
+    }
+
+    public function isFileUploadForSchemaComponent(string $name): bool
+    {
+        if (str_starts_with($name, 'componentFileAttachments.')) {
+            $name = substr($name, strlen('componentFileAttachments.'));
+        }
+
+        if ($this->getSchemaComponentForFileUpload($name) !== null) {
+            return true;
+        }
+
+        $lastDotPosition = strrpos($name, '.');
+
+        if ($lastDotPosition === false) {
+            return false;
+        }
+
+        return $this->getSchemaComponentForFileUpload(substr($name, 0, $lastDotPosition)) !== null;
+    }
+
+    protected function getSchemaComponentForFileUpload(string $statePath): ?Component
+    {
+        foreach ($this->getCachedSchemas() as $schema) {
+            if (! $schema instanceof Schema) {
+                continue;
+            }
+
+            foreach ($schema->getFlatComponents() as $component) {
+                if (! $component instanceof Field) {
+                    continue;
+                }
+
+                if ($component->getStatePath() !== $statePath) {
+                    continue;
+                }
+
+                if ($component instanceof BaseFileUpload) {
+                    return $component;
+                }
+
+                if (
+                    in_array(HasFileAttachments::class, class_uses_recursive($component), strict: true) &&
+                    method_exists($component, 'hasFileAttachments') &&
+                    $component->hasFileAttachments()
+                ) {
+                    return $component;
+                }
+            }
+        }
+
+        return null;
     }
 }

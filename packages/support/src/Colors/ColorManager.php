@@ -3,10 +3,10 @@
 namespace Filament\Support\Colors;
 
 use Closure;
-use Exception;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
+use LogicException;
 
 class ColorManager
 {
@@ -149,7 +149,7 @@ class ColorManager
                     'hover:bg' => "hover:fi-bg-color-{$shade}",
                     'hover:text' => "hover:fi-text-color-{$shade}",
                     'text' => "fi-text-color-{$shade}",
-                    default => throw new Exception("Invalid color mapping key [{$key}]."),
+                    default => throw new LogicException("Invalid color mapping key [{$key}]."),
                 },
                 array_values($map),
                 array_keys($map),

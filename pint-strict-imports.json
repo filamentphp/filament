@@ -14,5 +14,6 @@
         "types_spaces": {
             "space": "single"
         }
-    }
+    },
+    "exclude": ["tests/src/Panels/Commands/Fixture"]
 }

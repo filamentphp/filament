@@ -24,6 +24,8 @@ enum Language: string
 
     case Python = 'python';
 
+    case Sql = 'sql';
+
     case Xml = 'xml';
 
     case Yaml = 'yaml';

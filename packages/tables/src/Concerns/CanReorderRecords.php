@@ -20,6 +20,8 @@ trait CanReorderRecords
             return;
         }
 
+        $this->getTable()->callBeforeReordering($order);
+
         $orderColumn = (string) str($this->getTable()->getReorderColumn())->afterLast('.');
 
         DB::transaction(function () use ($order, $orderColumn): void {
@@ -40,8 +42,8 @@ trait CanReorderRecords
             $modelKeyName = $model->getKeyName();
             $wrappedModelKeyName = $model->getConnection()?->getQueryGrammar()?->wrap($modelKeyName) ?? $modelKeyName;
 
-            $model
-                ->newModelQuery()
+            $this->getTable()
+                ->getQuery()
                 ->whereIn($modelKeyName, array_values($order))
                 ->update([
                     $orderColumn => new Expression(
@@ -52,6 +54,8 @@ trait CanReorderRecords
                     ),
                 ]);
         });
+
+        $this->getTable()->callAfterReordering($order);
     }
 
     public function toggleTableReordering(): void

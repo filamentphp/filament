@@ -61,7 +61,7 @@ Inside the Blade view, you may access the current Livewire component instance us
 
 <div>
     @if ($this instanceof ConferencesRelationManager)
-        You are editing conferences the of a user.
+        You are editing the conferences of a user.
     @endif
 </div>
 ```

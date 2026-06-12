@@ -1,10 +1,13 @@
 ---
 title: Using widgets on resource pages
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Filament allows you to display widgets inside pages, below the header and above the footer.
+
+<AutoScreenshot name="panels/resources/widgets" alt="A resource page with header widgets" version="4.x" />
 
 You can use an existing [dashboard widget](../widgets), or create one specifically for the resource.
 
@@ -121,6 +124,16 @@ Alternatively, you can access a collection of the records on the current page us
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 Stat::make('Total Products', $this->getPageTableRecords()->count()),
+```
+
+## Accessing the total table records count
+
+If you need the total count of all records for the table query without executing an additional count query, you can use the `$tableRecordsCount` property:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+Stat::make('Total Products', $this->tableRecordsCount),
 ```
 
 ## Passing properties to widgets on resource pages

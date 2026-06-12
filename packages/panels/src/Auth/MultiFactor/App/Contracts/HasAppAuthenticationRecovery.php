@@ -2,6 +2,8 @@
 
 namespace Filament\Auth\MultiFactor\App\Contracts;
 
+use SensitiveParameter;
+
 interface HasAppAuthenticationRecovery
 {
     /**
@@ -10,7 +12,7 @@ interface HasAppAuthenticationRecovery
     public function getAppAuthenticationRecoveryCodes(): ?array;
 
     /**
-     * @param  array<string> | null  $codes
+     * @param  ?array<string>  $codes
      */
-    public function saveAppAuthenticationRecoveryCodes(?array $codes): void;
+    public function saveAppAuthenticationRecoveryCodes(#[SensitiveParameter] ?array $codes): void;
 }

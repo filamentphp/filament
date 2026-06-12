@@ -16,6 +16,7 @@ return [
 
         'password' => [
             'label' => 'סיסמה חדשה',
+            'validation_attribute' => 'סיסמה',
         ],
 
         'password_confirmation' => [
@@ -43,7 +44,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'חזרה',
+            'label' => 'ביטול',
         ],
 
     ],

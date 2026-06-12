@@ -311,6 +311,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/actions/bulk-not-grouped" alt="Table with grouped and ungrouped bulk actions" version="4.x" />
+
 Alternatively, if all of your bulk actions are grouped, you can use the shorthand `groupedBulkActions()` method:
 
 ```php
@@ -396,6 +398,23 @@ public function table(Table $table): Table
             // ...
         ])
         ->selectCurrentPageOnly();
+}
+```
+
+### Restricting bulk selection to groups only
+
+The `selectGroupsOnly()` method can be used to restrict bulk selection to only records within the same group, preventing bulk selection across multiple groups at once:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            // ...
+        ])
+        ->selectGroupsOnly();
 }
 ```
 

@@ -15,6 +15,7 @@ use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
@@ -54,7 +55,7 @@ class PanelProviderClassGenerator extends ClassGenerator
             StartSession::class,
             AuthenticateSession::class,
             ShareErrorsFromSession::class,
-            VerifyCsrfToken::class,
+            $this->getCsrfMiddlewareClass(),
             SubstituteBindings::class,
             DisableBladeIconComponents::class,
             DispatchServingFilamentEvent::class,
@@ -112,6 +113,8 @@ class PanelProviderClassGenerator extends ClassGenerator
         $componentsDirectory = $isDefault ? '' : (Str::studly($id) . '/');
         $componentsNamespace = $isDefault ? '' : (Str::studly($id) . '\\');
 
+        $rootNamespace = app()->getNamespace();
+
         return new Literal(
             <<<PHP
                 return \$panel{$defaultOutput}
@@ -120,12 +123,12 @@ class PanelProviderClassGenerator extends ClassGenerator
                     ->colors([
                         'primary' => {$this->simplifyFqn(Color::class)}::Amber,
                     ])
-                    ->discoverResources(in: app_path('Filament/{$componentsDirectory}Resources'), for: 'App\\Filament\\{$componentsNamespace}Resources')
-                    ->discoverPages(in: app_path('Filament/{$componentsDirectory}Pages'), for: 'App\\Filament\\{$componentsNamespace}Pages')
+                    ->discoverResources(in: app_path('Filament/{$componentsDirectory}Resources'), for: '{$rootNamespace}Filament\\{$componentsNamespace}Resources')
+                    ->discoverPages(in: app_path('Filament/{$componentsDirectory}Pages'), for: '{$rootNamespace}Filament\\{$componentsNamespace}Pages')
                     ->pages([
                         {$this->simplifyFqn(Dashboard::class)}::class,
                     ])
-                    ->discoverWidgets(in: app_path('Filament/{$componentsDirectory}Widgets'), for: 'App\\Filament\\{$componentsNamespace}Widgets')
+                    ->discoverWidgets(in: app_path('Filament/{$componentsDirectory}Widgets'), for: '{$rootNamespace}Filament\\{$componentsNamespace}Widgets')
                     ->widgets([
                         {$this->simplifyFqn(AccountWidget::class)}::class,
                         {$this->simplifyFqn(FilamentInfoWidget::class)}::class,
@@ -136,7 +139,7 @@ class PanelProviderClassGenerator extends ClassGenerator
                         {$this->simplifyFqn(StartSession::class)}::class,
                         {$this->simplifyFqn(AuthenticateSession::class)}::class,
                         {$this->simplifyFqn(ShareErrorsFromSession::class)}::class,
-                        {$this->simplifyFqn(VerifyCsrfToken::class)}::class,
+                        {$this->simplifyFqn($this->getCsrfMiddlewareClass())}::class,
                         {$this->simplifyFqn(SubstituteBindings::class)}::class,
                         {$this->simplifyFqn(DisableBladeIconComponents::class)}::class,
                         {$this->simplifyFqn(DispatchServingFilamentEvent::class)}::class,
@@ -164,5 +167,15 @@ class PanelProviderClassGenerator extends ClassGenerator
     public function isDefault(): bool
     {
         return $this->isDefault;
+    }
+
+    /**
+     * @return class-string
+     */
+    protected function getCsrfMiddlewareClass(): string
+    {
+        return class_exists(PreventRequestForgery::class)
+            ? PreventRequestForgery::class
+            : VerifyCsrfToken::class;
     }
 }

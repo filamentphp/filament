@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'مشاهده',
 
+    'navigation_label' => 'مشاهده',
+
     'content' => [
 
         'tab' => [

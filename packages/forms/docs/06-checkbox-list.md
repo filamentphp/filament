@@ -194,6 +194,8 @@ CheckboxList::make('technologies')
     ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
 ```
 
+<AutoScreenshot name="forms/fields/checkbox-list/disabled-options" alt="Checkbox list with disabled option" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
@@ -233,6 +235,8 @@ CheckboxList::make('technology')
     ->allowHtml()
 ```
 
+<AutoScreenshot name="forms/fields/checkbox-list/html-labels" alt="Checkbox list with HTML labels" version="4.x" />
+
 <Aside variant="danger">
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 </Aside>
@@ -269,11 +273,11 @@ CheckboxList::make('technologies')
 ```
 
 <Aside variant="warning">
-    When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
-    
+    When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `saved()` call from `disabled()` is not applied after the `relationship()` configuration:
+
     ```php
     use Filament\Forms\Components\CheckboxList;
-    
+
     CheckboxList::make('technologies')
         ->disabled()
         ->relationship(titleAttribute: 'name')
@@ -327,6 +331,25 @@ CheckboxList::make('authors')
 ```
 
 <UtilityInjection set="formFields" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Customizing the relationship option descriptions
+
+If you'd like to customize the description of each option, you can use the `getOptionDescriptionFromRecordUsing()` method to transform an option's Eloquent model into a description:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+CheckboxList::make('authors')
+    ->relationship(
+        modifyQueryUsing: fn (Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
+    )
+    ->getOptionDescriptionFromRecordUsing(fn (Model $record) => $record->notes)
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option description for.">The `getOptionDescriptionFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
 
 ### Saving pivot data to the relationship
 

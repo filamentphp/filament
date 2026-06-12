@@ -297,6 +297,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => '선택',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => '선택',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -360,37 +382,130 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => '파일 업로드',
+
+                'modal' => [
+
+                    'heading' => '파일 업로드',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => '파일',
+                                'existing' => '파일 교체',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => '대체 텍스트',
+                                'existing' => '대체 텍스트 변경',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => '삽입',
+                        ],
+
+                        'save' => [
+                            'label' => '저장',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => '링크',
-                    'unlink' => '링크 해제',
+                'label' => '수정',
+
+                'modal' => [
+
+                    'heading' => '링크',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => '새 탭에서 열기',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'URL을 입력하세요',
 
             ],
 
         ],
 
+        'no_merge_tag_search_results_message' => '병합 태그 결과가 없습니다.',
+
         'tools' => [
+            'align_center' => '가운데 정렬',
+            'align_end' => '끝 정렬',
+            'align_justify' => '양쪽 정렬',
+            'align_start' => '시작 정렬',
             'attach_files' => '파일 첨부',
             'blockquote' => '인용구',
             'bold' => '굵게',
             'bullet_list' => '순서가 없는 목록',
+            'clear_formatting' => '서식 지우기',
+            'code' => '코드',
             'code_block' => '코드 블록',
+            'custom_blocks' => '블록',
+            'details' => '세부사항',
             'h1' => '큰 제목',
             'h2' => '중간 제목',
             'h3' => '작은 제목',
+            'highlight' => '강조',
+            'horizontal_rule' => '수평선',
             'italic' => '기울임체',
+            'lead' => '강조 텍스트',
             'link' => '링크',
+            'merge_tags' => '병합 태그',
             'ordered_list' => '번호 목록',
             'redo' => '다시 실행',
+            'small' => '작은 텍스트',
             'strike' => '취소선',
+            'subscript' => '아래 첨자',
+            'superscript' => '위 첨자',
+            'table' => '테이블',
+            'table_delete' => '테이블 삭제',
+            'table_add_column_before' => '이전에 열 추가',
+            'table_add_column_after' => '이후에 열 추가',
+            'table_delete_column' => '열 삭제',
+            'table_add_row_before' => '위에 행 추가',
+            'table_add_row_after' => '아래에 행 추가',
+            'table_delete_row' => '행 삭제',
+            'table_merge_cells' => '셀 병합',
+            'table_split_cell' => '셀 분할',
+            'table_toggle_header_row' => '헤더 행 토글',
             'underline' => '밑줄',
             'undo' => '실행 취소',
         ],
@@ -402,6 +517,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => '만들기',
 
                 'modal' => [
 
@@ -424,6 +541,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => '수정',
 
                 'modal' => [
 
@@ -468,6 +587,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => '복사',
+                'message' => '복사됨',
+            ],
 
             'hide_password' => [
                 'label' => '비밀번호 숨기기',

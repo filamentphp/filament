@@ -6,9 +6,39 @@ return [
 
         'heading' => 'Στήλες',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Εφαρμογή στήλων',
+            ],
+
+            'reset' => [
+                'label' => 'Επαναφορά',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Ενέργεια|Ενέργειες',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Φόρτωση...',
+
+            'no_search_results_message' => 'Δεν βρέθηκαν επιλογές που ταιριάζουν στην αναζήτησή σας.',
+
+            'placeholder' => 'Επιλέξτε',
+
+            'searching_message' => 'Αναζήτηση...',
+
+            'search_prompt' => 'Ξεκινήστε να πληκτρολογείτε για αναζήτηση...',
+
+        ],
 
         'text' => [
 
@@ -142,6 +172,10 @@ return [
 
         'select' => [
             'placeholder' => 'Όλα',
+
+            'relationship' => [
+                'empty_option_label' => 'Κανένα',
+            ],
         ],
 
         'trashed' => [
@@ -164,7 +198,6 @@ return [
 
             'group' => [
                 'label' => 'Ομαδοποίηση βάσει',
-                'placeholder' => 'Ομαδοποίηση βάσει',
             ],
 
             'direction' => [
@@ -224,5 +257,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'Εγγραφή',
 
 ];

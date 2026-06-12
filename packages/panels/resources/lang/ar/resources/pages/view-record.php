@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'عرض',
 
+    'navigation_label' => 'عرض',
+
     'content' => [
 
         'tab' => [

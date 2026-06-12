@@ -4,7 +4,9 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TableSelect;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Services\RelationshipJoiner;
@@ -31,6 +33,8 @@ class AttachAction extends Action
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
+    protected string | Closure | null $tableSelectConfiguration = null;
+
     protected bool | Closure $isMultiple = false;
 
     /**
@@ -43,6 +47,18 @@ class AttachAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'attach';
+    }
+
+    public function getTableSelectConfiguration(): ?string
+    {
+        return $this->evaluate($this->tableSelectConfiguration);
+    }
+
+    public function tableSelect(string | Closure | null $configuration): static
+    {
+        $this->tableSelectConfiguration = $configuration;
+
+        return $this;
     }
 
     protected function setUp(): void
@@ -68,13 +84,20 @@ class AttachAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->schema(fn (): array => [$this->getRecordSelect()]);
+        $this->schema(fn (AttachAction $action): array => [$action->getRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+            if ($this->modifyRecordSelectOptionsQueryUsing) {
+                $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                    'query' => $relationshipQuery,
+                    'search' => null,
+                ]) ?? $relationshipQuery;
+            }
 
             $isMultiple = is_array($data['recordId']);
 
@@ -190,8 +213,12 @@ class AttachAction extends Action
         return $this->evaluate($this->recordSelectSearchColumns);
     }
 
-    public function getRecordSelect(): Select
+    public function getRecordSelect(): Field
     {
+        if (filled($this->getTableSelectConfiguration())) {
+            return $this->getTableRecordSelect();
+        }
+
         $table = $this->getTable();
 
         $getOptions = function (int $optionsLimit, ?string $search = null, ?array $searchColumns = []) use ($table): array {
@@ -287,23 +314,40 @@ class AttachAction extends Action
             ->multiple($this->isMultiple())
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(function ($value) use ($table): string {
+            ->getOptionLabelUsing(function ($value) use ($table): ?string {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-                return $this->getRecordTitle($relationshipQuery->find($value));
+                if ($this->modifyRecordSelectOptionsQueryUsing) {
+                    $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                        'query' => $relationshipQuery,
+                        'search' => null,
+                    ]) ?? $relationshipQuery;
+                }
+
+                $record = $relationshipQuery->find($value);
+
+                return $record ? $this->getRecordTitle($record) : null;
             })
             ->getOptionLabelsUsing(function (array $values) use ($table): array {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
+                if ($this->modifyRecordSelectOptionsQueryUsing) {
+                    $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                        'query' => $relationshipQuery,
+                        'search' => null,
+                    ]) ?? $relationshipQuery;
+                }
+
                 return $relationshipQuery->find($values)
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })
-            ->options(fn (Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : [])
+            ->options(fn (Select $component): ?array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : null)
+            ->dynamicOptions(fn (): ?bool => $this->isRecordSelectPreloaded() ? null : false)
             ->hiddenLabel();
 
         if ($this->modifyRecordSelectUsing) {
@@ -313,6 +357,22 @@ class AttachAction extends Action
         }
 
         return $select;
+    }
+
+    public function getTableRecordSelect(): TableSelect
+    {
+        $relationship = $this->getTable()->getRelationship();
+
+        assert($relationship instanceof BelongsToMany);
+
+        return TableSelect::make('recordId')
+            ->label(__('filament-actions::attach.single.modal.fields.record_id.label'))
+            ->hiddenLabel()
+            ->ignoreRelatedRecords()
+            ->tableConfiguration($this->getTableSelectConfiguration())
+            ->model($relationship->getParent())
+            ->relationshipName($relationship->getRelationName())
+            ->multiple($this->isMultiple());
     }
 
     public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static

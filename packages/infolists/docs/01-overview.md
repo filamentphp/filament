@@ -9,6 +9,12 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 <AutoScreenshot name="infolists/overview" alt="Product infolist example" version="4.x" />
 
+Filament's infolists package lets you display a read-only list of data for a specific entity. It's integrated into other Filament packages, such as inside [panel resources](../resources), [relation managers](../resources/managing-relationships), and [action modals](../actions). Understanding how to use the infolist builder will save you time when building custom Livewire applications or working with other Filament features.
+
+This guide covers the fundamentals of building infolists with Filament. If you want to add an infolist to your own Livewire component, [start here](../components/infolist) before continuing. If you're adding an infolist to a [panel resource](../resources), or using another Filament package, you're ready to begin!
+
+## Defining entries
+
 Entry classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema array of components. Filament includes a number of entries built-in:
 
 - [Text entry](text-entry)
@@ -72,7 +78,7 @@ TextEntry::make('title')
     ->state('Hello, world!')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" except="$state" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the default state of an entry
 
@@ -123,7 +129,7 @@ TextEntry::make('name')
 ### Hiding an entry's label
 
 <Aside variant="tip">
-    If you're looking to hide an entry's label, it might be the case that you are trying to use an entry for arbitrary text or UI. Entries are specifically designed to display data in a structured way, but [Prime components](../primes) are simple components that are used to render basic stand-alone static content, such as text, images, and buttons (actions). You may want to consider using a Prime component instead.
+    If you're looking to hide an entry's label, it might be the case that you are trying to use an entry for arbitrary text or UI. Entries are specifically designed to display data in a structured way, but [Prime components](../schemas/overview#prime-components) are simple components that are used to render basic stand-alone static content, such as text, images, and buttons (actions). You may want to consider using a Prime component instead.
 </Aside>
 
 It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the entry to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
@@ -134,6 +140,8 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('name')
     ->hiddenLabel()
 ```
+
+<AutoScreenshot name="infolists/entries/hidden-label" alt="Entry with a hidden label" version="4.x" />
 
 Optionally, you may pass a boolean value to control if the label should be hidden or not:
 
@@ -199,6 +207,10 @@ TextEntry::make('title')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `openUrlInNewTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
+</Aside>
 
 ## Hiding an entry
 
@@ -389,7 +401,7 @@ TextInput::make('name')
 
 ### Using inline labels in multiple places at once
 
-If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/section) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all entries within it will have their labels displayed inline:
+If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/sections) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all entries within it will have their labels displayed inline:
 
 ```php
 use Filament\Infolists\Components\TextInput;
@@ -397,7 +409,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->entries([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -431,7 +443,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->entries([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -484,6 +496,8 @@ TextEntry::make('title')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/alignment" alt="Entries with different alignments" version="4.x" />
 
 ## Adding extra content to an entry
 

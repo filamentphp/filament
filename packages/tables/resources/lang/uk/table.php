@@ -12,6 +12,9 @@ return [
                 'label' => 'Застосувати стовпці',
             ],
 
+            'reset' => [
+                'label' => 'Скинути',
+            ],
         ],
 
     ],
@@ -20,6 +23,20 @@ return [
 
         'actions' => [
             'label' => 'Дія|Дії',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Завантаження...',
+
+            'no_search_results_message' => 'Немає варіантів, що відповідають вашому пошуку.',
+
+            'placeholder' => 'Виберіть варіант',
+
+            'searching_message' => 'Пошук...',
+
+            'search_prompt' => 'Почніть вводити текст для пошуку...',
+
         ],
 
         'text' => [
@@ -182,7 +199,6 @@ return [
 
             'group' => [
                 'label' => 'Групувати за',
-                'placeholder' => 'Групувати за',
             ],
 
             'direction' => [

@@ -63,6 +63,8 @@ TextColumn::make('rating')
 
 In this example, all ratings in the table will be added together and divided by the number of ratings.
 
+<AutoScreenshot name="tables/summaries/average" alt="Table with average summary" version="4.x" />
+
 ## Count
 
 Count can be used to find the total number of values in the dataset. Unless you just want to calculate the number of rows, you will probably want to [scope the dataset](#scoping-the-dataset) as well:
@@ -95,6 +97,8 @@ IconColumn::make('is_published')
     ->summarize(Count::make()->icons()),
 ```
 
+<AutoScreenshot name="tables/summaries/count" alt="Table with icon count summary" version="4.x" />
+
 ## Range
 
 Range can be used to calculate the minimum and maximum value in the dataset:
@@ -108,6 +112,8 @@ TextColumn::make('price')
 ```
 
 In this example, the minimum and maximum price in the table will be found.
+
+<AutoScreenshot name="tables/summaries/range" alt="Table with range summary" version="4.x" />
 
 ### Date range
 
@@ -172,6 +178,8 @@ TextColumn::make('price')
 
 In this example, all prices in the table will be added together.
 
+<AutoScreenshot name="tables/summaries/sum" alt="Table with sum summary" version="4.x" />
+
 ## Setting a label
 
 You may set a summarizer's label using the `label()` method:
@@ -182,6 +190,28 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('price')
     ->summarize(Sum::make()->label('Total'))
+```
+
+### Hiding a summarizer's label
+
+It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the summarizer to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->hiddenLabel())
+```
+
+You can also conditionally hide the label:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->hiddenLabel(FeatureFlag::active()))
 ```
 
 ## Scoping the dataset
@@ -393,3 +423,24 @@ public function table(Table $table): Table
         ->groupsOnly();
 }
 ```
+
+## Hiding summary rows
+
+By default, both the page summary and total summary rows are displayed when columns have summarizers. You can control which summary rows appear using the `summaries()` method on the table:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->summaries(
+            pageCondition: false,
+            allTableCondition: false
+        );
+}
+```
+
+`pageCondition` controls whether the "this page" summary row is shown, and `allTableCondition` controls whether the total summary row for the entire table is shown.
+
+This is useful when using [group summaries](#summarising-groups-of-rows) where you only want to display summaries per group, or when the page summary is redundant and you only need the total across all records.

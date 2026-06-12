@@ -6,13 +6,13 @@ return [
 
         'actions' => [
 
-            'label' => 'Email verification codes',
+            'label' => 'E-posta doğrulama kodları',
 
-            'below_content' => 'Receive a temporary code at your email address to verify your identity during login.',
+            'below_content' => 'Giriş sırasında kimliğinizi doğrulamak için e-posta adresinize geçici bir kod alın.',
 
             'messages' => [
-                'enabled' => 'Enabled',
-                'disabled' => 'Disabled',
+                'enabled' => 'Etkin',
+                'disabled' => 'Devre dışı',
             ],
 
         ],
@@ -21,24 +21,24 @@ return [
 
     'login_form' => [
 
-        'label' => 'Send a code to your email',
+        'label' => 'E-postanıza kod gönder',
 
         'code' => [
 
-            'label' => 'Enter the 6-digit code we sent you by email',
+            'label' => 'Size e-posta ile gönderdiğimiz 6 haneli kodu girin',
 
-            'validation_attribute' => 'code',
+            'validation_attribute' => 'kod',
 
             'actions' => [
 
                 'resend' => [
 
-                    'label' => 'Send a new code by email',
+                    'label' => 'E-posta ile yeni kod gönder',
 
                     'notifications' => [
 
                         'resent' => [
-                            'title' => 'We\'ve sent you a new code by email',
+                            'title' => 'Size e-posta ile yeni bir kod gönderdik',
                         ],
 
                     ],
@@ -49,7 +49,7 @@ return [
 
             'messages' => [
 
-                'invalid' => 'The code you entered is invalid.',
+                'invalid' => 'Girdiğiniz kod geçersiz.',
 
             ],
 

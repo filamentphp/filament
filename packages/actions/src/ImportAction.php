@@ -23,6 +23,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
@@ -110,7 +111,7 @@ class ImportAction extends Action
                         return;
                     }
 
-                    $csvReader = CsvReader::createFromStream($csvStream);
+                    $csvReader = CsvReader::from($csvStream);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
@@ -159,7 +160,7 @@ class ImportAction extends Action
                         return [];
                     }
 
-                    $csvReader = CsvReader::createFromStream($csvStream);
+                    $csvReader = CsvReader::from($csvStream);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
@@ -189,7 +190,7 @@ class ImportAction extends Action
                 return;
             }
 
-            $csvReader = CsvReader::createFromStream($csvStream);
+            $csvReader = CsvReader::from($csvStream);
 
             if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                 $csvReader->setDelimiter($csvDelimiter);
@@ -202,13 +203,16 @@ class ImportAction extends Action
             $maxRows = $action->getMaxRows() ?? $totalRows;
 
             if ($maxRows < $totalRows) {
-                Notification::make()
-                    ->title(__('filament-actions::import.notifications.max_rows.title'))
-                    ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
-                        'count' => Number::format($maxRows),
-                    ]))
-                    ->danger()
-                    ->send();
+                $action->failureNotification(
+                    Notification::make()
+                        ->title(__('filament-actions::import.notifications.max_rows.title'))
+                        ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
+                            'count' => Number::format($maxRows),
+                        ]))
+                        ->danger(),
+                );
+
+                $action->failure();
 
                 return;
             }
@@ -280,9 +284,14 @@ class ImportAction extends Action
                         return;
                     }
 
+                    $import->columnMap($columnMap);
+                    $import->options($options);
+
                     $failedRowsCount = $import->getFailedRowsCount();
 
-                    Notification::make()
+                    $isSynchronous = ($jobConnection === 'sync') || (blank($jobConnection) && (config('queue.default') === 'sync'));
+
+                    $notification = Notification::make()
                         ->title($import->importer::getCompletedNotificationTitle($import))
                         ->body($import->importer::getCompletedNotificationBody($import))
                         ->when(
@@ -310,28 +319,38 @@ class ImportAction extends Action
                             ]),
                         )
                         ->when(
-                            ($jobConnection === 'sync') ||
-                                (blank($jobConnection) && (config('queue.default') === 'sync')),
-                            fn (Notification $notification) => $notification
-                                ->persistent()
-                                ->send(),
-                            fn (Notification $notification) => $notification->sendToDatabase($import->user, isEventDispatched: true),
+                            $isSynchronous,
+                            fn (Notification $notification) => $notification->persistent(),
                         );
+
+                    $notification = $import->importer::modifyCompletedNotification($notification, $import);
+
+                    if ($isSynchronous) {
+                        $notification->send();
+                    } else {
+                        $notification->sendToDatabase($import->user, isEventDispatched: true);
+                    }
                 })
                 ->dispatch();
 
             if (
-                (filled($jobConnection) && ($jobConnection !== 'sync')) ||
-                (blank($jobConnection) && (config('queue.default') !== 'sync'))
+                ($jobConnection === 'sync')
+                || (blank($jobConnection) && (config('queue.default') === 'sync'))
             ) {
+                $action->successNotification(null);
+                $action->successNotificationTitle(null);
+
+                return;
+            }
+
+            $action->successNotification(
                 Notification::make()
                     ->title($action->getSuccessNotificationTitle())
                     ->body(trans_choice('filament-actions::import.notifications.started.body', $import->total_rows, [
                         'count' => Number::format($import->total_rows),
                     ]))
-                    ->success()
-                    ->send();
-            }
+                    ->success(),
+            );
         });
 
         $this->registerModalActions([
@@ -619,7 +638,7 @@ class ImportAction extends Action
                     return;
                 }
 
-                $csvReader = CsvReader::createFromStream($csvStream);
+                $csvReader = CsvReader::from($csvStream);
 
                 if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                     $csvReader->setDelimiter($csvDelimiter);
@@ -693,5 +712,14 @@ class ImportAction extends Action
         }
 
         return $authGuard->name;
+    }
+
+    /**
+     * @param  Model | array<string, mixed> | null  $record
+     * @return Model | array<string, mixed> | null
+     */
+    protected function ensureCorrectRecordType(Model | array | null $record): Model | array | null
+    {
+        return $record;
     }
 }

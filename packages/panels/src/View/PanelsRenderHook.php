@@ -64,6 +64,10 @@ class PanelsRenderHook
 
     const PAGE_HEADER_ACTIONS_BEFORE = 'panels::page.header.actions.before';
 
+    const PAGE_HEADER_HEADING_AFTER = 'panels::page.header.heading.after';
+
+    const PAGE_HEADER_HEADING_BEFORE = 'panels::page.header.heading.before';
+
     const PAGE_HEADER_WIDGETS_AFTER = 'panels::page.header-widgets.after';
 
     const PAGE_HEADER_WIDGETS_BEFORE = 'panels::page.header-widgets.before';
@@ -123,6 +127,8 @@ class PanelsRenderHook
     const SIDEBAR_LOGO_AFTER = 'panels::sidebar.logo.after';
 
     const SIDEBAR_LOGO_BEFORE = 'panels::sidebar.logo.before';
+
+    const SIDEBAR_START = 'panels::sidebar.start';
 
     const SIDEBAR_NAV_END = 'panels::sidebar.nav.end';
 

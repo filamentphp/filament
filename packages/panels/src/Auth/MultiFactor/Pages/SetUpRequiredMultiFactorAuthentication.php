@@ -10,11 +10,14 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
 class SetUpRequiredMultiFactorAuthentication extends SimplePage
 {
+    use RestrictsFileUploadsToSchemaComponents;
+
     public function mount(): void
     {
         if ((! Filament::hasMultiFactorAuthentication()) || $this->isEnabled()) {
@@ -27,7 +30,7 @@ class SetUpRequiredMultiFactorAuthentication extends SimplePage
         return __('filament-panels::auth/multi-factor/pages/set-up-required-multi-factor-authentication.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/multi-factor/pages/set-up-required-multi-factor-authentication.heading');
     }

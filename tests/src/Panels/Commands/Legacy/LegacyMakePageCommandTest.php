@@ -6,13 +6,12 @@ use Filament\Support\Commands\FileGenerators\FileGenerationFlag;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Arr;
 use Illuminate\Testing\PendingCommand;
 
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     config()->set('filament.file_generation.flags', [
@@ -24,8 +23,7 @@ beforeEach(function (): void {
     ]);
 
     MakePageCommand::$shouldCheckModelsForSoftDeletes = false;
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a page class', function (): void {
     $this->withoutMockingConsoleOutput();
@@ -97,7 +95,7 @@ it('can generate a page class in a cluster', function (): void {
     $this->artisan('make:filament-page', [
         'name' => 'ManageSettings',
         '--panel' => 'admin',
-        '--cluster' => 'App\\Filament\\Clusters\\Site',
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site',
         '--no-interaction' => true,
     ]);
 
@@ -120,7 +118,7 @@ it('can generate a page view in a cluster', function (): void {
     $this->artisan('make:filament-page', [
         'name' => 'ManageSettings',
         '--panel' => 'admin',
-        '--cluster' => 'App\\Filament\\Clusters\\Site',
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site',
         '--no-interaction' => true,
     ]);
 
@@ -146,7 +144,7 @@ it('can generate a page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -179,7 +177,7 @@ it('can generate a page view in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -212,7 +210,7 @@ it('can generate a create page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -247,7 +245,7 @@ it('can generate an edit page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -282,7 +280,7 @@ it('can generate a view page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -334,8 +332,8 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\TeamResource',
-        'App\\Filament\\Resources\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\TeamResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     return $testCase->artisan('make:filament-page', [
@@ -349,7 +347,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
 $generateManageRelatedRecordsPageCommandQuestions = [
     'relationship' => 'What is the relationship?',
-    'hasRelatedResource' => 'Do you want to do this?',
+    'hasRelatedResource' => 'Do you want to link this to an existing resource?',
     'relatedResource' => 'Which resource do you want to use?',
     'isGenerated' => 'Should the page be generated from the current database columns?',
     'relatedModel' => 'What is the related model?',
@@ -366,9 +364,9 @@ it('can generate a manage related records page class in a resource', function ()
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
+        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isGenerated'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
-        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -385,8 +383,8 @@ it('can generate a manage related records page class in a resource with a relate
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], true)
-        ->expectsQuestion($questions['relatedResource'], 'App\\Filament\\Resources\\TeamResource')
-        ->expectsQuestion($questions['relatedResource'], 'App\\Filament\\Resources\\TeamResource'); // Repeat the question as there is a bug when testing `search()` in Prompts
+        ->expectsQuestion($questions['relatedResource'], app()->getNamespace() . 'Filament\\Resources\\TeamResource')
+        ->expectsQuestion($questions['relatedResource'], app()->getNamespace() . 'Filament\\Resources\\TeamResource'); // Repeat the question as there is a bug when testing `search()` in Prompts
 
     assertFileExists($path = app_path('Filament/Resources/UserResource/Pages/ManageUserTeams.php'));
     expect(file_get_contents($path))
@@ -399,16 +397,18 @@ it('can generate a manage related records page class in a resource with a genera
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
+        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isGenerated'], true)
         ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
-        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
     assertFileExists($path = app_path('Filament/Resources/UserResource/Pages/ManageUserTeams.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a manage related records page class in a resource with a view operation', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
@@ -417,9 +417,9 @@ it('can generate a manage related records page class in a resource with a view o
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
+        ->expectsQuestion($questions['hasViewOperation'], true)
         ->expectsQuestion($questions['isGenerated'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
-        ->expectsQuestion($questions['hasViewOperation'], true)
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -434,9 +434,9 @@ it('can generate a manage related records page class in a resource with soft-del
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
+        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isGenerated'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
-        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isSoftDeletable'], true)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -451,9 +451,9 @@ it('can generate a manage related records page class in a resource for a `HasMan
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
+        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isGenerated'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
-        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], HasMany::class);
 

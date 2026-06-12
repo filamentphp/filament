@@ -7,9 +7,15 @@ use Livewire\Component;
 
 trait BelongsToLivewire
 {
-    protected (Component & HasSchemas) | null $livewire = null;
+    /**
+     * @var (Component & HasSchemas) | null
+     */
+    protected ?HasSchemas $livewire = null;
 
-    public function livewire((Component & HasSchemas) | null $livewire = null): static
+    /**
+     * @param  (Component & HasSchemas) | null  $livewire
+     */
+    public function livewire(?HasSchemas $livewire = null): static
     {
         $this->livewire = $livewire;
 

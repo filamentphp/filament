@@ -20,6 +20,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/filters/grid-columns" alt="Table with filters in grid columns" version="4.x" />
+
 ## Controlling the width of the filters dropdown
 
 To customize the dropdown width, you may use the `filtersFormWidth()` method, and specify a width - `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge` or `SevenExtraLarge`. By default, the width is `ExtraSmall`:
@@ -72,7 +74,9 @@ public function table(Table $table): Table
 }
 ```
 
-You may use the [trigger action API](overview#customizing-the-filters-trigger-action) to [customize the modal](../actions/modals), including [using a `slideOver()`](../actions/modals#using-a-slide-over-instead-of-a-modal).
+<AutoScreenshot name="tables/filters/modal" alt="Table with filters in a modal" version="4.x" />
+
+You may use the [trigger action API](overview#customizing-the-filters-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
 
 ## Displaying filters above the table content
 
@@ -109,6 +113,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/filters/above-content-collapsible" alt="Table with collapsible filters above content" version="4.x" />
+
 ## Displaying filters below the table content
 
 To render the filters below the table content instead of in a dropdown, you may use:
@@ -127,6 +133,44 @@ public function table(Table $table): Table
 ```
 
 <AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="4.x" />
+
+## Displaying filters to the left or right of the table content
+
+To render the filters to the left (before) or right (after) of the table content instead of in a dropdown, you may use:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ], layout: FiltersLayout::BeforeContent); // or `FiltersLayout::AfterContent`
+}
+```
+
+<AutoScreenshot name="tables/filters/before-content" alt="Table with filters before content" version="4.x" />
+
+<AutoScreenshot name="tables/filters/after-content" alt="Table with filters after content" version="4.x" />
+
+### Allowing filters to be collapsible when displayed to the left or right of the table content
+
+To allow the filters to be collapsible when displayed to the left or right of the table content, you may use:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ], layout: FiltersLayout::BeforeContentCollapsible); // or `FiltersLayout::AfterContentCollapsible`
+}
+```
 
 ## Hiding the filter indicators
 
@@ -147,7 +191,7 @@ public function table(Table $table): Table
 
 ## Customizing the filter form schema
 
-You may customize the [form schema](../../schemas/layouts) of the entire filter form at once, in order to rearrange filters into your desired layout, and use any of the [layout components](../../schemas/layout) available to forms. To do this, use the `filterFormSchema()` method, passing a closure function that receives the array of defined `$filters` that you can insert:
+You may customize the [form schema](../../schemas/layouts) of the entire filter form at once, in order to rearrange filters into your desired layout, and use any of the [layout components](../../schemas/layouts) available to forms. To do this, use the `filterFormSchema()` method, passing a closure function that receives the array of defined `$filters` that you can insert:
 
 ```php
 use Filament\Schemas\Components\Section;
@@ -178,3 +222,23 @@ public function table(Table $table): Table
 ```
 
 In this example, we have put two of the filters inside a [section](../../schemas/sections) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the filter form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.
+
+<AutoScreenshot name="tables/filters/custom-form-schema" alt="Table with custom filter form schema" version="4.x" />
+
+## Displaying the reset action in the footer
+
+By default, the reset action appears in the header of the filters form. You may move it to the footer, next to the apply action, using the `filtersResetActionPosition()` method:
+
+```php
+use Filament\Tables\Enums\FiltersResetActionPosition;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersResetActionPosition(FiltersResetActionPosition::Footer);
+}
+```

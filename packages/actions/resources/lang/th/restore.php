@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'กู้คืน',
+        'label' => 'คืนค่า',
 
         'modal' => [
 
-            'heading' => 'กู้คืน :label',
+            'heading' => 'คืนค่า :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'กู้คืน',
+                    'label' => 'คืนค่า',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'กู้คืนข้อมูลเรียบร้อย',
+                'title' => 'คืนค่าข้อมูลเรียบร้อย',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'กู้คืนที่เลือก',
+        'label' => 'คืนค่าที่เลือก',
 
         'modal' => [
 
-            'heading' => 'กู้คืน :label ที่เลือก',
+            'heading' => 'คืนค่า :label ที่เลือก',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'กู้คืน',
+                    'label' => 'คืนค่า',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'กู้คืนข้อมูลเรียบร้อย',
+                'title' => 'คืนค่าข้อมูลเรียบร้อย',
             ],
 
         ],

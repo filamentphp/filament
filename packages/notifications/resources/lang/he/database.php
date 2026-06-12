@@ -20,7 +20,7 @@ return [
 
         'empty' => [
             'heading' => 'אין התראות',
-            'description' => 'נסה שנית מאוחר יותר',
+            'description' => 'בדוק שוב מאוחר יותר',
         ],
 
     ],

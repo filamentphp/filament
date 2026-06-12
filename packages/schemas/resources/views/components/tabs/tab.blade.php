@@ -21,7 +21,6 @@
                         'aria-labelledby' => $id,
                         'id' => $id,
                         'role' => 'tabpanel',
-                        'tabindex' => '0',
                         'wire:key' => $getLivewireKey() . '.container',
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
@@ -38,7 +37,6 @@
                         'aria-labelledby' => $id,
                         'id' => $id,
                         'role' => 'tabpanel',
-                        'tabindex' => '0',
                         'wire:key' => $getLivewireKey() . '.container',
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)

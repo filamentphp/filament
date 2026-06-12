@@ -27,5 +27,15 @@
         & .fi-fo-radio-label-description {
             @apply font-normal text-gray-500 dark:text-gray-400;
         }
+
+        &:has(.fi-radio-input:disabled) {
+            & > .fi-fo-radio-label-text {
+                @apply text-gray-400 dark:text-gray-500;
+            }
+
+            & .fi-fo-radio-label-description {
+                @apply text-gray-300 dark:text-gray-600;
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Resources\Departments\Schemas;
 
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class DepartmentForm
@@ -10,7 +11,7 @@ class DepartmentForm
     {
         return $schema
             ->components([
-                //
+                TextInput::make('name')->required(),
             ]);
     }
 }

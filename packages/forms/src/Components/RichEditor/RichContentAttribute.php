@@ -4,9 +4,11 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class RichContentAttribute implements Htmlable
 {
@@ -27,11 +29,28 @@ class RichContentAttribute implements Htmlable
     protected ?array $mergeTags = null;
 
     /**
-     * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
+     * @var ?array<string, string>
+     */
+    protected ?array $mergeTagLabels = null;
+
+    /**
+     * @var ?array<MentionProvider>
+     */
+    protected ?array $mentionProviders = null;
+
+    /**
+     * @var ?array<class-string<RichContentCustomBlock> | array<int | string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
 
     protected bool $isJson = false;
+
+    /**
+     * @var ?array<string, string | TextColor>
+     */
+    protected ?array $textColors = null;
+
+    protected bool $hasCustomTextColors = false;
 
     public function __construct(protected Model $model, protected string $name) {}
 
@@ -94,7 +113,21 @@ class RichContentAttribute implements Htmlable
 
     public function getFileAttachmentProvider(): ?FileAttachmentProvider
     {
-        return $this->fileAttachmentProvider;
+        if ($this->fileAttachmentProvider) {
+            return $this->fileAttachmentProvider;
+        }
+
+        foreach ($this->getPlugins() as $plugin) {
+            if ($plugin instanceof HasFileAttachmentProvider) {
+                $provider = $plugin->getFileAttachmentProvider();
+
+                if ($provider) {
+                    return $this->fileAttachmentProvider = $provider->attribute($this);
+                }
+            }
+        }
+
+        return null;
     }
 
     public function getModel(): Model
@@ -109,14 +142,37 @@ class RichContentAttribute implements Htmlable
 
     public function toHtml(): string
     {
-        return RichContentRenderer::make($this->model->getAttribute($this->name))
+        $content = $this->model->getAttribute($this->name);
+
+        if (blank($content)) {
+            return '';
+        }
+
+        return $this->getRenderer()->toHtml();
+    }
+
+    public function toText(): string
+    {
+        $content = $this->model->getAttribute($this->name);
+
+        if (blank($content)) {
+            return '';
+        }
+
+        return $this->getRenderer()->toText();
+    }
+
+    public function getRenderer(): RichContentRenderer
+    {
+        return RichContentRenderer::make($this->model->getAttribute($this->name) ?? '')
             ->plugins($this->getPlugins())
             ->customBlocks($this->customBlocks)
             ->mergeTags($this->mergeTags)
+            ->mentions($this->mentionProviders)
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
-            ->toHtml();
+            ->textColors($this->getTextColors());
     }
 
     /**
@@ -130,19 +186,50 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @return ?array<string>
+     * @param  ?array<string, string>  $labels
      */
-    public function getMergeTags(): ?array
+    public function mergeTagLabels(?array $labels): static
     {
-        if (blank($this->mergeTags)) {
-            return null;
-        }
+        $this->mergeTagLabels = $labels;
 
-        return array_keys($this->mergeTags);
+        return $this;
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     * @return ?array<string, string>
+     */
+    public function getMergeTags(): ?array
+    {
+        if (blank($this->mergeTags) && blank($this->mergeTagLabels)) {
+            return null;
+        }
+
+        return [
+            ...array_combine(array_keys($this->mergeTags ?? []), array_keys($this->mergeTags ?? [])),
+            ...($this->mergeTagLabels ?? []),
+        ];
+    }
+
+    /**
+     * @param  ?array<MentionProvider>  $providers
+     */
+    public function mentions(?array $providers): static
+    {
+        $this->mentionProviders = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<MentionProvider>
+     */
+    public function getMentionProviders(): ?array
+    {
+        return $this->mentionProviders;
+    }
+
+    /**
+     * @param  ?array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
@@ -163,10 +250,28 @@ class RichContentAttribute implements Htmlable
         $blocks = [];
 
         foreach ($this->customBlocks as $key => $block) {
-            $blocks[] = is_string($key) ? $key : $block;
+            if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                // Data association: `BlockClass::class => $data`
+                $blocks[] = $key;
+            } elseif (is_array($block)) {
+                // Group or ungrouped section: `'Label' => [...]` or `[...]`
+                foreach ($block as $innerKey => $innerValue) {
+                    $blocks[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $blocks[] = $block;
+            }
         }
 
         return $blocks;
+    }
+
+    /**
+     * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
+     */
+    public function getCustomBlocksConfig(): array
+    {
+        return $this->customBlocks ?? [];
     }
 
     public function json(bool $condition = true): static
@@ -179,5 +284,40 @@ class RichContentAttribute implements Htmlable
     public function isJson(): bool
     {
         return $this->isJson;
+    }
+
+    /**
+     * @param  ?array<string, string | TextColor>  $colors
+     */
+    public function textColors(?array $colors): static
+    {
+        $this->textColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string | TextColor>
+     */
+    public function getTextColors(): array
+    {
+        $textColors = $this->textColors ?? TextColor::getDefaults();
+
+        return Arr::mapWithKeys(
+            $textColors,
+            fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
+        );
+    }
+
+    public function customTextColors(bool $condition = true): static
+    {
+        $this->hasCustomTextColors = $condition;
+
+        return $this;
+    }
+
+    public function hasCustomTextColors(): bool
+    {
+        return $this->hasCustomTextColors;
     }
 }

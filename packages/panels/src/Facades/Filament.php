@@ -7,15 +7,20 @@ use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Billing\Providers\Contracts\BillingProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Enums\ThemeMode;
+use Filament\Enums\UserMenuPosition;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Filament\PanelRegistry;
+use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\Widget;
@@ -45,13 +50,15 @@ use Livewire\Component;
  * @method static Panel | null getCurrentPanel()
  * @method static Panel | null getCurrentOrDefaultPanel()
  * @method static string | Htmlable | null getDarkModeBrandLogo()
+ * @method static class-string<Component> getDatabaseNotificationsLivewireComponent()
  * @method static string | null getDatabaseNotificationsPollingInterval()
+ * @method static DatabaseNotificationsPosition getDatabaseNotificationsPosition()
  * @method static string getDefaultAvatarProvider()
  * @method static Panel getDefaultPanel()
  * @method static string | null getEmailVerificationPromptUrl(array<string, mixed> $parameters = [])
  * @method static string | null getSetUpRequiredMultiFactorAuthenticationUrl(array<string, mixed> $parameters = [])
  * @method static string getEmailVerifiedMiddleware()
- * @method static array<array{ title: string | Closure, body: string | Closure | null }> getErrorNotifications()
+ * @method static array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }> getErrorNotifications()
  * @method static string | null getFavicon()
  * @method static string getFontFamily()
  * @method static string getMonoFontFamily()
@@ -59,6 +66,9 @@ use Livewire\Component;
  * @method static Htmlable getFontHtml()
  * @method static Htmlable getMonoFontHtml()
  * @method static Htmlable getSerifFontHtml()
+ * @method static Htmlable getFontPreloadHtml()
+ * @method static Htmlable getMonoFontPreloadHtml()
+ * @method static Htmlable getSerifFontPreloadHtml()
  * @method static string getFontProvider()
  * @method static string getMonoFontProvider()
  * @method static string getSerifFontProvider()
@@ -68,6 +78,7 @@ use Livewire\Component;
  * @method static string getGlobalSearchDebounce()
  * @method static array<string> getGlobalSearchKeyBindings()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
+ * @method static GlobalSearchPosition getGlobalSearchPosition()
  * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array<string, mixed> $parameters = [])
  * @method static string getLogoutUrl(array<string, mixed> $parameters = [])
@@ -112,6 +123,7 @@ use Livewire\Component;
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array<Action> getUserMenuItems()
+ * @method static UserMenuPosition getUserMenuPosition()
  * @method static string getUserName(Model | Authenticatable $user)
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)
@@ -149,10 +161,20 @@ use Livewire\Component;
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
+ * @method static bool hasTenantSwitcher()
+ * @method static ?bool isTenantMenuSearchable()
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | string | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
  * @method static void setTenant(Model | null $tenant = null, bool $isQuiet = false)
+ * @method static void setCurrentResourceConfigurationKey(string | null $key)
+ * @method static string | null getCurrentResourceConfigurationKey()
+ * @method static ResourceConfiguration | null getResourceConfiguration(string $resourceClass)
+ * @method static void setCurrentPageConfigurationKey(string | null $key)
+ * @method static string | null getCurrentPageConfigurationKey()
+ * @method static PageConfiguration | null getPageConfiguration(string $pageClass)
+ * @method static void forResourceConfiguration(string $resourceClass, string $key)
+ * @method static void forPageConfiguration(string $pageClass, string $key)
  *
  * @see FilamentManager
  */

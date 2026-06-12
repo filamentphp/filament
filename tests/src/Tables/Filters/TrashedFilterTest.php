@@ -3,6 +3,7 @@
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
@@ -102,4 +103,42 @@ it('can restore records that are already deleted', function (): void {
 
     assertModelExists($trashedPost);
     assertNotSoftDeleted($trashedPost);
+});
+
+it('can access record for action after record no longer matches `TrashedFilter`', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->filterTable(TrashedFilter::class, null)
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->delete())
+        ->callAction(TestAction::make(RestoreAction::class)->table($post));
+
+    assertNotSoftDeleted($post);
+});
+
+it('has default name `trashed`', function (): void {
+    expect(TrashedFilter::getDefaultName())->toBe('trashed');
+});
+
+it('has translated labels', function (): void {
+    $filter = TrashedFilter::make('trashed');
+
+    expect($filter->getTrueLabel())->toBeString()->not->toBeEmpty();
+    expect($filter->getFalseLabel())->toBeString()->not->toBeEmpty();
+    expect($filter->getLabel())->toBeString()->not->toBeEmpty();
+});
+
+it('cannot access record for action after record no longer matches non-excluded filter', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]));
+
+    livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->mountTableAction(DeleteAction::class, $post)
+        ->assertTableActionNotMounted(DeleteAction::class);
 });

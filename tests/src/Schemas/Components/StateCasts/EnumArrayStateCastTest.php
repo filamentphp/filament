@@ -61,7 +61,7 @@ it('can get the values from an array of integer backed enums in the setter', fun
     $cast = app(EnumArrayStateCast::class, ['enum' => IntegerBackedEnum::class]);
 
     expect($cast->set([IntegerBackedEnum::One, IntegerBackedEnum::Two, IntegerBackedEnum::Three]))
-        ->toBe([1, 2, 3]);
+        ->toBe(['1', '2', '3']);
 });
 
 it('can ignore the values in the setter if they are not enums', function (): void {

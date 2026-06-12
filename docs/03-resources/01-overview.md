@@ -1,11 +1,14 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app using tables and forms.
+
+<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="4.x" />
 
 ## Creating a resource
 
@@ -53,6 +56,10 @@ Your resource will have a "Manage" page, which is a List page with modals added.
 
 Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
+<AutoScreenshot name="panels/resources/simple-modal-create" alt="Simple (modal) resource create modal" version="4.x" />
+
+<AutoScreenshot name="panels/resources/simple-modal-edit" alt="Simple (modal) resource edit modal" version="4.x" />
+
 ### Automatically generating forms and tables
 
 If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns, using `--generate`:
@@ -91,7 +98,7 @@ In this example, the model should exist at `Custom\Path\Models\Customer`. Please
 
 Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
 
-### Generating the model, migration and factory at the same name
+### Generating the model, migration and factory at the same time
 
 If you'd like to save time when scaffolding your resources, Filament can also generate the model, migration and factory for the new resource at the same time using the `--model`, `--migration` and `--factory` flags in any combination:
 
@@ -148,7 +155,7 @@ public static function configure(Schema $schema): Schema
 }
 ```
 
-The `components()` method is used to define the structure of your form. It is an array of [fields](../forms#available-fields) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your form.
+The `components()` method is used to define the structure of your form. It is an array of [fields](../forms/overview#available-fields) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your form.
 
 Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
 
@@ -206,7 +213,7 @@ Resource classes contain a `table()` method that is used to build the table on t
 By default, Filament creates a table file for you, which is referenced in the `table()` method. This is to keep your resource class clean and organized, otherwise it can get quite large:
 
 ```php
-use App\Filament\Resources\Customers\Schemas\CustomersTable;
+use App\Filament\Resources\Customers\Tables\CustomersTable;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -443,7 +450,7 @@ public static function getNavigationParentItem(): ?string
 
 ## Generating URLs to resource pages
 
-Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
+Filament provides a `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
 
 The `getUrl()` method, without any arguments, will generate a URL to the resource's [List page](listing-records):
 
@@ -582,6 +589,8 @@ public static function getRecordSubNavigation(Page $page): array
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
+<AutoScreenshot name="panels/resources/sub-navigation" alt="Resource with sub-navigation" version="4.x" />
+
 <Aside variant="tip">
     If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 </Aside>
@@ -595,6 +604,12 @@ use Filament\Pages\Enums\SubNavigationPosition;
 
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
+
+<AutoScreenshot name="panels/resources/sub-navigation-end" alt="Resource with end sub-navigation position" version="4.x" />
+
+The `SubNavigationPosition::Top` option renders the sub-navigation as tabs above the page content:
+
+<AutoScreenshot name="panels/resources/sub-navigation-top" alt="Resource with top sub-navigation position" version="4.x" />
 
 ## Deleting resource pages
 

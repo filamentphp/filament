@@ -116,7 +116,7 @@ Block::make('heading')
 
 Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 
-<UtilityInjection set="formFields" version="4.x" extras="Key;;string;;$key;;The key for the current block.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current block.">You can inject various utilities into the function passed to `label()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Key;;string;;$key;;The key for the current block.||Index;;int;;$index;;The zero-based index of the current block.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current block.">You can inject various utilities into the function passed to `label()` as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/builder/labelled" alt="Builder with labelled blocks based on the content" version="4.x" />
 
@@ -180,6 +180,8 @@ Builder::make('content')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `blockIcons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/builder/block-icons" alt="Builder with icons in block headers" version="4.x" />
+
 ## Previewing blocks
 
 If you prefer to render read-only previews in the builder instead of the blocks' forms, you can use the `blockPreviews()` method. This will render each block's `preview()` instead of the form. Block data will be passed to the preview Blade view in a variable with the same name:
@@ -222,6 +224,8 @@ Builder::make('content')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `blockPreviews()` and `preview()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/builder/block-previews" alt="Builder with block previews" version="4.x" />
 
 ### Interactive block previews
 
@@ -275,6 +279,8 @@ Builder::make('content')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/builder/add-action-alignment" alt="Builder with add action aligned to the start" version="4.x" />
 
 ### Preventing the user from adding items
 
@@ -392,6 +398,8 @@ Builder::make('content')
     ->collapsible()
 ```
 
+<AutoScreenshot name="forms/fields/builder/collapsible" alt="Collapsible builder" version="4.x" />
+
 You may also collapse all items by default:
 
 ```php
@@ -461,6 +469,8 @@ This method can be used in a couple of different ways:
 Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be found in the [Tailwind documentation](https://tailwindcss.com/docs/responsive-design#overview).
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `blockPickerColumns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/builder/block-picker-columns" alt="Builder with 2 block picker columns" version="4.x" />
 
 ### Increasing the width of the block picker
 

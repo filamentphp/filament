@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dissosiere',
+        'label' => 'Koble fra',
 
         'modal' => [
 
-            'heading' => 'Dissosiere :label',
+            'heading' => 'Koble fra :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissosier',
+                    'label' => 'Koble fra',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissosiert',
+                'title' => 'Koblet fra',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Dissosiere valgte',
+        'label' => 'Koble fra valgte',
 
         'modal' => [
 
-            'heading' => 'Dissosiere valgte :label',
+            'heading' => 'Koble fra valgte :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissosier',
+                    'label' => 'Koble fra',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissosiert',
+                'title' => 'Koblet fra',
             ],
 
         ],

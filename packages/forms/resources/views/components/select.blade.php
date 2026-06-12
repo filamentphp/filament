@@ -5,12 +5,15 @@
     $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
+    $isReorderable = $isReorderable();
     $isSearchable = $isSearchable();
+    $hasInitialNoOptionsMessage = $hasInitialNoOptionsMessage();
+    $hasDynamicOptions = $hasDynamicOptions();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
     $isHtmlAllowed = $isHtmlAllowed();
-    $isNative = (! ($isSearchable || $isMultiple) && $isNative());
+    $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $isNative());
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
     $key = $getKey();
@@ -24,14 +27,14 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
-    $state = $getState();
+    $state = $getRawState();
     $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    class="fi-fo-select-wrp"
 >
     <x-filament::input.wrapper
         :disabled="$isDisabled"
@@ -46,6 +49,7 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
+        :x-on:focus-input.stop="$isNative ? '$el.querySelector(\'select\')?.focus()' : '$el.querySelector(\'.fi-select-input-btn\')?.focus()'"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                 ->class([
@@ -56,6 +60,10 @@
         "
     >
         @if ($isNative)
+            @php
+                $options = $getOptions();
+            @endphp
+
             <select
                 {{
                     $extraInputAttributeBag
@@ -64,6 +72,7 @@
                             'disabled' => $isDisabled,
                             'id' => $id,
                             'required' => $isRequired && (! $isConcealed),
+                            'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                         ->class([
@@ -80,7 +89,7 @@
                     </option>
                 @endif
 
-                @foreach ($getOptions() as $value => $label)
+                @foreach ($options as $value => $label)
                     @if (is_array($label))
                         <optgroup label="{{ $value }}">
                             @foreach ($label as $groupedValue => $groupedLabel)
@@ -131,7 +140,6 @@
                 x-data="selectFormComponent({
                             canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             canSelectPlaceholder: @js($canSelectPlaceholder),
-                            isHtmlAllowed: @js($isHtmlAllowed),
                             getOptionLabelUsing: async () => {
                                 return await $wire.callSchemaComponentMethod(@js($key), 'getOptionLabel')
                             },
@@ -154,19 +162,23 @@
                                     { search },
                                 )
                             },
+                            hasDynamicOptions: @js($hasDynamicOptions),
+                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                            hasInitialNoOptionsMessage: @js($hasInitialNoOptionsMessage),
                             initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
                             initialOptionLabels: @js((filled($state) && $isMultiple) ? $getOptionLabelsForJs() : []),
                             initialState: @js($state),
                             isAutofocused: @js($isAutofocused),
                             isDisabled: @js($isDisabled),
+                            isHtmlAllowed: @js($isHtmlAllowed),
                             isMultiple: @js($isMultiple),
+                            isReorderable: @js($isReorderable),
                             isSearchable: @js($isSearchable),
                             livewireId: @js($this->getId()),
-                            hasDynamicOptions: @js($hasDynamicOptions()),
-                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             loadingMessage: @js($getLoadingMessage()),
                             maxItems: @js($getMaxItems()),
                             maxItemsMessage: @js($getMaxItemsMessage()),
+                            noOptionsMessage: @js($getNoOptionsMessage()),
                             noSearchResultsMessage: @js($getNoSearchResultsMessage()),
                             options: @js($getOptionsForJs()),
                             optionsLimit: @js($getOptionsLimit()),
@@ -183,6 +195,7 @@
                 wire:key="{{ $livewireKey }}.{{
                     substr(md5(serialize([
                         $isDisabled,
+                        $isReorderable,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
@@ -190,6 +203,7 @@
                 {{
                     $attributes
                         ->merge($getExtraAlpineAttributes(), escape: false)
+                        ->class(['fi-select-input'])
                 }}
             >
                 <div x-ref="select"></div>

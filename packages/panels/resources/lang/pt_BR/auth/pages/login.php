@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Verifique sua identidade',
+
+        'subheading' => 'Para continuar o login, você precisa verificar sua identidade.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Como você gostaria de verificar?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Confirmar login',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Essas credenciais não correspondem aos nossos registros.',

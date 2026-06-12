@@ -40,6 +40,10 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             }
 
             foreach ($records as $record) {
+                if (! method_exists($record, 'getFallbackMediaUrl')) {
+                    continue;
+                }
+
                 $url = $record->getFallbackMediaUrl($collection, $column->getConversion() ?? '');
 
                 if (blank($url)) {
@@ -109,7 +113,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             if ($this->getVisibility() === 'private') {
                 try {
                     return $media->getTemporaryUrl(
-                        now()->addMinutes(30)->endOfHour(),
+                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                         $conversion ?? '',
                     );
                 } catch (Throwable $exception) {

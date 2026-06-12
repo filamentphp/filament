@@ -2,6 +2,8 @@
 title: Input wrapper Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The input wrapper component should be used as a wrapper around the [input](input) or [select](select) components. It provides a border and other elements such as a prefix or suffix.
@@ -65,6 +67,8 @@ To disable the input, you must also pass the `disabled` attribute to the wrapper
 </x-filament::input.wrapper>
 ```
 
+<AutoScreenshot name="components/input/disabled" alt="A disabled input" version="4.x" />
+
 ## Adding affix text aside the input
 
 You may place text before and after the input using the `prefix` and `suffix` slots:
@@ -86,6 +90,8 @@ You may place text before and after the input using the `prefix` and `suffix` sl
 </x-filament::input.wrapper>
 ```
 
+<AutoScreenshot name="components/input/prefix" alt="An input with a prefix" version="4.x" />
+
 ### Using icons as affixes
 
 You may place an [icon](../styling/icons) before and after the input using the `prefix-icon` and `suffix-icon` attributes:
@@ -98,6 +104,8 @@ You may place an [icon](../styling/icons) before and after the input using the `
     />
 </x-filament::input.wrapper>
 ```
+
+<AutoScreenshot name="components/input/icon" alt="An input with a prefix icon" version="4.x" />
 
 #### Setting the affix icon's color
 
@@ -114,3 +122,5 @@ Affix icons are gray by default, but you may set a different color using the `pr
     />
 </x-filament::input.wrapper>
 ```
+
+<AutoScreenshot name="components/input/suffix-icon-color" alt="An input with a colored suffix icon" version="4.x" />

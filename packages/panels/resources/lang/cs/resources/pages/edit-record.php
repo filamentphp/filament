@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Upravit',
 
+    'navigation_label' => 'Upravit',
+
     'form' => [
 
         'actions' => [

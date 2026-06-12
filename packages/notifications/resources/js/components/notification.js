@@ -10,6 +10,8 @@ export default (Alpine) => {
 
         transitionEasing: null,
 
+        unsubscribeLivewireHook: null,
+
         init() {
             this.computedStyle = window.getComputedStyle(this.$el)
 
@@ -76,7 +78,7 @@ export default (Alpine) => {
         configureAnimations() {
             let animation
 
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     if (
@@ -162,6 +164,10 @@ export default (Alpine) => {
                     },
                 }),
             )
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }))
 }

@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Concerns\CanDisableGrammarly;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
+use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Textarea extends Field implements Contracts\CanBeLengthConstrained
@@ -67,9 +68,16 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
         return (bool) $this->evaluate($this->shouldAutosize);
     }
 
+    public function getDefaultStateCasts(): array
+    {
+        return [
+            ...parent::getDefaultStateCasts(),
+            ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
+        ];
+    }
+
     public function mutateDehydratedState(mixed $state): mixed
     {
-        $state = $this->stripCharactersFromState($state);
         $state = $this->trimState($state);
 
         return parent::mutateDehydratedState($state);
@@ -85,7 +93,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
 
     public function mutatesDehydratedState(): bool
     {
-        return parent::mutatesDehydratedState() || $this->hasStripCharacters() || $this->isTrimmed();
+        return parent::mutatesDehydratedState() || $this->isTrimmed();
     }
 
     public function mutatesStateForValidation(): bool

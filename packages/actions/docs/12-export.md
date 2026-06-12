@@ -2,27 +2,21 @@
 title: Export action
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-Filament includes an action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
+Filament includes an action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
 
 ```bash
-# Laravel 11 and higher
 php artisan make:queue-batches-table
 php artisan make:notifications-table
-
-# Laravel 10
-php artisan queue:batches-table
-php artisan notifications:table
-```
-
-```bash
-# All apps
 php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
+
+If you'd like to receive export notifications in a panel, you can enable them in the [panel configuration](../notifications/database-notifications#enabling-database-notifications-in-a-panel).
 
 <Aside variant="info">
     If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
@@ -41,6 +35,8 @@ use Filament\Actions\ExportAction;
 ExportAction::make()
     ->exporter(ProductExporter::class)
 ```
+
+<AutoScreenshot name="actions/export-action/modal" alt="Export action modal" version="4.x" />
 
 If you want to add this action to the header of a table, you may do so like this:
 
@@ -134,6 +130,17 @@ use Filament\Actions\Exports\ExportColumn;
 
 ExportColumn::make('description')
     ->enabledByDefault(false)
+```
+
+You can use the `enableVisibleTableColumnsByDefault()` method on the `ExportAction` to enable only the columns that are currently visible in the table by default. Columns that use `enabledByDefault(false)` will also be disabled by default:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->enableVisibleTableColumnsByDefault()
 ```
 
 ### Configuring the column selection form layout
@@ -271,7 +278,7 @@ ExportColumn::make('users_count')
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before counting, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -296,7 +303,7 @@ ExportColumn::make('users_exists')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before checking existence, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -321,7 +328,7 @@ ExportColumn::make('users_avg_age')
 
 In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before aggregating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -335,7 +342,7 @@ ExportColumn::make('users_avg_age')
 
 ## Configuring the export formats
 
-By default, the export action will allow the user to choose between both CSV and XLSX formats. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
+By default, the export action will generate both CSV and XLSX formats and allow user to choose between them in the notification. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
 
 ```php
 use App\Filament\Exports\ProductExporter;
@@ -418,7 +425,7 @@ public static function modifyQuery(Builder $query): Builder
 
 ### Customizing the storage disk
 
-By default, exported files will be uploaded to the storage disk defined in the [configuration file](../../installation#publishing-configuration), which is `public` by default. You can set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this.
+By default, exported files will be uploaded to the storage disk defined in the [configuration file](../introduction/installation#publishing-configuration), which is `public` by default. You can set the `FILESYSTEM_DISK` environment variable to change this.
 
 While using the `public` disk a good default for many parts of Filament, using it for exports would result in exported files being stored in a public location. As such, if the default filesystem disk is `public` and a `local` disk exists in your `config/filesystems.php`, Filament will use the `local` disk for exports instead. If you override the disk to be `public` for an `ExportAction` or inside an exporter class, Filament will use that.
 
@@ -455,7 +462,7 @@ Export files that are created are the developer's responsibility to delete if th
 
 ### Configuring the export file names
 
-By default, exported files will have a name generated based on the ID and type of the export. You can also use the `fileName()` method on the action to customize the file name:
+By default, exported files are given a name generated based on the export's ID and type. You can customize the file name by using the `fileName()` method on the action:
 
 ```php
 use Filament\Actions\ExportAction;
@@ -463,17 +470,17 @@ use Filament\Actions\Exports\Models\Export;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->fileName(fn (Export $export): string => "products-{$export->getKey()}.csv")
+    ->fileName(fn (Export $export): string => "products-{$export->getKey()}")
 ```
 
-Alternatively, you can override the `getFileName()` method on the exporter class, returning a string:
+Alternatively, you can override the `getFileName()` method on the exporter class and return a custom string:
 
 ```php
 use Filament\Actions\Exports\Models\Export;
 
 public function getFileName(Export $export): string
 {
-    return "products-{$export->getKey()}.csv";
+    return "products-{$export->getKey()}";
 }
 ```
 
@@ -746,6 +753,49 @@ public function configureXlsxWriterBeforeClose(Writer $writer): Writer
 }
 ```
 
+## Customizing the completion notification
+
+When an export finishes, Filament sends a notification to the user who started it. You can customize the title and body of that notification by overriding `getCompletedNotificationTitle()` and `getCompletedNotificationBody()` on your exporter:
+
+```php
+use Filament\Actions\Exports\Models\Export;
+
+public static function getCompletedNotificationTitle(Export $export): string
+{
+    return 'Your product export is ready';
+}
+
+public static function getCompletedNotificationBody(Export $export): string
+{
+    return $export->successful_rows . ' products were exported.';
+}
+```
+
+For anything beyond the title and body — for example, changing the notification color, adding extra actions, or replacing the icon — override `modifyCompletedNotification()`. You can either mutate the `Notification` passed in and return it, or build and return a completely new one:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Notifications\Notification;
+
+public static function modifyCompletedNotification(Notification $notification, Export $export): Notification
+{
+    $notification->icon('heroicon-o-shopping-bag');
+
+    if ($export->getOptions()['notifyTeam'] ?? false) {
+        $notification->actions([
+            ...$notification->getActions(),
+            Action::make('shareWithTeam')
+                ->url(route('exports.share', $export)),
+        ]);
+    }
+
+    return $notification;
+}
+```
+
+The `Export` model exposes the column mapping and options the user selected via `$export->getColumnMap()` and `$export->getOptions()`, so you can tailor the notification based on what the user exported.
+
 ## Customizing the export job
 
 The default job for processing exports is `Filament\Actions\Exports\Jobs\PrepareCsvExport`. If you want to extend this class and override any of its methods, you may replace the original class in the `register()` method of a service provider:
@@ -885,3 +935,29 @@ public function view(User $user, Export $export): bool
     return $export->user()->is($user);
 }
 ```
+
+## Security
+
+### Per-record authorization
+
+The export system does not perform per-record authorization checks. When an export is triggered, all records matching the table query (or the model's full dataset, if used outside a table) are included in the export without consulting your application's [Laravel policies](https://laravel.com/docs/authorization#creating-policies). This means that if a user is allowed to trigger an export, they may receive records they would not normally be authorized to view through your application's UI.
+
+If you need to restrict which records are exported, you should scope the query using the [`modifyQueryUsing()` method](#modifying-the-eloquent-query):
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->modifyQueryUsing(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
+```
+
+You could also apply [global scopes](https://laravel.com/docs/eloquent#global-scopes) to your model to ensure that only authorized records are ever queried.
+
+<Aside variant="danger">
+    If your application has per-record visibility rules, you should scope the export query to ensure users only receive records they are authorized to view.
+</Aside>
+
+### CSV formula injection
+
+Filament's export system writes data to CSV and XLSX files exactly as it is stored in the database, without any transformation. This means that if your database contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the exported file. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if your data includes untrusted or user-submitted content. You should ensure that your users are aware of this risk, or sanitize the data before export using the [`formatStateUsing()` method](export#formatting-the-value-of-an-export-column) on each column, for example by prefixing values with a single quote (`'`) to prevent formula interpretation.

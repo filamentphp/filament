@@ -19,6 +19,7 @@ it('can extract the search into words using whitespace', function (): void {
     assertCount(2, $trait->extractTableSearchWords('testy test'));
     assertCount(2, $trait->extractTableSearchWords('testy   test'));
     assertCount(2, $trait->extractTableSearchWords("testy \t \n \r  test"));
+    assertCount(2, $trait->extractTableSearchWords("testy 　 \u{3164} \u{1160}  test"));
     assertCount(3, $trait->extractTableSearchWords('testy   tasty   test'));
 
     // test count when string contains phrases
@@ -62,4 +63,13 @@ it('can trim the search query', function (): void {
 
     $trait->tableSearch = '  testy "test phrase" ';
     $this->assertSame('testy "test phrase"', $trait->getTableSearch());
+
+    $trait->tableSearch = '　　　test　　　';
+    $this->assertSame('test', $trait->getTableSearch());
+
+    $trait->tableSearch = "\u{3164}\u{3164}test\u{3164}\u{3164}";
+    $this->assertSame('test', $trait->getTableSearch());
+
+    $trait->tableSearch = "\u{1160}\u{1160}test\u{1160}\u{1160}";
+    $this->assertSame('test', $trait->getTableSearch());
 });

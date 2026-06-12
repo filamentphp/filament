@@ -3,7 +3,6 @@
 namespace Filament\Actions\Imports;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
@@ -15,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class ImportColumn extends Component
 {
@@ -98,7 +98,7 @@ class ImportColumn extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Import column of class [$importColumnClass] must have a unique name, passed to the [make()] method.");
+            throw new InvalidArgumentException("Import column of class [$importColumnClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($importColumnClass, ['name' => $name]);
@@ -651,9 +651,9 @@ class ImportColumn extends Component
         return $this;
     }
 
-    public function getValidationAttribute(): string
+    public function getValidationAttribute(): ?string
     {
-        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+        return $this->evaluate($this->validationAttribute) ?? (filled($label = $this->getLabel()) ? Str::lcfirst($label) : null);
     }
 
     public function getLabel(): ?string
@@ -721,7 +721,7 @@ class ImportColumn extends Component
 
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         return match ($parameterType) {
             Importer::class => [$this->getImporter()],

@@ -61,7 +61,7 @@ return [
             ],
 
             'deleted_none' => [
-                'title' => 'Failed to delete',
+                'title' => 'Gagal menghapus',
                 'missing_authorization_failure_message' => 'Anda tidak mempunyai akses untuk menghapus :count.',
                 'missing_processing_failure_message' => ':count tidak dapat dihapus.',
             ],

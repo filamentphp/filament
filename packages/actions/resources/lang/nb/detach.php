@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Løsne',
+        'label' => 'Fjern',
 
         'modal' => [
 
-            'heading' => 'Løsne fra :label',
+            'heading' => 'Fjern :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Løsne fra',
+                    'label' => 'Fjern',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Løsnet',
+                'title' => 'Fjernet',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Løsne fra valgte',
+        'label' => 'Fjern valgte',
 
         'modal' => [
 
-            'heading' => 'Løsne fra valgte :label',
+            'heading' => 'Fjern valgte :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Løsne fra',
+                    'label' => 'Fjern',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Løsnet',
+                'title' => 'Fjernet',
             ],
 
         ],

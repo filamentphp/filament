@@ -3,13 +3,13 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait HasRelationship
@@ -64,6 +64,12 @@ trait HasRelationship
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -75,7 +81,7 @@ trait HasRelationship
         }
 
         if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
         }
 
         return $relationship;

@@ -1,10 +1,13 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
+
+<AutoScreenshot name="panels/login" alt="The default login page" version="4.x" />
 
 ## Authorizing access to the panel
 
@@ -60,7 +63,7 @@ class User extends Authenticatable implements FilamentUser
 
 ## Authorizing access to Resources
 
-See the [Authorization](resources#authorization) section in the Resource documentation for controlling access to Resource pages and their data records.
+See the [Authorization](../resources/overview#authorization) section in the Resource documentation for controlling access to Resource pages and their data records.
 
 ## Setting up user avatars
 
@@ -179,6 +182,12 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/registration" alt="The default registration page" version="4.x" />
+
+<AutoScreenshot name="panels/password-reset" alt="The default password reset page" version="4.x" />
+
+<AutoScreenshot name="panels/profile" alt="The default profile page" version="4.x" />
+
 Filament also supports multi-factor authentication, which you can learn about in the [Multi-factor authentication](multi-factor-authentication) section.
 
 ### Customizing the authentication features
@@ -230,11 +239,11 @@ class EditProfile extends BaseEditProfile
 
 This class extends the base profile page class from the Filament codebase. Other page classes you could extend include:
 
-- `Filament\Pages\Auth\Login`
-- `Filament\Pages\Auth\Register`
-- `Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt`
-- `Filament\Pages\Auth\PasswordReset\RequestPasswordReset`
-- `Filament\Pages\Auth\PasswordReset\ResetPassword`
+- `Filament\Auth\Pages\Login`
+- `Filament\Auth\Pages\Register`
+- `Filament\Auth\Pages\EmailVerification\EmailVerificationPrompt`
+- `Filament\Auth\Pages\PasswordReset\RequestPasswordReset`
+- `Filament\Auth\Pages\PasswordReset\ResetPassword`
 
 In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.
 
@@ -331,7 +340,7 @@ public function panel(Panel $panel): Panel
 
 ### Disabling revealable password inputs
 
-By default, all password inputs in authentication forms are [`revealable()`](../forms/text-input#revealable-password-inputs). This allows the user can see a plain text version of the password they're typing by clicking a button. To disable this feature, you can pass `false` to the `revealablePasswords()` [configuration](../panel-configuration) method:
+By default, all password inputs in authentication forms are [`revealable()`](../forms/text-input#revealable-password-inputs). This allows the user to see a plain text version of the password they're typing by clicking a button. To disable this feature, you can pass `false` to the `revealablePasswords()` [configuration](../panel-configuration) method:
 
 ```php
 use Filament\Panel;

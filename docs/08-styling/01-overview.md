@@ -2,6 +2,7 @@
 title: Overview
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Changing the colors
 
@@ -27,6 +28,8 @@ public function panel(Panel $panel): Panel
 ```
 
 The `Filament\Support\Colors\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
+
+<AutoScreenshot name="panels/styling/colors" alt="Panel with custom colors" version="4.x" />
 
 You can also pass in a function to `register()` which will only get called when the app is getting rendered. This is useful if you are calling `register()` from a service provider, and want to access objects like the currently authenticated user, which are initialized later in middleware.
 
@@ -84,6 +87,8 @@ public function panel(Panel $panel): Panel
 
 All [Google Fonts](https://fonts.google.com) are available to use.
 
+<AutoScreenshot name="panels/styling/font" alt="Panel with custom font" version="4.x" />
+
 ### Changing the font provider
 
 [Bunny Fonts CDN](https://fonts.bunny.net) is used to serve the fonts. It is GDPR-compliant. If you'd like to use [Google Fonts CDN](https://fonts.google.com) instead, you can do so using the `provider` argument of the `font()` method:
@@ -128,9 +133,19 @@ By default, this command will use NPM to install dependencies. If you want to us
 php artisan make:filament-theme --pm=bun
 ````
 
-This command generates a CSS file in the `resources/css/filament` directory.
+This command will:
 
-Add the theme's CSS file to the input array in `vite.config.js`:
+1. Install the required Tailwind CSS dependencies
+2. Generate a CSS file in `resources/css/filament/{panel}/theme.css`
+3. Attempt to automatically add the theme to your `vite.config.js` input array
+4. Attempt to automatically register `->viteTheme()` in your panel provider
+5. Offer to compile the theme with Vite
+
+If the command cannot automatically configure your files (due to non-standard formatting), it will display manual instructions instead. In that case, follow these steps:
+
+### Manual configuration
+
+Add the theme's CSS file to the Laravel plugin's `input` array in `vite.config.js`:
 
 ```js
 input: [
@@ -139,7 +154,7 @@ input: [
 ]
 ```
 
-Now, register the Vite-compiled theme CSS file in the panel's provider:
+Register the Vite-compiled theme CSS file in the panel's provider:
 
 ```php
 use Filament\Panel;
@@ -152,30 +167,60 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Finally, compile the theme with Vite:
+Then compile the theme with Vite:
 
 ```bash
 npm run build
 ```
 
 <Aside variant="info">
-    Check the command output for the exact file path (e.g., `app/theme.css`), as it may vary depending on your panel's ID.
+    Check the command output for the exact file path (e.g., `admin/theme.css`), as it may vary depending on your panel's ID.
 </Aside>
 
 You can now customize the theme by editing the CSS file in `resources/css/filament`.
 
 ## Using Tailwind CSS classes in your Blade views or PHP files
 
-Even though Filament uses Tailwind CSS to compile the framework, it is not set up to automatically scan for any Tailwind classes you use in your project, so these classes will not be included in the compiled CSS.
+<Aside variant="warning">
+    **A custom theme is required to use Tailwind CSS classes in your own code.** Filament's default compiled stylesheet does not include arbitrary Tailwind classes - it only contains the styles needed for Filament's own UI components.
+</Aside>
 
-To use Tailwind CSS classes in your project, you need to set up a [custom theme](#creating-a-custom-theme) to customize the compiled CSS file in the panel. In the `theme.css` file of the theme, you will find two lines:
+If you want to use Tailwind CSS utility classes (like `text-primary-600`, `bg-gray-100`, `p-4`, etc.) in your own Blade views, Livewire components, or PHP files, **you must create a custom theme first**.
 
-```css
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
+Without a custom theme, any Tailwind classes you add to your code will simply not work - the styles won't be applied because they're not included in the compiled CSS.
+
+### Setting up Tailwind CSS for your project
+
+To use Tailwind CSS classes in your project, you need to set up a [custom theme](#creating-a-custom-theme). Run the following command:
+
+```bash
+php artisan make:filament-theme
 ```
 
-These lines tell Tailwind to scan the `app/Filament` and `resources/views/filament` directories for any Tailwind classes you use in your project. You can [add any other directories](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) you want to scan for Tailwind classes here.
+In the generated `theme.css` file, you will find `@source` directives that tell Tailwind CSS where to scan for classes:
+
+```css
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+```
+
+**Add your own directories** where you use Tailwind classes. For example:
+
+```css
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/components/**/*';
+@source '../../../../resources/views/livewire/**/*';
+@source '../../../../app/Livewire/**/*';
+```
+
+After adding your directories, rebuild your theme:
+
+```bash
+npm run build
+```
+
+You can [learn more about the `@source` directive](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) in the Tailwind CSS documentation.
 
 ## Disabling dark mode
 
@@ -225,6 +270,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/styling/brand-name" alt="Panel with custom brand name" version="4.x" />
+
 To render an image instead, you can pass a URL to the `brandLogo()` method:
 
 ```php
@@ -237,6 +284,8 @@ public function panel(Panel $panel): Panel
         ->brandLogo(asset('images/logo.svg'));
 }
 ```
+
+<AutoScreenshot name="panels/styling/brand-logo" alt="Panel with custom brand logo" version="4.x" />
 
 Alternatively, you may directly pass HTML to the `brandLogo()` method to render an inline SVG element for example:
 

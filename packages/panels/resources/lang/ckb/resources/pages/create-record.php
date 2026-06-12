@@ -4,7 +4,7 @@ return [
 
     'title' => 'زیادکردنی :label',
 
-    'breadcrumb' => 'دروستکردن',
+    'breadcrumb' => 'زیادکردن',
 
     'form' => [
 

@@ -3,13 +3,13 @@
 namespace Filament\Forms\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use LogicException;
 
 trait InteractsWithForms /** @phpstan-ignore trait.unused */
 {
@@ -64,7 +64,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
                     if (! method_exists($this, $form)) {
                         $livewireClass = $this::class;
 
-                        throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
+                        throw new LogicException("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
                     }
 
                     return [$form => $this->{$form}($this->makeSchema())];
@@ -260,10 +260,5 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
     {
         $this->unmountAction($shouldCancelParentActions);
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

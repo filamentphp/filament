@@ -91,8 +91,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->form($schema->columns(2)),
-            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->infolist($this->form($schema->columns(2))),
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->form($schema->hasCustomColumns() ? $schema : $schema->columns(2)),
+            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->infolist($this->form($schema->hasCustomColumns() ? $schema : $schema->columns(2))),
             default => null,
         };
     }
@@ -135,7 +135,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     }
 
                     $action->record($record);
-                    $action->getGroup()?->record($record);
+
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
 
                     if ($action->isHidden()) {
                         continue;
@@ -149,8 +156,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 }
 
                 return null;
-            })
-            ->recordUrl(function (Model $record, Table $table): ?string {
+            });
+
+        if (! $table->hasCustomRecordUrl()) {
+            $table->recordUrl(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -161,7 +170,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     $action = clone $action;
 
                     $action->record($record);
-                    $action->getGroup()?->record($record);
+
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
 
                     if ($action->isHidden()) {
                         continue;
@@ -192,6 +208,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
                 return null;
             });
+        }
 
         static::getResource()::configureTable($table);
 
@@ -211,7 +228,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      */
     public function getSubNavigation(): array
     {
-        if (filled($cluster = static::getCluster())) {
+        if (filled($cluster = static::getCluster()) && $cluster::shouldRegisterSubNavigation()) {
             return $this->generateNavigationItems($cluster::getClusteredComponents());
         }
 

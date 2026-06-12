@@ -41,6 +41,7 @@ use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
@@ -149,7 +150,7 @@ class MakePageCommand extends Command
                 name: 'resource-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
+                description: 'The namespace of the resource class, such as [' . app()->getNamespace() . 'Filament\\Resources]',
             ),
             new InputOption(
                 name: 'type',
@@ -336,7 +337,7 @@ class MakePageCommand extends Command
         }
 
         if (count($namespaces) < 2) {
-            $this->pagesNamespace = (Arr::first($namespaces) ?? 'App\\Filament\\Pages');
+            $this->pagesNamespace = (Arr::first($namespaces) ?? app()->getNamespace() . 'Filament\\Pages');
             $this->pagesDirectory = (Arr::first($directories) ?? app_path('Filament/Pages/'));
 
             return;
@@ -381,7 +382,7 @@ class MakePageCommand extends Command
                     ->whenContains(
                         'Filament\\',
                         fn (Stringable $fqn) => $fqn->after('Filament\\')->prepend('Filament\\'),
-                        fn (Stringable $fqn) => $fqn->replaceFirst('App\\', ''),
+                        fn (Stringable $fqn) => $fqn->replaceFirst(app()->getNamespace(), ''),
                     )
                     ->replace('\\', '/')
                     ->explode('/')
@@ -555,12 +556,17 @@ class MakePageCommand extends Command
 
                 $resourceModelFqn = $this->resourceFqn::getModel();
 
-                if (
-                    class_exists($resourceModelFqn) &&
-                    method_exists($resourceModelFqn, $relationship) &&
-                    (($relationshipInstance = app($resourceModelFqn)->{$relationship}()) instanceof Relation)
-                ) {
-                    return $relatedModelFqn = $relationshipInstance->getRelated()::class;
+                try {
+                    if (
+                        class_exists($resourceModelFqn) &&
+                        method_exists($resourceModelFqn, $relationship) &&
+                        (($relationshipInstance = app($resourceModelFqn)->{$relationship}()) instanceof Relation) &&
+                        class_exists($relatedModel = $relationshipInstance->getRelated()::class)
+                    ) {
+                        return $relatedModelFqn = $relatedModel;
+                    }
+                } catch (Throwable) {
+                    //
                 }
 
                 return $relatedModelFqn = $this->askForRelatedModel($relationship);
@@ -580,57 +586,55 @@ class MakePageCommand extends Command
                 );
             };
 
-            if (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS)) {
-                $formSchemaFqn = $this->askForSchema(
-                    intialQuestion: 'Should an existing form schema class be used?',
-                    question: 'Which form schema class would you like to use?',
-                    questionPlaceholder: 'App\\Filament\\Resources\\Users\\Schemas\\UserForm',
-                );
-            }
-
-            if (blank($formSchemaFqn)) {
-                $askForIsGeneratedIfNotAlready()
-                    ? $askForRelatedModelFqnIfNotAlready()
-                    : $askForRecordTitleAttributeIfNotAlready();
-            }
-
             if (confirm(
                 'Would you like to generate a read-only view modal for the table?',
                 default: false,
             )) {
                 $hasViewOperation = true;
+            }
 
+            $askForIsGeneratedIfNotAlready();
+
+            if ($isGenerated) {
+                $askForRelatedModelFqnIfNotAlready();
+            }
+
+            if (! $isGenerated) {
                 if (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS)) {
-                    $infolistSchemaFqn = $this->askForSchema(
-                        intialQuestion: 'Would you like to use an existing infolist schema class?',
-                        question: 'Which infolist schema class would you like to use?',
-                        questionPlaceholder: 'App\\Filament\\Resources\\Users\\Schemas\\UserInfolist',
+                    $formSchemaFqn = $this->askForSchema(
+                        intialQuestion: 'Should an existing form schema class be used?',
+                        question: 'Which form schema class would you like to use?',
+                        questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserForm',
                     );
                 }
 
-                if (blank($infolistSchemaFqn)) {
-                    $askForRecordTitleAttributeIfNotAlready();
+                if ($hasViewOperation && (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS))) {
+                    $infolistSchemaFqn = $this->askForSchema(
+                        intialQuestion: 'Would you like to use an existing infolist schema class?',
+                        question: 'Which infolist schema class would you like to use?',
+                        questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserInfolist',
+                    );
+                }
+
+                if (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES)) {
+                    $tableFqn = $this->askForSchema(
+                        intialQuestion: 'Would you like to use an existing table class?',
+                        question: 'Which table class would you like to use?',
+                        questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Tables\\UsersTable',
+                    );
                 }
             }
 
-            if ($this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES)) {
-                $askForIsGeneratedIfNotAlready()
-                    ? $askForRelatedModelFqnIfNotAlready()
-                    : $askForRecordTitleAttributeIfNotAlready();
-            } else {
-                $tableFqn = $this->askForSchema(
-                    intialQuestion: 'Would you like to use an existing table class?',
-                    question: 'Which table class would you like to use?',
-                    questionPlaceholder: 'App\\Filament\\Resources\\Users\\Tables\\UsersTable',
-                );
+            if (blank($formSchemaFqn) && (! $isGenerated)) {
+                $askForRecordTitleAttributeIfNotAlready();
+            }
+
+            if ($hasViewOperation && blank($infolistSchemaFqn) && (! $isGenerated)) {
+                $askForRecordTitleAttributeIfNotAlready();
             }
 
             if (blank($tableFqn)) {
                 $askForRecordTitleAttributeIfNotAlready();
-
-                $askForIsGeneratedIfNotAlready(
-                    question: 'Should the table columns be generated from the current database columns?',
-                ) && $askForRelatedModelFqnIfNotAlready();
 
                 $isSoftDeletable = (filled($relatedModelFqn) && static::$shouldCheckModelsForSoftDeletes && class_exists($relatedModelFqn))
                     ? in_array(SoftDeletes::class, class_uses_recursive($relatedModelFqn))
@@ -639,19 +643,40 @@ class MakePageCommand extends Command
                         default: false,
                     );
 
-                $relationshipType = select(
-                    label: 'What type of relationship is this?',
-                    options: [
-                        HasMany::class => 'HasMany',
-                        BelongsToMany::class => 'BelongsToMany',
-                        MorphMany::class => 'MorphMany',
-                        MorphToMany::class => 'MorphToMany',
-                        'other' => 'Other',
-                    ],
-                );
+                try {
+                    $resourceModelFqn = $this->resourceFqn::getModel();
 
-                if ($relationshipType === 'other') {
-                    $relationshipType = null;
+                    if (
+                        class_exists($resourceModelFqn) &&
+                        method_exists($resourceModelFqn, $relationship) &&
+                        (($relationshipInstance = app($resourceModelFqn)->{$relationship}()) instanceof Relation) &&
+                        class_exists($relationshipInstance->getRelated()::class) &&
+                        in_array($relationshipInstance::class, [
+                            HasMany::class,
+                            BelongsToMany::class,
+                            MorphMany::class,
+                            MorphToMany::class,
+                        ])
+                    ) {
+                        $relationshipType = $relationshipInstance::class;
+                    } else {
+                        $relationshipType = select(
+                            label: 'What type of relationship is this?',
+                            options: [
+                                HasMany::class => 'HasMany',
+                                BelongsToMany::class => 'BelongsToMany',
+                                MorphMany::class => 'MorphMany',
+                                MorphToMany::class => 'MorphToMany',
+                                'other' => 'Other',
+                            ],
+                        );
+
+                        if ($relationshipType === 'other') {
+                            $relationshipType = null;
+                        }
+                    }
+                } catch (Throwable) {
+                    //
                 }
             }
         }

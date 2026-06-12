@@ -8,9 +8,18 @@ trait HasParentActions
 {
     protected bool | string | Closure | null $cancelParentActions = null;
 
+    protected bool | Closure $shouldOverlayParentActions = false;
+
     public function cancelParentActions(bool | string | Closure | null $toAction = true): static
     {
         $this->cancelParentActions = $toAction;
+
+        return $this;
+    }
+
+    public function overlayParentActions(bool | Closure $condition = true): static
+    {
+        $this->shouldOverlayParentActions = $condition;
 
         return $this;
     }
@@ -23,5 +32,10 @@ trait HasParentActions
     public function getParentActionToCancelTo(): ?string
     {
         return $this->evaluate($this->cancelParentActions);
+    }
+
+    public function shouldOverlayParentActions(): bool
+    {
+        return (bool) $this->evaluate($this->shouldOverlayParentActions);
     }
 }

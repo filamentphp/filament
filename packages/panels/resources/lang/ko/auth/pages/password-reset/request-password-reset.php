@@ -32,6 +32,10 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => '계정이 존재하지 않으면 이메일을 받지 못합니다.',
+        ],
+
         'throttled' => [
             'title' => '너무 많이 시도했습니다',
             'body' => ':seconds 초 후에 다시 시도해 주세요.',

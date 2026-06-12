@@ -28,6 +28,8 @@ Textarea::make('description')
     ->cols(20)
 ```
 
+<AutoScreenshot name="forms/fields/textarea/rows" alt="Textarea with custom row size" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `rows()` and `cols()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Autosizing the textarea
@@ -52,6 +54,8 @@ Textarea::make('description')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autosize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/textarea/autosize" alt="Textarea with autosize" version="4.x" />
+
 ## Making the field read-only
 
 Not to be confused with [disabling the field](overview#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
@@ -65,7 +69,7 @@ Textarea::make('description')
 
 There are a few differences, compared to [`disabled()`](overview#disabling-a-field):
 
-- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](overview#preventing-a-field-from-being-dehydrated) to prevent this.
+- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`saved(false)`](overview#preventing-a-field-from-being-saved) to prevent this.
 - There are no styling changes, such as less opacity, when using `readOnly()`.
 - The field is still focusable when using `readOnly()`.
 

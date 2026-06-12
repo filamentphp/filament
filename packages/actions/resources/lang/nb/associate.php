@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Assosiere',
+        'label' => 'Koble til',
 
         'modal' => [
 
-            'heading' => 'Assosiere :label',
+            'heading' => 'Koble til :label',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Assosiere',
+                    'label' => 'Koble til',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Assosiere & assosiere en til',
+                    'label' => 'Koble til & koble til en annen',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'Assosiert',
+                'title' => 'Koblet til',
             ],
 
         ],

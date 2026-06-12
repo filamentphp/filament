@@ -1,6 +1,10 @@
 .fi-ta-icon-count-summary {
     @apply grid gap-y-1.5 px-3 py-4 text-sm text-gray-500 dark:text-gray-400;
 
+    .fi-ta-table-stacked-on-mobile & {
+        @apply px-0 py-2 sm:px-3 sm:py-4;
+    }
+
     & > .fi-ta-icon-count-summary-label {
         @apply font-medium text-gray-950 dark:text-white;
     }
@@ -9,7 +13,7 @@
         @apply grid gap-y-1.5;
 
         & > li {
-            @apply flex items-center justify-end gap-x-1.5;
+            @apply flex items-center gap-x-1.5;
 
             & > .fi-icon {
                 @apply text-gray-400 dark:text-gray-500;

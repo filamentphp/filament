@@ -13,6 +13,11 @@ return [
             'file' => [
                 'label' => 'File',
                 'placeholder' => 'CSVファイルをアップロード',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} 空の列ヘッダーが複数存在してはいけません。|{1,*} 次の列ヘッダーが重複しています: :columns。',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +77,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'エラー',
         'system_error' => 'システムエラーです。サポートにお問い合わせください。',
+        'column_mapping_required_for_new_record' => ':attribute 列がファイル内のどの列にも対応付けられていませんが、新規レコードの作成には必須です。',
     ],
 
 ];

@@ -24,8 +24,9 @@
         @if (($hasTopbar ?? true) && filament()->auth()->check())
             <div class="fi-simple-layout-header">
                 @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                    @livewire(filament()->getDatabaseNotificationsLivewireComponent(), [
                         'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                        'position' => \Filament\Enums\DatabaseNotificationsPosition::Topbar,
                     ])
                 @endif
 

@@ -32,6 +32,14 @@ trait HasTheme
         return $this;
     }
 
+    /**
+     * @return string | array<string> | null
+     */
+    public function getViteTheme(): string | array | null
+    {
+        return $this->viteTheme;
+    }
+
     public function theme(string | Htmlable | Theme $theme): static
     {
         $this->theme = $theme;
@@ -41,8 +49,8 @@ trait HasTheme
 
     public function getTheme(): Theme
     {
-        if (filled($this->viteTheme)) {
-            $this->theme = app(Vite::class)($this->viteTheme, $this->viteThemeBuildDirectory);
+        if (filled($viteTheme = $this->getViteTheme())) {
+            $this->theme = app(Vite::class)($viteTheme, $this->viteThemeBuildDirectory);
         }
 
         if (blank($this->theme)) {

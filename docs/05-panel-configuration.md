@@ -2,6 +2,7 @@
 title: Panel configuration
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -9,7 +10,7 @@ By default, the configuration file is located at `app/Providers/Filament/AdminPa
 
 ## Introducing panels
 
-By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources), [custom pages](navigation/custom-pages), and [dashboard widgets](dashboard) you create get registered to this panel.
+By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources/overview), [custom pages](navigation/custom-pages), and [dashboard widgets](widgets/overview) you create get registered to this panel.
 
 However, you can create as many panels as you want, and each can have its own set of resources, pages and widgets.
 
@@ -31,7 +32,7 @@ php artisan make:filament-panel app
 
 This command will create a new panel called "app". A configuration file will be created at `app/Providers/Filament/AppPanelProvider.php`. You can access this panel at `/app`, but you can [customize the path](#changing-the-path) if you don't want that.
 
-Since this configuration file is also a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `bootstrap/providers.php` (Laravel 11 and above) or `config/app.php` (Laravel 10 and below). Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed.
+Since this configuration file is also a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `bootstrap/providers.php` (Laravel 11 app structure and above) or `config/app.php` (Laravel 10 app structure and below). Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed.
 
 ## Changing the path
 
@@ -116,6 +117,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/configuration/content-width-full" alt="Panel with full content width" version="4.x" />
+
 If you'd like to set the max content width for pages of the type `SimplePage`, like login and registration pages, you may do so using the `simplePageMaxContentWidth()` method. The default is `Large`:
 
 ```php
@@ -129,6 +132,8 @@ public function panel(Panel $panel): Panel
         ->simplePageMaxContentWidth(Width::Small);
 }
 ```
+
+<AutoScreenshot name="panels/configuration/simple-page-max-content-width" alt="Login page with small max content width" version="4.x" />
 
 ## Setting the default sub-navigation position
 
@@ -199,7 +204,7 @@ public function panel(Panel $panel): Panel
 ```
 
 <Aside variant="info">
-    In this example, we are using [`getUrl()`](/resources#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
+    In this example, we are using [`getUrl()`](resources/overview#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
 </Aside>
 
 These URLs need to exactly match the URL that the user is navigating to, including the domain and protocol. If you'd like to use a pattern to match multiple URLs, you can use an asterisk (`*`) as a wildcard character:
@@ -321,7 +326,7 @@ class CreatePost extends CreateRecord
 
 ## Registering assets for a panel
 
-You can register [assets](../advanced/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:
+You can register [assets](advanced/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:
 
 ```php
 use Filament\Panel;
@@ -339,7 +344,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Before these [assets](../advanced/assets) can be used, you'll need to run `php artisan filament:assets`.
+Before these [assets](advanced/assets) can be used, you'll need to run `php artisan filament:assets`.
 
 ## Applying middleware
 
@@ -407,7 +412,7 @@ public function panel(Panel $panel): Panel
 
 ## Disabling broadcasting
 
-By default, Laravel Echo will automatically connect for every panel, if credentials have been set up in the [published `config/filament.php` configuration file](installation#publishing-configuration). To disable this automatic connection in a panel, you can use the `broadcasting(false)` method:
+By default, Laravel Echo will automatically connect for every panel, if credentials have been set up in the [published `config/filament.php` configuration file](introduction/installation#publishing-configuration). To disable this automatic connection in a panel, you can use the `broadcasting(false)` method:
 
 ```php
 use Filament\Panel;
@@ -489,6 +494,26 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification()` method. A hidden status code will still be caught by filament, but no notification will be shown.
+
+Alternatively, you can use the `disabledErrorNotification()` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        )
+        ->hiddenErrorNotification(403)
+        ->disabledErrorNotification(503);
+}
+```
+
 You can also enable or disable error notifications for specific pages in a panel by setting the `$hasErrorNotifications` property on the page class:
 
 ```php
@@ -497,9 +522,9 @@ use Filament\Pages\Dashboard as BaseDashboard;
 class Dashboard extends BaseDashboard
 {
     protected ?bool $hasErrorNotifications = true;
-    
+
     // or
-    
+
     protected ?bool $hasErrorNotifications = false;
 
     // ...
@@ -554,12 +579,37 @@ class Dashboard extends BaseDashboard
             title: 'An error occurred',
             body: 'Please try again later.',
         );
-    
+
         $this->registerErrorNotification(
             title: 'Record not found',
             body: 'A record you are looking for does not exist.',
             statusCode: 404,
         );
+    }
+
+    // ...
+}
+```
+
+You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification()` method. A hidden status code will still be caught by filament, but no notification will be shown.
+
+Alternatively, you can use the `disabledErrorNotification()` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    protected function setUpErrorNotifications(): void
+    {
+        $this->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        );
+
+        $this->hiddenErrorNotification(403);
+
+        $this->disabledErrorNotification(503);
     }
 
     // ...

@@ -14,7 +14,7 @@ return [
         ],
 
         'request_password_reset' => [
-            'label' => 'وشەی نهێنیت لەبیرکردووە؟',
+            'label' => 'تێپەڕەوشەت لەبیرکردووە؟',
         ],
 
     ],
@@ -26,11 +26,11 @@ return [
         ],
 
         'password' => [
-            'label' => 'وشەی نهێنی',
+            'label' => 'تێپەڕەوشە',
         ],
 
         'remember' => [
-            'label' => 'لەبیرم مەکە',
+            'label' => 'بەبیرمبهێنەوە',
         ],
 
         'actions' => [
@@ -43,17 +43,41 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Verify your identity',
+
+        'subheading' => 'To continue signing in, you need to verify your identity.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'How would you like to verify?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Confirm sign in',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
-        'failed' => 'هیچ هەژمارێک بەو تۆمارە بوونی نییە.',
+        'failed' => 'هیچ هەژمارێک بەو زانیارییانە تۆمارنەکراوە.',
 
     ],
 
     'notifications' => [
 
         'throttled' => [
-            'title' => 'هەوڵی داواکاری چونەژورەوە زۆر نێردرا',
-            'body' => 'تکایە هەوڵ بدەرەوە دوای :seconds چرکە.',
+            'title' => 'زۆر هەوڵدراوە بۆ چوونەژوورەوە',
+            'body' => 'تکایە دوای :seconds چرکە هەوڵ بدەرەوە.',
         ],
 
     ],

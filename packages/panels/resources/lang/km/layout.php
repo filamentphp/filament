@@ -60,4 +60,11 @@ return [
         'alt' => ':name និមិត្តសញ្ញា',
     ],
 
+    'tenant_menu' => [
+        'search_field' => [
+            'label' => 'ស្វែងរក',
+            'placeholder' => 'ស្វែងរក',
+        ],
+    ],
+
 ];

@@ -1,7 +1,8 @@
 @props([
     'actions' => [],
+    'actionsAlignment' => null,
     'breadcrumbs' => [],
-    'heading',
+    'heading' => null,
     'subheading' => null,
 ])
 
@@ -18,11 +19,17 @@
             <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
         @endif
 
-        <h1 class="fi-header-heading">
-            {{ $heading }}
-        </h1>
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_HEADING_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-        @if ($subheading)
+        @if (filled($heading))
+            <h1 class="fi-header-heading">
+                {{ $heading }}
+            </h1>
+        @endif
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_HEADING_AFTER, scopes: $this->getRenderHookScopes()) }}
+
+        @if (filled($subheading))
             <p class="fi-header-subheading">
                 {{ $subheading }}
             </p>
@@ -39,7 +46,10 @@
             {{ $beforeActions }}
 
             @if ($actions)
-                <x-filament::actions :actions="$actions" />
+                <x-filament::actions
+                    :actions="$actions"
+                    :alignment="$actionsAlignment"
+                />
             @endif
 
             {{ $afterActions }}

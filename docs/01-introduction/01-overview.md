@@ -13,7 +13,7 @@ import Disclosure from "@components/Disclosure.astro"
     <span slot="summary">What is Server-Driven UI?</span>
 
     SDUI is a proven architecture used by companies like Meta, Airbnb, and Shopify. It moves control of the UI to the server, allowing for faster iteration, greater consistency, and centralized logic. Filament embraces this pattern for web development, letting you define interfaces declaratively using PHP classes that are rendered into HTML by the server.
-    
+
     One key distinction to note is the difference between Server-Driven UI (SDUI) and Server-Rendered UI. While both approaches involve rendering content on the server, Server-Rendered UI relies on static templates (like traditional Blade views), where the structure and behavior of the UI are defined upfront in HTML or PHP files. In contrast, SDUI gives the server the power to dynamically generate the UI based on real-time configurations and business logic, allowing for more flexibility and reactivity without needing to modify frontend templates directly.
 </Disclosure>
 
@@ -42,10 +42,10 @@ Filament is designed to be highly extensible, allowing you to add your own UI co
 The vast majority of plugins in the ecosystem are open-source and free to use. Some premium plugins are available for purchase, often offering enhanced customer support and quality.
 
 <Aside variant="warning">
-    Plugins not maintained by Filament team are created and managed by independent authors. While these plugins can enhance your experience, Filament cannot guarantee their quality, security, compatibility, or maintenance. We recommend reviewing the plugin's code, documentation, and user feedback before installation.
+    Plugins not maintained by the Filament team are created and managed by independent authors. While these plugins can enhance your experience, Filament cannot guarantee their quality, security, compatibility, or maintenance. We recommend reviewing the plugin's code, documentation, and user feedback before installation.
 </Aside>
 
-You can browse an extensive list of official and community plugins on the [Filament website](/plugins).
+You can browse an extensive list of official and community plugins on the [Filament website](https://filamentphp.com/plugins).
 
 ## Customizing the appearance
 

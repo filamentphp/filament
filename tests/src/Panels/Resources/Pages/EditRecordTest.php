@@ -7,6 +7,8 @@ use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Resources\Events\RecordUpdated;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
@@ -19,6 +21,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -48,6 +51,11 @@ it('can retrieve data', function (): void {
 });
 
 it('can save', function (): void {
+    Event::fake([
+        RecordUpdated::class,
+        RecordSaved::class,
+    ]);
+
     $post = Post::factory()->create();
     $newData = Post::factory()->make();
 
@@ -69,6 +77,9 @@ it('can save', function (): void {
         ->content->toBe($newData->content)
         ->tags->toBe($newData->tags)
         ->title->toBe($newData->title);
+
+    Event::assertDispatched(RecordUpdated::class);
+    Event::assertDispatched(RecordSaved::class);
 });
 
 it('can validate input', function (): void {
@@ -254,6 +265,40 @@ it('does not render page if the policy update returns a denied response', functi
         ->assertForbidden();
 
     app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
+});
+
+it('re-authorizes update on Livewire updates after the initial mount', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
+
+    $component = livewire(EditTicket::class, ['record' => $ticket->getKey()]);
+
+    app()->bind(TicketPolicy::class . '::update', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::update', fn (): bool => true);
+});
+
+it('re-authorizes viewAny on Livewire updates after the initial mount of an edit page', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+
+    $component = livewire(EditTicket::class, ['record' => $ticket->getKey()]);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
+
+    $component
+        ->set('data.subject', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false): void {

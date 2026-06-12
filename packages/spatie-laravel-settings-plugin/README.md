@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-settings-plugin:"^3.2" -W
+composer require filament/spatie-laravel-settings-plugin:"^4.0" -W
 ```
 
 ## Preparing your page class
@@ -82,6 +82,8 @@ public static function canEdit(): bool
     return auth()->user()->isAdmin();
 }
 ```
+
+> Note: `canEdit()` only gates saving — it does not prevent a user from loading the page and reading every field's current value. If the settings themselves are sensitive (API keys, internal flags, etc.), restrict viewing with `canAccess()` (and/or route middleware) instead of relying on `canEdit()`.
 
 ## Publishing translations
 

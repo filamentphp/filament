@@ -49,7 +49,7 @@ trait CanGenerateButtonHtml
         Size | string | null $size = null,
         string $tag = 'button',
         ?string $target = null,
-        ?string $tooltip = null,
+        string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
     ): string {
         $color ??= 'primary';
@@ -125,6 +125,14 @@ trait CanGenerateButtonHtml
             ])
             ->color(app(ButtonComponent::class, ['isOutlined' => $isOutlined]), $color);
 
+        $iconButtonAttributes = $attributes;
+
+        if ($labeledFromBreakpoint && filled($wireKey = $attributes->get('wire:key'))) {
+            $iconButtonAttributes = $attributes
+                ->except(['wire:key'])
+                ->merge(['wire:key' => "{$wireKey}.icon-button"], escape: false);
+        }
+
         $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
@@ -144,7 +152,7 @@ trait CanGenerateButtonHtml
 
         <?php if ($labeledFromBreakpoint) { ?>
             <?= $this->generateIconButtonHtml(
-                attributes: $attributes,
+                attributes: $iconButtonAttributes,
                 badge: $badge,
                 badgeColor: $badgeColor,
                 badgeSize: $badgeSize,
@@ -176,12 +184,13 @@ trait CanGenerateButtonHtml
             <?php } ?>
             <?php if ($keyBindings) { ?>
                 x-bind:id="$id('key-bindings')"
-                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id).click()"
+                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id)?.click()"
             <?php } ?>
             <?php if ($hasTooltip) { ?>
                 x-tooltip="{
                     content: <?= Js::from($tooltip) ?>,
                     theme: $store.theme,
+                    allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?>,
                 }"
             <?php } ?>
             <?php if ($hasFormProcessingLoadingIndicator) { ?>

@@ -24,9 +24,11 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -34,7 +36,9 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Timebox;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use SensitiveParameter;
@@ -46,6 +50,7 @@ use SensitiveParameter;
  */
 class Login extends SimplePage
 {
+    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     /**
@@ -82,22 +87,40 @@ class Login extends SimplePage
 
         $authProvider = $authGuard->getProvider(); /** @phpstan-ignore-line */
         $credentials = $this->getCredentialsFromFormData($data);
+        $remember = $data['remember'] ?? false;
+        $timeboxDuration = (int) config('auth.timebox_duration', 200_000);
 
-        $user = $authProvider->retrieveByCredentials($credentials);
+        $user = app(Timebox::class)->call(function (Timebox $timebox) use ($authProvider, $authGuard, $credentials, $remember): Authenticatable {
+            $this->fireAttemptingEvent($authGuard, $credentials, $remember);
 
-        if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
-            $this->userUndertakingMultiFactorAuthentication = null;
+            $user = $authProvider->retrieveByCredentials($credentials);
 
-            $this->fireFailedEvent($authGuard, $user, $credentials);
-            $this->throwFailureValidationException();
-        }
+            if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
+                $this->userUndertakingMultiFactorAuthentication = null;
 
-        if (
-            filled($this->userUndertakingMultiFactorAuthentication) &&
-            (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
-        ) {
-            $this->multiFactorChallengeForm->validate();
-        } else {
+                $this->fireFailedEvent($authGuard, $user, $credentials);
+                $this->throwFailureValidationException();
+            }
+
+            $timebox->returnEarly();
+
+            return $user;
+        }, $timeboxDuration);
+
+        $needsMultiFactorChallenge = app(Timebox::class)->call(function (Timebox $timebox) use ($user): bool {
+            if (
+                filled($this->userUndertakingMultiFactorAuthentication) &&
+                (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
+            ) {
+                if ($this->isMultiFactorChallengeRateLimited($user)) {
+                    return true;
+                }
+
+                $this->multiFactorChallengeForm->validate();
+
+                return false;
+            }
+
             foreach (Filament::getMultiFactorAuthenticationProviders() as $multiFactorAuthenticationProvider) {
                 if (! $multiFactorAuthenticationProvider->isEnabled($user)) {
                     continue;
@@ -115,8 +138,14 @@ class Login extends SimplePage
             if (filled($this->userUndertakingMultiFactorAuthentication)) {
                 $this->multiFactorChallengeForm->fill();
 
-                return null;
+                return true;
             }
+
+            return false;
+        }, $timeboxDuration);
+
+        if ($needsMultiFactorChallenge) {
+            return null;
         }
 
         if (! $authGuard->attemptWhen($credentials, function (Authenticatable $user): bool {
@@ -125,7 +154,7 @@ class Login extends SimplePage
             }
 
             return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
-        }, $data['remember'] ?? false)) {
+        }, $remember)) {
             $this->fireFailedEvent($authGuard, $user, $credentials);
             $this->throwFailureValidationException();
         }
@@ -133,6 +162,26 @@ class Login extends SimplePage
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    protected function isMultiFactorChallengeRateLimited(Authenticatable $user): bool
+    {
+        $rateLimitingKey = "filament-multi-factor-challenge:{$user->getAuthIdentifier()}";
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'authenticate',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
     }
 
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
@@ -147,6 +196,14 @@ class Login extends SimplePage
                 'minutes' => $exception->minutesUntilAvailable,
             ]) : null)
             ->danger();
+    }
+
+    /**
+     * @param  array<string, mixed>  $credentials
+     */
+    protected function fireAttemptingEvent(Guard $guard, #[SensitiveParameter] array $credentials, bool $remember): void
+    {
+        event(app(Attempting::class, ['guard' => property_exists($guard, 'name') ? $guard->name : '', 'credentials' => $credentials, 'remember' => $remember]));
     }
 
     /**
@@ -223,20 +280,18 @@ class Login extends SimplePage
             ->email()
             ->required()
             ->autocomplete()
-            ->autofocus()
-            ->extraInputAttributes(['tabindex' => 1]);
+            ->autofocus();
     }
 
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/login.form.password.label'))
-            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()" tabindex="3"> {{ __(\'filament-panels::auth/pages/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
+            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()" tabindex="-1"> {{ __(\'filament-panels::auth/pages/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')
-            ->required()
-            ->extraInputAttributes(['tabindex' => 2]);
+            ->required();
     }
 
     protected function getRememberFormComponent(): Component
@@ -308,7 +363,7 @@ class Login extends SimplePage
         return __('filament-panels::auth/pages/login.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         if (filled($this->userUndertakingMultiFactorAuthentication)) {
             return __('filament-panels::auth/pages/login.multi_factor.heading');
@@ -405,7 +460,8 @@ class Login extends SimplePage
             ->footer([
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
-                    ->fullWidth($this->hasFullWidthFormActions()),
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->key('form-actions'),
             ])
             ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
@@ -426,10 +482,5 @@ class Login extends SimplePage
     public function getMultiFactorChallengeFormActionsAlignment(): string | Alignment
     {
         return $this->getFormActionsAlignment();
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

@@ -54,9 +54,13 @@ class PanelsIconAlias
 
     const TOPBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON = 'panels::topbar.open-database-notifications-button';
 
+    const SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON = 'panels::sidebar.open-database-notifications-button';
+
     const USER_MENU_PROFILE_ITEM = 'panels::user-menu.profile-item';
 
     const USER_MENU_LOGOUT_BUTTON = 'panels::user-menu.logout-button';
+
+    const USER_MENU_TOGGLE_BUTTON = 'panels::user-menu.toggle-button';
 
     const WIDGETS_ACCOUNT_LOGOUT_BUTTON = 'panels::widgets.account.logout-button';
 

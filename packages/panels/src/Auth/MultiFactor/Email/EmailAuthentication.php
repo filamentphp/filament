@@ -3,7 +3,6 @@
 namespace Filament\Auth\MultiFactor\Email;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook;
@@ -22,6 +21,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use LogicException;
+use SensitiveParameter;
 
 class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenticationProvider
 {
@@ -49,28 +50,28 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
     public function isEnabled(Authenticatable $user): bool
     {
         if (! ($user instanceof HasEmailAuthentication)) {
-            throw new Exception('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
+            throw new LogicException('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
         }
 
         return $user->hasEmailAuthentication();
     }
 
-    public function sendCode(HasEmailAuthentication $user): void
+    public function sendCode(HasEmailAuthentication $user): bool
     {
         if (! ($user instanceof Model)) {
-            throw new Exception('The [' . $user::class . '] class must be an instance of [' . Model::class . '] to use email authentication.');
+            throw new LogicException('The [' . $user::class . '] class must be an instance of [' . Model::class . '] to use email authentication.');
         }
 
         if (! method_exists($user, 'notify')) {
             $userClass = $user::class;
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+            throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
-        $rateLimitingKey = "filament_email_authentication.{$user->getKey()}";
+        $rateLimitingKey = "filament-email-authentication:{$user->getKey()}";
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
-            return;
+            return false;
         }
 
         RateLimiter::hit($rateLimitingKey);
@@ -85,6 +86,8 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             'code' => $code,
             'codeExpiryMinutes' => $codeExpiryMinutes,
         ]));
+
+        return true;
     }
 
     public function enableEmailAuthentication(HasEmailAuthentication $user): void
@@ -108,7 +111,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         return str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 
-    public function verifyCode(string $code): bool
+    public function verifyCode(#[SensitiveParameter] string $code): bool
     {
         $codeHash = session('filament_email_authentication_code');
         $codeExpiresAt = session('filament_email_authentication_code_expires_at');
@@ -178,7 +181,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
     public function beforeChallenge(Authenticatable $user): void
     {
         if (! ($user instanceof HasEmailAuthentication)) {
-            throw new Exception('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
+            throw new LogicException('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
         }
 
         $this->sendCode($user);
@@ -197,7 +200,14 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                     ->label(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.label'))
                     ->link()
                     ->action(function () use ($user): void {
-                        $this->sendCode($user);
+                        if (! $this->sendCode($user)) {
+                            Notification::make()
+                                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.throttled.title'))
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
 
                         Notification::make()
                             ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.resent.title'))
@@ -206,7 +216,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                     }))
                 ->required()
                 ->rule(function (): Closure {
-                    return function (string $attribute, $value, Closure $fail): void {
+                    return function (string $attribute, #[SensitiveParameter] $value, Closure $fail): void {
                         if ($this->verifyCode($value)) {
                             return;
                         }

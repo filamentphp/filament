@@ -16,9 +16,12 @@ use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
+use Filament\Tests\Fixtures\Resources\Tenancy\NonTenantScopedUsers\NonTenantScopedUserResource;
+use Filament\Tests\Fixtures\Resources\Tenancy\TenantScopedUsers\TenantScopedUserResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
@@ -37,9 +40,11 @@ class TenancyPanelProvider extends PanelProvider
             ->passwordReset()
             ->emailVerification()
             ->resources([
+                NonTenantScopedUserResource::class,
                 PostResource::class,
                 PostCategoryResource::class,
                 ProductResource::class,
+                TenantScopedUserResource::class,
                 UserResource::class,
             ])
             ->pages([
@@ -53,7 +58,7 @@ class TenancyPanelProvider extends PanelProvider
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
+                class_exists(PreventRequestForgery::class) ? PreventRequestForgery::class : VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,

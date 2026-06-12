@@ -3,8 +3,10 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 class ModalTableSelect extends Field
@@ -50,11 +53,17 @@ class ModalTableSelect extends Field
 
     protected string | Closure | null $relationship = null;
 
+    protected ?Closure $modifyRelationshipQueryUsing = null;
+
     protected string | Closure | null $tableConfiguration = null;
 
     protected ?Closure $modifyTableSelectUsing = null;
 
     protected ?Closure $modifySelectActionUsing = null;
+
+    protected bool | Closure | null $hasBadges = null;
+
+    protected string | Closure | null $badgeColor = null;
 
     /**
      * @var array<mixed> | Closure
@@ -64,20 +73,6 @@ class ModalTableSelect extends Field
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default(static fn (ModalTableSelect $component): ?array => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (ModalTableSelect $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->registerActions([
             fn (ModalTableSelect $component): Action => $component->getSelectAction(),
@@ -143,7 +138,7 @@ class ModalTableSelect extends Field
             ->hiddenLabel()
             ->tableConfiguration($this->getTableConfiguration())
             ->relationshipName($this->getRelationshipName())
-            ->multiple()
+            ->multiple($this->isMultiple())
             ->maxItems($this->getMaxItems())
             ->tableArguments($this->getTableArguments());
 
@@ -247,87 +242,10 @@ class ModalTableSelect extends Field
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
+        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
-        $this->loadStateFromRelationshipsUsing(static function (ModalTableSelect $component, $state) use ($modifyQueryUsing): void {
-            if (filled($state)) {
-                return;
-            }
-
-            $relationship = $component->getRelationship();
-
-            if (
-                ($relationship instanceof BelongsToMany) ||
-                ($relationship instanceof HasOneOrManyThrough)
-            ) {
-                if ($modifyQueryUsing) {
-                    $component->evaluate($modifyQueryUsing, [
-                        'query' => $relationship->getQuery(),
-                    ]);
-                }
-
-                /** @var Collection $relatedRecords */
-                $relatedRecords = $relationship->getResults();
-
-                $component->state(
-                    // Cast the related keys to a string, otherwise JavaScript does not
-                    // know how to handle deselection.
-                    //
-                    // https://github.com/filamentphp/filament/issues/1111
-                    $relatedRecords
-                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
-                        ->map(static fn ($key): string => strval($key))
-                        ->all(),
-                );
-
-                return;
-            }
-
-            if ($relationship instanceof BelongsToThrough) {
-                /** @var ?Model $relatedModel */
-                $relatedModel = $relationship->getResults();
-
-                $component->state(
-                    $relatedModel?->getAttribute(
-                        $relationship->getRelated()->getKeyName(),
-                    ),
-                );
-
-                return;
-            }
-
-            if ($relationship instanceof HasMany) {
-                /** @var Collection $relatedRecords */
-                $relatedRecords = $relationship->getResults();
-
-                $component->state(
-                    $relatedRecords
-                        ->pluck($relationship->getLocalKeyName())
-                        ->all(),
-                );
-
-                return;
-            }
-
-            if ($relationship instanceof HasOne) {
-                $relatedModel = $relationship->getResults();
-
-                $component->state(
-                    $relatedModel?->getAttribute(
-                        $relationship->getLocalKeyName(),
-                    ),
-                );
-
-                return;
-            }
-
-            /** @var BelongsTo $relationship */
-            $relatedModel = $relationship->getResults();
-
-            $component->state(
-                $relatedModel?->getAttribute(
-                    $relationship->getOwnerKeyName(),
-                ),
-            );
+        $this->loadStateFromRelationshipsUsing(static function (ModalTableSelect $component): void {
+            $component->fillStateFromRelationship();
         });
 
         $this->getOptionLabelUsing(static function (ModalTableSelect $component) {
@@ -350,165 +268,419 @@ class ModalTableSelect extends Field
             return data_get($record, $relationshipTitleAttribute);
         });
 
-        $this->getSelectedRecordUsing(static function (ModalTableSelect $component, $state) use ($modifyQueryUsing): ?Model {
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            $relationshipQuery->where($component->getQualifiedRelatedKeyNameForRelationship($relationship), $state);
-
-            if ($modifyQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationshipQuery,
-                    'search' => null,
-                ]) ?? $relationshipQuery;
-            }
-
-            return $relationshipQuery->first();
+        $this->getSelectedRecordUsing(static function (ModalTableSelect $component, $state): ?Model {
+            return $component->getSelectedRecordFromRelationship($state);
         });
 
-        $this->getOptionLabelsUsing(static function (ModalTableSelect $component, array $values) use ($modifyQueryUsing): array {
-            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
-
-            $relationshipQuery->whereIn($qualifiedRelatedKeyName, $values);
-
-            if ($modifyQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationshipQuery,
-                    'search' => null,
-                ]) ?? $relationshipQuery;
-            }
-
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $relationshipQuery
-                    ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                    ])
-                    ->toArray();
-            }
-
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (str_contains($relationshipTitleAttribute, '->')) {
-                if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
-                }
-            } else {
-                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
-            }
-
-            return $relationshipQuery
-                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
-                ->toArray();
+        $this->getOptionLabelsUsing(static function (ModalTableSelect $component, array $values): array {
+            return $component->getOptionLabelsFromRelationship($values);
         });
 
-        $this->saveRelationshipsUsing(static function (ModalTableSelect $component, Model $record, $state) use ($modifyQueryUsing): void {
-            $relationship = $component->getRelationship();
+        $this->saveRelationshipsUsing(static function (ModalTableSelect $component): void {
+            $component->saveStateToRelationship();
+        });
 
-            if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
-                $query = $relationship->getQuery();
+        $this->dehydrated(fn (ModalTableSelect $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
-                if ($modifyQueryUsing) {
-                    $component->evaluate($modifyQueryUsing, [
-                        'query' => $query,
-                        'search' => null,
-                    ]);
-                }
+        return $this;
+    }
 
-                $query->update([
-                    $relationship->getForeignKeyName() => null,
-                ]);
+    public function getSelectedRecordFromRelationship(mixed $state): ?Model
+    {
+        $relationship = $this->getRelationship();
 
-                if (! empty($state)) {
-                    $relationship::noConstraints(function () use ($component, $record, $state, $modifyQueryUsing): void {
-                        $relationship = $component->getRelationship();
-
-                        $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
-
-                        if ($modifyQueryUsing) {
-                            $component->evaluate($modifyQueryUsing, [
-                                'query' => $query,
-                                'search' => null,
-                            ]);
-                        }
-
-                        $query->update([
-                            $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
-                        ]);
-                    });
-                }
-
-                return;
-            }
+        if (
+            (! $this->modifyRelationshipQueryUsing) &&
+            ($relationship instanceof BelongsTo)
+        ) {
+            $record = $this->getRecord();
 
             if (
-                ($relationship instanceof HasOneOrMany) ||
-                ($relationship instanceof HasOneOrManyThrough) ||
-                ($relationship instanceof BelongsToThrough)
+                ($record instanceof Model) &&
+                $record->relationLoaded($this->getRelationshipName())
             ) {
-                return;
-            }
+                $relatedRecord = $record->getRelationValue($this->getRelationshipName());
 
-            if (! $relationship instanceof BelongsToMany) {
-                // If the model is new and the foreign key is already filled, we don't need to fill it again.
-                // This could be a security issue if the foreign key was mutated in some way before it
-                // was saved, and we don't want to overwrite that value.
                 if (
-                    $record->wasRecentlyCreated &&
-                    filled($record->getAttributeValue($relationship->getForeignKeyName()))
+                    ($relatedRecord instanceof Model) &&
+                    ((string) $relatedRecord->getAttribute($relationship->getOwnerKeyName()) === (string) $state)
                 ) {
-                    return;
+                    return $relatedRecord;
                 }
+            }
+        }
 
-                $relationship->associate($state);
-                $record->wasRecentlyCreated && $record->save();
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+
+        $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+        $relationshipQuery->where($this->getQualifiedRelatedKeyNameForRelationship($relationship), $state);
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+                'search' => null,
+            ]) ?? $relationshipQuery;
+        }
+
+        return $relationshipQuery->first();
+    }
+
+    /**
+     * @param  array<string | int>  $values
+     * @return array<string | int, string>
+     */
+    public function getOptionLabelsFromRelationship(array $values): array
+    {
+        $relationship = $this->getRelationship();
+        $record = $this->getRecord();
+        $relationshipName = $this->getRelationshipName();
+
+        if (
+            (! $this->modifyRelationshipQueryUsing) &&
+            ($record instanceof Model) &&
+            $record->relationLoaded($relationshipName) &&
+            (
+                ($relationship instanceof BelongsToMany) ||
+                ($relationship instanceof HasOneOrMany)
+            )
+        ) {
+            $relatedRecords = $record->getRelationValue($relationshipName);
+
+            if ($relatedRecords instanceof Collection) {
+                $relatedKeyName = ($relationship instanceof BelongsToMany)
+                    ? $relationship->getRelatedKeyName()
+                    : $relationship->getRelated()->getKeyName();
+
+                $loadedKeys = $relatedRecords->pluck($relatedKeyName)->map(fn ($key) => (string) $key)->all();
+                $requestedKeys = array_map(fn ($value) => (string) $value, $values);
+
+                if (empty(array_diff($requestedKeys, $loadedKeys))) {
+                    $relationshipTitleAttribute = $this->getRelationshipTitleAttribute();
+
+                    if (str_contains($relationshipTitleAttribute, '->')) {
+                        $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+                    }
+
+                    $filteredRecords = $relatedRecords->filter(
+                        fn (Model $relatedRecord): bool => in_array(
+                            (string) $relatedRecord->getAttribute($relatedKeyName),
+                            $requestedKeys,
+                            strict: true,
+                        ),
+                    );
+
+                    if ($this->hasOptionLabelFromRecordUsingCallback()) {
+                        return $filteredRecords
+                            ->mapWithKeys(fn (Model $relatedRecord) => [
+                                $relatedRecord->getAttribute($relatedKeyName) => $this->getOptionLabelFromRecord($relatedRecord),
+                            ])
+                            ->toArray();
+                    }
+
+                    return $filteredRecords
+                        ->pluck($relationshipTitleAttribute, $relatedKeyName)
+                        ->toArray();
+                }
+            }
+        }
+
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+
+        $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+        $qualifiedRelatedKeyName = $this->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+        $relationshipQuery->whereIn($qualifiedRelatedKeyName, $values);
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+                'search' => null,
+            ]) ?? $relationshipQuery;
+        }
+
+        if ($this->hasOptionLabelFromRecordUsingCallback()) {
+            return $relationshipQuery
+                ->get()
+                ->mapWithKeys(fn (Model $record) => [
+                    $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $this->getOptionLabelFromRecord($record),
+                ])
+                ->toArray();
+        }
+
+        $relationshipTitleAttribute = $this->getRelationshipTitleAttribute();
+
+        if (str_contains($relationshipTitleAttribute, '->')) {
+            if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+        } else {
+            $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+        }
+
+        return $relationshipQuery
+            ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
+            ->toArray();
+    }
+
+    public function fillStateFromRelationship(): void
+    {
+        if (filled($this->getState())) {
+            return;
+        }
+
+        $relationship = $this->getRelationship();
+        $relationshipName = $this->getRelationshipName();
+
+        if (
+            (! $this->modifyRelationshipQueryUsing) &&
+            (! str_contains($relationshipName, '.')) &&
+            ($record = $this->getRecord()) instanceof Model &&
+            $record->relationLoaded($relationshipName)
+        ) {
+            $relatedRecords = $record->getRelationValue($relationshipName);
+
+            if (
+                ($relationship instanceof BelongsToMany) ||
+                ($relationship instanceof HasOneOrManyThrough)
+            ) {
+                $this->state(
+                    $relatedRecords
+                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                        ->map(static fn ($key): string => strval($key))
+                        ->all(),
+                );
 
                 return;
             }
 
-            if ($modifyQueryUsing) {
-                $component->evaluate($modifyQueryUsing, [
+            if ($relationship instanceof BelongsToThrough) {
+                $this->state(
+                    $relatedRecords?->getAttribute(
+                        $relationship->getRelated()->getKeyName(),
+                    ),
+                );
+
+                return;
+            }
+
+            if ($relationship instanceof HasMany) {
+                $this->state(
+                    $relatedRecords
+                        ->pluck($relationship->getLocalKeyName())
+                        ->map(static fn ($key): string => strval($key))
+                        ->all(),
+                );
+
+                return;
+            }
+
+            if ($relationship instanceof HasOne) {
+                $this->state(
+                    $relatedRecords?->getAttribute(
+                        $relationship->getLocalKeyName(),
+                    ),
+                );
+
+                return;
+            }
+
+            /** @var BelongsTo $relationship */
+            $this->state(
+                $relatedRecords?->getAttribute(
+                    $relationship->getOwnerKeyName(),
+                ),
+            );
+
+            return;
+        }
+
+        if (
+            ($relationship instanceof BelongsToMany) ||
+            ($relationship instanceof HasOneOrManyThrough)
+        ) {
+            if ($this->modifyRelationshipQueryUsing) {
+                $this->evaluate($this->modifyRelationshipQueryUsing, [
                     'query' => $relationship->getQuery(),
-                    'search' => null,
                 ]);
             }
 
             /** @var Collection $relatedRecords */
             $relatedRecords = $relationship->getResults();
 
-            $state = Arr::wrap($state ?? []);
-
-            $recordsToDetach = array_diff(
+            $this->state(
+                // Cast the related keys to a string, otherwise
+                // JavaScript can't handle deselection.
+                //
+                // https://github.com/filamentphp/filament/issues/1111
                 $relatedRecords
-                    ->pluck($relationship->getRelatedKeyName())
+                    ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
                     ->map(static fn ($key): string => strval($key))
                     ->all(),
-                $state,
             );
 
-            if (count($recordsToDetach) > 0) {
-                $relationship->detach($recordsToDetach);
+            return;
+        }
+
+        if ($relationship instanceof BelongsToThrough) {
+            /** @var ?Model $relatedModel */
+            $relatedModel = $relationship->getResults();
+
+            $this->state(
+                $relatedModel?->getAttribute(
+                    $relationship->getRelated()->getKeyName(),
+                ),
+            );
+
+            return;
+        }
+
+        if ($relationship instanceof HasMany) {
+            /** @var Collection $relatedRecords */
+            $relatedRecords = $relationship->getResults();
+
+            $this->state(
+                // Cast the related keys to a string, otherwise
+                // JavaScript can't handle deselection.
+                //
+                // https://github.com/filamentphp/filament/issues/1111
+                $relatedRecords
+                    ->pluck($relationship->getLocalKeyName())
+                    ->map(static fn ($key): string => strval($key))
+                    ->all(),
+            );
+
+            return;
+        }
+
+        if ($relationship instanceof HasOne) {
+            $relatedModel = $relationship->getResults();
+
+            $this->state(
+                $relatedModel?->getAttribute(
+                    $relationship->getLocalKeyName(),
+                ),
+            );
+
+            return;
+        }
+
+        /** @var BelongsTo $relationship */
+        $relatedModel = $relationship->getResults();
+
+        $this->state(
+            $relatedModel?->getAttribute(
+                $relationship->getOwnerKeyName(),
+            ),
+        );
+    }
+
+    public function saveStateToRelationship(): void
+    {
+        $relationship = $this->getRelationship();
+        $record = $this->getRecord();
+        $relationshipName = $this->getRelationshipName();
+        $state = $this->getState();
+
+        if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
+            $query = $relationship->getQuery();
+
+            if ($this->modifyRelationshipQueryUsing) {
+                $this->evaluate($this->modifyRelationshipQueryUsing, [
+                    'query' => $query,
+                    'search' => null,
+                ]);
             }
 
-            $pivotData = $component->getPivotData();
+            $query->update([
+                $relationship->getForeignKeyName() => null,
+            ]);
 
-            if ($pivotData === []) {
-                $relationship->sync($state, detaching: false);
+            if (! empty($state)) {
+                $relationship::noConstraints(function () use ($record, $state): void {
+                    $relationship = $this->getRelationship();
 
+                    $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
+
+                    if ($this->modifyRelationshipQueryUsing) {
+                        $this->evaluate($this->modifyRelationshipQueryUsing, [
+                            'query' => $query,
+                            'search' => null,
+                        ]);
+                    }
+
+                    $query->update([
+                        $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
+                    ]);
+                });
+            }
+
+            $record->unsetRelation($relationshipName);
+
+            return;
+        }
+
+        if (
+            ($relationship instanceof HasOneOrMany) ||
+            ($relationship instanceof HasOneOrManyThrough) ||
+            ($relationship instanceof BelongsToThrough)
+        ) {
+            return;
+        }
+
+        if (! $relationship instanceof BelongsToMany) {
+            // Security: If the model is new and the foreign key is already
+            // filled, don't overwrite it — the key may have been set by
+            // authorization logic or event listeners before save.
+            if (
+                $record->wasRecentlyCreated &&
+                filled($record->getAttributeValue($relationship->getForeignKeyName()))
+            ) {
                 return;
             }
 
-            $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
-        });
+            $relationship->associate($state);
+            $record->wasRecentlyCreated && $record->save();
 
-        $this->dehydrated(fn (ModalTableSelect $component): bool => ! $component->isMultiple());
+            return;
+        }
 
-        return $this;
+        if ($this->modifyRelationshipQueryUsing) {
+            $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationship->getQuery(),
+                'search' => null,
+            ]);
+        }
+
+        /** @var Collection $relatedRecords */
+        $relatedRecords = $relationship->getResults();
+
+        $state = Arr::wrap($state ?? []);
+
+        $recordsToDetach = array_diff(
+            $relatedRecords
+                ->pluck($relationship->getRelatedKeyName())
+                ->map(static fn ($key): string => strval($key))
+                ->all(),
+            $state,
+        );
+
+        if (count($recordsToDetach) > 0) {
+            $relationship->detach($recordsToDetach);
+        }
+
+        $pivotData = $this->getPivotData();
+
+        if ($pivotData === []) {
+            $relationship->sync($state, detaching: false);
+            $record->unsetRelation($relationshipName);
+
+            return;
+        }
+
+        $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
+        $record->unsetRelation($relationshipName);
     }
 
     public function getOptionLabelFromRecordUsing(?Closure $callback): static
@@ -523,7 +695,7 @@ class ModalTableSelect extends Field
         return $this->getOptionLabelFromRecordUsing !== null;
     }
 
-    public function getOptionLabelFromRecord(Model $record): string
+    public function getOptionLabelFromRecord(Model $record): string | Htmlable
     {
         return $this->evaluate(
             $this->getOptionLabelFromRecordUsing,
@@ -570,6 +742,12 @@ class ModalTableSelect extends Field
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -581,7 +759,7 @@ class ModalTableSelect extends Field
         }
 
         if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $relationship;
@@ -643,6 +821,12 @@ class ModalTableSelect extends Field
             return $values;
         }
 
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
         if ($this->isMultiple()) {
             return array_keys($this->getOptionLabels(withDefaults: false));
         }
@@ -664,7 +848,7 @@ class ModalTableSelect extends Field
 
     public function getTableConfiguration(): string
     {
-        return $this->evaluate($this->tableConfiguration) ?? throw new Exception('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+        return $this->evaluate($this->tableConfiguration) ?? throw new LogicException('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
     }
 
     /**
@@ -673,5 +857,45 @@ class ModalTableSelect extends Field
     public function getTableArguments(): array
     {
         return $this->evaluate($this->tableArguments) ?? [];
+    }
+
+    public function badge(bool | Closure | null $condition = true): static
+    {
+        $this->hasBadges = $condition;
+
+        return $this;
+    }
+
+    public function hasBadges(): bool
+    {
+        return $this->evaluate($this->hasBadges) ?? $this->isMultiple();
+    }
+
+    public function badgeColor(string | Closure | null $color): static
+    {
+        $this->badgeColor = $color;
+
+        return $this;
+    }
+
+    public function getBadgeColor(): ?string
+    {
+        return $this->evaluate($this->badgeColor);
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts()) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class)];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 }

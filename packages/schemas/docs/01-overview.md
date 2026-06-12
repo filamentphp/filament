@@ -66,6 +66,8 @@ To arrange components into a [layout](layouts), Filament includes layout compone
 - [Section](sections)
 - [Tabs](tabs)
 - [Wizard](wizards)
+- [Callout](callouts)
+- [Empty states](empty-states)
 - Or, build your own [custom layout component](custom-components#custom-layout-components)
 
 For displaying arbitrary content, Filament includes [prime](primes) components:
@@ -88,6 +90,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
 $schema
@@ -269,3 +272,7 @@ use Filament\Schemas\Components\Section;
 Section::make()
     ->columns(1)
 ```
+
+## Restricting Livewire file uploads to schema components
+
+If you build a custom Livewire component on top of `InteractsWithSchemas`, Livewire's file upload RPC methods accept uploads to any property path by default. See [Restricting Livewire file uploads to schema components](../../advanced/security#restricting-livewire-file-uploads-to-schema-components) in the security documentation for the `RestrictsFileUploadsToSchemaComponents` trait that locks them down.

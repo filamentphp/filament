@@ -54,6 +54,10 @@ Action::make('edit')
 
 <UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `url()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
+</Aside>
+
 The entire look of the action's trigger button and the modal is customizable using fluent PHP methods. We provide a sensible and consistent styling for the UI, but all of this is customizable with CSS.
 
 ## Available actions
@@ -258,6 +262,10 @@ Action::make('edit')
     ->authorizationTooltip()
 ```
 
+If the denial does not provide a message (for example, your policy returns plain `false`, or a `Gate::before()` hook short-circuits the check), the action is hidden instead. You can supply a fallback message with `authorizationMessage()` to keep the action visible in that case.
+
+<AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
+
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
 
 ```php
@@ -268,6 +276,8 @@ Action::make('edit')
     ->authorize('update')
     ->authorizationNotification()
 ```
+
+As with `authorizationTooltip()`, the action is hidden if the denial does not provide a message, unless you supply a fallback with `authorizationMessage()`.
 
 ### Disabling a button
 
@@ -290,6 +300,8 @@ Action::make('delete')
 ```
 
 <UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="actions/trigger-button/disabled" alt="Disabled action button" version="4.x" />
 
 ## Registering keybindings
 
@@ -334,7 +346,7 @@ Action::make('filter')
     ->badgeColor('success')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="actions/trigger-button/success-badged" alt="Trigger with green badge" version="4.x" />
 
@@ -496,6 +508,131 @@ Action::make('delete')
     })
 ```
 
+## Using actions in schemas
+
+Action objects can be inserted anywhere in a [schema](../schemas/overview), such as in [form field slots](../forms/overview#adding-extra-content-to-a-field), [section headers and footers](../schemas/sections), or alongside [prime components](../schemas/primes). When an action is used in a schema, it has access to the schema's state via [utility injection](#injecting-utilities-from-a-schema) - you can use `$schemaGet` and `$schemaSet` in closures to read and modify form field values.
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+
+TextInput::make('title')
+    ->afterContent(
+        Action::make('generateSlug')
+            ->action(function (Get $schemaGet, Set $schemaSet) {
+                $schemaSet('slug', str($schemaGet('title'))->slug());
+            })
+    )
+
+TextInput::make('slug')
+```
+
+### Adding a list of actions to a schema
+
+If you want to render a list of action buttons on their own row in a schema, without attaching them to a specific field, you can wrap them in an `Actions` layout component:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/simple" alt="Independent actions in a schema" version="4.x" />
+
+You can make the actions span the full width of the schema using the `fullWidth()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->fullWidth()
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/full-width" alt="Full width independent actions in a schema" version="4.x" />
+
+You can change the horizontal alignment of the actions using the `alignment()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Support\Enums\Alignment;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->alignment(Alignment::Center)
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/horizontally-aligned-center" alt="Center-aligned independent actions in a schema" version="4.x" />
+
+If the `Actions` component is in a grid alongside other components, you can change its vertical alignment using the `verticalAlignment()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->verticalAlignment(VerticalAlignment::End)
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end in a schema" version="4.x" />
+
+### Running JavaScript when an action is clicked
+
+If you need a simple action that runs JavaScript directly in the browser without making a network request, you can use the `actionJs()` method. This is useful for simple interactions like updating form field values instantly:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('title')
+    ->live(onBlur: true)
+    ->afterContent(
+        Action::make('generateSlug')
+            ->actionJs(<<<'JS'
+                $set('slug', $get('title').toLowerCase().replaceAll(' ', '-'))
+                JS)
+    )
+
+TextInput::make('slug')
+```
+
+The JavaScript string has access to `$get()` and `$set()` utilities, which allow you to read and modify the state of form fields in the schema.
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `actionJs()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="warning">
+    When using `actionJs()`, the action cannot open a modal or perform any server-side processing. It is intended for simple client-side interactions only. If you need to run PHP code, use the `action()` method instead.
+</Aside>
+
+<Aside variant="danger">
+    Any JavaScript string passed to the `actionJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value.
+</Aside>
+
 ## Action utility injection
 
 The vast majority of methods used to configure actions accept functions as parameters instead of hardcoded values:
@@ -555,6 +692,7 @@ You can access various additional utilities if your action is defined in a schem
 - `$schema` - The schema instance that the action belongs to.
 - `$schemaComponent` - The schema component instance that the action belongs to.
 - `$schemaComponentState` - The current value of the schema component.
+- `$schemaState` - The current value of the schema that this action belongs to, like the current repeater item.
 - `$schemaGet` - A function for retrieving values from the schema data. Validation is not run on form fields.
 - `$schemaSet` - A function for setting values in the schema data.
 - `$schemaOperation` - The current operation being performed by the schema. Usually `create`, `edit`, or `view`.

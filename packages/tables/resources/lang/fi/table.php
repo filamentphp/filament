@@ -4,7 +4,19 @@ return [
 
     'column_manager' => [
 
-        'heading' => 'Kolumnit',
+        'heading' => 'Sarakkeet',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Aseta sarakkeet',
+            ],
+
+            'reset' => [
+                'label' => 'Palauta',
+            ],
+
+        ],
 
     ],
 
@@ -12,6 +24,22 @@ return [
 
         'actions' => [
             'label' => 'Toiminta|Toiminnat',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Ladataan...',
+
+            'no_options_message' => 'Ei vaihtoehtoja saatavilla.',
+
+            'no_search_results_message' => 'Ei hakuasi vastaavia vaihtoehtoja.',
+
+            'placeholder' => 'Valitse vaihtoehto',
+
+            'searching_message' => 'Haetaan...',
+
+            'search_prompt' => 'Aloita kirjoittaminen hakeaksesi...',
+
         ],
 
         'text' => [
@@ -100,7 +128,7 @@ return [
         ],
 
         'column_manager' => [
-            'label' => 'Näytä kolumnit',
+            'label' => 'Näytä sarakkeet',
         ],
 
     ],
@@ -145,7 +173,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Kaikki',
+
+            'relationship' => [
+                'empty_option_label' => 'Ei yhtään',
+            ],
+
         ],
 
         'trashed' => [
@@ -168,7 +202,6 @@ return [
 
             'group' => [
                 'label' => 'Ryhmittele',
-                'placeholder' => 'Ryhmittele',
             ],
 
             'direction' => [
@@ -228,5 +261,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'tietue',
 
 ];

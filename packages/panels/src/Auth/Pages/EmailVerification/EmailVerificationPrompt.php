@@ -4,35 +4,38 @@ namespace Filament\Auth\Pages\EmailVerification;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Text;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
+use LogicException;
 
 /**
  * @property-read Action $resendNotificationAction
  */
 class EmailVerificationPrompt extends SimplePage
 {
+    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     public function mount(): void
     {
-        if ($this->getVerifiable()->hasVerifiedEmail()) {
+        if ((! Filament::auth()->check()) || $this->getVerifiable()->hasVerifiedEmail()) {
             redirect()->intended(Filament::getUrl());
         }
     }
 
     protected function getVerifiable(): MustVerifyEmail
     {
-        /** @var MustVerifyEmail */
+        /** @var MustVerifyEmail $user */
         $user = Filament::auth()->user();
 
         return $user;
@@ -47,7 +50,7 @@ class EmailVerificationPrompt extends SimplePage
         if (! method_exists($user, 'notify')) {
             $userClass = $user::class;
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+            throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
         $notification = app(VerifyEmail::class);
@@ -70,6 +73,21 @@ class EmailVerificationPrompt extends SimplePage
 
                     return;
                 }
+
+                $rateLimitingKey = 'filament-resend-email-verification:' . Filament::auth()->id();
+
+                if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
+                    $this->getRateLimitedNotification(new TooManyRequestsException(
+                        static::class,
+                        'resendNotification',
+                        request()->ip(),
+                        RateLimiter::availableIn($rateLimitingKey),
+                    ))?->send();
+
+                    return;
+                }
+
+                RateLimiter::hit($rateLimitingKey);
 
                 $this->sendEmailVerificationNotification($this->getVerifiable());
 
@@ -99,7 +117,7 @@ class EmailVerificationPrompt extends SimplePage
         return __('filament-panels::auth/pages/email-verification/email-verification-prompt.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/email-verification/email-verification-prompt.heading');
     }

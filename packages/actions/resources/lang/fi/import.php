@@ -72,11 +72,11 @@ return [
     ],
 
     'example_csv' => [
-        'file_name' => ':importer-example',
+        'file_name' => ':importer-esimerkki',
     ],
 
     'failure_csv' => [
-        'file_name' => 'import-:import_id-:csv_name-failed-rows',
+        'file_name' => 'tuonti-:import_id-:csv_name-virheelliset-rivit',
         'error_header' => 'virhe',
         'system_error' => 'Järjestelmävirhe, ota yhteyttä tukeen.',
         'column_mapping_required_for_new_record' => 'Otsaketta :attribute ei voitu yhdistää tiedostosta löytyvään otsakkeeseen, se on vaadittu tuontia varten.',

@@ -21,7 +21,7 @@ return [
 
     'login_form' => [
 
-        'label' => 'Envíar un código a su correo electrónico',
+        'label' => 'Enviar un código a su correo electrónico',
 
         'code' => [
 
@@ -39,6 +39,10 @@ return [
 
                         'resent' => [
                             'title' => 'Le hemos enviado un código nuevo por correo electrónico.',
+                        ],
+
+                        'throttled' => [
+                            'title' => 'Demasiados intentos de reenvío. Espere antes de solicitar otro código.',
                         ],
 
                     ],

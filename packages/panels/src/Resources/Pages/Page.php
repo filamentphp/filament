@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -21,13 +20,18 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page as BasePage;
 use Filament\Panel;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Resources\Events\RecordUpdated;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use LogicException;
 
 use function Filament\Support\original_request;
 
@@ -74,11 +78,19 @@ abstract class Page extends BasePage
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => original_request()->routeIs(static::getRouteName()))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl($urlParameters)),
         ];
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return static::getRouteName();
     }
 
     /**
@@ -92,9 +104,9 @@ abstract class Page extends BasePage
     /**
      * @param  array<string, mixed>  $parameters
      */
-    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false, ?string $configuration = null): string
     {
-        return static::getResource()::getUrl(static::getResourcePageName(), $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
+        return static::getResource()::getUrl(static::getResourcePageName(), $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters, $configuration);
     }
 
     public static function getResourcePageName(): string
@@ -107,7 +119,7 @@ abstract class Page extends BasePage
             return $pageName;
         }
 
-        throw new Exception('Page [' . static::class . '] is not registered to the resource [' . static::getResource() . '].');
+        throw new LogicException('Page [' . static::class . '] is not registered to the resource [' . static::getResource() . '].');
     }
 
     public static function route(string $path): PageRegistration
@@ -337,9 +349,12 @@ abstract class Page extends BasePage
 
     public function getDefaultActionUrl(Action $action): ?string
     {
+        $actionModel = $action->getModel();
+
         if (
             ($action instanceof CreateAction) &&
-            (static::getResource()::hasPage('create'))
+            (static::getResource()::hasPage('create')) &&
+            (blank($actionModel) || ($actionModel === static::getResource()::getModel()))
         ) {
             return $this->getResourceUrl('create');
         }
@@ -347,7 +362,8 @@ abstract class Page extends BasePage
         if (
             ($action instanceof EditAction) &&
             (static::getResource()::hasPage('edit')) &&
-            (! $this instanceof EditRecord)
+            (! $this instanceof EditRecord) &&
+            (blank($actionModel) || ($actionModel === static::getResource()::getModel()))
         ) {
             return $this->getResourceUrl('edit', ['record' => $action->getRecord()]);
         }
@@ -355,7 +371,8 @@ abstract class Page extends BasePage
         if (
             ($action instanceof ViewAction) &&
             (static::getResource()::hasPage('view')) &&
-            (! $this instanceof ViewRecord)
+            (! $this instanceof ViewRecord) &&
+            (blank($actionModel) || ($actionModel === static::getResource()::getModel()))
         ) {
             return $this->getResourceUrl('view', ['record' => $action->getRecord()]);
         }
@@ -369,5 +386,18 @@ abstract class Page extends BasePage
     public function getModelLabel(): ?string
     {
         return null;
+    }
+
+    protected function afterActionCalled(Action $action): void
+    {
+        if ($action instanceof CreateAction) {
+            Event::dispatch(RecordCreated::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+        }
+
+        if ($action instanceof EditAction) {
+            Event::dispatch(RecordUpdated::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+        }
     }
 }

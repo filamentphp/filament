@@ -3,6 +3,7 @@
 namespace Filament\Support;
 
 use BackedEnum;
+use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
@@ -116,26 +117,40 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
 if (! function_exists('Filament\Support\is_app_url')) {
     function is_app_url(string $url): bool
     {
-        return str($url)->startsWith(request()->root());
+        if (str($url)->startsWith('/') && ! str($url)->startsWith('//')) {
+            return true;
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        if ($scheme && (! in_array($scheme, ['http', 'https'], strict: true))) {
+            return false;
+        }
+
+        $urlHost = parse_url($url, PHP_URL_HOST);
+
+        return (! $urlHost) || $urlHost === request()->getHost();
     }
 }
 
 if (! function_exists('Filament\Support\generate_href_html')) {
-    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null): Htmlable
+    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null, bool $hasNestedClickEventHandler = false): Htmlable
     {
         if (blank($url)) {
             return new HtmlString('');
         }
 
-        $html = "href=\"{$url}\"";
+        $html = 'href="' . e($url) . '"';
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
         } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
-            $html .= ' wire:navigate';
-
             if (FilamentView::hasSpaPrefetching()) {
-                $html .= '.hover';
+                $html .= ' wire:navigate.hover';
+            } elseif ($hasNestedClickEventHandler) {
+                $html .= ' x-on:click="if (! ($event.altKey || $event.ctrlKey || $event.metaKey || $event.shiftKey)) { $event.preventDefault(); Alpine.navigate($el.getAttribute(\'href\')) }"';
+            } else {
+                $html .= ' wire:navigate';
             }
         }
 
@@ -173,6 +188,8 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
         }
 
         if (is_string($icon) && str_contains($icon, '/')) {
+            $icon = e($icon);
+
             return new HtmlString(<<<HTML
                 <img src="{$icon}" {$attributes->toHtml()} />
                 HTML);
@@ -184,7 +201,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
             $icon = $icon->value;
         }
 
-        return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes()));
+        return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes(), static fn ($value): bool => $value !== false && $value !== null));
     }
 }
 
@@ -198,26 +215,11 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
             "fi-size-{$size->value}",
         ]);
 
-        return new HtmlString(<<<HTML
-            <svg
-                fill="none"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                {$attributes->toHtml()}
-            >
-                <path
-                    clip-rule="evenodd"
-                    d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                    fill-rule="evenodd"
-                    fill="currentColor"
-                    opacity="0.2"
-                ></path>
-                <path
-                    d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z"
-                    fill="currentColor"
-                ></path>
-            </svg>
-            HTML);
+        static $loadingIndicator = null;
+
+        $loadingIndicator ??= app(LoadingIndicator::class);
+
+        return new HtmlString($loadingIndicator->toHtml($attributes));
     }
 }
 
@@ -229,29 +231,45 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
+        if ($driverName === 'pgsql' && str_contains($column, '.')) {
+            $column = $databaseConnection->getTablePrefix() . $column;
+        }
+
         $column = match ($driverName) {
             'pgsql' => (
                 str($column)->contains('->')
-                    ? (
-                        // Handle `table.field` part with double quotes
-                        str($column)
-                            ->before('->')
-                            ->explode('.')
-                            ->map(fn (string $part): string => (string) str($part)->wrap('"'))
-                            ->implode('.')
-                    ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
-                        ->map(function ($segment, $index) use ($column): string {
-                            $totalParts = substr_count($column, '->');
+                            ? (
+                                // Handle `table.field` part with double quotes
+                                str($column)
+                                    ->before('->')
+                                    ->explode('.')
+                                    ->map(fn (string $part): string => (string) str($part)->wrap('"'))
+                                    ->implode('.')
+                            ) . collect(str($column)->after('->')->explode('->')) // Handle JSON path parts
+                                ->map(function ($segment, $index) use ($column): string {
+                                    // If segment already starts with `>` (from `->>` operator), preserve it
+                                    $isExplicitOperatorPrefixed = str($segment)->startsWith('>');
+                                    $segment = $isExplicitOperatorPrefixed ? (string) str($segment)->after('>') : $segment;
 
-                            return ($index === ($totalParts - 1))
-                                ? "->>'{$segment}'"
-                                : "->'{$segment}'";
-                        })
-                        ->implode('')
-                    : str($column)
-                        ->explode('.')
-                        ->map(fn (string $part): string => (string) str($part)->wrap('"'))
-                        ->implode('.')
+                                    // Remove single quotes from segment if present to avoid redundant quoting
+                                    $isWrappedWithSingleQuotes = str($segment)->startsWith("'") && str($segment)->endsWith("'");
+                                    $segment = $isWrappedWithSingleQuotes ? (string) str($segment)->trim("'") : $segment;
+
+                                    if ($isExplicitOperatorPrefixed) {
+                                        return "->>'{$segment}'";
+                                    }
+
+                                    $totalParts = substr_count($column, '->');
+
+                                    return ($index === ($totalParts - 1))
+                                        ? "->>'{$segment}'"
+                                        : "->'{$segment}'";
+                                })
+                                ->implode('')
+                            : str($column)
+                                ->explode('.')
+                                ->map(fn (string $part): string => (string) str($part)->wrap('"'))
+                                ->implode('.')
             ) . '::text',
             default => $column,
         };

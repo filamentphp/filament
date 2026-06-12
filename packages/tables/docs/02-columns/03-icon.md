@@ -14,7 +14,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Support\Icons\Heroicon;
 
 IconColumn::make('status')
-    ->icon(fn (string $state): string => match ($state) {
+    ->icon(fn (string $state): Heroicon => match ($state) {
         'draft' => Heroicon::OutlinedPencil,
         'reviewing' => Heroicon::OutlinedClock,
         'published' => Heroicon::OutlinedCheckCircle,
@@ -141,6 +141,8 @@ use Filament\Tables\Columns\IconColumn;
 IconColumn::make('icon')
     ->wrap()
 ```
+
+<AutoScreenshot name="tables/columns/icon/wrap" alt="Icon column with wrapping" version="4.x" />
 
 <Aside variant="tip">
     The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.

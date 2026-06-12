@@ -27,7 +27,7 @@ class ParentResourceRegistration
             ->camel()
             ->when(
                 function (Stringable $singularRelationshipName): bool {
-                    $model = app($this->childResource::getModel());
+                    $model = $this->childResource::getModel();
 
                     if (method_exists($model, $singularRelationshipName)) {
                         return false;
@@ -88,11 +88,6 @@ class ParentResourceRegistration
         return (string) str($this->inverseRelationshipName)
             ->singular()
             ->snake();
-    }
-
-    public function getSlug(): string
-    {
-        return Str::slug($this->relationshipName);
     }
 
     public function getRouteName(): string

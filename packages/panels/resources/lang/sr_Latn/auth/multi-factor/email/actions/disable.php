@@ -30,6 +30,9 @@ return [
                                 'title' => 'Poslali smo vam novi kod e-poštom',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Previše pokušaja. Molim sačekajte pre nego ponovo zatražite kod.',
+                            ],
                         ],
 
                     ],

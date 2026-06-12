@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Illuminate\View\ComponentAttributeBag;
@@ -16,6 +17,7 @@
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
     'extraModalWindowAttributeBag' => null,
+    'extraModalOverlayAttributeBag' => null,
     'footer' => null,
     'footerActions' => [],
     'footerActionsAlignment' => Alignment::Start,
@@ -27,8 +29,10 @@
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
+    'slideOverPosition' => SlideOverPosition::End,
     'stickyFooter' => false,
     'stickyHeader' => false,
+    'teleport' => null,
     'trigger' => null,
     'visible' => true,
     'width' => 'sm',
@@ -65,12 +69,21 @@
 
     <div
         @if (! $trigger->attributes->get('disabled'))
-            x-on:click="$el.nextElementSibling.dispatchEvent(new CustomEvent(@js($openEventName)))"
+            @if ($id)
+                x-on:click="$dispatch(@js($openEventName), { id: @js($id) })"
+            @else
+                x-on:click="$el.nextElementSibling.dispatchEvent(new CustomEvent(@js($openEventName)))"
+            @endif
         @endif
         {{ $trigger->attributes->except(['disabled'])->class(['fi-modal-trigger']) }}
     >
         {{ $trigger }}
     </div>
+@endif
+
+@if (filled($teleport))
+    {!! "<template x-teleport=\"{$teleport}\">" !!}
+    {{-- Avoid formatting issues with unclosed elements --}}
 @endif
 
 <div
@@ -90,10 +103,11 @@
         x-on:{{ $closeEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) close()"
         x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
         x-on:{{ $openEventName }}.window="if (($event.detail.id === @js($id)) && (! isOpen)) open()"
+    @else
+        x-on:{{ $closeEventName }}.stop="if (isOpen) close()"
+        x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
+        x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
     @endif
-    x-on:{{ $closeEventName }}.stop="if (isOpen) close()"
-    x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
-    x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
     x-bind:class="{
         'fi-modal-open': isOpen,
     }"
@@ -102,8 +116,13 @@
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     {{
         $attributes->class([
-            'fi-modal fi-absolute-positioning-context',
+            'fi-modal',
+            'fi-absolute-positioning-context',
             'fi-modal-slide-over' => $slideOver,
+            'fi-modal-slide-over-from-start' => $slideOver && $slideOverPosition === SlideOverPosition::Start,
+            'fi-modal-slide-over-from-end' => $slideOver && $slideOverPosition === SlideOverPosition::End,
+            'fi-modal-has-sticky-header' => $stickyHeader,
+            'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
         ])
     }}
@@ -112,17 +131,16 @@
         aria-hidden="true"
         x-show="isOpen"
         x-transition.duration.300ms.opacity
-        class="fi-modal-close-overlay"
+        {{
+            ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
+                'fi-modal-close-overlay',
+            ])
+        }}
     ></div>
 
     <div
         @if ($closeByClickingAway)
-            {{-- Ensure that the click element is not triggered from a user selecting text inside an input. --}}
-            x-on:click.self="
-                document.activeElement.selectionStart === undefined &&
-                    document.activeElement.selectionEnd === undefined &&
-                    {{ $closeEventHandler }}
-            "
+            x-on:click.self="{{ $closeEventHandler }}"
         @endif
         @class([
             'fi-modal-window-ctn',
@@ -131,7 +149,7 @@
     >
         <{{ filled($wireSubmitHandler) ? 'form' : 'div' }}
             @if ($closeByEscaping)
-                x-on:keydown.window.escape="{{ $closeEventHandler }}"
+                x-on:keydown.window.escape="if (isTopmost()) {{ $closeEventHandler }}"
             @endif
             x-show="isWindowVisible"
             x-transition:enter="fi-transition-enter"
@@ -155,9 +173,8 @@
                     'fi-modal-window-has-content' => $hasContent,
                     'fi-modal-window-has-footer' => $hasFooter,
                     'fi-modal-window-has-icon' => $hasIcon,
-                    'fi-modal-window-has-sticky-header' => $stickyHeader,
                     'fi-hidden' => ! $visible,
-                    (($alignment instanceof Alignment) && (! $slideOver)) ? "fi-align-{$alignment->value}" : null,
+                    ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
                     ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
                 ])
             }}
@@ -169,7 +186,6 @@
                     @endif
                     @class([
                         'fi-modal-header',
-                        'fi-sticky' => $stickyHeader,
                         'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
                     ])
                 >
@@ -232,7 +248,6 @@
                     @endif
                     @class([
                         'fi-modal-footer',
-                        'fi-sticky' => $stickyFooter,
                         ($footerActionsAlignment instanceof Alignment) ? "fi-align-{$footerActionsAlignment->value}" : null,
                     ])
                 >
@@ -254,6 +269,11 @@
         </{{ filled($wireSubmitHandler) ? 'form' : 'div' }}>
     </div>
 </div>
+
+@if (filled($teleport))
+    {!! '</template>' !!}
+    {{-- Avoid formatting issues with unclosed elements --}}
+@endif
 
 @if ($trigger)
     {!! '</div>' !!}

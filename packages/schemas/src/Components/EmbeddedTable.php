@@ -3,9 +3,9 @@
 namespace Filament\Schemas\Components;
 
 use Closure;
-use Exception;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\View\View;
+use LogicException;
 
 class EmbeddedTable extends Component
 {
@@ -29,7 +29,7 @@ class EmbeddedTable extends Component
         $livewire = $this->getLivewire();
 
         if (! ($livewire instanceof HasTable)) {
-            throw new Exception('The [' . $livewire::class . '] component must have a table defined.');
+            throw new LogicException('The [' . $livewire::class . '] component must have a table defined.');
         }
 
         return $livewire->getTable()->render();

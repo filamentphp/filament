@@ -7,6 +7,7 @@ use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Support\Enums\IconPosition;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasIcon
 {
@@ -54,7 +55,7 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(mixed $state): string | BackedEnum | null
+    public function getIcon(mixed $state): string | BackedEnum | Htmlable | null
     {
         $icon = $this->evaluate($this->icon, [
             'state' => $state,

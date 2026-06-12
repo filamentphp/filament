@@ -11,11 +11,19 @@ trait CanNotify
 {
     protected Notification | Closure | null $failureNotification = null;
 
+    protected bool $isFailureNotificationDisabled = false;
+
     protected Notification | Closure | null $successNotification = null;
+
+    protected bool $isSuccessNotificationDisabled = false;
 
     protected Notification | Closure | null $unauthorizedNotification = null;
 
+    protected bool $isUnauthorizedNotificationDisabled = false;
+
     protected Notification | Closure | null $rateLimitedNotification = null;
+
+    protected bool $isRateLimitedNotificationDisabled = false;
 
     protected string | Closure | null $failureNotificationTitle = null;
 
@@ -67,6 +75,10 @@ trait CanNotify
 
     public function sendFailureNotification(): static
     {
+        if ($this->isFailureNotificationDisabled) {
+            return $this;
+        }
+
         $notification = $this->evaluate($this->failureNotification, [
             ...$this->getFailureNotificationNamedInjections(),
             'notification' => $notification = Notification::make()
@@ -90,6 +102,7 @@ trait CanNotify
     public function failureNotification(Notification | Closure | null $notification): static
     {
         $this->failureNotification = $notification;
+        $this->isFailureNotificationDisabled = $notification === null;
 
         return $this;
     }
@@ -118,6 +131,10 @@ trait CanNotify
 
     public function sendSuccessNotification(): static
     {
+        if ($this->isSuccessNotificationDisabled) {
+            return $this;
+        }
+
         $notification = $this->evaluate($this->successNotification, [
             'notification' => $notification = Notification::make()
                 ->success()
@@ -134,6 +151,7 @@ trait CanNotify
     public function successNotification(Notification | Closure | null $notification): static
     {
         $this->successNotification = $notification;
+        $this->isSuccessNotificationDisabled = $notification === null;
 
         return $this;
     }
@@ -155,6 +173,10 @@ trait CanNotify
 
     public function sendUnauthorizedNotification(Response $response): static
     {
+        if ($this->isUnauthorizedNotificationDisabled) {
+            return $this;
+        }
+
         $notification = $this->evaluate($this->unauthorizedNotification, [
             'notification' => $notification = Notification::make()
                 ->danger()
@@ -173,6 +195,7 @@ trait CanNotify
     public function unauthorizedNotification(Notification | Closure | null $notification): static
     {
         $this->unauthorizedNotification = $notification;
+        $this->isUnauthorizedNotificationDisabled = $notification === null;
 
         return $this;
     }
@@ -186,6 +209,10 @@ trait CanNotify
 
     public function sendRateLimitedNotification(TooManyRequestsException $exception): static
     {
+        if ($this->isRateLimitedNotificationDisabled) {
+            return $this;
+        }
+
         $notification = $this->evaluate($this->rateLimitedNotification, [
             'exception' => $exception,
             'minutes' => $exception->minutesUntilAvailable,
@@ -210,6 +237,7 @@ trait CanNotify
     public function rateLimitedNotification(Notification | Closure | null $notification): static
     {
         $this->rateLimitedNotification = $notification;
+        $this->isRateLimitedNotificationDisabled = $notification === null;
 
         return $this;
     }

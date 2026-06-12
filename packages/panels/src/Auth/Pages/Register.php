@@ -4,7 +4,6 @@ namespace Filament\Auth\Pages;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\Events\Registered;
@@ -20,6 +19,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\EloquentUserProvider;
@@ -28,8 +28,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
+use LogicException;
+use SensitiveParameter;
 
 /**
  * @property-read Action $loginAction
@@ -38,6 +41,7 @@ use Illuminate\Validation\Rules\Password;
 class Register extends SimplePage
 {
     use CanUseDatabaseTransactions;
+    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     /**
@@ -70,6 +74,10 @@ class Register extends SimplePage
         } catch (TooManyRequestsException $exception) {
             $this->getRateLimitedNotification($exception)?->send();
 
+            return null;
+        }
+
+        if ($this->isRegisterRateLimited($this->data['email'] ?? '')) {
             return null;
         }
 
@@ -118,10 +126,34 @@ class Register extends SimplePage
             ->danger();
     }
 
+    protected function isRegisterRateLimited(string $email): bool
+    {
+        if (blank($email)) {
+            return false;
+        }
+
+        $rateLimitingKey = 'filament-register:' . sha1($email);
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'register',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
+    }
+
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function handleRegistration(array $data): Model
+    protected function handleRegistration(#[SensitiveParameter] array $data): Model
     {
         return $this->getUserModel()::create($data);
     }
@@ -139,7 +171,7 @@ class Register extends SimplePage
         if (! method_exists($user, 'notify')) {
             $userClass = $user::class;
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+            throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
         $notification = app(VerifyEmail::class);
@@ -193,7 +225,7 @@ class Register extends SimplePage
             ->required()
             ->rule(Password::default())
             ->showAllValidationMessages()
-            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+            ->dehydrateStateUsing(fn (#[SensitiveParameter] $state) => Hash::make($state))
             ->same('passwordConfirmation')
             ->validationAttribute(__('filament-panels::auth/pages/register.form.password.validation_attribute'));
     }
@@ -239,7 +271,7 @@ class Register extends SimplePage
         return __('filament-panels::auth/pages/register.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/register.heading');
     }
@@ -270,7 +302,7 @@ class Register extends SimplePage
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function mutateFormDataBeforeRegister(array $data): array
+    protected function mutateFormDataBeforeRegister(#[SensitiveParameter] array $data): array
     {
         return $data;
     }
@@ -302,12 +334,8 @@ class Register extends SimplePage
             ->footer([
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
-                    ->fullWidth($this->hasFullWidthFormActions()),
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->key('form-actions'),
             ]);
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

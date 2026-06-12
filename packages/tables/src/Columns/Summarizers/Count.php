@@ -2,13 +2,13 @@
 
 namespace Filament\Tables\Columns\Summarizers;
 
-use Exception;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\View\Components\Columns\Summarizers\CountComponent\IconComponent;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use LogicException;
 
 use function Filament\Support\generate_icon_html;
 
@@ -37,7 +37,7 @@ class Count extends Summarizer
         $column = $this->getColumn();
 
         if (! ($column instanceof IconColumn)) {
-            throw new Exception("The [{$column->getName()}] column must be an IconColumn to show an icon count summary.");
+            throw new LogicException("The [{$column->getName()}] column must be an IconColumn to show an icon count summary.");
         }
 
         $state = [];
@@ -78,7 +78,7 @@ class Count extends Summarizer
 
     public function getSelectedState(): int | float | null
     {
-        if (! array_key_exists($this->selectAlias, $this->selectedState)) {
+        if (! array_key_exists($this->selectAlias ?? '', $this->selectedState)) {
             return null;
         }
 
@@ -125,7 +125,7 @@ class Count extends Summarizer
             <div <?= $attributes->toHtml() ?>>
                 <?php if (filled($label = $this->getLabel())) { ?>
                     <span class="fi-ta-icon-count-summary-label">
-                        <?= $label ?>
+                        <?= e($label) ?>
                     </span>
                 <?php } ?>
 

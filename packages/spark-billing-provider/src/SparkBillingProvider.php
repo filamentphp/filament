@@ -3,10 +3,10 @@
 namespace Filament\Billing\Providers;
 
 use Closure;
-use Exception;
 use Filament\Billing\Providers\Http\Middleware\VerifySparkBillableIsSubscribed;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
+use LogicException;
 use Spark\Spark;
 
 class SparkBillingProvider implements Contracts\BillingProvider
@@ -21,7 +21,7 @@ class SparkBillingProvider implements Contracts\BillingProvider
             // and Paddle integrations have different packages associated
             // with them. As such, we must check if this class exists.
             if (! class_exists(Spark::class)) {
-                throw new Exception('Laravel Spark is not installed.');
+                throw new LogicException('Laravel Spark is not installed.');
             }
 
             $tenant = Filament::getTenant();

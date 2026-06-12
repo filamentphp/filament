@@ -32,7 +32,9 @@
     {{ $attributes->class(['fi-dropdown']) }}
 >
     <div
-        x-on:mousedown="toggle"
+        x-on:keyup.enter="toggle($event)"
+        x-on:keyup.space="toggle($event)"
+        x-on:mousedown="if ($event.button === 0) toggle($event)"
         {{ $trigger->attributes->class(['fi-dropdown-trigger']) }}
     >
         {{ $trigger }}
@@ -55,7 +57,7 @@
                 'fi-scrollable' => $maxHeight || $size,
             ])
             @style([
-                "max-height: {$maxHeight}" => $maxHeight,
+                ('max-height: ' . e($maxHeight)) => $maxHeight,
             ])
         >
             {{ $slot }}

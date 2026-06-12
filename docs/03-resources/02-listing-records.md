@@ -1,6 +1,11 @@
 ---
 title: Listing records
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
+
+<AutoScreenshot name="panels/resources/listing" alt="Resource listing page" version="4.x" />
 
 ## Using tabs to filter the records
 
@@ -21,6 +26,8 @@ public function getTabs(): array
     ];
 }
 ```
+
+<AutoScreenshot name="panels/resources/listing-tabs" alt="Resource listing page with tabs" version="4.x" />
 
 ### Customizing the filter tab labels
 
@@ -47,11 +54,13 @@ public function getTabs(): array
 You can add icons to the tabs by passing an [icon](../styling/icons) into the `icon()` method of the tab:
 
 ```php
-use use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tab::make()
     ->icon('heroicon-m-user-group')
 ```
+
+<AutoScreenshot name="panels/resources/listing-tabs-icons" alt="Resource listing page with tab icons" version="4.x" />
 
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
@@ -86,6 +95,28 @@ Tab::make()
     ->badgeColor('success')
 ```
 
+<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="panels/resources/listing-tabs-badge-colors" alt="Resource listing page with colored tab badges" version="4.x" />
+
+#### Deferring the loading of filter tab badges
+
+If you have expensive queries powering your tab badges (such as counting large datasets), the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tab::make()
+    ->badge(static fn (): int => Customer::query()->where('active', true)->count())
+    ->deferBadge()
+```
+
+<Aside variant="danger">
+    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+</Aside>
+
+While the badges are loading, a small loading indicator will appear in place of each deferred badge. Once the data is fetched, the loading indicators will be replaced with the actual badge values.
+
 ### Adding extra attributes to filter tabs
 
 You may also pass extra HTML attributes to filter tabs using `extraAttributes()`:
@@ -118,6 +149,35 @@ public function getDefaultActiveTab(): string | int | null
     return 'active';
 }
 ```
+
+### Excluding the tab query when resolving records
+
+When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, the active tab's query is applied, ensuring users cannot access records outside the current tab's scope.
+
+However, when a record's state changes after the user saw it in the table, you may still want the user to interact with it. For example, if you have an "Active" tab and an action sets a record to inactive, subsequent actions in the same modal would fail to resolve that record.
+
+You may mark a tab to be excluded when resolving records using the `excludeQueryWhenResolvingRecord()` method:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
+
+public function getTabs(): array
+{
+    return [
+        'active' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true))
+            ->excludeQueryWhenResolvingRecord(),
+        'inactive' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', false))
+            ->excludeQueryWhenResolvingRecord(),
+    ];
+}
+```
+
+<Aside variant="danger">
+    Do not use `excludeQueryWhenResolvingRecord()` on tabs that enforce authorization rules. For example, if you have a tab that restricts records by tenant or user ownership, those tabs should remain enforced to prevent unauthorized access.
+</Aside>
 
 ## Authorization
 

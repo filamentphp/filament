@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => '신원 확인',
+
+        'subheading' => '로그인을 계속하려면 신원을 확인해야 합니다.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => '어떻게 확인하시겠습니까?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => '로그인 확인',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => '일치하는 계정이 없습니다.',

@@ -53,7 +53,7 @@ trait CanFixIndistinctState
                         ->values()
                         ->all())
                     ->each(fn (array $newSiblingItemState, string $itemKey) => $set(
-                        key: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
+                        path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
                         state: $newSiblingItemState,
                         isAbsolute: true,
                     ));
@@ -75,7 +75,7 @@ trait CanFixIndistinctState
                     return $siblingItemComponentState === $state;
                 })
                 ->each(fn (mixed $siblingItemComponentState, string $itemKey) => $set(
-                    key: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
+                    path: "{$repeaterStatePath}.{$itemKey}.{$componentItemStatePath}",
                     state: match ($siblingItemComponentState) {
                         true => false,
                         default => null,

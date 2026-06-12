@@ -4,7 +4,6 @@
 
     $fieldWrapperView = $getFieldWrapperView();
     $gridDirection = $getGridDirection() ?? GridDirection::Column;
-    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isInline = $isInline();
@@ -18,7 +17,7 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
+    tabindex="-1"
     class="fi-fo-toggle-buttons-wrp"
 >
     <div
@@ -37,10 +36,12 @@
                 $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
                 $color = $getColor($value);
                 $icon = $getIcon($value);
+                $tooltip = $getTooltip($value);
             @endphp
 
             <div class="fi-fo-toggle-buttons-btn-ctn">
                 <input
+                    @if ($loop->first && $isAutofocused()) autofocus @endif
                     @disabled($shouldOptionBeDisabled)
                     id="{{ $inputId }}"
                     @if (! $isMultiple)
@@ -48,7 +49,6 @@
                     @endif
                     type="{{ $isMultiple ? 'checkbox' : 'radio' }}"
                     value="{{ $value }}"
-                    wire:loading.attr="disabled"
                     {{ $wireModelAttribute }}="{{ $statePath }}"
                     {{ $extraInputAttributeBag }}
                 />
@@ -60,6 +60,7 @@
                     :icon="$icon"
                     :label-sr-only="$areButtonLabelsHidden"
                     tag="label"
+                    :tooltip="$tooltip"
                 >
                     {{ $label }}
                 </x-filament::button>

@@ -6,6 +6,7 @@ use Closure;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
@@ -52,24 +53,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
         $this->default([]);
 
-        $this->afterStateHydrated(static function (TagsInput $component, $state): void {
-            if (is_array($state)) {
-                return;
-            }
-
-            if (! ($separator = $component->getSeparator())) {
-                $component->state([]);
-
-                return;
-            }
-
-            $state = explode($separator, $state ?? '');
-
-            if (count($state) === 1 && blank($state[0])) {
-                $state = [];
-            }
-
-            $component->state($state);
+        $this->afterStateHydrated(static function (TagsInput $component): void {
+            $component->hydrateTags();
         });
 
         $this->dehydrateStateUsing(static function (TagsInput $component, $state) {
@@ -83,6 +68,29 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
 
         $this->reorderAnimationDuration(100);
+    }
+
+    public function hydrateTags(): void
+    {
+        $state = $this->getState();
+
+        if (is_array($state)) {
+            return;
+        }
+
+        if (! ($separator = $this->getSeparator())) {
+            $this->state([]);
+
+            return;
+        }
+
+        $state = explode($separator, $state ?? '');
+
+        if (count($state) === 1 && blank($state[0])) {
+            $state = [];
+        }
+
+        $this->state($state);
     }
 
     public function tagPrefix(string | Closure | null $prefix): static
@@ -175,17 +183,21 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         return (bool) $this->evaluate($this->isReorderable);
     }
 
+    public function getDefaultStateCasts(): array
+    {
+        return [
+            ...parent::getDefaultStateCasts(),
+            ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
+        ];
+    }
+
     public function mutateDehydratedState(mixed $state): mixed
     {
         if (is_array($state)) {
             $state = array_map(function (mixed $value): mixed {
-                $value = $this->stripCharactersFromState($value);
-                $value = $this->trimState($value);
-
-                return $value;
+                return $this->trimState($value);
             }, $state);
         } else {
-            $state = $this->stripCharactersFromState($state);
             $state = $this->trimState($state);
         }
 
@@ -211,7 +223,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
     public function mutatesDehydratedState(): bool
     {
-        return parent::mutatesDehydratedState() || $this->hasStripCharacters() || $this->isTrimmed();
+        return parent::mutatesDehydratedState() || $this->isTrimmed();
     }
 
     public function mutatesStateForValidation(): bool

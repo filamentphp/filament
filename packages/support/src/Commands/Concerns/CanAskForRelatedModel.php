@@ -35,7 +35,7 @@ trait CanAskForRelatedModel
 
                 return array_filter($modelFqns, fn (string $modelFqn): bool => str($modelFqn)->replace(['\\', '/'], '')->contains($search, ignoreCase: true));
             },
-            placeholder: 'App\\Models\\User',
+            placeholder: app()->getNamespace() . 'Models\\User',
             hint: 'Please provide the fully-qualified class name.',
         );
     }

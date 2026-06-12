@@ -139,7 +139,7 @@ class MakeWidgetCommand extends Command
                 name: 'resource-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
+                description: 'The namespace of the resource class, such as [' . app()->getNamespace() . 'Filament\\Resources]',
             ),
             new InputOption(
                 name: 'stats-overview',
@@ -329,7 +329,7 @@ class MakeWidgetCommand extends Command
         }
 
         if (count($namespaces) < 2) {
-            $this->widgetsNamespace = (Arr::first($namespaces) ?? 'App\\Filament\\Widgets');
+            $this->widgetsNamespace = (Arr::first($namespaces) ?? app()->getNamespace() . 'Filament\\Widgets');
             $this->widgetsDirectory = (Arr::first($directories) ?? app_path('Filament/Widgets/'));
 
             return;
@@ -486,7 +486,7 @@ class MakeWidgetCommand extends Command
                     fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
                 );
             },
-            placeholder: 'App\\Models\\BlogPost',
+            placeholder: app()->getNamespace() . 'Models\\BlogPost',
         );
 
         $isGenerated = confirm(
@@ -504,7 +504,7 @@ class MakeWidgetCommand extends Command
 
         $this->writeFile($path, app(TableWidgetClassGenerator::class, [
             'fqn' => $this->fqn,
-            'modelFqn' => $modelFqn,
+            'modelFqn' => $modelFqn ?: Model::class,
             'isGenerated' => $isGenerated,
         ]));
     }

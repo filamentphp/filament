@@ -14,7 +14,7 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
-        "phiki/phiki": "^1.1"
+        "phiki/phiki": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

@@ -17,7 +17,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'E-post adresse',
+            'label' => 'E-postadresse',
         ],
 
         'actions' => [
@@ -31,6 +31,10 @@ return [
     ],
 
     'notifications' => [
+
+        'sent' => [
+            'body' => 'Hvis kontoen din ikke finnes, vil du ikke motta e-posten.',
+        ],
 
         'throttled' => [
             'title' => 'For mange forsøk',

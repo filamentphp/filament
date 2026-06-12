@@ -1,6 +1,9 @@
 @php
     use Filament\Actions\Action;
+    use Filament\Actions\ActionGroup;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
+    use Illuminate\Support\Js;
     use Illuminate\View\ComponentAttributeBag;
 
     $fieldWrapperView = $getFieldWrapperView();
@@ -27,16 +30,21 @@
     $statePath = $getStatePath();
 
     $tableColumns = $getTableColumns();
+
+    $isCompact = $isCompact();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{ $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-table-repeater']) }}
+                ->class([
+                    'fi-fo-table-repeater',
+                    'fi-compact' => $isCompact,
+                ]) }}
     >
         @if (count($items))
-            <table class="fi-absolute-positioning-context">
+            <table>
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
@@ -52,7 +60,7 @@
                                     (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
                                 ])
                                 @style([
-                                    ('width: ' . ($columnWidth = $column->getWidth())) => filled($columnWidth),
+                                    ('width: ' . e($columnWidth = $column->getWidth())) => filled($columnWidth),
                                 ])
                             >
                                 @if (! $column->isHeaderLabelHidden())
@@ -74,127 +82,132 @@
                     </tr>
                 </thead>
 
-                @if (count($items))
-                    <tbody
-                        x-sortable
-                        {{ (new ComponentAttributeBag)
-                                ->merge([
-                                    'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                                    'wire:end.stop' => 'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
-                                ], escape: false) }}
-                    >
-                        @foreach ($items as $itemKey => $item)
+                <tbody
+                    x-sortable
+                    {{ (new ComponentAttributeBag)
+                            ->merge([
+                                'data-sortable-animation-duration' => $getReorderAnimationDuration(),
+                                'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                            ], escape: false) }}
+                >
+                    @foreach ($items as $itemKey => $item)
+                        @php
+                            $visibleExtraItemActions = array_filter(
+                                $extraItemActions,
+                                fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                            );
+                            $cloneAction = $cloneAction(['item' => $itemKey]);
+                            $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
+                            $deleteAction = $deleteAction(['item' => $itemKey]);
+                            $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                            $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
+                            $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
+                            $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
+                            $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
+                            $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                            $itemStatePath = $item->getStatePath();
+                        @endphp
+
+                        <tr
+                            wire:key="{{ $item->getLivewireKey() }}.item"
+                            x-sortable-item="{{ $itemKey }}"
+                        >
+                            @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
+                                <td>
+                                    @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible)
+                                        <div
+                                            class="fi-fo-table-repeater-actions"
+                                        >
+                                            @if ($reorderActionIsVisible)
+                                                <div x-on:click.stop>
+                                                    {{ $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true) }}
+                                                </div>
+                                            @endif
+
+                                            @if ($moveUpActionIsVisible || $moveDownActionIsVisible)
+                                                <div x-on:click.stop>
+                                                    {{ $moveUpAction }}
+                                                </div>
+
+                                                <div x-on:click.stop>
+                                                    {{ $moveDownAction }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </td>
+                            @endif
+
                             @php
-                                $visibleExtraItemActions = array_filter(
-                                    $extraItemActions,
-                                    fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
-                                );
-                                $cloneAction = $cloneAction(['item' => $itemKey]);
-                                $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                                $deleteAction = $deleteAction(['item' => $itemKey]);
-                                $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                                $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
-                                $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                                $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
-                                $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
-                                $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                                $counter = 0
                             @endphp
 
-                            <tr
-                                wire:key="{{ $item->getLivewireKey() }}.item"
-                                x-sortable-item="{{ $itemKey }}"
-                            >
-                                @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
-                                    <td>
-                                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible)
-                                            <div
-                                                class="fi-fo-table-repeater-actions"
-                                            >
-                                                @if ($reorderActionIsVisible)
-                                                    <div
-                                                        x-sortable-handle
-                                                        x-on:click.stop
-                                                    >
-                                                        {{ $reorderAction }}
-                                                    </div>
-                                                @endif
-
-                                                @if ($moveUpActionIsVisible || $moveDownActionIsVisible)
-                                                    <div x-on:click.stop>
-                                                        {{ $moveUpAction }}
-                                                    </div>
-
-                                                    <div x-on:click.stop>
-                                                        {{ $moveDownAction }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    </td>
-                                @endif
-
+                            @foreach ($item->getComponents(withHidden: true) as $schemaComponent)
                                 @php
-                                    $counter = 0
+                                    throw_unless(
+                                        $schemaComponent instanceof \Filament\Schemas\Components\Component,
+                                        new \Exception('Table repeaters must only contain schema components, but [' . $schemaComponent::class . '] was used.'),
+                                    );
                                 @endphp
 
-                                @foreach ($item->getComponents(withHidden: true) as $component)
-                                    @php
-                                        throw_unless(
-                                            $component instanceof \Filament\Forms\Components\Field || $component instanceof \Filament\Infolists\Components\Entry,
-                                            new \Exception('Table repeaters must only contain form fields and infolist entries, but [' . $component::class . '] was used.'),
-                                        );
-                                    @endphp
+                                @if (count($tableColumns) > $counter)
+                                    @if ($schemaComponent instanceof \Filament\Forms\Components\Hidden)
+                                        {{ $schemaComponent }}
+                                    @else
+                                        @php
+                                            $counter++
+                                        @endphp
 
-                                    @if (count($tableColumns) > $counter)
-                                        @if ($component instanceof \Filament\Forms\Components\Hidden)
-                                            {{ $component }}
-                                        @else
+                                        @if ($schemaComponent->isVisible())
                                             @php
-                                                $counter++
+                                                $currentColumn = $tableColumns[$counter - 1] ?? null;
+                                                $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
                                             @endphp
 
-                                            @if ($component->isVisible())
-                                                <td>
-                                                    {{ $component }}
-                                                </td>
-                                            @else
-                                                <td class="fi-hidden"></td>
-                                            @endif
+                                            <td
+                                                @class([
+                                                    ($columnVerticalAlignment instanceof VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
+                                                ])
+                                            >
+                                                {!! $schemaComponent->toSchemaHtml() !!}
+                                            </td>
+                                        @else
+                                            <td class="fi-hidden"></td>
                                         @endif
                                     @endif
-                                @endforeach
-
-                                @if (count($extraItemActions) || $isCloneable || $isDeletable)
-                                    <td>
-                                        @if ($visibleExtraItemActions || $cloneActionIsVisible || $deleteActionIsVisible)
-                                            <div
-                                                class="fi-fo-table-repeater-actions"
-                                            >
-                                                @foreach ($visibleExtraItemActions as $extraItemAction)
-                                                    <div x-on:click.stop>
-                                                        {{ $extraItemAction(['item' => $itemKey]) }}
-                                                    </div>
-                                                @endforeach
-
-                                                @if ($cloneActionIsVisible)
-                                                    <div x-on:click.stop>
-                                                        {{ $cloneAction }}
-                                                    </div>
-                                                @endif
-
-                                                @if ($deleteActionIsVisible)
-                                                    <div x-on:click.stop>
-                                                        {{ $deleteAction }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    </td>
                                 @endif
-                            </tr>
-                        @endforeach
-                    </tbody>
-                @endif
+                            @endforeach
+
+                            @if (count($extraItemActions) || $isCloneable || $isDeletable)
+                                <td>
+                                    @if ($visibleExtraItemActions || $cloneActionIsVisible || $deleteActionIsVisible)
+                                        <div
+                                            class="fi-fo-table-repeater-actions"
+                                        >
+                                            @foreach ($visibleExtraItemActions as $extraItemAction)
+                                                <div x-on:click.stop>
+                                                    {{ $extraItemAction(['item' => $itemKey]) }}
+                                                </div>
+                                            @endforeach
+
+                                            @if ($cloneActionIsVisible)
+                                                <div x-on:click.stop>
+                                                    {{ $cloneAction }}
+                                                </div>
+                                            @endif
+
+                                            @if ($deleteActionIsVisible)
+                                                <div x-on:click.stop>
+                                                    {{ $deleteAction }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </td>
+                            @endif
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         @endif
 

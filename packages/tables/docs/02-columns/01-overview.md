@@ -37,10 +37,10 @@ TextColumn::make('author.name')
 
 Columns may feel a bit magic at first, but they’re designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they’re flexible and you can display data from any source, not just an Eloquent record attribute.
 
-The data that a column displays is called its "state". When using a [panel resource](../resources), the table is aware of the records it is displaying. This means that the state of the column is set based on the value of the attribute on the record. For example, if the column is used in the table of a `PostResource`, then the `title` attribute value of the current post will be displayed.
+The data that a column displays is called its "state". When using a [panel resource](../../resources/overview), the table is aware of the records it is displaying. This means that the state of the column is set based on the value of the attribute on the record. For example, if the column is used in the table of a `PostResource`, then the `title` attribute value of the current post will be displayed.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
 ```
@@ -48,7 +48,7 @@ TextColumn::make('title')
 If you want to access the value stored in a relationship, you can use "dot notation". The name of the relationship that you would like to access data from comes first, followed by a dot, and then the name of the attribute:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('author.name')
 ```
@@ -56,7 +56,7 @@ TextColumn::make('author.name')
 You can also use "dot notation" to access values within a JSON / array column on an Eloquent model. The name of the attribute comes first, followed by a dot, and then the key of the JSON object you want to read from:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('meta.title')
 ```
@@ -66,20 +66,20 @@ TextColumn::make('meta.title')
 You can pass your own state to a column by using the `state()` method:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->state('Hello, world!')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the default state of a column
 
 When a column is empty (its state is `null`), you can use the `default()` method to define alternative state to use instead. This method will treat the default state as if it were real, so columns like [image](image) or [color](color) will display the default image or color.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->default('Untitled')
@@ -90,7 +90,7 @@ TextColumn::make('title')
 Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-the-default-state-of-an-column), as the placeholder is always text and not treated as if it were real state.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->placeholder('Untitled')
@@ -120,7 +120,7 @@ TextColumn::make('users_count')->counts('users')
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before counting, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -143,7 +143,7 @@ TextColumn::make('users_exists')->exists('users')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before checking existence, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -166,7 +166,7 @@ TextColumn::make('users_avg_age')->avg('users', 'age')
 
 In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before aggregating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -182,18 +182,18 @@ TextColumn::make('users_avg_age')->avg([
 By default, the label of the column, which is displayed in the header of the table, is generated from the name of the column. You may customize this using the `label()` method:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->label(__('columns.name'))
@@ -241,7 +241,7 @@ TextColumn::make('full_name')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Direction;;string;;$direction;;The direction that the column is currently being sorted on, either <code>'asc'</code> or <code>'desc'</code>.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x" extras="Direction;;string;;$direction;;The direction that the column is currently being sorted on, either <code>'asc'</code> or <code>'desc'</code>.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
 
 ### Sorting by default
 
@@ -274,7 +274,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->defaultSort(query: function (Builder $query): Builder {
+        ->defaultSort(function (Builder $query): Builder {
             return $query->orderBy('stock');
         });
 }
@@ -316,7 +316,7 @@ public function table(Table $table): Table
 
 ## Disabling default primary key sorting
 
-By default, Filament will automatically add a primary key sort to the table query to ensure that the order of records is consistent. If your table doesn't have a primary key, or you wish to disable this behavior, you can use the `defaultKeySort(false)` method:
+By default, Filament will automatically add a primary key sort to the table query to ensure that the order of records is consistent. The primary key will be sorted in the same direction as the other sort column. If your table doesn't have a primary key, or you wish to disable this behavior, you can use the `defaultKeySort(false)` method:
 
 ```php
 use Filament\Tables\Table;
@@ -373,7 +373,7 @@ TextColumn::make('full_name')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Search;;string;;$search;;The current search input value.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x" extras="Search;;string;;$search;;The current search input value.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
 
 ### Adding extra searchable columns to the table
 
@@ -425,7 +425,7 @@ public function table(Table $table): Table
                 if (! is_numeric($search)) {
                     return $query;
                 }
-            
+
                 return $query->whereYear('published_at', $search);
             },
         ]);
@@ -575,6 +575,10 @@ TextColumn::make('title')
     ->openUrlInNewTab()
 ```
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
+</Aside>
+
 ### Triggering actions
 
 To run a function when a cell is clicked, you may use the `action()` method. Each method accepts a `$record` parameter which you may use to customize the behavior of the action:
@@ -635,6 +639,21 @@ TextColumn::make('title')
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/tooltips" alt="Table with column triggering a tooltip" version="4.x" />
+
+## Adding a header tooltip to a column
+
+You may specify a tooltip to display when you hover over the column header:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('sku')
+    ->headerTooltip('Stock Keeping Unit')
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `headerTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="tables/columns/header-tooltips" alt="Table with header tooltip on a column" version="4.x" />
 
 ## Aligning column content
 
@@ -723,6 +742,8 @@ TextColumn::make('name')
 
 <UtilityInjection set="tableColumns" version="4.x">The `wrapHeader()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/wrap-header" alt="Table with wrapped column headers" version="4.x" />
+
 ## Controlling the width of columns
 
 By default, columns will take up as much space as they need. You may allow some columns to consume more space than others by using the `grow()` method:
@@ -745,7 +766,9 @@ IconColumn::make('is_paid')
     ->width('1%')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="tables/columns/width" alt="Table with column width controls" version="4.x" />
 
 ## Grouping columns
 
@@ -879,9 +902,31 @@ public function table(Table $table): Table
 }
 ```
 
-#### Customizing the column manager dropdown trigger action
+#### Displaying the column manager in a modal
 
-To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
+To render the column manager in a modal instead of in a dropdown, you may use the `columnManagerLayout()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerLayout(ColumnManagerLayout::Modal);
+}
+```
+
+<AutoScreenshot name="tables/columns/column-manager-modal" alt="Table with column manager in a modal" version="4.x" />
+
+You may use the [trigger action API](#customizing-the-column-manager-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
+
+#### Customizing the column manager trigger action
+
+To customize the column manager trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;
@@ -890,7 +935,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->filters([
+        ->columns([
             // ...
         ])
         ->columnManagerTriggerAction(
@@ -900,6 +945,60 @@ public function table(Table $table): Table
         );
 }
 ```
+
+#### Displaying the reset action in the footer
+
+By default, the reset action appears in the header of the column manager. You may move it to the footer, next to the apply action, using the `columnManagerResetActionPosition()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerResetActionPosition(ColumnManagerResetActionPosition::Footer);
+}
+```
+
+#### Disabling column persistence in the user's session
+
+By default, Filament persists the table's columns by storing them in the user's session. To prevent persisting the columns in the user's session, use the `persistColumnsInSession(false)` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistColumnsInSession(false);
+}
+```
+
+#### Changing the number of display columns in the column manager
+
+By default, the column manager displays its options in a single column. You can increase this to multiple columns using the `columnManagerColumns()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerColumns(2);
+}
+```
+
+<AutoScreenshot name="tables/columns/column-manager-columns" alt="Table with a 2-column column manager" version="4.x" />
 
 ## Adding extra HTML attributes to a column content
 
@@ -958,7 +1057,7 @@ TextColumn::make('email')
     ->placeholder(fn (User $record): string => "No email for {$record->name}")
 
 TextColumn::make('role')
-    ->hidden(fn (User $record): bool => $record->role === 'admin')
+    ->badge(fn (User $record): bool => $record->role === 'admin')
 
 TextColumn::make('name')
     ->extraAttributes(fn (User $record): array => ['class' => "{$record->getKey()}-name-column"])

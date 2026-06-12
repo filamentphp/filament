@@ -1,6 +1,7 @@
 ---
 title: Testing tables
 ---
+import Aside from "@components/Aside.astro"
 
 ## Testing that a table can render
 
@@ -115,15 +116,22 @@ Once the table is sorted, you can ensure that the table records are rendered in 
 use function Pest\Livewire\livewire;
 
 it('can sort posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedPostsAsc = Post::query()->orderBy('title')->get();
+    $sortedPostsDesc = Post::query()->orderBy('title', 'desc')->get();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedPostsAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPostsDesc, inOrder: true);
 });
 ```
+
+<Aside variant="info">
+    Filament tables use a SQL `order` statement to sort records before they are output. Different database drivers can use different sorting strategies, and they can differ from PHP's own sorting strategy, so you should ensure that test records are sorted using `orderBy()` on a database query rather than `sortBy()` on a collection of models.
+</Aside>
 
 ### Testing the state of a column
 
@@ -170,7 +178,7 @@ it('has an author column', function () {
 });
 ```
 
-You may pass a function as an additional argument to assert that a column passes a given "truth test". This is useful for asserting that a column has a specific configuration. You can also pass in a record as the third parameter, which is useful if your check is dependant on which table row is being rendered:
+You may pass a function as an additional argument to assert that a column passes a given "truth test". This is useful for asserting that a column has a specific configuration. You can also pass in a record as the third parameter, which is useful if your check is dependent on which table row is being rendered:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -355,6 +363,7 @@ it('shows the correct filters', function () {
     livewire(PostsTable::class)
         ->assertTableFilterVisible('created_at')
         ->assertTableFilterHidden('author');
+});
 ```
 
 ### Testing the existence of a filter
@@ -376,7 +385,7 @@ You may pass a function as an additional argument to assert that a filter passes
 use function Pest\Livewire\livewire;
 use Filament\Tables\Filters\SelectFilter;
 
-it('has an author filter', function () {    
+it('has an author filter', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableFilterExists('author', function (SelectFilter $column): bool {
             return $column->getLabel() === 'Select author';
@@ -445,5 +454,29 @@ it('can average values in a column', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->assertTableColumnSummarySet('rating', 'range', [$posts->min('rating'), $posts->max('rating')]);
+});
+```
+
+## Testing toggleable columns
+
+By default, only columns that are toggled on by default in the table will be rendered and testable. You can toggle all columns in the table on using `toggleAllTableColumns()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can toggle all columns', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->toggleAllTableColumns();
+});
+```
+
+You can also toggle all columns off using `toggleAllTableColumns(false)`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can toggle all columns off', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->toggleAllTableColumns(false);
 });
 ```

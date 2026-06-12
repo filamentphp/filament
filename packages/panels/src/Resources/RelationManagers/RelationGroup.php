@@ -23,6 +23,8 @@ class RelationGroup extends Component
      */
     protected string | array | Closure | null $badgeColor = null;
 
+    protected bool | Closure $isBadgeDeferred = false;
+
     protected ?Model $ownerRecord = null;
 
     protected ?string $pageClass = null;
@@ -79,6 +81,13 @@ class RelationGroup extends Component
         return $this;
     }
 
+    public function deferBadge(bool | Closure $condition = true): static
+    {
+        $this->isBadgeDeferred = $condition;
+
+        return $this;
+    }
+
     public function getLabel(): string
     {
         return $this->evaluate($this->label);
@@ -130,9 +139,16 @@ class RelationGroup extends Component
     /**
      * @return string | array<string> | null
      */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(?string $badge = null): string | array | null
     {
-        return $this->evaluate($this->badgeColor);
+        return $this->evaluate($this->badgeColor, [
+            'badge' => $badge,
+        ]);
+    }
+
+    public function isBadgeDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isBadgeDeferred);
     }
 
     public function getOwnerRecord(): ?Model
@@ -162,7 +178,7 @@ class RelationGroup extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $ownerRecord = $this->getOwnerRecord();
+        $ownerRecord = is_a($parameterType, Model::class, allow_string: true) ? $this->getOwnerRecord() : null;
 
         if (! $ownerRecord) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
@@ -176,10 +192,15 @@ class RelationGroup extends Component
 
     public function getTabComponent(): Tab
     {
+        $isTabBadgeDeferred = $this->isBadgeDeferred();
+
         $tab = Tab::make($this->getLabel())
-            ->badge($this->getBadge())
-            ->badgeColor($this->getBadgeColor())
-            ->badgeTooltip($this->getBadgeTooltip())
+            ->badge($isTabBadgeDeferred
+                ? fn (): ?string => $this->getBadge()
+                : ($badge = $this->getBadge()))
+            ->deferBadge($isTabBadgeDeferred)
+            ->badgeColor($this->getBadgeColor($badge ?? null))
+            ->badgeTooltip($this->getBadgeTooltip($badge ?? null))
             ->icon($this->getIcon())
             ->iconPosition($this->getIconPosition());
 

@@ -11,7 +11,7 @@
         "build:panels-css": "npx @tailwindcss/cli -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
         "build": "npm-run-all build:*",
         "build-demo": "npm run build && cd ../demo && php artisan filament:upgrade && cd ../filament && cd docs-assets/app && php artisan filament:upgrade && npm run build && cd ../../",
-        "prettier": "npx prettier --write ."
+        "prettier": "npx prettier --write --cache --cache-location=.prettiercache ."
     },
     "devDependencies": {
         "@awcodes/alpine-floating-ui": "^3.4.0",
@@ -27,12 +27,13 @@
         "@codemirror/lang-markdown": "^6.3.3",
         "@codemirror/lang-php": "^6.0.1",
         "@codemirror/lang-python": "^6.2.1",
+        "@codemirror/lang-sql": "^6.10.0",
         "@codemirror/lang-xml": "^6.1.0",
         "@codemirror/lang-yaml": "^6.1.2",
         "@codemirror/state": "^6.5.2",
         "@codemirror/theme-one-dark": "^6.1.2",
         "@codemirror/view": "^6.36.6",
-        "@danharrin/alpine-mousetrap": "^0.1.6",
+        "@danharrin/alpine-mousetrap": "^0.1.8",
         "@floating-ui/dom": "^1.7.0",
         "@fontsource-variable/inter": "^5.0.18",
         "@ryangjchandler/alpine-tooltip": "^2.0",
@@ -90,14 +91,13 @@
         "filepond-plugin-image-preview": "^4.6.11",
         "filepond-plugin-image-resize": "^2.0.10",
         "filepond-plugin-image-transform": "^3.8.7",
-        "filepond-plugin-media-preview": "^1.0.11",
         "js-md5": "^0.8.3",
         "laravel-echo": "^1.14.0",
-        "laravel-mix": "^6.0.37",
         "luxon": "^3.4.3",
         "mime": "^4.0.4",
         "nouislider": "^15.8.1",
         "npm-run-all": "^4.1.5",
+        "playwright": "^1.58.1",
         "prettier": "^3.1.1",
         "prettier-plugin-blade": "v2.0.0",
         "prettier-plugin-tailwindcss": "^0.6.10",
@@ -105,7 +105,6 @@
         "sortablejs": "^1.15.0",
         "tailwindcss": "^4.0.0",
         "tippy.js": "^6.3.7",
-        "uuid-browser": "^3.1.0",
         "vanilla-colorful": "^0.7.2"
     }
 }

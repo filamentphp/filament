@@ -93,7 +93,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         parent::setUp();
 
         $this->key(function (Section $component): ?string {
-            $heading = $this->getHeading();
+            $heading = $component->getHeading();
 
             if (blank($heading)) {
                 return null;
@@ -102,13 +102,14 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($heading, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::section" : 'section');
-        });
+        }, isInheritable: false);
 
         $this->afterHeader(fn (Section $component): array => $component->getHeaderActions());
         $this->footer(function (Section $component): Schema {
             return match ($component->getFooterActionsAlignment()) {
                 Alignment::End, Alignment::Right => Schema::end($component->getFooterActions()),
                 Alignment::Center, => Schema::center($component->getFooterActions()),
+                Alignment::Between, Alignment::Justify => Schema::between($component->getFooterActions()),
                 default => Schema::start($component->getFooterActions()),
             };
         });

@@ -61,15 +61,15 @@ it('can get the value from a string backed enum in the setter', function (String
     [StringBackedEnum::Three, 'three'],
 ]);
 
-it('can get the value from an integer backed enum in the setter', function (IntegerBackedEnum $enum, int $integer): void {
+it('can get the value from an integer backed enum in the setter', function (IntegerBackedEnum $enum, string $value): void {
     $cast = app(EnumStateCast::class, ['enum' => IntegerBackedEnum::class]);
 
     expect($cast->set($enum))
-        ->toBe($integer);
+        ->toBe($value);
 })->with([
-    [IntegerBackedEnum::One, 1],
-    [IntegerBackedEnum::Two, 2],
-    [IntegerBackedEnum::Three, 3],
+    [IntegerBackedEnum::One, '1'],
+    [IntegerBackedEnum::Two, '2'],
+    [IntegerBackedEnum::Three, '3'],
 ]);
 
 it('can ignore the value in the setter if it is not an enum', function ($value): void {

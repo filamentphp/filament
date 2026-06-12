@@ -3,7 +3,6 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Component;
@@ -15,7 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Livewire\Livewire;
+use LogicException;
 
 use function Livewire\store;
 
@@ -49,9 +50,11 @@ trait HasState
 
     protected bool $hasDefaultState = false;
 
-    protected bool | Closure $isDehydrated = true;
+    protected bool | Closure | null $isDehydrated = null;
 
     protected bool | Closure $isDehydratedWhenHidden = false;
+
+    protected bool | Closure $isSaved = true;
 
     protected bool | Closure $isValidatedWhenNotDehydrated = true;
 
@@ -93,6 +96,11 @@ trait HasState
         return $casts;
     }
 
+    public function hasCustomStateCasts(): bool
+    {
+        return filled($this->stateCasts);
+    }
+
     /**
      * @return array<StateCast>
      */
@@ -130,6 +138,9 @@ trait HasState
 
     public function afterStateUpdatedJs(string | Closure | null $js): static
     {
+        // Security: This JavaScript is evaluated on the client via `eval()`.
+        // Never pass user input — only developer-defined expressions.
+
         if (blank($js)) {
             $this->afterStateUpdatedJs = [];
 
@@ -168,7 +179,13 @@ trait HasState
 
         if (filled($components = $this->getComponentsToPartiallyRenderAfterStateUpdated())) {
             foreach ($components as $key) {
-                $this->getLivewire()->getSchemaComponent($this->resolveRelativeKey($key))->partiallyRender();
+                $component = $this->getLivewire()->getSchemaComponent($this->resolveRelativeKey($key), withHidden: true);
+
+                if (! $component) {
+                    throw new InvalidArgumentException("Could not find component [{$key}] to partially render.");
+                }
+
+                $component->partiallyRender();
             }
         }
 
@@ -196,6 +213,8 @@ trait HasState
 
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
+
+        $this->clearCachedDefaultChildSchemas();
 
         return $this;
     }
@@ -248,6 +267,13 @@ trait HasState
         return $this;
     }
 
+    public function saved(bool | Closure $condition = true): static
+    {
+        $this->isSaved = $condition;
+
+        return $this;
+    }
+
     public function validatedWhenNotDehydrated(bool | Closure $condition = true): static
     {
         $this->isValidatedWhenNotDehydrated = $condition;
@@ -267,6 +293,10 @@ trait HasState
      */
     public function getStateToDehydrate(mixed $state): array
     {
+        if ($state === '') {
+            $state = null;
+        }
+
         foreach ($this->getStateCasts() as $stateCast) {
             $state = $stateCast->get($state);
         }
@@ -290,6 +320,25 @@ trait HasState
                 $statePath = $this->getStatePath();
 
                 if (! $this->getRootContainer()->hasDehydratedComponent($statePath)) {
+                    // When another component in the same scope shares this
+                    // `statePath`, removing the entire key would destroy that
+                    // sibling's data. Instead, only remove the state paths
+                    // owned by *this* component's descendants.
+                    if ($this->hasComponentWithStatePath($statePath)) {
+                        $descendantStatePathsToForget = $this->getDescendantStatePathsToForget($statePath);
+
+                        Arr::forget($state, $descendantStatePathsToForget); /** @phpstan-ignore parameterByRef.type */
+
+                        // Clean up the parent key when nothing meaningful
+                        // remains (e.g. all siblings sharing this path were
+                        // also non-dehydrated and removed their descendants).
+                        if (blank(Arr::get($state, $statePath))) {
+                            Arr::forget($state, $statePath); /** @phpstan-ignore parameterByRef.type */
+                        }
+
+                        return;
+                    }
+
                     Arr::forget($state, $statePath); /** @phpstan-ignore parameterByRef.type */
 
                     return;
@@ -320,6 +369,69 @@ trait HasState
         }
     }
 
+    /**
+     * Check whether another component in the same schema scope shares the
+     * given absolute `statePath`. The scope is determined by walking up
+     * through parent containers that don't introduce their own `statePath`
+     * (e.g. `Section`, `Tabs`) until a `statePath`-bearing ancestor is
+     * found — that ancestor's container defines the boundary.
+     */
+    protected function hasComponentWithStatePath(string $statePath): bool
+    {
+        $container = $this->getContainer();
+
+        while ($parentComponent = $container->getParentComponent()) {
+            $parentContainer = $parentComponent->getContainer();
+
+            if ($parentComponent->hasStatePath()) {
+                break;
+            }
+
+            if ($parentContainer->getStatePath() !== $container->getStatePath()) {
+                break;
+            }
+
+            $container = $parentContainer;
+        }
+
+        foreach ($container->getFlatComponents(withActions: false, withHidden: true) as $component) {
+            if ($component === $this) {
+                continue;
+            }
+
+            if ($component->hasStatePath() && $component->getStatePath() === $statePath) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string>
+     */
+    protected function getDescendantStatePathsToForget(string $statePath): array
+    {
+        $descendantStatePathPrefix = "{$statePath}.";
+        $paths = [];
+
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            foreach ($childSchema->getFlatComponents(withActions: false, withHidden: true) as $component) {
+                if (! $component->hasStatePath()) {
+                    continue;
+                }
+
+                $childStatePath = $component->getStatePath();
+
+                if (filled($childStatePath) && str_starts_with($childStatePath, $descendantStatePathPrefix)) {
+                    $paths[] = $childStatePath;
+                }
+            }
+        }
+
+        return $paths;
+    }
+
     public function dehydrateStateUsing(?Closure $callback): static
     {
         $this->dehydrateStateUsing = $callback;
@@ -329,8 +441,9 @@ trait HasState
 
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
+     * @param  array<string, true>  $appliedStateCastPaths
      */
-    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true): void
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true, bool $shouldApplyStateCasts = true, array &$appliedStateCastPaths = []): void
     {
         $this->hydrateDefaultState($hydratedDefaultState);
 
@@ -349,18 +462,28 @@ trait HasState
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-            $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
+            $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
         }
 
-        $rawState = $this->getRawState();
-        $originalRawState = $rawState;
+        if ($shouldApplyStateCasts && filled($stateCasts = $this->getStateCasts())) {
+            $statePath = $this->getStatePath();
 
-        foreach ($this->getStateCasts() as $stateCast) {
-            $rawState = $stateCast->set($rawState);
-        }
+            if (blank($statePath) || ! isset($appliedStateCastPaths[$statePath])) {
+                $rawState = $this->getRawState();
+                $originalRawState = $rawState;
 
-        if ($rawState !== $originalRawState) {
-            $this->rawState($rawState);
+                foreach ($stateCasts as $stateCast) {
+                    $rawState = $stateCast->set($rawState);
+                }
+
+                if ($rawState !== $originalRawState) {
+                    $this->rawState($rawState);
+                }
+
+                if (filled($statePath)) {
+                    $appliedStateCastPaths[$statePath] = true;
+                }
+            }
         }
 
         if ($shouldCallHydrationHooks) {
@@ -378,9 +501,10 @@ trait HasState
 
             $isStatePathMatching = in_array($statePathToCheck, $statePaths);
 
-            // Even if the current component's state path is not present in the array of state paths to hydrate,
-            // a parent state path may be present. In this case, we still need to hydrate the field as it is
-            // nested inside the parent state that was hydrated.
+            // Even if the current component's state path is not in the
+            // array of state paths to hydrate, a parent path may be.
+            // In that case we still need to hydrate the field since
+            // it is nested inside the parent state.
             while ((! $isStatePathMatching) && str($statePathToCheck)->contains('.')) {
                 $statePathToCheck = (string) str($statePathToCheck)->beforeLast('.');
 
@@ -444,14 +568,14 @@ trait HasState
         }
 
         if (! $this->hasDefaultState()) {
-            $this->hasStatePath() && $this->state(null);
+            $this->hasStatePath() && $this->rawState(null);
 
             return;
         }
 
         $defaultState = $this->getDefaultState();
 
-        $this->state($defaultState);
+        $this->rawState($defaultState);
 
         Arr::set($hydratedDefaultState, $statePath, $defaultState); /** @phpstan-ignore parameterByRef.type */
     }
@@ -535,6 +659,13 @@ trait HasState
         $livewire = $this->getLivewire();
 
         data_set($livewire, $this->getStatePath(), $this->evaluate($state));
+
+        // For components like repeaters and builders, child schemas
+        // depend on the component's state. When loading state after
+        // it is already present, cached child schemas must be
+        // cleared so they can be re-evaluated. `rawState()`
+        // is called during this process.
+        $this->clearCachedDefaultChildSchemas();
 
         return $this;
     }
@@ -642,7 +773,9 @@ trait HasState
 
     public function isDehydrated(): bool
     {
-        if (! $this->evaluate($this->isDehydrated)) {
+        $isDehydrated = $this->evaluate($this->isDehydrated) ?? $this->isSaved();
+
+        if (! $isDehydrated) {
             return false;
         }
 
@@ -652,6 +785,11 @@ trait HasState
     public function isDehydratedWhenHidden(): bool
     {
         return (bool) $this->evaluate($this->isDehydratedWhenHidden);
+    }
+
+    public function isSaved(): bool
+    {
+        return (bool) $this->evaluate($this->isSaved);
     }
 
     public function isValidatedWhenNotDehydrated(): bool
@@ -771,7 +909,7 @@ trait HasState
         return filled(ltrim($key, './')) ? "{$containerKey}.{$key}" : $containerKey;
     }
 
-    protected function flushCachedAbsoluteStatePath(): void
+    public function flushCachedAbsoluteStatePath(): void
     {
         /** @phpstan-ignore unset.possiblyHookedProperty */
         unset($this->cachedAbsoluteStatePath);
@@ -879,7 +1017,7 @@ trait HasState
         }
 
         if (! str($statePath)->startsWith("{$containerConstantStatePath}.")) {
-            throw new Exception("The current component\'s state path [$statePath] does not start with the container\'s constant state path [$containerConstantStatePath].");
+            throw new LogicException("The current component\'s state path [$statePath] does not start with the container\'s constant state path [$containerConstantStatePath].");
         }
 
         return (string) str($statePath)->after("{$containerConstantStatePath}.");
@@ -914,6 +1052,45 @@ trait HasState
      */
     public function getConstantStateFromRecord(Model $record): mixed
     {
+        $relationship = $this->getStateRelationship($record);
+
+        if ($relationship) {
+            $relationshipAttribute = $this->getStateRelationshipAttribute();
+
+            $state = collect($this->getStateRelationshipResults($record))
+                ->reduce(
+                    function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
+                        if (
+                            ($record instanceof HasRichContent) &&
+                            $record->hasRichContentAttribute($relationshipAttribute)
+                        ) {
+                            $state = $record->getRichContentAttribute($relationshipAttribute);
+                        } else {
+                            $state = data_get($record, $relationshipAttribute);
+                        }
+
+                        if (blank($state)) {
+                            return $carry;
+                        }
+
+                        return $carry->push($state);
+                    },
+                    initial: collect(),
+                )
+                ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+                ->values();
+
+            if (! $state->count()) {
+                return null;
+            }
+
+            if (($state->count() < 2) && (! $this->hasMultipleStateRelationship($record))) {
+                return $state->first();
+            }
+
+            return $state->all();
+        }
+
         $name = $this->getConstantStatePath();
 
         if (
@@ -925,34 +1102,7 @@ trait HasState
             $state = data_get($record, $name);
         }
 
-        if ($state !== null) {
-            return $state;
-        }
-
-        if (! $this->hasStateRelationship($record)) {
-            return null;
-        }
-
-        $relationship = $this->getStateRelationship($record);
-
-        if (! $relationship) {
-            return null;
-        }
-
-        $relationshipAttribute = $this->getStateRelationshipAttribute();
-
-        $state = collect($this->getStateRelationshipResults($record))
-            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
-            ->pluck($relationshipAttribute)
-            ->filter(fn ($state): bool => filled($state))
-            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
-            ->values();
-
-        if (! $state->count()) {
-            return null;
-        }
-
-        return $state->all();
+        return $state;
     }
 
     public function getStatePathForRelationship(): ?string

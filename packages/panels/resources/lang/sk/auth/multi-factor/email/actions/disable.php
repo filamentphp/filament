@@ -30,6 +30,9 @@ return [
                                 'title' => 'Poslali sme Vám nový kód e-mailom',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Príliš veľa pokusov o opätovné odoslanie. Počkajte, prosím, pred ďalšou žiadosťou o kód.',
+                            ],
                         ],
 
                     ],
@@ -39,6 +42,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Zadaný kód je neplatný.',
+
+                    'rate_limited' => 'Príliš veľa pokusov. Skúste to neskôr.',
 
                 ],
 

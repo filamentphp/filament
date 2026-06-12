@@ -13,6 +13,8 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
+use SensitiveParameter;
 
 class SetUpEmailAuthenticationAction
 {
@@ -44,7 +46,14 @@ class SetUpEmailAuthenticationAction
                             /** @var HasEmailAuthentication $user */
                             $user = Filament::auth()->user();
 
-                            $emailAuthentication->sendCode($user);
+                            if (! $emailAuthentication->sendCode($user)) {
+                                Notification::make()
+                                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
+                                    ->danger()
+                                    ->send();
+
+                                return;
+                            }
 
                             Notification::make()
                                 ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
@@ -54,7 +63,17 @@ class SetUpEmailAuthenticationAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.validation_attribute'))
                     ->required()
                     ->rule(function () use ($emailAuthentication): Closure {
-                        return function (string $attribute, $value, Closure $fail) use ($emailAuthentication): void {
+                        return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($emailAuthentication): void {
+                            $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::auth()->id();
+
+                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                                $fail(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.rate_limited'));
+
+                                return;
+                            }
+
+                            RateLimiter::hit($rateLimitingKey);
+
                             if ($emailAuthentication->verifyCode($value)) {
                                 return;
                             }

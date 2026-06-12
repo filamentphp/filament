@@ -1,7 +1,9 @@
 ---
 title: Managing relationships
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Choosing the right tool for the job
 
@@ -114,9 +116,11 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
+<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="4.x" />
+
 ### Customizing the relation manager's URL parameter
 
-If you pass a key to the array returned from `getRelations()`, it will be used in the URL for that relation manager when switching been multiple relation managers. For example, you can pass `posts` to use `?relation=posts` in the URL instead of a numeric array index:
+If you pass a key to the array returned from `getRelations()`, it will be used in the URL for that relation manager when switching between multiple relation managers. For example, you can pass `posts` to use `?relation=posts` in the URL instead of a numeric array index:
 
 ```php
 public static function getRelations(): array
@@ -301,6 +305,12 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="4.x" />
+
+<Aside variant="danger">
+    `AssociateAction`, `AttachAction`, `DetachAction`, and `DissociateAction` (and their bulk variants) only check the relation manager's `isReadOnly()` state — they do not consult any model policy method by default. Bulk delete, force-delete, and restore actions use the `deleteAny()`, `forceDeleteAny()`, and `restoreAny()` policy methods (one call for the whole batch) for performance. If you need per-record authorization on a bulk action, call [`authorizeIndividualRecords('ability')`](../actions/overview#authorizing-individual-records-of-a-bulk-action) on it, accepting the extra query cost.
+</Aside>
+
 ### Preloading the attachment modal select options
 
 By default, as you search for a record to attach, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `preloadRecordSelect()` method of `AttachAction`:
@@ -377,6 +387,38 @@ AttachAction::make()
     ->recordSelect(
         fn (Select $select) => $select->placeholder('Select a post'),
     )
+```
+
+#### Selecting records to attach using a modal table
+
+You may use the `tableSelect()` method to select records in the attachment modal using a full Filament table, instead of a simple select dropdown:
+
+```php
+use App\Filament\Resources\Products\Tables\ProductsTable;
+use Filament\Actions\AttachAction;
+
+AttachAction::make()
+    ->tableSelect(ProductsTable::class)
+```
+
+In this example, the `ProductsTable` class is a standard Filament table class, with a `configure()` method that defines the table's columns:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public static function configure(Table $table): Table
+{
+    return $table
+        ->columns([
+            TextColumn::make('name'),
+            TextColumn::make('sku'),
+            // ...
+        ])
+        ->filters([
+            // ...
+        ]);
+}
 ```
 
 ### Handling duplicates
@@ -709,15 +751,18 @@ use Filament\Resources\RelationManagers\RelationGroup;
 public static function getRelations(): array
 {
     return [
-        // ...
-        RelationGroup::make('Contacts', [
-            RelationManagers\IndividualsRelationManager::class,
-            RelationManagers\OrganizationsRelationManager::class,
+        RelationGroup::make('Interactions', [
+            RelationManagers\CommentsRelationManager::class,
+            RelationManagers\TagsRelationManager::class,
         ]),
-        // ...
+        RelationGroup::make('Links', [
+            RelationManagers\LinksRelationManager::class,
+        ]),
     ];
 }
 ```
+
+<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="4.x" />
 
 ## Conditionally showing relation managers
 
@@ -744,6 +789,8 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
     return true;
 }
 ```
+
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
 
 ### Customizing the content tab
 
@@ -790,6 +837,8 @@ public static function getTabComponent(Model $ownerRecord, string $pageClass): T
 }
 ```
 
+<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 If you are using a [relation group](#grouping-relation-managers), you can use the `tab()` method:
 
 ```php
@@ -805,6 +854,48 @@ RelationGroup::make('Contacts', [
         ->badgeColor('info')
         ->badgeTooltip('The number of posts in this category')
         ->icon('heroicon-m-document-text'));
+```
+
+<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+### Deferring the loading of relation manager tab badges
+
+If `getBadge()` runs an expensive query, you may defer the badge so that it loads asynchronously after the page renders, by setting the `$isBadgeDeferred` property to `true`:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+protected static bool $isBadgeDeferred = true;
+
+public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+{
+    $count = $ownerRecord->tickets()->count();
+
+    return $count > 0 ? (string) $count : null;
+}
+```
+
+Alternatively, you may override the `isBadgeDeferred()` method to define dynamic behavior:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
+{
+    return FeatureFlag::active();
+}
+```
+
+If you are using a [relation group](#grouping-relation-managers), use the fluent `deferBadge()` method:
+
+```php
+use Filament\Resources\RelationManagers\RelationGroup;
+
+RelationGroup::make('Contacts', [
+    // ...
+])
+    ->badge(fn (Model $ownerRecord): string => (string) $ownerRecord->contacts()->count())
+    ->deferBadge();
 ```
 
 ## Sharing a resource's form and table with a relation manager

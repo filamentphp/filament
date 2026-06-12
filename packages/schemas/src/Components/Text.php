@@ -12,6 +12,7 @@ use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Concerns\HasWeight;
+use Filament\Support\Enums\Size;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -30,7 +31,7 @@ class Text extends Component
 
     protected bool | Closure $isBadge = false;
 
-    protected TextSize | string | Closure | null $size = null;
+    protected TextSize | Size | string | Closure | null $size = null;
 
     protected string $view = 'filament-schemas::components.text';
 
@@ -85,14 +86,14 @@ class Text extends Component
         return $this->evaluate($this->content);
     }
 
-    public function size(TextSize | string | Closure | null $size): static
+    public function size(TextSize | Size | string | Closure | null $size): static
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getSize(): TextSize | string | null
+    public function getSize(): TextSize | Size | string | null
     {
         $size = $this->evaluate($this->size);
 

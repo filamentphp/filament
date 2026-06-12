@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Sloupce',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Vybrat vše',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Zrušit výběr všeho',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Export překračuje povolenou velikost',
             'body' => 'Není možné exportovat více než 1 řádek najednou.|Není možné exportovat více než :count řádků najednou.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Nejsou vybrány žádné sloupce',
+            'body' => 'Prosím vyberte alespoň jeden sloupec k exportu.',
         ],
 
         'started' => [

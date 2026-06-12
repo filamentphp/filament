@@ -1,6 +1,7 @@
 ---
 title: Markdown editor
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -26,6 +27,10 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 {!! str($record->content)->markdown()->sanitizeHtml() !!}
 ```
 
+<Aside variant="danger">
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
+</Aside>
+
 ## Customizing the toolbar buttons
 
 You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults:
@@ -47,9 +52,11 @@ Each nested array in the main array represents a group of buttons in the toolbar
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/markdown-editor/custom-toolbar" alt="Markdown editor with customized toolbar buttons" version="4.x" />
+
 ## Uploading images to the editor
 
-You may customize how images are uploaded using configuration methods:
+Images may be uploaded to the editor. They will always be uploaded to a publicly available URL with public storage permissions, since generating temporary file upload URLs is not supported in static content. You may customize where images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -60,3 +67,23 @@ MarkdownEditor::make('content')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()` and `fileAttachmentsDirectory()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Validating uploaded images
+
+You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->fileAttachmentsAcceptedFileTypes(['image/png', 'image/jpeg'])
+```
+
+You may use the `fileAttachmentsMaxSize()` method to control the maximum file size for uploaded images. The size is specified in kilobytes. By default, the maximum size is 12288 KB (12 MB):
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->fileAttachmentsMaxSize(5120) // 5 MB
+```

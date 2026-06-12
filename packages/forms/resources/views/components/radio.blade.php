@@ -27,11 +27,11 @@
             @php
                 $inputAttributes = $extraInputAttributeBag
                     ->merge([
+                        'autofocus' => $loop->first && $isAutofocused(),
                         'disabled' => $isDisabled || $isOptionDisabled($value, $label),
-                        'id' => $id . '-' . $value,
+                        'id' => e($id . '-' . $value),
                         'name' => $id,
-                        'value' => $value,
-                        'wire:loading.attr' => 'disabled',
+                        'value' => e($value),
                         $wireModelAttribute => $statePath,
                     ], escape: false);
             @endphp

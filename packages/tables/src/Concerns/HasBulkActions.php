@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Schema;
@@ -13,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use LogicException;
+
+use function Livewire\invade;
 
 trait HasBulkActions
 {
@@ -86,7 +88,7 @@ trait HasBulkActions
 
     public function deselectAllTableRecords(): void
     {
-        $this->dispatch('deselectAllTableRecords');
+        $this->dispatch('deselectAllTableRecords')->self();
     }
 
     /**
@@ -131,20 +133,52 @@ trait HasBulkActions
     /**
      * @return array<string>
      */
-    public function getGroupedSelectableTableRecordKeys(string $group): array
+    public function getGroupedSelectableTableRecordKeys(?string $group): array
     {
-        $query = $this->getFilteredTableQuery();
-
         $tableGrouping = $this->getTableGrouping();
+
+        if (! $this->getTable()->hasQuery()) {
+            $groupColumn = $tableGrouping->getColumn();
+
+            $records = $this->getTableRecords()
+                ->filter(static function (array $record) use ($groupColumn, $group): bool {
+                    $key = $record[$groupColumn] ?? null;
+                    $stringKey = filled($key) ? strval($key) : null;
+
+                    return $stringKey === $group;
+                });
+
+            if (! $this->getTable()->checksIfRecordIsSelectable()) {
+                return $records
+                    ->map(fn (array $record): string => $this->getTableRecordKey($record)) /** @phpstan-ignore method.notFound */
+                    ->values()
+                    ->all();
+            }
+
+            /** @phpstan-ignore-next-line */
+            return $records->reduce(
+                function (array $carry, array $record): array {
+                    if (! $this->getTable()->isRecordSelectable($record)) {
+                        return $carry;
+                    }
+
+                    $carry[] = $this->getTableRecordKey($record);
+
+                    return $carry;
+                },
+                initial: [],
+            );
+        }
+
+        $query = $this->getFilteredTableQuery();
 
         $tableGrouping->scopeQueryByKey($query, $group);
 
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             $records = $this->getTable()->selectsCurrentPageOnly() ?
-                /** @phpstan-ignore-next-line */
                 $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
-                    ->pluck($query->getModel()->getKeyName()) :
+                    ->pluck($query->getModel()->getKeyName()) : /** @phpstan-ignore method.notFound */
                 $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             return $records
@@ -204,12 +238,6 @@ trait HasBulkActions
 
         $table = $this->getTable();
 
-        if ($shouldFetchSelectedRecords && $table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates()) {
-            return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords(
-                $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize)->get(),
-            );
-        }
-
         if (! $table->hasQuery()) {
             $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
 
@@ -227,7 +255,7 @@ trait HasBulkActions
             $maxSelectableRecords = $table->getMaxSelectableRecords();
 
             if ($maxSelectableRecords && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
-                throw new Exception("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
+                throw new LogicException("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
             }
 
             return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
@@ -235,19 +263,22 @@ trait HasBulkActions
 
         $query = $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize);
 
-        if (! $chunkSize) {
-            $this->applySortingToTableQuery($query);
-        }
-
         if (! $shouldFetchSelectedRecords) {
             return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
+        }
+
+        if ($chunkSize && $table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+            $invadedRelationship = invade($table->getRelationship());
+
+            return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize)
+                ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
         }
 
         if ($chunkSize) {
             return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize);
         }
 
-        return $this->cachedSelectedTableRecords = $query->get();
+        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords($query->get());
     }
 
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
@@ -307,7 +338,15 @@ trait HasBulkActions
             }
         }
 
-        return $table->selectPivotDataInQuery($relationship);
+        $relationship = $table->selectPivotDataInQuery($relationship);
+
+        $query = $relationship->getQuery();
+
+        if (! $chunkSize) {
+            $this->applySortingToTableQuery($query);
+        }
+
+        return $query;
     }
 
     /**

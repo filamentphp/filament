@@ -6,6 +6,8 @@
     $id = $getId();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
+    $hasBadges = $hasBadges();
+    $badgeColor = $getBadgeColor();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -23,38 +25,45 @@
                 ])
         }}
     >
-        @if ($isMultiple)
-            @if (filled($optionLabels = $getOptionLabels()))
+        @if (((! $isMultiple) && filled($optionLabel = $getOptionLabel())) ||
+             ($isMultiple && filled($optionLabels = $getOptionLabels())))
+            @if ($isMultiple && $hasBadges)
                 <div class="fi-fo-modal-table-select-badges-ctn">
                     @foreach ($optionLabels as $optionLabel)
-                        <x-filament::badge>
+                        @if ($hasBadges)
+                            <x-filament::badge :color="$badgeColor">
+                                {{ $optionLabel }}
+                            </x-filament::badge>
+                        @else
                             {{ $optionLabel }}
-                        </x-filament::badge>
+                        @endif
                     @endforeach
                 </div>
-            @elseif (filled($placeholder = $getPlaceholder()))
-                <div class="fi-fo-modal-table-select-placeholder">
-                    {{ $placeholder }}
-                </div>
-            @endif
-
-            @if (! $isDisabled)
+            @else
                 <div>
-                    {{ $getAction('select') }}
+                    @if ($hasBadges)
+                        <x-filament::badge :color="$badgeColor">
+                            {{ $optionLabel }}
+                        </x-filament::badge>
+                    @elseif ($isMultiple)
+                        @foreach ($optionLabels as $optionLabel)
+                            {{ $optionLabel . ($loop->last ? '' : ', ') }}
+                        @endforeach
+                    @else
+                        {{ $optionLabel }}
+                    @endif
                 </div>
             @endif
-        @else
-            @if (filled($optionLabel = $getOptionLabel()))
-                {{ $optionLabel }}
-            @elseif (filled($placeholder = $getPlaceholder()))
-                <div class="fi-fo-modal-table-select-placeholder">
-                    {{ $placeholder }}
-                </div>
-            @endif
+        @elseif (filled($placeholder = $getPlaceholder()))
+            <div class="fi-fo-modal-table-select-placeholder">
+                {{ $placeholder }}
+            </div>
+        @endif
 
-            @if (! $isDisabled)
+        @if (! $isDisabled)
+            <div>
                 {{ $getAction('select') }}
-            @endif
+            </div>
         @endif
     </div>
 </x-dynamic-component>

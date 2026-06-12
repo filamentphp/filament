@@ -18,7 +18,11 @@ FileUpload::make('attachment')
 <AutoScreenshot name="forms/fields/file-upload/simple" alt="File upload" version="4.x" />
 
 <Aside variant="tip">
-    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/filament-spatie-media-library) for more information.
+    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library) for more information.
+</Aside>
+
+<Aside variant="danger">
+    By default, `FileUpload` accepts any string path within the configured disk — the field value is a client-controlled string and a tampered request can submit any other file on the same disk. If your disk holds files for more than one user, tenant, or record, either call [`->preventFilePathTampering()`](#authorizing-existing-file-paths) on the field (or apply it globally with `FileUpload::configureUsing()`), or isolate uploads at the disk or directory level so the field can only ever address files belonging to the current owner.
 </Aside>
 
 ## Configuring the storage disk and directory
@@ -41,6 +45,10 @@ FileUpload::make('attachment')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `disk()`, `directory()` and `visibility()` methods accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters. </UtilityInjection>
+
+<Aside variant="warning">
+    The default visibility is decided by a literal string match against the disk name: a disk literally named `public` is treated as publicly visible, and any other disk name defaults to `private`. A custom disk that happens to be named `public` will therefore be treated as public even if its underlying configuration is private, and a custom publicly-visible disk under a different name will default to private. To avoid confusion, either give custom disks unambiguous names or set `visibility()` explicitly on each field.
+</Aside>
 
 <Aside variant="info">
     It is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
@@ -183,6 +191,64 @@ FileUpload::make('attachments')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `storeFileNamesIn()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Authorizing existing file paths
+
+The value of a `FileUpload` field is a string, or an array of strings, containing the path to the file on the configured disk. Like any other Livewire form field value, it is controlled by the client: a request can be intercepted to change the submitted path to any other file on the same disk. If the field points at a resource that must not be accessible to other users — a private document on a shared disk, or a per-user directory — an attacker could otherwise cause the record to reference (and serve a signed URL for) someone else's file.
+
+Filament allows this by default because legitimate features depend on it — for example, an action that sets the field to a pre-uploaded template file, or a "copy from another record" button. If none of your fields rely on such a flow, call `preventFilePathTampering()` on the field to enable a built-in check:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering()
+```
+
+Filament compares every submitted string path against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
+
+<Aside variant="warning">
+    `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path fails validation unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+To apply this check to every `FileUpload` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::configureUsing(function (FileUpload $component): void {
+    $component->preventFilePathTampering();
+});
+```
+
+Individual fields can still opt out by calling `preventFilePathTampering(false)`.
+
+### Allowing additional file paths with a callback
+
+If your application legitimately references a path that is not on the record — for example, a button that selects a pre-uploaded template file — pass the `allowFilePathUsing` argument to approve it. Approved paths bypass the validation error:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="File;;string;;$file;;The submitted file path being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+
+The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering()
+    ->validationMessages([
+        'tampered' => 'The selected attachment is not permitted.',
+    ])
+```
+
 ## Avatar mode
 
 You can enable avatar mode for your file upload field using the `avatar()` method:
@@ -195,6 +261,8 @@ FileUpload::make('avatar')
 ```
 
 This will only allow images to be uploaded, and when they are, it will display them in a compact circle layout that is perfect for avatars.
+
+<AutoScreenshot name="forms/fields/file-upload/avatar" alt="File upload with avatar mode" version="4.x" />
 
 This feature pairs well with the [circle cropper](#allowing-users-to-crop-images-as-a-circle).
 
@@ -212,6 +280,8 @@ FileUpload::make('image')
 
 You can open the editor once you upload an image by clicking the pencil icon. You can also open the editor by clicking the pencil icon on an existing image, which will remove and re-upload it on save.
 
+<AutoScreenshot name="forms/fields/file-upload/image-editor" alt="File upload image editor with cropping controls" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the image editor is enabled:
 
 ```php
@@ -226,7 +296,7 @@ FileUpload::make('image')
 
 ### Allowing users to crop images to aspect ratios
 
-You can allow users to crop images to a set of specific aspect ratios using the `imageEditorAspectRatios()` method:
+You can allow users to crop images to a set of specific aspect ratios using the `imageEditorAspectRatioOptions()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -234,7 +304,7 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('image')
     ->image()
     ->imageEditor()
-    ->imageEditorAspectRatios([
+    ->imageEditorAspectRatioOptions([
         '16:9',
         '4:3',
         '1:1',
@@ -249,7 +319,7 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('image')
     ->image()
     ->imageEditor()
-    ->imageEditorAspectRatios([
+    ->imageEditorAspectRatioOptions([
         null,
         '16:9',
         '4:3',
@@ -257,11 +327,11 @@ FileUpload::make('image')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageEditorAspectRatios()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageEditorAspectRatioOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the image editor's mode
 
-You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs#viewmode):
+You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs/blob/v1/README.md#viewmode):
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -335,22 +405,90 @@ FileUpload::make('image')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `circleCropper()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Enforcing a specific aspect ratio
+
+If you need to ensure all uploaded images conform to a specific aspect ratio, you can combine the [`imageAspectRatio()` validation method](#image-aspect-ratio-validation) with `automaticallyOpenImageEditorForAspectRatio()`. This will automatically open a simplified image editor when a user uploads an image that doesn't match the required aspect ratio, allowing them to crop the image before it is saved:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('banner')
+    ->image()
+    ->imageAspectRatio('16:9')
+    ->automaticallyOpenImageEditorForAspectRatio()
+```
+
+The editor that appears when cropping is required only shows the crop area and save/cancel buttons - it does not include the full editing controls (rotation, position inputs, etc.) that appear when using [`imageEditor()`](#image-editor). This provides a streamlined experience focused on getting the correct aspect ratio.
+
+If you want users to have access to the full image editor controls, you can enable both:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('banner')
+    ->image()
+    ->imageEditor()
+    ->imageAspectRatio('16:9')
+    ->automaticallyOpenImageEditorForAspectRatio()
+```
+
+With both enabled, the image editor will still open automatically when the aspect ratio doesn't match, but users will also see an edit button on each uploaded image and have access to all editing controls.
+
+Optionally, you may pass a boolean value to control if the aspect ratio editor is enabled:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('banner')
+    ->image()
+    ->imageAspectRatio('16:9')
+    ->automaticallyOpenImageEditorForAspectRatio(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `automaticallyOpenImageEditorForAspectRatio()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="info">
+    The `automaticallyOpenImageEditorForAspectRatio()` method can only be used with a single aspect ratio. If you need to allow multiple aspect ratios, use `imageAspectRatio()` for validation only, and consider using [`imageEditor()`](#image-editor) with [`imageEditorAspectRatioOptions()`](#allowing-users-to-crop-images-to-aspect-ratios) to let users choose their preferred ratio.
+</Aside>
+
+<Aside variant="info">
+    The `automaticallyOpenImageEditorForAspectRatio()` method is not available when [`multiple()`](#uploading-multiple-files) is enabled.
+</Aside>
+
 ### Cropping and resizing images without the editor
 
-Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behavior using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
+Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behavior using the `automaticallyResizeImagesToHeight()` and `automaticallyResizeImagesToWidth()` methods. `automaticallyResizeImagesMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('image')
     ->image()
-    ->imageResizeMode('cover')
-    ->imageCropAspectRatio('16:9')
-    ->imageResizeTargetWidth('1920')
-    ->imageResizeTargetHeight('1080')
+    ->automaticallyCropImagesToAspectRatio('16:9')
+    ->automaticallyResizeImagesMode('cover')
+    ->automaticallyResizeImagesToWidth('1920')
+    ->automaticallyResizeImagesToHeight('1080')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `imageResizeMode()`, `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+To enable automatic cropping with a specific aspect ratio, use the `automaticallyCropImagesToAspectRatio()` method. If you also have `imageAspectRatio()` set for validation and want the automatic crop to use the same ratio, you can call `automaticallyCropImagesToAspectRatio()` without any arguments:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageAspectRatio('16:9')
+    ->automaticallyCropImagesToAspectRatio()
+    ->automaticallyResizeImagesMode('cover')
+    ->automaticallyResizeImagesToWidth('1920')
+    ->automaticallyResizeImagesToHeight('1080')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `automaticallyResizeImagesMode()`, `automaticallyCropImagesToAspectRatio()`, `automaticallyResizeImagesToHeight()` and `automaticallyResizeImagesToWidth()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
+<Aside variant="warning">
+    When using automatic image cropping, the crop is applied automatically without user interaction. The user cannot choose which part of the image to keep. If you want users to control how their images are cropped, use [`automaticallyOpenImageEditorForAspectRatio()`](#enforcing-a-specific-aspect-ratio) instead.
+</Aside>
 
 ## Altering the appearance of the file upload area
 
@@ -382,6 +520,8 @@ FileUpload::make('attachments')
     ->multiple()
     ->panelLayout('grid')
 ```
+
+<AutoScreenshot name="forms/fields/file-upload/multiple-grid" alt="File upload with grid layout" version="4.x" />
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `panelLayout()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -445,6 +585,25 @@ FileUpload::make('attachments')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `openable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/file-upload/openable" alt="File upload with openable files" version="4.x" />
+
+### Customizing the URL used when opening a file
+
+By default, the "open" button links to the same URL that is used to display the file in FilePond. If you need a different URL — for example, a signed URL, a URL on a different domain, or a URL for a derived file such as a PDF thumbnail generated by [Spatie Media Library's image generators](https://spatie.be/docs/laravel-medialibrary/v11/converting-other-file-types/using-image-generators#pdf) — you can use the `getOpenableFileUrlUsing()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->openable()
+    ->getOpenableFileUrlUsing(fn (string $file): string => Storage::disk('s3')->temporaryUrl($file, now()->addMinutes(5)))
+```
+
+The function receives the stored `$file` path and must return the URL that should be used when the "open" button is clicked. Returning `null` falls back to the default URL.
+
+<UtilityInjection set="formFields" version="4.x">The `getOpenableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
+
 ## Downloading files
 
 If you wish to add a download button to each file instead, you can use the `downloadable()` method:
@@ -468,6 +627,25 @@ FileUpload::make('attachments')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `downloadable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/file-upload/downloadable" alt="File upload with downloadable files" version="4.x" />
+
+### Customizing the URL used when downloading a file
+
+By default, the download button links to the same URL that is used to display the file in FilePond. If you need a different URL — for example, a signed URL with a `Content-Disposition: attachment` header, or a URL to the original file when the preview renders a derived image — you can use the `getDownloadableFileUrlUsing()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->downloadable()
+    ->getDownloadableFileUrlUsing(fn (string $file): string => route('attachments.download', ['path' => $file]))
+```
+
+The function receives the stored `$file` path and must return the URL that should be used when the download button is clicked. Returning `null` falls back to the default URL.
+
+<UtilityInjection set="formFields" version="4.x">The `getDownloadableFileUrlUsing()` method also accepts a function with utility injection. In addition to the standard utilities, the `$file` parameter contains the stored file path.</UtilityInjection>
 
 ## Previewing files
 
@@ -595,7 +773,15 @@ As well as all rules listed on the [validation](validation) page, there are addi
 
 Since Filament is powered by Livewire and uses its file upload system, you will want to refer to the default Livewire file upload validation rules in the `config/livewire.php` file as well. This also controls the 12MB file size maximum.
 
+<Aside variant="info">
+    Many of these validation rules only apply to newly uploaded files. Existing files that were uploaded before the validation rules were added will not be re-validated.
+</Aside>
+
 ### File type validation
+
+<Aside variant="danger">
+    By default, a `FileUpload` accepts **any file type**, the same way Laravel's `file` validation rule does. On a `local` or `public` disk served by a PHP-executing web server, this means a user can upload a `.php` file and have it executed as code — remote code execution. You should **always** call `acceptedFileTypes()` (or `image()`) with an explicit list of MIME types unless you have a specific reason not to. Doing so also activates Laravel's built-in block on PHP-family extensions (`.php`, `.phtml`, `.phar`, etc.) via the `mimetypes` validation rule, rejecting files whose client-supplied filename would otherwise land on disk as executable code.
+</Aside>
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types.
 
@@ -616,6 +802,8 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('image')
     ->image()
 ```
+
+<AutoScreenshot name="forms/fields/file-upload/image-preview" alt="File upload with image preview" version="4.x" />
 
 #### Custom MIME type mapping
 
@@ -677,6 +865,92 @@ The [max upload size can be adjusted in the `rules` key of `temporary_file_uploa
     // ...
 ],
 ```
+
+### Image dimension validation
+
+You may restrict the dimensions of uploaded images using the `rule()` method with Laravel's `Rule::dimensions()`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('photo')
+    ->image()
+    ->rule(Rule::dimensions()->minWidth(800)->minHeight(600))
+```
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('photo')
+    ->image()
+    ->rule(Rule::dimensions()->maxWidth(1920)->maxHeight(1080))
+```
+
+You can combine minimum and maximum constraints:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('photo')
+    ->image()
+    ->rule(
+        Rule::dimensions()
+            ->minWidth(800)
+            ->minHeight(600)
+            ->maxWidth(1920)
+            ->maxHeight(1080)
+    )
+```
+
+<Aside variant="info">
+    These dimension validation rules only apply to newly uploaded files. Existing files that were uploaded before the validation rules were added will not be re-validated.
+</Aside>
+
+### Image aspect ratio validation
+
+You may restrict the aspect ratio of uploaded images using the `imageAspectRatio()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('banner')
+    ->image()
+    ->imageAspectRatio('16:9')
+```
+
+You can allow multiple aspect ratios by passing an array:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('banner')
+    ->image()
+    ->imageAspectRatio(['16:9', '4:3', '1:1'])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageAspectRatio()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+You can also specify a range of acceptable aspect ratios using `Rule::dimensions()`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('banner')
+    ->image()
+    ->rule(Rule::dimensions()->minRatio(4 / 3)->maxRatio(16 / 9))
+```
+
+<Aside variant="info">
+    These aspect ratio validation rules only apply to newly uploaded files. Existing files that were uploaded before the validation rules were added will not be re-validated.
+</Aside>
+
+<Aside variant="tip">
+    If you want to help users meet the aspect ratio requirement rather than just rejecting invalid uploads, consider using [`automaticallyOpenImageEditorForAspectRatio()`](#enforcing-a-specific-aspect-ratio) alongside `imageAspectRatio()`. This will automatically open a crop editor when an uploaded image doesn't match the required ratio. Alternatively, you can use [`automaticallyCropImagesToAspectRatio()`](#cropping-and-resizing-images-without-the-editor) to automatically crop images to the required ratio without user interaction.
+</Aside>
 
 ### Number of files validation
 

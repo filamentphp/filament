@@ -2,9 +2,11 @@
 
 namespace Filament\Actions;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
+use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
@@ -14,6 +16,8 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Concerns\HasIconSize;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
@@ -32,6 +36,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Component;
 use Livewire\Drawer\Utils;
 
 class Action extends ViewComponent implements Arrayable
@@ -69,6 +74,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasData;
+    use Concerns\HasExtraModalOverlayAttributes;
     use Concerns\HasExtraModalWindowAttributes;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
@@ -121,6 +127,8 @@ class Action extends ViewComponent implements Arrayable
 
     protected ?ActionStatus $status = null;
 
+    protected ?Action $parentAction = null;
+
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -162,15 +170,24 @@ class Action extends ViewComponent implements Arrayable
      */
     public function toArray(): array
     {
+        $icon = $this->getIcon();
+
+        if ($icon instanceof ScalableIcon) {
+            $icon = $icon->getIconForSize($this->getIconSize() ?? IconSize::Medium);
+        } elseif ($icon instanceof BackedEnum) {
+            $icon = $icon->value;
+        }
+
         return [
             'name' => $this->getName(),
+            'alpineClickHandler' => $this->getCustomAlpineClickHandler(),
             'color' => $this->getColor(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
             'dispatchDirection' => $this->getDispatchDirection(),
             'dispatchToComponent' => $this->getDispatchToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
-            'icon' => $this->getIcon(),
+            'icon' => $icon,
             'iconPosition' => $this->getIconPosition(),
             'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),
@@ -195,7 +212,13 @@ class Action extends ViewComponent implements Arrayable
     {
         $static = static::make($data['name']);
 
-        $view = $data['view'] ?? null;
+        $view = match ($data['view'] ?? null) {
+            'filament-actions::button-action' => static::BUTTON_VIEW,
+            'filament-actions::grouped-action' => static::GROUPED_VIEW,
+            'filament-actions::icon-button-action' => static::ICON_BUTTON_VIEW,
+            'filament-actions::link-action' => static::LINK_VIEW,
+            default => $data['view'] ?? null,
+        };
 
         if (filled($view) && static::isViewSafe($view)) {
             $static->view($view);
@@ -203,6 +226,10 @@ class Action extends ViewComponent implements Arrayable
 
         if (filled($size = $data['size'] ?? null)) {
             $static->size($size);
+        }
+
+        if (filled($data['alpineClickHandler'] ?? null)) {
+            $static->alpineClickHandler($data['alpineClickHandler']);
         }
 
         $static->close($data['shouldClose'] ?? false);
@@ -235,7 +262,7 @@ class Action extends ViewComponent implements Arrayable
         return $this->getView() === static::BADGE_VIEW;
     }
 
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | Closure | null $badge = null): static
     {
         if (func_num_args() === 0) {
             /** @phpstan-ignore-next-line */
@@ -284,8 +311,21 @@ class Action extends ViewComponent implements Arrayable
 
     public function alpineClickHandler(string | Closure | null $handler): static
     {
+        // Security: This JavaScript expression is evaluated on the client.
+        // Never pass user input — only developer-defined expressions.
+
         $this->alpineClickHandler = $handler;
         $this->livewireClickHandlerEnabled(blank($handler));
+
+        return $this;
+    }
+
+    public function actionJs(string | Closure | null $action): static
+    {
+        // Security: This JavaScript expression is evaluated on the client.
+        // Never pass user input — only developer-defined expressions.
+
+        $this->alpineClickHandler($action);
 
         return $this;
     }
@@ -324,6 +364,23 @@ class Action extends ViewComponent implements Arrayable
         return $this->getJsClickHandler();
     }
 
+    protected function getLivewireKey(): ?string
+    {
+        if (! ($this->getRecord(withDefault: false) && $this->getTable())) {
+            return null;
+        }
+
+        $livewire = $this->getLivewire();
+
+        if (! ($livewire instanceof Component)) {
+            return null;
+        }
+
+        $key = md5(serialize($this->getContext()));
+
+        return "{$livewire->getId()}.actions.{$this->getName()}.{$key}";
+    }
+
     public function getLivewireEventClickHandler(): ?string
     {
         $event = $this->getEvent();
@@ -355,7 +412,7 @@ class Action extends ViewComponent implements Arrayable
 
     public function getAlpineClickHandler(): ?string
     {
-        if (filled($handler = $this->evaluate($this->alpineClickHandler))) {
+        if (filled($handler = $this->getCustomAlpineClickHandler())) {
             return $handler;
         }
 
@@ -378,6 +435,11 @@ class Action extends ViewComponent implements Arrayable
         return $this->getJsClickHandler();
     }
 
+    public function getCustomAlpineClickHandler(): ?string
+    {
+        return $this->evaluate($this->alpineClickHandler);
+    }
+
     public function livewireTarget(?string $target): static
     {
         $this->livewireTarget = $target;
@@ -392,7 +454,7 @@ class Action extends ViewComponent implements Arrayable
         }
 
         if (! $this->canAccessSelectedRecords()) {
-            return null;
+            return $this->canSubmitForm() ? $this->getFormToSubmit() : null;
         }
 
         return $this->getJsClickHandler();
@@ -429,7 +491,7 @@ class Action extends ViewComponent implements Arrayable
 
         $argumentsParameter = '';
 
-        if (count($arguments = $this->getArguments())) {
+        if (count($arguments = $this->getInvokedArguments() ?? [])) {
             $argumentsParameter .= ', ';
             $argumentsParameter .= Js::from($arguments);
         }
@@ -455,15 +517,22 @@ class Action extends ViewComponent implements Arrayable
     {
         $context = [];
 
-        if ($record = $this->getRecord()) {
-            $context['recordKey'] = $this->resolveRecordKey($record);
-        }
-
-        if (filled($schemaComponentKey = ($this->getSchemaContainer() ?? $this->getSchemaComponent())?->getKey())) {
-            $context['schemaComponent'] = $schemaComponentKey;
-        }
-
         $table = $this->getTable();
+
+        $record = $this->getRecord();
+
+        if ($record && (
+            (! $table)
+            || (! $record instanceof Model)
+            || blank($table->getModel())
+            || is_a($record::class, $table->getModel(), true)
+        ) && filled($recordKey = $this->resolveRecordKey($record))) {
+            $context['recordKey'] = $recordKey;
+        }
+
+        if ($this->getParentAction()) {
+            return $context;
+        }
 
         if ($table) {
             $context['table'] = true;
@@ -471,6 +540,10 @@ class Action extends ViewComponent implements Arrayable
 
         if ($table && $this->isBulk()) {
             $context['bulk'] = true;
+        }
+
+        if (filled($schemaComponentKey = ($this->getSchemaContainer() ?? $this->getSchemaComponent())?->getKey())) {
+            $context['schemaComponent'] = $schemaComponentKey;
         }
 
         return $context;
@@ -485,17 +558,18 @@ class Action extends ViewComponent implements Arrayable
             'arguments' => [$this->getArguments()],
             'data' => [$this->getData()],
             'livewire' => [$this->getLivewire()],
-            'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
+            'model' => [$this->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
-            'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
+            'record' => [$this->getRecord()],
             'selectedRecords', 'records' => [$this->getIndividuallyAuthorizedSelectedRecords()],
             'selectedRecordsQuery', 'recordsQuery' => [$this->getSelectedRecordsQuery()],
             'schema' => [$this->getSchemaContainer()],
             'schemaComponent', 'component' => [$this->getSchemaComponent()],
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
-            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
-            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()],
-            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
+            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()->skipComponentsChildContainersWhileSearching(false)],
+            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()->skipComponentsChildContainersWhileSearching(false)],
+            'schemaComponentState', 'state' => [$this->getSchemaComponentState()],
+            'schemaState' => [$this->getSchemaState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
@@ -506,7 +580,7 @@ class Action extends ViewComponent implements Arrayable
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         return match ($parameterType) {
             Builder::class => [$this->getSelectedRecordsQuery()],
@@ -516,15 +590,65 @@ class Action extends ViewComponent implements Arrayable
         };
     }
 
+    public function getSchemaComponentState(): mixed
+    {
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                break;
+            }
+
+            if ($parentComponent->hasStatePath()) {
+                return $parentComponent->getState();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return $this->getSchemaComponent()?->getState();
+    }
+
+    public function getSchemaState(): mixed
+    {
+        $schemaComponent = $this->getSchemaComponent();
+        $arguments = $this->getArguments();
+
+        if (
+            $schemaComponent instanceof HasExtraItemActions &&
+            filled($itemKey = $arguments['item'] ?? null)
+        ) {
+            return $schemaComponent->getItemState($itemKey);
+        }
+
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            if (filled($schemaContainer->getStatePath(isAbsolute: false))) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return null;
+    }
+
     public function shouldClearRecordAfter(): bool
     {
-        $record = $this->getRecord();
-
-        if (! ($record instanceof Model)) {
+        if (! ($this->record instanceof Model)) {
             return false;
         }
 
-        return ! $record->exists;
+        return ! $this->record->exists;
     }
 
     public function clearRecordAfter(): void
@@ -675,9 +799,11 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateBadgeHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
@@ -708,15 +834,17 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateButtonHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -746,16 +874,18 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateDropdownItemHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
-            badgeTooltip: $this->getBadgeTooltip(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
+            badgeTooltip: $this->getBadgeTooltip($badge),
             color: $this->getColor(),
             href: ($isDisabled || $shouldPostToUrl) ? null : $url,
             icon: $this->getIcon(default: $this->getGroupedIcon()),
@@ -778,15 +908,17 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateIconButtonHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -812,15 +944,17 @@ class Action extends ViewComponent implements Arrayable
 
         return $this->generateLinkHtml(
             attributes: (new ComponentAttributeBag([
-                'action' => $shouldPostToUrl ? $url : null,
+                'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:key' => $this->getLivewireKey(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-action']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badge = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badge),
             color: $this->getColor(),
             form: $this->getFormToSubmit(),
             formId: $this->getFormId(),
@@ -843,5 +977,17 @@ class Action extends ViewComponent implements Arrayable
     public function getClone(): static
     {
         return clone $this;
+    }
+
+    public function parentAction(?Action $action): static
+    {
+        $this->parentAction = $action;
+
+        return $this;
+    }
+
+    public function getParentAction(): ?Action
+    {
+        return $this->parentAction;
     }
 }

@@ -9,6 +9,12 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 <AutoScreenshot name="forms/overview" alt="Account settings form example" version="4.x" />
 
+Filament's forms package allows you to easily build dynamic forms in your app. It's used within other Filament packages to render forms within [panel resources](../resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essential to learning how to use these Filament packages.
+
+This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](../components/form) and then come back. If you're adding a form to a [panel resource](../resources), or another Filament package, you're ready to go!
+
+## Form fields
+
 Form field classes can be found in the `Filament\Form\Components` namespace. They reside within the schema array of components. Filament ships with many types of field, suitable for editing different types of data:
 
 - [Text input](text-input)
@@ -109,6 +115,8 @@ TextInput::make('name')
     ->hiddenLabel()
 ```
 
+<AutoScreenshot name="forms/fields/hidden-label" alt="Form field with a hidden label" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the label should be hidden or not:
 
 ```php
@@ -157,31 +165,31 @@ Toggle::make('is_admin')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `dehydrated()` method:
+Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `saved()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
     ->disabled()
-    ->dehydrated()
+    ->saved()
 ```
 
 <Aside variant="danger">
-    If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
+    If you choose to save the field when disabled, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
 </Aside>
 
-Optionally, you may pass a boolean value to control if the field should be dehydrated or not:
+Optionally, you may pass a boolean value to control if the field should be saved or not:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
     ->disabled()
-    ->dehydrated(FeatureFlag::active())
+    ->saved(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `dehydrated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `saved()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Disabling a field based on the current operation
 
@@ -300,7 +308,7 @@ Toggle::make('is_admin')
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
 
 <Aside variant="danger">
-    Any JS string passed to the `hiddenJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `hiddenJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 The `visibleJs()` method is also available, which works in the same way as `hiddenJs()`, but controls if the field should be visible or not:
@@ -322,7 +330,7 @@ Toggle::make('is_admin')
 ```
 
 <Aside variant="danger">
-    Any JS string passed to the `visibleJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `visibleJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 <Aside variant="info">
@@ -629,6 +637,10 @@ TextInput::make('name')
 ```
 
 <AutoScreenshot name="forms/fields/below-content/action" alt="Form field with action below content" version="4.x" />
+
+<Aside variant="tip">
+    If you need a simple action that runs JavaScript without making a network request, you can use the [`actionJs()` method](../actions/overview#running-javascript-when-an-action-is-clicked). This is useful for simple interactions like updating form field values using `$get()` and `$set()`. Actions using `actionJs()` cannot open modals.
+</Aside>
 
 You can insert any combination of content into the slots by passing an array of content to the method:
 
@@ -1023,6 +1035,32 @@ function (Get $get) {
     Unless a form field is [reactive](#the-basics-of-reactivity), the schema will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
 
+#### Type-safe retrieval of another field's state
+
+You may use a "typed" method on the `Get` utility to retrieve the state of another field in a type-safe manner:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+
+$get->string('email');
+$get->integer('age');
+$get->float('price');
+$get->boolean('is_admin');
+$get->array('tags');
+$get->date('published_at');
+$get->enum('status', StatusEnum::class);
+$get->filled('email'); // Returns the result of the `filled()` helper for the field.
+$get->blank('email'); // Returns the result of the `blank()` helper for the field.
+```
+
+Each method assumes that the field's state can't be `null`. To force a nullable return type, pass the `isNullable: true` argument:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+
+$get->string('email', isNullable: true);
+```
+
 ### Injecting the current Eloquent record
 
 You may retrieve the Eloquent record for the current schema using a `$record` parameter:
@@ -1116,6 +1154,10 @@ TextInput::make('greetingResponse')
 ```
 
 The [`$state`](#injecting-the-current-state-of-the-field) and [`$get`](#injecting-the-state-of-another-field) utilities are available in this JavaScript context, so you can use them to access the state of the field and other fields in the schema.
+
+<Aside variant="danger">
+    The string passed to `JsContent` is evaluated in the browser, so you should never concatenate user input into it — that would lead to XSS. Values read at runtime via `$state` or `$get()` are safe to use as string values inside the expression, but should never be evaluated as JavaScript code themselves.
+</Aside>
 
 ## The basics of reactivity
 
@@ -1251,27 +1293,27 @@ TextInput::make('name')
     ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
 ```
 
-#### Preventing a field from being dehydrated
+#### Preventing a field from being saved
 
-You may also prevent a field from being dehydrated altogether using `dehydrated(false)`. In this example, the field will not be present in the array returned from `getState()`:
+You may prevent a field from being saved altogether using `saved(false)`. In this example, the field will not be present in the array returned from `getState()`, and any relationships associated with the field will not be saved either:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('password_confirmation')
     ->password()
-    ->dehydrated(false)
+    ->saved(false)
 ```
 
 If your schema auto-saves data to the database, like in a [resource](../resources), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
 
 <Aside variant="info">
-    Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
+    Even when a field is not saved, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-saved) section.
 </Aside>
 
 ### Field rendering
 
-Each time a reactive field is updated, the HTML entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
+Each time a reactive field is updated, the HTML of the entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
 
 #### Field partial rendering
 
@@ -1346,7 +1388,7 @@ TextInput::make('email')
 ```
 
 <Aside variant="danger">
-    Any JS string passed to the `afterStateUpdatedJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `afterStateUpdatedJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 ## Reactive forms cookbook
@@ -1570,7 +1612,7 @@ TextInput::make('password')
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
 ```
 
-But if your schema is used to change an existing password, you don't want to overwrite the existing password if the field is empty. You can [prevent the field from being dehydrated](#preventing-a-field-from-being-dehydrated) if the field is null or an empty string (using the `filled()` helper):
+But if your schema is used to change an existing password, you don't want to overwrite the existing password if the field is empty. You can [prevent the field from being saved](#preventing-a-field-from-being-saved) if the field is null or an empty string (using the `filled()` helper):
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -1579,7 +1621,7 @@ use Illuminate\Support\Facades\Hash;
 TextInput::make('password')
     ->password()
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-    ->dehydrated(fn (?string $state): bool => filled($state))
+    ->saved(fn (?string $state): bool => filled($state))
 ```
 
 However, you want to require the password to be filled when the user is being created, by [injecting the `$operation` utility](#injecting-the-current-operation), and then [conditionally making the field required](#conditionally-making-a-field-required):
@@ -1591,7 +1633,7 @@ use Illuminate\Support\Facades\Hash;
 TextInput::make('password')
     ->password()
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-    ->dehydrated(fn (?string $state): bool => filled($state))
+    ->saved(fn (?string $state): bool => filled($state))
     ->required(fn (string $operation): bool => $operation === 'create')
 ```
 
@@ -1689,6 +1731,30 @@ Group::make()
 ```
 
 In this example, the customer's name is not `required()`, and the email address is only required when the `name` is filled. The `condition` function is used to check whether the `name` field is filled, and if it is, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists.
+
+### Saving relationship data when the component is hidden
+
+By default, if a layout component using `relationship()` is hidden when the form is submitted, Filament skips it entirely — the related record is not created or updated, and any existing record is left untouched. This is usually what you want, since hidden components have no state to save.
+
+If you need Filament to save the relationship even when the component is hidden — for example, when its field values are populated by [defaults](#setting-the-default-value-of-a-field) — call `saveRelationshipsWhenHidden()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+
+Group::make()
+    ->relationship('metadata')
+    ->saveRelationshipsWhenHidden()
+    ->hidden()
+    ->schema([
+        TextInput::make('source')
+            ->default('admin'),
+    ])
+```
+
+<Aside variant="warning">
+    Combining `saveRelationshipsWhenHidden()` with a `condition` that returns `false` while the component is hidden will cause any existing related record to be deleted when the form is submitted. If you only want to skip saving when the component is hidden, omit `saveRelationshipsWhenHidden()` and rely on the default behavior instead.
+</Aside>
 
 ## Global settings
 

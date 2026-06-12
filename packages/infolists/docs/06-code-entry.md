@@ -39,8 +39,10 @@ CodeEntry::make('code')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `grammar()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="infolists/entries/code/javascript" alt="Code entry with JavaScript syntax highlighting" version="4.x" />
+
 <Aside variant="tip">
-    If your code entry's content is a PHP array, it will automatically be converted to a JSON string, and the grammar will be set to `Grammar::Json`.
+    If your code entry's content is a PHP array, it will automatically be converted to a JSON string, and the grammar will be set to `Grammar::Json`. You can customize the `JSON_` flags used during conversion with the `jsonFlags()` method.
 </Aside>
 
 ## Changing the code's theme (highlighting)

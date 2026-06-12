@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Coloane',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Selectează toate',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Deselectează toate',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -62,7 +74,12 @@ return [
 
         'max_rows' => [
             'title' => 'Exportul este prea mare',
-            'body' => 'Nu puteți exporta mai mult de 1 rând odată.|Nu puteți exporta mai mult de :count rânduri odată',
+            'body' => 'Nu puteți exporta mai mult de 1 rând odată.|Nu puteți exporta mai mult de :count rânduri odată.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Nicio coloană selectată',
+            'body' => 'Vă rugăm să selectați cel puțin o coloană pentru export.',
         ],
 
         'started' => [

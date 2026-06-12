@@ -1,6 +1,25 @@
 .fi-sc-flex {
     @apply flex gap-6;
 
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply justify-start;
+    }
+
+    &.fi-align-center {
+        @apply justify-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply justify-end;
+    }
+
+    &.fi-align-between,
+    &.fi-align-justify {
+        @apply justify-between;
+    }
+
     &.fi-dense {
         @apply gap-3;
     }

@@ -19,7 +19,7 @@ trait HasNavigation
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?string $navigationBadgeTooltip = null;
+    protected static string | Htmlable | null $navigationBadgeTooltip = null;
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
@@ -64,18 +64,28 @@ trait HasNavigation
             return [];
         }
 
+        $activeRoutePattern = static::getNavigationItemActiveRoutePattern();
+
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => original_request()->routeIs(static::getRouteBaseName() . '.*'))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs($activeRoutePattern))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return static::getRouteBaseName() . '.*';
     }
 
     public static function getSubNavigationPosition(): SubNavigationPosition
@@ -101,7 +111,7 @@ trait HasNavigation
         return static::$navigationParentItem;
     }
 
-    public static function navigationGroup(?string $group): void
+    public static function navigationGroup(string | UnitEnum | null $group): void
     {
         static::$navigationGroup = $group;
     }
@@ -136,7 +146,7 @@ trait HasNavigation
         return null;
     }
 
-    public static function getNavigationBadgeTooltip(): ?string
+    public static function getNavigationBadgeTooltip(): string | Htmlable | null
     {
         return static::$navigationBadgeTooltip;
     }
@@ -171,6 +181,10 @@ trait HasNavigation
 
     public static function shouldRegisterNavigation(): bool
     {
+        // Security: Hiding a resource from navigation does NOT prevent
+        // direct URL access. Use resource authorization (Model
+        // Policies) to control who can access pages.
+
         return static::$shouldRegisterNavigation;
     }
 

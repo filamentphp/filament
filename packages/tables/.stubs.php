@@ -73,6 +73,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertCountTableRecords(int $count): static {}
 
+        public function toggleAllTableColumns(bool $condition = true): static {}
+
         public function loadTable(): static {}
 
         /**
@@ -159,7 +161,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertTableActionHalted(string | array $name): static {}
 
         /**
-         * @deprecated Use `assertHasTableActionErrors()` instead.
+         * @deprecated Use `assertHasFormErrors()` instead.
          */
         public function assertHasTableActionErrors(array $keys = []): static {}
 
@@ -169,7 +171,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertHasNoTableActionErrors(array $keys = []): static {}
 
         /**
-         * @deprecated Use `mountBulkAction()` instead.
+         * @deprecated Use `selectTableRecords()` and `mountAction()` instead.
          */
         public function mountTableBulkAction(string $name, array | Collection $records): static {}
 
@@ -204,7 +206,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertTableBulkActionDoesNotExist(string $name): static {}
 
         /**
-         * @deprecated Use `assertActionsExistInOrder()` instead.
+         * @deprecated Use `assertActionListInOrder()` instead.
          */
         public function assertTableBulkActionsExistInOrder(array $names): static {}
 

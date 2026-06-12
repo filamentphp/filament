@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Ubah',
 
+    'navigation_label' => 'Ubah',
+
     'form' => [
 
         'actions' => [

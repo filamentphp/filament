@@ -26,6 +26,22 @@ return [
             'label' => 'Actie|Acties',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Laden...',
+
+            'no_options_message' => 'Geen opties beschikbaar.',
+
+            'no_search_results_message' => 'Geen opties komen overeen met je zoekopdracht.',
+
+            'placeholder' => 'Selecteer een optie',
+
+            'searching_message' => 'Zoeken...',
+
+            'search_prompt' => 'Begin met typen om te zoeken...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -156,7 +172,12 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Alles',
+
+            'relationship' => [
+                'empty_option_label' => 'Geen',
+            ],
         ],
 
         'trashed' => [
@@ -179,7 +200,6 @@ return [
 
             'group' => [
                 'label' => 'Groeperen op',
-                'placeholder' => 'Groeperen op',
             ],
 
             'direction' => [
@@ -239,5 +259,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'record',
 
 ];

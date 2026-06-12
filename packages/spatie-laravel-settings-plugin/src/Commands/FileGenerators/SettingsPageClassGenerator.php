@@ -222,6 +222,9 @@ class SettingsPageClassGenerator extends ClassGenerator
                     'cost',
                     'money',
                     'price',
+                ]) || str($componentName)->endsWith([
+                    '_cost',
+                    '_price',
                 ])) {
                     $componentData['prefix'] = ['$'];
                 }

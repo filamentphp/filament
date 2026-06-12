@@ -2,8 +2,8 @@
 
 namespace Filament\Actions\Concerns;
 
-use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
@@ -18,21 +18,26 @@ use Filament\Actions\View\ActionsIconAlias;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\EloquentSerializer\EloquentSerializer;
+use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Bus\PendingBatch;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\PendingChain;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Number;
-use Illuminate\Support\Str;
 use Livewire\Component;
+use LogicException;
 
 trait CanExportRecords
 {
@@ -69,6 +74,8 @@ trait CanExportRecords
 
     protected bool | Closure $hasColumnMapping = true;
 
+    protected bool | Closure $isEnablingVisibleTableColumnsByDefault = false;
+
     protected string | Closure | null $authGuard = null;
 
     protected function setUp(): void
@@ -102,26 +109,76 @@ trait CanExportRecords
                     ],
                 })
                 ->schema(function () use ($action): array {
-                    return array_map(
-                        fn (ExportColumn $column): Flex => Flex::make([
-                            Forms\Components\Checkbox::make('isEnabled')
-                                ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
-                                ->hiddenLabel()
-                                ->default($column->isEnabledByDefault())
-                                ->live()
-                                ->grow(false),
-                            Forms\Components\TextInput::make('label')
-                                ->label(__('filament-actions::export.modal.form.columns.form.label.label', ['column' => $column->getName()]))
-                                ->hiddenLabel()
-                                ->default($column->getLabel())
-                                ->placeholder($column->getLabel())
-                                ->disabled(fn (Get $get): bool => ! $get('isEnabled'))
-                                ->required(fn (Get $get): bool => (bool) $get('isEnabled')),
-                        ])
-                            ->verticallyAlignCenter()
-                            ->statePath($column->getName()),
-                        $action->getExporter()::getColumns(),
-                    );
+                    $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+                    $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
+
+                    $columns = $action->getExporter()::getColumns();
+                    $hasMultipleToggleableColumns = count($columns) > 1;
+
+                    return [
+                        ...($hasMultipleToggleableColumns ? [Actions::make([
+                            Action::make('selectAll')
+                                ->label(__('filament-actions::export.modal.form.columns.actions.select_all.label'))
+                                ->link()
+                                ->size(Size::Small)
+                                ->action(function (Set $set) use ($columns): void {
+                                    foreach ($columns as $column) {
+                                        $set("{$column->getName()}.isEnabled", true);
+                                    }
+                                })
+                                ->visible(function (Get $get) use ($columns): bool {
+                                    foreach ($columns as $column) {
+                                        if (! $get("{$column->getName()}.isEnabled")) {
+                                            return true;
+                                        }
+                                    }
+
+                                    return false;
+                                }),
+                            Action::make('deselectAll')
+                                ->label(__('filament-actions::export.modal.form.columns.actions.deselect_all.label'))
+                                ->link()
+                                ->size(Size::Small)
+                                ->action(function (Set $set) use ($columns): void {
+                                    foreach ($columns as $column) {
+                                        $set("{$column->getName()}.isEnabled", false);
+                                    }
+                                })
+                                ->visible(function (Get $get) use ($columns): bool {
+                                    foreach ($columns as $column) {
+                                        if ($get("{$column->getName()}.isEnabled")) {
+                                            return true;
+                                        }
+                                    }
+
+                                    return false;
+                                }),
+                        ])->columnSpanFull()] : []),
+                        ...array_map(
+                            fn (ExportColumn $column): Flex => Flex::make([
+                                Forms\Components\Checkbox::make('isEnabled')
+                                    ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
+                                    ->hiddenLabel()
+                                    ->default(
+                                        $isEnablingVisibleTableColumnsByDefault
+                                            ? (in_array($column->getName(), $visibleTableColumnNames) && $column->isEnabledByDefault())
+                                            : $column->isEnabledByDefault()
+                                    )
+                                    ->live()
+                                    ->grow(false),
+                                Forms\Components\TextInput::make('label')
+                                    ->label(__('filament-actions::export.modal.form.columns.form.label.label', ['column' => $column->getName()]))
+                                    ->hiddenLabel()
+                                    ->default($column->getLabel())
+                                    ->placeholder($column->getLabel())
+                                    ->disabled(fn (Get $get): bool => ! $get('isEnabled'))
+                                    ->required(fn (Get $get): bool => (bool) $get('isEnabled')),
+                            ])
+                                ->verticallyAlignCenter()
+                                ->statePath($column->getName()),
+                            $columns,
+                        ),
+                    ];
                 })
                 ->statePath('columnMap')] : []),
             ...$action->getExporter()::getOptionsFormComponents(),
@@ -153,16 +210,24 @@ trait CanExportRecords
             $records = $action instanceof ExportBulkAction ? $action->getIndividuallyAuthorizedSelectedRecords() : null;
 
             $totalRows = $records ? $records->count() : $query->toBase()->getCountForPagination();
+
+            if ((! $records) && $query->getQuery()->limit) {
+                $totalRows = min($totalRows, $query->getQuery()->limit);
+            }
+
             $maxRows = $action->getMaxRows() ?? $totalRows;
 
             if ($maxRows < $totalRows) {
-                Notification::make()
-                    ->title(__('filament-actions::export.notifications.max_rows.title'))
-                    ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
-                        'count' => Number::format($maxRows),
-                    ]))
-                    ->danger()
-                    ->send();
+                $action->failureNotification(
+                    Notification::make()
+                        ->title(__('filament-actions::export.notifications.max_rows.title'))
+                        ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
+                            'count' => Number::format($maxRows),
+                        ]))
+                        ->danger(),
+                );
+
+                $action->failure();
 
                 return;
             }
@@ -172,18 +237,37 @@ trait CanExportRecords
             $user = auth($authGuard)->user();
 
             if ($action->hasColumnMapping()) {
-                $columnMap = collect($data['columnMap'])
-                    ->dot()
-                    ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
-                        Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
-                    ]), collect())
-                    ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
-                    ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
+                $columnMap = collect($exporter::getColumns())
+                    ->filter(fn (ExportColumn $column): bool => (bool) data_get($data['columnMap'], "{$column->getName()}.isEnabled", false))
+                    ->mapWithKeys(fn (ExportColumn $column): array => [
+                        $column->getName() => data_get($data['columnMap'], "{$column->getName()}.label", $column->getLabel()),
+                    ])
                     ->all();
             } else {
+                $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+                $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
+
                 $columnMap = collect($exporter::getColumns())
+                    ->when(
+                        $isEnablingVisibleTableColumnsByDefault,
+                        fn ($columns): Collection => $columns->filter(
+                            fn (ExportColumn $column): bool => in_array($column->getName(), $visibleTableColumnNames) && $column->isEnabledByDefault(),
+                        ),
+                    )
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
                     ->all();
+            }
+
+            if (empty($columnMap)) {
+                Notification::make()
+                    ->title(__('filament-actions::export.notifications.no_columns.title'))
+                    ->body(__('filament-actions::export.notifications.no_columns.body'))
+                    ->danger()
+                    ->send();
+
+                $action->halt();
+
+                return;
             }
 
             $export = app(Export::class);
@@ -200,7 +284,8 @@ trait CanExportRecords
             // Temporary save to obtain the sequence number of the export file.
             $export->save();
 
-            // Delete the export directory to prevent data contamination from previous exports with the same ID.
+            // Delete the export directory to prevent data contamination
+            // from previous exports with the same ID.
             $export->deleteFileDirectory();
 
             $export->file_name = $action->getFileName($export) ?? $exporter->getFileName($export);
@@ -210,15 +295,16 @@ trait CanExportRecords
             $hasCsv = in_array(ExportFormat::Csv, $formats);
             $hasXlsx = in_array(ExportFormat::Xlsx, $formats);
 
-            $serializedQuery = EloquentSerializeFacade::serialize($query);
+            $serializedQuery = app(EloquentSerializer::class)->serialize($query);
 
             $job = $action->getJob();
             $jobQueue = $exporter->getJobQueue();
             $jobConnection = $exporter->getJobConnection();
             $jobBatchName = $exporter->getJobBatchName();
 
-            // We do not want to send the loaded user relationship to the queue in job payloads,
-            // in case it contains attributes that are not serializable, such as binary columns.
+            // We do not want to send the loaded user relationship to the
+            // queue in job payloads, in case it contains attributes that
+            // are not serializable, such as binary columns.
             $export->unsetRelation('user');
 
             $makeCreateXlsxFileJob = fn (): CreateXlsxFile => app(CreateXlsxFile::class, [
@@ -270,17 +356,23 @@ trait CanExportRecords
                 ->dispatch();
 
             if (
-                (filled($jobConnection) && ($jobConnection !== 'sync')) ||
-                (blank($jobConnection) && (config('queue.default') !== 'sync'))
+                ($jobConnection === 'sync')
+                || (blank($jobConnection) && (config('queue.default') === 'sync'))
             ) {
+                $action->successNotification(null);
+                $action->successNotificationTitle(null);
+
+                return;
+            }
+
+            $action->successNotification(
                 Notification::make()
                     ->title($action->getSuccessNotificationTitle())
                     ->body(trans_choice('filament-actions::export.notifications.started.body', $export->total_rows, [
                         'count' => Number::format($export->total_rows),
                     ]))
-                    ->success()
-                    ->send();
-            }
+                    ->success(),
+            );
         });
 
         $this->defaultColor('gray');
@@ -324,6 +416,18 @@ trait CanExportRecords
         $this->exporter = $exporter;
 
         return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getVisibleTableColumnNames(): array
+    {
+        if (! $this->getLivewire() instanceof HasTable) {
+            throw new LogicException('Cannot get visible table columns from a non-table Livewire component.');
+        }
+
+        return array_keys($this->getLivewire()->getTable()->getVisibleColumns());
     }
 
     /**
@@ -447,6 +551,9 @@ trait CanExportRecords
 
     public function modifyQueryUsing(?Closure $callback): static
     {
+        // Security: Exports do not check per-record policies. Use this
+        // to scope the query to records the user is authorized to see.
+
         $this->modifyQueryUsing = $callback;
 
         return $this;
@@ -462,6 +569,18 @@ trait CanExportRecords
     public function hasColumnMapping(): bool
     {
         return (bool) $this->evaluate($this->hasColumnMapping);
+    }
+
+    public function enableVisibleTableColumnsByDefault(bool | Closure $condition = true): static
+    {
+        $this->isEnablingVisibleTableColumnsByDefault = $condition;
+
+        return $this;
+    }
+
+    public function isEnablingVisibleTableColumnsByDefault(): bool
+    {
+        return (bool) $this->evaluate($this->isEnablingVisibleTableColumnsByDefault);
     }
 
     public function authGuard(string | Closure | null $authGuard): static
@@ -490,5 +609,14 @@ trait CanExportRecords
         }
 
         return $authGuard->name;
+    }
+
+    /**
+     * @param  Model | array<string, mixed> | null  $record
+     * @return Model | array<string, mixed> | null
+     */
+    protected function ensureCorrectRecordType(Model | array | null $record): Model | array | null
+    {
+        return $record;
     }
 }

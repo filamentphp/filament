@@ -33,6 +33,6 @@ class EnumStateCast implements StateCast
             return $state;
         }
 
-        return $state->value;
+        return strval($state->value);
     }
 }

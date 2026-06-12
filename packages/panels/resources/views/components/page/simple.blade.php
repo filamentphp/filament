@@ -13,11 +13,13 @@
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
     <div class="fi-simple-page-content">
-        <x-filament-panels::header.simple
-            :heading="$heading"
-            :logo="$hasLogo"
-            :subheading="$subheading"
-        />
+        @if (filled($heading) || $hasLogo || filled($subheading))
+            <x-filament-panels::header.simple
+                :heading="$heading"
+                :logo="$hasLogo"
+                :subheading="$subheading"
+            />
+        @endif
 
         {{ $slot }}
     </div>

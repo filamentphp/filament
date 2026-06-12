@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Concerns\CanBeMarkedAsRequired;
 use Filament\Forms\Components\Concerns\HasExtraFieldWrapperAttributes;
+use Filament\Forms\Components\Concerns\HasHelperText;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Concerns\HasLabel;
@@ -20,6 +21,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
     use CanBeMarkedAsRequired;
     use EntanglesStateWithSingularRelationship;
     use HasExtraFieldWrapperAttributes;
+    use HasHelperText;
     use HasLabel;
 
     /**

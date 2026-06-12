@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'הסר שיוך',
+        'label' => 'הסרת שיוך',
 
         'modal' => [
 

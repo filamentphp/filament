@@ -7,7 +7,7 @@
 >
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SIDEBAR_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-    <ul wire:ignore class="fi-page-sub-navigation-sidebar">
+    <ul class="fi-page-sub-navigation-sidebar">
         @foreach ($navigation as $navigationGroup)
             @php
                 $isNavigationGroupActive = $navigationGroup->isActive();

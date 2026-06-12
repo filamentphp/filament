@@ -22,12 +22,13 @@ class AttachFilesAction
             ->fillForm(fn (array $arguments): array => [
                 'alt' => $arguments['alt'] ?? null,
             ])
-            ->schema(fn (array $arguments): array => [
+            ->schema(fn (array $arguments, RichEditor $component): array => [
                 FileUpload::make('file')
                     ->label(filled($arguments['src'] ?? null)
                         ? __('filament-forms::components.rich_editor.actions.attach_files.modal.form.file.label.existing')
                         : __('filament-forms::components.rich_editor.actions.attach_files.modal.form.file.label.new'))
-                    ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/gif', 'image/webp'])
+                    ->acceptedFileTypes($component->getFileAttachmentsAcceptedFileTypes())
+                    ->maxSize($component->getFileAttachmentsMaxSize())
                     ->storeFiles(false)
                     ->required(blank($arguments['src'] ?? null))
                     ->hiddenLabel(blank($arguments['src'] ?? null)),

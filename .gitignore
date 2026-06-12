@@ -6,6 +6,9 @@
 /node_modules.nosync
 /vendor
 /vendor.nosync
+/.pint.cache
+/.prettiercache
+/.rector.cache
 /.vscode
 .DS_Store
 .phpunit.cache
@@ -13,3 +16,6 @@
 composer.phar
 Thumbs.db
 phpunit.xml
+.env.testing
+!phpunit.*.xml
+/tests/**/Screenshots

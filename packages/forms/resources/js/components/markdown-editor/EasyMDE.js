@@ -3,6 +3,7 @@
  * Changes:
  * - Removal of line 1 to 15, awaiting https://github.com/Ionaru/easy-markdown-editor/pull/263
  * - Added `moveToNextField()` and `moveToPreviousField()` functions, and changed `Tab` and `Shift-Tab` key bindings to only indent the content when there is a selection in the editor. See https://github.com/filamentphp/filament/pull/16144.
+ * - Wrapped the indent/outdent operations in `toggleCodeBlock()` in `cm.operation()` so they group into a single CodeMirror undo step. See https://github.com/filamentphp/filament/pull/19890.
  */
 
 // Some variables
@@ -824,16 +825,18 @@ function toggleCodeBlock(editor) {
             next_line_indented =
                 next_line_last_tok &&
                 token_state(next_line_last_tok).indentedCode
-        if (next_line_indented) {
-            cm.replaceRange('\n', {
-                line: block_end + 1,
-                ch: 0,
-            })
-        }
+        cm.operation(function () {
+            if (next_line_indented) {
+                cm.replaceRange('\n', {
+                    line: block_end + 1,
+                    ch: 0,
+                })
+            }
 
-        for (var i = block_start; i <= block_end; i++) {
-            cm.indentLine(i, 'subtract') // TODO: this doesn't get tracked in the history, so can't be undone :(
-        }
+            for (var i = block_start; i <= block_end; i++) {
+                cm.indentLine(i, 'subtract')
+            }
+        })
         cm.focus()
     } else {
         // insert code formatting
@@ -2341,10 +2344,15 @@ EasyMDE.prototype.render = function (el) {
     var keyMaps = {}
 
     function moveToNextField(cm) {
-        const form = cm.getInputField().form
+        const inputField = cm.getInputField()
+        const form = inputField.form
         if (form) {
-            const elements = Array.from(form.elements)
-            const index = elements.indexOf(cm.getInputField())
+            const elements = Array.from(form.elements).filter((el) => {
+                if (el.closest && el.closest('.editor-toolbar')) return false
+                if (el.offsetParent === null) return false
+                return true
+            })
+            const index = elements.indexOf(inputField)
             if (
                 index !== -1 &&
                 index + 1 < elements.length &&
@@ -2356,18 +2364,19 @@ EasyMDE.prototype.render = function (el) {
     }
 
     function moveToPreviousField(cm) {
-        const form = cm.getInputField().form
+        const inputField = cm.getInputField()
+        const form = inputField.form
         if (form) {
-            const elements = Array.from(form.elements)
-            const index = elements.indexOf(cm.getInputField())
+            const elements = Array.from(form.elements).filter((el) => {
+                if (el.closest && el.closest('.editor-toolbar')) return false
+                if (el.offsetParent === null) return false
+                return true
+            })
+            const index = elements.indexOf(inputField)
             if (index !== -1) {
                 for (let i = index - 1; i >= 0; i--) {
                     const element = elements[i]
-                    if (
-                        element &&
-                        element.tagName === 'INPUT' &&
-                        !element.closest('.editor-toolbar')
-                    ) {
+                    if (element) {
                         element.focus()
                         break
                     }

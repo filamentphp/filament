@@ -4,12 +4,15 @@ namespace Filament\Clusters;
 
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Illuminate\Support\Arr;
 
 class Cluster extends Page
 {
     protected static ?string $clusterBreadcrumb = null;
+
+    protected static bool $shouldRegisterSubNavigation = true;
 
     /**
      * @return array<class-string>
@@ -32,7 +35,7 @@ class Cluster extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return static::canAccessClusteredComponents();
+        return parent::shouldRegisterNavigation() && static::canAccessClusteredComponents();
     }
 
     public function mount(): void
@@ -49,6 +52,11 @@ class Cluster extends Page
     public function getSubNavigation(): array
     {
         return $this->generateNavigationItems(static::getClusteredComponents());
+    }
+
+    public static function shouldRegisterSubNavigation(): bool
+    {
+        return static::$shouldRegisterSubNavigation;
     }
 
     /**
@@ -123,8 +131,8 @@ class Cluster extends Page
         return static::getRouteName() . '.*';
     }
 
-    public static function registerRoutes(Panel $panel): void
+    public static function registerRoutes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
-        static::routes($panel);
+        static::routes($panel, $configuration);
     }
 }

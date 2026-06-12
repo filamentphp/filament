@@ -15,8 +15,11 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithCustomFiltersRemoveAllAction;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithTabs;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTickets;
@@ -63,40 +66,66 @@ it('can render post authors', function (): void {
 });
 
 it('can sort posts by title', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->orderBy('id')->get();
 
     livewire(ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort posts by author', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()
+        ->orderBy(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
 
     livewire(ListPosts::class)
         ->sortTable('author.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort posts with default sort key', function (): void {
 
     $faker = fake()->unique();
-    $posts = Post::factory()->count(10)->state(function () use ($faker) {
+    Post::factory()->count(10)->state(function () use ($faker) {
         return [
             'id' => $faker->randomDigit(),
             'title' => 'Lorem Ipsum',
         ];
     })->create();
 
+    $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->orderByDesc('id')->get();
+
     livewire(ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy([['title', 'asc'], ['id', 'asc']]), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortBy([['title', 'desc'], ['id', 'asc']]), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can search posts by title', function (): void {
@@ -127,7 +156,17 @@ it('can filter posts by `is_published`', function (): void {
     livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('is_published')
+        ->assertDontSee('Clear filters')
         ->assertCanSeeTableRecords($posts->where('is_published', true))
+        ->assertCanNotSeeTableRecords($posts->where('is_published', false));
+});
+
+it('can customize the `filtersRemoveAllAction()` for resource tables', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(ListPostsWithCustomFiltersRemoveAllAction::class)
+        ->filterTable('is_published')
+        ->assertSee('Clear filters')
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
 });
 
@@ -235,6 +274,40 @@ it('does not render tickets page if the policy viewAny returns a denied response
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
+it('re-authorizes resource access on Livewire updates after the initial mount', function (): void {
+    Ticket::factory(10)
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+
+    $component = livewire(ListTickets::class);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
+
+    $component
+        ->set('tableSearch', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
+it('re-authorizes resource access on Livewire updates when the policy returns a denied response after mount', function (): void {
+    Ticket::factory(10)
+        ->create();
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::allow());
+
+    $component = livewire(ListTickets::class);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::deny());
+
+    $component
+        ->set('tableSearch', 'foo')
+        ->assertStatus(403);
+
+    app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
 it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 
@@ -297,3 +370,31 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'restore bulk action with policy returning false' => fn (): array => [RestoreBulkAction::class, 'restoreAny', false, false, true, true, true],
     'restore bulk action with policy returning denied response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::deny(), false, true, true, true],
 ]);
+
+it('can access record for action after record no longer matches tab query', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(ListPostsWithTabs::class)
+        ->set('activeTab', 'published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]))
+        ->callAction(TestAction::make(DeleteAction::class)->table($post));
+
+    expect($post->fresh()->trashed())->toBeTrue();
+});
+
+it('cannot access record for action after record no longer matches tab without `excludeQueryWhenResolvingRecord()`', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(ListPostsWithTabs::class)
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]));
+
+    livewire(ListPostsWithTabs::class)
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'published')
+        ->mountTableAction(DeleteAction::class, $post)
+        ->assertTableActionNotMounted(DeleteAction::class);
+});

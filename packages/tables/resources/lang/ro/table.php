@@ -6,12 +6,51 @@ return [
 
         'heading' => 'Coloane',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Aplică coloane',
+            ],
+
+            'reset' => [
+                'label' => 'Resetare',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
 
+        'actions' => [
+            'label' => 'Acțiune|Acțiuni',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Se încarcă...',
+
+            'no_options_message' => 'Nu sunt disponibile opțiuni.',
+
+            'no_search_results_message' => 'Nicio opțiune nu corespunde căutării.',
+
+            'placeholder' => 'Selectați o opțiune',
+
+            'searching_message' => 'Se caută...',
+
+            'search_prompt' => 'Începeți să tastați pentru a căuta...',
+
+        ],
+
         'text' => [
-            'more_list_items' => 'si alte :count',
+
+            'actions' => [
+                'collapse_list' => 'Afișează cu :count mai puțin',
+                'expand_list' => 'Afișează cu :count mai mult',
+            ],
+
+            'more_list_items' => 'și alte :count',
+
         ],
 
     ],
@@ -19,15 +58,15 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Selectați/Deselectați tot pentru operațiuni in masă.',
+            'label' => 'Selectați/Deselectați tot pentru operațiuni în masă.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Selectează/Deselectează elementul :key pentru operațiuni in masă.',
+            'label' => 'Selectează/Deselectează elementul :key pentru operațiuni în masă.',
         ],
 
         'bulk_select_group' => [
-            'label' => 'Selectează/Deselectează grupul :title pentru operațiuni in masă.',
+            'label' => 'Selectează/Deselectează grupul :title pentru operațiuni în masă.',
         ],
 
         'search' => [
@@ -59,7 +98,7 @@ return [
             ],
 
             'sum' => [
-                'label' => 'Suma',
+                'label' => 'Sumă',
             ],
 
         ],
@@ -69,11 +108,11 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Dezactivați reordonarea',
+            'label' => 'Finalizează reordonarea înregistrărilor',
         ],
 
         'enable_reordering' => [
-            'label' => 'Activați reordonarea',
+            'label' => 'Reordonează înregistrările',
         ],
 
         'filter' => [
@@ -85,18 +124,18 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Operațiuni in masă',
+            'label' => 'Operațiuni în masă',
         ],
 
         'column_manager' => [
-            'label' => 'Deschide/închide coloane',
+            'label' => 'Manager coloane',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'Nu s-au găsit rezultate',
+        'heading' => 'Niciun :model',
 
         'description' => 'Creează un :model pentru a începe.',
 
@@ -111,7 +150,7 @@ return [
             ],
 
             'remove' => [
-                'label' => 'Elimină filtru',
+                'label' => 'Elimină filtrul',
             ],
 
             'remove_all' => [
@@ -120,7 +159,7 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Resetare filtre',
+                'label' => 'Resetare',
             ],
 
         ],
@@ -134,18 +173,24 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Toate',
+
+            'relationship' => [
+                'empty_option_label' => 'Niciunul',
+            ],
+
         ],
 
         'trashed' => [
 
-            'label' => 'Elemente șterse',
+            'label' => 'Înregistrări șterse',
 
-            'only_trashed' => 'Doar elementele șterse',
+            'only_trashed' => 'Doar înregistrările șterse',
 
-            'with_trashed' => 'Include elementele șterse',
+            'with_trashed' => 'Cu înregistrări șterse',
 
-            'without_trashed' => 'Doar elementele neșterse',
+            'without_trashed' => 'Fără înregistrări șterse',
 
         ],
 
@@ -157,7 +202,6 @@ return [
 
             'group' => [
                 'label' => 'Grupează după',
-                'placeholder' => 'Grupează după',
             ],
 
             'direction' => [
@@ -175,20 +219,20 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Trageți și plasați elementele în ordine.',
+    'reorder_indicator' => 'Trageți și plasați înregistrările în ordinea dorită.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 element selectat|:count elemente selectate',
+        'selected_count' => '1 înregistrare selectată|:count înregistrări selectate',
 
         'actions' => [
 
             'select_all' => [
-                'label' => 'Selectare toate :count',
+                'label' => 'Selectează toate :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselectare toate',
+                'label' => 'Deselectează toate',
             ],
 
         ],
@@ -200,7 +244,7 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sortare după coloană',
+                'label' => 'Sortează după',
             ],
 
             'direction' => [
@@ -217,5 +261,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'înregistrare',
 
 ];

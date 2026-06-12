@@ -11,6 +11,7 @@
         "php": "^8.2",
         "filament/actions": "self.version",
         "filament/forms": "self.version",
+        "filament/query-builder": "self.version",
         "filament/support": "self.version"
     },
     "autoload": {

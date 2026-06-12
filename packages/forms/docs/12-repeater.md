@@ -100,6 +100,8 @@ Repeater::make('members')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `addActionAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/repeater/add-action-alignment" alt="Repeater with add action aligned to the start" version="4.x" />
+
 ### Preventing the user from adding items
 
 You may prevent the user from adding items to the repeater using the `addable(false)` method:
@@ -216,6 +218,8 @@ Repeater::make('qualifications')
     ->collapsible()
 ```
 
+<AutoScreenshot name="forms/fields/repeater/collapsible" alt="Collapsible repeater" version="4.x" />
+
 You may also collapse all items by default:
 
 ```php
@@ -288,21 +292,6 @@ Repeater::make('qualifications')
         // ...
     ])
 ```
-
-<Aside variant="warning">
-    When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
-    
-    ```php
-    use Filament\Forms\Components\Repeater;
-    
-    Repeater::make('qualifications')
-        ->disabled()
-        ->relationship()
-        ->schema([
-            // ...
-        ])
-    ```
-</Aside>
 
 ### Reordering items in a relationship
 
@@ -454,6 +443,89 @@ Repeater::make('qualifications')
 
 <UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that is being saved by the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeSaveUsing()` as parameters.</UtilityInjection>
 
+### Running code after creating a related item
+
+You may run code after a new related item is created in the database using the `afterCreate()` method. This method accepts a closure that receives the current item's data in a `$data` variable and the newly created record in a `$record` variable. This is useful when you need the record's ID to perform additional operations, such as attaching pivot data:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Model;
+
+Repeater::make('variants')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->afterCreate(function (array $data, Model $record): void {
+        if (isset($data['attributes'])) {
+            $record->attributes()->attach($data['attributes']);
+        }
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to create the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The newly created record.">You can inject various utilities into the function passed to `afterCreate()` as parameters.</UtilityInjection>
+
+### Running code after updating a related item
+
+You may run code after an existing related item is updated in the database using the `afterUpdate()` method. This method accepts a closure that receives the current item's data in a `$data` variable and the updated record in a `$record` variable:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Model;
+
+Repeater::make('variants')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->afterUpdate(function (array $data, Model $record): void {
+        if (isset($data['attributes'])) {
+            $record->attributes()->sync($data['attributes']);
+        }
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to update the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The updated record.">You can inject various utilities into the function passed to `afterUpdate()` as parameters.</UtilityInjection>
+
+### Running code after deleting a related item
+
+You may run code after a related item is deleted from the database using the `afterDelete()` method. This method accepts a closure that receives the record that was just deleted in a `$record` variable. The record will no longer exist in the database at this point, but you can still access its attributes, such as its ID:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
+Repeater::make('attachments')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->afterDelete(function (Model $record): void {
+        Storage::delete($record->file_path);
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Record;;Illuminate\Database\Eloquent\Model;;$record;;The record that was just deleted.">You can inject various utilities into the function passed to `afterDelete()` as parameters.</UtilityInjection>
+
+### Modifying related records after retrieval
+
+You may filter or modify the related records of a repeater after they are retrieved from the database using the `modifyRecordsUsing` argument. This method accepts a function that receives a `Collection` of related records. You should return the modified collection.
+
+This can be particularly useful to restrict records to a specific group or category without doing this in the database query itself, which would trigger an extra query if the records are already eager loaded:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Collection;
+
+Repeater::make('startItems')
+    ->relationship(name: 'items', modifyRecordsUsing: fn (Collection $records): Collection => $records->where('group', 'start')),
+Repeater::make('endItems')
+    ->relationship(name: 'items', modifyRecordsUsing: fn (Collection $records): Collection => $records->where('group', 'end')),
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Records;;Illuminate\Database\Eloquent\Collection;;$records;;The collection of related records.">You can inject various utilities into the function passed to `modifyRecordsUsing` as parameters.</UtilityInjection>
+
 ## Grid layout
 
 You may organize repeater items into columns by using the `grid()` method:
@@ -504,9 +576,25 @@ Repeater::make('members')
     Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 </Aside>
 
-<UtilityInjection set="formFields" version="4.x" extras="Item;;Filament\Schemas\Schema;;$item;;The schema object for the current repeater item.||Key;;string;;$key;;The key for the current repeater item.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current repeater item.">You can inject various utilities into the function passed to `itemLabel()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x" extras="Item;;Filament\Schemas\Schema;;$item;;The schema object for the current repeater item.||Key;;string;;$key;;The key for the current repeater item.||Index;;int;;$index;;The zero-based index of the current repeater item.||State;;array<string, mixed>;;$state;;The raw unvalidated data for the current repeater item.">You can inject various utilities into the function passed to `itemLabel()` as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="4.x" />
+
+## Numbering repeater items
+
+You can add the repeater item's number next to its label using the `itemNumbers()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->itemNumbers()
+```
+
+<AutoScreenshot name="forms/fields/repeater/numbered" alt="Repeater with numbered items" version="4.x" />
 
 ## Simple repeaters with one field
 
@@ -565,7 +653,7 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 `$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
 The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current repeater item.
 
@@ -644,6 +732,42 @@ use Filament\Forms\Components\Repeater\TableColumn;
 TableColumn::make('Name')
     ->width('200px')
 ```
+
+### Compact table repeaters
+
+You can make table repeaters more compact by using the `compact()` method, to fit more data in a smaller space:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->table([
+        // ...
+    ])
+    ->compact()
+    ->schema([
+        // ...
+    ])
+```
+
+Optionally, you may pass a boolean value to control if the table repeater should be compact or not:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->table([
+        // ...
+    ])
+    ->compact(FeatureFlag::active())
+    ->schema([
+        // ...
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/repeater/table-compact" alt="Repeater with a compact table layout" version="4.x" />
 
 ## Repeater validation
 
@@ -758,7 +882,7 @@ Repeater::make('members')
 This method will automatically enable the `distinct()` and `live()` methods on the field.
 
 <Aside variant="warning">
-    In case you want to add another condition to [disable options](../select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
+    In case you want to add another condition to [disable options](select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
     
     ```php
     use Filament\Forms\Components\Repeater;

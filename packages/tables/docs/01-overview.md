@@ -8,6 +8,8 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Tables are a common UI pattern for displaying lists of records in web applications. Filament provides a PHP-based API for defining tables with many features, while also being incredibly customizable.
 
+<AutoScreenshot name="tables/example" alt="Table" version="4.x" />
+
 ### Defining table columns
 
 The basis of any table is rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
@@ -198,6 +200,8 @@ Actions can also open modals to request confirmation from the user, as well as r
 
 By default, Filament tables will be paginated. The user can choose between 5, 10, 25, and 50 records per page. If there are more records than the selected number, the user can navigate between pages using the pagination buttons.
 
+<AutoScreenshot name="tables/pagination/default" alt="Table with default pagination" version="4.x" />
+
 ### Customizing the pagination options
 
 You may customize the options for the paginated records per page select by passing them to the `paginated()` method:
@@ -248,6 +252,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/pagination/extreme" alt="Table with extreme pagination links" version="4.x" />
+
 ### Using simple pagination
 
 You may use simple pagination by using the `paginationMode(PaginationMode::Simple)` method:
@@ -263,6 +269,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/pagination/simple" alt="Table with simple pagination" version="4.x" />
+
 ### Using cursor pagination
 
 You may use cursor pagination by using the `paginationMode(PaginationMode::Cursor)` method:
@@ -277,6 +285,8 @@ public function table(Table $table): Table
         ->paginationMode(PaginationMode::Cursor);
 }
 ```
+
+<AutoScreenshot name="tables/pagination/cursor" alt="Table with cursor pagination" version="4.x" />
 
 ### Preventing query string conflicts with the pagination page
 
@@ -357,7 +367,7 @@ public function table(Table $table): Table
 }
 ```
 
-If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
+The `sort` database column in this example will be used to store the order of records in the table. Whenever you order a database query using that column, they will be returned in the defined order. If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
@@ -434,6 +444,26 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="4.x" />
 
+### Running code before and after reordering
+
+You may run code before or after a record is reordered using the `beforeReordering()` and `afterReordering()` methods. Both methods accept a function that receives the new `$order` array of record keys:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort')
+        ->beforeReordering(function (array $order): void {
+            // Runs before records are reordered in the database.
+        })
+        ->afterReordering(function (array $order): void {
+            // Runs after records are reordered in the database.
+        });
+}
+```
+
 ## Customizing the table header
 
 You can add a heading to a table using the `$table->heading()` method:
@@ -464,6 +494,8 @@ public function table(Table $table): Table
             // ...
         ]);
 ```
+
+<AutoScreenshot name="tables/heading" alt="Table with heading and description" version="4.x" />
 
 You can pass a view to the `$table->header()` method to customize the entire header HTML:
 
@@ -577,6 +609,8 @@ public function table(Table $table): Table
         });
 }
 ```
+
+<AutoScreenshot name="tables/custom-row-classes" alt="Table with custom row classes" version="4.x" />
 
 ## Global settings
 

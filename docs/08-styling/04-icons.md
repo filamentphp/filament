@@ -211,6 +211,7 @@ Using class `Filament\View\PanelsIconAlias`
 - `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` - Button to expand the sidebar
 - `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` - Button to expand the sidebar (right-to-left direction)
 - `PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON` - Collapse button for a sidebar group
+- `PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON` - Button to open the database notifications modal
 - `PanelsIconAlias::TENANT_MENU_BILLING_BUTTON` - Billing button in the tenant menu
 - `PanelsIconAlias::TENANT_MENU_PROFILE_BUTTON` - Profile button in the tenant menu
 - `PanelsIconAlias::TENANT_MENU_REGISTRATION_BUTTON` - Registration button in the tenant menu
@@ -224,6 +225,7 @@ Using class `Filament\View\PanelsIconAlias`
 - `PanelsIconAlias::TOPBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON` - Button to open the database notifications modal
 - `PanelsIconAlias::USER_MENU_PROFILE_ITEM` - Profile item in the user menu
 - `PanelsIconAlias::USER_MENU_LOGOUT_BUTTON` - Button in the user menu to log out
+- `PanelsIconAlias::USER_MENU_TOGGLE_BUTTON` - Button to toggle the user menu 
 - `PanelsIconAlias::WIDGETS_ACCOUNT_LOGOUT_BUTTON` - Button in the account widget to log out
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON` - Button to open the documentation from the Filament info widget
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON` - Button to open GitHub from the Filament info widget

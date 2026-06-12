@@ -14,7 +14,7 @@ return [
 
         'password' => [
             'label' => 'Salasana',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'salasana',
         ],
 
         'password_confirmation' => [

@@ -138,6 +138,9 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     protected function isViewSafe(string $view): bool
     {
+        // Security: Only explicitly whitelisted views can be rendered in
+        // notifications, preventing view injection from stored data.
+
         return in_array($view, $this->safeViews, strict: true);
     }
 
@@ -205,7 +208,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $data = $this->toArray();
         $data['format'] = 'filament';
 
-        return new BroadcastNotification($data);
+        return app(BroadcastNotification::class, ['data' => $data]);
     }
 
     public function toDatabase(): DatabaseNotification
@@ -262,6 +265,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if (blank($notification)) {
+            Assert::assertNotEmpty(
+                $notifications->toArray(),
+                'A notification was expected but none were sent.',
+            );
+
             return;
         }
 
@@ -298,6 +306,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if (blank($notification)) {
+            Assert::assertEmpty(
+                $notifications->toArray(),
+                'No notification was expected but at least one was sent.',
+            );
+
             return;
         }
 
@@ -347,6 +360,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         <div
             x-data="notificationComponent({ notification: <?= Js::from($this->toArray()) ?> })"
             x-transition:enter-start="fi-transition-enter-start"
+            x-transition:enter-end="fi-transition-enter-end"
+            x-transition:leave-start="fi-transition-leave-start"
             x-transition:leave-end="fi-transition-leave-end"
             <?= $attributes ?>
         >

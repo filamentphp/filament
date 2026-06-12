@@ -17,6 +17,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $placeholder = $getPlaceholder();
 @endphp
 
 <x-dynamic-component
@@ -37,6 +38,7 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
+        x-on:focus-input.stop="$el.querySelector('input')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
                 ->class('fi-fo-color-picker')
@@ -55,6 +57,7 @@
                         state: $wire.$entangle('{{ $statePath }}'),
                     })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+            x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
             {{ $getExtraAlpineAttributeBag()->class(['fi-input-wrp-content']) }}
         >
             <input
@@ -67,7 +70,7 @@
                             'autocomplete' => 'off',
                             'disabled' => $isDisabled,
                             'id' => $getId(),
-                            'placeholder' => $getPlaceholder(),
+                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
                             'required' => $isRequired() && (! $isConcealed()),
                             'type' => 'text',
                             'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
@@ -107,7 +110,7 @@
                     } . '-color-picker';
                 @endphp
 
-                <{{ $tag }} color="{{ $getState() }}" />
+                <{{ $tag }} x-ref="picker" color="{{ $getState() }}" />
             </div>
         </div>
     </x-filament::input.wrapper>

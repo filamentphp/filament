@@ -3,11 +3,11 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
@@ -91,17 +91,15 @@ trait InteractsWithRecord
 
     /**
      * @return Model | array<string, mixed> | null
-     *
-     * @throws Exception
      */
-    public function getRecord(): Model | array | null
+    public function getRecord(bool $withDefault = true): Model | array | null
     {
         $record = $this->evaluate($this->record);
 
         $isRecordKey = filled($record) && (! $record instanceof Model) && (! is_array($record));
 
         if ($isRecordKey && (! $this->resolveRecordUsing)) {
-            throw new Exception("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
+            throw new LogicException("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
         }
 
         if ($isRecordKey) {
@@ -115,19 +113,52 @@ trait InteractsWithRecord
         }
 
         if ($record) {
-            return $record;
+            return $this->ensureCorrectRecordType($record);
         }
 
-        if ($this instanceof Action && ($record = $this->getHasActionsLivewire()?->getDefaultActionRecord($this))) {
-            return $record;
+        if ($record = $this->getGroup()?->getRecord($withDefault)) {
+            return $this->ensureCorrectRecordType($record);
         }
 
-        return $this->getGroup()?->getRecord();
+        if (($this instanceof Action) && $record = $this->getSchemaContainer()?->getRecord()) {
+            return $this->ensureCorrectRecordType($record);
+        }
+
+        if (($this instanceof Action) && $record = $this->getSchemaComponent()?->getRecord()) {
+            return $this->ensureCorrectRecordType($record);
+        }
+
+        return ($withDefault && ($this instanceof Action)) ? $this->ensureCorrectRecordType($this->getHasActionsLivewire()?->getDefaultActionRecord($this)) : null;
+    }
+
+    /**
+     * @param  Model | array<string, mixed> | null  $record
+     * @return Model | array<string, mixed> | null
+     */
+    protected function ensureCorrectRecordType(Model | array | null $record): Model | array | null
+    {
+        if (
+            ($record instanceof Model)
+            && filled($customModel = $this->getCustomModel())
+            && (! $record instanceof $customModel)
+        ) {
+            return null;
+        }
+
+        return $record;
     }
 
     public function getRecordTitle(?Model $record = null): ?string
     {
         $record ??= $this->getRecord();
+
+        if (
+            ($record instanceof Model)
+            && filled($customModel = $this->getCustomModel())
+            && (! $record instanceof $customModel)
+        ) {
+            $record = null;
+        }
 
         if ($record) {
             if (filled($title = $this->getCustomRecordTitle($record))) {
@@ -149,13 +180,19 @@ trait InteractsWithRecord
     /**
      * @param  Model | array<string, mixed>  $record
      */
-    public function resolveRecordKey(Model | array $record): string
+    public function resolveRecordKey(Model | array $record): ?string
     {
         if (is_array($record)) {
-            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
+            return strval($record[ArrayRecord::getKeyName()] ?? throw new LogicException('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.'));
         }
 
-        return $record->getKey();
+        $key = $record->getKey();
+
+        if (blank($key)) {
+            return null;
+        }
+
+        return strval($key);
     }
 
     public function getCustomRecordTitle(?Model $record = null): ?string
@@ -217,10 +254,8 @@ trait InteractsWithRecord
 
     /**
      * @return class-string<Model>|null
-     *
-     * @throws Exception
      */
-    public function getModel(): ?string
+    public function getModel(bool $withDefault = true): ?string
     {
         $model = $this->getCustomModel();
 
@@ -234,13 +269,25 @@ trait InteractsWithRecord
             return $model;
         }
 
-        $record = $this->getRecord();
+        $record = $this->getRecord($withDefault);
 
-        if (! ($record instanceof Model)) {
-            return $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
+        if ($record instanceof Model) {
+            return $record::class;
         }
 
-        return $record::class;
+        if ($record = $this->getGroup()?->getModel($withDefault)) {
+            return $record;
+        }
+
+        if ($this instanceof Action && $model = $this->getSchemaContainer()?->getModel()) {
+            return $model;
+        }
+
+        if ($this instanceof Action && $model = $this->getSchemaComponent()?->getModel()) {
+            return $model;
+        }
+
+        return ($withDefault && ($this instanceof Action)) ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
     }
 
     /**
@@ -266,15 +313,14 @@ trait InteractsWithRecord
         }
 
         $model = $this->getModel();
+        $hasActionsLivewire = ($this instanceof Action) ? $this->getHasActionsLivewire() : null;
 
         if (! $model) {
-            return $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this) : null;
+            return $hasActionsLivewire?->getDefaultActionModelLabel($this);
         }
 
-        $defaultModel = $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
-
-        if (($this instanceof Action) && ($model === $defaultModel)) {
-            return $this->getHasActionsLivewire()?->getDefaultActionModelLabel($this);
+        if ($hasActionsLivewire && ($model === $hasActionsLivewire->getDefaultActionModel($this))) {
+            return $hasActionsLivewire->getDefaultActionModelLabel($this);
         }
 
         return get_model_label($model);

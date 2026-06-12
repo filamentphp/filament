@@ -129,6 +129,22 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Setting a custom no options message
+
+When you're using a select or multi-select with `preload()` or dynamic options via `options()` closure, you may want to display a custom message when no options are available. You can do this using the `noOptionsMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->preload()
+    ->noOptionsMessage('No authors available.')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noOptionsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Setting a custom search prompt
 
 When you're using a searchable select or multi-select, you may want to display a custom message when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:
@@ -254,6 +270,28 @@ Select::make('technologies')
 
 <UtilityInjection set="formFields" version="4.x" extras="Option values;;array<mixed>;;$values;;[<code>getOptionLabelsUsing()</code> only] The option values to retrieve the labels for.">The `getOptionLabelsUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Reordering selected options
+
+The `reorderable()` method allows you to reorder the selected options in a multi-select:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->reorderable()
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+This is useful when the order of the selected options matters.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Grouping options
 
 You can group options together under a label, to organize them better. To do this, you can pass an array of groups to `options()` or wherever you would normally pass an array of options. The keys of the array are used as group labels, and the values are arrays of options in that group:
@@ -299,11 +337,11 @@ Select::make('technologies')
 ```
 
 <Aside variant="warning">
-    When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
-    
+    When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `saved()` call from `disabled()` is not applied after the `relationship()` configuration:
+
     ```php
     use Filament\Forms\Components\Select;
-    
+
     Select::make('technologies')
         ->multiple()
         ->disabled()
@@ -640,6 +678,40 @@ MorphToSelect::make('commentable')
     ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
 ```
 
+#### Using toggle buttons for the type selector
+
+By default, the type selector is a select field. You may switch it to use inline [toggle buttons](toggle-buttons) using the `typeSelectToggleButtons()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->typeSelectToggleButtons()
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+```
+
+When using toggle buttons, you can customize them using the `modifyTypeSelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\ToggleButtons;
+
+MorphToSelect::make('commentable')
+    ->typeSelectToggleButtons()
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyTypeSelectUsing(fn (ToggleButtons $toggleButtons): ToggleButtons => $toggleButtons->grouped())
+```
+
 ## Allowing HTML in the option labels
 
 By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
@@ -661,6 +733,8 @@ Select::make('technology')
 <Aside variant="danger">
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 </Aside>
+
+<AutoScreenshot name="forms/fields/select/html-labels" alt="Select with HTML option labels" version="4.x" />
 
 Optionally, you may pass a boolean value to control if the input should allow HTML or not:
 
@@ -690,6 +764,8 @@ use Filament\Forms\Components\Select;
 Select::make('truncate')
     ->wrapOptionLabels(false)
 ```
+
+<AutoScreenshot name="forms/fields/select/truncate-labels" alt="Select with truncated option labels" version="4.x" />
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `wrapOptionLabels()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -730,6 +806,8 @@ Select::make('status')
 ```
 
 <UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/select/disabled-options" alt="Select with disabled options" version="4.x" />
 
 ## Adding affix text aside the field
 
@@ -778,6 +856,8 @@ Select::make('domain')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/select/suffix-icon-color" alt="Select with suffix icon in color" version="4.x" />
+
 ## Limiting the number of options
 
 You can limit the number of options that are displayed in a searchable select or multi-select using the `optionsLimit()` method. The default is 50:
@@ -806,6 +886,8 @@ Select::make('feedback')
     ->label('Like this post?')
     ->boolean()
 ```
+
+<AutoScreenshot name="forms/fields/select/boolean" alt="Boolean select" version="4.x" />
 
 To customize the "Yes" label, you can use the `trueLabel` argument on the `boolean()` method:
 
@@ -890,6 +972,10 @@ ModalTableSelect::make('categories')
     ->tableConfiguration(CategoriesTable::class)
 ```
 
+<AutoScreenshot name="forms/fields/modal-table-select/simple" alt="Modal table select with selected options" version="4.x" />
+
+<AutoScreenshot name="forms/fields/modal-table-select/modal" alt="Modal table select with table open in a modal" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x">The `tableConfiguration()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the modal table select actions
@@ -926,6 +1012,37 @@ ModalTableSelect::make('category_id')
     ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
 ```
 
+By default, `multiple()` options are listed in a "badge" design, and singular options are listed in plain text. The `badge()` method can be used to define whether the option label should appear inside a badge:
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('category_id')
+    ->relationship('category', 'name')
+    ->tableConfiguration(CategoriesTable::class)
+    ->badge()
+
+ModalTableSelect::make('categories')
+    ->relationship('categories', 'name')
+    ->multiple()
+    ->tableConfiguration(CategoriesTable::class)
+    ->badge(false)
+```
+
+The `badgeColor()` method can be used to set the badge [color](../styling/colors):
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('categories')
+    ->relationship('categories', 'name')
+    ->multiple()
+    ->tableConfiguration(CategoriesTable::class)
+    ->badgeColor('success')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Passing additional arguments to the table in a modal select
 
 You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:
@@ -957,7 +1074,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Table;
 
-class EmployeesTable
+class ProductsTable
 {
     public static function configure(Table $table): Table
     {

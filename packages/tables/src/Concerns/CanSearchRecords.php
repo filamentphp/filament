@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
@@ -125,7 +126,7 @@ trait CanSearchRecords
     protected function extractTableSearchWords(string $search): array
     {
         return array_filter(
-            str_getcsv(preg_replace('/\s+/', ' ', $search), separator: ' ', escape: '\\'),
+            str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
     }
@@ -199,7 +200,7 @@ trait CanSearchRecords
 
     public function getTableSearch(): ?string
     {
-        return filled($this->tableSearch) ? trim(strval($this->tableSearch)) : null;
+        return filled($this->tableSearch) ? Str::trim(strval($this->tableSearch)) : null;
     }
 
     public function hasTableSearch(): bool

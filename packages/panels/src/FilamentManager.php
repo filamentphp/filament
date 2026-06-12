@@ -3,11 +3,13 @@
 namespace Filament;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Enums\ThemeMode;
+use Filament\Enums\UserMenuPosition;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -20,6 +22,8 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Pages\PageConfiguration;
+use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
@@ -35,6 +39,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Livewire\Component;
+use LogicException;
 
 class FilamentManager
 {
@@ -47,6 +52,10 @@ class FilamentManager
     protected bool $isCurrentPanelBooted = false;
 
     protected ?Model $tenant = null;
+
+    protected ?string $currentResourceConfigurationKey = null;
+
+    protected ?string $currentPageConfigurationKey = null;
 
     public function auth(): Guard
     {
@@ -192,6 +201,21 @@ class FilamentManager
     public function getSerifFontHtml(): Htmlable
     {
         return $this->getCurrentOrDefaultPanel()->getSerifFontHtml();
+    }
+
+    public function getFontPreloadHtml(): Htmlable
+    {
+        return $this->getCurrentOrDefaultPanel()->getFontPreloadHtml();
+    }
+
+    public function getMonoFontPreloadHtml(): Htmlable
+    {
+        return $this->getCurrentOrDefaultPanel()->getMonoFontPreloadHtml();
+    }
+
+    public function getSerifFontPreloadHtml(): Htmlable
+    {
+        return $this->getCurrentOrDefaultPanel()->getSerifFontPreloadHtml();
     }
 
     public function getFontProvider(): string
@@ -462,6 +486,16 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantMenuItems();
     }
 
+    public function hasTenantSwitcher(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasTenantSwitcher();
+    }
+
+    public function isTenantMenuSearchable(): ?bool
+    {
+        return $this->getCurrentOrDefaultPanel()->isTenantMenuSearchable();
+    }
+
     /**
      * @return class-string<Model>|null
      */
@@ -546,8 +580,8 @@ class FilamentManager
             $avatar = $user->getAttributeValue('avatar_url');
         }
 
-        if ($avatar) {
-            return $avatar;
+        if (filled($avatar)) {
+            return str($avatar)->startsWith('data:image/') ? $avatar : url($avatar);
         }
 
         return app($this->getDefaultAvatarProvider())->get($user);
@@ -757,6 +791,24 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasUserMenu();
     }
 
+    public function getUserMenuPosition(): UserMenuPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getUserMenuPosition();
+    }
+
+    public function getDatabaseNotificationsPosition(): DatabaseNotificationsPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPosition();
+    }
+
+    /**
+     * @return class-string<Component>
+     */
+    public function getDatabaseNotificationsLivewireComponent(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsLivewireComponent();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasTopNavigation();
@@ -780,6 +832,11 @@ class FilamentManager
         }
 
         return false;
+    }
+
+    public function getGlobalSearchPosition(): GlobalSearchPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getGlobalSearchPosition();
     }
 
     public function isServing(): bool
@@ -843,45 +900,109 @@ class FilamentManager
         }
     }
 
+    public function setCurrentResourceConfigurationKey(?string $key): void
+    {
+        $this->currentResourceConfigurationKey = $key;
+    }
+
+    public function getCurrentResourceConfigurationKey(): ?string
+    {
+        return $this->currentResourceConfigurationKey;
+    }
+
     /**
-     * @deprecated Use the `navigationGroups()` method on the panel configuration instead.
-     *
+     * @param  class-string  $resourceClass
+     */
+    public function getResourceConfiguration(string $resourceClass): ?ResourceConfiguration
+    {
+        $key = $this->currentResourceConfigurationKey;
+
+        if ($key === null) {
+            return null;
+        }
+
+        return $this->getCurrentOrDefaultPanel()->getResourceConfiguration($resourceClass, $key);
+    }
+
+    public function setCurrentPageConfigurationKey(?string $key): void
+    {
+        $this->currentPageConfigurationKey = $key;
+    }
+
+    public function getCurrentPageConfigurationKey(): ?string
+    {
+        return $this->currentPageConfigurationKey;
+    }
+
+    /**
+     * @param  class-string  $pageClass
+     */
+    public function getPageConfiguration(string $pageClass): ?PageConfiguration
+    {
+        $key = $this->currentPageConfigurationKey;
+
+        if ($key === null) {
+            return null;
+        }
+
+        return $this->getCurrentOrDefaultPanel()->getPageConfiguration($pageClass, $key);
+    }
+
+    /**
+     * @param  class-string  $resourceClass
+     */
+    public function forResourceConfiguration(string $resourceClass, string $key): void
+    {
+        $this->setCurrentResourceConfigurationKey($key);
+    }
+
+    /**
+     * @param  class-string  $pageClass
+     */
+    public function forPageConfiguration(string $pageClass, string $key): void
+    {
+        $this->setCurrentPageConfigurationKey($key);
+    }
+
+    /**
      * @param  array<string | int, NavigationGroup | string>  $groups
+     *
+     * @deprecated Use the `navigationGroups()` method on the panel configuration instead.
      */
     public function registerNavigationGroups(array $groups): void
     {
         try {
             $this->getDefaultPanel()->navigationGroups($groups);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups');
+            throw new LogicException('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups');
         }
     }
 
     /**
-     * @deprecated Use the `navigationItems()` method on the panel configuration instead.
-     *
      * @param  array<NavigationItem>  $items
+     *
+     * @deprecated Use the `navigationItems()` method on the panel configuration instead.
      */
     public function registerNavigationItems(array $items): void
     {
         try {
             $this->getDefaultPanel()->navigationItems($items);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `navigationItems()` method on the panel configuration to register navigation items. See the documentation - https://filamentphp.com/docs/panels/navigation#registering-custom-navigation-items');
+            throw new LogicException('Please use the `navigationItems()` method on the panel configuration to register navigation items. See the documentation - https://filamentphp.com/docs/panels/navigation#registering-custom-navigation-items');
         }
     }
 
     /**
-     * @deprecated Use the `pages()` method on the panel configuration instead.
-     *
      * @param  array<class-string>  $pages
+     *
+     * @deprecated Use the `pages()` method on the panel configuration instead.
      */
     public function registerPages(array $pages): void
     {
         try {
             $this->getDefaultPanel()->pages($pages);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `pages()` method on the panel configuration to register pages.');
+            throw new LogicException('Please use the `pages()` method on the panel configuration to register pages.');
         }
     }
 
@@ -894,33 +1015,33 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use the `resources()` method on the panel configuration instead.
-     *
      * @param  array<class-string>  $resources
+     *
+     * @deprecated Use the `resources()` method on the panel configuration instead.
      */
     public function registerResources(array $resources): void
     {
         try {
             $this->getDefaultPanel()->resources($resources);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `resources()` method on the panel configuration to register resources.');
+            throw new LogicException('Please use the `resources()` method on the panel configuration to register resources.');
         }
     }
 
     /**
-     * @deprecated Register scripts using the `FilamentAsset` facade instead.
-     *
      * @param  array<mixed>  $scripts
+     *
+     * @deprecated Register scripts using the `FilamentAsset` facade instead.
      */
     public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
     {
-        throw new Exception('Please use the `FilamentAsset` facade to register scripts. See the documentation - https://filamentphp.com/docs/support/assets#registering-javascript-files');
+        throw new LogicException('Please use the `FilamentAsset` facade to register scripts. See the documentation - https://filamentphp.com/docs/support/assets#registering-javascript-files');
     }
 
     /**
-     * @deprecated Register script data using the `FilamentAsset` facade instead.
-     *
      * @param  array<string, mixed>  $data
+     *
+     * @deprecated Register script data using the `FilamentAsset` facade instead.
      */
     public function registerScriptData(array $data): void
     {
@@ -928,13 +1049,13 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Register styles using the `FilamentAsset` facade instead.
-     *
      * @param  array<mixed>  $styles
+     *
+     * @deprecated Register styles using the `FilamentAsset` facade instead.
      */
     public function registerStyles(array $styles): void
     {
-        throw new Exception('Please use the `FilamentAsset` facade to register styles. See the documentation - https://filamentphp.com/docs/support/assets#registering-css-files');
+        throw new LogicException('Please use the `FilamentAsset` facade to register styles. See the documentation - https://filamentphp.com/docs/support/assets#registering-css-files');
     }
 
     /**
@@ -945,49 +1066,49 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->theme($theme);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `theme()` method on the panel configuration to register themes.');
+            throw new LogicException('Please use the `theme()` method on the panel configuration to register themes.');
         }
     }
 
     /**
-     * @deprecated Use the `viteTheme()` method on the panel configuration instead.
-     *
      * @param  string | array<string>  $theme
+     *
+     * @deprecated Use the `viteTheme()` method on the panel configuration instead.
      */
     public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
     {
         try {
             $this->getDefaultPanel()->viteTheme($theme, $buildDirectory);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `viteTheme()` method on the panel configuration to register themes.');
+            throw new LogicException('Please use the `viteTheme()` method on the panel configuration to register themes.');
         }
     }
 
     /**
-     * @deprecated Use the `userMenuItems()` method on the panel configuration instead.
-     *
      * @param  array<MenuItem>  $items
+     *
+     * @deprecated Use the `userMenuItems()` method on the panel configuration instead.
      */
     public function registerUserMenuItems(array $items): void
     {
         try {
             $this->getDefaultPanel()->userMenuItems($items);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `userMenuItems()` method on the panel configuration to register user menu items. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-the-user-menu');
+            throw new LogicException('Please use the `userMenuItems()` method on the panel configuration to register user menu items. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-the-user-menu');
         }
     }
 
     /**
-     * @deprecated Use the `widgets()` method on the panel configuration instead.
-     *
      * @param  array<class-string>  $widgets
+     *
+     * @deprecated Use the `widgets()` method on the panel configuration instead.
      */
     public function registerWidgets(array $widgets): void
     {
         try {
             $this->getDefaultPanel()->widgets($widgets);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
+            throw new LogicException('Please use the `widgets()` method on the panel configuration to register widgets.');
         }
     }
 
@@ -1012,7 +1133,7 @@ class FilamentManager
         }
 
         if (app()->runningInConsole()) {
-            throw new Exception('The current domain is not set, but multiple domains are registered for the panel. Please use [Filament::currentDomain(\'example.com\')] to set the current domain to ensure that panel URLs are generated correctly.');
+            throw new LogicException('The current domain is not set, but multiple domains are registered for the panel. Please use [Filament::currentDomain(\'example.com\')] to set the current domain to ensure that panel URLs are generated correctly.');
         }
 
         return request()->getHost();

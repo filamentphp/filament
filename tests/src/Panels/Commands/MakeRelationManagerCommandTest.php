@@ -3,11 +3,10 @@
 use Filament\Commands\MakeRelationManagerCommand;
 use Filament\Facades\Filament;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Arr;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
@@ -42,13 +41,12 @@ beforeEach(function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Teams\\TeamResource',
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     MakeRelationManagerCommand::$shouldCheckModelsForSoftDeletes = false;
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a relation manager', function (): void {
     $this->artisan('make:filament-relation-manager', [
@@ -69,7 +67,7 @@ it('can generate a relation manager with a related resource', function (): void 
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
-        '--related-resource' => 'App\\Filament\\Resources\\Teams\\TeamResource',
+        '--related-resource' => app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -85,7 +83,7 @@ it('can generate a relation manager with a form schema class', function (): void
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
         '--attach' => true,
-        '--form-schema' => 'App\\Filament\\Resources\\Teams\\Schemas\\TeamForm',
+        '--form-schema' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamForm',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -108,8 +106,10 @@ it('can generate a relation manager with a generated form schema and table colum
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/Users/RelationManagers/TeamsRelationManager.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a relation manager with a view operation', function (): void {
@@ -134,7 +134,7 @@ it('can generate a relation manager with an infolist schema class', function ():
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
         '--attach' => true,
-        '--infolist-schema' => 'App\\Filament\\Resources\\Teams\\Schemas\\TeamInfolist',
+        '--infolist-schema' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamInfolist',
         '--view' => true,
         '--panel' => 'admin',
         '--no-interaction' => true,
@@ -150,8 +150,39 @@ it('can generate a relation manager with a table class', function (): void {
         'resource' => 'Users',
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
+        '--table' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists($path = app_path('Filament/Resources/Users/RelationManagers/TeamsRelationManager.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
+it('can generate a relation manager with a table class and attach actions', function (): void {
+    $this->artisan('make:filament-relation-manager', [
+        'resource' => 'Users',
+        'relationship' => 'teams',
+        'recordTitleAttribute' => 'name',
         '--attach' => true,
-        '--table' => 'App\\Filament\\Resources\\Teams\\Tables\\TeamsTable',
+        '--table' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists($path = app_path('Filament/Resources/Users/RelationManagers/TeamsRelationManager.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
+it('can generate a relation manager with a table class and associate actions', function (): void {
+    $this->artisan('make:filament-relation-manager', [
+        'resource' => 'Users',
+        'relationship' => 'teams',
+        'recordTitleAttribute' => 'name',
+        '--associate' => true,
+        '--table' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);

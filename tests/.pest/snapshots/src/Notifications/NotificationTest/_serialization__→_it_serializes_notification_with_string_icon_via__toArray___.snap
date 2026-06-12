@@ -1,0 +1,13 @@
+{
+    "id": "test-id",
+    "actions": [],
+    "body": null,
+    "color": null,
+    "duration": 6000,
+    "icon": "heroicon-o-check-circle",
+    "iconColor": null,
+    "status": null,
+    "title": "Test Title",
+    "view": null,
+    "viewData": []
+}

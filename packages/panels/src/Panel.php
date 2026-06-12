@@ -68,10 +68,6 @@ class Panel extends Component
 
     public function register(): void
     {
-        foreach ($this->getResources() as $resource) {
-            $resource::observeTenancyModelCreation($this);
-        }
-
         $this->registerLivewireComponents();
         $this->registerLivewirePersistentMiddleware();
 
@@ -87,8 +83,11 @@ class Panel extends Component
 
     public function boot(): void
     {
-        foreach ($this->getResources() as $resource) {
-            $resource::registerTenancyModelGlobalScope($this);
+        if ($this->hasTenancy()) {
+            foreach ($this->getResources() as $resource) {
+                $resource::observeTenancyModelCreation($this);
+                $resource::registerTenancyModelGlobalScope($this);
+            }
         }
 
         $this->registerAssets();

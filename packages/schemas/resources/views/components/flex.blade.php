@@ -2,13 +2,21 @@
     use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Schemas\Components\Component;
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
+
+    $statePath = $getStatePath();
 
     $fromBreakpoint = $getFromBreakpoint();
     $verticalAlignment = $getVerticalAlignment();
+    $alignment = $getAlignment();
 
     if (! $verticalAlignment instanceof VerticalAlignment) {
         $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
+    }
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
 @endphp
 
@@ -21,32 +29,32 @@
                 'fi-dense' => $isDense(),
                 'fi-from-' . ($fromBreakpoint ?? 'default'),
                 ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ])
     }}
 >
-    @foreach ($getChildSchema()->getComponents() as $component)
-        @if (($component instanceof Action) || ($component instanceof ActionGroup))
+    @foreach ($getChildSchema()->getComponents() as $schemaComponent)
+        @if (($schemaComponent instanceof Action) || ($schemaComponent instanceof ActionGroup))
             <div>
-                {{ $component }}
+                {{ $schemaComponent }}
             </div>
         @else
             @php
-                $hiddenJs = $component->getHiddenJs();
-                $visibleJs = $component->getVisibleJs();
+                $hiddenJs = $schemaComponent->getHiddenJs();
+                $visibleJs = $schemaComponent->getVisibleJs();
 
-                $componentStatePath = $component->getStatePath();
+                $schemaComponentStatePath = $schemaComponent->getStatePath();
             @endphp
 
             <div
                 x-data="filamentSchemaComponent({
-                            path: @js($componentStatePath),
+                            path: @js($schemaComponentStatePath),
                             containerPath: @js($statePath),
-                            isLive: @js($schemaComponent->isLive()),
                             $wire,
                         })"
                 @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
                     x-init="{!! implode(';', array_map(
-                        fn (string $js): string => '$wire.watch(' . Js::from($componentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
+                        fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',
                         $afterStateUpdatedJs,
                     )) !!}"
                 @endif
@@ -60,10 +68,10 @@
                     x-cloak
                 @endif
                 @class([
-                    'fi-growable' => ($component instanceof Component) && $component->canGrow(),
+                    'fi-growable' => ($schemaComponent instanceof Component) && $schemaComponent->canGrow(),
                 ])
             >
-                {{ $component }}
+                {{ $schemaComponent }}
             </div>
         @endif
     @endforeach

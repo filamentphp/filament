@@ -2,13 +2,13 @@
 
 namespace Filament\Navigation;
 
-use Exception;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use LogicException;
 use UnitEnum;
 
 class NavigationManager
@@ -176,8 +176,24 @@ class NavigationManager
             $page::registerNavigationItems();
         }
 
+        foreach ($this->panel->getPageConfigurations() as $configuration) {
+            Filament::setCurrentPageConfigurationKey($configuration->getKey());
+
+            $configuration->page::registerNavigationItems();
+
+            Filament::setCurrentPageConfigurationKey(null);
+        }
+
         foreach ($this->panel->getResources() as $resource) {
             $resource::registerNavigationItems();
+        }
+
+        foreach ($this->panel->getResourceConfigurations() as $configuration) {
+            Filament::setCurrentResourceConfigurationKey($configuration->getKey());
+
+            $configuration->resource::registerNavigationItems();
+
+            Filament::setCurrentResourceConfigurationKey(null);
         }
 
         $this->isNavigationMounted = true;
@@ -189,7 +205,7 @@ class NavigationManager
     public function navigationGroups(array | string $groups): static
     {
         if (is_string($groups)) {
-            throw_unless(enum_exists($groups), new Exception("Enum class [{$groups}] does not exist for navigation groups."));
+            throw_unless(enum_exists($groups), new LogicException("Enum class [{$groups}] does not exist for navigation groups."));
 
             $groups = array_reduce(
                 $groups::cases(),

@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Kolonner',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Velg alle',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Velg bort alle',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Eksporteringen er for stor',
             'body' => 'Du kan ikke eksporterer mer enn 1 rap av gangen.|Du kan ikke eksportere mer enn :count rader av gangen.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Ingen kolonner valgt',
+            'body' => 'Vennligst velg en kolonne for eksport.',
         ],
 
         'started' => [

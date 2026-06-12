@@ -14,7 +14,10 @@ interface HasSchemas
 
     public function getOldSchemaState(string $statePath): mixed;
 
-    public function getSchemaComponent(string $key, bool $withHidden = false, ?Component $skipComponentChildContainersWhileSearching = null): Component | Action | ActionGroup | null;
+    /**
+     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     */
+    public function getSchemaComponent(string $key, bool $withHidden = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null;
 
     public function getSchema(string $name): ?Schema;
 

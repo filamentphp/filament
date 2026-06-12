@@ -45,6 +45,21 @@ ActionGroup::make([
 
 <AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="4.x" />
 
+### Adding a tooltip to the group trigger button
+
+You may add a tooltip to the group trigger button using the `tooltip()` method:
+
+```php
+use Filament\Actions\ActionGroup;
+
+ActionGroup::make([
+    // Array of actions
+])
+    ->tooltip('Actions')
+```
+
+<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="4.x" />
+
 ### Using a grouped button design
 
 Instead of a dropdown, an action group can render itself as a group of buttons. This design works with and without button labels. To use this feature, use the `buttonGroup()` method:
@@ -86,6 +101,17 @@ ActionGroup::make([
 
 <AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="4.x" />
 
+Alternatively, you may let the dropdown position be automatically determined based on the available space using the `dropdownAutoPlacement()` method:
+
+```php
+use Filament\Actions\ActionGroup;
+
+ActionGroup::make([
+    // Array of actions
+])
+    ->dropdownAutoPlacement()
+```
+
 ## Adding dividers between actions
 
 You may add dividers between groups of actions by using nested `ActionGroup` objects:
@@ -120,6 +146,8 @@ ActionGroup::make([
 ])
     ->dropdownWidth(Width::ExtraSmall)
 ```
+
+<AutoScreenshot name="actions/group/dropdown-width" alt="Action group with custom dropdown width" version="4.x" />
 
 <UtilityInjection set="actionGroups" version="4.x">The `dropdownWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 

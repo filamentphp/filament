@@ -77,9 +77,9 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
-        $this->options = $this->options();
-
         $this->configurePanel(question: 'Which panel would you like to create the user in?');
+
+        $this->options = $this->options();
 
         if (! $this->panel && ! Filament::getCurrentOrDefaultPanel()) {
             $this->error('Filament has not been installed yet: php artisan filament:install --panels');

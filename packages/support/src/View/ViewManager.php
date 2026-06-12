@@ -30,6 +30,10 @@ class ViewManager
      */
     public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
+        if ($scopes === null) {
+            $scopes = [''];
+        }
+
         if (! is_array($scopes)) {
             $scopes = [$scopes];
         }
@@ -37,6 +41,30 @@ class ViewManager
         foreach ($scopes as $scopeName) {
             $this->renderHooks[$name][$scopeName][] = $hook;
         }
+    }
+
+    /**
+     * @param  string | array<string> | null  $scopes
+     */
+    public function hasRenderHook(string $name, string | array | null $scopes = null): bool
+    {
+        if (! isset($this->renderHooks[$name])) {
+            return false;
+        }
+
+        if (isset($this->renderHooks[$name]['']) && count($this->renderHooks[$name][''])) {
+            return true;
+        }
+
+        $scopes = Arr::wrap($scopes);
+
+        foreach ($scopes as $scopeName) {
+            if (isset($this->renderHooks[$name][$scopeName]) && count($this->renderHooks[$name][$scopeName])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -65,7 +93,7 @@ class ViewManager
 
         $hooks = array_map(
             $renderHook,
-            $this->renderHooks[$name][null] ?? [],
+            $this->renderHooks[$name][''] ?? [],
         );
 
         foreach ($scopes as $scopeName) {

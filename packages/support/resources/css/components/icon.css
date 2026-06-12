@@ -24,4 +24,8 @@
     &.fi-size-2xl {
         @apply size-8;
     }
+
+    & > svg {
+        @apply h-[inherit] w-[inherit];
+    }
 }

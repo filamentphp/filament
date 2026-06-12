@@ -6,8 +6,10 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
 
         state,
 
+        unsubscribeLivewireHook: null,
+
         init() {
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     succeed(({ snapshot, effect }) => {
@@ -18,7 +20,7 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
 
                             if (
                                 component.id !==
-                                this.$root.closest('[wire\\:id]').attributes[
+                                this.$root.closest('[wire\\:id]')?.attributes[
                                     'wire:id'
                                 ].value
                             ) {
@@ -74,6 +76,10 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
             }
 
             return [1, '1'].includes(this.$refs.serverState.value)
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }
 }
