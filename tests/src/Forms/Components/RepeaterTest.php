@@ -2341,6 +2341,32 @@ describe('item labels', function (): void {
         expect($repeater->getItemLabel($itemKeys[2], 2))->toBe('Item 2: third');
     });
 
+    it('does not crash when getting item label for state mutated via data_set', function (): void {
+        $component = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $repeater = Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name'),
+                    ])
+                    ->itemLabel(static fn (array $state): string => "Item: {$state['name']}")
+                    ->default([
+                        'item-1' => ['name' => 'first'],
+                    ]),
+            ])
+            ->fill();
+
+        // Access child schema to warm the cache
+        $repeater->getChildSchema('item-1');
+
+        // Mutate the state directly bypassing the cache invalidation
+        $livewire = $component->getLivewire();
+        data_set($livewire, 'data.items.item-2', ['name' => 'second']);
+
+        // This would crash before the coherence fix because item-2 is not in the cache
+        expect($repeater->getItemLabel('item-2'))->toBe('Item: second');
+    });
+
     it('can set `itemNumbers()` with a `Closure`', function (): void {
         $repeater = Repeater::make('items')
             ->itemNumbers(static fn (): bool => true);

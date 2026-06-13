@@ -891,6 +891,20 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this->evaluate($this->isReorderableWithButtons) && $this->isReorderable();
     }
 
+    public function getChildSchema($key = null): ?Schema
+    {
+        if (
+            filled($key) &&
+            (! array_key_exists($key, $this->cachedDefaultChildSchemas ?? [])) &&
+            is_array($state = $this->getState()) &&
+            array_key_exists($key, $state)
+        ) {
+            $this->clearCachedDefaultChildSchemas();
+        }
+
+        return parent::getChildSchema($key);
+    }
+
     public function isAddable(): bool
     {
         if ($this->isDisabled()) {
