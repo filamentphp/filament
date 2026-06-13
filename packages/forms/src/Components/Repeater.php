@@ -1236,7 +1236,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             'item' => $container,
             'key' => $key,
             'schema' => $container,
-            'state' => $container->getStateSnapshot(),
+            'state' => $container?->getStateSnapshot(),
             'uuid' => $key,
             'index' => $index,
         ]);
