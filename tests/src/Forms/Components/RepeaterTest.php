@@ -2827,3 +2827,18 @@ class RepeaterWithTranslatableContentDriver extends Component implements HasActi
         return view('livewire.form');
     }
 }
+
+it('does not crash when evaluating repeater item label without warmed child schema cache', function (): void {
+    $repeater = Repeater::make('normal')
+        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
+        ->schema([
+            TextInput::make('title'),
+        ]);
+
+    $component = new TestComponentWithRepeater();
+
+    $container = \Filament\Schemas\ComponentContainer::make($component)
+        ->components([$repeater]);
+
+    expect($repeater->getItemLabel('missing-uuid'))->toBeNull();
+});
