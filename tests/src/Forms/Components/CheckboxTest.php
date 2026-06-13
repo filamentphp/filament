@@ -367,3 +367,63 @@ class TestComponentWithLabelledCheckbox extends Livewire
             ->statePath('data');
     }
 }
+
+it('respects required state for distinct validation in repeaters', function (): void {
+    $component = new class () extends Livewire {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->components([
+                    \Filament\Forms\Components\Repeater::make('items')
+                        ->schema([
+                            \Filament\Forms\Components\Checkbox::make('primary')->distinct(),
+                        ]),
+                ])
+                ->statePath('data');
+        }
+
+        public function save(): void
+        {
+            $this->form->getState();
+        }
+    };
+
+    \Filament\Tests\livewire($component::class)
+        ->fillForm([
+            'items' => [
+                'item-1' => ['primary' => false],
+                'item-2' => ['primary' => false],
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+
+    $componentRequired = new class () extends Livewire {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->components([
+                    \Filament\Forms\Components\Repeater::make('items')
+                        ->schema([
+                            \Filament\Forms\Components\Checkbox::make('primary')->distinct()->required(),
+                        ]),
+                ])
+                ->statePath('data');
+        }
+
+        public function save(): void
+        {
+            $this->form->getState();
+        }
+    };
+
+    \Filament\Tests\livewire($componentRequired::class)
+        ->fillForm([
+            'items' => [
+                'item-1' => ['primary' => false],
+                'item-2' => ['primary' => false],
+            ],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+});
