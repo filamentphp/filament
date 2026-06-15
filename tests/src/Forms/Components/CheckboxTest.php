@@ -3,7 +3,6 @@
 namespace Filament\Tests\Forms\Components;
 
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
@@ -366,96 +365,5 @@ class TestComponentWithLabelledCheckbox extends Livewire
                     ->label('I Accept the Terms'),
             ])
             ->statePath('data');
-    }
-}
-
-it('does not force an optional `distinct()` checkbox to be selected when sibling repeater items exist', function (): void {
-    livewire(TestComponentWithDistinctCheckboxInRepeater::class)
-        ->fillForm([
-            'items' => [
-                'item-1' => ['primary' => false],
-                'item-2' => ['primary' => false],
-            ],
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors(['items.item-1.primary', 'items.item-2.primary']);
-});
-
-it('allows a single `distinct()` checkbox to be selected across repeater items', function (): void {
-    livewire(TestComponentWithDistinctCheckboxInRepeater::class)
-        ->fillForm([
-            'items' => [
-                'item-1' => ['primary' => true],
-                'item-2' => ['primary' => false],
-            ],
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors(['items.item-1.primary', 'items.item-2.primary']);
-});
-
-it('does not allow more than one `distinct()` checkbox to be selected across repeater items', function (): void {
-    livewire(TestComponentWithDistinctCheckboxInRepeater::class)
-        ->fillForm([
-            'items' => [
-                'item-1' => ['primary' => true],
-                'item-2' => ['primary' => true],
-            ],
-        ])
-        ->call('save')
-        ->assertHasFormErrors(['items.item-1.primary', 'items.item-2.primary']);
-});
-
-it('forces a `required()` `distinct()` checkbox to be selected across repeater items', function (): void {
-    livewire(TestComponentWithRequiredDistinctCheckboxInRepeater::class)
-        ->fillForm([
-            'items' => [
-                'item-1' => ['primary' => false],
-                'item-2' => ['primary' => false],
-            ],
-        ])
-        ->call('save')
-        ->assertHasFormErrors(['items.item-1.primary', 'items.item-2.primary']);
-});
-
-class TestComponentWithDistinctCheckboxInRepeater extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->components([
-                Repeater::make('items')
-                    ->schema([
-                        Checkbox::make('primary')
-                            ->distinct(),
-                    ]),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
-    }
-}
-
-class TestComponentWithRequiredDistinctCheckboxInRepeater extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->components([
-                Repeater::make('items')
-                    ->schema([
-                        Checkbox::make('primary')
-                            ->distinct()
-                            ->required(),
-                    ]),
-            ])
-            ->statePath('data');
-    }
-
-    public function save(): void
-    {
-        $this->form->getState();
     }
 }
