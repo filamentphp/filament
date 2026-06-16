@@ -425,7 +425,7 @@ class Action extends ViewComponent implements Arrayable
         }
 
         if ($this->shouldClose()) {
-            return 'close()';
+            return (filled($this->getUrl()) && (! $this->shouldOpenUrlInNewTab())) ? 'close(true)' : 'close()';
         }
 
         if ($this->shouldMarkAsRead()) {
