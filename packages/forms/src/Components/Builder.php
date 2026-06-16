@@ -931,11 +931,16 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             return $this->cachedItems;
         }
 
+        $blocks = [];
+
+        foreach ($this->getBlocks() as $block) {
+            $blocks[$block->getName()] = $block;
+        }
+
         return $this->cachedItems = collect($this->getRawState())
-            ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
+            ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && array_key_exists($itemData['type'], $blocks))
             ->map(
-                fn (array $itemData, $itemIndex): Schema => $this
-                    ->getBlock($itemData['type'])
+                fn (array $itemData, $itemIndex): Schema => $blocks[$itemData['type']]
                     ->getChildSchema()
                     ->statePath("{$itemIndex}.data")
                     ->constantState($itemData['data'] ?? [])
