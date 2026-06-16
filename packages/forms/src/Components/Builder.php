@@ -108,6 +108,11 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
     protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
+    /**
+     * @var array<Schema> | null
+     */
+    protected ?array $cachedItems = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -922,7 +927,11 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
      */
     public function getItems(): array
     {
-        return collect($this->getRawState())
+        if ($this->cachedItems !== null) {
+            return $this->cachedItems;
+        }
+
+        return $this->cachedItems = collect($this->getRawState())
             ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
             ->map(
                 fn (array $itemData, $itemIndex): Schema => $this
@@ -942,6 +951,13 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
     public function getDefaultChildSchemas(): array
     {
         return $this->getItems();
+    }
+
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        parent::clearCachedDefaultChildSchemas();
+
+        $this->cachedItems = null;
     }
 
     public function getAddBetweenActionLabel(): string

@@ -60,6 +60,11 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
     protected ?Collection $cachedExistingRecords = null;
 
+    /**
+     * @var array<Schema> | null
+     */
+    protected ?array $cachedItems = null;
+
     protected string | Closure | null $orderColumn = null;
 
     protected string | Closure | null $relationship = null;
@@ -843,6 +848,10 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
      */
     public function getItems(): array
     {
+        if ($this->cachedItems !== null) {
+            return $this->cachedItems;
+        }
+
         $relationship = $this->getRelationship();
 
         $records = $relationship ? $this->getCachedExistingRecords() : null;
@@ -859,7 +868,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                 ->getClone();
         }
 
-        return $items;
+        return $this->cachedItems = $items;
     }
 
     /**
@@ -969,6 +978,11 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
     public function saveToRelationship(): void
     {
+        // The raw state may have been mutated through an ancestor schema (e.g. `Schema::rawState()`),
+        // which clears that ancestor's cached child schemas but not this component's. Rebuild the
+        // memoized items so the save reflects the current state rather than a stale set.
+        $this->cachedItems = null;
+
         $state = $this->getState();
 
         if (! is_array($state)) {
@@ -1306,6 +1320,14 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
     public function clearCachedExistingRecords(): void
     {
         $this->cachedExistingRecords = null;
+        $this->cachedItems = null;
+    }
+
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        parent::clearCachedDefaultChildSchemas();
+
+        $this->cachedItems = null;
     }
 
     /**
