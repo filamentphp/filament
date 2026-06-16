@@ -27,6 +27,8 @@ class QueryBuilder extends BaseFilter
     /** @var array<Constraint> */
     protected array $constraints = [];
 
+    protected ?RuleBuilder $cachedRuleBuilder = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -301,13 +303,17 @@ class QueryBuilder extends BaseFilter
 
     protected function getRuleBuilder(): RuleBuilder
     {
+        if ($this->cachedRuleBuilder instanceof RuleBuilder) {
+            return $this->cachedRuleBuilder;
+        }
+
         $builder = $this->getSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
             throw new LogicException('No rule builder component found.');
         }
 
-        return $builder;
+        return $this->cachedRuleBuilder = $builder;
     }
 
     protected function getNestedRuleBuilder(Schema $schema, string $orGroupIndex): RuleBuilder
