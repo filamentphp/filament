@@ -398,6 +398,6 @@ class QueryBuilder extends BaseFilter
 
     public function getConstraint(string $name): ?Constraint
     {
-        return $this->getConstraints()[$name] ?? null;
+        return ($this->constraints[$name] ?? null)?->model($this->getTable()->getModel());
     }
 }
