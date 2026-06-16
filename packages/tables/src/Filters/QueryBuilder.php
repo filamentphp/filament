@@ -29,6 +29,11 @@ class QueryBuilder extends BaseFilter
 
     protected ?RuleBuilder $cachedRuleBuilder = null;
 
+    /**
+     * @var array<string, bool>
+     */
+    protected array $cachedRuleSchemaValidity = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -153,9 +158,7 @@ class QueryBuilder extends BaseFilter
                 continue;
             }
 
-            try {
-                $ruleBuilderBlockContainer->validate();
-            } catch (ValidationException) {
+            if (! $this->ruleSchemaPassesValidation($ruleBuilderBlockContainer)) {
                 continue;
             }
 
@@ -355,9 +358,7 @@ class QueryBuilder extends BaseFilter
             return;
         }
 
-        try {
-            $schema->validate();
-        } catch (ValidationException) {
+        if (! $this->ruleSchemaPassesValidation($schema)) {
             return;
         }
 
@@ -380,6 +381,21 @@ class QueryBuilder extends BaseFilter
             ->constraint(null)
             ->settings(null)
             ->inverse(null);
+    }
+
+    protected function ruleSchemaPassesValidation(Schema $schema): bool
+    {
+        $statePath = $schema->getStatePath();
+
+        return $this->cachedRuleSchemaValidity[$statePath] ??= (function () use ($schema): bool {
+            try {
+                $schema->validate();
+
+                return true;
+            } catch (ValidationException) {
+                return false;
+            }
+        })();
     }
 
     /**
