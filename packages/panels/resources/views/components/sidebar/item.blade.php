@@ -112,7 +112,7 @@
         @endif
     </a>
 
-    @if (($active || $activeChildItems) && $childItems)
+    @if ($childItems && (blank($url) || $active || $activeChildItems))
         <ul class="fi-sidebar-sub-group-items">
             @foreach ($childItems as $childItem)
                 @php

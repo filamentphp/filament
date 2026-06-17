@@ -1,4 +1,8 @@
 export default () => ({
+    init() {
+        document.addEventListener('livewire:navigate', () => this.close())
+    },
+
     toggle(event) {
         this.$refs.panel?.toggle(event)
     },

@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.2",
+        "anourvalar/eloquent-serialize": "^1.3.6",
         "filament/forms": "self.version",
         "filament/infolists": "self.version",
         "filament/notifications": "self.version",

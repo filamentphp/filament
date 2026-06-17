@@ -493,7 +493,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
-                    'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
+                    'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{
                                 content: ' . Js::from($tooltip) . ',
@@ -503,8 +503,8 @@ class ImageColumn extends Column implements HasEmbeddedView
                         : null,
                 ], escape: false)
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml()
                 . ' />';
@@ -530,8 +530,8 @@ class ImageColumn extends Column implements HasEmbeddedView
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,
                 ])
                 ->style([
-                    "height: {$height}" => $height,
-                    "width: {$width}" => $width,
+                    ('height: ' . e($height)) => $height,
+                    ('width: ' . e($width)) => $width,
                 ])
                 ->toHtml() ?>>
                     +<?= $stateOverLimitCount ?>

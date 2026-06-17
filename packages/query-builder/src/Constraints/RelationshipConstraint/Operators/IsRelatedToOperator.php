@@ -188,7 +188,15 @@ class IsRelatedToOperator extends Operator
 
         return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
             $constraint->getRelationshipName(),
-            fn (Builder $query) => $query->whereKey($value),
+            function (Builder $query) use ($value): Builder {
+                if ($this->modifyRelationshipQueryUsing) {
+                    $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                return $query->whereKey($value);
+            },
         );
     }
 

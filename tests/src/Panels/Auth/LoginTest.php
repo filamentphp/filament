@@ -4,6 +4,7 @@ use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
@@ -49,6 +50,56 @@ describe('authentication', function (): void {
             ->assertRedirect(Filament::getUrl());
 
         $this->assertAuthenticatedAs($userToAuthenticate);
+    });
+
+    it('rotates the session ID after a successful authentication to prevent session fixation', function (): void {
+        $userToAuthenticate = User::factory()->create();
+
+        $sessionIdBefore = session()->getId();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertRedirect(Filament::getUrl());
+
+        expect(session()->getId())->not->toBe($sessionIdBefore);
+    });
+
+    it('rotates the CSRF token after a successful authentication', function (): void {
+        $userToAuthenticate = User::factory()->create();
+
+        session()->start();
+        $csrfTokenBefore = session()->token();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertRedirect(Filament::getUrl());
+
+        expect(session()->token())->not->toBe($csrfTokenBefore);
+    });
+
+    it('does not rotate the CSRF token when authentication fails (control)', function (): void {
+        $userToAuthenticate = User::factory()->create();
+
+        session()->start();
+        $csrfTokenBefore = session()->token();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'wrong-password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        expect(session()->token())->toBe($csrfTokenBefore);
     });
 
     it('can authenticate and redirect user to their intended URL', function (): void {
@@ -104,6 +155,54 @@ describe('authentication failures', function (): void {
             }
 
             return true;
+        });
+    });
+
+    it('fires the `Attempting` event when authentication fails because the email is unknown', function (): void {
+        Event::fake([Attempting::class]);
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => 'nonexistent@example.com',
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        Event::assertDispatched(function (Attempting $event): bool {
+            if ($event->guard !== 'web') {
+                return false;
+            }
+
+            return $event->credentials === [
+                'email' => 'nonexistent@example.com',
+                'password' => 'password',
+            ];
+        });
+    });
+
+    it('fires the `Attempting` event when authentication fails because the password is wrong', function (): void {
+        Event::fake([Attempting::class]);
+
+        $userToAuthenticate = User::factory()->create();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'incorrect-password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        Event::assertDispatched(function (Attempting $event) use ($userToAuthenticate): bool {
+            if ($event->guard !== 'web') {
+                return false;
+            }
+
+            return $event->credentials === [
+                'email' => $userToAuthenticate->email,
+                'password' => 'incorrect-password',
+            ];
         });
     });
 

@@ -2,11 +2,21 @@
 
 namespace Filament\Tests\Forms\Components;
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Models\Image;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
 use InvalidArgumentException;
+use Livewire\Component;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
@@ -118,6 +128,29 @@ describe('Closure support', function (): void {
     });
 });
 
+describe('validation', function (): void {
+    it('rejects an existing value excluded by `modifyOptionsQueryUsing` on a `MorphTo` type', function (): void {
+        $inScopePost = Post::factory()->create(['title' => 'Alpha Article']);
+        $outOfScopePost = Post::factory()->create(['title' => 'Beta Article']);
+
+        livewire(TestComponentWithMorphToSelectAndModifyQuery::class)
+            ->fillForm([
+                'imageable_type' => Post::class,
+                'imageable_id' => (string) $inScopePost->id,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithMorphToSelectAndModifyQuery::class)
+            ->fillForm([
+                'imageable_type' => Post::class,
+                'imageable_id' => (string) $outOfScopePost->id,
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['imageable_id' => ['in']]);
+    });
+});
+
 describe('modifier callback clearing', function (): void {
     it('can clear `modifyTypeSelectUsing()` with `null`', function (): void {
         $component = MorphToSelect::make('commentable')
@@ -135,3 +168,42 @@ describe('modifier callback clearing', function (): void {
         expect($component->getModifyKeySelectUsingCallback())->toBeNull();
     });
 });
+
+class TestComponentWithMorphToSelectAndModifyQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                MorphToSelect::make('imageable')
+                    ->types([
+                        MorphToSelect\Type::make(Post::class)
+                            ->titleAttribute('title')
+                            ->modifyOptionsQueryUsing(fn ($query) => $query->where('title', 'like', 'Alpha%')),
+                    ])
+                    ->preload(),
+            ])
+            ->model(Image::class)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}

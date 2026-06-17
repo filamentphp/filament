@@ -336,7 +336,7 @@ export default Node.create({
             const getMentionSearchResultsUsing =
                 this.options.getMentionSearchResultsUsing
 
-            let suggestion = suggestionConfig
+            let suggestion
 
             if (typeof suggestionConfig?.items === 'function') {
                 const originalItems = suggestionConfig.items

@@ -6,12 +6,14 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use SensitiveParameter;
 
 class VerifyEmailAuthentication extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public function __construct(
+        #[SensitiveParameter]
         public string $code,
         public int $codeExpiryMinutes,
     ) {}

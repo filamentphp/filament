@@ -6,6 +6,7 @@ use Closure;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
+use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -404,6 +406,59 @@ class TableSelect extends Field
     public function isMultiple(): bool
     {
         return (bool) $this->evaluate($this->isMultiple);
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if ($values !== null) {
+            return $values;
+        }
+
+        if (! $this->hasRelationship()) {
+            return null;
+        }
+
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+        $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+        $relatedKeyName = $relationship->getRelated()->getKeyName();
+        $qualifiedRelatedKeyName = $relationshipQuery->qualifyColumn($relatedKeyName);
+
+        if ($this->isMultiple()) {
+            $stateArray = Arr::wrap($state);
+
+            if (empty($stateArray)) {
+                return null;
+            }
+
+            return $relationshipQuery
+                ->whereIn($qualifiedRelatedKeyName, $stateArray)
+                ->pluck($relatedKeyName)
+                ->map(static fn ($id): string => (string) $id)
+                ->all();
+        }
+
+        $exists = $relationshipQuery
+            ->where($qualifiedRelatedKeyName, $state)
+            ->exists();
+
+        return $exists ? null : [];
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return $this->isMultiple();
     }
 
     /**

@@ -108,6 +108,83 @@ describe('properties', function (): void {
     });
 });
 
+describe('validation', function (): void {
+    it('automatically validates against options array', function (): void {
+        livewire(TestComponentWithToggleButtonsValidation::class)
+            ->fillForm(['status' => 'active'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithToggleButtonsValidation::class)
+            ->fillForm(['status' => 'archived'])
+            ->call('save')
+            ->assertHasFormErrors(['status' => ['in']]);
+    });
+
+    it('automatically validates multiple options', function (): void {
+        livewire(TestComponentWithMultipleToggleButtonsValidation::class)
+            ->fillForm(['tags' => ['one', 'two']])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithMultipleToggleButtonsValidation::class)
+            ->fillForm(['tags' => ['one', 'four']])
+            ->call('save')
+            ->assertHasFormErrors(['tags.1' => ['in']]);
+    });
+
+    it('passes validation when state is blank', function (): void {
+        livewire(TestComponentWithToggleButtonsValidation::class)
+            ->fillForm(['status' => null])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+});
+
+class TestComponentWithToggleButtonsValidation extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ToggleButtons::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithMultipleToggleButtonsValidation extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ToggleButtons::make('tags')
+                    ->multiple()
+                    ->options([
+                        'one' => 'One',
+                        'two' => 'Two',
+                        'three' => 'Three',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
 class TestComponentWithToggleButtons extends Livewire
 {
     public function form(Schema $form): Schema

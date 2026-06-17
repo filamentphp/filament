@@ -45,9 +45,17 @@
         @apply bg-transparent;
     }
 
+    & .filepond--drop-label {
+        @apply h-auto! p-3!;
+    }
+
+    & .filepond--drop-label label {
+        @apply p-0!;
+    }
+
     & .filepond--drop-label,
     & .filepond--drop-label label {
-        @apply p-3! text-sm text-gray-600! opacity-100! dark:text-gray-400!;
+        @apply text-sm text-gray-600! opacity-100! dark:text-gray-400!;
     }
 
     & .filepond--label-action {

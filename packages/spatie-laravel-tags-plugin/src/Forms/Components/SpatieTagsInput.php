@@ -40,11 +40,8 @@ class SpatieTagsInput extends TagsInput
                 return;
             }
 
-            if (
-                ($type = $component->getType()) &&
-                (! $component->isAnyTagTypeAllowed())
-            ) {
-                $record->syncTagsWithType($state, $type);
+            if (! $component->isAnyTagTypeAllowed()) {
+                $record->syncTagsWithType($state, $component->getType());
                 $record->unsetRelation('tags');
 
                 return;

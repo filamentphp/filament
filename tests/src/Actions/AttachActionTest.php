@@ -8,12 +8,14 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachActionRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithModifiedAttachQueryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMultipleModifiedAttachQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPreloadedAttachRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithRecordSelectSearchColumnsRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 
 uses(TestCase::class);
 
@@ -203,6 +205,63 @@ describe('record select options', function (): void {
             });
     });
 
+    it('rejects a `recordId` excluded by `recordSelectOptionsQuery()` when submitted directly', function (): void {
+        $ticket = Ticket::factory()->create();
+        Department::factory()->create(['name' => 'Active Engineering']);
+        $outOfScopeDepartment = Department::factory()->create(['name' => 'Inactive Department']);
+
+        livewire(DepartmentsWithModifiedAttachQueryRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->callAction(TestAction::make(AttachAction::class)->table(), [
+                'recordId' => $outOfScopeDepartment->getKey(),
+            ])
+            ->assertHasActionErrors(['recordId']);
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $outOfScopeDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+    });
+
+    it('rejects a multi-attach batch containing an out-of-scope `recordId`', function (): void {
+        $ticket = Ticket::factory()->create();
+        $inScopeDepartment = Department::factory()->create(['name' => 'Active Engineering']);
+        $outOfScopeDepartment = Department::factory()->create(['name' => 'Inactive Department']);
+
+        livewire(DepartmentsWithMultipleModifiedAttachQueryRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->callAction(TestAction::make(AttachAction::class)->table(), [
+                'recordId' => [$inScopeDepartment->getKey(), $outOfScopeDepartment->getKey()],
+            ])
+            ->assertHasActionErrors();
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $outOfScopeDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+
+        assertDatabaseMissing('department_ticket', [
+            'department_id' => $inScopeDepartment->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+    });
+
+    it('applies `recordSelectOptionsQuery()` to search results', function (): void {
+        $ticket = Ticket::factory()->create();
+        Department::factory()->create(['name' => 'Active Engineering']);
+        Department::factory()->create(['name' => 'Inactive Engineering']);
+
+        livewire(DepartmentsWithModifiedAttachQueryRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->mountAction(TestAction::make(AttachAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                $results = $select->getSearchResults('Engineering');
+
+                expect($results)->toHaveCount(1);
+                expect(array_values($results))->toContain('Active Engineering');
+                expect(array_values($results))->not->toContain('Inactive Engineering');
+
+                return true;
+            });
+    });
+
     it('uses `recordSelectSearchColumns()` when configured', function (): void {
         $ticket = Ticket::factory()->create();
         Department::factory()->create(['name' => 'Engineering Dept']);
@@ -269,6 +328,39 @@ describe('option labels', function (): void {
                 expect($labels)->toHaveCount(2);
                 expect(array_values($labels))->toContain($departments[0]->name);
                 expect(array_values($labels))->toContain($departments[1]->name);
+
+                return true;
+            });
+    });
+
+    it('returns `null` from `getOptionLabel()` when `recordSelectOptionsQuery()` excludes the record', function (): void {
+        $ticket = Ticket::factory()->create();
+        $outOfScopeDepartment = Department::factory()->create(['name' => 'Inactive Department']);
+
+        livewire(DepartmentsWithModifiedAttachQueryRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->mountAction(TestAction::make(AttachAction::class)->table())
+            ->fillForm(['recordId' => $outOfScopeDepartment->getKey()])
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                expect($select->getOptionLabel(withDefault: false))->toBeNull();
+
+                return true;
+            });
+    });
+
+    it('omits out-of-scope records from `getOptionLabels()` when `recordSelectOptionsQuery()` excludes them', function (): void {
+        $ticket = Ticket::factory()->create();
+        $inScopeDepartment = Department::factory()->create(['name' => 'Active Engineering']);
+        $outOfScopeDepartment = Department::factory()->create(['name' => 'Inactive Department']);
+
+        livewire(DepartmentsWithMultipleModifiedAttachQueryRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->mountAction(TestAction::make(AttachAction::class)->table())
+            ->fillForm(['recordId' => [$inScopeDepartment->getKey(), $outOfScopeDepartment->getKey()]])
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($inScopeDepartment, $outOfScopeDepartment): bool {
+                $labels = $select->getOptionLabels(withDefaults: false);
+
+                expect($labels)->toHaveCount(1);
+                expect($labels)->toHaveKey($inScopeDepartment->getKey());
+                expect($labels)->not->toHaveKey($outOfScopeDepartment->getKey());
 
                 return true;
             });

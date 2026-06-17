@@ -685,7 +685,9 @@ trait CanBeValidated
                         return;
                     }
 
-                    $fail(__($validationMessages['distinct.must_be_selected'] ?? 'filament-forms::validation.distinct.must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+                    if ($component->isRequired()) {
+                        $fail(__($validationMessages['distinct.must_be_selected'] ?? 'filament-forms::validation.distinct.must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+                    }
 
                     return;
                 }

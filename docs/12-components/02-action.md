@@ -41,6 +41,7 @@ You must use the `InteractsWithActions` and `InteractsWithSchemas` traits, and i
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
@@ -48,6 +49,7 @@ class ManagePost extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
 
     // ...
 }
@@ -63,6 +65,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
@@ -70,6 +73,7 @@ class ManagePost extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
 
     public Post $post;
 

@@ -33,6 +33,21 @@ class IsEmptyOperator extends Operator
 
     public function applyToBaseQuery(Builder $query): Builder
     {
-        return $query->{$this->isInverse() ? 'has' : 'doesntHave'}($this->getConstraint()->getRelationshipName());
+        $relationshipName = $this->getConstraint()->getRelationshipName();
+        $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
+
+        $scopeCallback = function (Builder $query) use ($modifyRelationshipQueryUsing): Builder {
+            if ($modifyRelationshipQueryUsing) {
+                $query = $this->evaluate($modifyRelationshipQueryUsing, [
+                    'query' => $query,
+                ]) ?? $query;
+            }
+
+            return $query;
+        };
+
+        return $this->isInverse()
+            ? $query->has($relationshipName, '>=', 1, 'and', $scopeCallback)
+            : $query->doesntHave($relationshipName, 'and', $scopeCallback);
     }
 }

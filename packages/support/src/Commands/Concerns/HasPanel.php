@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
+use Filament\Exceptions\NoDefaultPanelSetException;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Support\Arr;
@@ -36,15 +37,26 @@ trait HasPanel
 
         $panels = Filament::getPanels();
 
-        /** @var Panel $panel */
-        $panel = (count($panels) > 1) ? $panels[select(
-            label: $question,
-            options: array_map(
-                fn (Panel $panel): string => $panel->getId(),
-                $panels,
-            ),
-            default: Filament::getDefaultPanel()->getId(),
-        )] : Arr::first($panels);
+        if (count($panels) > 1) {
+            try {
+                $defaultPanelId = Filament::getDefaultPanel()->getId();
+            } catch (NoDefaultPanelSetException) {
+                $defaultPanelId = null;
+            }
+
+            /** @var Panel $panel */
+            $panel = $panels[select(
+                label: $question,
+                options: array_map(
+                    fn (Panel $panel): string => $panel->getId(),
+                    $panels,
+                ),
+                default: $defaultPanelId,
+            )];
+        } else {
+            /** @var Panel $panel */
+            $panel = Arr::first($panels);
+        }
 
         $this->panel = $panel;
     }

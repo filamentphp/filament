@@ -77,7 +77,7 @@ class ImportCsv implements ShouldQueue
             $processedRows = 0;
             $successfulRows = 0;
 
-            $rows = is_array($this->rows) ? $this->rows : unserialize(base64_decode($this->rows));
+            $rows = is_array($this->rows) ? $this->rows : unserialize(base64_decode($this->rows), ['allowed_classes' => false]);
 
             DB::transaction(function () use (&$processedRows, $rows, &$successfulRows): void {
                 foreach ($rows as $row) {

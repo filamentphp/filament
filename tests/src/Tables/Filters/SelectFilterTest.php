@@ -501,6 +501,22 @@ describe('relationship filtering', function (): void {
             ->assertCanNotSeeTableRecords($postsWithAuthor2);
     });
 
+    it('returns zero rows when a tampered filter value points at a record excluded by `modifyQueryUsing`', function (): void {
+        $inScopeAuthor = User::factory()->create(['name' => 'Alpha User']);
+        $outOfScopeAuthor = User::factory()->create(['name' => 'Beta User']);
+
+        $inScopePosts = Post::factory()->count(2)->create(['author_id' => $inScopeAuthor->getKey()]);
+        $outOfScopePosts = Post::factory()->count(2)->create(['author_id' => $outOfScopeAuthor->getKey()]);
+
+        // Defense-in-depth: even if the picker validation were bypassed and an
+        // out-of-scope author ID reached the filter, `apply()` re-applies the
+        // `modifyQueryUsing` scope inside `whereHas`, so no rows leak through.
+        livewire(TestTableWithScopeFilteredRelationshipFilter::class)
+            ->filterTable('author', $outOfScopeAuthor->getKey())
+            ->assertCanNotSeeTableRecords($outOfScopePosts)
+            ->assertCanNotSeeTableRecords($inScopePosts);
+    });
+
     it('can filter records by relationship with custom option labels', function (): void {
         $author1 = User::factory()->create(['name' => 'John', 'email' => 'john@example.com']);
         $author2 = User::factory()->create(['name' => 'Jane', 'email' => 'jane@example.com']);
@@ -589,6 +605,37 @@ describe('relationship filtering', function (): void {
                             'author',
                             'name',
                             modifyQueryUsing: fn ($query) => $query->orderBy('name'),
+                        )
+                        ->preload(),
+                ]);
+        }
+
+        public function render(): View
+        {
+            return view('livewire.table');
+        }
+    }
+
+    class TestTableWithScopeFilteredRelationshipFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+    {
+        use InteractsWithActions;
+        use InteractsWithSchemas;
+        use Tables\Concerns\InteractsWithTable;
+
+        public function table(Table $table): Table
+        {
+            return $table
+                ->query(Post::query())
+                ->columns([
+                    Tables\Columns\TextColumn::make('title'),
+                    Tables\Columns\TextColumn::make('author.name'),
+                ])
+                ->filters([
+                    SelectFilter::make('author')
+                        ->relationship(
+                            'author',
+                            'name',
+                            modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%'),
                         )
                         ->preload(),
                 ]);

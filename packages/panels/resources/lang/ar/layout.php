@@ -57,7 +57,7 @@ return [
     ],
 
     'logo' => [
-        'alt' => ':name شعار',
+        'alt' => 'شعار :name',
     ],
 
     'tenant_menu' => [

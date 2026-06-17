@@ -17,6 +17,7 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
+use SensitiveParameter;
 
 class DisableAppAuthenticationAction
 {
@@ -44,7 +45,7 @@ class DisableAppAuthenticationAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.validation_attribute'))
                     ->required(fn (Get $get): bool => (! $isRecoverable) || blank($get('recoveryCode')))
                     ->rule(function () use ($appAuthentication): Closure {
-                        return function (string $attribute, mixed $value, Closure $fail) use ($appAuthentication): void {
+                        return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::auth()->id();
 
                             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
@@ -68,7 +69,7 @@ class DisableAppAuthenticationAction
                     ->password()
                     ->revealable(Filament::arePasswordsRevealable())
                     ->rule(function () use ($appAuthentication): Closure {
-                        return function (string $attribute, mixed $value, Closure $fail) use ($appAuthentication): void {
+                        return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             if (blank($value)) {
                                 return;
                             }

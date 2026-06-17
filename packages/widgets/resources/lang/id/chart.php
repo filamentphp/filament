@@ -10,4 +10,20 @@ return [
 
     ],
 
+    'filters' => [
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Terapkan',
+            ],
+
+            'reset' => [
+                'label' => 'Atur ulang',
+            ],
+
+        ],
+
+    ],
+
 ];

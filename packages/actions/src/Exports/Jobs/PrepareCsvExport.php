@@ -2,9 +2,9 @@
 
 namespace Filament\Actions\Exports\Jobs;
 
+use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Support\EloquentSerializer\EloquentSerializer;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -68,7 +68,7 @@ class PrepareCsvExport implements ShouldQueue
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv';
         $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
 
-        $query = app(EloquentSerializer::class)->unserialize($this->query);
+        $query = EloquentSerializeFacade::unserialize($this->query);
         $keyName = $query->getModel()->getKeyName();
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
 

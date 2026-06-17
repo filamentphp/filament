@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\PasswordReset;
@@ -30,12 +31,14 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Livewire\Attributes\Locked;
+use SensitiveParameter;
 
 /**
  * @property-read Schema $form
  */
 class ResetPassword extends SimplePage
 {
+    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     #[Locked]
@@ -48,7 +51,7 @@ class ResetPassword extends SimplePage
     #[Locked]
     public ?string $token = null;
 
-    public function mount(?string $email = null, ?string $token = null): void
+    public function mount(?string $email = null, #[SensitiveParameter] ?string $token = null): void
     {
         if (Filament::auth()->check()) {
             redirect()->intended(Filament::getUrl());
@@ -263,7 +266,7 @@ class ResetPassword extends SimplePage
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function getCredentialsFromFormData(array $data): array
+    protected function getCredentialsFromFormData(#[SensitiveParameter] array $data): array
     {
         return $data;
     }

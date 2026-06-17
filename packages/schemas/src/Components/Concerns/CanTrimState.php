@@ -3,6 +3,7 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
+use Illuminate\Support\Str;
 
 trait CanTrimState
 {
@@ -32,6 +33,6 @@ trait CanTrimState
             return $state;
         }
 
-        return trim($state);
+        return Str::trim($state);
     }
 }

@@ -60,7 +60,7 @@
                                     (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
                                 ])
                                 @style([
-                                    ('width: ' . ($columnWidth = $column->getWidth())) => filled($columnWidth),
+                                    ('width: ' . e($columnWidth = $column->getWidth())) => filled($columnWidth),
                                 ])
                             >
                                 @if (! $column->isHeaderLabelHidden())

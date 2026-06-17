@@ -1,5 +1,6 @@
 <?php
 
+use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
@@ -12,6 +13,10 @@ return RectorConfig::configure()
         __DIR__ . '/packages',
         __DIR__ . '/tests',
     ])
+    ->withCache(
+        cacheDirectory: __DIR__ . '/.rector.cache',
+        cacheClass: FileCacheStorage::class,
+    )
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0);

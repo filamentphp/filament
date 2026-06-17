@@ -5,6 +5,7 @@ namespace Filament\Tests\Fixtures\Pages;
 use BackedEnum;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -135,6 +136,28 @@ class SelectTest extends Page
                     ])
                     ->native(false)
                     ->extraAttributes(['data-testid' => 'clearable-with-placeholder-select']),
+
+                Select::make('native_dynamic_options_context')
+                    ->label('Native Dynamic Options Context')
+                    ->live()
+                    ->options([
+                        'first' => 'First context',
+                        'second' => 'Second context',
+                    ])
+                    ->extraInputAttributes(['data-testid' => 'native-dynamic-options-context-select']),
+
+                Select::make('native_dynamic_options_value')
+                    ->label('Native Dynamic Options Value')
+                    ->options(fn (Get $get): array => match ($get('native_dynamic_options_context')) {
+                        'first' => [
+                            'first_only' => 'First only',
+                        ],
+                        'second' => [
+                            'second_only' => 'Second only',
+                        ],
+                        default => [],
+                    })
+                    ->extraInputAttributes(['data-testid' => 'native-dynamic-options-value-select']),
             ])
             ->statePath('data');
     }

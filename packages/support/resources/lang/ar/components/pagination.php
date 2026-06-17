@@ -23,7 +23,7 @@ return [
     'actions' => [
 
         'first' => [
-            'label' => 'الأولي',
+            'label' => 'الأولى',
         ],
 
         'go_to_page' => [

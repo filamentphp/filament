@@ -9,6 +9,6 @@
         ($attributes ?? new \Illuminate\View\ComponentAttributeBag)
             ->gridColumn($columnSpan, $columnStart)
             ->class(['fi-section fi-loading-section'])
-            ->style(['height: ' . ($height ?? '8rem')])
+            ->style(['height: ' . e($height ?? '8rem')])
     }}
 ></div>

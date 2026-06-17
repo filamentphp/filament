@@ -2,6 +2,7 @@
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -64,6 +65,32 @@ it('returns the state value from `__invoke()`', function (): void {
             'target' => 'test',
             'returned' => 'test',
         ]);
+});
+
+it('clears cached default child schemas when setting a path without a component', function (): void {
+    Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            $source = TextInput::make('source'),
+            $repeater = Repeater::make('equipment_data.burners')
+                ->schema([
+                    TextInput::make('name'),
+                ])
+                ->default([
+                    'old-burner' => ['name' => 'Old burner'],
+                ]),
+        ])
+        ->fill();
+
+    $repeater->getChildSchema('old-burner');
+
+    $source->makeSetUtility()('equipment_data', [
+        'burners' => [
+            'new-burner' => ['name' => 'New burner'],
+        ],
+    ]);
+
+    expect($repeater->getChildSchema('new-burner'))->not->toBeNull();
 });
 
 it('can set `skipComponentsChildContainersWhileSearching()`', function (): void {

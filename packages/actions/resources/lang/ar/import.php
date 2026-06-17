@@ -75,7 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'خطأ',
         'system_error' => 'خطأ في النظام، يرجى الاتصال بالدعم.',
-        'column_mapping_required_for_new_record' => 'لم يتم تعيين العمود :attribut إلى عمود في الملف، ولكنه مطلوب لإنشاء سجلات جديدة.',
+        'column_mapping_required_for_new_record' => 'لم يتم تعيين العمود :attribute إلى عمود في الملف، ولكنه مطلوب لإنشاء سجلات جديدة.',
     ],
 
 ];

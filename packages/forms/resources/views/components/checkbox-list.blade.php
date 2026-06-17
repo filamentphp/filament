@@ -101,7 +101,7 @@
                                 $extraInputAttributeBag
                                     ->merge([
                                         'disabled' => $isDisabled || $isOptionDisabled($value, $label),
-                                        'value' => $value,
+                                        'value' => e($value),
                                         'wire:loading.attr' => 'disabled',
                                         $wireModelAttribute => $statePath,
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,

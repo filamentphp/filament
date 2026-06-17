@@ -23,6 +23,8 @@ class SpatieTagsInputForm extends Component implements HasActions, HasSchemas
 
     public ?string $tagType = null;
 
+    public bool $useNullType = false;
+
     public function mount(Article $record): void
     {
         $this->record = $record;
@@ -33,7 +35,9 @@ class SpatieTagsInputForm extends Component implements HasActions, HasSchemas
     {
         $component = SpatieTagsInput::make('tags');
 
-        if ($this->tagType !== null) {
+        if ($this->useNullType) {
+            $component->type(null);
+        } elseif ($this->tagType !== null) {
             $component->type($this->tagType);
         }
 

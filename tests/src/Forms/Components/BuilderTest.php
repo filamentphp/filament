@@ -520,9 +520,11 @@ describe('properties', function (): void {
     it('can set `partiallyRenderAfterActionsCalled()` and check `shouldPartiallyRenderAfterActionsCalled()`', function (): void {
         $enabled = Builder::make('content')->partiallyRenderAfterActionsCalled();
         $disabled = Builder::make('content')->partiallyRenderAfterActionsCalled(false);
+        $liveEnabled = Builder::make('content')->live()->partiallyRenderAfterActionsCalled();
 
         expect($enabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
         expect($disabled->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($liveEnabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
     });
 
     it('can set `addActionAlignment()` and get with `getAddActionAlignment()`', function (): void {
@@ -726,6 +728,13 @@ it('can set `blockPickerColumns()` with responsive breakpoints', function (): vo
     expect($builder->getBlockPickerColumns('sm'))->toBe(2);
     expect($builder->getBlockPickerColumns('lg'))->toBe(3);
     expect($builder->getBlockPickerColumns('xl'))->toBeNull();
+});
+
+it('can set `blockPickerColumns()` with a `Closure`', function (): void {
+    $builder = Builder::make('content')
+        ->blockPickerColumns(static fn (): int => 2);
+
+    expect($builder->getBlockPickerColumns('lg'))->toBe(2);
 });
 
 it('can set `addActionLabel()` with a `Closure`', function (): void {
@@ -958,10 +967,20 @@ describe('boolean properties', function (): void {
         expect($builder->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
     });
 
-    it('defaults `shouldPartiallyRenderAfterActionsCalled()` to `true`', function (): void {
-        $builder = Builder::make('content');
+    it('defaults `shouldPartiallyRenderAfterActionsCalled()` based on `live()`', function (): void {
+        [$default, $live, $conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
+            ->components([
+                Builder::make('default'),
+                Builder::make('live')->live(),
+                Builder::make('conditionallyLive')->live(condition: static fn (): bool => true),
+                Builder::make('conditionallyNotLive')->live(condition: static fn (): bool => false),
+            ])
+            ->getComponents();
 
-        expect($builder->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+        expect($default->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+        expect($live->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyLive->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyNotLive->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
     });
 });
 

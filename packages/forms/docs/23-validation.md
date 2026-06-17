@@ -674,7 +674,9 @@ TextInput::make('password')
     ->allowHtmlValidationMessages()
 ```
 
-Be aware that you will need to ensure that the HTML in all validation messages is safe to render, otherwise your application will be vulnerable to XSS attacks.
+<Aside variant="danger">
+    Enabling this opts out of escaping for validation messages on this field. Make sure every message — including those from custom rules or translations — is safe to render. Untrusted content can lead to XSS.
+</Aside>
 
 ## Disabling validation when fields are not saved
 

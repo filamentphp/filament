@@ -55,6 +55,11 @@ return [
             'title' => 'Disimpan',
         ],
 
+        'throttled' => [
+            'title' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
+            'body' => 'Silakan coba lagi dalam :seconds detik.',
+        ],
+
     ],
 
     'actions' => [

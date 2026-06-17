@@ -182,6 +182,16 @@ it('can render', function (): void {
         ->assertSuccessful();
 });
 
+it('escapes `"` in `src`', function (): void {
+    Post::factory()->create([
+        'title' => 'data:image/png,"',
+    ]);
+
+    livewire(TestTableWithImageColumn::class)
+        ->assertSuccessful()
+        ->assertSeeHtml('data:image/png,&quot;');
+});
+
 describe('rendering', function (): void {
     it('can render with `circular()`', function (): void {
         Post::factory()->create();

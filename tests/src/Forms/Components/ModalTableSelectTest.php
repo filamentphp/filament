@@ -235,6 +235,174 @@ describe('eager loading', function (): void {
     });
 });
 
+describe('scope enforcement', function (): void {
+    it('rejects out-of-scope IDs in a multi `BelongsToMany` select when `modifyQueryUsing` excludes them', function (): void {
+        $user = User::factory()->create();
+        $inScopeTeam = Team::factory()->create(['name' => 'Active Team']);
+        $outOfScopeTeam = Team::factory()->create(['name' => 'Inactive Team']);
+
+        livewire(ModalTableSelectWithFilteredBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScopeTeam->id, (string) $outOfScopeTeam->id]])
+            ->call('save')
+            ->assertHasFormErrors();
+
+        expect(DB::table('team_user')->where('user_id', $user->id)->where('team_id', $outOfScopeTeam->id)->exists())->toBeFalse();
+        expect(DB::table('team_user')->where('user_id', $user->id)->where('team_id', $inScopeTeam->id)->exists())->toBeFalse();
+    });
+
+    it('rejects out-of-scope IDs in a single `BelongsTo` select when `modifyQueryUsing` excludes them', function (): void {
+        $inScopeTeam = Team::factory()->create(['name' => 'Active Team']);
+        $outOfScopeTeam = Team::factory()->create(['name' => 'Inactive Team']);
+        $user = User::factory()->create(['team_id' => $inScopeTeam->id]);
+
+        livewire(ModalTableSelectWithFilteredBelongsToRelationship::class, ['record' => $user])
+            ->fillForm(['team_id' => (string) $outOfScopeTeam->id])
+            ->call('save')
+            ->assertHasFormErrors(['team_id']);
+
+        expect($user->fresh()->team_id)->toBe($inScopeTeam->id);
+    });
+
+    it('rejects out-of-scope IDs in a `HasMany` select when `modifyQueryUsing` excludes them', function (): void {
+        $user = User::factory()->create();
+        $inScopePost = Post::factory()->create(['author_id' => null, 'is_published' => true]);
+        $outOfScopePost = Post::factory()->create(['author_id' => null, 'is_published' => false]);
+
+        livewire(ModalTableSelectWithFilteredHasManyRelationship::class, ['record' => $user])
+            ->fillForm(['posts' => [(string) $inScopePost->id, (string) $outOfScopePost->id]])
+            ->call('save')
+            ->assertHasFormErrors();
+
+        expect($outOfScopePost->fresh()->author_id)->toBeNull();
+        expect($inScopePost->fresh()->author_id)->toBeNull();
+    });
+});
+
+class ModalTableSelectWithFilteredBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('teams')
+                    ->relationship(
+                        'teams',
+                        'name',
+                        modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Active%'),
+                    )
+                    ->tableConfiguration(TeamsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithFilteredBelongsToRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('team_id')
+                    ->relationship(
+                        'team',
+                        'name',
+                        modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Active%'),
+                    )
+                    ->tableConfiguration(TeamsTable::class),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithFilteredHasManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('posts')
+                    ->relationship(
+                        'posts',
+                        'title',
+                        modifyQueryUsing: fn ($query) => $query->where('is_published', true),
+                    )
+                    ->tableConfiguration(PostsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
 class ModalTableSelectWithBelongsToManyRelationship extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;

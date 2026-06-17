@@ -39,12 +39,14 @@ You must use the `InteractsWithSchemas` trait, and implement the `HasSchemas` in
 
 ```php
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
 class ViewProduct extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
 
     // ...
 }
@@ -83,3 +85,7 @@ Finally, render the schema in the Livewire component's view:
     
     If you are using any other [Filament components](overview#package-components) in your schema, make sure to install and integrate the corresponding package as well.
 </Aside>
+
+## Security considerations for file uploads
+
+The `InteractsWithSchemas` trait exposes Livewire's file upload RPC methods on every component that uses it — whether or not the component's schema contains an upload field. If your Livewire component is reachable to users you do not want uploading arbitrary files, add the `RestrictsFileUploadsToSchemaComponents` trait. See [Restricting Livewire file uploads to schema components](../advanced/security#restricting-livewire-file-uploads-to-schema-components) for details.

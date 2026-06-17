@@ -41,6 +41,10 @@ return [
                             'title' => 'Kami telah mengirimkan kode baru ke email Anda',
                         ],
 
+                        'throttled' => [
+                            'title' => 'Terlalu banyak percobaan pengiriman ulang. Harap tunggu sebelum meminta kode lain.',
+                        ],
+
                     ],
 
                 ],

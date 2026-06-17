@@ -30,6 +30,10 @@ return [
                                 'title' => 'Kami telah mengirimkan kode baru ke email Anda',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Terlalu banyak percobaan pengiriman ulang. Harap tunggu sebelum meminta kode lain.',
+                            ],
+
                         ],
 
                     ],
@@ -39,6 +43,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Kode yang Anda masukkan tidak valid.',
+
+                    'rate_limited' => 'Terlalu banyak percobaan. Silakan coba lagi nanti.',
 
                 ],
 

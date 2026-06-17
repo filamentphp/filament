@@ -11,6 +11,8 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
+use function Livewire\on;
+
 class SchemasServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
@@ -44,5 +46,21 @@ class SchemasServiceProvider extends PackageServiceProvider
         }
 
         Testable::mixin(new TestsSchemas);
+
+        on('call', function (object $component, string $method, array $params): void {
+            if (! in_array($method, ['_startUpload', '_finishUpload'], strict: true)) {
+                return;
+            }
+
+            if (! (
+                method_exists($component, 'shouldRestrictFileUploadsToSchemaComponents') &&
+                method_exists($component, 'isFileUploadForSchemaComponent') &&
+                $component->shouldRestrictFileUploadsToSchemaComponents()
+            )) {
+                return;
+            }
+
+            abort_unless($component->isFileUploadForSchemaComponent($params[0] ?? ''), 403);
+        });
     }
 }

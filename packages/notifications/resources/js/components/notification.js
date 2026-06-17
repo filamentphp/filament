@@ -130,20 +130,25 @@ export default (Alpine) => {
             )
         },
 
-        close() {
+        close(isImmediate = false) {
             this.isShown = false
 
-            setTimeout(
-                () =>
-                    window.dispatchEvent(
-                        new CustomEvent('notificationClosed', {
-                            detail: {
-                                id: notification.id,
-                            },
-                        }),
-                    ),
-                this.transitionDuration,
-            )
+            const dispatchClosedEvent = () =>
+                window.dispatchEvent(
+                    new CustomEvent('notificationClosed', {
+                        detail: {
+                            id: notification.id,
+                        },
+                    }),
+                )
+
+            if (isImmediate === true) {
+                dispatchClosedEvent()
+
+                return
+            }
+
+            setTimeout(dispatchClosedEvent, this.transitionDuration)
         },
 
         markAsRead() {

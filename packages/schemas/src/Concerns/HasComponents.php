@@ -240,7 +240,7 @@ trait HasComponents
 
         $skipIds = array_map('spl_object_id', $skipComponentsChildContainersWhileSearching);
         sort($skipIds);
-        $cacheKey = $skipIds ? implode('-', $skipIds) : null;
+        $cacheKey = $skipIds ? implode('-', $skipIds) : '';
 
         return $this->cachedComponentsByStatePath[$withHidden][$cacheKey][$statePath] ??= $search($this);
     }

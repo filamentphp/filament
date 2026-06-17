@@ -26,6 +26,11 @@ it('can `trim()` whitespace from `Textarea`', function (mixed $input, mixed $exp
     [null, null],
     ['', ''],
     [123, 123],
+    ["\t test content \n", 'test content'],
+    ['　test content　', 'test content'],
+    [" \t　test content　\n ", 'test content'],
+    ['   ', ''],
+    ["\t\n　", ''],
 ]);
 
 it('can set `autosize()`', function (): void {

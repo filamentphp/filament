@@ -29,7 +29,7 @@
         \Filament\Support\prepare_inherited_attributes(
             $attributes->class([
                 'fi-fo-builder-block-picker',
-                ($actionAlignment instanceof Alignment) ? ('fi-align-' . $actionAlignment->value) : $actionAlignment => $actionAlignment,
+                ($actionAlignment instanceof Alignment) ? ('fi-align-' . $actionAlignment->value) : $actionAlignment,
             ]),
         )
     "

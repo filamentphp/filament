@@ -272,3 +272,7 @@ use Filament\Schemas\Components\Section;
 Section::make()
     ->columns(1)
 ```
+
+## Restricting Livewire file uploads to schema components
+
+If you build a custom Livewire component on top of `InteractsWithSchemas`, Livewire's file upload RPC methods accept uploads to any property path by default. See [Restricting Livewire file uploads to schema components](../../advanced/security#restricting-livewire-file-uploads-to-schema-components) in the security documentation for the `RestrictsFileUploadsToSchemaComponents` trait that locks them down.
