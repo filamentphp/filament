@@ -57,7 +57,7 @@ return [
             'deleted_partial' => [
                 'title' => 'تم حذف :count من :total',
                 'missing_authorization_failure_message' => 'ليس لديك إذن لحذف :count.',
-                'missing_processing_failure_message' => ':count لم يتم حذفه.',
+                'missing_processing_failure_message' => 'تعذر حذف :count.',
             ],
 
             'deleted_none' => [
