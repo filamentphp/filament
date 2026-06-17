@@ -196,3 +196,43 @@ it('can state whether bulk actions exist in order', function (): void {
     livewire(PostsTable::class)
         ->assertTableBulkActionsExistInOrder(['exists', 'existsInOrder']);
 });
+
+it('does not receive non-selectable records when using select all', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    $unpublishedPost = Post::factory()->create(['is_published' => false]);
+
+    livewire(SelectablePostsTable::class)
+        ->set('isTrackingDeselectedTableRecords', true)
+        ->set('deselectedTableRecords', [])
+        ->callTableBulkAction('customBulk', [])
+        ->assertDispatched('customBulk-called', records: $publishedPosts->pluck('id')->toArray());
+});
+
+class SelectablePostsTable extends \Livewire\Component implements \Filament\Actions\Contracts\HasActions, \Filament\Schemas\Contracts\HasSchemas, \Filament\Tables\Contracts\HasTable
+{
+    use \Filament\Actions\Concerns\InteractsWithActions;
+    use \Filament\Schemas\Concerns\InteractsWithSchemas;
+    use \Filament\Tables\Concerns\InteractsWithTable;
+
+    public function table(\Filament\Tables\Table $table): \Filament\Tables\Table
+    {
+        return $table
+            ->query(Post::query())
+            ->checkIfRecordIsSelectableUsing(fn (Post $record): bool => (bool) $record->is_published)
+            ->columns([
+                \Filament\Tables\Columns\TextColumn::make('title'),
+            ])
+            ->bulkActions([
+                \Filament\Actions\BulkAction::make('customBulk')
+                    ->action(function (\Illuminate\Support\Collection $records) {
+                        $this->dispatch('customBulk-called', records: $records->pluck('id')->toArray());
+                    })
+            ]);
+    }
+
+    public function render(): \Illuminate\Contracts\View\View
+    {
+        return view('livewire.table');
+    }
+}
