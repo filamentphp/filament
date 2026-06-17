@@ -35,12 +35,18 @@ trait HasComponents
     protected array $cachedComponentsByStatePath = [];
 
     /**
+     * @var array<int, array<int, array<array-key, Component | Action | ActionGroup>>>
+     */
+    protected array $cachedComponentsWithHidden = [];
+
+    /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
     public function components(array | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         $this->components = $components;
         $this->cachedComponents = null;
+        $this->cachedComponentsWithHidden = [];
         $this->cachedFlatComponents = [];
         $this->cachedComponentsByStatePath = [];
 
@@ -333,6 +339,19 @@ trait HasComponents
             return $components;
         });
 
+        if ($withHidden) {
+            return $this->cachedComponentsWithHidden[(int) $withActions][(int) $withOriginalKeys] ??= $this->filterComponents($allComponents, $withActions, true, $withOriginalKeys);
+        }
+
+        return $this->filterComponents($allComponents, $withActions, false, $withOriginalKeys);
+    }
+
+    /**
+     * @param  array<array-key, Component | Action | ActionGroup>  $allComponents
+     * @return array<array-key, Component | Action | ActionGroup>
+     */
+    protected function filterComponents(array $allComponents, bool $withActions, bool $withHidden, bool $withOriginalKeys): array
+    {
         $components = array_filter(
             $allComponents,
             function (Component | Action | ActionGroup $component) use ($withActions, $withHidden): bool {
@@ -367,6 +386,7 @@ trait HasComponents
             );
 
             $this->cachedComponents = null;
+            $this->cachedComponentsWithHidden = [];
             $this->cachedFlatComponents = [];
             $this->cachedComponentsByStatePath = [];
         }
