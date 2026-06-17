@@ -25,6 +25,16 @@ class ComponentManager implements ScopedComponentManager
      */
     protected array $methodCache = [];
 
+    /**
+     * @var array<class-string, array<class-string>>
+     */
+    protected array $configureClassHierarchyCache = [];
+
+    /**
+     * @var array<class-string, class-string>
+     */
+    protected array $setUpMethodClassCache = [];
+
     final public function __construct() {}
 
     public static function resolve(): ScopedComponentManager
@@ -90,8 +100,13 @@ class ComponentManager implements ScopedComponentManager
 
     public function configure(Component $component, Closure $setUp): void
     {
-        $classesToConfigure = [...array_reverse(class_parents($component)), $component::class];
-        $setUpMethodClass = (new ReflectionMethod($component, 'setUp'))->getDeclaringClass()->getName();
+        $componentClass = $component::class;
+
+        $classesToConfigure = $this->configureClassHierarchyCache[$componentClass]
+            ??= [...array_reverse(class_parents($component)), $componentClass];
+
+        $setUpMethodClass = $this->setUpMethodClassCache[$componentClass]
+            ??= (new ReflectionMethod($component, 'setUp'))->getDeclaringClass()->getName();
 
         foreach ($classesToConfigure as $classToConfigure) {
             if ($classToConfigure === $setUpMethodClass) {
