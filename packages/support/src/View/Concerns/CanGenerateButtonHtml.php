@@ -116,6 +116,8 @@ trait CanGenerateButtonHtml
                 ),
             );
 
+        $buttonComponent = ButtonComponent::make($isOutlined);
+
         $buttonAttributes = $attributes
             ->class([
                 'fi-btn',
@@ -124,7 +126,7 @@ trait CanGenerateButtonHtml
                 ($size instanceof Size) ? "fi-size-{$size->value}" : $size,
                 is_string($labeledFromBreakpoint) ? "fi-labeled-from-{$labeledFromBreakpoint}" : null,
             ])
-            ->color(app(ButtonComponent::class, ['isOutlined' => $isOutlined]), $color);
+            ->color($buttonComponent, $color);
 
         $iconButtonAttributes = $attributes;
 
@@ -134,13 +136,17 @@ trait CanGenerateButtonHtml
                 ->merge(['wire:key' => "{$wireKey}.icon-button"], escape: false);
         }
 
+        $loadingDelay = ($icon || $hasLoadingIndicator)
+            ? config('filament.livewire_loading_delay', 'default')
+            : null;
+
         $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
         ])), size: $iconSize)->toHtml() : '';
 
         $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+            'wire:loading.delay.' . $loadingDelay => '',
             'wire:target' => $loadingIndicatorTarget,
         ])), size: $iconSize)->toHtml() : '';
 

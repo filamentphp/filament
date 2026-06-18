@@ -114,6 +114,10 @@ trait CanGenerateIconButtonHtml
             ])
             ->color(IconButtonComponent::class, $color);
 
+        $loadingDelay = ($icon || $hasLoadingIndicator)
+            ? config('filament.livewire_loading_delay', 'default')
+            : null;
+
         ob_start(); ?>
 
         <?= ($tag === 'form') ? ('<form ' . $formAttributes->toHtml() . '>' . csrf_field()) : '' ?>
@@ -136,11 +140,11 @@ trait CanGenerateIconButtonHtml
             <?= $attributes->toHtml() ?>
         >
             <?= $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
             ])), size: $iconSize)->toHtml() : '' ?>
             <?= $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                'wire:loading.delay.' . $loadingDelay => '',
                 'wire:target' => $loadingIndicatorTarget,
             ])), size: $iconSize)->toHtml() : '' ?>
 

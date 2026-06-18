@@ -94,7 +94,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         ]);
 
         $first = true;
-        $buttonComponent = app(ButtonComponent::class, ['isOutlined' => false]);
 
         ob_start(); ?>
 
@@ -119,7 +118,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                         'fi-size-md',
                         'fi-disabled' => $shouldOptionBeDisabled,
                     ])
-                    ->color($buttonComponent, $color);
+                    ->color(ButtonComponent::class, $color);
                 ?>
 
                 <div class="fi-fo-toggle-buttons-btn-ctn">
@@ -170,8 +169,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
         $containerAttributes = $this->getExtraAttributeBag()->class(['fi-fo-toggle-buttons fi-btn-group']);
 
-        $buttonComponent = app(ButtonComponent::class, ['isOutlined' => false]);
-
         ob_start(); ?>
 
         <div <?= $containerAttributes->toHtml() ?>>
@@ -196,7 +193,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                         'fi-size-md',
                         'fi-disabled' => $shouldOptionBeDisabled,
                     ])
-                    ->color($buttonComponent, $color);
+                    ->color(ButtonComponent::class, $color);
                 ?>
 
                 <input

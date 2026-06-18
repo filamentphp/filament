@@ -898,10 +898,12 @@ class Action extends ViewComponent implements Arrayable
             return "<span{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$label}</span>";
         }
 
+        $loadingDelay = config('filament.livewire_loading_delay', 'default');
+
         $iconHtml = $icon ? generate_icon_html(
             $icon,
             attributes: (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
+                'wire:loading.remove.delay.' . $loadingDelay => true,
                 'wire:target' => $handler,
             ])),
             size: IconSize::Small,
@@ -909,7 +911,7 @@ class Action extends ViewComponent implements Arrayable
 
         $loadingHtml = generate_loading_indicator_html(
             (new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                'wire:loading.delay.' . $loadingDelay => '',
                 'wire:target' => $handler,
             ])),
             size: IconSize::Small,
@@ -980,17 +982,19 @@ class Action extends ViewComponent implements Arrayable
             return "<button type=\"button\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
         }
 
+        $loadingDelay = config('filament.livewire_loading_delay', 'default');
+
         $iconHtml = $icon ? generate_icon_html(
             $icon,
             attributes: (new FilamentComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
+                'wire:loading.remove.delay.' . $loadingDelay => true,
                 'wire:target' => $handler,
             ]))->color(IconComponent::class, $color),
         )?->toHtml() : '';
 
         $loadingHtml = generate_loading_indicator_html(
             (new FilamentComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                'wire:loading.delay.' . $loadingDelay => '',
                 'wire:target' => $handler,
             ])),
         )->toHtml();
