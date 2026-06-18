@@ -16,9 +16,10 @@ export default (Alpine) => {
             this.computedStyle = window.getComputedStyle(this.$el)
 
             this.transitionDuration =
-                parseFloat(this.computedStyle.transitionDuration) * 1000
+                parseFloat(this.computedStyle.transitionDuration) * 1000 || 0
 
-            this.transitionEasing = this.computedStyle.transitionTimingFunction
+            this.transitionEasing =
+                this.computedStyle.transitionTimingFunction || 'ease'
 
             this.configureTransitions()
             this.configureAnimations()
