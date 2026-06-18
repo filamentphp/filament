@@ -324,6 +324,16 @@ trait HasBulkActions
                 $this->filterTableQuery($query);
             }
 
+            if ($table->checksIfRecordIsSelectable()) {
+                $selectableKeys = [];
+                (clone $query)->lazy(chunkSize: 1000)->each(function (Model $record) use (&$selectableKeys, $table) {
+                    if ($table->isRecordSelectable($record)) {
+                        $selectableKeys[] = $record->getKey();
+                    }
+                });
+                $query = $table->getQuery()->whereKey($selectableKeys);
+            }
+
             return $query;
         }
 
@@ -356,6 +366,16 @@ trait HasBulkActions
 
         if (! $chunkSize) {
             $this->applySortingToTableQuery($query);
+        }
+
+        if ($table->checksIfRecordIsSelectable()) {
+            $selectableKeys = [];
+            (clone $query)->lazy(chunkSize: 1000)->each(function (Model $record) use (&$selectableKeys, $table) {
+                if ($table->isRecordSelectable($record)) {
+                    $selectableKeys[] = $record->getKey();
+                }
+            });
+            $query->whereKey($selectableKeys);
         }
 
         return $query;

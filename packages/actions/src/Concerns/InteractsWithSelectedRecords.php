@@ -53,9 +53,7 @@ trait InteractsWithSelectedRecords
         $records = $this->getLivewire()->getSelectedTableRecords($this->shouldFetchSelectedRecords(), $this->getSelectedRecordsChunkSize());
 
         $this->totalSelectedRecordsCount = ($records instanceof LazyCollection)
-            ? ((method_exists($this->getLivewire(), 'getTable') && $this->getLivewire()->getTable()->checksIfRecordIsSelectable())
-                ? $records->count()
-                : $this->getLivewire()->getSelectedTableRecordsQuery(shouldFetchSelectedRecords: false)->count())
+            ? $this->getLivewire()->getSelectedTableRecordsQuery(shouldFetchSelectedRecords: false)->count()
             : $records->count();
         $this->successfulSelectedRecordsCount = $this->totalSelectedRecordsCount;
 

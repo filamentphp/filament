@@ -209,6 +209,26 @@ it('does not receive non-selectable records when using select all', function ():
         ->assertDispatched('customBulk-called', records: $publishedPosts->pluck('id')->toArray());
 });
 
+it('does not delete non-selectable records when using select all with a query-based action', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    $unpublishedPost = Post::factory()->create(['is_published' => false]);
+
+    livewire(SelectablePostsTable::class)
+        ->set('isTrackingDeselectedTableRecords', true)
+        ->set('deselectedTableRecords', [])
+        ->callTableBulkAction('queryBulkDelete', []);
+
+    foreach ($publishedPosts as $post) {
+        assertSoftDeleted($post);
+    }
+
+    $this->assertDatabaseHas('posts', [
+        'id' => $unpublishedPost->id,
+        'deleted_at' => null,
+    ]);
+});
+
 class SelectablePostsTable extends \Livewire\Component implements \Filament\Actions\Contracts\HasActions, \Filament\Schemas\Contracts\HasSchemas, \Filament\Tables\Contracts\HasTable
 {
     use \Filament\Actions\Concerns\InteractsWithActions;
@@ -227,7 +247,9 @@ class SelectablePostsTable extends \Livewire\Component implements \Filament\Acti
                 \Filament\Actions\BulkAction::make('customBulk')
                     ->action(function (\Illuminate\Support\Collection $records) {
                         $this->dispatch('customBulk-called', records: $records->pluck('id')->toArray());
-                    })
+                    }),
+                \Filament\Actions\DeleteBulkAction::make('queryBulkDelete')
+                    ->fetchSelectedRecords(false),
             ]);
     }
 
@@ -236,3 +258,5 @@ class SelectablePostsTable extends \Livewire\Component implements \Filament\Acti
         return view('livewire.table');
     }
 }
+
+
