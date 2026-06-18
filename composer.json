@@ -8,6 +8,7 @@
         "ext-intl": "*"
     },
     "require-dev": {
+        "anourvalar/eloquent-serialize": "^1.3.6",
         "chillerlan/php-qrcode": "^5.0",
         "danharrin/date-format-converter": "^0.3.1",
         "filament/support": "*",

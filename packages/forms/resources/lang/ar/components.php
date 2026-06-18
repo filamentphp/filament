@@ -610,7 +610,7 @@ return [
             'align_justify' => 'محاذاة للضبط',
             'align_start' => 'محاذاة للبداية',
             'attach_files' => 'إرفاق ملفات',
-            'blockquote' => 'إقتباس',
+            'blockquote' => 'اقتباس',
             'bold' => 'عريض',
             'bullet_list' => 'قائمة نقطية',
             'clear_formatting' => 'مسح التنسيق',
@@ -652,7 +652,7 @@ return [
             'table_toggle_header_row' => 'إظهار/إخفاء الترويسة',
             'table_toggle_header_cell' => 'إظهار/إخفاء الخلية',
             'text_color' => 'لون النص',
-            'underline' => 'خط اسفل النص',
+            'underline' => 'خط أسفل النص',
             'undo' => 'تراجع',
         ],
 
