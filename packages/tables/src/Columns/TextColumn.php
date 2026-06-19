@@ -324,7 +324,7 @@ class TextColumn extends Column implements HasEmbeddedView
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
 
-        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab): string {
+        $formatState = function (mixed $stateItem, mixed $formattedState = null) use ($shouldOpenUrlInNewTab): string {
             $url = $this->getUrl($stateItem);
 
             $item = '';
@@ -333,7 +333,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 $item .= '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>';
             }
 
-            $item .= e($this->formatState($stateItem));
+            $item .= e($formattedState ?? $this->formatState($stateItem));
 
             if (filled($url)) {
                 $item .= '</a>';
@@ -361,6 +361,8 @@ class TextColumn extends Column implements HasEmbeddedView
             }
         }
 
+        $isCollapsedList = false;
+
         if (($stateCount > 1) && (! $isListWithLineBreaks) && (! $isBadge)) {
             $state = [
                 implode(
@@ -373,7 +375,8 @@ class TextColumn extends Column implements HasEmbeddedView
             ];
 
             $stateCount = 1;
-            $formatState = fn (mixed $stateItem): string => $stateItem;
+            $formatState = fn (mixed $stateItem, mixed $formattedState = null): string => $stateItem;
+            $isCollapsedList = true;
         }
 
         $attributes = $attributes
@@ -386,7 +389,7 @@ class TextColumn extends Column implements HasEmbeddedView
         $iconPosition = $this->getIconPosition();
         $isBulleted = $this->isBulleted();
 
-        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $lineClamp): array {
+        $getStateItem = function (mixed $stateItem, mixed $formattedState = null) use ($iconPosition, $isBadge, $lineClamp): array {
             $color = $this->getColor($stateItem) ?? ($isBadge ? 'primary' : null);
             $iconColor = $this->getIconColor($stateItem);
 
@@ -402,7 +405,7 @@ class TextColumn extends Column implements HasEmbeddedView
             $isCopyable = $this->isCopyable($stateItem);
 
             if ($isCopyable) {
-                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $this->formatState($stateItem));
+                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $formattedState ?? $this->formatState($stateItem));
                 $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
                 $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
             }
@@ -476,12 +479,13 @@ class TextColumn extends Column implements HasEmbeddedView
             (! $lineClamp)
         ) {
             $stateItem = Arr::first($state);
+            $stateItemFormattedState = $isCollapsedList ? null : $this->formatState($stateItem);
             [
                 'attributes' => $stateItemAttributes,
                 'contentAttributes' => $stateItemContentAttributes,
                 'iconAfterHtml' => $stateItemIconAfterHtml,
                 'iconBeforeHtml' => $stateItemIconBeforeHtml,
-            ] = $getStateItem($stateItem);
+            ] = $getStateItem($stateItem, $stateItemFormattedState);
 
             ob_start(); ?>
 
@@ -493,7 +497,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php } ?>
 
                 <?= $stateItemIconBeforeHtml ?>
-                <?= $formatState($stateItem) ?>
+                <?= $formatState($stateItem, $stateItemFormattedState) ?>
                 <?= $stateItemIconAfterHtml ?>
 
                 <?php if ($stateItemContentAttributes) { ?>
@@ -534,12 +538,13 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php if (($stateCount === 1) && (! $isBulleted)) { ?>
                     <?php
                         $stateItem = Arr::first($state);
+                    $stateItemFormattedState = $isCollapsedList ? null : $this->formatState($stateItem);
                     [
                         'attributes' => $stateItemAttributes,
                         'contentAttributes' => $stateItemContentAttributes,
                         'iconAfterHtml' => $stateItemIconAfterHtml,
                         'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                    ] = $getStateItem($stateItem);
+                    ] = $getStateItem($stateItem, $stateItemFormattedState);
                     ?>
 
                     <p <?= $stateItemAttributes->toHtml() ?>>
@@ -548,7 +553,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         <?php } ?>
 
                         <?= $stateItemIconBeforeHtml ?>
-                        <?= $formatState($stateItem) ?>
+                        <?= $formatState($stateItem, $stateItemFormattedState) ?>
                         <?= $stateItemIconAfterHtml ?>
 
                         <?php if ($stateItemContentAttributes) { ?>
@@ -560,12 +565,13 @@ class TextColumn extends Column implements HasEmbeddedView
                         <?php $stateIteration = 1; ?>
 
                         <?php foreach ($state as $stateItem) { ?>
+                            <?php $stateItemFormattedState = $isCollapsedList ? null : $this->formatState($stateItem); ?>
                             <?php [
                                 'attributes' => $stateItemAttributes,
                                 'contentAttributes' => $stateItemContentAttributes,
                                 'iconAfterHtml' => $stateItemIconAfterHtml,
                                 'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                            ] = $getStateItem($stateItem); ?>
+                            ] = $getStateItem($stateItem, $stateItemFormattedState); ?>
 
                             <li
                                 <?php if ($stateIteration > $listLimit) { ?>
@@ -580,7 +586,7 @@ class TextColumn extends Column implements HasEmbeddedView
                                 <?php } ?>
 
                                 <?= $stateItemIconBeforeHtml ?>
-                                <?= $formatState($stateItem) ?>
+                                <?= $formatState($stateItem, $stateItemFormattedState) ?>
                                 <?= $stateItemIconAfterHtml ?>
 
                                 <?php if ($stateItemContentAttributes) { ?>
@@ -634,12 +640,13 @@ class TextColumn extends Column implements HasEmbeddedView
 
         <ul <?= $attributes->toHtml() ?>>
             <?php foreach ($state as $stateItem) { ?>
+                <?php $stateItemFormattedState = $isCollapsedList ? null : $this->formatState($stateItem); ?>
                 <?php [
                     'attributes' => $stateItemAttributes,
                     'contentAttributes' => $stateItemContentAttributes,
                     'iconAfterHtml' => $stateItemIconAfterHtml,
                     'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                ] = $getStateItem($stateItem); ?>
+                ] = $getStateItem($stateItem, $stateItemFormattedState); ?>
 
                 <li <?= $stateItemAttributes->toHtml() ?>>
                     <?php if ($stateItemContentAttributes) { ?>
@@ -647,7 +654,7 @@ class TextColumn extends Column implements HasEmbeddedView
                     <?php } ?>
 
                     <?= $stateItemIconBeforeHtml ?>
-                    <?= $formatState($stateItem) ?>
+                    <?= $formatState($stateItem, $stateItemFormattedState) ?>
                     <?= $stateItemIconAfterHtml ?>
 
                     <?php if ($stateItemContentAttributes) { ?>
