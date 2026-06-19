@@ -80,9 +80,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     protected array $plugins = [];
 
     /**
+     * @var array<RichContentPlugin> | null
+     */
+    protected ?array $cachedPlugins = null;
+
+    /**
      * @var array<RichEditorTool | Closure>
      */
     protected array $tools = [];
+
+    /**
+     * @var array<string, RichEditorTool> | null
+     */
+    protected ?array $cachedTools = null;
 
     /**
      * @var array<string> | Closure | null
@@ -638,6 +648,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             ...is_array($extensions) ? $extensions : [$extensions],
         ];
 
+        $this->cachedPlugins = null;
+        $this->cachedTools = null;
+
         return $this;
     }
 
@@ -650,6 +663,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             ...$this->tools,
             ...is_array($tools) ? $tools : [$tools],
         ];
+
+        $this->cachedTools = null;
 
         return $this;
     }
@@ -739,7 +754,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      */
     public function getPlugins(): array
     {
-        return [
+        return $this->cachedPlugins ??= [
             ...$this->getContentAttribute()?->getPlugins() ?? [],
             ...array_reduce(
                 $this->plugins,
@@ -778,7 +793,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      */
     public function getTools(): array
     {
-        return array_reduce(
+        return $this->cachedTools ??= array_reduce(
             [
                 ...array_reduce(
                     $this->tools,
