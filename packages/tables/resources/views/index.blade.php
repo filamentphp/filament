@@ -1013,7 +1013,7 @@
                                         $recordUrl = $getRecordUrl($record);
                                         $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                         $recordGroupKey = $group?->getStringKey($record);
-                                        $recordGroupTitle = $group?->getTitle($record);
+                                        $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
                                         $isRecordGroupCollapsible = $group?->isCollapsible();
 
                                         $collapsibleColumnsLayout?->record($record)->recordKey($recordKey);
@@ -1917,7 +1917,7 @@
                                                 $recordUrl = $getRecordUrl($record);
                                                 $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                                 $recordGroupKey = $group?->getStringKey($record);
-                                                $recordGroupTitle = $group?->getTitle($record);
+                                                $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
 
                                                 $recordActions = array_reduce(
                                                     $defaultRecordActions,
