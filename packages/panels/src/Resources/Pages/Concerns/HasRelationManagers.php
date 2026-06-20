@@ -37,19 +37,19 @@ trait HasRelationManagers
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
-    public function getRelationManagers(): array
+    public function getCachedRelationManagers(): array
     {
         if (! $this->hasRecord()) {
             return [];
         }
 
-        return $this->cachedRelationManagers ??= $this->computeRelationManagers();
+        return $this->cachedRelationManagers ??= $this->getRelationManagers();
     }
 
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
-    protected function computeRelationManagers(): array
+    public function getRelationManagers(): array
     {
         $managers = $this->getAllRelationManagers();
 
@@ -80,7 +80,7 @@ trait HasRelationManagers
 
     public function renderingHasRelationManagers(): void
     {
-        $managers = $this->getRelationManagers();
+        $managers = $this->getCachedRelationManagers();
 
         if (array_key_exists($this->activeRelationManager ?? '', $managers)) {
             return;
@@ -121,7 +121,7 @@ trait HasRelationManagers
 
     public function getRelationManagersContentComponent(): Component
     {
-        $managers = $this->getRelationManagers();
+        $managers = $this->getCachedRelationManagers();
         $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
         $ownerRecord = $this->getRecord();
 
