@@ -22,6 +22,11 @@ trait HasRelationManagers
     public ?string $activeRelationManager = null;
 
     /**
+     * @var array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration> | null
+     */
+    protected ?array $cachedRelationManagers = null;
+
+    /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
     protected function getAllRelationManagers(): array
@@ -38,6 +43,14 @@ trait HasRelationManagers
             return [];
         }
 
+        return $this->cachedRelationManagers ??= $this->computeRelationManagers();
+    }
+
+    /**
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
+     */
+    protected function computeRelationManagers(): array
+    {
         $managers = $this->getAllRelationManagers();
 
         return array_filter(
