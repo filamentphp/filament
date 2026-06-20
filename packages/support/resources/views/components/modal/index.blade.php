@@ -43,7 +43,7 @@
     $hasDescription = filled($description);
     $hasFooter = (! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions)));
     $hasHeading = filled($heading);
-    $hasIcon = filled($icon);
+    $hasIcon = filled($icon) || filled($iconAlias);
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;

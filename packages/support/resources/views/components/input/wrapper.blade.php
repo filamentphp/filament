@@ -31,8 +31,8 @@
         fn (\Filament\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
-    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
-    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
+    $hasPrefix = count($prefixActions) || $prefixIcon || $prefixIconAlias || filled($prefix);
+    $hasSuffix = count($suffixActions) || $suffixIcon || $suffixIconAlias || filled($suffix);
 
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
@@ -47,8 +47,8 @@
     }
 
     $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
-    $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
-    $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
+    $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || $prefixIconAlias || filled($prefix));
+    $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || $suffixIconAlias || filled($suffix));
 @endphp
 
 <div
