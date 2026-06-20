@@ -287,11 +287,14 @@ trait HasComponents
                     $carry[$componentKey] = $component;
                 }
 
+                $childComponents = [];
+
                 foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                    $carry = [
-                        ...$carry,
-                        ...$childSchema->getFlatComponents($withActions, $withHidden, $withAbsoluteKeys, $containerKey),
-                    ];
+                    $childComponents[] = $childSchema->getFlatComponents($withActions, $withHidden, $withAbsoluteKeys, $containerKey);
+                }
+
+                if ($childComponents !== []) {
+                    $carry = array_merge($carry, ...$childComponents);
                 }
 
                 return $carry;
