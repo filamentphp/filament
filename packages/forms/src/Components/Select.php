@@ -563,9 +563,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     #[Renderless]
     public function getOptionLabel(bool $withDefault = true): ?string
     {
+        return $this->resolveOptionLabel($withDefault);
+    }
+
+    /**
+     * @param  array<string | array<string>> | null  $options
+     */
+    protected function resolveOptionLabel(bool $withDefault = true, ?array $options = null): ?string
+    {
         if (! $this->getOptionLabelUsing) {
             $state = $this->getState();
-            $options = $this->getOptions();
+            $options ??= $this->getOptions();
 
             if ($state instanceof BackedEnum) {
                 $state = $state->value;
@@ -610,13 +618,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
+     * @param  array<string | array<string>> | null  $options
      * @return array<string>
      */
-    public function getOptionLabels(bool $withDefaults = true): array
+    public function getOptionLabels(bool $withDefaults = true, ?array $options = null): array
     {
         if (! $this->getOptionLabelsUsing) {
             $state = $this->getState();
-            $options = $this->getOptions();
+            $options ??= $this->getOptions();
 
             $labels = [];
 
@@ -1921,6 +1930,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         <?php } ?>
                     </select>
                 <?php } else { ?>
+                    <?php $options = $this->getOptions(); ?>
+
                     <div
                         class="fi-hidden"
                         x-data="{
@@ -1966,8 +1977,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
                                     hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,
-                                    initialOptionLabel: <?= Js::from((blank($state) || $isMultiple) ? null : $this->getOptionLabel()) ?>,
-                                    initialOptionLabels: <?= Js::from((filled($state) && $isMultiple) ? $this->getOptionLabelsForJs() : []) ?>,
+                                    initialOptionLabel: <?= Js::from((blank($state) || $isMultiple) ? null : $this->resolveOptionLabel(options: $options)) ?>,
+                                    initialOptionLabels: <?= Js::from((filled($state) && $isMultiple) ? $this->transformOptionsForJs($this->getOptionLabels(options: $options)) : []) ?>,
                                     initialState: <?= Js::from($state) ?>,
                                     isAutofocused: <?= Js::from($isAutofocused) ?>,
                                     isDisabled: <?= Js::from($isDisabled) ?>,
@@ -1981,7 +1992,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     maxItemsMessage: <?= Js::from($this->getMaxItemsMessage()) ?>,
                                     noOptionsMessage: <?= Js::from($this->getNoOptionsMessage()) ?>,
                                     noSearchResultsMessage: <?= Js::from($this->getNoSearchResultsMessage()) ?>,
-                                    options: <?= Js::from($this->getOptionsForJs()) ?>,
+                                    options: <?= Js::from($this->transformOptionsForJs($options)) ?>,
                                     optionsLimit: <?= Js::from($this->getOptionsLimit()) ?>,
                                     placeholder: <?= Js::from($this->getPlaceholder()) ?>,
                                     position: <?= Js::from($this->getPosition()) ?>,
