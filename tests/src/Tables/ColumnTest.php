@@ -5,6 +5,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\CustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithReservedJsPropertyColumnSearch;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithTableSearchableColumns;
 use Filament\Tests\Fixtures\Livewire\UsersTable;
 use Filament\Tests\Fixtures\Livewire\UsersWithTeamTable;
@@ -352,6 +353,19 @@ describe('searching', function (): void {
             ])
             ->assertCanSeeTableRecords($posts->where('author.email', $authorEmail))
             ->assertCanNotSeeTableRecords($posts->where('author.email', '!=', $authorEmail));
+    });
+
+    it('pre-populates `tableColumnSearches` for individually searchable columns on mount so it serializes as a JSON object', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->assertSet('tableColumnSearches', ['length' => '']);
+    });
+
+    it('does not remove the key from `tableColumnSearches` when clearing an individual column search value', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->set('tableColumnSearches.length', 'foo')
+            ->assertSet('tableColumnSearches', ['length' => 'foo'])
+            ->set('tableColumnSearches.length', '')
+            ->assertSet('tableColumnSearches', ['length' => '']);
     });
 });
 

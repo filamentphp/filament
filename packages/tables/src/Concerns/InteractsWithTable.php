@@ -130,6 +130,13 @@ trait InteractsWithTable
             $this->tableColumnSearches,
         );
 
+        // Pre-populate so the array is always associative (serializes to `{}` not `[]`), preventing Alpine reading a `length` key as the built-in array `.length`.
+        foreach ($this->getTable()->getColumns() as $column) {
+            if ($column->isIndividuallySearchable() && ! array_key_exists($column->getName(), $this->tableColumnSearches)) {
+                $this->tableColumnSearches[$column->getName()] = '';
+            }
+        }
+
         if ($shouldPersistColumnSearchesInSession) {
             session()->put(
                 $columnSearchesSessionKey,

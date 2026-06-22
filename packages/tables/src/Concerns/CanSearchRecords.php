@@ -43,7 +43,8 @@ trait CanSearchRecords
     public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
         if (blank($value) && filled($key)) {
-            Arr::forget($this->tableColumnSearches, $key);
+            // Keep the key present as '' so the array stays associative and serializes to a JSON object, not [].
+            Arr::set($this->tableColumnSearches, $key, '');
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
