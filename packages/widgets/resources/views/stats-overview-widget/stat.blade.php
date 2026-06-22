@@ -10,7 +10,6 @@
     $descriptionIconPosition = $getDescriptionIconPosition();
     $url = $getUrl();
     $tag = $url ? 'a' : 'div';
-    $chartDataChecksum = $generateChartDataChecksum();
 @endphp
 
 <{!! $tag !!}
@@ -57,13 +56,14 @@
     </div>
 
     @if ($chart = $getChart())
-        {{-- An empty function to initialize the Alpine component with until it's loaded with `x-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
+        {{-- An empty function to initialize the Alpine component with until it's loaded with `x-load`. --}}
         <div x-data="{ statsOverviewStatChart() {} }">
             <div
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
+                wire:ignore
                 x-data="statsOverviewStatChart({
-                            dataChecksum: @js($chartDataChecksum),
+                            key: @js($getKey(false)),
                             labels: @js(array_keys($chart)),
                             values: @js(array_values($chart)),
                         })"
