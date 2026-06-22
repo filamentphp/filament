@@ -1,4 +1,21 @@
-import Chart from 'chart.js/auto'
+import {
+    CategoryScale,
+    Chart,
+    Filler,
+    LineController,
+    LineElement,
+    LinearScale,
+    PointElement,
+} from 'chart.js'
+
+Chart.register(
+    CategoryScale,
+    Filler,
+    LineController,
+    LineElement,
+    LinearScale,
+    PointElement,
+)
 
 export default function statsOverviewStatChart({ key, labels, values }) {
     return {
