@@ -1323,9 +1323,9 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         $this->cachedItems = null;
     }
 
-    public function clearCachedDefaultChildSchemas(): void
+    public function clearCachedChildSchemas(): void
     {
-        parent::clearCachedDefaultChildSchemas();
+        parent::clearCachedChildSchemas();
 
         $this->cachedItems = null;
     }

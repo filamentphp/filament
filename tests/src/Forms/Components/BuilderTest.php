@@ -1624,8 +1624,8 @@ describe('`getItems()` memoization', function (): void {
             ['type' => 'one', 'data' => ['foo' => 'C']],
         ]);
 
-        // Mirrors the state-update lifecycle's `clearCachedDefaultChildSchemas()` call.
-        $builder->clearCachedDefaultChildSchemas();
+        // Mirrors the state-update lifecycle's `clearCachedChildSchemas()` call.
+        $builder->clearCachedChildSchemas();
 
         expect($builder->getItems())
             ->toHaveCount(3)

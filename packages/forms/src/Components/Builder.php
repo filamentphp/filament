@@ -958,9 +958,9 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
         return $this->getItems();
     }
 
-    public function clearCachedDefaultChildSchemas(): void
+    public function clearCachedChildSchemas(): void
     {
-        parent::clearCachedDefaultChildSchemas();
+        parent::clearCachedChildSchemas();
 
         $this->cachedItems = null;
     }

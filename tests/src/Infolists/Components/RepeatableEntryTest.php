@@ -872,8 +872,8 @@ describe('`getItems()` memoization', function (): void {
             ],
         ]);
 
-        // Mirrors the state-update lifecycle's `clearCachedDefaultChildSchemas()` call.
-        $entry->clearCachedDefaultChildSchemas();
+        // Mirrors the state-update lifecycle's `clearCachedChildSchemas()` call.
+        $entry->clearCachedChildSchemas();
 
         expect($entry->getItems())
             ->toHaveCount(3)

@@ -322,9 +322,9 @@ describe('`getItems()` memoization', function (): void {
             ['name' => 'Third'],
         ]);
 
-        // `clearCachedDefaultChildSchemas()` is what the state-update lifecycle invokes via
+        // `clearCachedChildSchemas()` is what the state-update lifecycle invokes via
         // `callAfterStateUpdatedHooks()`; the memoized items must be dropped alongside it.
-        $repeater->clearCachedDefaultChildSchemas();
+        $repeater->clearCachedChildSchemas();
 
         expect($repeater->getItems())
             ->toHaveCount(3)

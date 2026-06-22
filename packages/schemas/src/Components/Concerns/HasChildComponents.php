@@ -22,6 +22,11 @@ trait HasChildComponents
     protected ?array $cachedDefaultChildSchemas = null;
 
     /**
+     * @var array<string, Schema>
+     */
+    protected array $cachedChildSchemas = [];
+
+    /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $components
      */
     public function components(array | Closure $components): static
@@ -37,6 +42,7 @@ trait HasChildComponents
     public function childComponents(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components, string $key = 'default'): static
     {
         $this->childComponents[$key] = $components;
+        unset($this->cachedChildSchemas[$key]);
 
         return $this;
     }
@@ -82,6 +88,14 @@ trait HasChildComponents
 
         $key ??= 'default';
 
+        $isCacheable = ($key !== 'default')
+            && filled($this->childComponents[$key] ?? null)
+            && ! (($this->childComponents[$key] ?? null) instanceof Closure);
+
+        if ($isCacheable && isset($this->cachedChildSchemas[$key])) {
+            return $this->cachedChildSchemas[$key];
+        }
+
         $components = ($key === 'default')
             ? $this->getDefaultChildComponents()
             : $this->evaluate($this->childComponents[$key] ?? []) ?? [];
@@ -96,19 +110,25 @@ trait HasChildComponents
         }
 
         if ($components instanceof Schema) {
-            return $this->configureChildSchema(
+            $childSchema = $this->configureChildSchema(
                 $components
                     ->livewire($this->getLivewire())
                     ->parentComponent($this),
                 $key,
             );
+        } else {
+            $childSchema = $this->configureChildSchema(
+                $this->makeChildSchema($key)
+                    ->components($components),
+                $key,
+            );
         }
 
-        return $this->configureChildSchema(
-            $this->makeChildSchema($key)
-                ->components($components),
-            $key,
-        );
+        if ($isCacheable) {
+            $this->cachedChildSchemas[$key] = $childSchema;
+        }
+
+        return $childSchema;
     }
 
     /**
@@ -179,13 +199,24 @@ trait HasChildComponents
         return ['default' => $this->getChildSchema()];
     }
 
-    public function clearCachedDefaultChildSchemas(): void
+    public function clearCachedChildSchemas(): void
     {
         $this->cachedDefaultChildSchemas = null;
+        $this->cachedChildSchemas = [];
+    }
+
+    /**
+     * @deprecated Use `clearCachedChildSchemas()` instead.
+     */
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        $this->clearCachedChildSchemas();
     }
 
     protected function cloneChildComponents(): static
     {
+        $this->cachedChildSchemas = [];
+
         foreach ($this->childComponents as $key => $childComponents) {
             if (is_array($childComponents)) {
                 $this->childComponents[$key] = array_map(

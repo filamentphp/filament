@@ -397,14 +397,22 @@ trait HasComponents
         return $this;
     }
 
-    public function clearCachedDefaultChildSchemas(): void
+    public function clearCachedChildSchemas(): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            $component->clearCachedDefaultChildSchemas();
+            $component->clearCachedChildSchemas();
 
             foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                $childSchema->clearCachedDefaultChildSchemas();
+                $childSchema->clearCachedChildSchemas();
             }
         }
+    }
+
+    /**
+     * @deprecated Use `clearCachedChildSchemas()` instead.
+     */
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        $this->clearCachedChildSchemas();
     }
 }
