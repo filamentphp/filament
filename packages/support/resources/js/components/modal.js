@@ -1,9 +1,18 @@
+// Keep scroll positions across modal remounts caused by Livewire morphing.
+const modalScrollPositions = new Map()
+
 export default ({ id }) => ({
     isOpen: false,
 
     isWindowVisible: false,
 
     livewire: null,
+
+    scrollContainer: null,
+
+    scrollListener: null,
+
+    isRestoringScrollPosition: false,
 
     textSelectionClosePreventionMouseDownHandler: null,
 
@@ -15,10 +24,117 @@ export default ({ id }) => ({
         this.$nextTick(() => {
             this.isWindowVisible = this.isOpen
 
+            this.refreshScrollContainer()
             this.setUpTextSelectionClosePrevention()
 
-            this.$watch('isOpen', () => (this.isWindowVisible = this.isOpen))
+            this.$watch('isOpen', () => {
+                this.isWindowVisible = this.isOpen
+
+                if (this.isOpen) {
+                    this.refreshScrollContainer()
+                    this.isRestoringScrollPosition = true
+                    this.restoreScrollPositionAfterOpen()
+
+                    return
+                }
+
+                this.storeScrollPosition(true)
+            })
+
+            if (this.isOpen) {
+                this.isRestoringScrollPosition = true
+                this.restoreScrollPositionAfterOpen()
+            }
         })
+    },
+
+    refreshScrollContainer() {
+        const scrollContainer = this.getScrollContainer()
+
+        if (scrollContainer === this.scrollContainer) {
+            return
+        }
+
+        if (this.scrollContainer && this.scrollListener) {
+            this.scrollContainer.removeEventListener(
+                'scroll',
+                this.scrollListener,
+            )
+        }
+
+        this.scrollContainer = scrollContainer
+        this.setUpScrollPositionPersistence()
+    },
+
+    restoreScrollPositionAfterOpen() {
+        this.$nextTick(() => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    this.restoreScrollPosition()
+                    this.isRestoringScrollPosition = false
+                })
+            })
+        })
+    },
+
+    getScrollContainer() {
+        const modalWindow = this.$el.querySelector('.fi-modal-window')
+
+        if (
+            this.$el.classList.contains('fi-modal-slide-over') ||
+            this.$el.classList.contains('fi-modal-has-sticky-header') ||
+            this.$el.classList.contains('fi-modal-has-sticky-footer')
+        ) {
+            return modalWindow
+        }
+
+        return this.$el.querySelector('.fi-modal-window-ctn') ?? modalWindow
+    },
+
+    setUpScrollPositionPersistence() {
+        if (!id || !this.scrollContainer) {
+            return
+        }
+
+        this.scrollListener = () => this.storeScrollPosition()
+
+        this.scrollContainer.addEventListener('scroll', this.scrollListener, {
+            passive: true,
+        })
+    },
+
+    storeScrollPosition(force = false) {
+        if (!force && this.isRestoringScrollPosition) {
+            return
+        }
+
+        this.refreshScrollContainer()
+
+        if (!id || !this.scrollContainer) {
+            return
+        }
+
+        modalScrollPositions.set(id, {
+            left: this.scrollContainer.scrollLeft,
+            top: this.scrollContainer.scrollTop,
+        })
+    },
+
+    restoreScrollPosition() {
+        this.refreshScrollContainer()
+
+        if (!id || !this.scrollContainer) {
+            return
+        }
+
+        const scrollPosition = modalScrollPositions.get(id)
+
+        if (!scrollPosition) {
+            return
+        }
+
+        this.scrollContainer.scrollLeft = scrollPosition.left
+        this.scrollContainer.scrollTop = scrollPosition.top
     },
 
     setUpTextSelectionClosePrevention() {
@@ -110,6 +226,9 @@ export default ({ id }) => ({
     },
 
     closeQuietly() {
+        this.refreshScrollContainer()
+        this.storeScrollPosition(true)
+        this.isRestoringScrollPosition = false
         this.isOpen = false
     },
 
@@ -128,6 +247,18 @@ export default ({ id }) => ({
     },
 
     destroy() {
+        this.refreshScrollContainer()
+        this.storeScrollPosition(true)
+        this.isRestoringScrollPosition = false
+
+        if (this.scrollContainer && this.scrollListener) {
+            this.scrollContainer.removeEventListener(
+                'scroll',
+                this.scrollListener,
+            )
+            this.scrollListener = null
+        }
+
         const capture = true
 
         if (this.textSelectionClosePreventionMouseDownHandler) {
