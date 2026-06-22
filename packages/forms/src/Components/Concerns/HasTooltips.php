@@ -13,11 +13,21 @@ trait HasTooltips
     protected array | Closure | null $tooltips = null;
 
     /**
+     * @var ?array<string | Htmlable>
+     */
+    protected ?array $cachedTooltips = null;
+
+    protected bool $hasCachedTooltips = false;
+
+    /**
      * @param  array<string | Htmlable> | Closure | null  $tooltips
      */
     public function tooltips(array | Closure | null $tooltips): static
     {
         $this->tooltips = $tooltips;
+
+        $this->cachedTooltips = null;
+        $this->hasCachedTooltips = false;
 
         return $this;
     }
@@ -35,6 +45,12 @@ trait HasTooltips
      */
     public function getTooltips(): ?array
     {
-        return $this->evaluate($this->tooltips);
+        if ($this->hasCachedTooltips) {
+            return $this->cachedTooltips;
+        }
+
+        $this->hasCachedTooltips = true;
+
+        return $this->cachedTooltips = $this->evaluate($this->tooltips);
     }
 }
