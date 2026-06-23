@@ -50,6 +50,25 @@ it('can retrieve data', function (): void {
         ]);
 });
 
+it('does not retrieve invalid UTF-8 record attributes', function (): void {
+    $post = Post::factory()->create([
+        'location' => "\xB1\x31",
+    ]);
+
+    $component = livewire(EditPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->assertSchemaStateSet([
+            'title' => $post->title,
+        ]);
+
+    expect($component->instance()->data)
+        ->not->toHaveKey('location');
+
+    expect(json_encode($component->instance()->data, JSON_THROW_ON_ERROR))
+        ->toBeString();
+});
+
 it('can save', function (): void {
     Event::fake([
         RecordUpdated::class,

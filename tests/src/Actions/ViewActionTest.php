@@ -40,6 +40,26 @@ it('can display record data in `ViewAction`', function (): void {
         ]);
 });
 
+it('does not fill form data with invalid UTF-8 record attributes in `ViewAction`', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->hasAttached($ticket)->create([
+        'name' => 'Test Department',
+        'location' => "\xB1\x31",
+    ]);
+
+    $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+        ->mountAction(TestAction::make(ViewAction::class)->table($department))
+        ->assertSchemaStateSet([
+            'name' => 'Test Department',
+        ]);
+
+    expect($component->instance()->mountedActions[0]['data'])
+        ->not->toHaveKey('location');
+
+    expect(json_encode($component->instance()->mountedActions, JSON_THROW_ON_ERROR))
+        ->toBeString();
+});
+
 it('displays form as disabled in `ViewAction`', function (): void {
     $ticket = Ticket::factory()->create();
     $department = Department::factory()->hasAttached($ticket)->create(['name' => 'Test Department']);

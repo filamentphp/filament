@@ -9,6 +9,7 @@ use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\get_authorization_response;
+use function Filament\Support\filter_invalid_utf8_strings;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\prepare_inherited_attributes;
 
@@ -47,6 +48,29 @@ it('will prepare data attributes', function (): void {
 
     expect($attributes->getAttributes())->toBe([
         'data-foo' => 'bar',
+    ]);
+});
+
+it('will filter invalid UTF-8 strings from arrays', function (): void {
+    expect(filter_invalid_utf8_strings([
+        'name' => 'Engineering',
+        'location' => "\xB1\x31",
+        'metadata' => [
+            'valid' => 'yes',
+            'invalid' => "\xB1\x31",
+        ],
+        'coordinates' => [
+            'valid',
+            "\xB1\x31",
+        ],
+    ]))->toBe([
+        'name' => 'Engineering',
+        'metadata' => [
+            'valid' => 'yes',
+        ],
+        'coordinates' => [
+            0 => 'valid',
+        ],
     ]);
 });
 

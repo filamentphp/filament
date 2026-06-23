@@ -40,6 +40,7 @@ use Livewire\Attributes\Renderless;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\filter_invalid_utf8_strings;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
@@ -967,7 +968,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->fillEditOptionActionFormUsing(static function (Select $component): ?array {
-            return $component->getSelectedRecord()?->attributesToArray();
+            $record = $component->getSelectedRecord();
+
+            return $record ? filter_invalid_utf8_strings($record->attributesToArray()) : null;
         });
 
         $this->updateOptionUsing(static function (array $data, Schema $schema): void {

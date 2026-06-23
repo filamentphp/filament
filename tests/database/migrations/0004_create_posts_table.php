@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('author_id')->nullable();
             $table->text('content')->nullable();
             $table->boolean('is_published')->default(true);
+            $table->binary('location')->nullable();
             $table->unsignedTinyInteger('rating')->default(0);
             $table->jsonb('tags')->nullable();
             $table->string('title');

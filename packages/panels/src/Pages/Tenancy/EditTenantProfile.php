@@ -23,6 +23,7 @@ use Livewire\Attributes\Locked;
 use Throwable;
 
 use function Filament\authorize;
+use function Filament\Support\filter_invalid_utf8_strings;
 
 /**
  * @property-read Schema $form
@@ -85,6 +86,7 @@ abstract class EditTenantProfile extends Page
         $this->callHook('beforeFill');
 
         $data = $this->mutateFormDataBeforeFill($data);
+        $data = filter_invalid_utf8_strings($data);
 
         $this->form->fill($data);
 

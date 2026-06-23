@@ -19,6 +19,8 @@ use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
+use function Filament\Support\filter_invalid_utf8_strings;
+
 /**
  * @template TModel of Model = Model
  *
@@ -110,6 +112,8 @@ class ViewRecord extends Page
             ...$extraData,
         ]);
 
+        $data = filter_invalid_utf8_strings($data);
+
         $this->form->fill($data);
 
         $this->callHook('afterFill');
@@ -121,7 +125,7 @@ class ViewRecord extends Page
     public function refreshFormData(array $statePaths): void
     {
         $this->form->fillPartially(
-            $this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray()),
+            filter_invalid_utf8_strings($this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray())),
             $statePaths,
         );
     }

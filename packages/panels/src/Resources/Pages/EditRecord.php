@@ -35,6 +35,8 @@ use Illuminate\Support\Js;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
+use function Filament\Support\filter_invalid_utf8_strings;
+
 /**
  * @template TModel of Model = Model
  *
@@ -125,6 +127,8 @@ class EditRecord extends Page
             ...$extraData,
         ]);
 
+        $data = filter_invalid_utf8_strings($data);
+
         $this->form->fill($data);
 
         $this->callHook('afterFill');
@@ -136,7 +140,7 @@ class EditRecord extends Page
     public function refreshFormData(array $statePaths): void
     {
         $this->form->fillPartially(
-            $this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray()),
+            filter_invalid_utf8_strings($this->mutateFormDataBeforeFill($this->getRecord()->attributesToArray())),
             $statePaths,
         );
     }

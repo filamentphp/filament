@@ -10,6 +10,8 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 
+use function Filament\Support\filter_invalid_utf8_strings;
+
 class ViewAction extends Action
 {
     protected ?Closure $mutateRecordDataUsing = null;
@@ -48,7 +50,7 @@ class ViewAction extends Action
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
             }
 
-            return $data;
+            return filter_invalid_utf8_strings($data);
         });
     }
 

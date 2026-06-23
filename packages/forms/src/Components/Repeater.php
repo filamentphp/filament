@@ -27,6 +27,7 @@ use LogicException;
 
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
+use function Filament\Support\filter_invalid_utf8_strings;
 
 class Repeater extends Field implements CanConcealComponents, HasExtraItemActions
 {
@@ -1116,7 +1117,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                     $translatableContentDriver->getRecordAttributesToArray($record) :
                     $record->attributesToArray();
 
-                return $this->mutateRelationshipDataBeforeFill($data);
+                return filter_invalid_utf8_strings($this->mutateRelationshipDataBeforeFill($data));
             })
             ->toArray();
     }

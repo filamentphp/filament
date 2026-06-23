@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
+use function Filament\Support\filter_invalid_utf8_strings;
+
 class EditAction extends Action
 {
     use CanCustomizeProcess;
@@ -75,7 +77,7 @@ class EditAction extends Action
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
             }
 
-            return $data;
+            return filter_invalid_utf8_strings($data);
         });
 
         $this->action(function (): void {

@@ -11,6 +11,8 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
+use function Filament\Support\filter_invalid_utf8_strings;
+
 class ReplicateAction extends Action
 {
     use CanCustomizeProcess;
@@ -50,7 +52,7 @@ class ReplicateAction extends Action
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
             }
 
-            return $data;
+            return filter_invalid_utf8_strings($data);
         });
 
         $this->action(function () {

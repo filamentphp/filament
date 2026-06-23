@@ -41,6 +41,26 @@ it('can fill form with record data in `EditAction`', function (): void {
         ]);
 });
 
+it('does not fill form data with invalid UTF-8 record attributes in `EditAction`', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->hasAttached($ticket)->create([
+        'name' => 'Original Name',
+        'location' => "\xB1\x31",
+    ]);
+
+    $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+        ->mountAction(TestAction::make(EditAction::class)->table($department))
+        ->assertSchemaStateSet([
+            'name' => 'Original Name',
+        ]);
+
+    expect($component->instance()->mountedActions[0]['data'])
+        ->not->toHaveKey('location');
+
+    expect(json_encode($component->instance()->mountedActions, JSON_THROW_ON_ERROR))
+        ->toBeString();
+});
+
 it('can validate form data in `EditAction`', function (): void {
     $ticket = Ticket::factory()->create();
     $department = Department::factory()->hasAttached($ticket)->create();

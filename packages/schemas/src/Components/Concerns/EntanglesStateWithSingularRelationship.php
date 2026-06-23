@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Arr;
 use Livewire\Component as LivewireComponent;
 
+use function Filament\Support\filter_invalid_utf8_strings;
+
 trait EntanglesStateWithSingularRelationship
 {
     protected ?Model $cachedExistingRecord = null;
@@ -191,6 +193,8 @@ trait EntanglesStateWithSingularRelationship
         $data = $this->mutateRelationshipDataBeforeFill(
             $this->getStateFromRelatedRecord($record),
         );
+
+        $data = filter_invalid_utf8_strings($data);
 
         $this->getChildSchema()->fill($data, shouldCallHydrationHooks: false, shouldFillStateWithNull: false, shouldApplyStateCasts: false);
     }

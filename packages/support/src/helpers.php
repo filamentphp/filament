@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
+use JsonException;
 use Throwable;
 
 if (! function_exists('Filament\Support\format_money')) {
@@ -96,6 +97,35 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
         );
 
         return $attributes;
+    }
+}
+
+if (! function_exists('Filament\Support\filter_invalid_utf8_strings')) {
+    /**
+     * @param  array<array-key, mixed>  $values
+     * @return array<array-key, mixed>
+     */
+    function filter_invalid_utf8_strings(array $values): array
+    {
+        foreach ($values as $key => $value) {
+            if (is_array($value)) {
+                $values[$key] = filter_invalid_utf8_strings($value);
+
+                continue;
+            }
+
+            if (! is_string($value)) {
+                continue;
+            }
+
+            try {
+                json_encode($value, JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+                unset($values[$key]);
+            }
+        }
+
+        return $values;
     }
 }
 
