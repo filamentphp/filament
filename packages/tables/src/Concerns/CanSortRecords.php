@@ -6,49 +6,101 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait CanSortRecords
 {
-    public ?string $tableSort = null;
+    /**
+     * @var array<string, string> | string | null
+     */
+    public array | string | null $tableSort = null;
 
-    public function sortTable(?string $column = null, ?string $direction = null): void
+    public function sortTable(?string $column = null, ?string $direction = null, bool $isMultiSort = false): void
     {
-        if ($column === $this->getTableSortColumn()) {
-            $direction ??= match ($this->getTableSortDirection()) {
+        if (blank($column)) {
+            $this->tableSort = null;
+
+            $this->updatedTableSort();
+
+            return;
+        }
+
+        $sorts = $this->getTableSorts();
+
+        $currentDirection = $isMultiSort
+            ? ($sorts[$column] ?? null)
+            : ((count($sorts) === 1) && (array_key_first($sorts) === $column) ? $sorts[$column] : null);
+
+        if ($currentDirection) {
+            $direction ??= match ($currentDirection) {
                 'asc' => 'desc',
                 'desc' => null,
-                default => 'asc',
             };
         } else {
             $direction ??= 'asc';
         }
 
-        $this->tableSort = $direction ? "{$column}:{$direction}" : null;
+        if ($isMultiSort) {
+            if ($direction) {
+                $sorts[$column] = $this->normalizeTableSortDirection($direction) ?? 'asc';
+            } else {
+                unset($sorts[$column]);
+            }
+        } elseif ($direction) {
+            $sorts = [$column => $this->normalizeTableSortDirection($direction) ?? 'asc'];
+        } else {
+            $sorts = [];
+        }
+
+        $this->tableSort = $this->normalizeTableSortForStorage($sorts);
 
         $this->updatedTableSort();
     }
 
-    public function getTableSortColumn(): ?string
+    /**
+     * @return array<string, string>
+     */
+    public function getTableSorts(): array
     {
         if (blank($this->tableSort)) {
+            return [];
+        }
+
+        if (is_array($this->tableSort)) {
+            $sorts = [];
+
+            foreach ($this->tableSort as $column => $direction) {
+                if (blank($column)) {
+                    continue;
+                }
+
+                $sorts[$column] = $this->normalizeTableSortDirection($direction) ?? 'asc';
+            }
+
+            return $sorts;
+        }
+
+        $column = (string) str($this->tableSort)->before(':');
+
+        if (blank($column)) {
+            return [];
+        }
+
+        return [$column => $this->getTableSortDirectionFromString($this->tableSort) ?? 'asc'];
+    }
+
+    public function getTableSortColumn(): ?string
+    {
+        if (blank($sorts = $this->getTableSorts())) {
             return null;
         }
 
-        return (string) str($this->tableSort)->before(':');
+        return array_key_first($sorts);
     }
 
     public function getTableSortDirection(): ?string
     {
-        if (blank($this->tableSort)) {
+        if (blank($sorts = $this->getTableSorts())) {
             return null;
         }
 
-        if (! str($this->tableSort)->contains(':')) {
-            return 'asc';
-        }
-
-        return match ((string) str($this->tableSort)->after(':')) {
-            'asc' => 'asc',
-            'desc' => 'desc',
-            default => null,
-        };
+        return reset($sorts);
     }
 
     public function updatedTableSort(): void
@@ -85,13 +137,13 @@ trait CanSortRecords
             return $query->orderBy($this->getTable()->getReorderColumn(), $this->getTable()->getReorderDirection());
         }
 
-        $tableSortColumn = $this->getTableSortColumn();
+        $tableSorts = $this->getTableSorts();
+        $tableSortColumns = array_keys($tableSorts);
 
-        if (
-            $tableSortColumn &&
-            $column = $this->getTable()->getSortableVisibleColumn($tableSortColumn)
-        ) {
-            $sortDirection = $this->getTableSortDirection() === 'desc' ? 'desc' : 'asc';
+        foreach ($tableSorts as $tableSortColumn => $sortDirection) {
+            if (! $column = $this->getTable()->getSortableVisibleColumn($tableSortColumn)) {
+                continue;
+            }
 
             $column->applySort($query, $sortDirection);
         }
@@ -101,13 +153,13 @@ trait CanSortRecords
 
         if (
             is_string($defaultSort) &&
-            ($defaultSort !== $tableSortColumn) &&
+            (! in_array($defaultSort, $tableSortColumns, strict: true)) &&
             ($sortColumn = $this->getTable()->getSortableVisibleColumn($defaultSort))
         ) {
             $sortColumn->applySort($query, $sortDirection);
         } elseif (
             is_string($defaultSort) &&
-            $defaultSort !== $tableSortColumn
+            (! in_array($defaultSort, $tableSortColumns, strict: true))
         ) {
             $query->orderBy($defaultSort, $sortDirection);
         }
@@ -161,6 +213,47 @@ trait CanSortRecords
         $table = md5($this::class);
 
         return "tables.{$table}_sort";
+    }
+
+    protected function getTableSortDirectionFromString(string $sort): ?string
+    {
+        if (! str($sort)->contains(':')) {
+            return 'asc';
+        }
+
+        return $this->normalizeTableSortDirection((string) str($sort)->after(':'));
+    }
+
+    protected function normalizeTableSortDirection(mixed $direction): ?string
+    {
+        if (! is_scalar($direction)) {
+            return null;
+        }
+
+        return match (strtolower(strval($direction))) {
+            'asc' => 'asc',
+            'desc' => 'desc',
+            default => null,
+        };
+    }
+
+    /**
+     * @param  array<string, string>  $sorts
+     * @return array<string, string> | string | null
+     */
+    protected function normalizeTableSortForStorage(array $sorts): array | string | null
+    {
+        if (blank($sorts)) {
+            return null;
+        }
+
+        if (count($sorts) === 1) {
+            $column = array_key_first($sorts);
+
+            return "{$column}:{$sorts[$column]}";
+        }
+
+        return $sorts;
     }
 
     /**

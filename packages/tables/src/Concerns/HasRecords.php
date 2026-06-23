@@ -108,6 +108,7 @@ trait HasRecords
                 'sort' => fn (): array => [$this->getTableSortColumn(), $this->getTableSortDirection()],
                 'sortColumn' => fn (): ?string => $this->getTableSortColumn(),
                 'sortDirection' => fn (): ?string => $this->getTableSortDirection(),
+                'sorts' => fn (): array => $this->getTableSorts(),
             ]);
 
             if (is_array($records)) {

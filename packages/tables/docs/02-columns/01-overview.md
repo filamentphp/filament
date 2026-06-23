@@ -210,6 +210,8 @@ TextColumn::make('name')
     ->sortable()
 ```
 
+Users may sort by multiple columns by holding <kbd>Shift</kbd> while clicking another sortable column header. Shift-clicking a sorted column will toggle that column between ascending, descending, and unsorted. Clicking a column header without holding <kbd>Shift</kbd> will reset the table back to sorting by that column only.
+
 <AutoScreenshot name="tables/columns/sortable" alt="Table with sortable column" version="4.x" />
 
 Using the name of the column, Filament will apply an `orderBy()` clause to the Eloquent query. This is useful for simple cases where the column name matches the database column name. It can also handle [relationships](#displaying-data-from-relationships).

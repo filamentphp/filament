@@ -618,8 +618,8 @@ class TestsColumns
 
     public function sortTable(): Closure
     {
-        return function (?string $name = null, ?string $direction = null): static {
-            $this->call('sortTable', $name, $direction);
+        return function (?string $name = null, ?string $direction = null, bool $isMultiSort = false): static {
+            $this->call('sortTable', $name, $direction, $isMultiSort);
 
             return $this;
         };

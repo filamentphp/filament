@@ -69,8 +69,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url(as: 'search')]
     public $tableSearch = '';
 
+    /**
+     * @var array<string, string> | string | null
+     */
     #[Url(as: 'sort')]
-    public ?string $tableSort = null;
+    public array | string | null $tableSort = null;
 
     #[Url(as: 'tab')]
     public ?string $activeTab = null;

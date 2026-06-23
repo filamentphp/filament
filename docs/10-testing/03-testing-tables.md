@@ -110,6 +110,8 @@ it('can search posts by title column', function () {
 
 To sort table records, you can call `sortTable()`, passing the name of the column to sort by. You can use `'desc'` in the second parameter of `sortTable()` to reverse the sorting direction.
 
+To test sorting by multiple columns, pass `true` as the third parameter of `sortTable()` when adding another column to the current sort.
+
 Once the table is sorted, you can ensure that the table records are rendered in order using `assertCanSeeTableRecords()` with the `inOrder` parameter:
 
 ```php
@@ -126,6 +128,24 @@ it('can sort posts by title', function () {
         ->assertCanSeeTableRecords($sortedPostsAsc, inOrder: true)
         ->sortTable('title', 'desc')
         ->assertCanSeeTableRecords($sortedPostsDesc, inOrder: true);
+});
+```
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can sort posts by title and publish date', function () {
+    Post::factory()->count(10)->create();
+
+    $sortedPosts = Post::query()
+        ->orderBy('title')
+        ->orderByDesc('published_at')
+        ->get();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->sortTable('title')
+        ->sortTable('published_at', 'desc', true)
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
 });
 ```
 

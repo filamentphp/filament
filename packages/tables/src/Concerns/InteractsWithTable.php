@@ -146,8 +146,10 @@ trait InteractsWithTable
             session()->has($sortSessionKey)
         ) {
             $sessionSort = session()->get($sortSessionKey);
-            $this->tableSort = is_string($sessionSort) ? $sessionSort : null;
+            $this->tableSort = (is_string($sessionSort) || is_array($sessionSort)) ? $sessionSort : null;
         }
+
+        $this->tableSort = $this->normalizeTableSortForStorage($this->getTableSorts());
 
         if ($shouldPersistSortInSession) {
             session()->put(

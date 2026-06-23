@@ -143,7 +143,7 @@
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $page = $this->getTablePage();
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
-    $sortDirection = $getSortDirection();
+    $sorts = $getSorts();
 
     if (count($defaultRecordActions) && (! $isReordering)) {
         $columnsCount++;
@@ -886,43 +886,28 @@
                                                 sort: $wire.$entangle('tableSort', true),
                                                 column: null,
                                                 direction: null,
+                                                syncSortInputs() {
+                                                    let column = null
+                                                    let direction = null
+
+                                                    if (typeof this.sort === 'string') {
+                                                        ;[column, direction] = this.sort.split(':')
+                                                    } else if (this.sort && typeof this.sort === 'object') {
+                                                        column = Object.keys(this.sort)[0] ?? null
+                                                        direction = column ? this.sort[column] : null
+                                                    }
+
+                                                    this.column = column
+                                                    this.direction = column ? (direction === 'desc' ? 'desc' : 'asc') : null
+                                                },
+                                                updateSortFromInputs() {
+                                                    this.sort = this.column ? `${this.column}:${this.direction || 'asc'}` : null
+                                                },
                                             }"
                                             x-init="
-                                                if (sort) {
-                                                    ;[column, direction] = sort.split(':')
-                                                    direction ??= 'asc'
-                                                }
+                                                syncSortInputs()
 
-                                                $watch('sort', function () {
-                                                    if (! sort) {
-                                                        return
-                                                    }
-
-                                                    ;[column, direction] = sort.split(':')
-                                                    direction ??= 'asc'
-                                                })
-
-                                                $watch('direction', function () {
-                                                    sort = column ? `${column}:${direction}` : null
-                                                })
-
-                                                $watch('column', function (newColumn, oldColumn) {
-                                                    if (! newColumn) {
-                                                        direction = null
-                                                        sort = column ? `${column}:${direction}` : null
-
-                                                        return
-                                                    }
-
-                                                    if (oldColumn) {
-                                                        sort = column ? `${column}:${direction}` : null
-
-                                                        return
-                                                    }
-
-                                                    direction = 'asc'
-                                                    sort = column ? `${column}:${direction}` : null
-                                                })
+                                                $watch('sort', () => syncSortInputs())
                                             "
                                             class="fi-ta-sorting-settings"
                                         >
@@ -932,6 +917,10 @@
                                                 >
                                                     <x-filament::input.select
                                                         x-model="column"
+                                                        x-on:change="
+                                                            direction = column ? (direction || 'asc') : null
+                                                            updateSortFromInputs()
+                                                        "
                                                     >
                                                         <option value="">
                                                             {{ $defaultSortOptionLabel }}
@@ -956,6 +945,7 @@
                                                 <x-filament::input.wrapper>
                                                     <x-filament::input.select
                                                         x-model="direction"
+                                                        x-on:change="updateSortFromInputs()"
                                                     >
                                                         <option value="asc">
                                                             {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
@@ -1383,43 +1373,28 @@
                                                         sort: $wire.$entangle('tableSort', true),
                                                         column: null,
                                                         direction: null,
+                                                        syncSortInputs() {
+                                                            let column = null
+                                                            let direction = null
+
+                                                            if (typeof this.sort === 'string') {
+                                                                ;[column, direction] = this.sort.split(':')
+                                                            } else if (this.sort && typeof this.sort === 'object') {
+                                                                column = Object.keys(this.sort)[0] ?? null
+                                                                direction = column ? this.sort[column] : null
+                                                            }
+
+                                                            this.column = column
+                                                            this.direction = column ? (direction === 'desc' ? 'desc' : 'asc') : null
+                                                        },
+                                                        updateSortFromInputs() {
+                                                            this.sort = this.column ? `${this.column}:${this.direction || 'asc'}` : null
+                                                        },
                                                     }"
                                                     x-init="
-                                                        if (sort) {
-                                                            ;[column, direction] = sort.split(':')
-                                                            direction ??= 'asc'
-                                                        }
+                                                        syncSortInputs()
 
-                                                        $watch('sort', function () {
-                                                            if (! sort) {
-                                                                return
-                                                            }
-
-                                                            ;[column, direction] = sort.split(':')
-                                                            direction ??= 'asc'
-                                                        })
-
-                                                        $watch('direction', function () {
-                                                            sort = column ? `${column}:${direction}` : null
-                                                        })
-
-                                                        $watch('column', function (newColumn, oldColumn) {
-                                                            if (! newColumn) {
-                                                                direction = null
-                                                                sort = column ? `${column}:${direction}` : null
-
-                                                                return
-                                                            }
-
-                                                            if (oldColumn) {
-                                                                sort = column ? `${column}:${direction}` : null
-
-                                                                return
-                                                            }
-
-                                                            direction = 'asc'
-                                                            sort = column ? `${column}:${direction}` : null
-                                                        })
+                                                        $watch('sort', () => syncSortInputs())
                                                     "
                                                     class="fi-ta-table-stacked-sorting"
                                                 >
@@ -1429,6 +1404,10 @@
                                                         >
                                                             <x-filament::input.select
                                                                 x-model="column"
+                                                                x-on:change="
+                                                                    direction = column ? (direction || 'asc') : null
+                                                                    updateSortFromInputs()
+                                                                "
                                                             >
                                                                 <option
                                                                     value=""
@@ -1460,6 +1439,7 @@
                                                         <x-filament::input.wrapper>
                                                             <x-filament::input.select
                                                                 x-model="direction"
+                                                                x-on:change="updateSortFromInputs()"
                                                             >
                                                                 <option
                                                                     value="asc"
@@ -1667,7 +1647,8 @@
                                                 $columnLabel = $column->getLabel();
                                                 $columnAlignment = $column->getAlignment();
                                                 $columnWidth = $column->getWidth();
-                                                $isColumnActivelySorted = $getSortColumn() === $column->getName();
+                                                $columnSortDirection = $sorts[$columnName] ?? null;
+                                                $isColumnActivelySorted = filled($columnSortDirection);
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
                                                 $columnHeaderTooltip = $column->getHeaderTooltip();
                                                 $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
@@ -1677,7 +1658,7 @@
 
                                             <th
                                                 @if ($isColumnActivelySorted)
-                                                    aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+                                                    aria-sort="{{ $columnSortDirection === 'asc' ? 'ascending' : 'descending' }}"
                                                 @endif
                                                 {{
                                                     $column->getExtraHeaderAttributeBag()
@@ -1702,9 +1683,9 @@
                                                         aria-label="{{ trim(strip_tags($columnLabel)) }}"
                                                         role="button"
                                                         tabindex="0"
-                                                        wire:click="sortTable('{{ $columnName }}')"
-                                                        x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                        x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                        x-on:click="$wire.sortTable(@js($columnName), null, $event.shiftKey)"
+                                                        x-on:keydown.enter.prevent.stop="$wire.sortTable(@js($columnName), null, $event.shiftKey)"
+                                                        x-on:keydown.space.prevent.stop="$wire.sortTable(@js($columnName), null, $event.shiftKey)"
                                                         wire:loading.attr="disabled"
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >
@@ -1723,20 +1704,20 @@
                                                         @endif
 
                                                         {{
-                                                            \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
-                                                                $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
-                                                                $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
+                                                            \Filament\Support\generate_icon_html(($isColumnActivelySorted && $columnSortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
+                                                                $isColumnActivelySorted && ($columnSortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
+                                                                $isColumnActivelySorted && ($columnSortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                                                                 default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
                                                             }, attributes: (new \Illuminate\View\ComponentAttributeBag([
                                                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
-                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                                'wire:target' => 'sortTable',
                                                             ])))
                                                         }}
 
                                                         {{
                                                             \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
                                                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                                'wire:target' => 'sortTable',
                                                             ]))
                                                         }}
                                                     </span>

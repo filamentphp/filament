@@ -51,6 +51,52 @@ describe('rendering and sorting', function (): void {
             ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
     });
 
+    it('can sort records by multiple columns', function (): void {
+        $alice = User::factory()->create(['name' => 'Alice']);
+        $bob = User::factory()->create(['name' => 'Bob']);
+
+        Post::factory()->for($bob, 'author')->create(['title' => 'Alpha']);
+        Post::factory()->for($alice, 'author')->create(['title' => 'Alpha']);
+        Post::factory()->for($bob, 'author')->create(['title' => 'Beta']);
+        Post::factory()->for($alice, 'author')->create(['title' => 'Beta']);
+
+        $authorNameSortQuery = User::query()
+            ->select('name')
+            ->whereColumn('users.id', 'posts.author_id')
+            ->limit(1);
+
+        $sortedAsc = Post::query()
+            ->orderBy('title')
+            ->orderBy($authorNameSortQuery)
+            ->orderBy('posts.id')
+            ->get();
+
+        $sortedDesc = Post::query()
+            ->orderBy('title')
+            ->orderByDesc($authorNameSortQuery)
+            ->orderBy('posts.id')
+            ->get();
+
+        livewire(PostsTable::class)
+            ->sortTable('title')
+            ->sortTable('author.name', null, true)
+            ->assertSet('tableSort', [
+                'title' => 'asc',
+                'author.name' => 'asc',
+            ])
+            ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+            ->sortTable('author.name', null, true)
+            ->assertSet('tableSort', [
+                'title' => 'asc',
+                'author.name' => 'desc',
+            ])
+            ->assertCanSeeTableRecords($sortedDesc, inOrder: true)
+            ->sortTable('author.name', null, true)
+            ->assertSet('tableSort', 'title:asc')
+            ->sortTable('author.name')
+            ->assertSet('tableSort', 'author.name:asc');
+    });
+
     it('can sort records with relationship', function (): void {
         Post::factory()->count(10)->create();
 

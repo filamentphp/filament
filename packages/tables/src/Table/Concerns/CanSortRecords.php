@@ -116,6 +116,14 @@ trait CanSortRecords
         return $this->getLivewire()->getTableSortColumn();
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getSorts(): array
+    {
+        return $this->getLivewire()->getTableSorts();
+    }
+
     public function getSortDirection(): ?string
     {
         return $this->getLivewire()->getTableSortDirection();

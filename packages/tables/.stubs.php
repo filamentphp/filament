@@ -47,7 +47,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableSelectColumnDoesNotHaveOptions(string $name, array $options, $record): static {}
 
-        public function sortTable(?string $name = null, ?string $direction = null): static {}
+        public function sortTable(?string $name = null, ?string $direction = null, bool $isMultiSort = false): static {}
 
         public function searchTable(?string $search = null): static {}
 

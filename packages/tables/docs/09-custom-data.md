@@ -68,7 +68,9 @@ TextColumn::make('is_featured')
 
 Filament's built-in [sorting](columns#sorting) function uses SQL to sort data. When working with custom data, you'll need to handle sorting yourself.
 
-To access the currently sorted column and direction, you can inject `$sortColumn` and `$sortDirection` into the `records()` function. These variables are `null` if no sorting is applied.
+To access the first currently sorted column and direction, you can inject `$sortColumn` and `$sortDirection` into the `records()` function. These variables are `null` if no sorting is applied.
+
+If you need to handle [multi-column sorting](columns#sorting), you can inject `$sorts` instead. This is an array keyed by column name, where each value is either `'asc'` or `'desc'`.
 
 In the example below, a [collection](https://laravel.com/docs/collections#method-sortby) is used to sort the data by key. The collection is returned instead of an array, and Filament handles it the same way. However, using a collection is not required to use this feature.
 

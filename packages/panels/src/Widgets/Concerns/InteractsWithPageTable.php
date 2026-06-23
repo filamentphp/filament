@@ -46,8 +46,11 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive]
     public $tableSearch = '';
 
+    /**
+     * @var array<string, string> | string | null
+     */
     #[Reactive]
-    public ?string $tableSort = null;
+    public array | string | null $tableSort = null;
 
     #[Reactive]
     public ?string $activeTab = null;
