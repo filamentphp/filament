@@ -153,14 +153,14 @@
             }
         }
 
-        & .cropper-drag-box.cropper-crop.cropper-modal {
-            @apply bg-gray-100/50 opacity-100 dark:bg-gray-900/80;
+        & cropper-canvas {
+            @apply h-full w-full bg-gray-100/50 dark:bg-gray-900/80;
         }
 
         &.fi-fo-file-upload-editor-circle-cropper {
-            & .cropper-view-box,
-            & .cropper-face {
+            & cropper-selection {
                 border-radius: 50%;
+                overflow: hidden;
             }
         }
 

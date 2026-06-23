@@ -23,6 +23,351 @@ FilePond.registerPlugin(FilePondPluginMediaPreview)
 
 window.FilePond = FilePond
 
+const cropperTemplate = [
+    '<cropper-canvas>',
+    '<cropper-image rotatable scalable skewable translatable></cropper-image>',
+    '<cropper-shade hidden></cropper-shade>',
+    '<cropper-handle action="select" plain></cropper-handle>',
+    '<cropper-selection initial-coverage="1" movable resizable>',
+    '<cropper-grid role="grid" bordered covered></cropper-grid>',
+    '<cropper-crosshair centered></cropper-crosshair>',
+    '<cropper-handle action="move" theme-color="rgba(255, 255, 255, 0.35)"></cropper-handle>',
+    '<cropper-handle action="n-resize"></cropper-handle>',
+    '<cropper-handle action="e-resize"></cropper-handle>',
+    '<cropper-handle action="s-resize"></cropper-handle>',
+    '<cropper-handle action="w-resize"></cropper-handle>',
+    '<cropper-handle action="ne-resize"></cropper-handle>',
+    '<cropper-handle action="nw-resize"></cropper-handle>',
+    '<cropper-handle action="se-resize"></cropper-handle>',
+    '<cropper-handle action="sw-resize"></cropper-handle>',
+    '</cropper-selection>',
+    '</cropper-canvas>',
+].join('')
+
+class CropperEditor {
+    constructor(element, options = {}) {
+        this.aspectRatio = this.normalizeAspectRatio(options.aspectRatio)
+        this.viewMode = options.viewMode
+        this.onCrop = options.onCrop
+        this.rotation = 0
+        this.scaleXValue = 1
+        this.scaleYValue = 1
+
+        this.cropper = new Cropper(element, {
+            container: element.parentElement,
+            template: cropperTemplate,
+        })
+
+        this.refreshElements()
+        this.configureElements(options)
+        this.bindEvents()
+    }
+
+    normalizeAspectRatio(aspectRatio) {
+        const parsedAspectRatio = Number(aspectRatio)
+
+        return Number.isFinite(parsedAspectRatio) && parsedAspectRatio > 0
+            ? parsedAspectRatio
+            : NaN
+    }
+
+    refreshElements() {
+        this.canvas = this.cropper.getCropperCanvas()
+        this.image = this.cropper.getCropperImage()
+        this.selection = this.cropper.getCropperSelection()
+        this.dragHandle =
+            this.canvas?.querySelector('cropper-handle[plain]') ?? null
+    }
+
+    configureElements({ wheelZoomRatio }) {
+        if (this.canvas) {
+            this.canvas.scaleStep = wheelZoomRatio ?? 0.02
+        }
+
+        if (this.image) {
+            this.image.initialCenterSize =
+                this.viewMode === 3 ? 'cover' : 'contain'
+        }
+
+        if (this.selection) {
+            this.selection.initialCoverage = 1
+            this.selection.aspectRatio = this.aspectRatio
+        }
+    }
+
+    bindEvents() {
+        this.handleSelectionChange = (event) => {
+            if (!this.isSelectionWithinCanvas(event.detail)) {
+                event.preventDefault()
+
+                return
+            }
+
+            this.notifyCrop(event.detail)
+        }
+
+        this.handleImageTransform = (event) => {
+            if (!this.isImageWithinViewMode(event.detail.matrix)) {
+                event.preventDefault()
+
+                return
+            }
+
+            this.notifyCrop()
+        }
+
+        this.selection?.addEventListener('change', this.handleSelectionChange)
+        this.image?.addEventListener('transform', this.handleImageTransform)
+    }
+
+    isSelectionWithinCanvas(selection) {
+        if (!this.canvas || this.viewMode < 1) {
+            return true
+        }
+
+        const precision = 1
+
+        return (
+            selection.x >= -precision &&
+            selection.y >= -precision &&
+            selection.x + selection.width <=
+                this.canvas.offsetWidth + precision &&
+            selection.y + selection.height <=
+                this.canvas.offsetHeight + precision
+        )
+    }
+
+    isImageWithinViewMode(matrix) {
+        if (!this.canvas || !this.image || this.viewMode < 2) {
+            return true
+        }
+
+        const imageRect = this.getTransformedImageRect(matrix)
+        const canvasRect = this.canvas.getBoundingClientRect()
+
+        if (!imageRect) {
+            return true
+        }
+
+        if (this.viewMode === 2) {
+            return !(
+                (imageRect.top > canvasRect.top &&
+                    imageRect.right < canvasRect.right) ||
+                (imageRect.right < canvasRect.right &&
+                    imageRect.bottom < canvasRect.bottom) ||
+                (imageRect.bottom < canvasRect.bottom &&
+                    imageRect.left > canvasRect.left) ||
+                (imageRect.left > canvasRect.left &&
+                    imageRect.top > canvasRect.top)
+            )
+        }
+
+        return (
+            imageRect.top <= canvasRect.top &&
+            imageRect.right >= canvasRect.right &&
+            imageRect.bottom >= canvasRect.bottom &&
+            imageRect.left <= canvasRect.left
+        )
+    }
+
+    getTransformedImageRect(matrix) {
+        const clonedImage = this.image.cloneNode()
+
+        clonedImage.style.opacity = '0'
+        clonedImage.style.transform = `matrix(${matrix.join(', ')})`
+
+        this.canvas.appendChild(clonedImage)
+
+        const imageRect = clonedImage.getBoundingClientRect()
+
+        this.canvas.removeChild(clonedImage)
+
+        return imageRect
+    }
+
+    initializeSelection() {
+        this.refreshElements()
+        this.configureElements({ wheelZoomRatio: this.canvas?.scaleStep })
+        this.selection?.$initSelection?.(true, true)
+        this.notifyCrop()
+    }
+
+    notifyCrop(selection = this.selection) {
+        if (!this.onCrop || !selection) {
+            return
+        }
+
+        this.onCrop({
+            x: selection.x,
+            y: selection.y,
+            height: selection.height,
+            width: selection.width,
+            rotate: this.rotation,
+            scaleX: this.scaleXValue,
+            scaleY: this.scaleYValue,
+        })
+    }
+
+    setDragMode(mode) {
+        if (!this.dragHandle) {
+            return
+        }
+
+        this.dragHandle.action = mode === 'move' ? 'move' : 'select'
+    }
+
+    zoom(scale) {
+        this.image?.$zoom(scale)
+    }
+
+    zoomTo(scale) {
+        const [a, b] = this.image?.$getTransform() ?? [1, 0]
+        const currentScale = Math.hypot(a, b) || 1
+
+        this.image?.$scale(scale / currentScale)
+    }
+
+    move(x, y) {
+        this.image?.$move(x, y)
+    }
+
+    rotate(degrees) {
+        this.rotation += degrees
+        this.image?.$rotate(`${degrees}deg`)
+        this.notifyCrop()
+    }
+
+    rotateTo(degrees) {
+        this.rotate(degrees - this.rotation)
+    }
+
+    scaleX(scale) {
+        this.image?.$scale(scale / this.scaleXValue, 1)
+        this.scaleXValue = scale
+        this.notifyCrop()
+    }
+
+    scaleY(scale) {
+        this.image?.$scale(1, scale / this.scaleYValue)
+        this.scaleYValue = scale
+        this.notifyCrop()
+    }
+
+    getData(rounded = false) {
+        const data = {
+            x: this.selection?.x ?? 0,
+            y: this.selection?.y ?? 0,
+            height: this.selection?.height ?? 0,
+            width: this.selection?.width ?? 0,
+            rotate: this.rotation,
+            scaleX: this.scaleXValue,
+            scaleY: this.scaleYValue,
+        }
+
+        if (!rounded) {
+            return data
+        }
+
+        return Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [
+                key,
+                Math.round(value),
+            ]),
+        )
+    }
+
+    setData(data) {
+        if (!this.selection) {
+            return
+        }
+
+        this.selection.$change(
+            Number(data.x ?? this.selection.x),
+            Number(data.y ?? this.selection.y),
+            Number(data.width ?? this.selection.width),
+            Number(data.height ?? this.selection.height),
+            this.selection.aspectRatio,
+            true,
+        )
+
+        this.notifyCrop()
+    }
+
+    setAspectRatio(aspectRatio) {
+        if (!this.selection) {
+            return
+        }
+
+        this.aspectRatio = this.normalizeAspectRatio(aspectRatio)
+        this.selection.aspectRatio = this.aspectRatio
+        this.selection.$change(
+            this.selection.x,
+            this.selection.y,
+            this.selection.width,
+            this.selection.height,
+            this.aspectRatio,
+            true,
+        )
+
+        this.notifyCrop()
+    }
+
+    reset() {
+        this.rotation = 0
+        this.scaleXValue = 1
+        this.scaleYValue = 1
+        this.image?.$resetTransform()
+        this.image?.$center(this.viewMode === 3 ? 'cover' : 'contain')
+        this.selection?.$reset()
+        this.notifyCrop()
+    }
+
+    replace(source) {
+        this.rotation = 0
+        this.scaleXValue = 1
+        this.scaleYValue = 1
+        this.image?.$resetTransform()
+
+        if (!this.image) {
+            return Promise.resolve()
+        }
+
+        this.image.src = source
+
+        return this.image.$ready().then(() => {
+            this.initializeSelection()
+        })
+    }
+
+    getCroppedCanvas(options = {}) {
+        if (!this.selection) {
+            return Promise.resolve(null)
+        }
+
+        return this.selection.$toCanvas({
+            height: options.height,
+            width: options.width,
+            beforeDraw: (context, canvas) => {
+                context.fillStyle = options.fillColor ?? 'transparent'
+                context.fillRect(0, 0, canvas.width, canvas.height)
+                context.imageSmoothingEnabled =
+                    options.imageSmoothingEnabled ?? true
+                context.imageSmoothingQuality =
+                    options.imageSmoothingQuality ?? 'high'
+            },
+        })
+    }
+
+    destroy() {
+        this.selection?.removeEventListener(
+            'change',
+            this.handleSelectionChange,
+        )
+        this.image?.removeEventListener('transform', this.handleImageTransform)
+        this.cropper.destroy()
+    }
+}
+
 export default function fileUploadFormComponent({
     acceptedFileTypes,
     automaticallyCropImagesAspectRatio,
@@ -102,7 +447,7 @@ export default function fileUploadFormComponent({
 
         currentRatio: '',
 
-        editor: {},
+        editor: null,
 
         visibilityObserver: null,
 
@@ -601,34 +946,29 @@ export default function fileUploadFormComponent({
                 return
             }
 
+            if (this.editor) {
+                this.destroyEditor()
+            }
+
             const cropperOptions = {
                 aspectRatio:
                     automaticallyOpenImageEditorForAspectRatio ??
                     imageEditorViewportWidth / imageEditorViewportHeight,
-                autoCropArea: 1,
-                center: true,
-                cropBoxResizable: true,
-                guides: true,
-                highlight: true,
-                responsive: true,
-                toggleDragModeOnDblclick: true,
                 viewMode: imageEditorMode,
                 wheelZoomRatio: 0.02,
             }
 
             if (isImageEditorExplicitlyEnabled) {
-                cropperOptions.crop = (event) => {
-                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
-                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
-                    this.$refs.heightInput.value = Math.round(
-                        event.detail.height,
-                    )
-                    this.$refs.widthInput.value = Math.round(event.detail.width)
-                    this.$refs.rotationInput.value = event.detail.rotate
+                cropperOptions.onCrop = (data) => {
+                    this.$refs.xPositionInput.value = Math.round(data.x)
+                    this.$refs.yPositionInput.value = Math.round(data.y)
+                    this.$refs.heightInput.value = Math.round(data.height)
+                    this.$refs.widthInput.value = Math.round(data.width)
+                    this.$refs.rotationInput.value = Math.round(data.rotate)
                 }
             }
 
-            this.editor = new Cropper(this.$refs.editor, cropperOptions)
+            this.editor = new CropperEditor(this.$refs.editor, cropperOptions)
         },
 
         closeEditor() {
@@ -745,17 +1085,19 @@ export default function fileUploadFormComponent({
             this.fixImageDimensions(file, (editingFile) => {
                 this.editingFile = editingFile
 
-                this.initEditor()
-
                 const reader = new FileReader()
 
                 reader.onload = (event) => {
                     this.isEditorOpen = true
 
-                    setTimeout(
-                        () => this.editor.replace(event.target.result),
-                        200,
-                    )
+                    this.$nextTick(() => {
+                        setTimeout(() => {
+                            this.initEditor()
+                            this.editor
+                                .replace(event.target.result)
+                                .catch(() => this.closeEditor())
+                        }, 200)
+                    })
                 }
 
                 reader.readAsDataURL(file)
@@ -789,7 +1131,7 @@ export default function fileUploadFormComponent({
             return canvas
         },
 
-        saveEditor() {
+        async saveEditor() {
             if (isDisabled) {
                 return
             }
@@ -798,15 +1140,25 @@ export default function fileUploadFormComponent({
                 return
             }
 
+            if (!this.editor) {
+                return
+            }
+
             this.isEditorOpenedForAspectRatio = false
 
-            let croppedCanvas = this.editor.getCroppedCanvas({
+            let croppedCanvas = await this.editor.getCroppedCanvas({
                 fillColor: imageEditorEmptyFillColor ?? 'transparent',
                 height: automaticallyResizeImagesHeight,
                 imageSmoothingEnabled: true,
                 imageSmoothingQuality: 'high',
                 width: automaticallyResizeImagesWidth,
             })
+
+            if (!croppedCanvas) {
+                this.closeEditor()
+
+                return
+            }
 
             if (hasCircleCropper) {
                 croppedCanvas = this.getRoundedCanvas(croppedCanvas)
