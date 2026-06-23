@@ -85,6 +85,10 @@ trait CanGenerateModelForms
 
             $type = $this->parseColumnType($column);
 
+            if (! $this->canGenerateSchemaComponentForColumnType($type)) {
+                continue;
+            }
+
             $componentData = [];
 
             $componentData['type'] = match (true) {

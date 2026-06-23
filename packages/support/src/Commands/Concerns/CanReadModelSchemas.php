@@ -143,6 +143,7 @@ trait CanReadModelSchemas
             'timestamp', 'timestamptz' => 'timestamp',
             'text', 'tinytext', 'longtext', 'mediumtext', 'ntext' => 'text',
             'json', 'jsonb' => 'json',
+            'binary', 'varbinary', 'blob', 'tinyblob', 'mediumblob', 'longblob', 'bytea' => 'binary',
             default => $column['type_name'],
         };
 
@@ -157,6 +158,16 @@ trait CanReadModelSchemas
         };
 
         return array_merge(['name' => $type], array_filter($values));
+    }
+
+    /**
+     * @param  array<string, mixed>  $type
+     */
+    protected function canGenerateSchemaComponentForColumnType(array $type): bool
+    {
+        return ! in_array($type['name'], [
+            'binary',
+        ], strict: true);
     }
 
     /**

@@ -55,6 +55,10 @@ trait CanGenerateModelInfolists
 
             $type = $this->parseColumnType($column);
 
+            if (! $this->canGenerateSchemaComponentForColumnType($type)) {
+                continue;
+            }
+
             if (in_array($type['name'], [
                 'json',
             ])) {
