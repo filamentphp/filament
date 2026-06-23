@@ -45,9 +45,7 @@ it('can retrieve data', function (): void {
 });
 
 it('does not retrieve invalid UTF-8 record attributes', function (): void {
-    $post = Post::factory()->create([
-        'location' => "\xB1\x31",
-    ]);
+    $post = set_invalid_utf8_record_attribute(Post::factory()->create(), 'location');
 
     $component = livewire(ViewPost::class, [
         'record' => $post->getKey(),

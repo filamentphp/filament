@@ -110,12 +110,7 @@ if (! function_exists('Filament\Support\filter_invalid_utf8_strings')) {
         foreach ($values as $key => $value) {
             if (is_array($value)) {
                 $values[$key] = filter_invalid_utf8_strings($value);
-
-                continue;
-            }
-
-            if (! is_string($value)) {
-                continue;
+                $value = $values[$key];
             }
 
             try {

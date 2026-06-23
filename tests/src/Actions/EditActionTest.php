@@ -43,10 +43,9 @@ it('can fill form with record data in `EditAction`', function (): void {
 
 it('does not fill form data with invalid UTF-8 record attributes in `EditAction`', function (): void {
     $ticket = Ticket::factory()->create();
-    $department = Department::factory()->hasAttached($ticket)->create([
+    $department = set_invalid_utf8_record_attribute(Department::factory()->hasAttached($ticket)->create([
         'name' => 'Original Name',
-        'location' => "\xB1\x31",
-    ]);
+    ]), 'location');
 
     $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
         ->mountAction(TestAction::make(EditAction::class)->table($department))

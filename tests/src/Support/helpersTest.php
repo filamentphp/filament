@@ -52,9 +52,12 @@ it('will prepare data attributes', function (): void {
 });
 
 it('will filter invalid UTF-8 strings from arrays', function (): void {
+    $stream = fopen('php://memory', 'r+');
+
     expect(filter_invalid_utf8_strings([
         'name' => 'Engineering',
         'location' => "\xB1\x31",
+        'stream' => $stream,
         'metadata' => [
             'valid' => 'yes',
             'invalid' => "\xB1\x31",
@@ -72,6 +75,8 @@ it('will filter invalid UTF-8 strings from arrays', function (): void {
             0 => 'valid',
         ],
     ]);
+
+    fclose($stream);
 });
 
 it('can handle policy being an object when method does not exist', function (): void {
