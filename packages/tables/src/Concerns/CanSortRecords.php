@@ -31,6 +31,7 @@ trait CanSortRecords
             $direction ??= match ($currentDirection) {
                 'asc' => 'desc',
                 'desc' => null,
+                default => 'asc',
             };
         } else {
             $direction ??= 'asc';
