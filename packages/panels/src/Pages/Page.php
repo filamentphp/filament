@@ -147,7 +147,7 @@ abstract class Page extends BasePage
         $activeRoutePattern = static::getNavigationItemActiveRoutePattern();
 
         return [
-            NavigationItem::make(static::getNavigationLabel())
+            static::class => NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
