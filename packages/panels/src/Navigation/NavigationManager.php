@@ -63,12 +63,14 @@ class NavigationManager
                 $group = $item->getGroup();
 
                 return serialize($group);
-            })
+            }, preserveKeys: true)
             ->map(function (Collection $items, string $groupIndex) use ($groups): NavigationGroup {
-                $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
+                $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '',
+                    preserveKeys: true
+                );
 
                 $items = $parentItems->get('', collect())
-                    ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
+                    ->keyBy(fn (NavigationItem $item, int|string $key): string => is_string($key) ? $key : $item->getLabel());
 
                 $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items): void {
                     if (! $items->has($parentItemLabel)) {
