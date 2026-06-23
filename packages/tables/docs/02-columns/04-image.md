@@ -12,7 +12,7 @@ Tables can render images, based on the path in the state of the column:
 ```php
 use Filament\Tables\Columns\ImageColumn;
 
-ImageColumn::make('avatar')
+ImageColumn::make('header_image')
 ```
 
 In this case, the `header_image` state could contain `posts/header-images/4281246003439.jpg`, which is relative to the root directory of the storage disk. The storage disk is defined in the [configuration file](../../introduction/installation#publishing-configuration), `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this.
