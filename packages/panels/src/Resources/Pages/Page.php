@@ -73,7 +73,7 @@ abstract class Page extends BasePage
     public static function getNavigationItems(array $urlParameters = []): array
     {
         return [
-            NavigationItem::make(static::getNavigationLabel())
+            static::class => NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
