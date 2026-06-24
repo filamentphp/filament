@@ -39,61 +39,62 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
-        $placeholder = $this->getPlaceholder();
         $length = $this->getLength();
 
-        $outerAttributes = $this->getExtraAttributeBag()
+        $entangle = $this->applyStateBindingModifiers("\$entangle('{$this->getStatePath()}')");
+
+        $containerAttributes = $this->getExtraAttributeBag()
             ->merge($this->getExtraAlpineAttributes(), escape: false)
             ->class(['fi-one-time-code-input-ctn']);
 
+        // The first input carries the `one-time-code` autocomplete so that browser and OS
+        // autofill targets it. The component then distributes the filled value across the
+        // remaining inputs.
         $inputAttributes = $this->getExtraInputAttributeBag()
             ->merge([
-                'autocomplete' => false,
                 'autofocus' => $this->isAutofocused(),
                 'disabled' => $this->isDisabled(),
                 'id' => $this->getId(),
-                'length' => $length,
-                'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'readonly' => $this->isReadOnly(),
                 'required' => $this->isRequired() && (! $this->isConcealed()),
-                $this->applyStateBindingModifiers('wire:model') => $this->getStatePath(),
             ], escape: false);
+
+        // The remaining inputs mirror the first input's resolved `disabled` and `readonly`
+        // state so that an `extraInputAttributes()` override applies to every digit.
+        $isDisabled = filter_var($inputAttributes->get('disabled'), FILTER_VALIDATE_BOOLEAN);
+        $isReadOnly = filter_var($inputAttributes->get('readonly'), FILTER_VALIDATE_BOOLEAN);
 
         ob_start(); ?>
 
-        <div
-            x-data="{ currentNumberOfDigits: null }"
-            <?= $outerAttributes->toHtml() ?>
-        >
-            <?php foreach (range(1, $length) as $digit) { ?>
-                <div
-                    x-bind:class="{
-                        'fi-active':
-                            currentNumberOfDigits !== null &&
-                            currentNumberOfDigits >= <?= $digit ?>,
-                    }"
-                    class="fi-one-time-code-input-digit-field"
-                ></div>
-            <?php } ?>
-
-            <input
-                autocomplete="one-time-code"
-                inputmode="numeric"
-                minlength="<?= $length ?>"
-                maxlength="<?= $length ?>"
-                pattern="\d<?= '{' . $length . '}' ?>"
-                type="text"
-                x-data="{}"
-                x-on:focus="currentNumberOfDigits = $el.value.length"
-                x-on:blur="currentNumberOfDigits = null"
-                x-on:input="
-                    $el.value = $el.value.replace(/\D/g, '')
-                    currentNumberOfDigits = $el.value.length
-                "
-                x-bind:class="{ 'fi-valid': currentNumberOfDigits >= <?= $length ?> }"
-                <?= $inputAttributes->toHtml() ?>
-                class="fi-one-time-code-input"
-            />
+        <div x-data="{ code: $wire.<?= $entangle ?>, }">
+            <div
+                x-data="filamentOneTimeCodeInput"
+                x-modelable="state"
+                x-model="code"
+                role="group"
+                <?= $containerAttributes->toHtml() ?>
+            >
+                <?php foreach (range(0, $length - 1) as $index) { ?>
+                    <?php if ($index === 0) { ?>
+                        <input
+                            autocomplete="one-time-code"
+                            inputmode="numeric"
+                            type="text"
+                            <?= $inputAttributes->class(['fi-one-time-code-input-digit'])->toHtml() ?>
+                        />
+                    <?php } else { ?>
+                        <input
+                            aria-label="<?= e(__('filament::components/input/one-time-code.aria_label', ['position' => $index + 1, 'count' => $length])) ?>"
+                            autocomplete="off"
+                            inputmode="numeric"
+                            type="text"
+                            <?php if ($isDisabled) { ?> disabled <?php } ?>
+                            <?php if ($isReadOnly) { ?> readonly <?php } ?>
+                            class="fi-one-time-code-input-digit"
+                        />
+                    <?php } ?>
+                <?php } ?>
+            </div>
         </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean());
