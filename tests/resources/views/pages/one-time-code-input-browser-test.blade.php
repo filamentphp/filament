@@ -5,5 +5,8 @@
         <x-filament::button type="submit">Save</x-filament::button>
     </form>
 
-    <p>Submitted code: <span>{{ data_get($data, 'code') }}</span></p>
+    <p>
+        Submitted code:
+        <span>{{ data_get($data, 'code') }}</span>
+    </p>
 </x-filament-panels::page>
