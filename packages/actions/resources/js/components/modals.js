@@ -3,6 +3,8 @@ export default ({ livewireId }) => ({
 
     closedActionNestingIndexes: [],
 
+    previouslyFocusedElementsByActionNestingIndex: {},
+
     init() {
         window.addEventListener('sync-action-modals', (event) => {
             if (event.detail.id !== livewireId) {
@@ -45,6 +47,15 @@ export default ({ livewireId }) => ({
             newActionNestingIndex !== null &&
             newActionNestingIndex > this.actionNestingIndex
 
+        const shouldRestorePreviouslyFocusedElement =
+            this.actionNestingIndex !== null &&
+            newActionNestingIndex !== null &&
+            newActionNestingIndex < this.actionNestingIndex
+
+        if (isNestingIncrease) {
+            this.rememberPreviouslyFocusedElement()
+        }
+
         if (
             this.actionNestingIndex !== null &&
             !(shouldOverlayParentActions && isNestingIncrease)
@@ -56,6 +67,7 @@ export default ({ livewireId }) => ({
 
         if (this.actionNestingIndex === null) {
             this.closedActionNestingIndexes = []
+            this.previouslyFocusedElementsByActionNestingIndex = {}
 
             return
         }
@@ -75,12 +87,67 @@ export default ({ livewireId }) => ({
                 `#${this.generateModalId(newActionNestingIndex)}`,
             )
         ) {
-            this.$nextTick(() => this.openModal())
+            this.$nextTick(() => {
+                this.openModal()
+
+                if (shouldRestorePreviouslyFocusedElement) {
+                    requestAnimationFrame(() =>
+                        this.restorePreviouslyFocusedElement(),
+                    )
+                }
+            })
 
             return
         }
 
         this.openModal()
+
+        if (shouldRestorePreviouslyFocusedElement) {
+            requestAnimationFrame(() => this.restorePreviouslyFocusedElement())
+        }
+    },
+
+    rememberPreviouslyFocusedElement() {
+        const modal = this.$el.querySelector(
+            `#${this.generateModalId(this.actionNestingIndex)}`,
+        )
+
+        const focused = this.$focus.focused()
+
+        if (!modal?.contains(focused)) {
+            return
+        }
+
+        this.previouslyFocusedElementsByActionNestingIndex[
+            this.actionNestingIndex
+        ] = focused
+    },
+
+    restorePreviouslyFocusedElement(
+        actionNestingIndex = this.actionNestingIndex,
+    ) {
+        const previouslyFocusedElement =
+            this.previouslyFocusedElementsByActionNestingIndex[
+                actionNestingIndex
+            ]
+
+
+        delete this.previouslyFocusedElementsByActionNestingIndex[
+            actionNestingIndex
+        ]
+
+        const modal = this.$el.querySelector(
+            `#${this.generateModalId(actionNestingIndex)}`,
+        )
+
+        if (
+            !previouslyFocusedElement?.isConnected ||
+            !modal?.contains(previouslyFocusedElement)
+        ) {
+            return
+        }
+
+        requestAnimationFrame(() => this.$focus.focus(previouslyFocusedElement))
     },
 
     generateModalId(actionNestingIndex) {
