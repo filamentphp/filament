@@ -98,7 +98,7 @@ class Flex extends Component implements HasEmbeddedView
                                 })"
                         <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
                             x-init="<?= implode(';', array_map(
-                                fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',
+                                fn (string $js): string => '$wire; $wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',
                                 $afterStateUpdatedJs,
                             )) ?>"
                         <?php } ?>

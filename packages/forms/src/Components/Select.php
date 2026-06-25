@@ -1953,25 +1953,35 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     canOptionLabelsWrap: <?= Js::from($canOptionLabelsWrap) ?>,
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
                                     getOptionLabelUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(<?= Js::from($key) ?>, 'getOptionLabel')
+                                        return await Livewire.fireAction(
+                                            $wire.__instance,
+                                            'callSchemaComponentMethod',
+                                            [<?= Js::from($key) ?>, 'getOptionLabel'],
+                                            { async: true },
+                                        )
                                     },
                                     getOptionLabelsUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getOptionLabelsForJs',
+                                        return await Livewire.fireAction(
+                                            $wire.__instance,
+                                            'callSchemaComponentMethod',
+                                            [<?= Js::from($key) ?>, 'getOptionLabelsForJs'],
+                                            { async: true },
                                         )
                                     },
                                     getOptionsUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getOptionsForJs',
+                                        return await Livewire.fireAction(
+                                            $wire.__instance,
+                                            'callSchemaComponentMethod',
+                                            [<?= Js::from($key) ?>, 'getOptionsForJs'],
+                                            { async: true },
                                         )
                                     },
                                     getSearchResultsUsing: async (search) => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getSearchResultsForJs',
-                                            { search },
+                                        return await Livewire.fireAction(
+                                            $wire.__instance,
+                                            'callSchemaComponentMethod',
+                                            [<?= Js::from($key) ?>, 'getSearchResultsForJs', { search }],
+                                            { async: true },
                                         )
                                     },
                                     hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
