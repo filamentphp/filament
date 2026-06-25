@@ -31,7 +31,10 @@ export default ({ livewireId }) => ({
             this.closedActionNestingIndexes.push(actionNestingIndex)
         }
 
-        window.addEventListener('sync-action-modals', this.boundSyncActionModals)
+        window.addEventListener(
+            'sync-action-modals',
+            this.boundSyncActionModals,
+        )
 
         window.addEventListener('modal-closed', this.boundOnModalClosed)
     },
