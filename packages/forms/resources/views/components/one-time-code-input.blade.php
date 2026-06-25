@@ -1,29 +1,40 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $placeholder = $getPlaceholder();
-    $extraAttributes = $getExtraAttributeBag()
-        ->merge($getExtraAlpineAttributes(), escape: false);
-    $extraInputAttributes = $getExtraInputAttributeBag()
-        ->merge([
-            'autocomplete' => false,
-            'autofocus' => $isAutofocused(),
-            'disabled' => $isDisabled(),
-            'id' => $getId(),
-            'length' => $getLength(),
-            'placeholder' => filled($placeholder) ? e($placeholder) : null,
-            'readonly' => $isReadOnly(),
-            'required' => $isRequired() && (! $isConcealed()),
-            $applyStateBindingModifiers('wire:model') => $getStatePath(),
-        ], escape: false);
+    $statePath = $getStatePath();
+    $length = $getLength();
+    $isConcealed = $isConcealed();
+    $isDisabled = $isDisabled();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
-    <x-filament::input.one-time-code
-        :attributes="\Filament\Support\prepare_inherited_attributes($extraAttributes)"
+    <div
+        x-data="{
+            code: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+        }"
     >
-        <x-slot
-            name="input"
-            :attributes="\Filament\Support\prepare_inherited_attributes($extraInputAttributes)"
-        ></x-slot>
-    </x-filament::input.one-time-code>
+        <x-filament::input.one-time-code
+            x-model="code"
+            :length="$length"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    $getExtraAttributeBag()->merge($getExtraAlpineAttributes(), escape: false),
+                )
+            "
+        >
+            <x-slot
+                name="input"
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        $getExtraInputAttributeBag()->merge([
+                            'autofocus' => $isAutofocused(),
+                            'disabled' => $isDisabled,
+                            'id' => $getId(),
+                            'readonly' => $isReadOnly(),
+                            'required' => $isRequired() && (! $isConcealed),
+                        ], escape: false),
+                    )
+                "
+            ></x-slot>
+        </x-filament::input.one-time-code>
+    </div>
 </x-dynamic-component>
