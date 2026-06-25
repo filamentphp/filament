@@ -34,4 +34,14 @@ trait HasSize
     {
         return $this->evaluate($this->size) ?? $this->getDefaultSize();
     }
+
+    public function hasSize(): bool
+    {
+        return $this->size !== null || $this->defaultSize !== null;
+    }
+
+    public function hasSmallSizeDefault(): bool
+    {
+        return $this->size === null && $this->defaultSize === Size::Small;
+    }
 }

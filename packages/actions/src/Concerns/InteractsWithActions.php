@@ -29,7 +29,7 @@ use Throwable;
 
 use function Livewire\store;
 
-trait InteractsWithActions
+trait InteractsWithActions /** @phpstan-ignore trait.unused */
 {
     use WithRateLimiting;
 

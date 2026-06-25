@@ -179,7 +179,7 @@ class ImportCsv implements ShouldQueue
     protected function filterSensitiveData(array $data): array
     {
         return array_reduce(
-            $this->importer->getColumns(),
+            $this->importer->getCachedColumns(),
             function (array $carry, ImportColumn $column): array {
                 if (! $column->isSensitive()) {
                     return $carry;

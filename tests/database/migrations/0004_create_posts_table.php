@@ -21,6 +21,7 @@ return new class extends Migration
             $table->jsonb('json')->nullable();
             $table->jsonb('json_array_of_objects')->nullable();
             $table->string('string_backed_enum')->nullable();
+            $table->unsignedInteger('sort')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

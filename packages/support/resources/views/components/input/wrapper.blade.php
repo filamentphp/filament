@@ -49,6 +49,10 @@
     $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
     $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
     $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
+
+    $loadingDelay = ($hasPrefix || $hasSuffix || $hasLoadingIndicator)
+        ? config('filament.livewire_loading_delay', 'default')
+        : null;
 @endphp
 
 <div
@@ -71,7 +75,7 @@
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
             @if (! $hasPrefix)
-                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.flex
+                wire:loading.delay.{{ $loadingDelay }}.flex
                 wire:target="{{ $loadingIndicatorTarget }}"
                 wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
@@ -97,9 +101,9 @@
             @endif
 
             {{
-                \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
+                \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
                     ->merge([
-                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                        'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                     ], escape: false)
                     ->color(IconComponent::class, $prefixIconColor))
@@ -107,8 +111,8 @@
 
             @if ($hasLoadingIndicator)
                 {{
-                    \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
+                    \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                        'wire:loading.delay.' . $loadingDelay => $hasPrefix,
                         'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                     ]))->color(IconComponent::class, 'gray'))
                 }}
@@ -125,7 +129,7 @@
     <div
         @if ($hasLoadingIndicator && (! $hasPrefix))
             @if ($inlinePrefix)
-                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
+                wire:loading.delay.{{ $loadingDelay }}.class.remove="ps-3"
             @endif
 
             wire:target="{{ $loadingIndicatorTarget }}"
@@ -156,9 +160,9 @@
             @endif
 
             {{
-                \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
+                \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
                     ->merge([
-                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                        'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                     ], escape: false)
                     ->color(IconComponent::class, $suffixIconColor))

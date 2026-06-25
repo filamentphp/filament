@@ -3,8 +3,12 @@ export default ({ livewireId }) => ({
 
     closedActionNestingIndexes: [],
 
+    boundSyncActionModals: null,
+
+    boundOnModalClosed: null,
+
     init() {
-        window.addEventListener('sync-action-modals', (event) => {
+        this.boundSyncActionModals = (event) => {
             if (event.detail.id !== livewireId) {
                 return
             }
@@ -13,9 +17,9 @@ export default ({ livewireId }) => ({
                 event.detail.newActionNestingIndex,
                 event.detail.shouldOverlayParentActions ?? false,
             )
-        })
+        }
 
-        window.addEventListener('modal-closed', (event) => {
+        this.boundOnModalClosed = (event) => {
             const actionNestingIndex = this.getActionNestingIndexFromModalId(
                 event.detail.id,
             )
@@ -25,7 +29,28 @@ export default ({ livewireId }) => ({
             }
 
             this.closedActionNestingIndexes.push(actionNestingIndex)
-        })
+        }
+
+        window.addEventListener('sync-action-modals', this.boundSyncActionModals)
+
+        window.addEventListener('modal-closed', this.boundOnModalClosed)
+    },
+
+    destroy() {
+        if (this.boundSyncActionModals) {
+            window.removeEventListener(
+                'sync-action-modals',
+                this.boundSyncActionModals,
+            )
+
+            this.boundSyncActionModals = null
+        }
+
+        if (this.boundOnModalClosed) {
+            window.removeEventListener('modal-closed', this.boundOnModalClosed)
+
+            this.boundOnModalClosed = null
+        }
     },
 
     syncActionModals(

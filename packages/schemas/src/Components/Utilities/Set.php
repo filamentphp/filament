@@ -35,7 +35,7 @@ class Set
         } else {
             data_set($livewire, $path, $state);
 
-            $this->component->getRootContainer()->clearCachedDefaultChildSchemas();
+            $this->component->getRootContainer()->clearCachedChildSchemas();
         }
 
         return $state;
