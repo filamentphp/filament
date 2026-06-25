@@ -324,14 +324,8 @@ trait HasBulkActions
                 $this->filterTableQuery($query);
             }
 
-            if (! $shouldFetchSelectedRecords && $table->checksIfRecordIsSelectable()) {
-                $selectableKeys = [];
-                (clone $query)->lazy(chunkSize: 1000)->each(function (Model $record) use (&$selectableKeys, $table) {
-                    if ($table->isRecordSelectable($record)) {
-                        $selectableKeys[] = $record->getKey();
-                    }
-                });
-                $query->whereKey($selectableKeys);
+            if (! $shouldFetchSelectedRecords) {
+                $this->constrainQueryToSelectableTableRecords($query);
             }
 
             return $query;
@@ -368,17 +362,30 @@ trait HasBulkActions
             $this->applySortingToTableQuery($query);
         }
 
-        if (! $shouldFetchSelectedRecords && $table->checksIfRecordIsSelectable()) {
-            $selectableKeys = [];
-            (clone $query)->lazy(chunkSize: 1000)->each(function (Model $record) use (&$selectableKeys, $table) {
-                if ($table->isRecordSelectable($record)) {
-                    $selectableKeys[] = $record->getKey();
-                }
-            });
-            $query->whereKey($selectableKeys);
+        if (! $shouldFetchSelectedRecords) {
+            $this->constrainQueryToSelectableTableRecords($query);
         }
 
         return $query;
+    }
+
+    protected function constrainQueryToSelectableTableRecords(Builder $query): void
+    {
+        $table = $this->getTable();
+
+        if (! $table->checksIfRecordIsSelectable()) {
+            return;
+        }
+
+        $selectableKeys = [];
+
+        (clone $query)->lazyById()->each(function (Model $record) use (&$selectableKeys, $table): void {
+            if ($table->isRecordSelectable($record)) {
+                $selectableKeys[] = $record->getKey();
+            }
+        });
+
+        $query->whereKey($selectableKeys);
     }
 
     /**
