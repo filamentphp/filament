@@ -201,7 +201,7 @@ it('can state whether bulk actions exist in order', function (): void {
 it('does not receive non-selectable records when using select all', function (): void {
     // 2 published (selectable) and 1 unpublished (non-selectable)
     $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
-    $unpublishedPost = Post::factory()->create(['is_published' => false]);
+    Post::factory()->create(['is_published' => false]);
 
     livewire(SelectablePostsTable::class)
         ->set('isTrackingDeselectedTableRecords', true)
