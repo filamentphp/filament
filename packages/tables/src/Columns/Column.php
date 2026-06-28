@@ -216,6 +216,8 @@ class Column extends ViewComponent
             $this->hasDynamicExtraCellAttributes()
             || $this->hasDynamicAlignment()
             || $this->hasDynamicVerticalAlignment()
+            || $this->hasDynamicHiddenFrom()
+            || $this->hasDynamicVisibleFrom()
         ) {
             return $this->getCellAttributeHtml();
         }
