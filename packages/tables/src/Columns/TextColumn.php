@@ -20,6 +20,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent;
 use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -106,11 +107,9 @@ class TextColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function getSize(mixed $state): TextSize | string
+    public function getSize(mixed $state, ?Model $relationshipRecord = null): TextSize | string
     {
-        $size = $this->evaluate($this->size, [
-            'state' => $state,
-        ]);
+        $size = $this->evaluateForStateItem($this->size, $state, $relationshipRecord);
 
         if (blank($size)) {
             return TextSize::Small;
@@ -213,24 +212,6 @@ class TextColumn extends Column implements HasEmbeddedView
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
 
-        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab): string {
-            $url = $this->getUrl($stateItem);
-
-            $item = '';
-
-            if (filled($url)) {
-                $item .= '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>';
-            }
-
-            $item .= e($this->formatState($stateItem));
-
-            if (filled($url)) {
-                $item .= '</a>';
-            }
-
-            return $item;
-        };
-
         /** @var array<mixed> $state */
         $state = Arr::wrap($state);
 
@@ -238,6 +219,7 @@ class TextColumn extends Column implements HasEmbeddedView
 
         $listLimit = $this->getListLimit() ?? $stateCount;
         $stateOverListLimitCount = 0;
+        $relationshipRecords = $this->getRelationshipRecords();
 
         if ($listLimit && ($stateCount > $listLimit)) {
             $stateOverListLimitCount = $stateCount - $listLimit;
@@ -246,22 +228,45 @@ class TextColumn extends Column implements HasEmbeddedView
                 (! $isListWithLineBreaks) ||
                 (! $isLimitedListExpandable)
             ) {
-                $state = array_slice($state, 0, $listLimit);
+                [
+                    'state' => $state,
+                    'relationshipRecords' => $relationshipRecords,
+                ] = $this->sliceStateWithRelationshipRecords($state, $listLimit);
             }
         }
+
+        $formatState = function (mixed $stateItem, ?Model $relationshipRecord = null) use ($shouldOpenUrlInNewTab): string {
+            $url = $this->getUrl($stateItem, $relationshipRecord);
+
+            $item = '';
+
+            if (filled($url)) {
+                $item .= '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>';
+            }
+
+            $item .= e($this->formatState($stateItem, $relationshipRecord));
+
+            if (filled($url)) {
+                $item .= '</a>';
+            }
+
+            return $item;
+        };
 
         if (($stateCount > 1) && (! $isListWithLineBreaks) && (! $isBadge)) {
             $state = [
                 implode(
                     ', ',
                     array_map(
-                        fn (mixed $stateItem): string => $formatState($stateItem),
+                        fn (mixed $stateItem, int $index): string => $formatState($stateItem, $relationshipRecords[$index] ?? null),
                         $state,
+                        array_keys($state),
                     ),
                 ),
             ];
 
             $stateCount = 1;
+            $relationshipRecords = [];
             $formatState = fn (mixed $stateItem): string => $stateItem;
         }
 
@@ -275,83 +280,85 @@ class TextColumn extends Column implements HasEmbeddedView
         $iconPosition = $this->getIconPosition();
         $isBulleted = $this->isBulleted();
 
-        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $lineClamp): array {
-            $color = $this->getColor($stateItem) ?? ($isBadge ? 'primary' : null);
-            $iconColor = $this->getIconColor($stateItem);
+        $getStateItem = function (mixed $stateItem, ?Model $relationshipRecord = null) use ($iconPosition, $isBadge, $lineClamp): array {
+            return $this->withEvaluatingRelationshipRecord($relationshipRecord, function () use ($stateItem, $relationshipRecord, $iconPosition, $isBadge, $lineClamp): array {
+                $color = $this->getColor($stateItem, $relationshipRecord) ?? ($isBadge ? 'primary' : null);
+                $iconColor = $this->getIconColor($stateItem, $relationshipRecord);
 
-            $size = $this->getSize($stateItem);
+                $size = $this->getSize($stateItem, $relationshipRecord);
 
-            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
-                ->color(IconComponent::class, $iconColor), size: match ($size) {
-                    TextSize::Medium => IconSize::Medium,
-                    TextSize::Large => IconSize::Large,
-                    default => IconSize::Small,
-                })?->toHtml();
+                $iconHtml = generate_icon_html($this->getIcon($stateItem, $relationshipRecord), attributes: (new ComponentAttributeBag)
+                    ->color(IconComponent::class, $iconColor), size: match ($size) {
+                        TextSize::Medium => IconSize::Medium,
+                        TextSize::Large => IconSize::Large,
+                        default => IconSize::Small,
+                    })?->toHtml();
 
-            $isCopyable = $this->isCopyable($stateItem);
+                $isCopyable = $this->isCopyable($stateItem);
 
-            if ($isCopyable) {
-                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $this->formatState($stateItem));
-                $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
-                $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
-            }
+                if ($isCopyable) {
+                    $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $this->formatState($stateItem, $relationshipRecord));
+                    $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
+                    $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
+                }
 
-            $tooltip = $this->getTooltip($stateItem);
+                $tooltip = $this->getTooltip($stateItem, $relationshipRecord);
 
-            return [
-                'attributes' => (new ComponentAttributeBag)
-                    ->class([
-                        'fi-ta-text-item',
-                        (($fontFamily = $this->getFontFamily($stateItem)) instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : (is_string($fontFamily) ? $fontFamily : ''),
-                    ])
-                    ->when(
-                        ! $isBadge,
-                        fn (ComponentAttributeBag $attributes) => $attributes
-                            ->class([
-                                ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
-                                (($weight = $this->getWeight($stateItem)) instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($weight) ? $weight : ''),
-                            ])
-                            ->when($lineClamp, fn (ComponentAttributeBag $attributes) => $attributes->style([
-                                "--line-clamp: {$lineClamp}",
-                            ]))
-                            ->color(ItemComponent::class, $color)
-                    ),
-                'contentAttributes' => ($isBadge || $isCopyable || filled($tooltip))
-                    ? (new ComponentAttributeBag)
-                        ->merge([
-                            'x-on:click.prevent.stop' => $isCopyable
-                                ? <<<JS
+                return [
+                    'attributes' => (new ComponentAttributeBag)
+                        ->class([
+                            'fi-ta-text-item',
+                            (($fontFamily = $this->getFontFamily($stateItem)) instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : (is_string($fontFamily) ? $fontFamily : ''),
+                        ])
+                        ->when(
+                            ! $isBadge,
+                            fn (ComponentAttributeBag $attributes) => $attributes
+                                ->class([
+                                    ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
+                                    (($weight = $this->getWeight($stateItem)) instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($weight) ? $weight : ''),
+                                ])
+                                ->when($lineClamp, fn (ComponentAttributeBag $attributes) => $attributes->style([
+                                    "--line-clamp: {$lineClamp}",
+                                ]))
+                                ->color(ItemComponent::class, $color)
+                        ),
+                    'contentAttributes' => ($isBadge || $isCopyable || filled($tooltip))
+                        ? (new ComponentAttributeBag)
+                            ->merge([
+                                'x-on:click.prevent.stop' => $isCopyable
+                                    ? <<<JS
                                 window.navigator.clipboard.writeText({$copyableStateJs})
                                 \$tooltip({$copyMessageJs}, {
                                     theme: \$store.theme,
                                     timeout: {$copyMessageDurationJs},
                                 })
                                 JS
-                                : null,
-                            'x-tooltip' => filled($tooltip)
-                                ? '{
+                                    : null,
+                                'x-tooltip' => filled($tooltip)
+                                    ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
                                 allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
-                                : null,
-                        ], escape: false)
-                        ->class([
-                            'fi-copyable' => $isCopyable,
-                        ])
-                        ->when(
-                            $isBadge,
-                            fn (ComponentAttributeBag $attributes) => $attributes
-                                ->class([
-                                    'fi-badge' => $isBadge,
-                                    ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
-                                ])
-                                ->color(BadgeComponent::class, $color ?? 'primary'),
-                        )
-                    : null,
-                'iconAfterHtml' => ($iconPosition === IconPosition::After) ? $iconHtml : '',
-                'iconBeforeHtml' => ($iconPosition === IconPosition::Before) ? $iconHtml : '',
-            ];
+                                    : null,
+                            ], escape: false)
+                            ->class([
+                                'fi-copyable' => $isCopyable,
+                            ])
+                            ->when(
+                                $isBadge,
+                                fn (ComponentAttributeBag $attributes) => $attributes
+                                    ->class([
+                                        'fi-badge' => $isBadge,
+                                        ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
+                                    ])
+                                    ->color(BadgeComponent::class, $color ?? 'primary'),
+                            )
+                        : null,
+                    'iconAfterHtml' => ($iconPosition === IconPosition::After) ? $iconHtml : '',
+                    'iconBeforeHtml' => ($iconPosition === IconPosition::Before) ? $iconHtml : '',
+                ];
+            });
         };
 
         $descriptionAbove = $this->getDescriptionAbove();
@@ -365,12 +372,13 @@ class TextColumn extends Column implements HasEmbeddedView
             (! $lineClamp)
         ) {
             $stateItem = Arr::first($state);
+            $relationshipRecord = $relationshipRecords[0] ?? null;
             [
                 'attributes' => $stateItemAttributes,
                 'contentAttributes' => $stateItemContentAttributes,
                 'iconAfterHtml' => $stateItemIconAfterHtml,
                 'iconBeforeHtml' => $stateItemIconBeforeHtml,
-            ] = $getStateItem($stateItem);
+            ] = $getStateItem($stateItem, $relationshipRecord);
 
             ob_start(); ?>
 
@@ -382,7 +390,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php } ?>
 
                 <?= $stateItemIconBeforeHtml ?>
-                <?= $formatState($stateItem) ?>
+                <?= $formatState($stateItem, $relationshipRecord) ?>
                 <?= $stateItemIconAfterHtml ?>
 
                 <?php if ($stateItemContentAttributes) { ?>
@@ -423,12 +431,13 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php if (($stateCount === 1) && (! $isBulleted)) { ?>
                     <?php
                         $stateItem = Arr::first($state);
+                    $relationshipRecord = $relationshipRecords[0] ?? null;
                     [
                         'attributes' => $stateItemAttributes,
                         'contentAttributes' => $stateItemContentAttributes,
                         'iconAfterHtml' => $stateItemIconAfterHtml,
                         'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                    ] = $getStateItem($stateItem);
+                    ] = $getStateItem($stateItem, $relationshipRecord);
                     ?>
 
                     <p <?= $stateItemAttributes->toHtml() ?>>
@@ -437,7 +446,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         <?php } ?>
 
                         <?= $stateItemIconBeforeHtml ?>
-                        <?= $formatState($stateItem) ?>
+                        <?= $formatState($stateItem, $relationshipRecord) ?>
                         <?= $stateItemIconAfterHtml ?>
 
                         <?php if ($stateItemContentAttributes) { ?>
@@ -448,13 +457,15 @@ class TextColumn extends Column implements HasEmbeddedView
                     <ul>
                         <?php $stateIteration = 1; ?>
 
-                        <?php foreach ($state as $stateItem) { ?>
-                            <?php [
+                        <?php foreach ($state as $index => $stateItem) { ?>
+                            <?php
+                                $relationshipRecord = $relationshipRecords[$index] ?? null;
+                            [
                                 'attributes' => $stateItemAttributes,
                                 'contentAttributes' => $stateItemContentAttributes,
                                 'iconAfterHtml' => $stateItemIconAfterHtml,
                                 'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                            ] = $getStateItem($stateItem); ?>
+                            ] = $getStateItem($stateItem, $relationshipRecord); ?>
 
                             <li
                                 <?php if ($stateIteration > $listLimit) { ?>
@@ -469,7 +480,7 @@ class TextColumn extends Column implements HasEmbeddedView
                                 <?php } ?>
 
                                 <?= $stateItemIconBeforeHtml ?>
-                                <?= $formatState($stateItem) ?>
+                                <?= $formatState($stateItem, $relationshipRecord) ?>
                                 <?= $stateItemIconAfterHtml ?>
 
                                 <?php if ($stateItemContentAttributes) { ?>
@@ -522,13 +533,15 @@ class TextColumn extends Column implements HasEmbeddedView
         ob_start(); ?>
 
         <ul <?= $attributes->toHtml() ?>>
-            <?php foreach ($state as $stateItem) { ?>
-                <?php [
+            <?php foreach ($state as $index => $stateItem) { ?>
+                <?php
+                    $relationshipRecord = $relationshipRecords[$index] ?? null;
+                [
                     'attributes' => $stateItemAttributes,
                     'contentAttributes' => $stateItemContentAttributes,
                     'iconAfterHtml' => $stateItemIconAfterHtml,
                     'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                ] = $getStateItem($stateItem); ?>
+                ] = $getStateItem($stateItem, $relationshipRecord); ?>
 
                 <li <?= $stateItemAttributes->toHtml() ?>>
                     <?php if ($stateItemContentAttributes) { ?>
@@ -536,7 +549,7 @@ class TextColumn extends Column implements HasEmbeddedView
                     <?php } ?>
 
                     <?= $stateItemIconBeforeHtml ?>
-                    <?= $formatState($stateItem) ?>
+                    <?= $formatState($stateItem, $relationshipRecord) ?>
                     <?= $stateItemIconAfterHtml ?>
 
                     <?php if ($stateItemContentAttributes) { ?>

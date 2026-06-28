@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use Closure;
 use Filament\Support\Contracts\HasColor as ColorInterface;
 use Filament\Tables\Columns\Column;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasColor
 {
@@ -52,11 +53,9 @@ trait HasColor
     /**
      * @return string | array<string> | null
      */
-    public function getColor(mixed $state): string | array | null
+    public function getColor(mixed $state, ?Model $relationshipRecord = null): string | array | null
     {
-        $color = $this->evaluate($this->color, [
-            'state' => $state,
-        ]);
+        $color = $this->evaluateForStateItem($this->color, $state, $relationshipRecord);
 
         if ($color === false) {
             return null;

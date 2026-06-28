@@ -8,6 +8,7 @@ use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\Column;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasIcon
 {
@@ -55,11 +56,9 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(mixed $state): string | BackedEnum | Htmlable | null
+    public function getIcon(mixed $state, ?Model $relationshipRecord = null): string | BackedEnum | Htmlable | null
     {
-        $icon = $this->evaluate($this->icon, [
-            'state' => $state,
-        ]);
+        $icon = $this->evaluateForStateItem($this->icon, $state, $relationshipRecord);
 
         if ($icon === false) {
             return null;

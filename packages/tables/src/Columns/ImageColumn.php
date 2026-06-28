@@ -9,6 +9,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -459,6 +460,8 @@ class ImageColumn extends Column implements HasEmbeddedView
         }
 
         $state = Arr::wrap($state);
+
+        $relationshipRecords = $this->getRelationshipRecords();
         $stateCount = count($state);
 
         $limit = $this->getLimit() ?? $stateCount;
@@ -468,7 +471,10 @@ class ImageColumn extends Column implements HasEmbeddedView
             : 0;
 
         if ($stateOverLimitCount) {
-            $state = array_slice($state, 0, $limit);
+            [
+                'state' => $state,
+                'relationshipRecords' => $relationshipRecords,
+            ] = $this->sliceStateWithRelationshipRecords($state, $limit);
         }
 
         $isCircular = $this->isCircular();
@@ -490,11 +496,11 @@ class ImageColumn extends Column implements HasEmbeddedView
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
 
-        $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
+        $formatState = function (mixed $stateItem, ?Model $relationshipRecord = null) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
                     'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
-                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem, $relationshipRecord))
                         ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
@@ -509,7 +515,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                 ->toHtml()
                 . ' />';
 
-            if (filled($url = $this->getUrl($stateItem))) {
+            if (filled($url = $this->getUrl($stateItem, $relationshipRecord))) {
                 $item = '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>' . $item . '</a>';
             }
 
@@ -519,8 +525,8 @@ class ImageColumn extends Column implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?php foreach ($state as $stateItem) { ?>
-                <?= $formatState($stateItem) ?>
+            <?php foreach ($state as $index => $stateItem) { ?>
+                <?= $formatState($stateItem, $relationshipRecords[$index] ?? null) ?>
             <?php } ?>
 
             <?php if ($hasLimitedRemainingText) { ?>

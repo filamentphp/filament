@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasTooltip
 {
@@ -20,11 +21,9 @@ trait HasTooltip
         return $this;
     }
 
-    public function getTooltip(mixed $state = null): string | Htmlable | null
+    public function getTooltip(mixed $state = null, ?Model $relationshipRecord = null): string | Htmlable | null
     {
-        return $this->evaluate($this->tooltip, [
-            'state' => $state,
-        ]);
+        return $this->evaluateForStateItem($this->tooltip, $state, $relationshipRecord);
     }
 
     public function headerTooltip(string | Htmlable | Closure | null $tooltip): static

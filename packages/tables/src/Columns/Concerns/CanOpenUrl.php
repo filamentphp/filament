@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanOpenUrl
 {
@@ -32,13 +33,11 @@ trait CanOpenUrl
         return $this;
     }
 
-    public function getUrl(mixed $state = null): ?string
+    public function getUrl(mixed $state = null, ?Model $relationshipRecord = null): ?string
     {
-        if (func_num_args() === 1) {
+        if (func_num_args() >= 1) {
             return $this->hasStateBasedUrls()
-                ? $this->evaluate($this->url, [
-                    'state' => $state,
-                ])
+                ? $this->evaluateForStateItem($this->url, $state, $relationshipRecord)
                 : null;
         }
 
@@ -51,7 +50,8 @@ trait CanOpenUrl
 
     public function hasStateBasedUrls(): bool
     {
-        return $this->evaluationValueIsFunctionAndHasParameter($this->url, parameterName: 'state');
+        return $this->evaluationValueIsFunctionAndHasParameter($this->url, parameterName: 'state')
+            || $this->evaluationValueIsFunctionAndHasParameter($this->url, parameterName: 'relationshipRecord');
     }
 
     public function shouldOpenUrlInNewTab(): bool

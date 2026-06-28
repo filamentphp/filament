@@ -18,9 +18,7 @@ trait HasWeight
 
     public function getWeight(mixed $state = null): FontWeight | string | null
     {
-        $weight = $this->evaluate($this->weight, [
-            'state' => $state,
-        ]);
+        $weight = $this->evaluate($this->weight, $this->getEvaluationsForStateItem($state));
 
         if (! is_string($weight)) {
             return $weight;

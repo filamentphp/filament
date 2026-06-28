@@ -146,11 +146,9 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function getSize(mixed $state): IconSize | string | null
+    public function getSize(mixed $state, ?Model $relationshipRecord = null): IconSize | string | null
     {
-        $size = $this->evaluate($this->size, [
-            'state' => $state,
-        ]);
+        $size = $this->evaluateForStateItem($this->size, $state, $relationshipRecord);
 
         if (blank($size)) {
             return null;
@@ -167,9 +165,9 @@ class IconColumn extends Column implements HasEmbeddedView
         return $size;
     }
 
-    public function getIcon(mixed $state): string | BackedEnum | Htmlable | null
+    public function getIcon(mixed $state, ?Model $relationshipRecord = null): string | BackedEnum | Htmlable | null
     {
-        if (filled($icon = $this->getBaseIcon($state))) {
+        if (filled($icon = $this->getBaseIcon($state, $relationshipRecord))) {
             return $icon;
         }
 
@@ -187,9 +185,9 @@ class IconColumn extends Column implements HasEmbeddedView
     /**
      * @return string | array<int | string, string | int> | null
      */
-    public function getColor(mixed $state): string | array | null
+    public function getColor(mixed $state, ?Model $relationshipRecord = null): string | array | null
     {
-        if (filled($color = $this->getBaseColor($state))) {
+        if (filled($color = $this->getBaseColor($state, $relationshipRecord))) {
             return $color;
         }
 
@@ -308,6 +306,8 @@ class IconColumn extends Column implements HasEmbeddedView
 
         $state = Arr::wrap($state);
 
+        $relationshipRecords = $this->getRelationshipRecords();
+
         $attributes = $attributes
             ->class([
                 'fi-ta-icon-has-line-breaks' => $this->isListWithLineBreaks(),
@@ -316,19 +316,19 @@ class IconColumn extends Column implements HasEmbeddedView
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
 
-        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab): string {
-            $icon = $this->getIcon($stateItem);
+        $formatState = function (mixed $stateItem, ?Model $relationshipRecord = null) use ($shouldOpenUrlInNewTab): string {
+            $icon = $this->getIcon($stateItem, $relationshipRecord);
 
             if (blank($icon)) {
                 return '';
             }
 
-            $color = $this->getColor($stateItem);
-            $size = $this->getSize($stateItem);
+            $color = $this->getColor($stateItem, $relationshipRecord);
+            $size = $this->getSize($stateItem, $relationshipRecord);
 
             $item = generate_icon_html($icon, attributes: (new ComponentAttributeBag)
                 ->merge([
-                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem, $relationshipRecord))
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
@@ -339,7 +339,7 @@ class IconColumn extends Column implements HasEmbeddedView
                 ->color(IconComponent::class, $color), size: $size ?? IconSize::Large)
                 ->toHtml();
 
-            if (filled($url = $this->getUrl($stateItem))) {
+            if (filled($url = $this->getUrl($stateItem, $relationshipRecord))) {
                 $item = '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>' . $item . '</a>';
             }
 
@@ -349,8 +349,8 @@ class IconColumn extends Column implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?php foreach ($state as $stateItem) { ?>
-                <?= $formatState($stateItem) ?>
+            <?php foreach ($state as $index => $stateItem) { ?>
+                <?= $formatState($stateItem, $relationshipRecords[$index] ?? null) ?>
             <?php } ?>
         </div>
 

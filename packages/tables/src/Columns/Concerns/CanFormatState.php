@@ -11,6 +11,7 @@ use Filament\Support\Enums\ArgumentValue;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
@@ -373,13 +374,11 @@ trait CanFormatState
         return $this;
     }
 
-    public function formatState(mixed $state): mixed
+    public function formatState(mixed $state, ?Model $relationshipRecord = null): mixed
     {
         $isHtml = $this->isHtml();
 
-        $state = $this->evaluate($this->formatStateUsing ?? $state, [
-            'state' => $state,
-        ]);
+        $state = $this->evaluateForStateItem($this->formatStateUsing ?? $state, $state, $relationshipRecord);
 
         if (is_array($state)) {
             $state = json_encode($state);

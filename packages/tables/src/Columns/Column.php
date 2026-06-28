@@ -47,6 +47,7 @@ class Column extends ViewComponent
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasRecord;
+    use Concerns\HasRelationshipRecords;
     use Concerns\HasRowLoopObject;
     use Concerns\InteractsWithTableQuery;
     use HasAlignment;
@@ -100,6 +101,7 @@ class Column extends ViewComponent
         return match ($parameterName) {
             'livewire' => [$this->getLivewire()],
             'record' => [$this->getRecord()],
+            'relationshipRecord' => [$this->getRelationshipRecord()],
             'rowLoop' => [$this->getRowLoop()],
             'state' => [$this->getState()],
             'table' => [$this->getTable()],

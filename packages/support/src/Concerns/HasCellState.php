@@ -33,6 +33,16 @@ trait HasCellState
      */
     protected array $cachedState = [];
 
+    /**
+     * @var array<string, array<Model>>
+     */
+    protected array $cachedRelationshipRecords = [];
+
+    /**
+     * @var array<Model>|null
+     */
+    protected ?array $lastResolvedRelationshipRecords = null;
+
     protected ?bool $hasMultipleRelationshipCache = null;
 
     protected ?Relation $relationshipCache = null;
@@ -112,30 +122,13 @@ trait HasCellState
             $relationship = $this->getRelationship($record);
 
             if ($relationship) {
-                $relationshipAttribute = $this->getFullAttributeName($record);
+                $pairs = $this->resolveRelationshipStatePairs($record);
 
-                $state = collect($this->getRelationshipResults($record))
-                    ->reduce(
-                        function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
-                            if (
-                                ($record instanceof HasRichContent) &&
-                                $record->hasRichContentAttribute($relationshipAttribute)
-                            ) {
-                                $state = $record->getRichContentAttribute($relationshipAttribute);
-                            } else {
-                                $state = data_get($record, $relationshipAttribute);
-                            }
+                $this->lastResolvedRelationshipRecords = $pairs
+                    ->pluck('record')
+                    ->all();
 
-                            if (blank($state)) {
-                                return $carry;
-                            }
-
-                            return $carry->push($state);
-                        },
-                        initial: collect(),
-                    )
-                    ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
-                    ->values();
+                $state = $pairs->pluck('state');
 
                 if (! $state->count()) {
                     return null;
@@ -148,6 +141,8 @@ trait HasCellState
                 return $state->all();
             }
         }
+
+        $this->lastResolvedRelationshipRecords = null;
 
         $name = $this->getName();
 
@@ -166,6 +161,79 @@ trait HasCellState
     public function clearCachedState(): void
     {
         $this->cachedState = [];
+        $this->cachedRelationshipRecords = [];
+    }
+
+    /**
+     * @return array<Model>
+     */
+    public function getRelationshipRecords(): array
+    {
+        $this->getState();
+
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return [];
+        }
+
+        $recordKey = $this->resolveCachedStateRecordKey($record);
+
+        if (blank($recordKey)) {
+            return $this->lastResolvedRelationshipRecords ?? [];
+        }
+
+        return $this->cachedRelationshipRecords[$recordKey] ?? [];
+    }
+
+    public function getRelationshipRecord(): ?Model
+    {
+        $records = $this->getRelationshipRecords();
+
+        if (count($records) !== 1) {
+            return null;
+        }
+
+        return $records[0];
+    }
+
+    /**
+     * @return Collection<int, array{state: mixed, record: Model}>
+     */
+    protected function resolveRelationshipStatePairs(Model $record): Collection
+    {
+        $relationshipAttribute = $this->getFullAttributeName($record);
+
+        return collect($this->getRelationshipResults($record))
+            ->map(function (Model $relatedRecord) use ($relationshipAttribute): ?array {
+                if (
+                    ($relatedRecord instanceof HasRichContent) &&
+                    $relatedRecord->hasRichContentAttribute($relationshipAttribute)
+                ) {
+                    $state = $relatedRecord->getRichContentAttribute($relationshipAttribute);
+                } else {
+                    $state = data_get($relatedRecord, $relationshipAttribute);
+                }
+
+                if (blank($state)) {
+                    return null;
+                }
+
+                return [
+                    'state' => $state,
+                    'record' => $relatedRecord,
+                ];
+            })
+            ->filter()
+            ->when(
+                $this->isDistinctList(),
+                fn (Collection $pairs) => $pairs->unique(
+                    fn (array $pair): string => is_scalar($pair['state'])
+                        ? (string) $pair['state']
+                        : serialize($pair['state']),
+                ),
+            )
+            ->values();
     }
 
     public function separator(string | Closure | null $separator = ','): static
@@ -467,15 +535,11 @@ trait HasCellState
             return null;
         }
 
-        if ($this instanceof Column) {
-            $recordKey = $this->getLivewire()->getTableRecordKey($record);
-        } elseif (is_array($record)) { /** @phpstan-ignore function.impossibleType */
-            $recordKey = (string) ($record[ArrayRecord::getKeyName()] ?? null); /** @phpstan-ignore nullCoalesce.offset */
-        } else {
-            $recordKey = (string) $record->getKey();
-        }
+        $recordKey = $this->resolveCachedStateRecordKey($record);
 
         if (blank($recordKey)) {
+            $this->lastResolvedRelationshipRecords = null;
+
             return $state();
         }
 
@@ -483,7 +547,28 @@ trait HasCellState
             return $this->cachedState[$recordKey];
         }
 
-        return $this->cachedState[$recordKey] = $state();
+        $this->lastResolvedRelationshipRecords = null;
+
+        $computedState = $state();
+
+        if ($this->lastResolvedRelationshipRecords !== null) {
+            $this->cachedRelationshipRecords[$recordKey] = $this->lastResolvedRelationshipRecords;
+        }
+
+        return $this->cachedState[$recordKey] = $computedState;
+    }
+
+    protected function resolveCachedStateRecordKey(mixed $record): ?string
+    {
+        if ($this instanceof Column) {
+            return $this->getLivewire()->getTableRecordKey($record);
+        }
+
+        if (is_array($record)) { /** @phpstan-ignore function.impossibleType */
+            return (string) ($record[ArrayRecord::getKeyName()] ?? null); /** @phpstan-ignore nullCoalesce.offset */
+        }
+
+        return (string) $record->getKey();
     }
 
     public function getGetStateUsingCallback(): mixed

@@ -133,6 +133,18 @@ trait EvaluatesClosures
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getEvaluationsForStateItem(mixed $state): array
+    {
+        if (method_exists($this, 'getNamedInjectionsForStateItem')) {
+            return $this->getNamedInjectionsForStateItem($state);
+        }
+
+        return ['state' => $state];
+    }
+
     protected function getTypedReflectionParameterClassName(ReflectionParameter $parameter): ?string
     {
         $type = $parameter->getType();
