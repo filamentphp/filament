@@ -135,6 +135,18 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('renders the correct number of inputs for `length()` of `8`', function (): void {
+        $html = livewire(RenderOneTimeCodeInputWithClosureLength::class)->html();
+
+        expect(substr_count($html, 'fi-one-time-code-input-digit'))->toBe(8);
+    });
+
+    it('renders the correct number of inputs for `length()` of `4`', function (): void {
+        $html = livewire(TestComponentWithFourDigitCodeInput::class)->html();
+
+        expect(substr_count($html, 'fi-one-time-code-input-digit'))->toBe(4);
+    });
+
     it('can render with `readOnly()`', function (): void {
         livewire(RenderOneTimeCodeInputWithReadOnly::class)
             ->assertSuccessful();
