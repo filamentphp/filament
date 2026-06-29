@@ -29,11 +29,7 @@ export default ({ livewireId }) => ({
             }
 
             if (this.shouldOverlayParentActions) {
-                this.$nextTick(() =>
-                    this.restorePreviouslyFocusedElement(
-                        actionNestingIndex - 1,
-                    ),
-                )
+                this.restorePreviouslyFocusedElement(actionNestingIndex - 1)
             }
 
             this.closedActionNestingIndexes.push(actionNestingIndex)
@@ -151,7 +147,9 @@ export default ({ livewireId }) => ({
 
         requestAnimationFrame(() =>
             requestAnimationFrame(() =>
-                this.$focus.focus(previouslyFocusedElement),
+                this.$nextTick(() => {
+                    previouslyFocusedElement.focus({ preventScroll: false })
+                }),
             ),
         )
     },
