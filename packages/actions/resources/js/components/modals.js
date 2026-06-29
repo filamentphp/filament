@@ -1,6 +1,8 @@
 export default ({ livewireId }) => ({
     actionNestingIndex: null,
 
+    shouldOverlayParentActions: false,
+
     closedActionNestingIndexes: [],
 
     previouslyFocusedElementsByActionNestingIndex: {},
@@ -24,6 +26,14 @@ export default ({ livewireId }) => ({
 
             if (actionNestingIndex === null) {
                 return
+            }
+
+            if (this.shouldOverlayParentActions) {
+                this.$nextTick(() =>
+                    this.restorePreviouslyFocusedElement(
+                        actionNestingIndex - 1,
+                    ),
+                )
             }
 
             this.closedActionNestingIndexes.push(actionNestingIndex)
@@ -68,9 +78,12 @@ export default ({ livewireId }) => ({
         if (this.actionNestingIndex === null) {
             this.closedActionNestingIndexes = []
             this.previouslyFocusedElementsByActionNestingIndex = {}
+            this.shouldOverlayParentActions = false
 
             return
         }
+
+        this.shouldOverlayParentActions = shouldOverlayParentActions
 
         this.closedActionNestingIndexes =
             this.closedActionNestingIndexes.filter(
@@ -91,9 +104,7 @@ export default ({ livewireId }) => ({
                 this.openModal()
 
                 if (shouldRestorePreviouslyFocusedElement) {
-                    requestAnimationFrame(() =>
-                        this.restorePreviouslyFocusedElement(),
-                    )
+                    this.restorePreviouslyFocusedElement()
                 }
             })
 
@@ -101,9 +112,8 @@ export default ({ livewireId }) => ({
         }
 
         this.openModal()
-
         if (shouldRestorePreviouslyFocusedElement) {
-            requestAnimationFrame(() => this.restorePreviouslyFocusedElement())
+            this.restorePreviouslyFocusedElement()
         }
     },
 
@@ -131,23 +141,19 @@ export default ({ livewireId }) => ({
                 actionNestingIndex
             ]
 
+        if (!previouslyFocusedElement) {
+            return
+        }
 
         delete this.previouslyFocusedElementsByActionNestingIndex[
             actionNestingIndex
         ]
 
-        const modal = this.$el.querySelector(
-            `#${this.generateModalId(actionNestingIndex)}`,
+        requestAnimationFrame(() =>
+            requestAnimationFrame(() =>
+                this.$focus.focus(previouslyFocusedElement),
+            ),
         )
-
-        if (
-            !previouslyFocusedElement?.isConnected ||
-            !modal?.contains(previouslyFocusedElement)
-        ) {
-            return
-        }
-
-        requestAnimationFrame(() => this.$focus.focus(previouslyFocusedElement))
     },
 
     generateModalId(actionNestingIndex) {
