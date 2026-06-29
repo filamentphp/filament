@@ -19,7 +19,7 @@
                 \Filament\Support\prepare_inherited_attributes(
                     $getExtraAttributeBag()->merge($getExtraAlpineAttributes(), escape: false),
                 )->merge([
-                    'length' => $getLength(),
+                    'length' => $length,
                 ], escape: false)
             "
         >
