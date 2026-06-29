@@ -18,7 +18,9 @@
             :attributes="
                 \Filament\Support\prepare_inherited_attributes(
                     $getExtraAttributeBag()->merge($getExtraAlpineAttributes(), escape: false),
-                )
+                )->merge([
+                    'length' => $getLength(),
+                ], escape: false)
             "
         >
             <x-slot
