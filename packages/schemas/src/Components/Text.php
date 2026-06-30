@@ -158,7 +158,7 @@ class Text extends Component implements HasEmbeddedView
                     'fi-badge',
                     ($size instanceof BackedEnum) ? "fi-size-{$size->value}" : $size,
                 ])
-                ->color(BadgeComponent::class, $color);
+                ->color(BadgeComponent::class, $color ?? 'primary');
 
             ob_start(); ?>
 
