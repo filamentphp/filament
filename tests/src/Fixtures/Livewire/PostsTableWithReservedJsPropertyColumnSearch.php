@@ -25,9 +25,9 @@ class PostsTableWithReservedJsPropertyColumnSearch extends Component implements 
             ->columns([
                 // `length` and `sort` collide with built-in JavaScript array properties.
                 Tables\Columns\TextColumn::make('length')
-                    ->searchable(isIndividual: true, isGlobal: false),
+                    ->searchable('title', isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('sort')
-                    ->searchable(isIndividual: true, isGlobal: false),
+                    ->searchable('title', isIndividual: true, isGlobal: false),
                 // `title` is a normal column name and must not be seeded.
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(isIndividual: true, isGlobal: false),
