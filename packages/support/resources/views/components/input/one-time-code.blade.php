@@ -2,42 +2,36 @@
     'length' => 6,
 ])
 
-<div
-    x-data="{ currentNumberOfDigits: null }"
-    {{
-        $attributes
-            ->class([
-                'fi-one-time-code-input-ctn',
-            ])
-    }}
->
-    @foreach (range(1, $length) as $digit)
-        <div
-            x-bind:class="{
-                'fi-active':
-                    currentNumberOfDigits !== null &&
-                    currentNumberOfDigits >= {{ $digit }},
-            }"
-            class="fi-one-time-code-input-digit-field"
-        ></div>
-    @endforeach
+@php
+    $inputAttributes = $input?->attributes ?? new \Illuminate\View\ComponentAttributeBag;
+    $isDisabled = filter_var($inputAttributes->get('disabled'), FILTER_VALIDATE_BOOLEAN);
+    $isReadOnly = filter_var($inputAttributes->get('readonly'), FILTER_VALIDATE_BOOLEAN);
+@endphp
 
-    <input
-        autocomplete="one-time-code"
-        inputmode="numeric"
-        minlength="{{ $length }}"
-        maxlength="{{ $length }}"
-        pattern="\d{{ '{' . $length . '}' }}"
-        type="text"
-        x-data="{}"
-        x-on:focus="currentNumberOfDigits = $el.value.length"
-        x-on:blur="currentNumberOfDigits = null"
-        x-on:input="
-            $el.value = $el.value.replace(/\D/g, '')
-            currentNumberOfDigits = $el.value.length
-        "
-        x-bind:class="{ 'fi-valid': currentNumberOfDigits >= {{ $length }} }"
-        {{ $input?->attributes }}
-        class="fi-one-time-code-input"
-    />
+<div
+    x-data="filamentOneTimeCodeInput"
+    x-modelable="state"
+    role="group"
+    {{ $attributes->class(['fi-one-time-code-input-ctn']) }}
+>
+    @foreach (range(0, $length - 1) as $index)
+        @if ($index === 0)
+            <input
+                autocomplete="one-time-code"
+                inputmode="numeric"
+                type="text"
+                {{ $inputAttributes->class(['fi-one-time-code-input-digit']) }}
+            />
+        @else
+            <input
+                aria-label="{{ __('filament::components/input/one-time-code.aria_label', ['position' => $index + 1, 'count' => $length]) }}"
+                autocomplete="off"
+                inputmode="numeric"
+                type="text"
+                @disabled($isDisabled)
+                @readonly($isReadOnly)
+                class="fi-one-time-code-input-digit"
+            />
+        @endif
+    @endforeach
 </div>
