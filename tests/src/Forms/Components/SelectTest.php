@@ -1542,6 +1542,20 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('restores focus to the trigger when closing a `createOptionForm()` modal in the browser', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/select-test')
+                ->assertSee('Creatable Select')
+                ->click('[data-testid="create-option-action-trigger"]')
+                ->assertVisible('[data-testid="create-option-action-modal"]')
+                ->click('[data-testid="create-option-action-modal"] .fi-modal-close-btn')
+                ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
+                ->assertNoSmoke();
+        });
+    });
+
     it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
