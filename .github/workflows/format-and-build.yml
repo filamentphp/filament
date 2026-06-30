@@ -22,7 +22,8 @@ jobs:
       - name: Checkout code
         # Uses a maintainer PAT so the auto-commit push can bypass branch protection;
         # the default GITHUB_TOKEN pushes as `github-actions[bot]` and gets rejected.
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 # zizmor: ignore[artipacked]
+        # zizmor: ignore[artipacked]
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN || github.token }}
       - name: Cache Composer package downloads

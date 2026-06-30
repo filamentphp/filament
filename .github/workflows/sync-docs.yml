@@ -16,7 +16,8 @@ jobs:
         # persist-credentials: true is required so the final `git push` to
         # filamentphp/mintlify-docs uses the GH_ACCESS_TOKEN written into
         # docs/.git/config. Subsequent steps in this job are maintainer-controlled.
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 # zizmor: ignore[artipacked]
+        # zizmor: ignore[artipacked]
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: filamentphp/mintlify-docs
           token: ${{ secrets.GH_ACCESS_TOKEN }}
@@ -27,7 +28,8 @@ jobs:
         # (read-only against the docs repo's working tree) and then pushes to a separate
         # repo via PAT. No cache contents reach a release-distributed artifact, so the
         # cache-poisoning vector zizmor flags doesn't apply.
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0 # zizmor: ignore[cache-poisoning]
+        # zizmor: ignore[cache-poisoning]
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: '20'
 
