@@ -117,7 +117,7 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
         $firstButton = $resolvedButtons[0];
         $icon = $this->getIcon();
 
-        $defaultContent = generate_icon_html($icon ?? $firstButton->getIcon(), alias: $icon ? null : $firstButton->getIconAlias())->toHtml();
+        $defaultContent = generate_icon_html($icon ?? $firstButton->getIcon(), alias: $icon ? null : $firstButton->getIconAlias())?->toHtml() ?? '';
         $defaultContentHtml = $defaultContent;
 
         $effectJs = $this->buildTriggerEffect($resolvedButtons, $defaultContent);
@@ -175,7 +175,7 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
         $parts = [];
 
         foreach ($resolvedButtons as $button) {
-            $value = Js::from(generate_icon_html($button->getIcon(), alias: $button->getIconAlias())->toHtml())->toHtml();
+            $value = Js::from(generate_icon_html($button->getIcon(), alias: $button->getIconAlias())?->toHtml() ?? '')->toHtml();
 
             $parts[] = 'if (' . $this->buildActiveExpression($button) . ') return ' . $value . ';';
         }
@@ -211,7 +211,7 @@ class ToolbarButtonGroup extends ViewComponent implements HasEmbeddedView
                     'fi-fo-rich-editor-dropdown-tool-option',
                 ]);
 
-            $iconHtml = generate_icon_html($button->getIcon(), alias: $button->getIconAlias())->toHtml();
+            $iconHtml = generate_icon_html($button->getIcon(), alias: $button->getIconAlias())?->toHtml() ?? '';
 
             $content = $isTextual
                 ? $iconHtml . ' <span>' . e($buttonLabel) . '</span>'
