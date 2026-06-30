@@ -130,12 +130,8 @@ trait InteractsWithTable
             $this->tableColumnSearches,
         );
 
-        // Pre-populate so the array is always associative (serializes to `{}` not `[]`), preventing Alpine reading a `length` key as the built-in array `.length`.
-        foreach ($this->getTable()->getColumns() as $column) {
-            if ($column->isIndividuallySearchable() && ! array_key_exists($column->getName(), $this->tableColumnSearches)) {
-                $this->tableColumnSearches[$column->getName()] = '';
-            }
-        }
+        // Seed individually searchable columns named after a JavaScript array property (e.g. `length`), so `$tableColumnSearches` serializes to a JSON object instead of an array and `wire:model` reads the search value rather than the array property.
+        $this->fillReservedTableColumnSearchKeys();
 
         if ($shouldPersistColumnSearchesInSession) {
             session()->put(
