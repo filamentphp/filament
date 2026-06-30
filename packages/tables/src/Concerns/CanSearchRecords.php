@@ -43,8 +43,11 @@ trait CanSearchRecords
     public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
         if (blank($value) && filled($key)) {
-            // Keep the key present as '' so the array stays associative and serializes to a JSON object, not [].
-            Arr::set($this->tableColumnSearches, $key, '');
+            if (in_array($key, $this->getReservedTableColumnSearchKeys(), strict: true)) {
+                Arr::set($this->tableColumnSearches, $key, '');
+            } else {
+                Arr::forget($this->tableColumnSearches, $key);
+            }
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
@@ -247,7 +250,7 @@ trait CanSearchRecords
             $columnName = $column->getName();
 
             // Other names already read back as an empty search from a JSON array, so only reserved names need seeding.
-            if (! in_array($columnName, $reservedKeys, true)) {
+            if (! in_array($columnName, $reservedKeys, strict: true)) {
                 continue;
             }
 

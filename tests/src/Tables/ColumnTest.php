@@ -374,6 +374,14 @@ describe('searching', function (): void {
             ->assertSet('tableColumnSearches.length', '');
     });
 
+    it('removes a non-reserved key from `tableColumnSearches` when clearing an individual column search value', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->set('tableColumnSearches.title', 'foo')
+            ->assertSet('tableColumnSearches.title', 'foo')
+            ->set('tableColumnSearches.title', '')
+            ->assertSet('tableColumnSearches', fn (array $tableColumnSearches): bool => ! array_key_exists('title', $tableColumnSearches));
+    });
+
     it('keeps reserved keys present in `tableColumnSearches` after resetting all column searches', function (): void {
         livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
             ->set('tableColumnSearches.length', 'foo')
