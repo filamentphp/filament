@@ -5,7 +5,7 @@ export default ({ livewireId }) => ({
 
     closedActionNestingIndexes: [],
 
-    previouslyFocusedElementsByActionNestingIndex: {},
+    focusTargetsByNestingIndex: {},
 
     init() {
         window.addEventListener('sync-action-modals', (event) => {
@@ -78,7 +78,7 @@ export default ({ livewireId }) => ({
         if (this.actionNestingIndex === null) {
             this.restorePreviouslyFocusedElement(-1)
             this.closedActionNestingIndexes = []
-            this.previouslyFocusedElementsByActionNestingIndex = {}
+            this.focusTargetsByNestingIndex = {}
             this.shouldOverlayParentActions = false
 
             return
@@ -126,7 +126,7 @@ export default ({ livewireId }) => ({
         }
 
         if (this.actionNestingIndex === null) {
-            this.previouslyFocusedElementsByActionNestingIndex[-1] = focused
+            this.focusTargetsByNestingIndex[-1] = focused
             return
         }
 
@@ -138,26 +138,24 @@ export default ({ livewireId }) => ({
             return
         }
 
-        this.previouslyFocusedElementsByActionNestingIndex[
-            this.actionNestingIndex
-        ] = focused
+        this.focusTargetsByNestingIndex[this.actionNestingIndex] = focused
     },
 
     restorePreviouslyFocusedElement(
         actionNestingIndex = this.actionNestingIndex,
     ) {
         const previouslyFocusedElement =
-            this.previouslyFocusedElementsByActionNestingIndex[
-                actionNestingIndex
-            ]
+            this.focusTargetsByNestingIndex[actionNestingIndex]
 
         if (!previouslyFocusedElement) {
             return
         }
 
-        delete this.previouslyFocusedElementsByActionNestingIndex[
-            actionNestingIndex
-        ]
+        for (const focusTargetNestingIndex in this.focusTargetsByNestingIndex) {
+            if (Number(focusTargetNestingIndex) >= actionNestingIndex) {
+                delete this.focusTargetsByNestingIndex[focusTargetNestingIndex]
+            }
+        }
 
         requestAnimationFrame(() =>
             requestAnimationFrame(() =>
