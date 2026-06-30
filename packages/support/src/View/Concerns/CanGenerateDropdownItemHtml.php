@@ -94,7 +94,7 @@ trait CanGenerateDropdownItemHtml
             ])
             ->color(ItemComponent::class, $color);
 
-        $loadingDelay = ($icon || $hasLoadingIndicator)
+        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
             ? config('filament.livewire_loading_delay', 'default')
             : null;
 
@@ -119,7 +119,7 @@ trait CanGenerateDropdownItemHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
+            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)->toHtml() : '' ?>

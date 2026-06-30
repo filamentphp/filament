@@ -31,9 +31,6 @@
         fn (\Filament\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
-    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
-    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
-
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
@@ -46,13 +43,34 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
     }
 
-    $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
-    $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
-    $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
-
-    $loadingDelay = ($hasPrefix || $hasSuffix || $hasLoadingIndicator)
+    $loadingDelay = ($prefixIcon || $prefixIconAlias || $suffixIcon || $suffixIconAlias || $hasLoadingIndicator)
         ? config('filament.livewire_loading_delay', 'default')
         : null;
+
+    $prefixIconHtml = ($prefixIcon || $prefixIconAlias)
+        ? \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
+            ->merge([
+                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+            ], escape: false)
+            ->color(IconComponent::class, $prefixIconColor))
+        : null;
+
+    $suffixIconHtml = ($suffixIcon || $suffixIconAlias)
+        ? \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
+            ->merge([
+                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+            ], escape: false)
+            ->color(IconComponent::class, $suffixIconColor))
+        : null;
+
+    $hasPrefix = count($prefixActions) || ($prefixIconHtml !== null) || filled($prefix);
+    $hasSuffix = count($suffixActions) || ($suffixIconHtml !== null) || filled($suffix);
+
+    $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
+    $canClickPrefixAffix = $hasFocusInputListener && (($prefixIconHtml !== null) || filled($prefix));
+    $canClickSuffixAffix = $hasFocusInputListener && (($suffixIconHtml !== null) || filled($suffix));
 @endphp
 
 <div
@@ -100,14 +118,7 @@
                 </div>
             @endif
 
-            {{
-                \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
-                    ->merge([
-                        'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ], escape: false)
-                    ->color(IconComponent::class, $prefixIconColor))
-            }}
+            {{ $prefixIconHtml }}
 
             @if ($hasLoadingIndicator)
                 {{
@@ -159,14 +170,7 @@
                 </span>
             @endif
 
-            {{
-                \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
-                    ->merge([
-                        'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ], escape: false)
-                    ->color(IconComponent::class, $suffixIconColor))
-            }}
+            {{ $suffixIconHtml }}
 
             @if (count($suffixActions))
                 <div

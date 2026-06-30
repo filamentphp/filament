@@ -104,7 +104,7 @@
             ->color(ItemComponent::class, $color)
     }}
 >
-    @if ($icon)
+    @if ($icon || $iconAlias)
         {{
             \Filament\Support\generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
