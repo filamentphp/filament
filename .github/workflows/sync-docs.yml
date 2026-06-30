@@ -16,7 +16,7 @@ jobs:
         # persist-credentials: true is required so the final `git push` to
         # filamentphp/mintlify-docs uses the GH_ACCESS_TOKEN written into
         # docs/.git/config. Subsequent steps in this job are maintainer-controlled.
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3 # zizmor: ignore[artipacked]
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 # zizmor: ignore[artipacked]
         with:
           repository: filamentphp/mintlify-docs
           token: ${{ secrets.GH_ACCESS_TOKEN }}
