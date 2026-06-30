@@ -28,7 +28,8 @@ export default ({ livewireId }) => ({
                 return
             }
 
-            if (this.shouldOverlayParentActions) {
+            // Stacked mode and top modal return close immediately restore focus (close the modal without waiting for Livewire requests upon return)
+            if (this.shouldOverlayParentActions || actionNestingIndex === 0) {
                 this.restorePreviouslyFocusedElement(actionNestingIndex - 1)
             }
 
@@ -53,12 +54,15 @@ export default ({ livewireId }) => ({
             newActionNestingIndex !== null &&
             newActionNestingIndex > this.actionNestingIndex
 
-        const shouldRestorePreviouslyFocusedElement =
+        const isNestingDecrease =
             this.actionNestingIndex !== null &&
             newActionNestingIndex !== null &&
             newActionNestingIndex < this.actionNestingIndex
 
-        if (isNestingIncrease) {
+        const isEnteringActionModalStack =
+            this.actionNestingIndex === null && newActionNestingIndex !== null
+
+        if (isNestingIncrease || isEnteringActionModalStack) {
             this.rememberPreviouslyFocusedElement()
         }
 
@@ -72,6 +76,7 @@ export default ({ livewireId }) => ({
         this.actionNestingIndex = newActionNestingIndex
 
         if (this.actionNestingIndex === null) {
+            this.restorePreviouslyFocusedElement(-1)
             this.closedActionNestingIndexes = []
             this.previouslyFocusedElementsByActionNestingIndex = {}
             this.shouldOverlayParentActions = false
@@ -99,7 +104,7 @@ export default ({ livewireId }) => ({
             this.$nextTick(() => {
                 this.openModal()
 
-                if (shouldRestorePreviouslyFocusedElement) {
+                if (isNestingDecrease) {
                     this.restorePreviouslyFocusedElement()
                 }
             })
@@ -108,17 +113,26 @@ export default ({ livewireId }) => ({
         }
 
         this.openModal()
-        if (shouldRestorePreviouslyFocusedElement) {
+        if (isNestingDecrease) {
             this.restorePreviouslyFocusedElement()
         }
     },
 
     rememberPreviouslyFocusedElement() {
+        const focused = this.$focus.focused()
+
+        if (!focused) {
+            return
+        }
+
+        if (this.actionNestingIndex === null) {
+            this.previouslyFocusedElementsByActionNestingIndex[-1] = focused
+            return
+        }
+
         const modal = this.$el.querySelector(
             `#${this.generateModalId(this.actionNestingIndex)}`,
         )
-
-        const focused = this.$focus.focused()
 
         if (!modal?.contains(focused)) {
             return
