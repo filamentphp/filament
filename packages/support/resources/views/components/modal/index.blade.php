@@ -16,6 +16,7 @@
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
+    'focusTrapReturnsFocus' => true,
     'extraModalWindowAttributeBag' => null,
     'extraModalOverlayAttributeBag' => null,
     'footer' => null,
@@ -114,7 +115,7 @@
     }"
     x-cloak
     x-show="isOpen"
-    x-trap.noscroll.noreturn{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+    x-trap.noscroll{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
     {{
         $attributes->class([
             'fi-modal',

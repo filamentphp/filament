@@ -32,6 +32,7 @@
     :close-by-clicking-away="$actionIsModalClosedByClickingAway"
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"
+    :focus-trap-returns-focus="false"
     :extra-modal-window-attribute-bag="$actionExtraModalWindowAttributeBag"
     :extra-modal-overlay-attribute-bag="$actionExtraModalOverlayAttributeBag"
     :footer-actions="$actionModalFooterActions"

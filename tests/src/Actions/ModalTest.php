@@ -11,6 +11,21 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
+    it('restores focus to the trigger after closing a standalone modal', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->click('[data-testid="standalone-trigger"]')
+                ->assertVisible('[data-testid="standalone-modal"]')
+                ->click('[data-testid="standalone-close"]')
+                ->assertMissing('[data-testid="standalone-modal"]')
+                ->assertPresent('[data-testid="standalone-trigger"]:focus')
+                ->assertNoSmoke();
+        });
+    });
+
     it('restores focus to the trigger after closing a top-level action modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
