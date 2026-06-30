@@ -116,7 +116,7 @@
     }}
 >
     @if ($iconPosition === IconPosition::Before)
-        @if ($icon)
+        @if ($icon || $iconAlias)
             {{
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
@@ -140,7 +140,7 @@
     @endif
 
     @if ($iconPosition === IconPosition::After)
-        @if ($icon)
+        @if ($icon || $iconAlias)
             {{
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,

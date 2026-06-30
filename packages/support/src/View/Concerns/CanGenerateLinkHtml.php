@@ -123,14 +123,14 @@ trait CanGenerateLinkHtml
             ])
             ->color(LinkComponent::class, $color);
 
-        $loadingDelay = ($icon || $hasLoadingIndicator)
+        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
             ? config('filament.livewire_loading_delay', 'default')
             : null;
 
-        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
             'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize)->toHtml() : '';
+        ])), size: $iconSize)?->toHtml() ?? '' : '';
 
         $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
             'wire:loading.delay.' . $loadingDelay => '',

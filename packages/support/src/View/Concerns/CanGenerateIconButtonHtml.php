@@ -114,7 +114,7 @@ trait CanGenerateIconButtonHtml
             ])
             ->color(IconButtonComponent::class, $color);
 
-        $loadingDelay = ($icon || $hasLoadingIndicator)
+        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
             ? config('filament.livewire_loading_delay', 'default')
             : null;
 
@@ -139,10 +139,10 @@ trait CanGenerateIconButtonHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
+            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ])), size: $iconSize)->toHtml() : '' ?>
+            ])), size: $iconSize)?->toHtml() ?? '' : '' ?>
             <?= $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
                 'wire:loading.delay.' . $loadingDelay => '',
                 'wire:target' => $loadingIndicatorTarget,
