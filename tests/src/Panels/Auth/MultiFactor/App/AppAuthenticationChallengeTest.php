@@ -409,6 +409,44 @@ describe('recovery codes', function (): void {
 
         $this->assertGuest();
     });
+
+    it('will not preserve a recovery code when a different code is used concurrently', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        $initialCount = count($userToAuthenticate->app_authentication_recovery_codes);
+
+        $userInstanceA = User::find($userToAuthenticate->getKey());
+        $userInstanceB = User::find($userToAuthenticate->getKey());
+
+        expect($appAuthentication->verifyRecoveryCode($recoveryCodes[0], $userInstanceA))->toBeTrue();
+        expect($appAuthentication->verifyRecoveryCode($recoveryCodes[1], $userInstanceB))->toBeTrue();
+
+        $userToAuthenticate->refresh();
+
+        expect($userToAuthenticate->app_authentication_recovery_codes)->toHaveCount($initialCount - 2);
+
+        expect($appAuthentication->verifyRecoveryCode($recoveryCodes[0], $userToAuthenticate->fresh()))->toBeFalse();
+    });
+
+    it('will not allow the same recovery code to authenticate two concurrent requests', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        $userInstanceA = User::find($userToAuthenticate->getKey());
+        $userInstanceB = User::find($userToAuthenticate->getKey());
+
+        $code = $recoveryCodes[0];
+
+        expect($appAuthentication->verifyRecoveryCode($code, $userInstanceA))->toBeTrue();
+        expect($appAuthentication->verifyRecoveryCode($code, $userInstanceB))->toBeFalse();
+    });
 });
 
 describe('security', function (): void {

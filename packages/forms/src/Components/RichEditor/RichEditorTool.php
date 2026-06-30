@@ -204,7 +204,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
             ->merge([
                 'tabindex' => -1,
                 'type' => 'button',
-                'aria-label' => $label,
+                'aria-label' => e($label),
                 'x-bind:class' => '{ \'fi-active\': ' . ($this->hasActiveStyling() ? $activeJsExpression : 'false') . ' }',
                 'x-bind:disabled' => $this->isDisabledWhenNotActive() ? '!(' . $activeJsExpression . ')' : null,
                 'x-on:click' => $this->getJsHandler(),
@@ -220,7 +220,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         ob_start(); ?>
 
         <button <?= $attributes->toHtml() ?>>
-            <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())->toHtml() ?>
+            <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())?->toHtml() ?? '' ?>
             <?= $isLabelHidden ? null : '<span class="fi-fo-rich-editor-tool-label">' . e($label) . '</span>' ?>
         </button>
 

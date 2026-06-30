@@ -13,7 +13,7 @@ return [
             ],
 
             'reset' => [
-                'label' => 'إعادة ضبط التصفيات',
+                'label' => 'إعادة تعيين',
             ],
 
         ],
@@ -28,7 +28,7 @@ return [
 
         'select' => [
 
-            'loading_message' => 'جاري التحميل...',
+            'loading_message' => 'جارٍ التحميل...',
 
             'no_options_message' => 'لا توجد خيارات متاحة.',
 
@@ -36,7 +36,7 @@ return [
 
             'placeholder' => 'اختر',
 
-            'searching_message' => 'جاري البحث...',
+            'searching_message' => 'جارٍ البحث...',
 
             'search_prompt' => 'ابدأ الكتابة للبحث...',
 
@@ -206,7 +206,7 @@ return [
 
             'direction' => [
 
-                'label' => 'إتجاه التجميع',
+                'label' => 'اتجاه التجميع',
 
                 'options' => [
                     'asc' => 'تصاعدي',
@@ -223,7 +223,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} تم تحديد سجل واحد|[3,10] تم تحديد :count سجلات |[2,*] تم تحديد :count سجل',
+        'selected_count' => '{1} تم تحديد سجل واحد|{2} تم تحديد سجلين|[3,10] تم تحديد :count سجلات|[11,*] تم تحديد :count سجل',
 
         'actions' => [
 

@@ -5,9 +5,11 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
@@ -800,6 +802,154 @@ class TestComponentWithRepeaterAndBuilder extends Livewire
                                             ->distinct(),
                                     ]),
                             ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+describe('`distinct()` validation on boolean fields', function (): void {
+    it('does not force an optional `distinct()` boolean field to be selected when sibling items exist', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => false],
+                    'item-2' => ['primary' => false],
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithDistinctBooleanToggleInRepeater::class,
+    ]);
+
+    it('allows a single `distinct()` boolean field to be selected across sibling items', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => true],
+                    'item-2' => ['primary' => false],
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithDistinctBooleanToggleInRepeater::class,
+    ]);
+
+    it('does not allow more than one `distinct()` boolean field to be selected across sibling items', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => true],
+                    'item-2' => ['primary' => true],
+                ],
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithDistinctBooleanToggleInRepeater::class,
+    ]);
+
+    it('forces a `required()` `distinct()` boolean field to be selected across sibling items', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => false],
+                    'item-2' => ['primary' => false],
+                ],
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithRequiredDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithRequiredDistinctBooleanToggleInRepeater::class,
+    ]);
+});
+
+class TestComponentWithDistinctBooleanCheckboxInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Checkbox::make('primary')
+                            ->distinct(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithDistinctBooleanToggleInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Toggle::make('primary')
+                            ->distinct(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithRequiredDistinctBooleanCheckboxInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Checkbox::make('primary')
+                            ->distinct()
+                            ->required(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithRequiredDistinctBooleanToggleInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Toggle::make('primary')
+                            ->distinct()
+                            ->required(),
                     ]),
             ])
             ->statePath('data');
@@ -1986,9 +2136,27 @@ describe('properties', function (): void {
     it('can set `partiallyRenderAfterActionsCalled()` and check `shouldPartiallyRenderAfterActionsCalled()`', function (): void {
         $enabled = Repeater::make('items')->partiallyRenderAfterActionsCalled();
         $disabled = Repeater::make('items')->partiallyRenderAfterActionsCalled(false);
+        $liveEnabled = Repeater::make('items')->live()->partiallyRenderAfterActionsCalled();
 
         expect($enabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
         expect($disabled->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($liveEnabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+    });
+
+    it('defaults `shouldPartiallyRenderAfterActionsCalled()` based on `live()`', function (): void {
+        [$default, $live, $conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
+            ->components([
+                Repeater::make('default'),
+                Repeater::make('live')->live(),
+                Repeater::make('conditionallyLive')->live(condition: static fn (): bool => true),
+                Repeater::make('conditionallyNotLive')->live(condition: static fn (): bool => false),
+            ])
+            ->getComponents();
+
+        expect($default->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+        expect($live->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyLive->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyNotLive->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
     });
 
     it('can set `addActionAlignment()` and get with `getAddActionAlignment()`', function (): void {

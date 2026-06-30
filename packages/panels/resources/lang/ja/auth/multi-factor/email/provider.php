@@ -6,13 +6,13 @@ return [
 
         'actions' => [
 
-            'label' => 'Email verification codes',
+            'label' => 'メール認証コード',
 
-            'below_content' => 'Receive a temporary code at your email address to verify your identity during login.',
+            'below_content' => 'ログイン時に本人確認を行うため、メールアドレスに一時的なコードを受け取ります。',
 
             'messages' => [
-                'enabled' => 'Enabled',
-                'disabled' => 'Disabled',
+                'enabled' => '有効',
+                'disabled' => '無効',
             ],
 
         ],
@@ -21,28 +21,28 @@ return [
 
     'login_form' => [
 
-        'label' => 'Send a code to your email',
+        'label' => 'メールでコードを送信',
 
         'code' => [
 
-            'label' => 'Enter the 6-digit code we sent you by email',
+            'label' => 'メールで送信された6桁のコードを入力',
 
-            'validation_attribute' => 'code',
+            'validation_attribute' => 'コード',
 
             'actions' => [
 
                 'resend' => [
 
-                    'label' => 'Send a new code by email',
+                    'label' => '新しいコードをメールで送信',
 
                     'notifications' => [
 
                         'resent' => [
-                            'title' => 'We\'ve sent you a new code by email',
+                            'title' => '新しいコードをメールで送信しました',
                         ],
 
                         'throttled' => [
-                            'title' => 'Too many resend attempts. Please wait before requesting another code.',
+                            'title' => '再送信の試行が多すぎます。しばらくしてから再度お試しください。',
                         ],
 
                     ],
@@ -53,7 +53,7 @@ return [
 
             'messages' => [
 
-                'invalid' => 'The code you entered is invalid.',
+                'invalid' => '入力されたコードが無効です。',
 
             ],
 

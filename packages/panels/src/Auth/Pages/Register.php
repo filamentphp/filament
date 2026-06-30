@@ -19,6 +19,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\RenderHook;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\EloquentUserProvider;
@@ -31,6 +32,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use LogicException;
+use SensitiveParameter;
 
 /**
  * @property-read Action $loginAction
@@ -39,6 +41,7 @@ use LogicException;
 class Register extends SimplePage
 {
     use CanUseDatabaseTransactions;
+    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     /**
@@ -150,7 +153,7 @@ class Register extends SimplePage
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function handleRegistration(array $data): Model
+    protected function handleRegistration(#[SensitiveParameter] array $data): Model
     {
         return $this->getUserModel()::create($data);
     }
@@ -222,7 +225,7 @@ class Register extends SimplePage
             ->required()
             ->rule(Password::default())
             ->showAllValidationMessages()
-            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+            ->dehydrateStateUsing(fn (#[SensitiveParameter] $state) => Hash::make($state))
             ->same('passwordConfirmation')
             ->validationAttribute(__('filament-panels::auth/pages/register.form.password.validation_attribute'));
     }
@@ -299,7 +302,7 @@ class Register extends SimplePage
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function mutateFormDataBeforeRegister(array $data): array
+    protected function mutateFormDataBeforeRegister(#[SensitiveParameter] array $data): array
     {
         return $data;
     }

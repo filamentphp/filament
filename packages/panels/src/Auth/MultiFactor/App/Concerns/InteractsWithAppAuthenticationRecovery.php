@@ -4,6 +4,7 @@ namespace Filament\Auth\MultiFactor\App\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
+use SensitiveParameter;
 
 /**
  * @property array<string> | null $app_authentication_recovery_codes
@@ -40,7 +41,7 @@ trait InteractsWithAppAuthenticationRecovery /** @phpstan-ignore trait.unused */
     /**
      * @param  ?array<string>  $codes
      */
-    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
+    public function saveAppAuthenticationRecoveryCodes(#[SensitiveParameter] ?array $codes): void
     {
         $this->app_authentication_recovery_codes = $codes;
         $this->save();

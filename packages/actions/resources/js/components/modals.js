@@ -1,6 +1,8 @@
 export default ({ livewireId }) => ({
     actionNestingIndex: null,
 
+    closedActionNestingIndexes: [],
+
     init() {
         window.addEventListener('sync-action-modals', (event) => {
             if (event.detail.id !== livewireId) {
@@ -11,6 +13,18 @@ export default ({ livewireId }) => ({
                 event.detail.newActionNestingIndex,
                 event.detail.shouldOverlayParentActions ?? false,
             )
+        })
+
+        window.addEventListener('modal-closed', (event) => {
+            const actionNestingIndex = this.getActionNestingIndexFromModalId(
+                event.detail.id,
+            )
+
+            if (actionNestingIndex === null) {
+                return
+            }
+
+            this.closedActionNestingIndexes.push(actionNestingIndex)
         })
     },
 
@@ -41,6 +55,18 @@ export default ({ livewireId }) => ({
         this.actionNestingIndex = newActionNestingIndex
 
         if (this.actionNestingIndex === null) {
+            this.closedActionNestingIndexes = []
+
+            return
+        }
+
+        this.closedActionNestingIndexes =
+            this.closedActionNestingIndexes.filter(
+                (closedActionNestingIndex) =>
+                    closedActionNestingIndex <= this.actionNestingIndex,
+            )
+
+        if (this.closedActionNestingIndexes.includes(this.actionNestingIndex)) {
             return
         }
 
@@ -61,6 +87,18 @@ export default ({ livewireId }) => ({
         // HTML IDs must start with a letter, so if the Livewire component ID starts
         // with a number, we need to make sure it does not fail by prepending `fi-`.
         return `fi-${livewireId}-action-` + actionNestingIndex
+    },
+
+    getActionNestingIndexFromModalId(id) {
+        const prefix = `fi-${livewireId}-action-`
+
+        if (!id?.startsWith(prefix)) {
+            return null
+        }
+
+        const actionNestingIndex = Number(id.slice(prefix.length))
+
+        return Number.isInteger(actionNestingIndex) ? actionNestingIndex : null
     },
 
     openModal() {

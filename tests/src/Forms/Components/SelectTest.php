@@ -1713,6 +1713,22 @@ describe('browser interactions', function (): void {
                 ->assertNoSmoke();
         });
     });
+
+    it('does not show another native `Select` option for a missing value in the browser', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/select-test')
+                ->select('[data-testid="native-dynamic-options-context-select"]', 'first')
+                ->waitForEvent('networkidle')
+                ->select('[data-testid="native-dynamic-options-value-select"]', 'first_only')
+                ->assertValue('[data-testid="native-dynamic-options-value-select"]', 'first_only')
+                ->select('[data-testid="native-dynamic-options-context-select"]', 'second')
+                ->waitForEvent('networkidle')
+                ->assertValue('[data-testid="native-dynamic-options-value-select"]', '')
+                ->assertNoSmoke();
+        });
+    });
 });
 
 describe('option labels', function (): void {

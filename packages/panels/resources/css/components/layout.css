@@ -49,7 +49,7 @@ html.fi {
 }
 
 .fi-main-ctn {
-    @apply w-screen flex-1 flex-col;
+    @apply min-w-0 flex-1 flex-col;
 }
 
 .fi-main {
