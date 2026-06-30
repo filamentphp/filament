@@ -15,9 +15,9 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('avatar')
 ```
 
-In this case, the `header_image` state could contain `posts/header-images/4281246003439.jpg`, which is relative to the root directory of the storage disk. The storage disk is defined in the [configuration file](../../introduction/installation#publishing-configuration), `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this.
+In this case, the `avatar` state could contain `users/avatars/4281246003439.jpg`, which is relative to the root directory of the storage disk. The storage disk is defined in the [configuration file](../../introduction/installation#publishing-configuration), `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this.
 
-Alternatively, the state could contain an absolute URL to an image, such as `https://example.com/images/header.jpg`.
+Alternatively, the state could contain an absolute URL to an image, such as `https://example.com/images/avatar.jpg`.
 
 <AutoScreenshot name="tables/columns/image/simple" alt="Image column" version="5.x" />
 
