@@ -139,7 +139,7 @@
 
                         <h2 class="fi-wi-chart-empty-state-heading">
                             {{ $this->getEmptyStateHeading() }}
-                        <h2>
+                        </h2>
 
                         @if (filled($emptyStateDescription = $this->getEmptyStateDescription()))
                             <p class="fi-wi-chart-empty-state-description">
