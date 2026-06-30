@@ -19,7 +19,6 @@
 
 @php
     use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
 
     $prefixActions = array_filter(
         $prefixActions,

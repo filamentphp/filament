@@ -143,7 +143,7 @@ trait CanGenerateButtonHtml
         $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
             'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize)->toHtml() : '';
+        ])), size: $iconSize)?->toHtml() ?? '' : '';
 
         $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
             'wire:loading.delay.' . $loadingDelay => '',
