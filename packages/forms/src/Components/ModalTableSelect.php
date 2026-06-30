@@ -970,7 +970,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
                 'fi-badge',
                 'fi-size-md',
             ])
-            ->color(BadgeComponent::class, $color);
+            ->color(BadgeComponent::class, $color ?? 'primary');
 
         ob_start(); ?>
 

@@ -102,7 +102,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 <?php
                     $inputId = "{$id}-{$value}";
                 $shouldOptionBeDisabled = $isDisabled || $this->isOptionDisabled($value, $label);
-                $color = $this->getColor($value);
+                $color = $this->getColor($value) ?? 'primary';
                 $icon = $this->getIcon($value);
                 $tooltip = $this->getTooltip($value);
 
@@ -176,7 +176,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                 <?php
                     $inputId = "{$id}-{$value}";
                 $shouldOptionBeDisabled = $isDisabled || $this->isOptionDisabled($value, $label);
-                $color = $this->getColor($value);
+                $color = $this->getColor($value) ?? 'primary';
                 $icon = $this->getIcon($value);
                 $tooltip = $this->getTooltip($value);
 
