@@ -133,7 +133,7 @@ trait CanGenerateButtonHtml
                 ->merge(['wire:key' => "{$wireKey}.icon-button"], escape: false);
         }
 
-        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
         ])), size: $iconSize)->toHtml() : '';
