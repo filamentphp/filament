@@ -141,13 +141,15 @@ class SelectTest extends Page
 
                 Select::make('creatable_status')
                     ->label('Creatable Select')
+                    ->placeholder('Select an option...')
                     ->options([
                         'existing' => 'Existing',
                     ])
                     ->native(false)
                     ->createOptionForm([
                         TextInput::make('name')
-                            ->required(),
+                            ->required()
+                            ->extraInputAttributes(['data-testid' => 'create-option-name-input']),
                     ])
                     ->createOptionUsing(static fn (array $data): string => $data['name'])
                     ->createOptionAction(static fn (Action $action): Action => $action
