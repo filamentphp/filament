@@ -12,6 +12,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -1561,6 +1562,23 @@ describe('construction and properties', function (): void {
 });
 
 describe('rendering', function (): void {
+    it('can render an optimized URL `link()` action with SPA navigation attributes', function (): void {
+        FilamentView::spa();
+
+        $html = Action::make('link')
+            ->link()
+            ->defaultSize(Size::Small)
+            ->url('/foo')
+            ->toHtml();
+
+        expect($html)
+            ->toStartWith('<a ')
+            ->toContain('wire:navigate')
+            ->toContain('href="/foo"');
+
+        FilamentView::spa(false);
+    });
+
     it('can render a link action with an array `color()` and a URL', function (): void {
         $html = Action::make('test')
             ->link()
