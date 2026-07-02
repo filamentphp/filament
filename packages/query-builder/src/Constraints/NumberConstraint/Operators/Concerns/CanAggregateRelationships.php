@@ -115,8 +115,8 @@ trait CanAggregateRelationships
             ->options([
                 static::getAggregateSumKey() => __('filament-query-builder::query-builder.operators.number.aggregates.sum.label'),
                 static::getAggregateAverageKey() => __('filament-query-builder::query-builder.operators.number.aggregates.average.label'),
-                static::getAggregateMinKey() => __('filament-query-builder::query-builder.operators.number.aggregates.max.label'),
-                static::getAggregateMaxKey() => __('filament-query-builder::query-builder.operators.number.aggregates.min.label'),
+                static::getAggregateMaxKey() => __('filament-query-builder::query-builder.operators.number.aggregates.max.label'),
+                static::getAggregateMinKey() => __('filament-query-builder::query-builder.operators.number.aggregates.min.label'),
             ])
             ->visible($this->getConstraint()->queriesRelationships());
     }
