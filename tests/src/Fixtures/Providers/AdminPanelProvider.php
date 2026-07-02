@@ -37,6 +37,7 @@ use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
@@ -122,6 +123,7 @@ class AdminPanelProvider extends PanelProvider
                 KeyValueTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
+                ModalBrowserTest::class,
                 OneTimeCodeInputBrowserTest::class,
                 PartialRenderingTest::class,
                 QueryBuilderTableTest::class,
