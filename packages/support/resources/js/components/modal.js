@@ -3,6 +3,8 @@ export default ({ id }) => ({
 
     isWindowVisible: false,
 
+    isTrapActive: false,
+
     livewire: null,
 
     textSelectionClosePreventionMouseDownHandler: null,
@@ -106,6 +108,8 @@ export default ({ id }) => ({
     close() {
         this.closeQuietly()
 
+        this.isTrapActive = false
+
         this.$dispatch('modal-closed', { id })
     },
 
@@ -116,6 +120,7 @@ export default ({ id }) => ({
     open() {
         this.$nextTick(() => {
             this.isOpen = true
+            this.isTrapActive = true
 
             document.dispatchEvent(
                 new CustomEvent('x-modal-opened', {
