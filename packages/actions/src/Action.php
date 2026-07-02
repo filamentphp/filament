@@ -44,6 +44,7 @@ use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component;
 use Livewire\Drawer\Utils;
 
+use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
 
@@ -887,9 +888,9 @@ class Action extends ViewComponent implements Arrayable
 
         if (filled($url)) {
             $iconHtml = $icon ? generate_icon_html($icon, size: IconSize::Small)?->toHtml() : '';
-            $href = e($url);
+            $hrefHtml = generate_href_html($url)->toHtml();
 
-            return "<a href=\"{$href}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$label}</a>";
+            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$label}</a>";
         }
 
         $handler = $this->getLivewireClickHandler();
@@ -971,9 +972,9 @@ class Action extends ViewComponent implements Arrayable
                 $icon,
                 attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $color),
             )?->toHtml() : '';
-            $href = e($url);
+            $hrefHtml = generate_href_html($url)->toHtml();
 
-            return "<a href=\"{$href}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
+            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
         }
 
         $handler = $this->getLivewireClickHandler();
