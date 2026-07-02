@@ -293,11 +293,11 @@ public function filtersResetAction(Action $action): Action
 }
 ```
 
-## Empty State
+## Empty state
 
-When `getData()` method returns an empty array, the chart widget will automatically render an empty state.
+When the `getData()` method returns an empty array, the chart widget renders an "empty state" instead of the chart.
 
-To customize this behavior, override the `isEmpty()` method:
+To customize when the empty state is rendered, override the `isEmpty()` method:
 
 ```php
 public function isEmpty(): bool
@@ -310,28 +310,36 @@ public function isEmpty(): bool
 
 ### Setting the empty state heading
 
-To customize the heading of the empty state, use the `$emptyStateHeading` property or `getEmptyStateHeading()` method:
+To customize the heading of the empty state, set the `$emptyStateHeading` property:
 
 ```php
 protected ?string $emptyStateHeading = 'No data available';
 ```
 
+Alternatively, you can override the `getEmptyStateHeading()` method to return a dynamic heading:
+
 ```php
+use Illuminate\Contracts\Support\Htmlable;
+
 public function getEmptyStateHeading(): string | Htmlable
 {
-    return 'No sales yet for ' . $this->filter;
+    return "No sales yet for {$this->filter}";
 }
 ```
 
 ### Setting the empty state description
 
-To customize the description of the empty state, use the `$emptyStateDescription` property or `getEmptyStateDescription()` method:
+To customize the description of the empty state, set the `$emptyStateDescription` property:
 
 ```php
 protected ?string $emptyStateDescription = 'Check back later once data has been collected.';
 ```
 
+Alternatively, you can override the `getEmptyStateDescription()` method to return a dynamic description:
+
 ```php
+use Illuminate\Contracts\Support\Htmlable;
+
 public function getEmptyStateDescription(): string | Htmlable | null
 {
     return 'Sales data will appear here once orders are placed.';
@@ -340,13 +348,21 @@ public function getEmptyStateDescription(): string | Htmlable | null
 
 ### Setting the empty state icon
 
-To customize the [icon](../styling/icons) of the empty state, use the `$emptyStateIcon` property or `getEmptyStateIcon()` method:
+To customize the [icon](../styling/icons) of the empty state, set the `$emptyStateIcon` property:
 
 ```php
+use Filament\Support\Icons\Heroicon;
+
 protected string | BackedEnum | null $emptyStateIcon = Heroicon::OutlinedChartBar;
 ```
 
+Alternatively, you can override the `getEmptyStateIcon()` method to return a dynamic icon:
+
 ```php
+use BackedEnum;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
+
 public function getEmptyStateIcon(): string | BackedEnum | Htmlable
 {
     return Heroicon::OutlinedShoppingCart;
@@ -355,9 +371,11 @@ public function getEmptyStateIcon(): string | BackedEnum | Htmlable
 
 ### Adding empty state actions
 
-You can add [Actions](../actions/overview) to the empty state to prompt users to take action using `getEmptyStateActions()` method:
+You can add [actions](../actions/overview) to the empty state to prompt users to take action by overriding the `getEmptyStateActions()` method:
 
 ```php
+use Filament\Actions\Action;
+
 public function getEmptyStateActions(): array
 {
     return [
@@ -370,13 +388,12 @@ public function getEmptyStateActions(): array
 
 ### Using a custom empty state view
 
-You may use a completely custom empty state view by `$emptyState` property or `getEmptyState()` method:
+You may use a completely custom empty state view by overriding the `getEmptyState()` method:
 
 ```php
-protected ?string $emptyState = 'widgets.charts.custom-empty-state';
-```
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 
-```php
 public function getEmptyState(): View | Htmlable | null
 {
     return view('widgets.charts.custom-empty-state');

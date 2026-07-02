@@ -13,8 +13,6 @@ use Illuminate\Contracts\View\View;
 
 trait HasEmptyState
 {
-    protected ?string $emptyState = null;
-
     protected ?string $emptyStateDescription = null;
 
     protected ?string $emptyStateHeading = null;
@@ -23,7 +21,7 @@ trait HasEmptyState
 
     public function getEmptyState(): View | Htmlable | null
     {
-        return is_string($this->emptyState) ? view($this->emptyState) : null;
+        return null;
     }
 
     /**
