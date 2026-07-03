@@ -101,6 +101,7 @@
     role="dialog"
     x-data="filamentModal({
                 id: @js($id),
+                locksScroll: @js(! $isClickThrough),
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
@@ -117,10 +118,10 @@
     }"
     x-cloak
     x-show="isOpen"
-    @unless($isClickThrough)
-        x-trap.noscroll{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+    @unless ($isClickThrough)
+        x-trap{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
     @endunless
-        {{
+    {{
         $attributes->class([
             'fi-modal',
             'fi-absolute-positioning-context',
