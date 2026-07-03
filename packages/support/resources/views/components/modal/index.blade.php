@@ -118,9 +118,9 @@
     }"
     x-cloak
     x-show="isOpen"
-    @unless ($isClickThrough)
+    @if (! $isClickThrough)
         x-trap{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
-    @endunless
+    @endif
     {{
         $attributes->class([
             'fi-modal',
@@ -131,11 +131,11 @@
             'fi-modal-has-sticky-header' => $stickyHeader,
             'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
-            'pointer-events-none' => $isClickThrough,
+            'fi-modal-is-click-through' => $isClickThrough,
         ])
     }}
 >
-    @unless ($isClickThrough)
+    @if(! $isClickThrough)
         <div
             aria-hidden="true"
             x-show="isOpen"
@@ -146,7 +146,7 @@
                 ])
             }}
         ></div>
-    @endunless
+    @endif
 
     <div
         @if ($closeByClickingAway)
@@ -155,7 +155,6 @@
         @class([
             'fi-modal-window-ctn',
             'fi-clickable' => $closeByClickingAway,
-            'pointer-events-none' => $isClickThrough,
         ])
     >
         <{{ filled($wireSubmitHandler) ? 'form' : 'div' }}
