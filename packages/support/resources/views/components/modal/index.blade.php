@@ -135,7 +135,7 @@
         ])
     }}
 >
-    @if(! $isClickThrough)
+    @if (! $isClickThrough)
         <div
             aria-hidden="true"
             x-show="isOpen"
