@@ -9,6 +9,7 @@ use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,9 @@ class DisableEmailAuthenticationAction
             ->color('danger')
             ->icon(Heroicon::LockOpen)
             ->link()
-            ->mountUsing(function () use ($emailAuthentication): void {
+            ->mountUsing(function (Schema $schema) use ($emailAuthentication): void {
+                $schema->fill();
+
                 /** @var HasEmailAuthentication $user */
                 $user = Filament::auth()->user();
 
