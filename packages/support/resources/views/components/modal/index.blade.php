@@ -11,8 +11,8 @@
     'ariaLabelledby' => null,
     'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
     'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
-    'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
     'clickThrough' => false,
+    'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
@@ -64,7 +64,14 @@
 
     $wireSubmitHandler = $attributes->get('wire:submit.prevent');
     $attributes = $attributes->except(['wire:submit.prevent']);
-    $isClickThrough = $clickThrough && ! $closeByClickingAway;
+
+    $isClickThrough = (bool) $clickThrough;
+
+    // Click-through and closing by clicking away are incompatible, so enabling
+    // click-through silently disables closing the modal by clicking away.
+    if ($isClickThrough) {
+        $closeByClickingAway = false;
+    }
 @endphp
 
 @if ($trigger)

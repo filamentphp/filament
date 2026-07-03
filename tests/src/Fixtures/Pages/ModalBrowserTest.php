@@ -90,7 +90,6 @@ class ModalBrowserTest extends Page
             Action::make('clickThrough')
                 ->label('Click through')
                 ->modalClickThrough()
-                ->closeModalByClickingAway(false)
                 ->modalSubmitAction(false)
                 ->modalHeading('Click-through modal')
                 ->modalContent(new HtmlString('<p>You can still scroll the page behind this modal.</p>'))

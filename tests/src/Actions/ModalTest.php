@@ -159,6 +159,22 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('lets clicks reach the page behind a click-through modal', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Behind: not clicked')
+                ->click('[data-testid="click-through-trigger"]')
+                ->assertVisible('[data-testid="click-through-modal"]')
+                // The open modal covers the page, but because it is click-through
+                // the click passes through to the button behind it.
+                ->click('[data-testid="behind-button"]')
+                ->assertSee('Behind: clicked')
+                ->assertNoSmoke();
+        });
+    });
+
     it('does not lock page scroll for a click-through modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
