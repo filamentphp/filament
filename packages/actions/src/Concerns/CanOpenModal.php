@@ -85,8 +85,6 @@ trait CanOpenModal
 
     protected bool | Closure | null $hasModalCloseButton = null;
 
-    protected bool | string | Closure | null $modalDismissesParentActions = null;
-
     protected bool | Closure | null $isModalClosedByClickingAway = null;
 
     protected bool | Closure | null $isModalClosedByEscaping = null;
@@ -136,13 +134,6 @@ trait CanOpenModal
     public function modalCloseButton(bool | Closure | null $condition = true): static
     {
         $this->hasModalCloseButton = $condition;
-
-        return $this;
-    }
-
-    public function modalDismissesParentActions(bool | string | Closure | null $cancelParentActions = true): static
-    {
-        $this->modalDismissesParentActions = $cancelParentActions;
 
         return $this;
     }
@@ -708,30 +699,6 @@ trait CanOpenModal
     public function hasModalCloseButton(): bool
     {
         return $this->evaluate($this->hasModalCloseButton) ?? ModalComponent::$hasCloseButton;
-    }
-
-    public function shouldModalDismissParentActions(): bool
-    {
-        $parentActionsToCancel = $this->getParentActionsToCancelWhenModalIsDismissed();
-
-        return ($parentActionsToCancel === true) || is_string($parentActionsToCancel);
-    }
-
-    public function shouldModalDismissAllParentActions(): bool
-    {
-        return $this->getParentActionsToCancelWhenModalIsDismissed() === true;
-    }
-
-    public function getParentActionsToCancelWhenModalIsDismissed(): bool | string | null
-    {
-        return $this->evaluate($this->modalDismissesParentActions);
-    }
-
-    public function getParentActionToCancelToWhenModalIsDismissed(): ?string
-    {
-        $cancelParentActions = $this->getParentActionsToCancelWhenModalIsDismissed();
-
-        return is_string($cancelParentActions) ? $cancelParentActions : null;
     }
 
     public function isModalClosedByClickingAway(): bool

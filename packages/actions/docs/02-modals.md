@@ -829,40 +829,44 @@ In this example, when the user clicks the delete button on a repeater item, the 
 
 <AutoScreenshot name="actions/modal/overlaying-child" alt="Child confirmation modal overlaying a parent slide-over" version="4.x" />
 
-## Dismissing a modal to cancel parent actions
+## Canceling parent actions when a modal is closed
 
-When a modal is dismissed — whether by pressing Escape, clicking the backdrop, or using the close button — by default only that modal is closed, leaving any parent actions still mounted. You can use the `modalDismissesParentActions()` method to change this so that dismissing a child modal also cancels parent actions:
+The `cancelParentActions()` method above only cancels parent actions when the child action is run. If the user closes the child's modal instead — by pressing Escape, clicking the backdrop, or using the close button — by default only that modal is closed, leaving any parent actions still mounted. This is useful when the user wants to abandon a multi-step flow entirely rather than closing one modal at a time. To also cancel parent actions when the modal is closed, use the `cancelParentActionsOnClose()` method:
 
 ```php
 use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
 
 Action::make('createPost')
     ->schema([
-        TextInput::make('title')
-            ->required()
-            ->registerActions([
-                Action::make('confirmCreation')
-                    ->requiresConfirmation()
-                    ->modalDismissesParentActions()
-                    ->action(function (): void {
-                        // ...
-                    }),
-            ]),
+        // ...
+    ])
+    ->extraModalFooterActions([
+        Action::make('saveAsDraft')
+            ->schema([
+                // ...
+            ])
+            ->cancelParentActionsOnClose()
+            ->action(function (): void {
+                // ...
+            }),
     ])
     ->action(function (array $data): void {
         // ...
     })
 ```
 
-You can also pass an action name to cancel back to a specific parent action rather than all of them:
+Now, closing the `saveAsDraft` modal will also cancel the `createPost` action and close its modal.
+
+Like `cancelParentActions()`, you can pass the name of a parent action to cancel back to a specific parent, including its children, rather than all of them:
 
 ```php
 use Filament\Actions\Action;
 
 Action::make('editPostMetadata')
-    ->requiresConfirmation()
-    ->modalDismissesParentActions('createPost')
+    ->schema([
+        // ...
+    ])
+    ->cancelParentActionsOnClose('createPost')
     ->action(function (): void {
         // ...
     })

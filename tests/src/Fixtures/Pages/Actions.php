@@ -116,26 +116,26 @@ class Actions extends Page
                         ])
                         ->action(fn () => null),
                 ]),
-            Action::make('grandparentWithModalDismissalCancellation')
+            Action::make('grandparentWithModalCloseCancellation')
                 ->schema([
                     TextInput::make('grandparentValue')
                         ->required()
                         ->registerActions([
-                            Action::make('parentWithModalDismissalCancellation')
+                            Action::make('parentWithModalCloseCancellation')
                                 ->schema([
                                     TextInput::make('parentValue')
                                         ->required()
                                         ->registerActions([
-                                            Action::make('modalDismissalPreservesParentActions')
+                                            Action::make('modalClosePreservesParentActions')
                                                 ->requiresConfirmation()
                                                 ->action(fn () => null),
-                                            Action::make('modalDismissalCancelsAllParentActions')
+                                            Action::make('modalCloseCancelsAllParentActions')
                                                 ->requiresConfirmation()
-                                                ->modalDismissesParentActions()
+                                                ->cancelParentActionsOnClose()
                                                 ->action(fn () => null),
-                                            Action::make('modalDismissalCancelsToNamedParentAction')
+                                            Action::make('modalCloseCancelsToNamedParentAction')
                                                 ->requiresConfirmation()
-                                                ->modalDismissesParentActions('parentWithModalDismissalCancellation')
+                                                ->cancelParentActionsOnClose('parentWithModalCloseCancellation')
                                                 ->action(fn () => null),
                                         ]),
                                 ])
