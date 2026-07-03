@@ -136,7 +136,7 @@
         }
     }
 
-    &.fi-modal-is-click-through {
+    &.fi-modal-click-through {
         @apply pointer-events-none;
     }
 

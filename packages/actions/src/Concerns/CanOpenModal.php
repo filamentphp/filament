@@ -717,7 +717,7 @@ trait CanOpenModal
 
     public function isModalClickThrough(): bool
     {
-        return (bool) ($this->evaluate($this->isModalClickThrough) ?? ModalComponent::$isModalClickThrough);
+        return (bool) $this->evaluate($this->isModalClickThrough);
     }
 
     public function isModalClosedByEscaping(): bool

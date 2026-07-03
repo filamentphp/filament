@@ -101,7 +101,7 @@
     role="dialog"
     x-data="filamentModal({
                 id: @js($id),
-                locksScroll: @js(! $isClickThrough),
+                isScrollLocked: @js(! $isClickThrough),
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
@@ -131,7 +131,7 @@
             'fi-modal-has-sticky-header' => $stickyHeader,
             'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
-            'fi-modal-is-click-through' => $isClickThrough,
+            'fi-modal-click-through' => $isClickThrough,
         ])
     }}
 >

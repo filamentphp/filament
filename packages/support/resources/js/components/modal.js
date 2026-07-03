@@ -46,7 +46,7 @@ const releaseScrollLock = () => {
     }
 }
 
-export default ({ id, locksScroll = true }) => ({
+export default ({ id, isScrollLocked = true }) => ({
     isOpen: false,
 
     isWindowVisible: false,
@@ -196,7 +196,7 @@ export default ({ id, locksScroll = true }) => ({
 
             // Click-through modals let you interact with the page behind them,
             // so they must not lock scrolling.
-            if (locksScroll) {
+            if (isScrollLocked) {
                 this.acquireScrollLock()
             }
 
