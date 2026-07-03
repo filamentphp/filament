@@ -23,6 +23,8 @@ trait CanBeSearchable
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure | null $shouldSplitSearchTerms = null;
+
     /**
      * @param  bool | array<string> | string | Closure  $condition
      */
@@ -54,6 +56,13 @@ trait CanBeSearchable
         return $this;
     }
 
+    public function splitSearchTerms(bool | Closure | null $condition = true): static
+    {
+        $this->shouldSplitSearchTerms = $condition;
+
+        return $this;
+    }
+
     /**
      * @return array<string>
      */
@@ -80,6 +89,11 @@ trait CanBeSearchable
     public function isSearchForcedCaseInsensitive(): ?bool
     {
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
+    }
+
+    public function shouldSplitSearchTerms(): ?bool
+    {
+        return $this->evaluate($this->shouldSplitSearchTerms);
     }
 
     /**

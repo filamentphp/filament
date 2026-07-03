@@ -542,6 +542,16 @@ public function table(Table $table): Table
 }
 ```
 
+You can also use the `splitSearchTerms()` method on a column to override the table's setting for that column's [individual search](#searching-individually) only:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->searchable(isIndividual: true)
+    ->splitSearchTerms(false)
+```
+
 ## Clickable cell content
 
 When a cell is clicked, you may open a URL or trigger an "action".
