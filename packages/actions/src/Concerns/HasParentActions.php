@@ -40,7 +40,9 @@ trait HasParentActions
 
     public function getParentActionToCancelTo(): ?string
     {
-        return $this->evaluate($this->cancelParentActions);
+        $toAction = $this->evaluate($this->cancelParentActions);
+
+        return is_string($toAction) ? $toAction : null;
     }
 
     public function shouldCancelParentActionsOnClose(): bool

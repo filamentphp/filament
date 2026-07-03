@@ -24,15 +24,15 @@
     $actionModalWidth = $action->getModalWidth();
     $actionLivewireCallMountedActionName = $action->hasFormWrapper() ? $action->getLivewireCallMountedActionName() : null;
     $actionModalWireKey = "{$this->getId()}.actions.{$action->getName()}.modal";
-    $actionParentActionToCancelToOnClose = $action->shouldCancelAllParentActionsOnClose()
-        ? true
-        : $action->getParentActionToCancelToOnClose();
+    $actionParentActionsToCancelOnClose = match (true) {
+        $action->shouldCancelAllParentActionsOnClose() => true,
+        $action->shouldCancelParentActionsOnClose() => $action->getParentActionToCancelToOnClose(),
+        default => false,
+    };
     $actionModalClosedEventHandler = 'if ($event.detail.id === ' .
         Js::from($actionModalId) .
         ') $wire.unmountAction(' .
-        Js::from($action->shouldCancelParentActionsOnClose()) .
-        ', ' .
-        Js::from($actionParentActionToCancelToOnClose) .
+        Js::from($actionParentActionsToCancelOnClose) .
         ')';
 @endphp
 

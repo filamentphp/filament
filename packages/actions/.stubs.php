@@ -9,7 +9,7 @@ namespace Livewire\Features\SupportTesting {
     class Testable {
         public function mountAction(string | TestAction | array $actions, array $arguments = []): static {}
 
-        public function unmountAction(bool $canCancelParentActions = true): static {}
+        public function unmountAction(bool | string | null $cancelParentActions = null): static {}
 
         /**
          * @deprecated Use `fillForm()` instead.

@@ -123,13 +123,13 @@ trait InteractsWithActions
         }
 
         if (! $action) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         }
 
         if ($action->isDisabled()) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         }
@@ -167,15 +167,15 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         } catch (Cancel $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         } catch (ValidationException $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             throw $exception;
         }
@@ -723,7 +723,7 @@ trait InteractsWithActions
         return null;
     }
 
-    public function unmountAction(bool $canCancelParentActions = true, bool | string | null $parentActionsToCancel = null): void
+    public function unmountAction(bool | string | null $cancelParentActions = null): void
     {
         try {
             $action = $this->getMountedAction();
@@ -731,27 +731,24 @@ trait InteractsWithActions
             $action = null;
         }
 
-        if (! ($canCancelParentActions && $action)) {
+        if (($cancelParentActions === false) || (! $action)) {
             array_pop($this->mountedActions);
         } elseif (
-            ($parentActionsToCancel === true) ||
-            (($parentActionsToCancel === null) && $action->shouldCancelAllParentActions())
+            ($cancelParentActions === true) ||
+            (($cancelParentActions === null) && $action->shouldCancelAllParentActions())
         ) {
             $this->mountedActions = [];
         } else {
-            if ($parentActionsToCancel === null) {
-                $parentActionToCancelTo = $action->getParentActionToCancelTo();
-            } elseif (is_string($parentActionsToCancel)) {
-                $parentActionToCancelTo = $parentActionsToCancel;
-            } else {
-                $parentActionToCancelTo = null;
-            }
+            $parentActionToCancelTo = is_string($cancelParentActions)
+                ? $cancelParentActions
+                : $action->getParentActionToCancelTo();
 
             while (true) {
                 $recentlyClosedParentAction = array_pop($this->mountedActions);
 
                 if (
                     blank($parentActionToCancelTo) ||
+                    ($recentlyClosedParentAction === null) ||
                     ($recentlyClosedParentAction['name'] === $parentActionToCancelTo)
                 ) {
                     break;

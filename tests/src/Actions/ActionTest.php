@@ -249,7 +249,7 @@ describe('nested actions', function (): void {
         expect($livewire->instance()->getMountedAction()->shouldCancelParentActionsOnClose())->toBeFalse();
 
         $livewire
-            ->unmountAction(false)
+            ->unmountAction(cancelParentActions: false)
             ->assertActionMounted([
                 'grandparentWithModalCloseCancellation',
                 TestAction::make('parentWithModalCloseCancellation')->schemaComponent('grandparentValue'),
@@ -263,7 +263,7 @@ describe('nested actions', function (): void {
                 TestAction::make('parentWithModalCloseCancellation')->schemaComponent('grandparentValue'),
                 TestAction::make('modalCloseCancelsAllParentActions')->schemaComponent('parentValue'),
             ])
-            ->unmountAction(true, true)
+            ->unmountAction(cancelParentActions: true)
             ->assertActionNotMounted();
     });
 
@@ -274,7 +274,7 @@ describe('nested actions', function (): void {
                 TestAction::make('parentWithModalCloseCancellation')->schemaComponent('grandparentValue'),
                 TestAction::make('modalCloseCancelsToNamedParentAction')->schemaComponent('parentValue'),
             ])
-            ->unmountAction(true, 'parentWithModalCloseCancellation')
+            ->unmountAction(cancelParentActions: 'parentWithModalCloseCancellation')
             ->assertActionMounted('grandparentWithModalCloseCancellation');
     });
 
