@@ -91,8 +91,9 @@
                     (new ComponentAttributeBag)
                         ->color(ChartWidgetComponent::class, $color)
                         ->class([
+                            'fi-wi-chart-frame',
                             'fi-wi-chart-canvas-ctn',
-                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => $hasMaxHeight,
+                            'fi-wi-chart-frame-no-aspect-ratio' => $hasMaxHeight,
                         ])
                 }}
             >
@@ -131,27 +132,32 @@
             @if ($emptyState = $this->getEmptyState())
                 {{ $emptyState }}
             @else
-                <x-filament::empty-state
-                    :contained="false"
-                    :description="$this->getEmptyStateDescription()"
-                    :heading="$this->getEmptyStateHeading()"
-                    :icon="$this->getEmptyStateIcon()"
-                    icon-color="gray"
-                    class="fi-wi-chart-empty-state"
+                <div
+                    @class([
+                        'fi-wi-chart-frame',
+                        'fi-wi-chart-frame-no-aspect-ratio' => $hasMaxHeight,
+                    ])
+                    @style([
+                        ('min-height: ' . e($maxHeight)) => $hasMaxHeight,
+                    ])
                 >
-                    @if ($emptyStateActions = array_filter(
-                        $this->getEmptyStateActions(),
-                        fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible()
-                    ))
-                        <x-slot name="footer">
-                            <div class="fi-ac fi-align-center">
-                                @foreach ($emptyStateActions as $action)
-                                    {{ $action }}
-                                @endforeach
-                            </div>
-                        </x-slot>
-                    @endif
-                </x-filament::empty-state>
+                    <x-filament::empty-state
+                        :contained="false"
+                        :description="$this->getEmptyStateDescription()"
+                        :heading="$this->getEmptyStateHeading()"
+                        :icon="$this->getEmptyStateIcon()"
+                        icon-color="gray"
+                    >
+                        @if ($emptyStateActions = $this->getEmptyStateActions())
+                            <x-slot name="footer">
+                                <x-filament::actions
+                                    :actions="$emptyStateActions"
+                                    alignment="center"
+                                />
+                            </x-slot>
+                        @endif
+                    </x-filament::empty-state>
+                </div>
             @endif
         @endif
     </x-filament::section>
