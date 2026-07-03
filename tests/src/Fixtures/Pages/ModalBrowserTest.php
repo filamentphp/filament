@@ -70,6 +70,22 @@ class ModalBrowserTest extends Page
                         ->action(static fn () => null)
                         ->extraModalWindowAttributes(['data-testid' => 'overlay-cancel-modal']),
                 ]),
+            Action::make('cancelParentActionsOnClose')
+                ->label('Cancel parents on close')
+                ->requiresConfirmation()
+                ->action(static fn () => null)
+                ->extraAttributes(['data-testid' => 'cancel-on-close-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'cancel-on-close-modal'])
+                ->extraModalFooterActions([
+                    Action::make('cancelParentActionsOnCloseNested')
+                        ->label('Open nested modal')
+                        ->requiresConfirmation()
+                        ->modalCloseButton()
+                        ->cancelParentActionsOnClose()
+                        ->action(static fn () => null)
+                        ->extraAttributes(['data-testid' => 'cancel-on-close-nested-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'cancel-on-close-nested-modal']),
+                ]),
         ];
     }
 }

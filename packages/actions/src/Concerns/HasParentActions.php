@@ -45,21 +45,26 @@ trait HasParentActions
         return is_string($toAction) ? $toAction : null;
     }
 
-    public function shouldCancelParentActionsOnClose(): bool
+    public function getParentActionsToCancelOnClose(): bool | string
     {
         $toAction = $this->evaluate($this->cancelParentActionsOnClose);
 
-        return ($toAction === true) || is_string($toAction);
+        return is_string($toAction) ? $toAction : ($toAction === true);
+    }
+
+    public function shouldCancelParentActionsOnClose(): bool
+    {
+        return $this->getParentActionsToCancelOnClose() !== false;
     }
 
     public function shouldCancelAllParentActionsOnClose(): bool
     {
-        return $this->evaluate($this->cancelParentActionsOnClose) === true;
+        return $this->getParentActionsToCancelOnClose() === true;
     }
 
     public function getParentActionToCancelToOnClose(): ?string
     {
-        $toAction = $this->evaluate($this->cancelParentActionsOnClose);
+        $toAction = $this->getParentActionsToCancelOnClose();
 
         return is_string($toAction) ? $toAction : null;
     }

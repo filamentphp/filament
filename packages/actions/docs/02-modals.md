@@ -831,7 +831,7 @@ In this example, when the user clicks the delete button on a repeater item, the 
 
 ## Canceling parent actions when a modal is closed
 
-The `cancelParentActions()` method above only cancels parent actions when the child action is run. If the user closes the child's modal instead — by pressing Escape, clicking the backdrop, or using the close button — by default only that modal is closed, leaving any parent actions still mounted. This is useful when the user wants to abandon a multi-step flow entirely rather than closing one modal at a time. To also cancel parent actions when the modal is closed, use the `cancelParentActionsOnClose()` method:
+The `cancelParentActions()` method above only cancels parent actions when the child action is run. If the user closes the child's modal instead — by pressing Escape, clicking the backdrop, or using the close button — by default only that modal is closed, leaving any parent actions still mounted. To also cancel parent actions when the modal is closed, allowing the user to abandon a multi-step flow entirely rather than closing one modal at a time, use the `cancelParentActionsOnClose()` method:
 
 ```php
 use Filament\Actions\Action;

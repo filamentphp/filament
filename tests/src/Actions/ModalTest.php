@@ -88,6 +88,29 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('cancels parent actions when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->click('Cancel parents on close')
+                ->assertVisible('[data-testid="cancel-on-close-modal"]')
+                ->click('[data-testid="cancel-on-close-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
+                ->assertVisible('[data-testid="cancel-on-close-nested-modal"]')
+                ->click('[data-testid="cancel-on-close-nested-modal"] .fi-modal-close-btn')
+                ->assertMissing('[data-testid="cancel-on-close-nested-modal"]')
+                ->assertMissing('[data-testid="cancel-on-close-modal"]')
+                ->assertPresent('[data-testid="cancel-on-close-trigger"]:focus')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/modal-browser-test')
+                ->inDarkMode()
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
     it('restores focus after a nested overlay action cancels its parent action', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
