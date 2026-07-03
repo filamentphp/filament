@@ -388,12 +388,20 @@ export default function fileUploadFormComponent({
                 this.insertOpenLink(fileItem)
             })
 
+            let isProcessingFiles = false
+
             this.pond.on('addfilestart', async (file) => {
                 this.error = null
 
                 if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
                     return
                 }
+
+                if (isProcessingFiles) {
+                    return
+                }
+
+                isProcessingFiles = true
 
                 this.dispatchFormEvent('form-processing-started', {
                     message: uploadingMessage,
@@ -414,6 +422,12 @@ export default function fileUploadFormComponent({
                 ) {
                     return
                 }
+
+                if (!isProcessingFiles) {
+                    return
+                }
+
+                isProcessingFiles = false
 
                 this.dispatchFormEvent('form-processing-finished')
             }
