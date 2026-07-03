@@ -46,7 +46,7 @@ const releaseScrollLock = () => {
     }
 }
 
-export default ({ id }) => ({
+export default ({ id, locksScroll = true }) => ({
     isOpen: false,
 
     isWindowVisible: false,
@@ -194,7 +194,11 @@ export default ({ id }) => ({
             this.isOpen = true
             this.isTrapActive = true
 
-            this.acquireScrollLock()
+            // Click-through modals let you interact with the page behind them,
+            // so they must not lock scrolling.
+            if (locksScroll) {
+                this.acquireScrollLock()
+            }
 
             document.dispatchEvent(
                 new CustomEvent('x-modal-opened', {

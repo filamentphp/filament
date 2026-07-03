@@ -159,6 +159,22 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('does not lock page scroll for a click-through modal', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->assertScript('document.documentElement.style.overflow', '')
+                ->click('[data-testid="click-through-trigger"]')
+                ->assertVisible('[data-testid="click-through-modal"]')
+                // A click-through modal lets you interact with the page behind it,
+                // so it must leave the page scrollable.
+                ->assertScript('document.documentElement.style.overflow', '')
+                ->assertNoSmoke();
+        });
+    });
+
     it('releases the page scroll lock after a dismissed nested modal cancels all parent actions', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
