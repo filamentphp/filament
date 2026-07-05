@@ -5,8 +5,8 @@
 
     $actionModalAlignment = $action->getModalAlignment();
     $actionIsModalAutofocused = $action->isModalAutofocused();
-    $actionHasModalCloseButton = $action->hasModalCloseButton();
     $actionIsModalClickThrough = $action->isModalClickThrough();
+    $actionHasModalCloseButton = $action->hasModalCloseButton();
     $actionIsModalClosedByClickingAway = $action->isModalClosedByClickingAway();
     $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
     $actionModalDescription = $action->getModalDescription();
@@ -35,8 +35,8 @@
 <x-filament::modal
     :alignment="$actionModalAlignment"
     :autofocus="$actionIsModalAutofocused"
-    :close-button="$actionHasModalCloseButton"
     :click-through="$actionIsModalClickThrough"
+    :close-button="$actionHasModalCloseButton"
     :close-by-clicking-away="$actionIsModalClosedByClickingAway"
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"

@@ -10,8 +10,8 @@
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
     'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
-    'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
     'clickThrough' => false,
+    'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
@@ -103,7 +103,7 @@
     @elseif ($heading)
         aria-labelledby="{{ "{$id}.heading" }}"
     @endif
-    aria-modal="true"
+    aria-modal="{{ $isClickThrough ? 'false' : 'true' }}"
     id="{{ $id }}"
     role="dialog"
     x-data="filamentModal({
