@@ -70,14 +70,7 @@ trait EntanglesStateWithSingularRelationship
             $isFirstComponent = ($firstComponentWithThisRelationship === null) || ($firstComponentWithThisRelationship === $component);
 
             if ($isFirstComponent) {
-                // The first layout component using this relationship is the one that will fill the relationship data for all of them,
-                // but it will only hydrate the state correctly for itself.
                 $component->fillFromRelationship();
-            } else {
-                // If this is not the first layout component using this relationship, the data has already been filled by the first one,
-                // so we just need to hydrate the state without calling any hydration hooks. This ensures that state casts have run.
-                $hydratedDefaultState = null;
-                $component->getChildSchema()->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
             }
         });
 
@@ -188,7 +181,9 @@ trait EntanglesStateWithSingularRelationship
         $record = $this->getCachedExistingRecord();
 
         if (! $record) {
-            $this->getChildSchema()->fill(shouldCallHydrationHooks: false, shouldFillStateWithNull: false);
+            // State casts are skipped here; the surrounding `Component::hydrateState()`
+            // recurses into child schemas and applies them exactly once.
+            $this->getChildSchema()->fill(shouldCallHydrationHooks: false, shouldFillStateWithNull: false, shouldApplyStateCasts: false);
 
             return;
         }
@@ -197,7 +192,7 @@ trait EntanglesStateWithSingularRelationship
             $this->getStateFromRelatedRecord($record),
         );
 
-        $this->getChildSchema()->fill($data, shouldCallHydrationHooks: false, shouldFillStateWithNull: false);
+        $this->getChildSchema()->fill($data, shouldCallHydrationHooks: false, shouldFillStateWithNull: false, shouldApplyStateCasts: false);
     }
 
     /**

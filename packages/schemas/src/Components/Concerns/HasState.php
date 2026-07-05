@@ -441,8 +441,9 @@ trait HasState
 
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
+     * @param  array<string, true>  $appliedStateCastPaths
      */
-    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true): void
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true, bool $shouldApplyStateCasts = true, array &$appliedStateCastPaths = []): void
     {
         $this->hydrateDefaultState($hydratedDefaultState);
 
@@ -461,18 +462,28 @@ trait HasState
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-            $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
+            $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
         }
 
-        $rawState = $this->getRawState();
-        $originalRawState = $rawState;
+        if ($shouldApplyStateCasts && filled($stateCasts = $this->getStateCasts())) {
+            $statePath = $this->getStatePath();
 
-        foreach ($this->getStateCasts() as $stateCast) {
-            $rawState = $stateCast->set($rawState);
-        }
+            if (blank($statePath) || ! isset($appliedStateCastPaths[$statePath])) {
+                $rawState = $this->getRawState();
+                $originalRawState = $rawState;
 
-        if ($rawState !== $originalRawState) {
-            $this->rawState($rawState);
+                foreach ($stateCasts as $stateCast) {
+                    $rawState = $stateCast->set($rawState);
+                }
+
+                if ($rawState !== $originalRawState) {
+                    $this->rawState($rawState);
+                }
+
+                if (filled($statePath)) {
+                    $appliedStateCastPaths[$statePath] = true;
+                }
+            }
         }
 
         if ($shouldCallHydrationHooks) {

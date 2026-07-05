@@ -21,6 +21,10 @@ FileUpload::make('attachment')
     Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library) for more information.
 </Aside>
 
+<Aside variant="danger">
+    By default, `FileUpload` accepts any string path within the configured disk — the field value is a client-controlled string and a tampered request can submit any other file on the same disk. If your disk holds files for more than one user, tenant, or record, either call [`->preventFilePathTampering()`](#authorizing-existing-file-paths) on the field (or apply it globally with `FileUpload::configureUsing()`), or isolate uploads at the disk or directory level so the field can only ever address files belonging to the current owner.
+</Aside>
+
 ## Configuring the storage disk and directory
 
 By default, files will be uploaded to the storage disk defined in the [configuration file](../introduction/installation#publishing-configuration). You can also set the `FILESYSTEM_DISK` environment variable to change this.
@@ -41,6 +45,10 @@ FileUpload::make('attachment')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `disk()`, `directory()` and `visibility()` methods accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters. </UtilityInjection>
+
+<Aside variant="warning">
+    The default visibility is decided by a literal string match against the disk name: a disk literally named `public` is treated as publicly visible, and any other disk name defaults to `private`. A custom disk that happens to be named `public` will therefore be treated as public even if its underlying configuration is private, and a custom publicly-visible disk under a different name will default to private. To avoid confusion, either give custom disks unambiguous names or set `visibility()` explicitly on each field.
+</Aside>
 
 <Aside variant="info">
     It is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).

@@ -26,6 +26,11 @@ it('can trim whitespace from TagsInput array values', function (mixed $input, mi
     [null, null],
     [[], []],
     [['  tag1  ', 123, '  tag2  '], ['tag1', 123, 'tag2']],
+    [["\t tag1 \n", "\n tag2 \t"], ['tag1', 'tag2']],
+    [['　tag1　', '　tag2　'], ['tag1', 'tag2']],
+    [[" \t　tag1　\n ", "　 tag2\t "], ['tag1', 'tag2']],
+    [['   ', "\t\n　"], ['', '']],
+    [['  tag1  ', null, true, '　tag2　'], ['tag1', null, true, 'tag2']],
 ]);
 
 it('can strip characters from TagsInput array values', function (mixed $input, mixed $expected): void {

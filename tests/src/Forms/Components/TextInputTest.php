@@ -27,6 +27,11 @@ it('can `trim()` whitespace from `TextInput`', function (mixed $input, mixed $ex
     [null, null],
     ['', ''],
     [123, 123],
+    ["\t test value \n", 'test value'],
+    ['　test value　', 'test value'],
+    [" \t　test value　\n ", 'test value'],
+    ['   ', ''],
+    ["\t\n　", ''],
 ]);
 
 it('can strip characters before applying `numeric()` state cast', function (mixed $input, mixed $expected): void {

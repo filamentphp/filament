@@ -11,7 +11,7 @@
         "build:panels-css": "npx @tailwindcss/cli -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
         "build": "npm-run-all build:*",
         "build-demo": "npm run build && cd ../demo && php artisan filament:upgrade && cd ../filament && cd docs-assets/app && php artisan filament:upgrade && npm run build && cd ../../",
-        "prettier": "npx prettier --write ."
+        "prettier": "npx prettier --write --cache --cache-location=.prettiercache ."
     },
     "devDependencies": {
         "@awcodes/alpine-floating-ui": "^3.4.0",
@@ -80,7 +80,7 @@
         "cropperjs": "^1.5.13",
         "dayjs": "^1.10.6",
         "easymde": "^2.18.0",
-        "esbuild": "^0.25.0",
+        "esbuild": "^0.28.1",
         "esbuild-postcss": "^0.0.4",
         "filepond": "^4.32.7",
         "filepond-plugin-file-validate-size": "^2.2.8",
@@ -93,7 +93,6 @@
         "filepond-plugin-image-transform": "^3.8.7",
         "js-md5": "^0.8.3",
         "laravel-echo": "^1.14.0",
-        "laravel-mix": "^6.0.37",
         "luxon": "^3.4.3",
         "mime": "^4.0.4",
         "nouislider": "^15.8.1",

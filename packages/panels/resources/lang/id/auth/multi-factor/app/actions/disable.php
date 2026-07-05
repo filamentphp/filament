@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Kode yang Anda masukkan tidak valid.',
 
+                    'rate_limited' => 'Terlalu banyak percobaan. Silakan coba lagi nanti.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Kode pemulihan yang Anda masukkan tidak valid.',
+
+                    'rate_limited' => 'Terlalu banyak percobaan. Silakan coba lagi nanti.',
 
                 ],
 
