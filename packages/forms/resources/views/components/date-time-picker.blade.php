@@ -245,6 +245,8 @@
                                 step="{{ $getHoursStep() }}"
                                 type="number"
                                 inputmode="numeric"
+                                x-on:blur="checkTimeInputValidity"
+                                x-on:invalid="timeInputInvalid"
                                 x-model.debounce="hour"
                             />
 
@@ -260,6 +262,8 @@
                                 step="{{ $getMinutesStep() }}"
                                 type="number"
                                 inputmode="numeric"
+                                x-on:blur="checkTimeInputValidity"
+                                x-on:invalid="timeInputInvalid"
                                 x-model.debounce="minute"
                             />
 
@@ -276,6 +280,8 @@
                                     step="{{ $getSecondsStep() }}"
                                     type="number"
                                     inputmode="numeric"
+                                    x-on:blur="checkTimeInputValidity"
+                                    x-on:invalid="timeInputInvalid"
                                     x-model.debounce="second"
                                 />
                             @endif

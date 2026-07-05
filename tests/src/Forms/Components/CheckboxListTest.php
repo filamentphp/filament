@@ -395,6 +395,22 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasNoFormErrors();
     });
+
+    it('rejects existing values excluded by `modifyQueryUsing` on a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $inScope = Team::factory()->create(['name' => 'Alpha Team']);
+        $outOfScope = Team::factory()->create(['name' => 'Beta Team']);
+
+        livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id]])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation::class, ['record' => $user])
+            ->fillForm(['teams' => [(string) $inScope->id, (string) $outOfScope->id]])
+            ->call('save')
+            ->assertHasFormErrors(['teams.1' => ['in']]);
+    });
 });
 
 describe('action names', function (): void {
@@ -419,6 +435,48 @@ class CheckboxListWithBelongsToManyRelationship extends Component implements Has
     public function mount(): void
     {
         $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                CheckboxList::make('teams')
+                    ->relationship('teams', 'name'),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class CheckboxListWithEagerLoadedBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->record->load('teams');
+        $this->form->fill([]);
+    }
+
+    public function hydrate(): void
+    {
+        $this->record->load('teams');
     }
 
     public function form(Schema $form): Schema
@@ -688,6 +746,42 @@ class CheckboxListWithBelongsToManyRelationshipValidation extends Component impl
             ->schema([
                 CheckboxList::make('teams')
                     ->relationship('teams', 'name'),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class CheckboxListWithBelongsToManyRelationshipAndModifyQueryValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                CheckboxList::make('teams')
+                    ->relationship('teams', 'name', modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Alpha%')),
             ])
             ->model($this->record)
             ->statePath('data');
@@ -1110,6 +1204,23 @@ describe('saving relationships', function (): void {
         expect($user->fresh()->teams)->toHaveCount(3);
         expect($modifyCallCount)->toBeGreaterThan(0);
     });
+
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $component = livewire(CheckboxListWithEagerLoadedBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => []])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0)
+            ->and($component->instance()->data['teams'])->toBe([]);
+
+        $component->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
+    });
 });
 
 describe('loading relationships', function (): void {
@@ -1323,6 +1434,12 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->assertSeeHtml('Active')
             ->assertSeeHtml('Archived');
+    });
+
+    it('can render option values containing double quotes', function (): void {
+        livewire(RenderCheckboxListWithQuotedOptionValues::class)
+            ->assertSuccessful()
+            ->assertSeeHtml('value="1/2&quot; wrench"');
     });
 });
 
@@ -1868,6 +1985,37 @@ class RenderCheckboxListWithDisabledOptionWhen extends Component implements HasA
                         'archived' => 'Archived',
                     ])
                     ->disableOptionWhen(static fn (string $value): bool => $value === 'archived'),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RenderCheckboxListWithQuotedOptionValues extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                CheckboxList::make('items')
+                    ->options([
+                        '1/2" wrench' => '1/2" wrench',
+                        '3/8" wrench' => '3/8" wrench',
+                    ]),
             ])
             ->statePath('data');
     }

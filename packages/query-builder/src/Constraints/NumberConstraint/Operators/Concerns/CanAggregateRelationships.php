@@ -62,6 +62,7 @@ trait CanAggregateRelationships
         $relationshipName = $this->getConstraint()->getRelationshipName();
         $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
         $aggregate = $this->getAggregate();
+        $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
 
         /** @var Relation $relationship */
         $relationship = $query->getModel()->{$relationshipName}();
@@ -82,6 +83,10 @@ trait CanAggregateRelationships
                 ->join($pivotTable, $relatedKey, '=', $relatedPivotKey)
                 ->whereColumn($foreignPivotKey, $parentKey);
 
+            if ($modifyRelationshipQueryUsing) {
+                $subQuery = $this->evaluate($modifyRelationshipQueryUsing, ['query' => $subQuery]) ?? $subQuery;
+            }
+
             return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
         }
 
@@ -92,6 +97,10 @@ trait CanAggregateRelationships
             $subQuery = $relatedModel->query()
                 ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
                 ->whereColumn($foreignKeyName, $parentKeyName);
+
+            if ($modifyRelationshipQueryUsing) {
+                $subQuery = $this->evaluate($modifyRelationshipQueryUsing, ['query' => $subQuery]) ?? $subQuery;
+            }
 
             return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
         }
@@ -106,8 +115,8 @@ trait CanAggregateRelationships
             ->options([
                 static::getAggregateSumKey() => __('filament-query-builder::query-builder.operators.number.aggregates.sum.label'),
                 static::getAggregateAverageKey() => __('filament-query-builder::query-builder.operators.number.aggregates.average.label'),
-                static::getAggregateMinKey() => __('filament-query-builder::query-builder.operators.number.aggregates.max.label'),
-                static::getAggregateMaxKey() => __('filament-query-builder::query-builder.operators.number.aggregates.min.label'),
+                static::getAggregateMaxKey() => __('filament-query-builder::query-builder.operators.number.aggregates.max.label'),
+                static::getAggregateMinKey() => __('filament-query-builder::query-builder.operators.number.aggregates.min.label'),
             ])
             ->visible($this->getConstraint()->queriesRelationships());
     }

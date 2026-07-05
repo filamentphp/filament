@@ -284,6 +284,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     public function saveStateToRelationship(): void
     {
         $relationship = $this->getRelationship();
+        $record = $this->getRecord();
+        $relationshipName = $this->getRelationshipName();
 
         if ($this->modifyRelationshipQueryUsing) {
             $this->evaluate($this->modifyRelationshipQueryUsing, [
@@ -312,11 +314,13 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
         if ($pivotData === []) {
             $relationship->sync($state, detaching: false);
+            $record->unsetRelation($relationshipName);
 
             return;
         }
 
         $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
+        $record->unsetRelation($relationshipName);
     }
 
     public function bulkToggleable(bool | Closure $condition = true): static

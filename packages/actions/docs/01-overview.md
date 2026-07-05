@@ -55,7 +55,7 @@ Action::make('edit')
 <UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `url()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="danger">
-    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks.
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
 </Aside>
 
 The entire look of the action's trigger button and the modal is customizable using fluent PHP methods. We provide a sensible and consistent styling for the UI, but all of this is customizable with CSS.
@@ -262,6 +262,8 @@ Action::make('edit')
     ->authorizationTooltip()
 ```
 
+If the denial does not provide a message (for example, your policy returns plain `false`, or a `Gate::before()` hook short-circuits the check), the action is hidden instead. You can supply a fallback message with `authorizationMessage()` to keep the action visible in that case.
+
 <AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
 
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
@@ -274,6 +276,8 @@ Action::make('edit')
     ->authorize('update')
     ->authorizationNotification()
 ```
+
+As with `authorizationTooltip()`, the action is hidden if the denial does not provide a message, unless you supply a fallback with `authorizationMessage()`.
 
 ### Disabling a button
 

@@ -4,6 +4,7 @@ namespace Filament\Auth\MultiFactor\App\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
+use SensitiveParameter;
 
 /**
  * @property ?string $app_authentication_secret
@@ -34,7 +35,7 @@ trait InteractsWithAppAuthentication /** @phpstan-ignore trait.unused */
         return $this->app_authentication_secret;
     }
 
-    public function saveAppAuthenticationSecret(?string $secret): void
+    public function saveAppAuthenticationSecret(#[SensitiveParameter] ?string $secret): void
     {
         $this->app_authentication_secret = $secret;
         $this->save();

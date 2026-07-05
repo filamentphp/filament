@@ -316,8 +316,9 @@ trait HasState
 
     /**
      * @param  array<string, mixed> | null  $state
+     * @param  array<string, true>  $appliedStateCastPaths
      */
-    public function fill(?array $state = null, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
+    public function fill(?array $state = null, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true, bool $shouldApplyStateCasts = true, array &$appliedStateCastPaths = []): static
     {
         $hydratedDefaultState = null;
 
@@ -327,7 +328,7 @@ trait HasState
             $this->rawState($state);
         }
 
-        $this->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
+        $this->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
 
         if ($shouldFillStateWithNull) {
             $this->fillStateWithNull();
@@ -365,15 +366,16 @@ trait HasState
 
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
+     * @param  array<string, true>  $appliedStateCastPaths
      */
-    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true): void
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true, bool $shouldApplyStateCasts = true, array &$appliedStateCastPaths = []): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component instanceof Entry) {
                 continue;
             }
 
-            $component->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
+            $component->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
         }
     }
 

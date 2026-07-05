@@ -4,7 +4,7 @@ return [
 
     'label' => 'التنقل بين الصفحات',
 
-    'overview' => '{1} عرض نتيجة واحدة|[3,10] عرض :first إلى :last من :total نتائج|[2,*] عرض :first إلى :last من :total نتيجة',
+    'overview' => '{1} عرض نتيجة واحدة|{2} عرض :first إلى :last من نتيجتين|[3,10] عرض :first إلى :last من :total نتائج|[11,*] عرض :first إلى :last من :total نتيجة',
 
     'fields' => [
 
@@ -23,7 +23,7 @@ return [
     'actions' => [
 
         'first' => [
-            'label' => 'الأولي',
+            'label' => 'الأولى',
         ],
 
         'go_to_page' => [

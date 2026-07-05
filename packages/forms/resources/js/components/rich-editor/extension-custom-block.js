@@ -1,6 +1,6 @@
-import { mergeAttributes, Node, NodePos } from '@tiptap/core'
+import { mergeAttributes, Node } from '@tiptap/core'
 import { Node as ProseMirrorNode } from '@tiptap/pm/model'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
+import { Plugin } from '@tiptap/pm/state'
 
 export default Node.create({
     name: 'customBlock',
@@ -31,7 +31,7 @@ export default Node.create({
             extension,
         }) => {
             const dom = document.createElement('div')
-            dom.setAttribute('data-config', node.attrs.config)
+            dom.setAttribute('data-config', JSON.stringify(node.attrs.config))
             dom.setAttribute('data-id', node.attrs.id)
             dom.setAttribute('data-type', 'customBlock')
 
@@ -131,6 +131,15 @@ export default Node.create({
                 default: null,
                 parseHTML: (element) =>
                     JSON.parse(element.getAttribute('data-config')),
+                renderHTML: (attributes) => {
+                    if (!attributes.config) {
+                        return {}
+                    }
+
+                    return {
+                        'data-config': JSON.stringify(attributes.config),
+                    }
+                },
             },
 
             id: {
@@ -175,7 +184,10 @@ export default Node.create({
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['div', mergeAttributes(HTMLAttributes)]
+        return [
+            'div',
+            mergeAttributes({ 'data-type': 'customBlock' }, HTMLAttributes),
+        ]
     },
 
     addKeyboardShortcuts() {

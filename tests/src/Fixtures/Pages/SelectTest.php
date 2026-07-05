@@ -3,8 +3,11 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -135,6 +138,46 @@ class SelectTest extends Page
                     ])
                     ->native(false)
                     ->extraAttributes(['data-testid' => 'clearable-with-placeholder-select']),
+
+                Select::make('creatable_status')
+                    ->label('Creatable Select')
+                    ->placeholder('Select an option...')
+                    ->options([
+                        'existing' => 'Existing',
+                    ])
+                    ->native(false)
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->required()
+                            ->extraInputAttributes(['data-testid' => 'create-option-name-input']),
+                    ])
+                    ->createOptionUsing(static fn (array $data): string => $data['name'])
+                    ->createOptionAction(static fn (Action $action): Action => $action
+                        ->extraAttributes(['data-testid' => 'create-option-action-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'create-option-action-modal']))
+                    ->extraAttributes(['data-testid' => 'creatable-select']),
+
+                Select::make('native_dynamic_options_context')
+                    ->label('Native Dynamic Options Context')
+                    ->live()
+                    ->options([
+                        'first' => 'First context',
+                        'second' => 'Second context',
+                    ])
+                    ->extraInputAttributes(['data-testid' => 'native-dynamic-options-context-select']),
+
+                Select::make('native_dynamic_options_value')
+                    ->label('Native Dynamic Options Value')
+                    ->options(fn (Get $get): array => match ($get('native_dynamic_options_context')) {
+                        'first' => [
+                            'first_only' => 'First only',
+                        ],
+                        'second' => [
+                            'second_only' => 'Second only',
+                        ],
+                        default => [],
+                    })
+                    ->extraInputAttributes(['data-testid' => 'native-dynamic-options-value-select']),
             ])
             ->statePath('data');
     }

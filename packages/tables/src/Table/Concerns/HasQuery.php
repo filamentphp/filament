@@ -127,7 +127,13 @@ trait HasQuery
             ];
         }
 
-        $query->select($columns);
+        $baseQuery = $query instanceof Relation ? $query->getQuery()->getQuery() : $query->getQuery();
+        $baseQuery->columns = array_values(array_filter(
+            $baseQuery->columns ?? [],
+            fn ($column): bool => ! in_array($column, $columns, true),
+        ));
+
+        $query->addSelect($columns);
 
         return $query;
     }

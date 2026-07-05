@@ -136,6 +136,8 @@ class CreateAction extends Action
                 $hydratedDefaultState = null;
                 $schema->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
 
+                $schema->dispatchClientSideStateReset();
+
                 $this->halt();
 
                 return;
