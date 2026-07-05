@@ -22,6 +22,31 @@ Filament automatically checks [Laravel Model Policies](https://laravel.com/docs/
 
 However, Filament's automatic authorization only covers these built-in resource operations. Any custom functionality you add — custom actions, custom pages, custom Livewire components, API endpoints, or other business logic — must be authorized by you. Filament cannot know your application's authorization requirements beyond the standard CRUD operations it provides.
 
+### Authorization and the Livewire request lifecycle
+
+Filament re-runs authorization on every Livewire request — both on the initial page load and on every subsequent update (search, filter, pagination, action call, form interaction). This means that if a user's permissions change while they are using the panel, the next interaction they make will be authorized against the current policy state, not the policy state at the time the component was first mounted.
+
+This applies across every Livewire component Filament ships:
+
+- **Resource pages** (`ListRecords`, `CreateRecord`, `EditRecord`, `ViewRecord`, `ManageRelatedRecords`) — the resource-level `Resource::canAccess()` check (and parent resource's check, if any) re-runs on every request via the `CanAuthorizeResourceAccess` trait. The page-specific record-scoped checks (`canEdit($record)`, `canView($record)`, `canCreate()`, parameterized `canAccess(['record' => ...])`) re-run on every request via each page type's `hydrate()` method, mirroring the existing `mount()`-time call to `$this->authorizeAccess()`.
+- **Custom panel pages** (anything extending `Filament\Pages\Page`, including `SettingsPage`, the auth pages, the dashboard, cluster pages) — the page's `canAccess()` method re-runs on every request via the `CanAuthorizeAccess` trait.
+- **Relation managers** — the `canViewForRecord($ownerRecord, $pageClass)` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Resources\RelationManagers\Concerns`. Initial mount is gated by the parent page's render-time filter, so the trait only registers a hydrate-time check to avoid a duplicate call on the first request.
+- **Widgets** — the static `canView()` check re-runs on every request via the `CanAuthorizeAccess` trait under `Filament\Widgets\Concerns`. As with relation managers, the parent dashboard's render-time filter handles the initial-mount gate.
+- **Tenancy pages** (`RegisterTenant`, `EditTenantProfile`) — their `canView()` checks re-run on every Livewire request via a `hydrate()` method mirroring the existing `mount()`-time check.
+
+Panel-level access (`canAccessPanel`) is enforced by the panel's `Authenticate` middleware, which runs on every HTTP request (including Livewire updates) — so users who lose panel access mid-session are bounced at the middleware layer before any component-level authorization is consulted.
+
+When you build custom Livewire components on a Filament panel, be aware that **several Livewire activities run before Filament's authorization hooks fire**:
+
+- Public properties are deserialized from the request payload (Livewire's "synth" step) before any of your hooks run.
+- The `boot()` and `boot{TraitName}()` lifecycle hooks fire before authorization.
+- The user's `mount()` body runs before trait-level `mount{TraitName}` hooks on initial mount.
+- Per-property `hydrate{PropertyName}()` hooks fire after Filament's hydrate-time authorization but still complete before the request progresses to update or render.
+
+In practice this means **work that happens during these earlier hooks runs even when authorization will subsequently abort the request**. Filament aborts before the response is rendered or any update method is called, so unauthorized data is never returned to the user, but server-side side effects (database queries to resolve a record, audit log entries that fire on `SELECT`, dispatched events in custom hooks, etc.) can occur before the abort.
+
+If your component does anything significant that should not happen for an unauthorized user — emitting events, writing to the database, calling external services — do that work in a method or hook that runs **after** Filament's authorization has already fired (for example, in the `mount()` body **after** an explicit `$this->authorizeAccess()` call, or in an action method invoked via `wire:click`, which always runs post-authorization). Avoid putting such work in `boot()` or per-property hydrate hooks.
+
 ### Inline editable columns
 
 Inline editable table columns such as `ToggleColumn`, `TextInputColumn`, `SelectColumn`, and `CheckboxColumn` do not check Model Policies before saving changes. They only check the column's `disabled()` state. If you need to restrict who can edit these columns, use the `disabled()` method with your own authorization logic. See the documentation for each [editable column type](../tables/columns/toggle) for more details.
@@ -40,18 +65,55 @@ Do not rely solely on Filament's built-in policy checks. Treat them as a helpful
 
 Many Filament configuration methods accept closures that can return dynamic values. Methods like `url()`, `icon()`, `html()`, and others are designed to be flexible, allowing developers to build rich, dynamic interfaces. However, when the values passed to these methods originate from user input or untrusted database content, it is your responsibility to validate and sanitize them appropriately.
 
-For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament:
+For example, the `url()` method on columns, entries, and actions renders an `<a href="...">` tag with whatever value you provide. If you pass a URL sourced from user input without validation, a malicious value like `javascript:alert(document.cookie)` could be rendered as a clickable link, leading to XSS. Always validate that URLs use a safe scheme such as `http` or `https` before passing them to Filament.
+
+Filament ships a `Str::sanitizeUrl()` helper that returns the URL when it is schemeless (relative) or uses the `http`/`https` scheme, and returns `null` for anything else. Before checking the scheme, it accounts for the obfuscation tricks that browsers silently undo when parsing an `href` value — HTML entity references (numeric like `&#9;`/`&#x09;` and named like `&Tab;`/`&NewLine;`/`&colon;`), percent-encoded control characters (`%09`, `%0A`), embedded raw control characters and whitespace (`\t`, `\n`, `\r`, NUL bytes), and mixed-case schemes — so values like `"\tJaVa\nScRiPt:alert(1)"` or `"java&#x09;script:alert(1)"` are rejected. The return value is the original input unchanged when it passes the check; the helper never rewrites a URL.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Str;
 
 TextColumn::make('website')
+    ->url(fn (string $state): ?string => Str::sanitizeUrl($state))
+```
+
+You can call the helper anywhere a URL is being passed to a Filament configuration method (`url()`, `image()`, `icon()` when given a URL, `openUrlInNewTab()` callbacks, and so on). Internally Filament already runs every file URL it emits from components like `FileUpload` and `SpatieMediaLibraryFileUpload` through this helper.
+
+If you need to allow additional schemes — for example `mailto:` or `tel:` — pass them in as the second argument. The default allowlist is replaced by what you pass, so include `http` and `https` if you still want them:
+
+```php
+TextColumn::make('contact')
+    ->url(fn (string $state): ?string => Str::sanitizeUrl(
+        $state,
+        allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+    ))
+```
+
+`Str::sanitizeUrl()` is a scheme allowlist designed to prevent XSS from dangerous URL schemes. It does not:
+
+- check that the host belongs to a domain you control (open-redirect protection),
+- check that the URL is safe for the server to fetch (SSRF protection),
+- guarantee safety for non-standard rendering contexts — the safety analysis assumes the URL will be placed in an HTML attribute like `href`, where the browser performs a single HTML-entity decode and strips whitespace/control characters before parsing the scheme. If your code applies additional transformations to the return value before rendering (for example, calling `urldecode()` and then setting `location.href`), apply your own scheme check to the transformed value,
+- validate that an `http(s)` URL is reachable or trusted in any other way.
+
+If you need any of those guarantees, layer your own check on top of the helper's return value.
+
+If you need a stricter allowlist (for example, only your own domains), wrap the helper:
+
+```php
+TextColumn::make('website')
     ->url(function (string $state): ?string {
-        if (! str_starts_with($state, 'http://') && ! str_starts_with($state, 'https://')) {
+        $sanitized = Str::sanitizeUrl($state);
+
+        if (blank($sanitized)) {
             return null;
         }
 
-        return $state;
+        $host = parse_url($sanitized, PHP_URL_HOST);
+
+        return in_array($host, ['example.com', 'cdn.example.com'], true)
+            ? $sanitized
+            : null;
     })
 ```
 
@@ -186,47 +248,39 @@ Filament supports [multi-factor authentication](../users/multi-factor-authentica
 
 Filament exposes all non-`$hidden` model attributes to JavaScript via Livewire's model binding. This is necessary for dynamic form functionality, and only attributes with corresponding form fields are actually editable — this is not a mass assignment vulnerability. However, if your model contains sensitive attributes that should not be visible in the browser (such as API keys or internal flags), you should either add them to the model's `$hidden` property or remove them using the `mutateFormDataBeforeFill()` method on your Edit or View page. See the [resources documentation](../resources/overview#protecting-model-attributes) for more details.
 
-## File uploads
+## File uploads and rich editor attachments
 
-Filament's `FileUpload` component uses Livewire's file upload mechanism. There are important security considerations when allowing users to upload files, particularly around file names, storage visibility, and accepted file types.
+Filament's `FileUpload` and `RichEditor` components both have their own security considerations — uploaded file names, storage visibility, accepted file types, and client-controlled file paths can each be abused if misconfigured. The relevant guidance lives alongside each component:
 
-By default, Filament generates random file names and stores files with `private` visibility. If you use `preserveFilenames()` or `getUploadedFileNameForStorageUsing()` with local or public disks, an attacker could upload a PHP file with a deceptive MIME type that gets executed by your server. The safer alternative is to use `storeFileNamesIn()`, which stores original file names in a separate database column while keeping randomly generated file names on disk. See the [file upload documentation](../forms/file-upload#security-implications-of-controlling-file-names) for a full explanation of these risks and recommended mitigations.
+- [File upload security](../forms/file-upload#security-implications-of-controlling-file-names) — file name preservation risks and the [authorizing existing file paths](../forms/file-upload#authorizing-existing-file-paths) flow.
+- [Rich editor file attachment IDs](../forms/rich-editor#securing-file-attachment-ids) — `data-id` tampering and how the default vs. `spatie/laravel-medialibrary` providers differ in scoping.
 
-You should always use `acceptedFileTypes()` to restrict the types of files users can upload, and validate file sizes with `maxSize()`. These constraints are enforced server-side, not just in the browser.
+### Restricting Livewire file uploads to schema components
 
-## File path tampering
+Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, because the trait composes Livewire's `WithFileUploads` so that schema components like `FileUpload` and `MarkdownEditor` can use Livewire's standard file upload mechanism. By default, those RPC methods accept uploads to any Livewire property name — they do not check whether the property corresponds to a real upload field in the component's schemas. This means an attacker who can reach the page can tamper with a Livewire request to upload files to arbitrary property paths on any page that uses `InteractsWithSchemas`, even pages that do not display an upload field at all.
 
-The value of a `FileUpload` field is a string (or array of strings) pointing to a file on its configured disk. The `RichEditor` embeds images by storing their identifier in the `data-id` attribute of each image node, which is similarly resolved against a disk when the content is rendered. Like any other Livewire form field value, both are controlled by the client — a request can be intercepted to change a submitted path or `data-id` to any other file on the same disk. If the disk also stores files belonging to other users or records, an attacker can cause a record to reference (and serve a signed URL for) someone else's file.
-
-Filament allows this by default because legitimate features depend on it — for example, an action that sets a field to a pre-uploaded template file, or a "copy from another record" button. If your forms do not rely on such a flow, opt in to the built-in checks:
-
-- For `FileUpload` fields, call [`preventFilePathTampering()`](../forms/file-upload#authorizing-existing-file-paths) to fail validation when a submitted path does not match the original value on the record.
-- For `RichEditor` fields, call [`preventFileAttachmentPathTampering()`](../forms/rich-editor#securing-file-attachment-ids) to fail validation when a submitted `data-id` is not already present in the record's stored content.
-
-Both methods compare submitted values against the attribute on the record via `$record->getOriginal()`, and both accept an `allowFilePathUsing` callback for paths that are legitimately added outside the record (such as shared template files). Newly uploaded files and images always pass through unchanged.
-
-<Aside variant="warning">
-    These checks require a record on the form, so on create pages every submitted existing path fails validation unless the `allowFilePathUsing` callback approves it. New uploads are unaffected.
-</Aside>
-
-If you want these checks to apply across your entire application rather than remembering to add them to each field, enable them globally from a service provider's `boot()` method using `configureUsing()`:
+If your Livewire component is reachable to users you do not want uploading arbitrary files (for example, an unauthenticated page, or any page whose schema does not contain an upload field), add the `RestrictsFileUploadsToSchemaComponents` trait. This causes `_startUpload` and `_finishUpload` to abort with a `403` response unless the upload's target property maps to a `FileUpload` field (or any field that supports file attachments) registered in one of the component's schemas:
 
 ```php
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
+use Filament\Schemas\Contracts\HasSchemas;
+use Livewire\Component;
 
-FileUpload::configureUsing(function (FileUpload $component): void {
-    $component->preventFilePathTampering();
-});
+class ViewProduct extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
 
-RichEditor::configureUsing(function (RichEditor $component): void {
-    $component->preventFileAttachmentPathTampering();
-});
+    // ...
+}
 ```
 
-Individual fields can still opt out by passing `false` to the corresponding method (for example, `preventFilePathTampering(false)`) when a specific form legitimately needs to accept paths that are not on the record.
+With the trait in place, an attacker tampering with a Livewire request to upload to an arbitrary property name is rejected; legitimate uploads from your schema's `FileUpload` fields continue to work because their target property matches a registered component. Uploads from components that support file attachments — such as the [`MarkdownEditor`](../forms/markdown-editor) and [`RichEditor`](../forms/rich-editor) — are also allowed when they target a registered component.
 
-If your application isolates uploads per user or per record at the disk level — for example, by using a separate disk or directory for each tenant — this class of tampering is not exploitable and these methods are unnecessary. The `spatie/laravel-medialibrary` rich editor provider also performs an equivalent check implicitly by looking up each `data-id` against the record's own media collection.
+<Aside variant="tip">
+    Hidden fields are not considered matchable targets. If a `FileUpload` field is conditionally hidden (`->visible(false)` or equivalent), uploads to its state path are rejected — only fields the user can actually see are valid upload targets.
+</Aside>
 
 ## Scoping queries
 

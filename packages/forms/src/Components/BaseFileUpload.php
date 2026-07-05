@@ -202,7 +202,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             'name' => ($this->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
             'size' => $shouldFetchFileInformation ? $storage->size($file) : 0,
             'type' => $shouldFetchFileInformation ? $storage->mimeType($file) : null,
-            'url' => $url,
+            'url' => Str::sanitizeUrl($url),
         ];
     }
 
@@ -927,11 +927,15 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 continue;
             }
 
+            if (array_key_exists('url', $urls[$fileKey])) {
+                $urls[$fileKey]['url'] = Str::sanitizeUrl($urls[$fileKey]['url']);
+            }
+
             if ($openableFileUrlCallback) {
-                $openableUrl = $this->evaluate($openableFileUrlCallback, [
+                $openableUrl = Str::sanitizeUrl($this->evaluate($openableFileUrlCallback, [
                     'file' => $file,
                     'storedFileNames' => $storedFileNames,
-                ]);
+                ]));
 
                 if ($openableUrl !== null) {
                     $urls[$fileKey]['openableUrl'] = $openableUrl;
@@ -939,10 +943,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             }
 
             if ($downloadableFileUrlCallback) {
-                $downloadableUrl = $this->evaluate($downloadableFileUrlCallback, [
+                $downloadableUrl = Str::sanitizeUrl($this->evaluate($downloadableFileUrlCallback, [
                     'file' => $file,
                     'storedFileNames' => $storedFileNames,
-                ]);
+                ]));
 
                 if ($downloadableUrl !== null) {
                     $urls[$fileKey]['downloadableUrl'] = $downloadableUrl;

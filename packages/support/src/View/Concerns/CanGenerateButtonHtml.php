@@ -125,7 +125,15 @@ trait CanGenerateButtonHtml
             ])
             ->color(app(ButtonComponent::class, ['isOutlined' => $isOutlined]), $color);
 
-        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+        $iconButtonAttributes = $attributes;
+
+        if ($labeledFromBreakpoint && filled($wireKey = $attributes->get('wire:key'))) {
+            $iconButtonAttributes = $attributes
+                ->except(['wire:key'])
+                ->merge(['wire:key' => "{$wireKey}.icon-button"], escape: false);
+        }
+
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
         ])), size: $iconSize)->toHtml() : '';
@@ -144,7 +152,7 @@ trait CanGenerateButtonHtml
 
         <?php if ($labeledFromBreakpoint) { ?>
             <?= $this->generateIconButtonHtml(
-                attributes: $attributes,
+                attributes: $iconButtonAttributes,
                 badge: $badge,
                 badgeColor: $badgeColor,
                 badgeSize: $badgeSize,

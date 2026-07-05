@@ -397,6 +397,65 @@ describe('saving relationships', function (): void {
 
         expect($user->fresh()->company?->id)->toBe($companyA->id);
     });
+
+    it('invalidates the cached `BelongsToMany` relationship after save so a subsequent reload does not re-attach detached rows', function (): void {
+        $user = User::factory()->create();
+        $teams = Team::factory()->count(2)->create();
+        $user->teams()->attach($teams);
+
+        $component = livewire(TableSelectWithEagerLoadedBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => []])
+            ->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0)
+            ->and($component->instance()->data['teams'])->toBe([]);
+
+        $component->call('save');
+
+        expect($user->fresh()->teams)->toHaveCount(0);
+    });
+});
+
+describe('scope enforcement', function (): void {
+    it('rejects an out-of-relationship ID when saving a `BelongsTo` relationship', function (): void {
+        $allowedTeam = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $allowedTeam->id]);
+        $nonExistentTeamId = (string) (Team::max('id') + 1000);
+
+        livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
+            ->fillForm(['team_id' => $nonExistentTeamId])
+            ->call('save')
+            ->assertHasFormErrors(['team_id']);
+
+        expect($user->fresh()->team_id)->toBe($allowedTeam->id);
+    });
+
+    it('rejects out-of-relationship IDs when saving a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $availableTeams = Team::factory()->count(2)->create();
+        $nonExistentTeamId = (string) (Team::max('id') + 1000);
+
+        livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => [...$availableTeams->pluck('id')->map(fn ($id) => (string) $id)->all(), $nonExistentTeamId]])
+            ->call('save')
+            ->assertHasFormErrors();
+
+        expect(DB::table('team_user')->where('user_id', $user->id)->where('team_id', $nonExistentTeamId)->exists())->toBeFalse();
+        expect(DB::table('team_user')->where('user_id', $user->id)->where('team_id', $availableTeams->first()->id)->exists())->toBeFalse();
+    });
+
+    it('rejects out-of-relationship IDs when saving a `HasMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $orphanPost = Post::factory()->create(['author_id' => null]);
+        $nonExistentPostId = (string) (Post::max('id') + 1000);
+
+        livewire(TableSelectWithHasManyRelationship::class, ['record' => $user])
+            ->fillForm(['posts' => [(string) $orphanPost->id, $nonExistentPostId]])
+            ->call('save')
+            ->assertHasFormErrors();
+
+        expect($orphanPost->fresh()->author_id)->toBeNull();
+    });
 });
 
 describe('properties', function (): void {
@@ -497,6 +556,50 @@ class TableSelectWithBelongsToManyRelationship extends Component implements HasA
     public function mount(): void
     {
         $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TableSelect::make('teams')
+                    ->relationship('teams')
+                    ->tableConfiguration(TeamsTable::class)
+                    ->multiple(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TableSelectWithEagerLoadedBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->record->load('teams');
+        $this->form->fill([]);
+    }
+
+    public function hydrate(): void
+    {
+        $this->record->load('teams');
     }
 
     public function form(Schema $form): Schema
