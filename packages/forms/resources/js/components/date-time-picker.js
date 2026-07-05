@@ -37,6 +37,8 @@ export default function dateTimePickerFormComponent({
 
         focusedYear: null,
 
+        hasValidationMessage: false,
+
         hour: null,
 
         isClearingState: false,
@@ -250,6 +252,13 @@ export default function dateTimePickerFormComponent({
 
                 this.setDisplayText()
             })
+        },
+
+        checkTimeInputValidity(event) {
+            const el = event.target
+            if (this.isOpen() && !el.validity.valid) {
+                el.reportValidity()
+            }
         },
 
         clearState() {
@@ -493,6 +502,24 @@ export default function dateTimePickerFormComponent({
             this.setDisplayText()
         },
 
+        timeInputInvalid(event) {
+            const el = event.target
+
+            if (!this.isOpen()) {
+                event.preventDefault()
+                this.togglePanelVisibility()
+            }
+
+            if (!this.hasValidationMessage) {
+                this.hasValidationMessage = true
+
+                this.$nextTick(() => {
+                    el.reportValidity()
+                    this.hasValidationMessage = false
+                })
+            }
+        },
+
         isOpen() {
             return this.$refs.panel?.style.display === 'block'
         },
@@ -525,6 +552,7 @@ const locales = {
     ja: require('dayjs/locale/ja'),
     ka: require('dayjs/locale/ka'),
     km: require('dayjs/locale/km'),
+    ko: require('dayjs/locale/ko'),
     ku: require('dayjs/locale/ku'),
     lt: require('dayjs/locale/lt'),
     lv: require('dayjs/locale/lv'),

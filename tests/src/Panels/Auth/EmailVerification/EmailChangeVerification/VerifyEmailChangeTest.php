@@ -78,6 +78,33 @@ it('cannot verify an email when signed in as another user', function (): void {
         ->email->not->toBe($newEmail);
 });
 
+it('cannot verify an email change to an address that has been taken since the verification link was issued', function (): void {
+    $userToVerify = User::factory()->create();
+    $newEmail = fake()->email();
+    $originalEmail = $userToVerify->email;
+
+    $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
+
+    $verificationSignature = Query::new($verificationUrl)->get('signature');
+    cache()->put($verificationSignature, true, ttl: now()->addHour());
+
+    User::factory()->create(['email' => $newEmail]);
+
+    $this
+        ->actingAs($userToVerify)
+        ->get($verificationUrl)
+        ->assertRedirect(Filament::getProfileUrl());
+
+    Notification::assertNotified('That email address is no longer available.');
+    Notification::assertNotNotified('Email address changed');
+
+    expect($userToVerify->refresh())
+        ->email->toBe($originalEmail);
+
+    expect(cache()->has($verificationSignature))
+        ->toBeFalse();
+});
+
 it('cannot verify an email change with the same URL twice', function (): void {
     $userToVerify = User::factory()->create();
     $newEmail = fake()->email();

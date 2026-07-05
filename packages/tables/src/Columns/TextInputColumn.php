@@ -249,7 +249,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
                 'x-bind:disabled' => $isDisabled ? null : 'isLoading',
                 'inputmode' => $this->getInputMode(),
-                'placeholder' => $this->getPlaceholder(),
+                'placeholder' => filled($placeholder = $this->getPlaceholder()) ? e($placeholder) : null,
                 'step' => $this->getStep(),
                 'type' => $type,
                 'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,

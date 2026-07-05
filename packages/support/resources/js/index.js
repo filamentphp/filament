@@ -7,6 +7,7 @@ import Tooltip from '@ryangjchandler/alpine-tooltip'
 import dropdown from './components/dropdown.js'
 import formButton from './components/form-button.js'
 import modal from './components/modal.js'
+import oneTimeCodeInput from './components/one-time-code.js'
 import './partials.js'
 import pluralize from './utilities/pluralize.js'
 
@@ -22,6 +23,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentDropdown', dropdown)
     window.Alpine.data('filamentFormButton', formButton)
     window.Alpine.data('filamentModal', modal)
+    window.Alpine.data('filamentOneTimeCodeInput', oneTimeCodeInput)
 })
 
 window.jsMd5 = md5

@@ -416,6 +416,48 @@ describe('saving relationships', function (): void {
     });
 });
 
+describe('scope enforcement', function (): void {
+    it('rejects an out-of-relationship ID when saving a `BelongsTo` relationship', function (): void {
+        $allowedTeam = Team::factory()->create();
+        $user = User::factory()->create(['team_id' => $allowedTeam->id]);
+        $nonExistentTeamId = (string) (Team::max('id') + 1000);
+
+        livewire(TableSelectWithBelongsToRelationship::class, ['record' => $user])
+            ->fillForm(['team_id' => $nonExistentTeamId])
+            ->call('save')
+            ->assertHasFormErrors(['team_id']);
+
+        expect($user->fresh()->team_id)->toBe($allowedTeam->id);
+    });
+
+    it('rejects out-of-relationship IDs when saving a `BelongsToMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $availableTeams = Team::factory()->count(2)->create();
+        $nonExistentTeamId = (string) (Team::max('id') + 1000);
+
+        livewire(TableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+            ->fillForm(['teams' => [...$availableTeams->pluck('id')->map(fn ($id) => (string) $id)->all(), $nonExistentTeamId]])
+            ->call('save')
+            ->assertHasFormErrors();
+
+        expect(DB::table('team_user')->where('user_id', $user->id)->where('team_id', $nonExistentTeamId)->exists())->toBeFalse();
+        expect(DB::table('team_user')->where('user_id', $user->id)->where('team_id', $availableTeams->first()->id)->exists())->toBeFalse();
+    });
+
+    it('rejects out-of-relationship IDs when saving a `HasMany` relationship', function (): void {
+        $user = User::factory()->create();
+        $orphanPost = Post::factory()->create(['author_id' => null]);
+        $nonExistentPostId = (string) (Post::max('id') + 1000);
+
+        livewire(TableSelectWithHasManyRelationship::class, ['record' => $user])
+            ->fillForm(['posts' => [(string) $orphanPost->id, $nonExistentPostId]])
+            ->call('save')
+            ->assertHasFormErrors();
+
+        expect($orphanPost->fresh()->author_id)->toBeNull();
+    });
+});
+
 describe('properties', function (): void {
     it('defaults `isMultiple()` to `false`', function (): void {
         $select = TableSelect::make('team');

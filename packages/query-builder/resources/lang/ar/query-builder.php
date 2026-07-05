@@ -108,12 +108,12 @@ return [
 
                 'label' => [
                     'direct' => 'تاريخ',
-                    'inverse' => 'ليس تاريخ',
+                    'inverse' => 'ليس تاريخاً',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute هو :date',
-                    'inverse' => ':attribute هو ليس :date',
+                    'inverse' => ':attribute ليس :date',
                 ],
 
             ],
@@ -122,12 +122,12 @@ return [
 
                 'label' => [
                     'direct' => 'شهر',
-                    'inverse' => 'ليس شهر',
+                    'inverse' => 'ليس شهراً',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute هو :month',
-                    'inverse' => ':attribute هو ليس :month',
+                    'inverse' => ':attribute ليس :month',
                 ],
 
             ],
@@ -136,12 +136,12 @@ return [
 
                 'label' => [
                     'direct' => 'سنة',
-                    'inverse' => 'ليس سنة',
+                    'inverse' => 'ليس سنةً',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute هو :year',
-                    'inverse' => ':attribute هو ليس :year',
+                    'inverse' => ':attribute ليس :year',
                 ],
 
             ],
@@ -372,7 +372,7 @@ return [
 
                 'label' => [
                     'direct' => 'فارغ',
-                    'inverse' => 'ليس فارغا',
+                    'inverse' => 'ليس فارغاً',
                 ],
 
                 'summary' => [
@@ -392,8 +392,8 @@ return [
                     ],
 
                     'multiple' => [
-                        'direct' => 'يحتوي',
-                        'inverse' => 'لا يحتوي',
+                        'direct' => 'يحتوي على',
+                        'inverse' => 'لا يحتوي على',
                     ],
 
                 ],
@@ -406,8 +406,8 @@ return [
                     ],
 
                     'multiple' => [
-                        'direct' => ':relationship يحتوي :values',
-                        'inverse' => ':relationship لا يحتوي :values',
+                        'direct' => ':relationship يحتوي على :values',
+                        'inverse' => ':relationship لا يحتوي على :values',
                     ],
 
                     'values_glue' => [
@@ -480,13 +480,13 @@ return [
             'contains' => [
 
                 'label' => [
-                    'direct' => 'يحتوي',
-                    'inverse' => 'لا يحتوي',
+                    'direct' => 'يحتوي على',
+                    'inverse' => 'لا يحتوي على',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute يحتوي :text',
-                    'inverse' => ':attribute لا يحتوي :text',
+                    'direct' => ':attribute يحتوي على :text',
+                    'inverse' => ':attribute لا يحتوي على :text',
                 ],
 
             ],

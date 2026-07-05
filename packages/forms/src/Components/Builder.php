@@ -93,13 +93,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     protected bool | Closure $isBlockLabelTruncated = true;
 
     /**
-     * @var array<string, ?int> | null
+     * @var array<string | int, int | Closure | null> | null
      */
     protected ?array $blockPickerColumns = [];
 
     protected Width | string | Closure | null $blockPickerWidth = null;
 
-    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
+    protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     protected function setUp(): void
     {
@@ -1062,10 +1062,16 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     }
 
     /**
-     * @param  array<string, ?int> | int | null  $columns
+     * @param  array<string, int | Closure | null> | int | Closure | null  $columns
      */
-    public function blockPickerColumns(array | int | null $columns = 2): static
+    public function blockPickerColumns(array | int | Closure | null $columns = 2): static
     {
+        if ($columns instanceof Closure) {
+            $this->blockPickerColumns[] = $columns;
+
+            return $this;
+        }
+
         if (! is_array($columns)) {
             $columns = [
                 'lg' => $columns,
@@ -1093,6 +1099,37 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             'xl' => null,
             '2xl' => null,
         ];
+
+        foreach ($this->blockPickerColumns ?? [] as $columnBreakpoint => $column) {
+            $column = $this->evaluate($column);
+
+            if (is_array($column)) {
+                $columns = [
+                    ...$columns,
+                    ...$column,
+                ];
+
+                unset($columns[$columnBreakpoint]);
+
+                continue;
+            }
+
+            if (blank($columnBreakpoint)) {
+                unset($columns[$columnBreakpoint]);
+
+                continue;
+            }
+
+            if (! is_string($columnBreakpoint)) {
+                $columns['lg'] = $column;
+
+                unset($columns[$columnBreakpoint]);
+
+                continue;
+            }
+
+            $columns[$columnBreakpoint] = $column;
+        }
 
         if ($breakpoint !== null) {
             return $columns[$breakpoint] ?? null;
@@ -1167,7 +1204,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         $rules["{$this->getStatePath()}.*.type"] = ['required'];
     }
 
-    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    public function partiallyRenderAfterActionsCalled(bool | Closure | null $condition = true): static
     {
         $this->shouldPartiallyRenderAfterActionsCalled = $condition;
 
@@ -1176,7 +1213,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     public function shouldPartiallyRenderAfterActionsCalled(): bool
     {
-        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+        $condition = $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+
+        if ($condition !== null) {
+            return (bool) $condition;
+        }
+
+        return ! $this->isLive();
     }
 
     public function blockHeaders(bool | Closure $condition = true): static
