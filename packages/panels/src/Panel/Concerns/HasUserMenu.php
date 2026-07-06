@@ -144,7 +144,7 @@ trait HasUserMenu
             }
 
             $lastGroupKey = array_key_last($groups);
-            $groups[$lastGroupKey] = $groups[$lastGroupKey] + ['logout' => $this->getUserLogoutMenuItem()];
+            $groups[$lastGroupKey] += ['logout' => $this->getUserLogoutMenuItem()];
         }
 
         return $groups;
