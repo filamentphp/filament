@@ -29,13 +29,13 @@ public function panel(Panel $panel): Panel
 
 <AutoScreenshot name="panels/navigation/user-menu" alt="User menu with custom menu item" version="4.x" />
 
-## Grouping user menu items below the theme switcher
+## Grouping user menu items
 
-By default, every item you register in `userMenuItems()` appears in a **single** list under the theme switcher (except items with a negative [`sort()`](../actions), such as the profile link, which stay above it).
-
-You can split the area **below the theme switcher** into multiple visually separated lists by passing a **list of groups**: each group is a normal `userMenuItems()` array, wrapped as one element of an outer list.
+By default, all user menu items are rendered in a single list. If you want to separate them into distinct groups, you can pass an array of arrays to the `userMenuItems()` method. Each array is rendered as its own group, separated by a divider:
 
 ```php
+use App\Filament\Pages\Billing;
+use App\Filament\Pages\Settings;
 use Filament\Actions\Action;
 use Filament\Panel;
 
@@ -45,31 +45,21 @@ public function panel(Panel $panel): Panel
         // ...
         ->userMenuItems([
             [
-                Action::make('team')
-                    ->url('/team')
-                    ->icon('heroicon-o-user-group'),
+                Action::make('settings')
+                    ->url(fn (): string => Settings::getUrl())
+                    ->icon('heroicon-o-cog-6-tooth'),
                 Action::make('billing')
-                    ->url('/billing')
+                    ->url(fn (): string => Billing::getUrl())
                     ->icon('heroicon-o-banknotes'),
             ],
             [
-                Action::make('localeEn')->label('English')->url('/locale/en'),
-                Action::make('localeFr')->label('Français')->url('/locale/fr'),
+                Action::make('documentation')
+                    ->url('https://filamentphp.com/docs')
+                    ->icon('heroicon-o-book-open'),
             ],
         ]);
 }
 ```
-
-Each inner array is rendered as its own [dropdown list](../12-components/03-dropdown) block after the theme switcher. Items with `sort()` less than `0` still follow the usual rules and are not moved into these grouped lists.
-
-### Backward compatibility
-
-- A **single** flat array (the same shape as in the examples above this section) behaves exactly as before: one list under the theme switcher.
-- Calling `userMenuItems()` **multiple times** with flat arrays still merges all items into the **last** registered group, so you can split configuration across service providers without changing the visual result.
-
-### Logout action
-
-The default `logout` action is injected if you do not register one. When you use multiple groups, Filament appends `logout` to the **last** after-theme group if it is not already present in any group, so users always retain a way to sign out.
 
 ## Moving the user menu to the sidebar
 

@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Notifications\Notification;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -18,31 +19,26 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class UserMenuGroupingFixturePanelProvider extends PanelProvider
+class UserMenuFlatPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('user-menu-grouping-fixture')
-            ->path('user-menu-grouping-fixture')
+            ->id('user-menu-flat')
+            ->path('user-menu-flat')
             ->login()
             ->pages([
                 Pages\Dashboard::class,
             ])
             ->userMenuItems([
-                [
-                    Action::make('alpha')
-                        ->url('/alpha')
-                        ->sort(1),
-                    Action::make('beta')
-                        ->url('/beta')
-                        ->sort(2),
-                ],
-                [
-                    Action::make('gamma')
-                        ->url('/gamma')
-                        ->sort(10),
-                ],
+                Action::make('first')
+                    ->action(fn () => Notification::make()->title('first ran')->send())
+                    ->sort(1),
+            ])
+            ->userMenuItems([
+                Action::make('second')
+                    ->action(fn () => Notification::make()->title('second ran')->send())
+                    ->sort(2),
             ])
             ->middleware([
                 EncryptCookies::class,
