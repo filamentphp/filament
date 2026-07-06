@@ -10,7 +10,6 @@ use Filament\Navigation\MenuItem;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
-use Illuminate\Support\Collection;
 
 trait HasUserMenu
 {
@@ -148,21 +147,6 @@ trait HasUserMenu
         }
 
         return $groups;
-    }
-
-    /**
-     * @param  array<int, array<string, Action>> | null  $groups
-     * @return array<int, Collection<string, Action>>
-     */
-    public function getUserMenuItemGroupsAfterTheme(?array $groups = null): array
-    {
-        return collect($groups ?? $this->getUserMenuItemGroups())
-            ->map(fn (array $group): Collection => collect($group)
-                ->filter(fn (Action $action): bool => $action->isVisible() && ($action->getSort() >= 0))
-                ->sortBy(fn (Action $action): int => $action->getSort()))
-            ->reject(fn (Collection $group): bool => $group->isEmpty())
-            ->values()
-            ->all();
     }
 
     public function hasUserMenu(): bool

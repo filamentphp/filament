@@ -4,6 +4,7 @@ use Filament\Facades\Filament;
 use Filament\Livewire\Topbar;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Collection;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\actingAs;
@@ -20,7 +21,7 @@ describe('grouped user menu items', function (): void {
     });
 
     it('renders each registration group as a separate list, with `logout` in the last group', function (): void {
-        $groups = Filament::getCurrentPanel()->getUserMenuItemGroupsAfterTheme();
+        $groups = livewire(Topbar::class)->instance()->getUserMenuItemGroupsAfterTheme();
 
         expect($groups)->toHaveCount(2)
             ->and($groups[0]->keys()->all())->toBe(['alpha', 'beta'])
@@ -33,6 +34,28 @@ describe('grouped user menu items', function (): void {
             ->assertNotified('alpha ran')
             ->callAction('gamma')
             ->assertNotified('gamma ran');
+    });
+
+    it('keeps `profile` above the theme switcher, out of the grouped lists', function (): void {
+        $groupedNames = collect(livewire(Topbar::class)->instance()->getUserMenuItemGroupsAfterTheme())
+            ->flatMap(fn (Collection $group): array => $group->keys()->all())
+            ->all();
+
+        expect(array_keys(Filament::getCurrentPanel()->getUserMenuItems()))->toContain('profile')
+            ->and($groupedNames)->not->toContain('profile');
+    });
+});
+
+describe('explicit `logout` placement', function (): void {
+    beforeEach(function (): void {
+        Filament::setCurrentPanel('user-menu-logout-placement');
+    });
+
+    it('keeps a registered `logout` in its group instead of appending it to the last group', function (): void {
+        $groups = livewire(Topbar::class)->instance()->getUserMenuItemGroupsAfterTheme();
+
+        expect($groups[0]->keys()->all())->toBe(['settings', 'logout'])
+            ->and($groups[array_key_last($groups)]->has('logout'))->toBeFalse();
     });
 });
 

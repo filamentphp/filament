@@ -72,8 +72,15 @@ trait HasUserMenu
             $this->cacheAction($action);
         }
 
+        // Split the groups into the separate lists rendered after the theme switcher (visible items with a non-negative sort).
         if ($panel?->hasMultipleUserMenuItemGroups()) {
-            $this->userMenuItemGroupsAfterTheme = $panel->getUserMenuItemGroupsAfterTheme($groups);
+            $this->userMenuItemGroupsAfterTheme = collect($groups)
+                ->map(fn (array $group): Collection => collect($group)
+                    ->filter(fn (Action $action): bool => $action->isVisible() && ($action->getSort() >= 0))
+                    ->sortBy(fn (Action $action): int => $action->getSort()))
+                ->reject(fn (Collection $group): bool => $group->isEmpty())
+                ->values()
+                ->all();
         }
 
         if (blank($items)) {
