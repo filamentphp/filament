@@ -12,6 +12,7 @@ use Filament\Notifications\NotificationsServiceProvider;
 use Filament\QueryBuilder\QueryBuilderServiceProvider;
 use Filament\Schemas\SchemasServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
+use Filament\SpatieLaravelTagsPluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\Fixtures\Models\Department;
@@ -67,6 +68,7 @@ abstract class TestCase extends BaseTestCase
             QueryBuilderServiceProvider::class,
             SchemasServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
+            SpatieLaravelTagsPluginServiceProvider::class,
             SupportServiceProvider::class,
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,

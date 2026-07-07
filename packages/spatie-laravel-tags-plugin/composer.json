@@ -17,6 +17,13 @@
             "Filament\\": "src"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\SpatieLaravelTagsPluginServiceProvider"
+            ]
+        }
+    },
     "config": {
         "sort-packages": true
     },

@@ -135,3 +135,88 @@ SpatieTagsEntry::make('tags')
 The [type](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections.
 
 The tags entry supports all the customization options of the [text entry](https://filamentphp.com/docs/infolists/entries/text).
+
+## Bulk actions
+
+You may add bulk actions to a table, allowing your users to attach tags to all selected records, or detach tags from them:
+
+```php
+use Filament\Actions\AttachSpatieTagsBulkAction;
+use Filament\Actions\DetachSpatieTagsBulkAction;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            AttachSpatieTagsBulkAction::make(),
+            DetachSpatieTagsBulkAction::make(),
+        ]);
+}
+```
+
+Each action opens a modal with a tags input, which suggests existing tags from the database. Attaching tags preserves any tags that the records already have, and creates any tags that do not exist yet. Detaching tags removes the chosen tags from the selected records, without deleting the tags themselves from the database.
+
+### Managing tags with a single bulk action
+
+Instead of separate attach and detach actions, you may use `ManageSpatieTagsBulkAction`, which opens a single modal with two tags inputs, allowing your users to attach some tags and detach others in a single pass over the selected records:
+
+```php
+use Filament\Actions\ManageSpatieTagsBulkAction;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            ManageSpatieTagsBulkAction::make(),
+        ]);
+}
+```
+
+At least one of the two fields must be filled in, and the same tag may not be attached and detached at the same time. Attaching and detaching behave identically to the standalone actions.
+
+You may restrict the action to attaching only or detaching only, using the `attachable()` and `detachable()` methods. The corresponding field is hidden from the modal, and the action's label adapts to describe what it does:
+
+```php
+use Filament\Actions\ManageSpatieTagsBulkAction;
+
+ManageSpatieTagsBulkAction::make()
+    ->detachable(false) // Attach only, labeled "Attach tags"
+
+ManageSpatieTagsBulkAction::make()
+    ->attachable(false) // Detach only, labeled "Detach tags"
+```
+
+Both methods also accept a closure, which is useful for conditionally restricting the action, for example based on the authenticated user:
+
+```php
+use Filament\Actions\ManageSpatieTagsBulkAction;
+
+ManageSpatieTagsBulkAction::make()
+    ->detachable(fn (): bool => auth()->user()->isAdmin())
+```
+
+If both `attachable(false)` and `detachable(false)` are set, the action is hidden.
+
+Optionally, you may pass a [`type()`](https://spatie.be/docs/laravel-tags/advanced-usage/using-types), which scopes the tags that the action can attach or detach:
+
+```php
+use Filament\Actions\AttachSpatieTagsBulkAction;
+
+AttachSpatieTagsBulkAction::make()
+    ->type('categories')
+```
+
+When no `type()` is passed, the actions match tags across every type, in the same way as the `SpatieTagsInput` field. The [security caveats around tag types and privilege namespaces](#security-tag-types-and-privilege-namespaces) apply equally to these bulk actions, so pass `->type(...)` (or `->type(null)` for untyped tags only) when tag types are used as a privilege namespace in your application.
+
+You may authorize each selected record individually using [`authorizeIndividualRecords()`](https://filamentphp.com/docs/actions/create#authorization), passing the name of a policy method. Records that fail the authorization check are skipped, and the user is notified:
+
+```php
+use Filament\Actions\AttachSpatieTagsBulkAction;
+
+AttachSpatieTagsBulkAction::make()
+    ->authorizeIndividualRecords('update')
+```
+
+The bulk actions support all the customization options of [regular bulk actions](https://filamentphp.com/docs/actions/overview), such as `label()` and `successNotificationTitle()`.

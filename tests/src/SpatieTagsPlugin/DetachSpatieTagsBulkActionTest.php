@@ -1,0 +1,193 @@
+<?php
+
+use Filament\Actions\DetachSpatieTagsBulkAction;
+use Filament\Actions\Testing\TestAction;
+use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
+use Filament\Tests\Fixtures\Livewire\SpatieTagsBulkActionsTable;
+use Filament\Tests\Fixtures\Models\Article;
+use Filament\Tests\TestCase;
+use Spatie\Tags\Tag;
+
+use function Filament\Tests\livewire;
+
+uses(TestCase::class);
+
+it('uses `detachTags` as the default name', function (): void {
+    expect(DetachSpatieTagsBulkAction::getDefaultName())->toBe('detachTags');
+});
+
+describe('type', function (): void {
+    it('defaults `getType()` to `AllTagTypes`', function (): void {
+        $action = DetachSpatieTagsBulkAction::make();
+
+        expect($action->getType())->toBeInstanceOf(AllTagTypes::class);
+        expect($action->isAnyTagTypeAllowed())->toBeTrue();
+    });
+
+    it('can set `type()` with a string', function (): void {
+        $action = DetachSpatieTagsBulkAction::make()
+            ->type('category');
+
+        expect($action->getType())->toBe('category');
+        expect($action->isAnyTagTypeAllowed())->toBeFalse();
+    });
+
+    it('can set `type()` with a `Closure`', function (): void {
+        $action = DetachSpatieTagsBulkAction::make()
+            ->type(static fn (): string => 'dynamic');
+
+        expect($action->getType())->toBe('dynamic');
+        expect($action->isAnyTagTypeAllowed())->toBeFalse();
+    });
+
+    it('can set `type()` to `null`', function (): void {
+        $action = DetachSpatieTagsBulkAction::make()
+            ->type(null);
+
+        expect($action->getType())->toBeNull();
+        expect($action->isAnyTagTypeAllowed())->toBeFalse();
+    });
+});
+
+describe('integration', function (): void {
+    it('can detach tags from the selected records', function (): void {
+        $records = Article::factory()->count(3)->create();
+        $unselectedRecord = Article::factory()->create();
+
+        foreach ([...$records, $unselectedRecord] as $record) {
+            $record->attachTags(['Laravel', 'PHP']);
+        }
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Laravel'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified();
+
+        foreach ($records as $record) {
+            $freshRecord = Article::with('tags')->find($record->getKey());
+
+            expect($freshRecord->getRelationValue('tags')->pluck('name')->all())->toBe(['PHP']);
+        }
+
+        $freshUnselectedRecord = Article::with('tags')->find($unselectedRecord->getKey());
+
+        expect($freshUnselectedRecord->getRelationValue('tags')->pluck('name')->sort()->values()->all())
+            ->toBe(['Laravel', 'PHP']);
+    });
+
+    it('requires at least one tag to be entered', function (): void {
+        $records = Article::factory()->count(2)->create();
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => [],
+            ])
+            ->assertHasFormErrors(['tags' => ['required']]);
+    });
+
+    it('does not delete the tag models from the database, only detaches them', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Laravel']);
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Laravel'],
+            ]);
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+
+        expect($freshRecord->getRelationValue('tags'))->toBeEmpty();
+        expect(Tag::count())->toBe(1);
+    });
+
+    it('succeeds when a selected record does not have one of the tags', function (): void {
+        $taggedRecord = Article::factory()->create();
+        $taggedRecord->attachTags(['Laravel']);
+
+        $untaggedRecord = Article::factory()->create();
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$taggedRecord->getKey(), $untaggedRecord->getKey()])
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Laravel'],
+            ])
+            ->assertNotified(__('filament-spatie-laravel-tags-plugin::detach-tags.notifications.detached.title'));
+
+        $freshTaggedRecord = Article::with('tags')->find($taggedRecord->getKey());
+
+        expect($freshTaggedRecord->getRelationValue('tags'))->toBeEmpty();
+    });
+
+    it('does nothing when none of the tags exist in the database', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Laravel']);
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Nonexistent'],
+            ])
+            ->assertHasNoFormErrors();
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+
+        expect($freshRecord->getRelationValue('tags')->pluck('name')->all())->toBe(['Laravel']);
+    });
+
+    it('detaches only tags of the given `type()` when one is set', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('admin', 'role');
+        $record->attachTag('admin');
+
+        livewire(SpatieTagsBulkActionsTable::class, ['tagType' => 'role'])
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['admin'],
+            ]);
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+        $remainingTags = $freshRecord->getRelationValue('tags');
+
+        expect($remainingTags)->toHaveCount(1);
+        expect($remainingTags->first()->type)->toBeNull();
+    });
+
+    it('detaches only untyped tags when `type()` is `null`, preserving typed tags of the same name', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('admin', 'role');
+        $record->attachTag('admin');
+
+        livewire(SpatieTagsBulkActionsTable::class, ['useNullType' => true])
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['admin'],
+            ]);
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+        $remainingTags = $freshRecord->getRelationValue('tags');
+
+        expect($remainingTags)->toHaveCount(1);
+        expect($remainingTags->first()->type)->toBe('role');
+    });
+
+    it('detaches every tag of any type matching the name when any tag type is allowed', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTag('admin', 'role');
+        $record->attachTag('admin');
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['admin'],
+            ]);
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+
+        expect($freshRecord->getRelationValue('tags'))->toBeEmpty();
+    });
+});
