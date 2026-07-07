@@ -176,29 +176,6 @@ public function table(Table $table): Table
 
 At least one of the two fields must be filled in, and the same tag may not be attached and detached at the same time. Attaching and detaching behave identically to the standalone actions.
 
-You may restrict the action to attaching only or detaching only, using the `attachable()` and `detachable()` methods. The corresponding field is hidden from the modal, and the action's label adapts to describe what it does:
-
-```php
-use Filament\Actions\ManageSpatieTagsBulkAction;
-
-ManageSpatieTagsBulkAction::make()
-    ->detachable(false) // Attach only, labeled "Attach tags"
-
-ManageSpatieTagsBulkAction::make()
-    ->attachable(false) // Detach only, labeled "Detach tags"
-```
-
-Both methods also accept a closure, which is useful for conditionally restricting the action, for example based on the authenticated user:
-
-```php
-use Filament\Actions\ManageSpatieTagsBulkAction;
-
-ManageSpatieTagsBulkAction::make()
-    ->detachable(fn (): bool => auth()->user()->isAdmin())
-```
-
-If both `attachable(false)` and `detachable(false)` are set, the action is hidden.
-
 Optionally, you may pass a [`type()`](https://spatie.be/docs/laravel-tags/advanced-usage/using-types), which scopes the tags that the action can attach or detach:
 
 ```php

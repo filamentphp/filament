@@ -22,10 +22,6 @@ class ManageSpatieTagsBulkAction extends BulkAction
     use CanCustomizeProcess;
     use InteractsWithSpatieTags;
 
-    protected bool | Closure $canAttachTags = true;
-
-    protected bool | Closure $canDetachTags = true;
-
     public static function getDefaultName(): ?string
     {
         return 'manageTags';
@@ -37,23 +33,11 @@ class ManageSpatieTagsBulkAction extends BulkAction
 
         $this->type(new AllTagTypes);
 
-        $this->label(fn (): string => match (true) {
-            ! $this->canDetachTags() => __('filament-spatie-laravel-tags-plugin::attach-tags.label'),
-            ! $this->canAttachTags() => __('filament-spatie-laravel-tags-plugin::detach-tags.label'),
-            default => __('filament-spatie-laravel-tags-plugin::manage-tags.label'),
-        });
+        $this->label(__('filament-spatie-laravel-tags-plugin::manage-tags.label'));
 
-        $this->modalHeading(fn (): string => match (true) {
-            ! $this->canDetachTags() => __('filament-spatie-laravel-tags-plugin::attach-tags.modal.heading', ['label' => $this->getTitleCasePluralModelLabel()]),
-            ! $this->canAttachTags() => __('filament-spatie-laravel-tags-plugin::detach-tags.modal.heading', ['label' => $this->getTitleCasePluralModelLabel()]),
-            default => __('filament-spatie-laravel-tags-plugin::manage-tags.modal.heading', ['label' => $this->getTitleCasePluralModelLabel()]),
-        });
+        $this->modalHeading(fn (): string => __('filament-spatie-laravel-tags-plugin::manage-tags.modal.heading', ['label' => $this->getTitleCasePluralModelLabel()]));
 
-        $this->modalSubmitActionLabel(fn (): string => match (true) {
-            ! $this->canDetachTags() => __('filament-spatie-laravel-tags-plugin::attach-tags.modal.actions.attach.label'),
-            ! $this->canAttachTags() => __('filament-spatie-laravel-tags-plugin::detach-tags.modal.actions.detach.label'),
-            default => __('filament-spatie-laravel-tags-plugin::manage-tags.modal.actions.save.label'),
-        });
+        $this->modalSubmitActionLabel(__('filament-spatie-laravel-tags-plugin::manage-tags.modal.actions.save.label'));
 
         $this->successNotificationTitle(__('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated.title'));
 
@@ -101,12 +85,10 @@ class ManageSpatieTagsBulkAction extends BulkAction
             TagsInput::make('tagsToAttach')
                 ->label(__('filament-spatie-laravel-tags-plugin::manage-tags.modal.form.tags_to_attach.label'))
                 ->suggestions(static fn (): array => $action->getTagSuggestions())
-                ->visible($action->canAttachTags())
                 ->requiredWithout('tagsToDetach'),
             TagsInput::make('tagsToDetach')
                 ->label(__('filament-spatie-laravel-tags-plugin::manage-tags.modal.form.tags_to_detach.label'))
                 ->suggestions(static fn (): array => $action->getTagSuggestions())
-                ->visible($action->canDetachTags())
                 ->requiredWithout('tagsToAttach')
                 ->rules([
                     static fn (Get $get): Closure => static function (string $attribute, mixed $value, Closure $fail) use ($get): void {
@@ -129,13 +111,9 @@ class ManageSpatieTagsBulkAction extends BulkAction
                     $records = $action->getSelectedRecordsQuery()->cursor();
                 }
 
-                $tagIdsToAttach = $action->canAttachTags()
-                    ? $action->resolveTagsForAttaching($data['tagsToAttach'] ?? [])->pluck('id')->all()
-                    : [];
+                $tagIdsToAttach = $action->resolveTagsForAttaching($data['tagsToAttach'] ?? [])->pluck('id')->all();
 
-                $tagIdsToDetach = $action->canDetachTags()
-                    ? $action->resolveTagsForDetaching($data['tagsToDetach'] ?? [])->pluck('id')->all()
-                    : [];
+                $tagIdsToDetach = $action->resolveTagsForDetaching($data['tagsToDetach'] ?? [])->pluck('id')->all();
 
                 if (empty($tagIdsToAttach) && empty($tagIdsToDetach)) {
                     return;
@@ -177,31 +155,5 @@ class ManageSpatieTagsBulkAction extends BulkAction
         });
 
         $this->deselectRecordsAfterCompletion();
-
-        $this->hidden(fn (): bool => ! ($this->canAttachTags() || $this->canDetachTags()));
-    }
-
-    public function attachable(bool | Closure $condition = true): static
-    {
-        $this->canAttachTags = $condition;
-
-        return $this;
-    }
-
-    public function detachable(bool | Closure $condition = true): static
-    {
-        $this->canDetachTags = $condition;
-
-        return $this;
-    }
-
-    public function canAttachTags(): bool
-    {
-        return (bool) $this->evaluate($this->canAttachTags);
-    }
-
-    public function canDetachTags(): bool
-    {
-        return (bool) $this->evaluate($this->canDetachTags);
     }
 }

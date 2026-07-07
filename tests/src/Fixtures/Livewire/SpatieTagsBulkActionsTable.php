@@ -28,10 +28,6 @@ class SpatieTagsBulkActionsTable extends Component implements HasActions, HasSch
 
     public bool $useNullType = false;
 
-    public bool $isManageActionAttachable = true;
-
-    public bool $isManageActionDetachable = true;
-
     protected function getTableQuery(): Builder
     {
         return Article::query();
@@ -41,9 +37,7 @@ class SpatieTagsBulkActionsTable extends Component implements HasActions, HasSch
     {
         $attachTagsAction = AttachSpatieTagsBulkAction::make();
         $detachTagsAction = DetachSpatieTagsBulkAction::make();
-        $manageTagsAction = ManageSpatieTagsBulkAction::make()
-            ->attachable($this->isManageActionAttachable)
-            ->detachable($this->isManageActionDetachable);
+        $manageTagsAction = ManageSpatieTagsBulkAction::make();
 
         if ($this->useNullType) {
             $attachTagsAction->type(null);

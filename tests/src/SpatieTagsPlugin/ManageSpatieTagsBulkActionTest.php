@@ -24,59 +24,11 @@ it('defaults `getType()` to `AllTagTypes`', function (): void {
 });
 
 describe('configuration', function (): void {
-    it('allows attaching and detaching by default', function (): void {
-        $action = ManageSpatieTagsBulkAction::make();
-
-        expect($action->canAttachTags())->toBeTrue();
-        expect($action->canDetachTags())->toBeTrue();
-    });
-
-    it('can disable attaching with `attachable(false)`', function (): void {
-        $action = ManageSpatieTagsBulkAction::make()
-            ->attachable(false);
-
-        expect($action->canAttachTags())->toBeFalse();
-        expect($action->canDetachTags())->toBeTrue();
-    });
-
-    it('can disable detaching with `detachable(false)`', function (): void {
-        $action = ManageSpatieTagsBulkAction::make()
-            ->detachable(false);
-
-        expect($action->canAttachTags())->toBeTrue();
-        expect($action->canDetachTags())->toBeFalse();
-    });
-
-    it('can set `attachable()` and `detachable()` with a `Closure`', function (): void {
-        $action = ManageSpatieTagsBulkAction::make()
-            ->attachable(static fn (): bool => false)
-            ->detachable(static fn (): bool => true);
-
-        expect($action->canAttachTags())->toBeFalse();
-        expect($action->canDetachTags())->toBeTrue();
-    });
-
-    it('uses the `manage-tags` label by default', function (): void {
+    it('uses the `manage-tags` label', function (): void {
         $action = ManageSpatieTagsBulkAction::make();
 
         expect($action->getLabel())
             ->toBe(__('filament-spatie-laravel-tags-plugin::manage-tags.label'));
-    });
-
-    it('uses the `attach-tags` label when detaching is disabled', function (): void {
-        $action = ManageSpatieTagsBulkAction::make()
-            ->detachable(false);
-
-        expect($action->getLabel())
-            ->toBe(__('filament-spatie-laravel-tags-plugin::attach-tags.label'));
-    });
-
-    it('uses the `detach-tags` label when attaching is disabled', function (): void {
-        $action = ManageSpatieTagsBulkAction::make()
-            ->attachable(false);
-
-        expect($action->getLabel())
-            ->toBe(__('filament-spatie-laravel-tags-plugin::detach-tags.label'));
     });
 });
 
@@ -193,58 +145,4 @@ describe('integration', function (): void {
         expect($untypedTagNames)->toBe(['Old']);
     });
 
-    it('only attaches tags when detaching is disabled, even if detach data is submitted', function (): void {
-        $record = Article::factory()->create();
-        $record->attachTags(['Old']);
-
-        livewire(SpatieTagsBulkActionsTable::class, ['isManageActionDetachable' => false])
-            ->selectTableRecords([$record->getKey()])
-            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
-                'tagsToAttach' => ['New'],
-                'tagsToDetach' => ['Old'],
-            ]);
-
-        $freshRecord = Article::with('tags')->find($record->getKey());
-
-        expect($freshRecord->getRelationValue('tags')->pluck('name')->sort()->values()->all())
-            ->toBe(['New', 'Old']);
-    });
-
-    it('only detaches tags when attaching is disabled, even if attach data is submitted', function (): void {
-        $record = Article::factory()->create();
-        $record->attachTags(['Old']);
-
-        livewire(SpatieTagsBulkActionsTable::class, ['isManageActionAttachable' => false])
-            ->selectTableRecords([$record->getKey()])
-            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
-                'tagsToAttach' => ['New'],
-                'tagsToDetach' => ['Old'],
-            ]);
-
-        $freshRecord = Article::with('tags')->find($record->getKey());
-
-        expect($freshRecord->getRelationValue('tags'))->toBeEmpty();
-        expect(Tag::query()->where('name->en', 'New')->exists())->toBeFalse();
-    });
-
-    it('requires the attach field when detaching is disabled', function (): void {
-        $records = Article::factory()->count(2)->create();
-
-        livewire(SpatieTagsBulkActionsTable::class, ['isManageActionDetachable' => false])
-            ->selectTableRecords($records)
-            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
-                'tagsToAttach' => [],
-            ])
-            ->assertHasFormErrors(['tagsToAttach' => ['required_without']]);
-    });
-
-    it('is hidden when both attaching and detaching are disabled', function (): void {
-        Article::factory()->create();
-
-        livewire(SpatieTagsBulkActionsTable::class, [
-            'isManageActionAttachable' => false,
-            'isManageActionDetachable' => false,
-        ])
-            ->assertActionHidden(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk());
-    });
 });
