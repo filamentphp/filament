@@ -19,7 +19,7 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Nemáme pro vás žádné aktulizace',
+            'heading' => 'Nemáme pro vás žádné aktualizace',
             'description' => 'Zkuste to prosím později',
         ],
 

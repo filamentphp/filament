@@ -43,7 +43,11 @@ trait CanSearchRecords
     public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
         if (blank($value) && filled($key)) {
-            Arr::forget($this->tableColumnSearches, $key);
+            if (in_array($key, $this->getReservedTableColumnSearchKeys(), strict: true)) {
+                Arr::set($this->tableColumnSearches, $key, '');
+            } else {
+                Arr::forget($this->tableColumnSearches, $key);
+            }
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
@@ -222,7 +226,40 @@ trait CanSearchRecords
     public function resetTableColumnSearches(): void
     {
         $this->tableColumnSearches = [];
+        $this->fillReservedTableColumnSearchKeys();
         $this->updatedTableColumnSearches();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function getReservedTableColumnSearchKeys(): array
+    {
+        return ['at', 'concat', 'constructor', 'entries', 'every', 'fill', 'filter', 'find', 'flat', 'includes', 'join', 'keys', 'length', 'map', 'pop', 'push', 'reduce', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'unshift', 'values', 'with'];
+    }
+
+    protected function fillReservedTableColumnSearchKeys(): void
+    {
+        $reservedKeys = $this->getReservedTableColumnSearchKeys();
+
+        foreach ($this->getTable()->getColumns() as $column) {
+            if (! $column->isIndividuallySearchable()) {
+                continue;
+            }
+
+            $columnName = $column->getName();
+
+            // Other names already read back as an empty search from a JSON array, so only reserved names need seeding.
+            if (! in_array($columnName, $reservedKeys, strict: true)) {
+                continue;
+            }
+
+            if (Arr::has($this->tableColumnSearches, $columnName)) {
+                continue;
+            }
+
+            Arr::set($this->tableColumnSearches, $columnName, '');
+        }
     }
 
     public function getTableSearchIndicator(): Indicator

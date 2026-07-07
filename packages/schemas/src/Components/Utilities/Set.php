@@ -34,6 +34,8 @@ class Set
             $shouldCallUpdatedHooks && $component->callAfterStateUpdated();
         } else {
             data_set($livewire, $path, $state);
+
+            $this->component->getRootContainer()->clearCachedDefaultChildSchemas();
         }
 
         return $state;

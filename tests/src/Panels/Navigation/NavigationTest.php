@@ -5,6 +5,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Contracts\Collapsible;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
@@ -113,6 +114,15 @@ describe('registration and ordering', function (): void {
             );
     });
 
+});
+
+describe('navigation groups from enums', function (): void {
+    it('can use enum `Collapsible` to make a group collapsible but not collapsed', function (): void {
+        $group = NavigationGroup::fromEnum(CollapsibleNavigationGroupEnum::Group);
+
+        expect($group->isCollapsible())->toBeTrue();
+        expect($group->isCollapsed())->toBeFalse();
+    });
 });
 
 describe('sub-navigation parent-child', function (): void {
@@ -364,3 +374,18 @@ describe('cluster sub-navigation', function (): void {
         expect(WithoutSubNavigationCluster::shouldRegisterSubNavigation())->toBeFalse();
     });
 });
+
+enum CollapsibleNavigationGroupEnum implements Collapsible
+{
+    case Group;
+
+    public function isCollapsible(): bool
+    {
+        return true;
+    }
+
+    public function isCollapsed(): bool
+    {
+        return false;
+    }
+}
