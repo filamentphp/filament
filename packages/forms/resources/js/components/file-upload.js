@@ -86,6 +86,8 @@ export default function fileUploadFormComponent({
 
         shouldUpdateState: true,
 
+        activeUploads: 0,
+
         state,
 
         lastState: null,
@@ -238,6 +240,7 @@ export default function fileUploadFormComponent({
                         progress,
                         abort,
                     ) => {
+                        this.activeUploads++
                         this.shouldUpdateState = false
 
                         let fileKey = (
@@ -254,20 +257,34 @@ export default function fileUploadFormComponent({
                             ).toString(16),
                         )
 
+                        const finishUpload = () => {
+                            this.activeUploads--
+
+                            if (this.activeUploads === 0) {
+                                this.shouldUpdateState = true
+                            }
+                        }
+
                         uploadUsing(
                             fileKey,
                             file,
                             (fileKey) => {
-                                this.shouldUpdateState = true
+                                finishUpload()
 
                                 load(fileKey)
                             },
-                            error,
+                            (...args) => {
+                                finishUpload()
+
+                                error(...args)
+                            },
                             progress,
                         )
 
                         return {
                             abort: () => {
+                                finishUpload()
+
                                 cancelUploadUsing(fileKey)
                                 abort()
                             },
