@@ -1012,6 +1012,7 @@
                                         $recordGroupKey = $group?->getStringKey($record);
                                         $recordGroupTitle = $group?->getTitle($record);
                                         $isRecordGroupCollapsible = $group?->isCollapsible();
+                                        $recordIsSelectable = $isSelectionEnabled && $isRecordSelectable($record);
 
                                         $collapsibleColumnsLayout?->record($record)->recordKey($recordKey);
                                         $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
@@ -1165,17 +1166,17 @@
                                         @class([
                                             'fi-ta-record',
                                             'fi-clickable' => $recordUrl || $recordAction,
-                                            'fi-ta-record-with-content-prefix' => $isReordering || ($isSelectionEnabled && $isRecordSelectable($record)),
+                                            'fi-ta-record-with-content-prefix' => $isReordering || $recordIsSelectable,
                                             'fi-ta-record-with-content-suffix' => $hasCollapsibleColumnsLayout && (! $isReordering),
                                             ...$getRecordClasses($record),
                                         ])
                                         x-bind:class="{
                                             {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
-                                            'fi-selected': isRecordSelected(@js($recordKey)),
+                                            'fi-selected': @js($recordIsSelectable) && isRecordSelected(@js($recordKey)),
                                         }"
                                     >
                                         @php
-                                            $hasItemBeforeRecordContent = $isReordering || ($isSelectionEnabled && $isRecordSelectable($record));
+                                            $hasItemBeforeRecordContent = $isReordering || $recordIsSelectable;
                                             $hasItemAfterRecordContent = $hasCollapsibleColumnsLayout && (! $isReordering);
                                         @endphp
 
@@ -1186,7 +1187,7 @@
                                             >
                                                 {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                             </button>
-                                        @elseif ($isSelectionEnabled && $isRecordSelectable($record))
+                                        @elseif ($recordIsSelectable)
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                 type="checkbox"
@@ -1915,6 +1916,7 @@
                                                 $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                                 $recordGroupKey = $group?->getStringKey($record);
                                                 $recordGroupTitle = $group?->getTitle($record);
+                                                $recordIsSelectable = $isSelectionEnabled && $isRecordSelectable($record);
 
                                                 $recordActions = array_reduce(
                                                     $defaultRecordActions,
@@ -2130,7 +2132,7 @@
                                                     {!! $isReordering ? 'x-sortable-item="' . e($recordKey) . '"' : null !!}
                                                     x-bind:class="{
                                                         {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
-                                                        'fi-selected': isRecordSelected(@js($recordKey)),
+                                                        'fi-selected': @js($recordIsSelectable) && isRecordSelected(@js($recordKey)),
                                                     }"
                                                     @class([
                                                         'fi-ta-row',
@@ -2175,7 +2177,7 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-selection-cell"
                                                         >
-                                                            @if ($isRecordSelectable($record))
+                                                            @if ($recordIsSelectable)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                     type="checkbox"
@@ -2311,7 +2313,7 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-selection-cell"
                                                         >
-                                                            @if ($isRecordSelectable($record))
+                                                            @if ($recordIsSelectable)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                     type="checkbox"
