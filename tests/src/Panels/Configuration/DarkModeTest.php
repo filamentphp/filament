@@ -5,12 +5,12 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('enables dark mode, the forced state, and the toggle by default', function (): void {
+it('enables dark mode, the theme switcher, and disables the forced state by default', function (): void {
     $panel = Panel::make();
 
     expect($panel->hasDarkMode())->toBeTrue();
     expect($panel->hasDarkModeForced())->toBeFalse();
-    expect($panel->hasDarkModeToggle())->toBeTrue();
+    expect($panel->hasThemeSwitcher())->toBeTrue();
 });
 
 it('can disable dark mode using `darkMode()`', function (): void {
@@ -26,11 +26,11 @@ it('can force dark mode using `darkMode()`', function (): void {
     expect($panel->hasDarkModeForced())->toBeTrue();
 });
 
-it('can disable the dark mode toggle using `darkModeToggle()`', function (): void {
-    $panel = Panel::make()->darkModeToggle(false);
+it('can hide the theme switcher using `themeSwitcher()`', function (): void {
+    $panel = Panel::make()->themeSwitcher(false);
 
     expect($panel->hasDarkMode())->toBeTrue();
-    expect($panel->hasDarkModeToggle())->toBeFalse();
+    expect($panel->hasThemeSwitcher())->toBeFalse();
 });
 
 it('can use a `Closure` to control dark mode', function (): void {
@@ -45,8 +45,8 @@ it('can use a `Closure` to control the forced state of dark mode', function (): 
     expect($panel->hasDarkModeForced())->toBeTrue();
 });
 
-it('can use a `Closure` to control the dark mode toggle', function (): void {
-    $panel = Panel::make()->darkModeToggle(fn (): bool => false);
+it('can use a `Closure` to control the theme switcher', function (): void {
+    $panel = Panel::make()->themeSwitcher(fn (): bool => false);
 
-    expect($panel->hasDarkModeToggle())->toBeFalse();
+    expect($panel->hasThemeSwitcher())->toBeFalse();
 });

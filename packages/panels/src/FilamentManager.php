@@ -696,9 +696,9 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasDarkModeForced();
     }
 
-    public function hasDarkModeToggle(): bool
+    public function hasThemeSwitcher(): bool
     {
-        return $this->getCurrentOrDefaultPanel()->hasDarkModeToggle();
+        return $this->getCurrentOrDefaultPanel()->hasThemeSwitcher();
     }
 
     public function hasDatabaseNotifications(): bool

@@ -241,9 +241,9 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Hiding the dark mode toggle
+### Hiding the theme switcher
 
-By default, users can switch between light and dark mode using a toggle in the user menu. If you want to keep dark mode enabled but prevent users from manually switching (so that Filament follows the [default theme mode](#changing-the-default-theme-mode) or the user's system preference), you can use the `darkModeToggle(false)` method:
+By default, users can switch between light and dark mode using the theme switcher in the user menu. If you want to keep dark mode enabled but prevent users from manually switching (so that Filament follows the [default theme mode](#changing-the-default-theme-mode) or the user's system preference), you can hide the theme switcher using the `themeSwitcher(false)` method:
 
 ```php
 use Filament\Panel;
@@ -252,17 +252,17 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->darkModeToggle(false);
+        ->themeSwitcher(false);
 }
 ```
 
 <Aside variant="info">
-    This is different from `darkMode(false)`, which disables dark mode altogether. `darkModeToggle(false)` keeps dark mode active but hides the switcher.
+    This is different from `darkMode(false)`, which disables dark mode altogether. `themeSwitcher(false)` keeps dark mode active but hides the switcher.
 </Aside>
 
 ### Forcing dark mode
 
-If you want to force the panel to always use dark mode, regardless of the user's preference, you can pass `isForced: true` to the `darkMode()` method. This also hides the dark mode toggle:
+If you want to force the panel to always use dark mode, regardless of the user's preference, you can pass `isForced: true` to the `darkMode()` method. This also hides the theme switcher:
 
 ```php
 use Filament\Panel;
