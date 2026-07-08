@@ -260,7 +260,7 @@ export default function fileUploadFormComponent({
                         const finishUpload = () => {
                             this.activeUploads--
 
-                            if (this.activeUploads === 0) {
+                            if (this.activeUploads <= 0) {
                                 this.shouldUpdateState = true
                             }
                         }
