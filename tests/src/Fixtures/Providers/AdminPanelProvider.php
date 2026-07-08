@@ -18,6 +18,9 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\Clustered
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
 use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
+use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsBrowserTest;
+use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsModalBrowserTest;
+use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
@@ -32,10 +35,12 @@ use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
+use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
@@ -102,6 +107,9 @@ class AdminPanelProvider extends PanelProvider
                 Actions::class,
                 AfterStateUpdatedJsTest::class,
                 AuthorizableSettings::class,
+                AutofocusAfterCreateAnotherTabsBrowserTest::class,
+                AutofocusAfterCreateAnotherTabsModalBrowserTest::class,
+                AutofocusAfterCreateAnotherWizardBrowserTest::class,
                 AutofocusBasicBrowserTest::class,
                 AutofocusBrowserTest::class,
                 AutofocusSecondTabBrowserTest::class,
@@ -116,10 +124,12 @@ class AdminPanelProvider extends PanelProvider
                 DatePickerBrowserTest::class,
                 DateTimePickerTest::class,
                 FileUploadBrowserTest::class,
+                IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
                 KeyValueTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,
+                ModalBrowserTest::class,
                 OneTimeCodeInputBrowserTest::class,
                 PartialRenderingTest::class,
                 QueryBuilderTableTest::class,

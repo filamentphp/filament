@@ -57,6 +57,8 @@ class CreateXlsxFile implements ShouldQueue
         $writer = app(Writer::class, ['options' => $this->exporter->getXlsxWriterOptions()]);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $this->export->file_name));
 
+        $this->exporter->configureXlsxWriterAfterOpen($writer);
+
         $csvDelimiter = $this->exporter::getCsvDelimiter();
 
         $writeRowsFromFile = function (string $file, ?Style $style, ?Closure $makeRow) use ($csvDelimiter, $disk, $writer): void {

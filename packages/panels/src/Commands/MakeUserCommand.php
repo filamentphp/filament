@@ -2,7 +2,6 @@
 
 namespace Filament\Commands;
 
-use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\HasPanel;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
@@ -81,7 +80,7 @@ class MakeUserCommand extends Command
 
         $this->options = $this->options();
 
-        if (! Filament::getCurrentOrDefaultPanel()) {
+        if (! $this->panel) {
             $this->error('Filament has not been installed yet: php artisan filament:install --panels');
 
             return static::FAILURE;

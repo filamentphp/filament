@@ -3,6 +3,7 @@
     use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
@@ -160,6 +161,8 @@
     if (is_string($filtersFormWidth)) {
         $filtersFormWidth = Width::tryFrom($filtersFormWidth) ?? $filtersFormWidth;
     }
+
+    $loadingTargetsWireTarget = implode(',', \Filament\Tables\Table::LOADING_TARGETS);
 @endphp
 
 <div
@@ -716,7 +719,7 @@
                     class="fi-ta-reorder-indicator"
                 >
                     {{
-                        \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                        \Filament\Support\generate_loading_indicator_html(new \Filament\Support\View\ComponentAttributeBag([
                             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                             'wire:target' => 'reorderTable',
                         ]))
@@ -734,7 +737,7 @@
                 >
                     <div>
                         {{
-                            \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                            \Filament\Support\generate_loading_indicator_html(new \Filament\Support\View\ComponentAttributeBag([
                                 'x-show' => 'isLoading',
                             ]))
                         }}
@@ -875,7 +878,7 @@
                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                             wire:loading.attr="disabled"
-                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                            wire:target="{{ $loadingTargetsWireTarget }}"
                                             class="fi-ta-page-checkbox fi-checkbox-input"
                                         />
                                     @endif
@@ -988,7 +991,7 @@
                                     data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                                 @endif
                                 {{
-                                    (new ComponentAttributeBag)
+                                    (new FilamentComponentAttributeBag)
                                         ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
                                         ->class([
                                             'fi-ta-content',
@@ -1010,8 +1013,9 @@
                                         $recordUrl = $getRecordUrl($record);
                                         $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                         $recordGroupKey = $group?->getStringKey($record);
-                                        $recordGroupTitle = $group?->getTitle($record);
+                                        $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
                                         $isRecordGroupCollapsible = $group?->isCollapsible();
+                                        $recordIsSelectable = $isSelectionEnabled && $isRecordSelectable($record);
 
                                         $collapsibleColumnsLayout?->record($record)->recordKey($recordKey);
                                         $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
@@ -1111,7 +1115,7 @@
                                                     "
                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                     class="fi-ta-group-checkbox fi-checkbox-input"
                                                 />
                                             @endif
@@ -1165,17 +1169,17 @@
                                         @class([
                                             'fi-ta-record',
                                             'fi-clickable' => $recordUrl || $recordAction,
-                                            'fi-ta-record-with-content-prefix' => $isReordering || ($isSelectionEnabled && $isRecordSelectable($record)),
+                                            'fi-ta-record-with-content-prefix' => $isReordering || $recordIsSelectable,
                                             'fi-ta-record-with-content-suffix' => $hasCollapsibleColumnsLayout && (! $isReordering),
                                             ...$getRecordClasses($record),
                                         ])
                                         x-bind:class="{
                                             {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
-                                            'fi-selected': isRecordSelected(@js($recordKey)),
+                                            'fi-selected': @js($recordIsSelectable) && isRecordSelected(@js($recordKey)),
                                         }"
                                     >
                                         @php
-                                            $hasItemBeforeRecordContent = $isReordering || ($isSelectionEnabled && $isRecordSelectable($record));
+                                            $hasItemBeforeRecordContent = $isReordering || $recordIsSelectable;
                                             $hasItemAfterRecordContent = $hasCollapsibleColumnsLayout && (! $isReordering);
                                         @endphp
 
@@ -1186,7 +1190,7 @@
                                             >
                                                 {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::REORDER_HANDLE) }}
                                             </button>
-                                        @elseif ($isSelectionEnabled && $isRecordSelectable($record))
+                                        @elseif ($recordIsSelectable)
                                             <input
                                                 aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                 type="checkbox"
@@ -1200,7 +1204,7 @@
                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                 data-group="{{ $recordGroupKey }}"
                                                 wire:loading.attr="disabled"
-                                                wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                wire:target="{{ $loadingTargetsWireTarget }}"
                                                 class="fi-ta-record-checkbox fi-checkbox-input"
                                             />
                                         @endif
@@ -1508,7 +1512,7 @@
                                                     {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                     wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.stacked.{{ \Illuminate\Support\Str::random() }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                     class="fi-ta-page-checkbox fi-checkbox-input"
                                                 />
                                             @endif
@@ -1627,7 +1631,7 @@
                                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                                             wire:loading.attr="disabled"
-                                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                            wire:target="{{ $loadingTargetsWireTarget }}"
                                                             class="fi-ta-page-checkbox fi-checkbox-input"
                                                         />
                                                     @endif
@@ -1693,7 +1697,7 @@
                                                             (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
                                                         ])
                                                         ->style([
-                                                            ('width: ' . $columnWidth) => filled($columnWidth),
+                                                            ('width: ' . e($columnWidth)) => filled($columnWidth),
                                                         ])
                                                 }}
                                             >
@@ -1727,14 +1731,14 @@
                                                                 $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
                                                                 $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                                                                 default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
-                                                            }, attributes: (new \Illuminate\View\ComponentAttributeBag([
+                                                            }, attributes: (new \Filament\Support\View\ComponentAttributeBag([
                                                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
                                                                 'wire:target' => "sortTable('{$columnName}')",
                                                             ])))
                                                         }}
 
                                                         {{
-                                                            \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                                                            \Filament\Support\generate_loading_indicator_html(new \Filament\Support\View\ComponentAttributeBag([
                                                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                                                 'wire:target' => "sortTable('{$columnName}')",
                                                             ]))
@@ -1809,7 +1813,7 @@
                                                         {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                         wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                                         wire:loading.attr="disabled"
-                                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                         class="fi-ta-page-checkbox fi-checkbox-input"
                                                     />
                                                 @endif
@@ -1914,7 +1918,8 @@
                                                 $recordUrl = $getRecordUrl($record);
                                                 $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                                 $recordGroupKey = $group?->getStringKey($record);
-                                                $recordGroupTitle = $group?->getTitle($record);
+                                                $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
+                                                $recordIsSelectable = $isSelectionEnabled && $isRecordSelectable($record);
 
                                                 $recordActions = array_reduce(
                                                     $defaultRecordActions,
@@ -2019,7 +2024,7 @@
                                                                         "
                                                                         wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                         wire:loading.attr="disabled"
-                                                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                                         class="fi-ta-group-checkbox fi-checkbox-input"
                                                                     />
                                                                 @endif
@@ -2109,7 +2114,7 @@
                                                                         "
                                                                         wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                         wire:loading.attr="disabled"
-                                                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                                         class="fi-ta-group-checkbox fi-checkbox-input"
                                                                     />
                                                                 @endif
@@ -2130,7 +2135,7 @@
                                                     {!! $isReordering ? 'x-sortable-item="' . e($recordKey) . '"' : null !!}
                                                     x-bind:class="{
                                                         {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
-                                                        'fi-selected': isRecordSelected(@js($recordKey)),
+                                                        'fi-selected': @js($recordIsSelectable) && isRecordSelected(@js($recordKey)),
                                                     }"
                                                     @class([
                                                         'fi-ta-row',
@@ -2175,7 +2180,7 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-selection-cell"
                                                         >
-                                                            @if ($isRecordSelectable($record))
+                                                            @if ($recordIsSelectable)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                     type="checkbox"
@@ -2189,7 +2194,7 @@
                                                                     x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                                     data-group="{{ $recordGroupKey }}"
                                                                     wire:loading.attr="disabled"
-                                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                                     class="fi-ta-record-checkbox fi-checkbox-input"
                                                                 />
                                                             @endif
@@ -2251,16 +2256,7 @@
 
                                                         <td
                                                             wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                                            {{
-                                                                $column->getExtraCellAttributeBag()->class([
-                                                                    'fi-ta-cell',
-                                                                    'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
-                                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                                    ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
-                                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                                                ])
-                                                            }}
+                                                            {!! $column->getCachedCellAttributeHtml() !!}
                                                         >
                                                             {!! $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' !!}
                                                             <{{ $columnWrapperTag }}
@@ -2311,7 +2307,7 @@
                                                         <td
                                                             class="fi-ta-cell fi-ta-selection-cell"
                                                         >
-                                                            @if ($isRecordSelectable($record))
+                                                            @if ($recordIsSelectable)
                                                                 <input
                                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
                                                                     type="checkbox"
@@ -2325,7 +2321,7 @@
                                                                     x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                                     data-group="{{ $recordGroupKey }}"
                                                                     wire:loading.attr="disabled"
-                                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                                     class="fi-ta-record-checkbox fi-checkbox-input"
                                                                 />
                                                             @endif

@@ -8,6 +8,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Livewire\Attributes\Locked;
 
 class StatsOverviewWidget extends Widget implements HasSchemas
 {
@@ -18,6 +19,12 @@ class StatsOverviewWidget extends Widget implements HasSchemas
      * @var array<Stat> | null
      */
     protected ?array $cachedStats = null;
+
+    /**
+     * @var array<string, string>
+     */
+    #[Locked]
+    public array $chartDataChecksums = [];
 
     protected int | string | array $columnSpan = 'full';
 
@@ -35,12 +42,71 @@ class StatsOverviewWidget extends Widget implements HasSchemas
      */
     protected string $view = 'filament-widgets::stats-overview-widget';
 
+    public function mount(): void
+    {
+        $this->chartDataChecksums = $this->getStatChartDataChecksums();
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema
             ->components([
                 $this->getSectionContentComponent(),
             ]);
+    }
+
+    public function rendering(): void
+    {
+        $this->updateChartData();
+    }
+
+    public function updateChartData(): void
+    {
+        foreach ($this->getCachedStats() as $stat) {
+            if ($stat->getChart() === null) {
+                continue;
+            }
+
+            $key = $stat->getKey(isAbsolute: false);
+
+            if ($key === null) {
+                continue;
+            }
+
+            $newChecksum = $stat->generateChartDataChecksum();
+
+            if (($this->chartDataChecksums[$key] ?? null) === $newChecksum) {
+                continue;
+            }
+
+            $this->chartDataChecksums[$key] = $newChecksum;
+
+            $this->dispatch('updateStatsOverviewChartData', key: $key, data: array_values($stat->getChart()));
+        }
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getStatChartDataChecksums(): array
+    {
+        $checksums = [];
+
+        foreach ($this->getCachedStats() as $stat) {
+            if ($stat->getChart() === null) {
+                continue;
+            }
+
+            $key = $stat->getKey(isAbsolute: false);
+
+            if ($key === null) {
+                continue;
+            }
+
+            $checksums[$key] = $stat->generateChartDataChecksum();
+        }
+
+        return $checksums;
     }
 
     public function getSectionContentComponent(): Component
@@ -91,7 +157,19 @@ class StatsOverviewWidget extends Widget implements HasSchemas
      */
     protected function getCachedStats(): array
     {
-        return $this->cachedStats ??= $this->getStats();
+        if ($this->cachedStats !== null) {
+            return $this->cachedStats;
+        }
+
+        $stats = array_values($this->getStats());
+
+        foreach ($stats as $index => $stat) {
+            if (($stat->getChart() !== null) && blank($stat->getKey(isAbsolute: false))) {
+                $stat->key('stats-overview-stat-' . $index);
+            }
+        }
+
+        return $this->cachedStats = $stats;
     }
 
     /**
