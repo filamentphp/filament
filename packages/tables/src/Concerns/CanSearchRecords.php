@@ -96,7 +96,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            if (! ($column->shouldSplitSearchTerms() ?? $shouldSplitSearchTermsByDefault)) {
+            if (! ($column->shouldSplitIndividualSearchTerms() ?? $shouldSplitSearchTermsByDefault)) {
                 $isFirst = true;
 
                 $column->applySearchConstraint(

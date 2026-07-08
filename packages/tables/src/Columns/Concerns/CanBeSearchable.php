@@ -23,7 +23,7 @@ trait CanBeSearchable
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
-    protected bool | Closure | null $shouldSplitSearchTerms = null;
+    protected bool | Closure | null $shouldSplitIndividualSearchTerms = null;
 
     /**
      * @param  bool | array<string> | string | Closure  $condition
@@ -56,9 +56,9 @@ trait CanBeSearchable
         return $this;
     }
 
-    public function splitSearchTerms(bool | Closure | null $condition = true): static
+    public function splitIndividualSearchTerms(bool | Closure | null $condition = true): static
     {
-        $this->shouldSplitSearchTerms = $condition;
+        $this->shouldSplitIndividualSearchTerms = $condition;
 
         return $this;
     }
@@ -91,9 +91,9 @@ trait CanBeSearchable
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
-    public function shouldSplitSearchTerms(): ?bool
+    public function shouldSplitIndividualSearchTerms(): ?bool
     {
-        return $this->evaluate($this->shouldSplitSearchTerms);
+        return $this->evaluate($this->shouldSplitIndividualSearchTerms);
     }
 
     /**

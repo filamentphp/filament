@@ -14,7 +14,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class PostsTableWithColumnSearchTermSplittingEnabled extends Component implements HasActions, HasSchemas, HasTable
+class PostsTableWithColumnIndividualSearchTermSplittingDisabled extends Component implements HasActions, HasSchemas, HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
@@ -24,13 +24,12 @@ class PostsTableWithColumnSearchTermSplittingEnabled extends Component implement
     {
         return $table
             ->query(Post::query())
-            ->splitSearchTerms(false)
             ->columns([
                 TextColumn::make('title')
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('content')
                     ->searchable(isIndividual: true, isGlobal: false)
-                    ->splitSearchTerms(),
+                    ->splitIndividualSearchTerms(false),
             ]);
     }
 
