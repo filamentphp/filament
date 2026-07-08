@@ -5,6 +5,7 @@ use Filament\Actions\Testing\TestAction;
 use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
 use Filament\Tests\Fixtures\Livewire\SpatieTagsBulkActionsTable;
 use Filament\Tests\Fixtures\Models\Article;
+use Filament\Tests\Fixtures\Models\ThrowingTag;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Spatie\Tags\Tag;
@@ -258,6 +259,50 @@ describe('integration', function (): void {
 
         // The pre-existing untyped `New` tag was reused rather than duplicated as an empty-string type.
         expect(Tag::all()->filter(fn (Tag $tag): bool => $tag->name === 'New'))->toHaveCount(1);
+    });
+
+    it('rejects a tag entry that is not a string', function (string $field): void {
+        $record = Article::factory()->create();
+
+        // Tag names come from client-writable Livewire state, so a tampered payload can contain a
+        // nested array. `nestedRecursiveRules(['string'])` must reject it during validation rather
+        // than let it reach the `string`-typed resolution and conflict-validation closures and throw
+        // a `TypeError`.
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                $field => [['Laravel']],
+            ])
+            ->assertHasFormErrors(["{$field}.0"]);
+
+        expect(Tag::count())->toBe(0);
+    })->with([
+        'tagsToAttach',
+        'tagsToDetach',
+    ]);
+
+    it('reports a failure notification instead of throwing when resolving the tags fails', function (): void {
+        $records = Article::factory()->count(2)->create();
+
+        // Force `resolveTagsForAttaching()` to throw to prove the action reports a graceful failure
+        // instead of letting the exception escape as an uncaught error that would leave the records
+        // selected with no notification.
+        config(['tags.tag_model' => ThrowingTag::class]);
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => ['Laravel'],
+                'tagsToDetach' => [],
+            ])
+            ->assertNotified();
+
+        // Restore the real tag model so the relationship's pivot key resolves when inspecting results.
+        config(['tags.tag_model' => Tag::class]);
+
+        foreach ($records as $record) {
+            expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags'))->toBeEmpty();
+        }
     });
 
 });

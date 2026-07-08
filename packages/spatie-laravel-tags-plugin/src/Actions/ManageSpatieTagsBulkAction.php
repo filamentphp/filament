@@ -13,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
@@ -86,10 +87,15 @@ class ManageSpatieTagsBulkAction extends BulkAction
             TagsInput::make('tagsToAttach')
                 ->label(__('filament-spatie-laravel-tags-plugin::manage-tags.modal.form.tags_to_attach.label'))
                 ->suggestions(static fn (): array => $action->getTagSuggestions())
+                // Tag names come from client-writable Livewire state. Validate each entry as a
+                // `string` so a tampered payload with a nested array fails validation instead of
+                // reaching the `string`-typed resolution closures and throwing a `TypeError`.
+                ->nestedRecursiveRules(['string'])
                 ->requiredWithout('tagsToDetach'),
             TagsInput::make('tagsToDetach')
                 ->label(__('filament-spatie-laravel-tags-plugin::manage-tags.modal.form.tags_to_detach.label'))
                 ->suggestions(static fn (): array => $action->getTagSuggestions())
+                ->nestedRecursiveRules(['string'])
                 ->requiredWithout('tagsToAttach')
                 ->rules([
                     static fn (Get $get): Closure => static function (string $attribute, mixed $value, Closure $fail) use ($get): void {
@@ -97,13 +103,18 @@ class ManageSpatieTagsBulkAction extends BulkAction
                         // Spatie's `findFromStringOfAnyType()`), so `PHP`/`php` or `Front End`/`front-end`
                         // point at the same tag. Comparing slugs catches conflicts that a raw string
                         // comparison would miss and silently detach a tag the user asked to attach.
+                        //
+                        // Both fields come from client-writable Livewire state. `nestedRecursiveRules(['string'])`
+                        // reports any non-string entry as its own validation error, but this closure still runs
+                        // over the raw arrays, so filter to strings first to keep a tampered nested-array payload
+                        // from reaching the `string`-typed callbacks and throwing a `TypeError`.
                         $tagsToAttachSlugs = array_map(
                             static fn (string $tag): string => Str::slug($tag),
-                            $get('tagsToAttach') ?? [],
+                            array_filter($get('tagsToAttach') ?? [], 'is_string'),
                         );
 
                         $conflictingTags = array_filter(
-                            $value ?? [],
+                            array_filter($value ?? [], 'is_string'),
                             static fn (string $tag): bool => in_array(Str::slug($tag), $tagsToAttachSlugs, strict: true),
                         );
 
@@ -124,9 +135,21 @@ class ManageSpatieTagsBulkAction extends BulkAction
                     $records = $action->getSelectedRecordsQuery()->cursor();
                 }
 
-                $tagIdsToAttach = $action->resolveTagsForAttaching($data['tagsToAttach'] ?? [])->pluck('id')->all();
+                try {
+                    // Resolving the tags runs find-or-create queries before any record is processed.
+                    // If that throws (e.g. a `findOrCreate()` race against a user-added unique index,
+                    // or a transient database error), report a complete failure so the user gets the
+                    // failure notification instead of an uncaught error, mirroring `DeleteBulkAction`.
+                    $tagIdsToAttach = $action->resolveTagsForAttaching($data['tagsToAttach'] ?? [])->pluck('id')->all();
 
-                $tagIdsToDetach = $action->resolveTagsForDetaching($data['tagsToDetach'] ?? [])->pluck('id')->all();
+                    $tagIdsToDetach = $action->resolveTagsForDetaching($data['tagsToDetach'] ?? [])->pluck('id')->all();
+                } catch (Throwable $exception) {
+                    $action->reportCompleteBulkProcessingFailure();
+
+                    report($exception);
+
+                    return;
+                }
 
                 if (empty($tagIdsToAttach) && empty($tagIdsToDetach)) {
                     return;
@@ -142,13 +165,19 @@ class ManageSpatieTagsBulkAction extends BulkAction
                     }
 
                     try {
-                        if (! empty($tagIdsToAttach)) {
-                            $record->tags()->syncWithoutDetaching($tagIdsToAttach);
-                        }
+                        // Attaching and detaching are two dependent writes. Wrap them in a
+                        // transaction so a failure between them cannot leave the record
+                        // half-updated while it is reported as a failure that implies nothing
+                        // changed. Nests via savepoints under an opt-in `->databaseTransaction()`.
+                        DB::transaction(static function () use ($record, $tagIdsToAttach, $tagIdsToDetach): void {
+                            if (! empty($tagIdsToAttach)) {
+                                $record->tags()->syncWithoutDetaching($tagIdsToAttach);
+                            }
 
-                        if (! empty($tagIdsToDetach)) {
-                            $record->tags()->detach($tagIdsToDetach);
-                        }
+                            if (! empty($tagIdsToDetach)) {
+                                $record->tags()->detach($tagIdsToDetach);
+                            }
+                        });
 
                         $record->unsetRelation('tags');
                     } catch (Throwable $exception) {

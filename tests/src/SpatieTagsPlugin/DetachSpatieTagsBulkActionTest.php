@@ -197,4 +197,22 @@ describe('integration', function (): void {
 
         expect($freshRecord->getRelationValue('tags'))->toBeEmpty();
     });
+
+    it('rejects a tag entry that is not a string', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Laravel']);
+
+        // Tag names come from client-writable Livewire state, so a tampered payload can contain a
+        // nested array. `nestedRecursiveRules(['string'])` must reject it during validation rather
+        // than let it reach the `string`-typed resolution closures and throw a `TypeError`.
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => [['Laravel']],
+            ])
+            ->assertHasFormErrors(['tags.0']);
+
+        expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags')->pluck('name')->all())
+            ->toBe(['Laravel']);
+    });
 });
