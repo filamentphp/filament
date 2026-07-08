@@ -6,6 +6,7 @@ use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
 use Filament\Tests\Fixtures\Livewire\SpatieTagsBulkActionsTable;
 use Filament\Tests\Fixtures\Models\Article;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\DB;
 use Spatie\Tags\Tag;
 
 use function Filament\Tests\livewire;
@@ -29,6 +30,49 @@ describe('configuration', function (): void {
 
         expect($action->getLabel())
             ->toBe(__('filament-spatie-laravel-tags-plugin::manage-tags.label'));
+    });
+});
+
+describe('suggestions', function (): void {
+    it('memoizes `getTagSuggestions()` so the two inputs share a single query per request', function (): void {
+        // The attach and detach `TagsInput`s both resolve their suggestions from the same action via
+        // `->suggestions()` closures that the tags-input view re-runs on every render. Without the memo,
+        // each call repeats the unbounded `SELECT name FROM tags` scan; the cache keeps it to one query.
+        Tag::findOrCreate('Laravel');
+        Tag::findOrCreate('PHP');
+
+        $action = ManageSpatieTagsBulkAction::make();
+
+        DB::enableQueryLog();
+        DB::flushQueryLog();
+
+        $firstSuggestions = $action->getTagSuggestions();
+        $queriesAfterFirstCall = count(DB::getQueryLog());
+
+        DB::flushQueryLog();
+
+        $secondSuggestions = $action->getTagSuggestions();
+        $queriesAfterSecondCall = count(DB::getQueryLog());
+
+        DB::disableQueryLog();
+
+        expect($queriesAfterFirstCall)->toBeGreaterThan(0);
+        expect($queriesAfterSecondCall)->toBe(0);
+        expect($secondSuggestions)->toBe($firstSuggestions);
+        expect($firstSuggestions)->toContain('Laravel', 'PHP');
+    });
+
+    it('recomputes `getTagSuggestions()` after the `type()` changes', function (): void {
+        Tag::findOrCreate('Laravel', 'framework');
+        Tag::findOrCreate('PHP', 'language');
+
+        $action = ManageSpatieTagsBulkAction::make()->type('framework');
+
+        expect($action->getTagSuggestions())->toContain('Laravel')->not->toContain('PHP');
+
+        $action->type('language');
+
+        expect($action->getTagSuggestions())->toContain('PHP')->not->toContain('Laravel');
     });
 });
 

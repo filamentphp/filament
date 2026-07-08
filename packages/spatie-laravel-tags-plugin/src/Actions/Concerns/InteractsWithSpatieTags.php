@@ -12,9 +12,17 @@ trait InteractsWithSpatieTags
 {
     protected string | Closure | AllTagTypes | null $type;
 
+    /**
+     * @var array<string> | null
+     */
+    protected ?array $cachedTagSuggestions = null;
+
     public function type(string | Closure | AllTagTypes | null $type): static
     {
         $this->type = $type;
+
+        // The suggestions depend on the resolved `type`, so drop the memoized list when it changes.
+        $this->cachedTagSuggestions = null;
 
         return $this;
     }
@@ -46,6 +54,10 @@ trait InteractsWithSpatieTags
      */
     public function getTagSuggestions(): array
     {
+        if ($this->cachedTagSuggestions !== null) {
+            return $this->cachedTagSuggestions;
+        }
+
         $type = $this->getType();
         $query = $this->getTagClassName()::query();
 
@@ -57,7 +69,12 @@ trait InteractsWithSpatieTags
             );
         }
 
-        return $query->pluck('name')->all();
+        // `ManageSpatieTagsBulkAction` renders two `TagsInput`s whose `->suggestions()` closures both
+        // call this method, and the tags-input view re-runs them on every render. Memoizing the result
+        // keeps the identical unbounded `SELECT name FROM tags` query from running once per input per
+        // render. The `type()` is fixed for the request (and resets the cache when changed), so the
+        // memoized list stays valid.
+        return $this->cachedTagSuggestions = $query->pluck('name')->all();
     }
 
     /**
