@@ -90,7 +90,7 @@ trait HasActions
      */
     public function unmountTableAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($shouldCancelParentActions);
+        $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);
     }
 
     /**

@@ -5,10 +5,12 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Contracts\Collapsible;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
+use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Navigation\TestCase;
 
@@ -113,6 +115,65 @@ describe('registration and ordering', function (): void {
             );
     });
 
+    it('orders several navigation groups by their registration order', function (): void {
+        // `Shop` and `Blog` already contain resource items; `Reports` is given
+        // its own item so it survives the empty-group filter.
+        Filament::getCurrentOrDefaultPanel()
+            ->navigationGroups([
+                NavigationGroup::make()->label('Reports'),
+                NavigationGroup::make()->label('Shop'),
+                NavigationGroup::make()->label('Blog'),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Sales')
+                    ->group('Reports')
+                    ->url('#'),
+            ]);
+
+        $groupLabels = collect(Filament::getNavigation())
+            ->map(fn (NavigationGroup $group): ?string => $group->getLabel())
+            ->values()
+            ->all();
+
+        expect($groupLabels)->toBe([null, 'Reports', 'Shop', 'Blog']);
+    });
+
+    it('orders navigation groups registered from a `UnitEnum` by their `cases()` order', function (): void {
+        // Items are registered in reverse `cases()` order to prove the sort
+        // follows enum order, not registration order.
+        Filament::getCurrentOrDefaultPanel()
+            ->navigationGroups(NavigationGroupEnum::class)
+            ->navigationItems([
+                NavigationItem::make('Manage Settings')
+                    ->group(NavigationGroupEnum::Settings)
+                    ->url('#'),
+                NavigationItem::make('Manage Users')
+                    ->group(NavigationGroupEnum::Users)
+                    ->url('#'),
+            ]);
+
+        $groupLabels = collect(Filament::getNavigation())
+            ->map(fn (NavigationGroup $group): ?string => $group->getLabel())
+            ->values()
+            ->all();
+
+        $usersPosition = array_search('User Management', $groupLabels);
+        $settingsPosition = array_search('System Settings', $groupLabels);
+
+        expect($usersPosition)->not->toBeFalse();
+        expect($settingsPosition)->not->toBeFalse();
+        expect($usersPosition)->toBeLessThan($settingsPosition);
+    });
+
+});
+
+describe('navigation groups from enums', function (): void {
+    it('can use enum `Collapsible` to make a group collapsible but not collapsed', function (): void {
+        $group = NavigationGroup::fromEnum(CollapsibleNavigationGroupEnum::Group);
+
+        expect($group->isCollapsible())->toBeTrue();
+        expect($group->isCollapsed())->toBeFalse();
+    });
 });
 
 describe('sub-navigation parent-child', function (): void {
@@ -364,3 +425,18 @@ describe('cluster sub-navigation', function (): void {
         expect(WithoutSubNavigationCluster::shouldRegisterSubNavigation())->toBeFalse();
     });
 });
+
+enum CollapsibleNavigationGroupEnum implements Collapsible
+{
+    case Group;
+
+    public function isCollapsible(): bool
+    {
+        return true;
+    }
+
+    public function isCollapsed(): bool
+    {
+        return false;
+    }
+}

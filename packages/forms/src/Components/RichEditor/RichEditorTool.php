@@ -220,7 +220,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         ob_start(); ?>
 
         <button <?= $attributes->toHtml() ?>>
-            <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())->toHtml() ?>
+            <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())?->toHtml() ?? '' ?>
             <?= $isLabelHidden ? null : '<span class="fi-fo-rich-editor-tool-label">' . e($label) . '</span>' ?>
         </button>
 

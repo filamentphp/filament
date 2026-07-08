@@ -80,7 +80,7 @@
         "cropperjs": "^1.5.13",
         "dayjs": "^1.10.6",
         "easymde": "^2.18.0",
-        "esbuild": "^0.25.0",
+        "esbuild": "^0.28.1",
         "esbuild-postcss": "^0.0.4",
         "filepond": "^4.32.7",
         "filepond-plugin-file-validate-size": "^2.2.8",

@@ -20,6 +20,11 @@ use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Facades\FilamentColor;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Filament\Support\View\Components\DropdownComponent\ItemComponent;
+use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+use Filament\Support\View\Components\LinkComponent;
 use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
 use Filament\Support\View\Concerns\CanGenerateButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
@@ -38,6 +43,10 @@ use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component;
 use Livewire\Drawer\Utils;
+
+use function Filament\Support\generate_href_html;
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\generate_loading_indicator_html;
 
 class Action extends ViewComponent implements Arrayable
 {
@@ -417,7 +426,7 @@ class Action extends ViewComponent implements Arrayable
         }
 
         if ($this->shouldClose()) {
-            return 'close()';
+            return (filled($this->getUrl()) && (! $this->shouldOpenUrlInNewTab())) ? 'close(true)' : 'close()';
         }
 
         if ($this->shouldMarkAsRead()) {
@@ -671,6 +680,8 @@ class Action extends ViewComponent implements Arrayable
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();
             }
+
+            $this->clearVisibilityCache();
         }
     }
 
@@ -781,6 +792,14 @@ class Action extends ViewComponent implements Arrayable
             return $this->toEmbeddedHtml();
         }
 
+        if ($this->canRenderOptimizedLink()) {
+            return $this->toOptimizedLinkHtml();
+        }
+
+        if ($this->canRenderOptimizedGrouped()) {
+            return $this->toOptimizedGroupedHtml();
+        }
+
         return match ($this->getView()) {
             static::BADGE_VIEW => $this->toBadgeHtml(),
             static::BUTTON_VIEW => $this->toButtonHtml(),
@@ -791,6 +810,202 @@ class Action extends ViewComponent implements Arrayable
         };
     }
 
+    protected function canRenderOptimizedLink(): bool
+    {
+        return ($this->getView() === static::LINK_VIEW)
+            && $this->hasSmallSizeDefault()
+            && ! $this->hasBadge()
+            && ! $this->hasTooltip()
+            && ! $this->hasIconPosition()
+            && ! $this->hasIconSize()
+            && ! $this->hasKeyBindings()
+            && ! $this->hasLabeledFromBreakpoint()
+            && ! $this->hasOutlined()
+            && ! $this->hasLabelHidden()
+            && ! $this->hasDisabled()
+            && ! $this->hasShouldOpenUrlInNewTab()
+            && ! $this->hasShouldPostToUrl()
+            && ! $this->hasClose()
+            && ! $this->hasCanAccessSelectedRecords()
+            && ! $this->hasCustomModalPresence()
+            && ! $this->hasAuthorization()
+            && ! $this->hasExtraAttributes()
+            && ! $this->hasMarkAsRead()
+            && ! $this->hasMarkAsUnread()
+            && ! $this->hasAlpineClickHandler()
+            && ! $this->hasCustomLivewireClickHandler()
+            && ! $this->hasLivewireTarget()
+            && ! $this->hasCanSubmitForm()
+            && ! $this->hasFormId()
+            && ! $this->hasTableIcon()
+            && ! $this->hasGroupedIcon();
+    }
+
+    public function hasMarkAsRead(): bool
+    {
+        return $this->shouldMarkAsRead !== false;
+    }
+
+    public function hasMarkAsUnread(): bool
+    {
+        return $this->shouldMarkAsUnread !== false;
+    }
+
+    public function hasAlpineClickHandler(): bool
+    {
+        return $this->alpineClickHandler !== null;
+    }
+
+    public function hasCustomLivewireClickHandler(): bool
+    {
+        return $this->isLivewireClickHandlerEnabled !== null;
+    }
+
+    public function hasLivewireTarget(): bool
+    {
+        return $this->livewireTarget !== null;
+    }
+
+    protected function toOptimizedLinkHtml(): string
+    {
+        $color = $this->getColor() ?? 'primary';
+
+        if (is_array($color)) {
+            $classString = 'fi-ac-link-action fi-link fi-size-sm fi-color';
+            $styleString = ' style="' . implode('; ', FilamentColor::getComponentCustomStyles(LinkComponent::class, $color)) . '"';
+        } else {
+            $colorClasses = implode(' ', FilamentColor::getComponentClasses(LinkComponent::class, $color));
+            $classString = "fi-ac-link-action fi-link fi-size-sm {$colorClasses}";
+            $styleString = '';
+        }
+
+        $wireKey = $this->getLivewireKey();
+        $wireKeyAttribute = $wireKey === null ? '' : ' wire:key="' . e($wireKey) . '"';
+
+        $url = $this->getUrl();
+        $icon = $this->getIcon();
+        $label = e($this->getLabel());
+
+        if (filled($url)) {
+            $iconHtml = $icon ? generate_icon_html($icon, size: IconSize::Small)?->toHtml() : '';
+            $hrefHtml = generate_href_html($url)->toHtml();
+
+            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$label}</a>";
+        }
+
+        $handler = $this->getLivewireClickHandler();
+
+        if (blank($handler)) {
+            return "<span{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$label}</span>";
+        }
+
+        $loadingDelay = config('filament.livewire_loading_delay', 'default');
+
+        $iconHtml = $icon ? generate_icon_html(
+            $icon,
+            attributes: (new FilamentComponentAttributeBag([
+                'wire:loading.remove.delay.' . $loadingDelay => true,
+                'wire:target' => $handler,
+            ])),
+            size: IconSize::Small,
+        )?->toHtml() : '';
+
+        $loadingHtml = generate_loading_indicator_html(
+            (new FilamentComponentAttributeBag([
+                'wire:loading.delay.' . $loadingDelay => '',
+                'wire:target' => $handler,
+            ])),
+            size: IconSize::Small,
+        )->toHtml();
+
+        // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
+        $handler = str_replace('"', '\\"', $handler);
+
+        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}{$label}</button>";
+    }
+
+    protected function canRenderOptimizedGrouped(): bool
+    {
+        return ($this->getView() === static::GROUPED_VIEW)
+            && ! $this->hasBadge()
+            && ! $this->hasTooltip()
+            && ! $this->hasIconSize()
+            && ! $this->hasKeyBindings()
+            && ! $this->hasDisabled()
+            && ! $this->hasShouldOpenUrlInNewTab()
+            && ! $this->hasShouldPostToUrl()
+            && ! $this->hasClose()
+            && ! $this->hasCanAccessSelectedRecords()
+            && ! $this->hasCustomModalPresence()
+            && ! $this->hasAuthorization()
+            && ! $this->hasExtraAttributes()
+            && ! $this->hasMarkAsRead()
+            && ! $this->hasMarkAsUnread()
+            && ! $this->hasAlpineClickHandler()
+            && ! $this->hasCustomLivewireClickHandler()
+            && ! $this->hasLivewireTarget()
+            && ! $this->hasCanSubmitForm();
+    }
+
+    protected function toOptimizedGroupedHtml(): string
+    {
+        $color = $this->getColor() ?? 'gray';
+
+        if (is_array($color)) {
+            $classString = 'fi-dropdown-list-item fi-ac-grouped-action fi-color';
+            $styleString = ' style="' . implode('; ', FilamentColor::getComponentCustomStyles(ItemComponent::class, $color)) . '"';
+        } else {
+            $colorClasses = implode(' ', FilamentColor::getComponentClasses(ItemComponent::class, $color));
+            $classString = "fi-dropdown-list-item fi-ac-grouped-action {$colorClasses}";
+            $styleString = '';
+        }
+
+        $wireKey = $this->getLivewireKey();
+        $wireKeyAttribute = $wireKey === null ? '' : ' wire:key="' . e($wireKey) . '"';
+
+        $url = $this->getUrl();
+        $icon = $this->getIcon(default: $this->getGroupedIcon());
+        $label = e($this->getLabel());
+
+        if (filled($url)) {
+            $iconHtml = $icon ? generate_icon_html(
+                $icon,
+                attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $color),
+            )?->toHtml() : '';
+            $hrefHtml = generate_href_html($url)->toHtml();
+
+            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></a>";
+        }
+
+        $handler = $this->getLivewireClickHandler();
+
+        if (blank($handler)) {
+            return "<button type=\"button\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}><span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+        }
+
+        $loadingDelay = config('filament.livewire_loading_delay', 'default');
+
+        $iconHtml = $icon ? generate_icon_html(
+            $icon,
+            attributes: (new FilamentComponentAttributeBag([
+                'wire:loading.remove.delay.' . $loadingDelay => true,
+                'wire:target' => $handler,
+            ]))->color(IconComponent::class, $color),
+        )?->toHtml() : '';
+
+        $loadingHtml = generate_loading_indicator_html(
+            (new FilamentComponentAttributeBag([
+                'wire:loading.delay.' . $loadingDelay => '',
+                'wire:target' => $handler,
+            ])),
+        )->toHtml();
+
+        // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
+        $handlerEscaped = str_replace('"', '\\"', $handler);
+
+        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handlerEscaped}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-dropdown-list-item-label\">{$label}</span></button>";
+    }
+
     protected function toBadgeHtml(): string
     {
         $isDisabled = $this->isDisabled();
@@ -798,7 +1013,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateBadgeHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -833,7 +1048,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateButtonHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -873,7 +1088,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateDropdownItemHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -907,7 +1122,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateIconButtonHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -943,7 +1158,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateLinkHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? e($url) : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),

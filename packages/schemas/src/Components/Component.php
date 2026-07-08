@@ -35,6 +35,7 @@ use Filament\Support\Concerns\CanOrderColumns;
 use Filament\Support\Concerns\CanSpanColumns;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Enums\Width;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
@@ -166,7 +167,7 @@ class Component extends ViewComponent
 
         $key = $this->getKey();
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->when(
                 ! $container->isInline(),
                 fn (ComponentAttributeBag $attributes) => $attributes->gridColumn($this->getColumnSpan(), $this->getColumnStart(), $this->getColumnOrder(), ! $isVisible),

@@ -7,18 +7,22 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasVerticalAlignment;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 
-class Actions extends Component
+class Actions extends Component implements HasEmbeddedView
 {
     use HasAlignment;
     use HasLabel;
     use HasVerticalAlignment;
 
-    protected string $view = 'filament-schemas::components.actions';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.actions';
 
     protected bool | Closure $isSticky = false;
 
@@ -171,5 +175,92 @@ class Actions extends Component
     public function isSticky(): bool
     {
         return (bool) $this->evaluate($this->isSticky);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $actions = $this->getChildSchema()->getComponents();
+        $alignment = $this->getAlignment();
+        $isFullWidth = $this->isFullWidth();
+        $isSticky = $this->isSticky();
+        $verticalAlignment = $this->getVerticalAlignment();
+
+        if (! $verticalAlignment instanceof VerticalAlignment) {
+            $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
+        }
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
+
+        // Filter to visible actions
+        $visibleActions = array_filter(
+            $actions,
+            fn ($action): bool => $action->isVisible(),
+        );
+
+        $outerAttributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'id' => $this->getId(),
+            ], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->class([
+                'fi-sc-actions',
+                ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
+            ]);
+
+        $label = $this->getLabel();
+        $beforeLabelSchema = $this->getChildSchema(static::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $afterLabelSchema = $this->getChildSchema(static::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $belowContentSchema = $this->getChildSchema(static::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+        ob_start(); ?>
+
+        <div
+            <?php if ($isSticky) { ?>
+                x-data="filamentActionsSchemaComponent()"
+                x-intersect:enter.half="disableSticky"
+                x-intersect:leave="enableSticky"
+                x-bind:class="{ 'fi-sticky': isSticky }"
+            <?php } ?>
+            <?= $outerAttributes->toHtml() ?>
+        >
+            <?php if (filled($label)) { ?>
+                <div class="fi-sc-actions-label-ctn">
+                    <?= $beforeLabelSchema?->toHtml() ?>
+
+                    <div class="fi-sc-actions-label">
+                        <?= e($label) ?>
+                    </div>
+
+                    <?= $afterLabelSchema?->toHtml() ?>
+                </div>
+            <?php } ?>
+
+            <?= $aboveContentSchema?->toHtml() ?>
+
+            <?php if (filled($visibleActions)) { ?>
+                <div
+                    <?= (new FilamentComponentAttributeBag)
+                        ->merge([
+                            'x-bind:style' => $isSticky ? 'isSticky ? `width: ${width}px;` : \'\'' : null,
+                        ], escape: false)
+                        ->class([
+                            'fi-ac',
+                            'fi-width-full' => $isFullWidth,
+                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : null)) => ! $isFullWidth,
+                        ])->toHtml() ?>
+                >
+                    <?php foreach ($visibleActions as $action) { ?>
+                        <?= $action->toHtml() ?>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <?= $belowContentSchema?->toHtml() ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

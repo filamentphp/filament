@@ -1,6 +1,6 @@
 @php
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\ChartWidgetComponent;
-    use Illuminate\View\ComponentAttributeBag;
 
     $color = $this->getColor();
     $heading = $this->getHeading();
@@ -10,6 +10,7 @@
     $type = $this->getType();
     $maxHeight = $this->getMaxHeight();
     $hasMaxHeight = filled($maxHeight) && $maxHeight !== '100%';
+    $isEmpty = $this->isEmpty();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -72,6 +73,9 @@
             @if ($pollingInterval = $this->getPollingInterval())
                 wire:poll.{{ $pollingInterval }}="updateChartData"
             @endif
+            @if ($isEmpty)
+                style="display: none"
+            @endif
         >
             <div
                 x-load
@@ -84,11 +88,12 @@
                             type: @js($type),
                         })"
                 {{
-                    (new ComponentAttributeBag)
+                    (new FilamentComponentAttributeBag)
                         ->color(ChartWidgetComponent::class, $color)
                         ->class([
+                            'fi-wi-chart-frame',
                             'fi-wi-chart-canvas-ctn',
-                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => $hasMaxHeight,
+                            'fi-wi-chart-frame-no-aspect-ratio' => $hasMaxHeight,
                         ])
                 }}
             >
@@ -122,5 +127,38 @@
                 ></span>
             </div>
         </div>
+
+        @if ($isEmpty)
+            @if ($emptyState = $this->getEmptyState())
+                {{ $emptyState }}
+            @else
+                <div
+                    @class([
+                        'fi-wi-chart-frame',
+                        'fi-wi-chart-frame-no-aspect-ratio' => $hasMaxHeight,
+                    ])
+                    @style([
+                        ('min-height: ' . e($maxHeight)) => $hasMaxHeight,
+                    ])
+                >
+                    <x-filament::empty-state
+                        :contained="false"
+                        :description="$this->getEmptyStateDescription()"
+                        :heading="$this->getEmptyStateHeading()"
+                        :icon="$this->getEmptyStateIcon()"
+                        icon-color="gray"
+                    >
+                        @if ($emptyStateActions = $this->getEmptyStateActions())
+                            <x-slot name="footer">
+                                <x-filament::actions
+                                    :actions="$emptyStateActions"
+                                    alignment="center"
+                                />
+                            </x-slot>
+                        @endif
+                    </x-filament::empty-state>
+                </div>
+            @endif
+        @endif
     </x-filament::section>
 </x-filament-widgets::widget>

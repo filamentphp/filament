@@ -22,9 +22,9 @@
         type="button"
         class="fi-pagination-item-btn"
     >
-        @if (filled($icon))
+        @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, attributes: (new \Illuminate\View\ComponentAttributeBag)->class([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, attributes: (new \Filament\Support\View\ComponentAttributeBag)->class([
                     'fi-pagination-item-icon',
                 ]))
             }}
