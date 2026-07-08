@@ -181,6 +181,32 @@ describe('rendering', function (): void {
     it('can render with `inline()` set via `Closure`', function (): void {
         livewire(RenderToggleWithClosureInline::class)->assertSuccessful();
     });
+
+    it('does not render the always-on `<div>` fallback when initial state is off', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $toggle = Toggle::make('isActive')->default(false),
+            ])
+            ->fill();
+
+        $html = $toggle->toHtml();
+
+        expect($html)->not->toContain('fi-toggle-on fi-hidden');
+    });
+
+    it('renders the `fi-toggle-on fi-hidden` fallback when initial state is on', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $toggle = Toggle::make('isActive')->default(true),
+            ])
+            ->fill();
+
+        $html = $toggle->toHtml();
+
+        expect($html)->toContain('fi-toggle-on fi-hidden');
+    });
 });
 
 class TestComponentWithAcceptedToggle extends Livewire

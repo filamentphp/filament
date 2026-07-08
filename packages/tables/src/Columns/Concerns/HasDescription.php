@@ -31,4 +31,9 @@ trait HasDescription
     {
         return $this->evaluate($this->descriptionBelow);
     }
+
+    public function hasDescription(): bool
+    {
+        return $this->descriptionAbove !== null || $this->descriptionBelow !== null;
+    }
 }

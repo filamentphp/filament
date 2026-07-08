@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
@@ -44,6 +45,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     protected string | Closure | null $directory = null;
 
     protected string | Closure | null $diskName = null;
+
+    protected ?Filesystem $cachedDisk = null;
 
     protected bool | Closure $isMultiple = false;
 
@@ -173,12 +176,14 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         $shouldFetchFileInformation = $this->shouldFetchFileInformation();
 
+        $size = 0;
+        $type = null;
+
         if ($shouldFetchFileInformation) {
             try {
-                if (! $storage->exists($file)) {
-                    return null;
-                }
-            } catch (UnableToCheckFileExistence $exception) {
+                $size = $storage->size($file);
+                $type = $storage->mimeType($file);
+            } catch (UnableToRetrieveMetadata | UnableToCheckFileExistence $exception) {
                 return null;
             }
         }
@@ -200,8 +205,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         return [
             'name' => ($this->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
-            'size' => $shouldFetchFileInformation ? $storage->size($file) : 0,
-            'type' => $shouldFetchFileInformation ? $storage->mimeType($file) : null,
+            'size' => $size,
+            'type' => $type,
             'url' => Str::sanitizeUrl($url),
         ];
     }
@@ -280,6 +285,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function disk(string | Closure | null $name): static
     {
         $this->diskName = $name;
+
+        $this->cachedDisk = null;
 
         return $this;
     }
@@ -586,7 +593,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function getDisk(): Filesystem
     {
-        return Storage::disk($this->getDiskName());
+        return $this->cachedDisk ??= Storage::disk($this->getDiskName());
     }
 
     public function getDiskName(): string
