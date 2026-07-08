@@ -10,6 +10,7 @@ use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
+use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Navigation\TestCase;
 
@@ -112,6 +113,56 @@ describe('registration and ordering', function (): void {
                     ->toBeInstanceOf(NavigationGroup::class)
                     ->getLabel()->toBe('Blog'),
             );
+    });
+
+    it('orders several navigation groups by their registration order', function (): void {
+        // `Shop` and `Blog` already contain resource items; `Reports` is given
+        // its own item so it survives the empty-group filter.
+        Filament::getCurrentOrDefaultPanel()
+            ->navigationGroups([
+                NavigationGroup::make()->label('Reports'),
+                NavigationGroup::make()->label('Shop'),
+                NavigationGroup::make()->label('Blog'),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Sales')
+                    ->group('Reports')
+                    ->url('#'),
+            ]);
+
+        $groupLabels = collect(Filament::getNavigation())
+            ->map(fn (NavigationGroup $group): ?string => $group->getLabel())
+            ->values()
+            ->all();
+
+        expect($groupLabels)->toBe([null, 'Reports', 'Shop', 'Blog']);
+    });
+
+    it('orders navigation groups registered from a `UnitEnum` by their `cases()` order', function (): void {
+        // Items are registered in reverse `cases()` order to prove the sort
+        // follows enum order, not registration order.
+        Filament::getCurrentOrDefaultPanel()
+            ->navigationGroups(NavigationGroupEnum::class)
+            ->navigationItems([
+                NavigationItem::make('Manage Settings')
+                    ->group(NavigationGroupEnum::Settings)
+                    ->url('#'),
+                NavigationItem::make('Manage Users')
+                    ->group(NavigationGroupEnum::Users)
+                    ->url('#'),
+            ]);
+
+        $groupLabels = collect(Filament::getNavigation())
+            ->map(fn (NavigationGroup $group): ?string => $group->getLabel())
+            ->values()
+            ->all();
+
+        $usersPosition = array_search('User Management', $groupLabels);
+        $settingsPosition = array_search('System Settings', $groupLabels);
+
+        expect($usersPosition)->not->toBeFalse();
+        expect($settingsPosition)->not->toBeFalse();
+        expect($usersPosition)->toBeLessThan($settingsPosition);
     });
 
 });

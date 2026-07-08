@@ -177,7 +177,7 @@ return [
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'تعيين نسبة العرض للإرتفاع إلى :ratio',
+                    'label' => 'تعيين نسبة العرض لارتفاع إلى :ratio',
                 ],
 
                 'save' => [
@@ -465,9 +465,9 @@ return [
 
                             'options' => [
                                 'two' => 'عمودان',
-                                'three' => 'ثلاث أعمدة',
-                                'four' => 'أربع أعمدة',
-                                'five' => 'خمس أعمدة',
+                                'three' => 'ثلاثة أعمدة',
+                                'four' => 'أربعة أعمدة',
+                                'five' => 'خمسة أعمدة',
                                 'two_start_third' => 'عمودان (الثلث في البداية)',
                                 'two_end_third' => 'عمودان (الثلث في النهاية)',
                                 'two_start_fourth' => 'عمودان (الربع في البداية)',
@@ -495,7 +495,7 @@ return [
                         ],
 
                         'is_asymmetric' => [
-                            'label' => 'عمودين غير متماثلين',
+                            'label' => 'عمودان غير متماثلين',
                         ],
 
                         'start_span' => [
@@ -601,7 +601,7 @@ return [
             'no_options_message' => 'لا توجد خيارات متاحة.',
             'no_search_results_message' => 'لا توجد نتائج تتطابق مع بحثك.',
             'search_prompt' => 'ابدأ بالكتابة للبحث...',
-            'searching_message' => 'جاري البحث...',
+            'searching_message' => 'جارٍ البحث...',
         ],
 
         'tools' => [
@@ -656,7 +656,7 @@ return [
             'undo' => 'تراجع',
         ],
 
-        'uploading_file_message' => 'جاري رفع الملف...',
+        'uploading_file_message' => 'جارٍ رفع الملف...',
 
     ],
 
@@ -717,7 +717,7 @@ return [
 
         'loading_message' => 'تحميل...',
 
-        'max_items_message' => 'يمكنك اختيار :count فقط.',
+        'max_items_message' => '{1} يمكنك اختيار عنصر واحد فقط.|{2} يمكنك اختيار عنصرين فقط.|[3,10] يمكنك اختيار :count عناصر فقط.|[11,*] يمكنك اختيار :count عنصراً فقط.',
 
         'no_options_message' => 'لا توجد خيارات متاحة.',
 
@@ -725,7 +725,7 @@ return [
 
         'placeholder' => 'اختر',
 
-        'searching_message' => 'جاري البحث...',
+        'searching_message' => 'جارٍ البحث...',
 
         'search_prompt' => 'ابدأ بالكتابة للبحث...',
 

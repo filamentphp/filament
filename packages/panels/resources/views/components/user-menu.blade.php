@@ -25,6 +25,9 @@
         $itemsBeforeThemeSwitcher = $itemsBeforeThemeSwitcher->prepend($itemsBeforeThemeSwitcher->pull('profile'), 'profile');
     }
 
+    $multiGroupAfterTheme = $this->hasMultipleUserMenuItemGroups();
+    $afterThemeItemGroups = $multiGroupAfterTheme ? $this->getUserMenuItemGroupsAfterTheme() : [];
+
     $position ??= filament()->getUserMenuPosition();
 
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
@@ -67,7 +70,7 @@
                 </span>
 
                 {{
-                    \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
+                    \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new \Filament\Support\View\ComponentAttributeBag([
                         'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
                     ]))
                 }}
@@ -115,7 +118,23 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if ($itemsAfterThemeSwitcher->isNotEmpty())
+    @if ($multiGroupAfterTheme && $afterThemeItemGroups !== [])
+        @foreach ($afterThemeItemGroups as $afterThemeGroup)
+            <x-filament::dropdown.list>
+                @foreach ($afterThemeGroup as $key => $item)
+                    @if ($key === 'profile')
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+
+                        {{ $item }}
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+                    @else
+                        {{ $item }}
+                    @endif
+                @endforeach
+            </x-filament::dropdown.list>
+        @endforeach
+    @elseif ($itemsAfterThemeSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
             @foreach ($itemsAfterThemeSwitcher as $key => $item)
                 @if ($key === 'profile')

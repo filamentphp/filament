@@ -37,6 +37,14 @@ trait HasCellState
 
     protected ?Relation $relationshipCache = null;
 
+    protected ?bool $hasRelationshipCache = null;
+
+    protected ?string $relationshipNameCache = null;
+
+    protected ?string $fullAttributeNameCache = null;
+
+    protected ?string $attributeNameCache = null;
+
     public function inverseRelationship(?string $name): static
     {
         $this->inverseRelationshipName = $name;
@@ -182,17 +190,21 @@ trait HasCellState
 
     public function hasRelationship(Model $record): bool
     {
+        if (isset($this->hasRelationshipCache)) {
+            return $this->hasRelationshipCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
-            return false;
+            return $this->hasRelationshipCache = false;
         }
 
         if ($record->hasAttribute((string) str($name)->before('.'))) {
-            return false;
+            return $this->hasRelationshipCache = false;
         }
 
-        return $record->isRelation((string) str($name)->before('.'));
+        return $this->hasRelationshipCache = $record->isRelation((string) str($name)->before('.'));
     }
 
     /**
@@ -327,10 +339,14 @@ trait HasCellState
 
     public function getAttributeName(Model $record): string
     {
+        if ($this->attributeNameCache !== null) {
+            return $this->attributeNameCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
-            return $name;
+            return $this->attributeNameCache = $name;
         }
 
         $nameParts = explode('.', $name);
@@ -349,15 +365,19 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return Arr::first([...$nameParts, $lastPart]);
+        return $this->attributeNameCache = Arr::first([...$nameParts, $lastPart]);
     }
 
     public function getFullAttributeName(Model $record): string
     {
+        if ($this->fullAttributeNameCache !== null) {
+            return $this->fullAttributeNameCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
-            return $name;
+            return $this->fullAttributeNameCache = $name;
         }
 
         $nameParts = explode('.', $name);
@@ -376,7 +396,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return implode('.', [...$nameParts, $lastPart]);
+        return $this->fullAttributeNameCache = implode('.', [...$nameParts, $lastPart]);
     }
 
     public function getInverseRelationshipName(Model $record): string
@@ -427,11 +447,15 @@ trait HasCellState
             array_unshift($inverseRelationshipParts, $inverseNestedRelationshipName);
         }
 
-        return implode('.', $inverseRelationshipParts);
+        return $this->inverseRelationshipName = implode('.', $inverseRelationshipParts);
     }
 
     public function getRelationshipName(Model $record): ?string
     {
+        if ($this->relationshipNameCache !== null) {
+            return $this->relationshipNameCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
@@ -456,7 +480,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return implode('.', $relationshipParts);
+        return $this->relationshipNameCache = implode('.', $relationshipParts);
     }
 
     protected function cacheState(Closure $state): mixed

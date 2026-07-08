@@ -1,4 +1,13 @@
 <x-filament-panels::page>
+    <button
+        type="button"
+        data-testid="behind-button"
+        style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1"
+        x-data="{ label: 'Behind: not clicked' }"
+        x-text="label"
+        x-on:click="label = 'Behind: clicked'"
+    ></button>
+
     <x-filament::modal
         id="standalone-browser-test-modal"
         :extra-modal-window-attribute-bag="new \Illuminate\View\ComponentAttributeBag(['data-testid' => 'standalone-modal'])"

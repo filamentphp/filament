@@ -46,6 +46,11 @@ class Group extends Component
 
     protected bool $isDate = false;
 
+    /**
+     * @var array<string, string | Htmlable | null>
+     */
+    protected array $cachedTitles = [];
+
     protected string $evaluationIdentifier = 'group';
 
     final public function __construct(?string $id = null)
@@ -263,7 +268,25 @@ class Group extends Component
     /**
      * @param  Model | array<string, mixed>  $record
      */
-    public function getTitle(Model | array $record): string | Htmlable | null
+    public function getTitle(Model | array $record, ?string $key = null): string | Htmlable | null
+    {
+        if ($this->getTitleFromRecordUsing) {
+            return $this->resolveTitle($record);
+        }
+
+        $key ??= $this->getStringKey($record);
+
+        if (! array_key_exists($key, $this->cachedTitles)) {
+            $this->cachedTitles[$key] = $this->resolveTitle($record);
+        }
+
+        return $this->cachedTitles[$key];
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    protected function resolveTitle(Model | array $record): string | Htmlable | null
     {
         $column = $this->getColumn();
 
