@@ -83,6 +83,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalHidden = null;
 
+    protected bool | Closure | null $isModalClickThrough = null;
+
     protected bool | Closure | null $hasModalCloseButton = null;
 
     protected bool | Closure | null $isModalClosedByClickingAway = null;
@@ -97,6 +99,13 @@ trait CanOpenModal
      * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $modalIconColor = null;
+
+    public function modalClickThrough(bool | Closure | null $condition = true): static
+    {
+        $this->isModalClickThrough = $condition;
+
+        return $this;
+    }
 
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
@@ -694,6 +703,11 @@ trait CanOpenModal
             $this->hasModalContent() ||
             $this->hasModalContentFooter() ||
             (value($checkForSchemaUsing, $this) ?? false);
+    }
+
+    public function isModalClickThrough(): bool
+    {
+        return (bool) $this->evaluate($this->isModalClickThrough);
     }
 
     public function hasModalCloseButton(): bool

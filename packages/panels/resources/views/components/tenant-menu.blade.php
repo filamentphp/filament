@@ -11,10 +11,8 @@
 
     $items = $this->getTenantMenuItems();
 
-    $canSwitchTenants = filament()->hasTenantSwitcher() && filled($tenants = array_filter(
-        filament()->getUserTenants(filament()->auth()->user()),
-        fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
-    ));
+    $tenants = $this->getSwitchableTenants();
+    $canSwitchTenants = filled($tenants);
 
     $isSearchable = $canSwitchTenants && (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10));
 
@@ -23,6 +21,9 @@
         ->all();
     $itemsBeforeTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[true] ?? collect();
     $itemsAfterTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[false] ?? collect();
+
+    $multiGroupAfterSwitcher = $this->hasMultipleTenantMenuItemGroups();
+    $afterSwitcherItemGroups = $multiGroupAfterSwitcher ? $this->getTenantMenuItemGroupsAfterSwitcher() : [];
 
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
@@ -140,7 +141,15 @@
         </div>
     @endif
 
-    @if ($itemsAfterTenantSwitcher->isNotEmpty())
+    @if ($multiGroupAfterSwitcher && $afterSwitcherItemGroups !== [])
+        @foreach ($afterSwitcherItemGroups as $afterSwitcherGroup)
+            <x-filament::dropdown.list>
+                @foreach ($afterSwitcherGroup as $item)
+                    {{ $item }}
+                @endforeach
+            </x-filament::dropdown.list>
+        @endforeach
+    @elseif ($itemsAfterTenantSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
             @foreach ($itemsAfterTenantSwitcher as $item)
                 {{ $item }}

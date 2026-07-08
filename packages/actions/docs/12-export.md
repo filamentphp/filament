@@ -733,7 +733,29 @@ public function getXlsxWriterOptions(): ?Options
 }
 ```
 
-If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClosing()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
+If you want to customize the XLSX writer immediately after it is opened, before any rows have been written, you can override the `configureXlsxWriterAfterOpen()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before the header and data rows are written. This is useful for adding custom rows, such as a title or sub-header, above the exported table:
+
+```php
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\XLSX\Writer;
+
+public function configureXlsxWriterAfterOpen(Writer $writer): Writer
+{
+    $writer->addRow(Row::fromValues(
+        ['This is a custom header added after opening the XLSX writer.'],
+        (new Style())->setShouldWrapText(false),
+    ));
+
+    return $writer;
+}
+```
+
+<Aside variant="warning">
+    Any rows you add here appear above the header row, shifting the exported table down. If you also use `configureXlsxWriterBeforeClose()` to freeze rows, remember to account for the extra rows in `setFreezeRow()`.
+</Aside>
+
+If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClose()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
 
 ```php
 use OpenSpout\Writer\XLSX\Entity\SheetView;
