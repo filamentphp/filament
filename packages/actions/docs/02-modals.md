@@ -829,6 +829,49 @@ In this example, when the user clicks the delete button on a repeater item, the 
 
 <AutoScreenshot name="actions/modal/overlaying-child" alt="Child confirmation modal overlaying a parent slide-over" version="4.x" />
 
+## Canceling parent actions when a modal is closed
+
+The `cancelParentActions()` method above only cancels parent actions when the child action is run. If the user closes the child's modal instead — by pressing Escape, clicking the backdrop, or using the close button — by default only that modal is closed, leaving any parent actions still mounted. To also cancel parent actions when the modal is closed, allowing the user to abandon a multi-step flow entirely rather than closing one modal at a time, use the `cancelParentActionsOnClose()` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('createPost')
+    ->schema([
+        // ...
+    ])
+    ->extraModalFooterActions([
+        Action::make('saveAsDraft')
+            ->schema([
+                // ...
+            ])
+            ->cancelParentActionsOnClose()
+            ->action(function (): void {
+                // ...
+            }),
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+```
+
+Now, closing the `saveAsDraft` modal will also cancel the `createPost` action and close its modal.
+
+Like `cancelParentActions()`, you can pass the name of a parent action to cancel back to a specific parent, including its children, rather than all of them:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('editPostMetadata')
+    ->schema([
+        // ...
+    ])
+    ->cancelParentActionsOnClose('createPost')
+    ->action(function (): void {
+        // ...
+    })
+```
+
 ## Optimizing modal configuration methods
 
 When you use database queries or other heavy operations inside modal configuration methods like `modalHeading()`, they can be executed more than once. This is because Filament uses these methods to decide whether to render the modal or not, and also to render the modal's content.

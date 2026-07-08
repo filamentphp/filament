@@ -115,7 +115,7 @@
     }"
     x-cloak
     x-show="isOpen"
-    x-trap.noscroll{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+    x-trap{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
     {{
         $attributes->class([
             'fi-modal',

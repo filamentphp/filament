@@ -4,6 +4,7 @@ namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
@@ -69,6 +70,46 @@ class ModalBrowserTest extends Page
                         ->cancelParentActions()
                         ->action(static fn () => null)
                         ->extraModalWindowAttributes(['data-testid' => 'overlay-cancel-modal']),
+                ]),
+            Action::make('scrollPreservation')
+                ->label('Scroll preservation')
+                ->modalSubmitAction(false)
+                ->stickyModalFooter()
+                ->schema(array_map(
+                    fn (int $index): TextInput => TextInput::make("scrollField{$index}"),
+                    range(1, 25),
+                ))
+                ->extraModalWindowAttributes(['data-testid' => 'scroll-modal'])
+                ->extraModalFooterActions([
+                    Action::make('scrollPreservationNested')
+                        ->label('Open nested modal')
+                        ->requiresConfirmation()
+                        ->action(static fn () => null)
+                        ->extraModalWindowAttributes(['data-testid' => 'scroll-nested-modal']),
+                ]),
+            Action::make('cancelParentActionsOnClose')
+                ->label('Cancel parents on close')
+                ->modalSubmitAction(false)
+                ->modalDescription('Grandparent (level 1).')
+                ->extraAttributes(['data-testid' => 'cancel-on-close-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'cancel-on-close-modal'])
+                ->extraModalFooterActions([
+                    Action::make('cancelParentActionsOnCloseParent')
+                        ->label('Open level 2')
+                        ->modalSubmitAction(false)
+                        ->modalDescription('Parent (level 2).')
+                        ->extraAttributes(['data-testid' => 'cancel-on-close-parent-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'cancel-on-close-parent-modal'])
+                        ->extraModalFooterActions([
+                            Action::make('cancelParentActionsOnCloseNested')
+                                ->label('Open level 3')
+                                ->requiresConfirmation()
+                                ->modalCloseButton()
+                                ->cancelParentActionsOnClose()
+                                ->action(static fn () => null)
+                                ->extraAttributes(['data-testid' => 'cancel-on-close-nested-trigger'])
+                                ->extraModalWindowAttributes(['data-testid' => 'cancel-on-close-nested-modal']),
+                        ]),
                 ]),
         ];
     }

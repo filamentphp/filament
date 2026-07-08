@@ -90,6 +90,6 @@ trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
      */
     public function unmountInfolistAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($shouldCancelParentActions);
+        $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);
     }
 }
