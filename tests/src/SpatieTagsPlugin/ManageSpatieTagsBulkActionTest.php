@@ -123,6 +123,25 @@ describe('integration', function (): void {
         expect($freshRecord->getRelationValue('tags'))->toBeEmpty();
     });
 
+    it('does not allow the same tag to be attached and detached when the two spellings resolve to the same tag', function (array $tagsToAttach, array $tagsToDetach): void {
+        $record = Article::factory()->create();
+
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => $tagsToAttach,
+                'tagsToDetach' => $tagsToDetach,
+            ])
+            ->assertHasFormErrors(['tagsToDetach']);
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+
+        expect($freshRecord->getRelationValue('tags'))->toBeEmpty();
+    })->with([
+        'differing only by case' => [['PHP'], ['php']],
+        'name versus slug format' => [['Front End'], ['front-end']],
+    ]);
+
     it('respects the `type()` when attaching and detaching', function (): void {
         $record = Article::factory()->create();
         $record->attachTag('Old', 'framework');

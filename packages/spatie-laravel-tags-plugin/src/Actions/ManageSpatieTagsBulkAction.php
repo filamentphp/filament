@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Throwable;
 
 class ManageSpatieTagsBulkAction extends BulkAction
@@ -92,7 +93,19 @@ class ManageSpatieTagsBulkAction extends BulkAction
                 ->requiredWithout('tagsToAttach')
                 ->rules([
                     static fn (Get $get): Closure => static function (string $attribute, mixed $value, Closure $fail) use ($get): void {
-                        $conflictingTags = array_intersect($get('tagsToAttach') ?? [], $value ?? []);
+                        // Tags resolve by name *or* slug (see `InteractsWithSpatieTags` and
+                        // Spatie's `findFromStringOfAnyType()`), so `PHP`/`php` or `Front End`/`front-end`
+                        // point at the same tag. Comparing slugs catches conflicts that a raw string
+                        // comparison would miss and silently detach a tag the user asked to attach.
+                        $tagsToAttachSlugs = array_map(
+                            static fn (string $tag): string => Str::slug($tag),
+                            $get('tagsToAttach') ?? [],
+                        );
+
+                        $conflictingTags = array_filter(
+                            $value ?? [],
+                            static fn (string $tag): bool => in_array(Str::slug($tag), $tagsToAttachSlugs, strict: true),
+                        );
 
                         if (empty($conflictingTags)) {
                             return;
