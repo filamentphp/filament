@@ -157,25 +157,6 @@ public function table(Table $table): Table
 
 Each action opens a modal with a tags input, which suggests existing tags from the database. Attaching tags preserves any tags that the records already have, and creates any tags that do not exist yet. Detaching tags removes the chosen tags from the selected records, without deleting the tags themselves from the database.
 
-### Managing tags with a single bulk action
-
-Instead of separate attach and detach actions, you may use `ManageSpatieTagsBulkAction`, which opens a single modal with two tags inputs, allowing your users to attach some tags and detach others in a single pass over the selected records:
-
-```php
-use Filament\Actions\ManageSpatieTagsBulkAction;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->toolbarActions([
-            ManageSpatieTagsBulkAction::make(),
-        ]);
-}
-```
-
-At least one of the two fields must be filled in, and the same tag may not be attached and detached at the same time. Attaching and detaching behave identically to the standalone actions.
-
 Optionally, you may pass a [`type()`](https://spatie.be/docs/laravel-tags/advanced-usage/using-types), which scopes the tags that the action can attach or detach:
 
 ```php
@@ -197,3 +178,22 @@ AttachSpatieTagsBulkAction::make()
 ```
 
 The bulk actions support all the customization options of [regular bulk actions](https://filamentphp.com/docs/actions/overview), such as `label()` and `successNotificationTitle()`.
+
+### Managing tags with a single bulk action
+
+Instead of separate attach and detach actions, you may use `ManageSpatieTagsBulkAction`, which opens a single modal with two tags inputs, allowing your users to attach some tags and detach others in a single pass over the selected records:
+
+```php
+use Filament\Actions\ManageSpatieTagsBulkAction;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            ManageSpatieTagsBulkAction::make(),
+        ]);
+}
+```
+
+At least one of the two fields must be filled in, and the same tag may not be attached and detached at the same time. Attaching and detaching behave identically to the standalone actions. The `type()`, `authorizeIndividualRecords()`, and other customization options described above apply to this action too.
