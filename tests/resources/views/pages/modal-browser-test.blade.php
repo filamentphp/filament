@@ -2,7 +2,7 @@
     <button
         type="button"
         data-testid="behind-button"
-        style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1;"
+        style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1"
         x-data="{ label: 'Behind: not clicked' }"
         x-text="label"
         x-on:click="label = 'Behind: clicked'"
