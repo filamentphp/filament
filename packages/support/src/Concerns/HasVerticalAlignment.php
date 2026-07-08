@@ -41,4 +41,9 @@ trait HasVerticalAlignment
 
         return VerticalAlignment::tryFrom($alignment) ?? $alignment;
     }
+
+    public function hasDynamicVerticalAlignment(): bool
+    {
+        return $this->verticalAlignment instanceof Closure;
+    }
 }

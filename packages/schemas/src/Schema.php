@@ -145,6 +145,11 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
+        return Component::withVisibilityCache(fn (): string => $this->renderEmbeddedHtml());
+    }
+
+    protected function renderEmbeddedHtml(): string
+    {
         if ($this->isDirectlyHidden()) {
             return '';
         }

@@ -171,6 +171,29 @@ it('can set `livewireProperty()` with a `Closure`', function (): void {
     expect($tabs->getLivewireProperty())->toBe('dynamicProp');
 });
 
+it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is set', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public ?string $activeTab = 'all';
+    };
+
+    Schema::make($livewire)
+        ->components([
+            $tabs = Tabs::make()
+                ->livewireProperty('activeTab')
+                ->tabs([
+                    'all' => Tab::make('All'),
+                    'active' => Tab::make('Active'),
+                ]),
+        ])
+        ->fill();
+
+    $html = $tabs->toHtml();
+
+    expect($html)->toContain("\$set('activeTab', 'all')");
+    expect($html)->toContain("\$set('activeTab', 'active')");
+});
+
 it('returns fluent `$this` from `tabs()`', function (): void {
     $tabs = Tabs::make('Test');
 

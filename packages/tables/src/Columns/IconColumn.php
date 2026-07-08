@@ -10,6 +10,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -326,7 +326,7 @@ class IconColumn extends Column implements HasEmbeddedView
             $color = $this->getColor($stateItem);
             $size = $this->getSize($stateItem);
 
-            $item = generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+            $item = generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{

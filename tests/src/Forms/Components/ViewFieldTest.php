@@ -24,9 +24,9 @@ it('can set and get state', function (): void {
 
 it('can set a custom `view()`', function (): void {
     $field = ViewField::make('custom')
-        ->view('filament-forms::components.hidden');
+        ->view('simple-component');
 
-    expect($field->getView())->toBe('filament-forms::components.hidden');
+    expect($field->getView())->toBe('simple-component');
 });
 
 class TestComponentWithViewField extends Livewire
@@ -36,7 +36,7 @@ class TestComponentWithViewField extends Livewire
         return $form
             ->schema([
                 ViewField::make('custom')
-                    ->view('filament-forms::components.hidden'),
+                    ->view('simple-component'),
             ])
             ->statePath('data');
     }
