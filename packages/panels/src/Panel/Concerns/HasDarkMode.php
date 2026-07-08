@@ -8,11 +8,11 @@ trait HasDarkMode
 {
     protected bool | Closure $hasDarkMode = true;
 
-    protected bool $hasDarkModeForced = false;
+    protected bool | Closure $hasDarkModeForced = false;
 
     protected bool | Closure $hasDarkModeToggle = true;
 
-    public function darkMode(bool | Closure $condition = true, bool $isForced = false): static
+    public function darkMode(bool | Closure $condition = true, bool | Closure $isForced = false): static
     {
         $this->hasDarkMode = $condition;
         $this->hasDarkModeForced = $isForced;
@@ -34,7 +34,7 @@ trait HasDarkMode
 
     public function hasDarkModeForced(): bool
     {
-        return $this->hasDarkModeForced;
+        return (bool) $this->evaluate($this->hasDarkModeForced);
     }
 
     public function hasDarkModeToggle(): bool
