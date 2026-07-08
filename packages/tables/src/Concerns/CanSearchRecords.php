@@ -75,7 +75,7 @@ trait CanSearchRecords
     protected function applyColumnSearchesToTableQuery(Builder $query): Builder
     {
         $table = $this->getTable();
-        $shouldSplitSearchTerms = $table->shouldSplitSearchTerms();
+        $shouldSplitSearchTermsByDefault = $table->shouldSplitSearchTerms();
 
         foreach ($this->getTableColumnSearches() as $column => $search) {
             if (blank($search)) {
@@ -96,7 +96,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            if (! $shouldSplitSearchTerms) {
+            if (! ($column->shouldSplitIndividualSearchTerms() ?? $shouldSplitSearchTermsByDefault)) {
                 $isFirst = true;
 
                 $column->applySearchConstraint(
