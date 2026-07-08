@@ -56,6 +56,8 @@ class CreatePostWithFields extends Component implements HasActions, HasSchemas
                     ->columnSpanFull(),
                 Select::make('string_backed_enum')
                     ->options(StringBackedEnum::class),
+                TextInput::make('sort')
+                    ->numeric(),
                 DateTimePicker::make('published_at'),
             ])
             ->statePath('data')

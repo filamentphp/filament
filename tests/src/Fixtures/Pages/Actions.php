@@ -116,6 +116,33 @@ class Actions extends Page
                         ])
                         ->action(fn () => null),
                 ]),
+            Action::make('grandparentWithModalCloseCancellation')
+                ->schema([
+                    TextInput::make('grandparentValue')
+                        ->required()
+                        ->registerActions([
+                            Action::make('parentWithModalCloseCancellation')
+                                ->schema([
+                                    TextInput::make('parentValue')
+                                        ->required()
+                                        ->registerActions([
+                                            Action::make('modalClosePreservesParentActions')
+                                                ->requiresConfirmation()
+                                                ->action(fn () => null),
+                                            Action::make('modalCloseCancelsAllParentActions')
+                                                ->requiresConfirmation()
+                                                ->cancelParentActionsOnClose()
+                                                ->action(fn () => null),
+                                            Action::make('modalCloseCancelsToNamedParentAction')
+                                                ->requiresConfirmation()
+                                                ->cancelParentActionsOnClose('parentWithModalCloseCancellation')
+                                                ->action(fn () => null),
+                                        ]),
+                                ])
+                                ->action(fn () => null),
+                        ]),
+                ])
+                ->action(fn () => null),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action): void {

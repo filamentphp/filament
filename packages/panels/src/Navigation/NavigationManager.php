@@ -127,19 +127,7 @@ class NavigationManager
                 return $group->items($items);
             })
             ->filter(fn (NavigationGroup $group): bool => filled($group->getItems()))
-            ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
-                if (blank($group->getLabel())) {
-                    return -1;
-                }
-
-                $groupName = unserialize($groupIndex);
-                $groupEnum = null;
-
-                if ($groupName instanceof UnitEnum) {
-                    $groupEnum = $groupName;
-                    $groupName = $groupEnum->name;
-                }
-
+            ->pipe(function (Collection $groupsCollection): Collection {
                 $registeredGroups = $this->getNavigationGroups();
 
                 $groupsToSearch = $registeredGroups;
@@ -151,21 +139,35 @@ class NavigationManager
                     ];
                 }
 
-                $sort = array_search(
-                    $groupName,
-                    $groupsToSearch,
-                );
+                return $groupsCollection->sortBy(function (NavigationGroup $group, ?string $groupIndex) use ($registeredGroups, $groupsToSearch): int {
+                    if (blank($group->getLabel())) {
+                        return -1;
+                    }
 
-                if ($groupEnum) {
-                    $enumCaseSort = array_search($groupEnum, $groupEnum::cases());
-                    $sort = ($enumCaseSort !== false) ? $enumCaseSort : $sort;
-                }
+                    $groupName = unserialize($groupIndex);
+                    $groupEnum = null;
 
-                if ($sort === false) {
-                    return count($registeredGroups);
-                }
+                    if ($groupName instanceof UnitEnum) {
+                        $groupEnum = $groupName;
+                        $groupName = $groupEnum->name;
+                    }
 
-                return $sort;
+                    $sort = array_search(
+                        $groupName,
+                        $groupsToSearch,
+                    );
+
+                    if ($groupEnum) {
+                        $enumCaseSort = array_search($groupEnum, $groupEnum::cases());
+                        $sort = ($enumCaseSort !== false) ? $enumCaseSort : $sort;
+                    }
+
+                    if ($sort === false) {
+                        return count($registeredGroups);
+                    }
+
+                    return $sort;
+                });
             })
             ->all();
     }

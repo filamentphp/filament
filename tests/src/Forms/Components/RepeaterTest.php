@@ -255,6 +255,93 @@ it('can remove items from a repeater', function (): void {
     $undoRepeaterFake();
 });
 
+describe('`getItems()` memoization', function (): void {
+    it('builds one schema per item keyed by the item key', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+                ['name' => 'Third'],
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        $items = $repeater->getItems();
+
+        expect($items)->toHaveCount(3)
+            ->and(array_keys($items))->toBe(array_keys($repeater->getRawState()))
+            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        expect($repeater->getItems())->toBe($repeater->getItems());
+    });
+
+    it('rebuilds `getItems()` to reflect the new item count after the cache is cleared', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        $firstItems = $repeater->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        $repeater->state([
+            ['name' => 'First'],
+            ['name' => 'Second'],
+            ['name' => 'Third'],
+        ]);
+
+        // `clearCachedChildSchemas()` is what the state-update lifecycle invokes via
+        // `callAfterStateUpdatedHooks()`; the memoized items must be dropped alongside it.
+        $repeater->clearCachedChildSchemas();
+
+        expect($repeater->getItems())
+            ->toHaveCount(3)
+            ->not->toBe($firstItems);
+    });
+
+    it('reflects the new item count after a state-updating action', function (): void {
+        livewire(TestComponentWithRepeaterSetByAction::class)
+            ->callAction(TestAction::make('insert')->schemaComponent('questionsSection'))
+            ->assertSchemaStateSet(function (array $state): array {
+                expect($state['questions'])->toHaveCount(3);
+
+                return [];
+            });
+    });
+});
+
 describe('relationships', function (): void {
     it('loads a relationship', function (): void {
         $user = User::factory()

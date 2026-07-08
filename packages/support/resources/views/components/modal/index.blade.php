@@ -2,14 +2,15 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
     'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
+    'clickThrough' => false,
     'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
@@ -63,6 +64,14 @@
 
     $wireSubmitHandler = $attributes->get('wire:submit.prevent');
     $attributes = $attributes->except(['wire:submit.prevent']);
+
+    $isClickThrough = (bool) $clickThrough;
+
+    // Click-through and closing by clicking away are incompatible, so enabling
+    // click-through silently disables closing the modal by clicking away.
+    if ($isClickThrough) {
+        $closeByClickingAway = false;
+    }
 @endphp
 
 @if ($trigger)
@@ -94,11 +103,12 @@
     @elseif ($heading)
         aria-labelledby="{{ "{$id}.heading" }}"
     @endif
-    aria-modal="true"
+    aria-modal="{{ $isClickThrough ? 'false' : 'true' }}"
     id="{{ $id }}"
     role="dialog"
     x-data="filamentModal({
                 id: @js($id),
+                isScrollLocked: @js(! $isClickThrough),
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
@@ -115,7 +125,9 @@
     }"
     x-cloak
     x-show="isOpen"
-    x-trap.noscroll{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+    @if (! $isClickThrough)
+        x-trap{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+    @endif
     {{
         $attributes->class([
             'fi-modal',
@@ -126,19 +138,22 @@
             'fi-modal-has-sticky-header' => $stickyHeader,
             'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
+            'fi-modal-click-through' => $isClickThrough,
         ])
     }}
 >
-    <div
-        aria-hidden="true"
-        x-show="isOpen"
-        x-transition.duration.300ms.opacity
-        {{
-            ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
-                'fi-modal-close-overlay',
-            ])
-        }}
-    ></div>
+    @if (! $isClickThrough)
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            {{
+                ($extraModalOverlayAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
+                    'fi-modal-close-overlay',
+                ])
+            }}
+        ></div>
+    @endif
 
     <div
         @if ($closeByClickingAway)
@@ -169,7 +184,7 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
+                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
                     'fi-modal-window',
                     'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
@@ -210,7 +225,7 @@
                         @if ($hasIcon)
                             <div class="fi-modal-icon-ctn">
                                 <div
-                                    {{ (new ComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
+                                    {{ (new FilamentComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
                                 >
                                     {{ $iconHtml }}
                                 </div>

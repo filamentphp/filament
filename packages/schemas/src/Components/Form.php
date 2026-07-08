@@ -9,16 +9,15 @@ use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 
-class Form extends Component implements CanEntangleWithSingularRelationships, ExposesStateToActionData
+class Form extends Component implements CanEntangleWithSingularRelationships, ExposesStateToActionData, HasEmbeddedView
 {
     use EntanglesStateWithSingularRelationship;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.form';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.form';
 
     protected string | Closure | null $livewireSubmitHandler = null;
 
@@ -86,6 +85,32 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Ex
         $this->childComponents($components, static::FOOTER_SCHEMA_KEY);
 
         return $this;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $attributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'id' => $this->getId(),
+                'wire:submit' => $this->getLivewireSubmitHandler(),
+            ], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->class([
+                'fi-sc-form',
+                'fi-dense' => $this->isDense(),
+            ]);
+
+        ob_start(); ?>
+
+        <form <?= $attributes->toHtml() ?>>
+            <?= $this->getChildSchema(static::HEADER_SCHEMA_KEY)?->toHtml() ?>
+
+            <?= $this->getChildSchema()?->toHtml() ?>
+
+            <?= $this->getChildSchema(static::FOOTER_SCHEMA_KEY)?->toHtml() ?>
+        </form>
+
+        <?php return ob_get_clean();
     }
 
     protected function configureChildSchema(Schema $schema, string $key): Schema

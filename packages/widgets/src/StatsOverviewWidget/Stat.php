@@ -177,6 +177,6 @@ class Stat extends Component
 
     public function generateChartDataChecksum(): string
     {
-        return md5(json_encode($this->getChart()) . now());
+        return md5(json_encode($this->getChart()));
     }
 }

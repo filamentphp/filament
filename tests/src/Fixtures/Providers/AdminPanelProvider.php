@@ -18,6 +18,9 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\Clustered
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
 use Filament\Tests\Fixtures\Pages\AuthorizableSettings;
+use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsBrowserTest;
+use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherTabsModalBrowserTest;
+use Filament\Tests\Fixtures\Pages\AutofocusAfterCreateAnotherWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
@@ -104,6 +107,9 @@ class AdminPanelProvider extends PanelProvider
                 Actions::class,
                 AfterStateUpdatedJsTest::class,
                 AuthorizableSettings::class,
+                AutofocusAfterCreateAnotherTabsBrowserTest::class,
+                AutofocusAfterCreateAnotherTabsModalBrowserTest::class,
+                AutofocusAfterCreateAnotherWizardBrowserTest::class,
                 AutofocusBasicBrowserTest::class,
                 AutofocusBrowserTest::class,
                 AutofocusSecondTabBrowserTest::class,

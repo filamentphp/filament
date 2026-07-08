@@ -136,6 +136,10 @@
         }
     }
 
+    &.fi-modal-click-through {
+        @apply pointer-events-none;
+    }
+
     &:not(.fi-modal-slide-over):not(.fi-width-screen) {
         & > .fi-modal-window-ctn {
             @apply p-4;

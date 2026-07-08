@@ -85,13 +85,13 @@
         ],
         "pint": "pint --config pint-strict-imports.json --cache-file=.pint.cache",
         "rector": "rector",
-        "test:pest": "pest --parallel --exclude-group=commands",
-        "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=commands",
-        "test:mysql": "pest --configuration=phpunit.mysql.xml --parallel --exclude-group=commands",
-        "test:pgsql": "pest --configuration=phpunit.pgsql.xml --parallel --exclude-group=commands",
-        "test:commands:sqlite": "pest --configuration=phpunit.sqlite.xml --group=commands",
-        "test:commands:mysql": "pest --configuration=phpunit.mysql.xml --group=commands",
-        "test:commands:pgsql": "pest --configuration=phpunit.pgsql.xml --group=commands",
+        "test:pest": "pest --parallel --exclude-group=serial",
+        "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=serial",
+        "test:mysql": "pest --configuration=phpunit.mysql.xml --parallel --exclude-group=serial",
+        "test:pgsql": "pest --configuration=phpunit.pgsql.xml --parallel --exclude-group=serial",
+        "test:serial:sqlite": "pest --configuration=phpunit.sqlite.xml --group=serial",
+        "test:serial:mysql": "pest --configuration=phpunit.mysql.xml --group=serial",
+        "test:serial:pgsql": "pest --configuration=phpunit.pgsql.xml --group=serial",
         "test:all-databases": [
             "@test:sqlite",
             "@test:mysql",
@@ -100,7 +100,7 @@
         "test:phpstan": "phpstan analyse",
         "test": [
             "@test:sqlite",
-            "@test:commands:sqlite",
+            "@test:serial:sqlite",
             "@test:phpstan"
         ]
     },

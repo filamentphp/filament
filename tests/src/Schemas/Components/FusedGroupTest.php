@@ -1,10 +1,14 @@
 <?php
 
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Illuminate\Support\MessageBag;
+use Illuminate\Support\ViewErrorBag;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -90,6 +94,36 @@ describe('rendering', function (): void {
 
     it('can render with `hiddenLabel()`', function (): void {
         livewire(RenderFusedGroupWithHiddenLabel::class)->assertSuccessful();
+    });
+
+    it('renders a single error as `<p>` even when child uses `showAllValidationMessages()`', function (): void {
+        $errors = new ViewErrorBag;
+        $errors->put('default', new MessageBag([
+            'data.email' => ['The email field is required.'],
+        ]));
+
+        view()->share('errors', $errors);
+
+        try {
+            $livewire = Livewire::make();
+
+            Schema::make($livewire)
+                ->statePath('data')
+                ->components([
+                    $group = FusedGroup::make()
+                        ->components([
+                            TextInput::make('email')->showAllValidationMessages(),
+                        ]),
+                ])
+                ->fill();
+
+            $html = $group->toHtml();
+
+            expect($html)->toContain('fi-fo-field-wrp-error-message');
+            expect($html)->not->toContain('fi-fo-field-wrp-error-list');
+        } finally {
+            view()->share('errors', new ViewErrorBag);
+        }
     });
 });
 

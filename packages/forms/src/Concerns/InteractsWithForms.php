@@ -259,6 +259,6 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
      */
     public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($shouldCancelParentActions);
+        $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);
     }
 }

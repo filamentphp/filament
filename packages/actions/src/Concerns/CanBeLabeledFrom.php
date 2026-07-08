@@ -19,4 +19,9 @@ trait CanBeLabeledFrom
     {
         return $this->evaluate($this->labeledFrom);
     }
+
+    public function hasLabeledFromBreakpoint(): bool
+    {
+        return $this->labeledFrom !== null;
+    }
 }
