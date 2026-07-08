@@ -87,6 +87,14 @@ class ModalBrowserTest extends Page
                         ->action(static fn () => null)
                         ->extraModalWindowAttributes(['data-testid' => 'scroll-nested-modal']),
                 ]),
+            Action::make('clickThrough')
+                ->label('Click through')
+                ->modalClickThrough()
+                ->modalSubmitAction(false)
+                ->modalHeading('Click-through modal')
+                ->modalContent(new HtmlString('<p>You can still scroll the page behind this modal.</p>'))
+                ->extraAttributes(['data-testid' => 'click-through-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'click-through-modal']),
             Action::make('cancelParentActionsOnClose')
                 ->label('Cancel parents on close')
                 ->modalSubmitAction(false)

@@ -772,6 +772,31 @@ ModalComponent::closeButton(false);
 
 <AutoScreenshot name="actions/modal/no-close-button" alt="Modal without a close button" version="4.x" />
 
+## Making the modal click-through
+
+By default, a modal blocks interaction with the rest of the page while it is open. If you want the user to be able to keep interacting with the page behind the modal, you can make it "click-through" using the `modalClickThrough()` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('updateAuthor')
+    ->schema([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->modalClickThrough()
+```
+
+When a modal is click-through, its backdrop is removed, clicks outside the modal window pass through to the page beneath, and the page remains scrollable. The modal can still be closed using its close button or by pressing the escape key.
+
+<Aside variant="info">
+    A click-through modal cannot be closed by clicking away, as that would be incompatible with interacting with the page behind it. Enabling `modalClickThrough()` therefore disables closing by clicking away automatically.
+</Aside>
+
+<UtilityInjection set="actions" version="4.x">The `modalClickThrough()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Preventing the modal from autofocusing
 
 By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior, you can use the `modalAutofocus(false)` method:
