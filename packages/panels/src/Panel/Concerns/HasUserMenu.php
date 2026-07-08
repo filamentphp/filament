@@ -10,7 +10,6 @@ use Filament\Navigation\MenuItem;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
-use Illuminate\Support\Collection;
 
 trait HasUserMenu
 {
@@ -19,9 +18,9 @@ trait HasUserMenu
     protected bool | Closure $hasUserMenu = true;
 
     /**
-     * @var array<Action | Closure | MenuItem>
+     * @var array<int, array<int | string, Action | Closure | MenuItem>>
      */
-    protected array $userMenuItems = [];
+    protected array $userMenuItemGroups = [];
 
     public function userMenu(bool | Closure $condition = true, UserMenuPosition | Closure | null $position = null): static
     {
@@ -32,16 +31,122 @@ trait HasUserMenu
     }
 
     /**
-     * @param  array<Action | Closure | MenuItem>  $items
+     * @param  array<int | string, Action | Closure | MenuItem> | array<int, array<int | string, Action | Closure | MenuItem>>  $items
      */
     public function userMenuItems(array $items): static
     {
-        $this->userMenuItems = [
-            ...$this->userMenuItems,
+        if ($items === []) {
+            return $this;
+        }
+
+        $registrationGroups = $this->splitUserMenuRegistrationGroups($items);
+
+        if ($registrationGroups !== null) {
+            foreach ($registrationGroups as $group) {
+                $this->userMenuItemGroups[] = $group;
+            }
+
+            return $this;
+        }
+
+        if ($this->userMenuItemGroups === []) {
+            $this->userMenuItemGroups[] = $items;
+
+            return $this;
+        }
+
+        $lastIndex = array_key_last($this->userMenuItemGroups);
+
+        $this->userMenuItemGroups[$lastIndex] = [
+            ...$this->userMenuItemGroups[$lastIndex],
             ...$items,
         ];
 
         return $this;
+    }
+
+    /**
+     * @param  array<mixed>  $items
+     * @return list<array<int | string, Action | Closure | MenuItem>> | null
+     */
+    protected function splitUserMenuRegistrationGroups(array $items): ?array
+    {
+        if (! array_is_list($items) || $items === []) {
+            return null;
+        }
+
+        $groups = [];
+
+        foreach ($items as $entry) {
+            if (! is_array($entry)) {
+                return null;
+            }
+
+            $groups[] = $entry;
+        }
+
+        return $groups;
+    }
+
+    public function hasMultipleUserMenuItemGroups(): bool
+    {
+        return count($this->userMenuItemGroups) > 1;
+    }
+
+    /**
+     * @return array<int, array<string, Action>>
+     */
+    public function getUserMenuItemGroups(): array
+    {
+        $groups = array_values(array_map(
+            fn (array $group): array => collect($group)
+                ->mapWithKeys(function (Action | Closure | MenuItem $item, int | string $key): array {
+                    if ($item instanceof Action) {
+                        return [$item->getName() => $item];
+                    }
+
+                    if (in_array($key, ['profile', 'account'])) {
+                        return ['profile' => $this->getUserProfileMenuItem($item)];
+                    }
+
+                    if ($key === 'logout') {
+                        return ['logout' => $this->getUserLogoutMenuItem($item)];
+                    }
+
+                    $action = $this->evaluate($item);
+
+                    if ($action instanceof MenuItem) {
+                        $action = $action->toAction();
+                    }
+
+                    return [$action->getName() => $action];
+                })
+                ->all(),
+            $this->userMenuItemGroups,
+        ));
+
+        $isRegistered = fn (string $name): bool => collect($groups)
+            ->contains(fn (array $group): bool => array_key_exists($name, $group));
+
+        if (! $isRegistered('profile')) {
+            if ($groups === []) {
+                $groups[] = [];
+            }
+
+            $firstGroupKey = array_key_first($groups);
+            $groups[$firstGroupKey] = ['profile' => $this->getUserProfileMenuItem()] + $groups[$firstGroupKey];
+        }
+
+        if (! $isRegistered('logout')) {
+            if ($groups === []) {
+                $groups[] = [];
+            }
+
+            $lastGroupKey = array_key_last($groups);
+            $groups[$lastGroupKey] += ['logout' => $this->getUserLogoutMenuItem()];
+        }
+
+        return $groups;
     }
 
     public function hasUserMenu(): bool
@@ -96,36 +201,8 @@ trait HasUserMenu
      */
     public function getUserMenuItems(): array
     {
-        return collect($this->userMenuItems)
-            ->mapWithKeys(function (Action | Closure | MenuItem $item, int | string $key): array {
-                if ($item instanceof Action) {
-                    return [$item->getName() => $item];
-                }
-
-                if (in_array($key, ['profile', 'account'])) {
-                    return ['profile' => $this->getUserProfileMenuItem($item)];
-                }
-
-                if ($key === 'logout') {
-                    return ['logout' => $this->getUserLogoutMenuItem($item)];
-                }
-
-                $action = $this->evaluate($item);
-
-                if ($action instanceof MenuItem) {
-                    $action = $action->toAction();
-                }
-
-                return [$action->getName() => $action];
-            })
-            ->when(
-                fn (Collection $items): bool => ! $items->has('profile'),
-                fn (Collection $items): Collection => $items->put('profile', $this->getUserProfileMenuItem()),
-            )
-            ->when(
-                fn (Collection $items): bool => ! $items->has('logout'),
-                fn (Collection $items): Collection => $items->put('logout', $this->getUserLogoutMenuItem()),
-            )
+        return collect($this->getUserMenuItemGroups())
+            ->collapse()
             ->filter(fn (Action $item): bool => $item->isVisible())
             ->sortBy(fn (Action $item): int => $item->getSort())
             ->all();
