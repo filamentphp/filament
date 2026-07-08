@@ -795,7 +795,7 @@ When a modal is click-through, its backdrop is removed, clicks outside the modal
     A click-through modal cannot be closed by clicking away, as that would be incompatible with interacting with the page behind it. Enabling `modalClickThrough()` therefore disables closing by clicking away automatically.
 </Aside>
 
-<UtilityInjection set="actions" version="4.x">The `modalClickThrough()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">The `modalClickThrough()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Preventing the modal from autofocusing
 

@@ -266,6 +266,6 @@ Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
 
    **Important:** The script expects `http://127.0.0.1:8000`. Don't use a custom port.
 
-5. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="4.x" />`
+5. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="5.x" />`
 
 Screenshots are generated in `images/light/` and `images/dark/`. Use natural, realistic content - not test-like examples.
