@@ -127,6 +127,20 @@ describe('create another', function (): void {
         assertDatabaseHas(Department::class, ['name' => $firstName]);
     });
 
+    it('dispatches `reset-schema-component-state` after `create another` so `autofocus()` fields refocus', function (): void {
+        $ticket = Ticket::factory()->create();
+
+        $component = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+            ->mountAction(TestAction::make(CreateAction::class)->table(), ['another' => true])
+            ->fillForm([
+                'name' => Str::random(),
+            ])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
+
+        $component->assertDispatched('reset-schema-component-state', livewireId: $component->instance()->getId());
+    });
+
     it('can create another record and preserve data using `CreateAction`', function (): void {
         $ticket = Ticket::factory()->create();
 

@@ -184,8 +184,9 @@ class Schema extends ViewComponent implements HasEmbeddedView
             )
             ->merge([
                 'wire:partial' => $this->shouldPartiallyRender() ? ('schema.' . $this->getKey()) : null,
-                'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ' })' : null,
+                'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($this->getKey()) . ' })' : null,
                 'x-on:form-validation-error.window' => $isRoot ? 'handleFormValidationError' : null,
+                'x-on:reset-schema-component-state.window' => $isRoot ? 'handleClientSideStateReset' : null,
             ], escape: false)
             ->class([
                 'fi-sc',
