@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -795,3 +796,87 @@ class RenderRepeatableEntryWithClosureTable extends Component implements HasSche
         return '<div>{{ $this->infolist }}</div>';
     }
 }
+
+describe('`getItems()` memoization', function (): void {
+    it('builds one schema per item keyed by the item key', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                    ['name' => 'Third'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        $items = $entry->getItems();
+
+        expect($items)->toHaveCount(3)
+            ->and(array_keys($items))->toBe(array_keys($entry->getState()))
+            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        expect($entry->getItems())->toBe($entry->getItems());
+    });
+
+    it('rebuilds `getItems()` to reflect the new item count after the cache is cleared', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        $firstItems = $entry->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        $schema->state([
+            'items' => [
+                ['name' => 'First'],
+                ['name' => 'Second'],
+                ['name' => 'Third'],
+            ],
+        ]);
+
+        // Mirrors the state-update lifecycle's `clearCachedChildSchemas()` call.
+        $entry->clearCachedChildSchemas();
+
+        expect($entry->getItems())
+            ->toHaveCount(3)
+            ->not->toBe($firstItems);
+    });
+});

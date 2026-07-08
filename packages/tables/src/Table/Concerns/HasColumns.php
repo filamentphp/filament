@@ -15,6 +15,11 @@ trait HasColumns
     protected array $columns = [];
 
     /**
+     * @var array<string, Column> | null
+     */
+    protected ?array $cachedVisibleColumns = null;
+
+    /**
      * @var array<string, ColumnGroup>
      */
     protected array $columnGroups = [];
@@ -120,10 +125,15 @@ trait HasColumns
      */
     public function getVisibleColumns(): array
     {
-        return array_filter(
+        return $this->cachedVisibleColumns ??= array_filter(
             $this->getColumns(),
             fn (Column $column): bool => $column->isVisible() && (! $column->isToggledHidden()),
         );
+    }
+
+    public function flushCachedVisibleColumns(): void
+    {
+        $this->cachedVisibleColumns = null;
     }
 
     public function getColumn(string $name): ?Column

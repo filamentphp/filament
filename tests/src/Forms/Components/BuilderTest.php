@@ -1562,6 +1562,77 @@ describe('`blockPickerColumns()` default behavior', function (): void {
     });
 });
 
+describe('`getItems()` memoization', function (): void {
+    $makeBuilder = function (array $default): Builder {
+        $builder = Builder::make('content')
+            ->blocks([
+                Builder\Block::make('one')
+                    ->schema([
+                        TextInput::make('foo'),
+                    ]),
+                Builder\Block::make('two')
+                    ->schema([
+                        TextInput::make('bar'),
+                    ]),
+            ])
+            ->default($default);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$builder])
+            ->fill();
+
+        return $builder;
+    };
+
+    it('builds one schema per block of differing types', function () use ($makeBuilder): void {
+        $builder = $makeBuilder([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+            ['type' => 'one', 'data' => ['foo' => 'C']],
+        ]);
+
+        $items = $builder->getItems();
+
+        expect($items)->toHaveCount(3)
+            ->and(array_keys($items))->toBe(array_keys($builder->getRawState()))
+            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('memoizes `getItems()` so repeated calls return the same instances', function () use ($makeBuilder): void {
+        $builder = $makeBuilder([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+        ]);
+
+        expect($builder->getItems())->toBe($builder->getItems());
+    });
+
+    it('rebuilds `getItems()` to reflect the new block count after the cache is cleared', function () use ($makeBuilder): void {
+        $builder = $makeBuilder([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+        ]);
+
+        $firstItems = $builder->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        $builder->state([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+            ['type' => 'one', 'data' => ['foo' => 'C']],
+        ]);
+
+        // Mirrors the state-update lifecycle's `clearCachedChildSchemas()` call.
+        $builder->clearCachedChildSchemas();
+
+        expect($builder->getItems())
+            ->toHaveCount(3)
+            ->not->toBe($firstItems);
+    });
+});
+
 class RenderBuilderWithNotAddable extends Livewire
 {
     public function form(Schema $form): Schema

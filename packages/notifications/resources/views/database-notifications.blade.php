@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
-    use Illuminate\View\ComponentAttributeBag;
 
     $notifications = $this->getNotifications();
     $unreadNotificationsCount = $this->getUnreadNotificationsCount();
@@ -30,7 +30,7 @@
         width="md"
         class="fi-no-database"
         :attributes="
-            new \Illuminate\View\ComponentAttributeBag([
+            new \Filament\Support\View\ComponentAttributeBag([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? '' : false,
             ])
         "
@@ -50,7 +50,7 @@
                         @if ($unreadNotificationsCount)
                             <span
                                 {{
-                                    (new ComponentAttributeBag)->color(BadgeComponent::class, 'primary')->class([
+                                    (new FilamentComponentAttributeBag)->color(BadgeComponent::class, 'primary')->class([
                                         'fi-badge fi-size-xs',
                                     ])
                                 }}
