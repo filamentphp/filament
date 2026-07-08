@@ -123,16 +123,23 @@ describe('integration', function (): void {
         expect($freshTaggedRecord->getRelationValue('tags'))->toBeEmpty();
     });
 
-    it('does nothing when none of the tags exist in the database', function (): void {
+    it('reports success and changes nothing when none of the entered tags exist in the database', function (): void {
         $record = Article::factory()->create();
         $record->attachTags(['Laravel']);
 
+        // Detaching is declarative: the goal is to ensure the named tags are absent. When none of
+        // the entered names resolve to existing tags via `resolveTagsForDetaching()`, that goal is
+        // already satisfied, so the action reports success rather than a processing failure. This
+        // mirrors detaching an existing tag from a record that does not have it (see the
+        // `succeeds when a selected record does not have one of the tags` test); success must not
+        // depend on whether the typed name happens to match a tag elsewhere in the database.
         livewire(SpatieTagsBulkActionsTable::class)
             ->selectTableRecords([$record->getKey()])
             ->callAction(TestAction::make(DetachSpatieTagsBulkAction::class)->table()->bulk(), data: [
                 'tags' => ['Nonexistent'],
             ])
-            ->assertHasNoFormErrors();
+            ->assertHasNoFormErrors()
+            ->assertNotified(__('filament-spatie-laravel-tags-plugin::detach-tags.notifications.detached.title'));
 
         $freshRecord = Article::with('tags')->find($record->getKey());
 

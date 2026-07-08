@@ -92,6 +92,29 @@ describe('integration', function (): void {
         expect($freshRecord->getRelationValue('tags')->pluck('name')->all())->toBe(['Kept']);
     });
 
+    it('reports success and changes nothing when the only tags to detach do not exist', function (): void {
+        $record = Article::factory()->create();
+        $record->attachTags(['Kept']);
+
+        // Same declarative semantics as the detach action: with nothing to attach and none of the
+        // `tagsToDetach` resolving to existing tags via `resolveTagsForDetaching()`, the desired
+        // state is already satisfied, so the action reports success rather than a processing
+        // failure. Reporting failure here would make the outcome depend on whether the typed name
+        // happens to match a tag elsewhere in the database, unrelated to the selected records.
+        livewire(SpatieTagsBulkActionsTable::class)
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => [],
+                'tagsToDetach' => ['Nonexistent'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(__('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated.title'));
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+
+        expect($freshRecord->getRelationValue('tags')->pluck('name')->all())->toBe(['Kept']);
+    });
+
     it('requires at least one of the two fields to be filled', function (): void {
         $records = Article::factory()->count(2)->create();
 
