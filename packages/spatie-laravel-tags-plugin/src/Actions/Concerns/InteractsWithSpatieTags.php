@@ -79,7 +79,7 @@ trait InteractsWithSpatieTags
         }
 
         return collect($tagNames)
-            ->map(static function (string $tagName) use ($tagClassName) { /** @phpstan-ignore argument.templateType */
+            ->map(static function (string $tagName) use ($tagClassName) {
                 $locale = $tagClassName::getLocale();
 
                 $tags = $tagClassName::findFromStringOfAnyType($tagName, $locale);
@@ -113,12 +113,12 @@ trait InteractsWithSpatieTags
             $type = $this->getType();
 
             return collect($tagNames)
-                ->map(static fn (string $tagName) => $tagClassName::findFromString($tagName, $type)) /** @phpstan-ignore argument.templateType */
+                ->map(static fn (string $tagName) => $tagClassName::findFromString($tagName, $type))
                 ->filter();
         }
 
         return collect($tagNames)
-            ->map(static fn (string $tagName) => $tagClassName::findFromStringOfAnyType($tagName)) /** @phpstan-ignore argument.templateType */
+            ->map(static fn (string $tagName) => $tagClassName::findFromStringOfAnyType($tagName))
             ->flatten()
             ->filter();
     }
