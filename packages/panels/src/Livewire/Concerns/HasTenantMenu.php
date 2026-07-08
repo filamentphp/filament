@@ -19,6 +19,11 @@ trait HasTenantMenu
      */
     protected array $tenantMenuItemGroupsAfterSwitcher = [];
 
+    /**
+     * @var ?array<Model>
+     */
+    protected ?array $switchableTenants = null;
+
     public function bootHasTenantMenu(): void
     {
         if (Filament::auth()->guest()) {
@@ -99,13 +104,29 @@ trait HasTenantMenu
         return $this->tenantMenuItems = $items;
     }
 
-    protected function canSwitchTenants(): bool
+    /**
+     * @return array<Model>
+     */
+    protected function getSwitchableTenants(): array
     {
+        if (isset($this->switchableTenants)) {
+            return $this->switchableTenants;
+        }
+
+        if (! Filament::hasTenantSwitcher()) {
+            return $this->switchableTenants = [];
+        }
+
         $currentTenant = Filament::getTenant();
 
-        return Filament::hasTenantSwitcher() && filled(array_filter(
+        return $this->switchableTenants = array_filter(
             Filament::getUserTenants(Filament::auth()->user()),
             fn (Model $tenant): bool => ! $tenant->is($currentTenant),
-        ));
+        );
+    }
+
+    protected function canSwitchTenants(): bool
+    {
+        return filled($this->getSwitchableTenants());
     }
 }

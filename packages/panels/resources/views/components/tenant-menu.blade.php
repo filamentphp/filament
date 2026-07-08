@@ -11,10 +11,8 @@
 
     $items = $this->getTenantMenuItems();
 
-    $canSwitchTenants = filament()->hasTenantSwitcher() && filled($tenants = array_filter(
-        filament()->getUserTenants(filament()->auth()->user()),
-        fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
-    ));
+    $tenants = $this->getSwitchableTenants();
+    $canSwitchTenants = filled($tenants);
 
     $isSearchable = $canSwitchTenants && (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10));
 
