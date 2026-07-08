@@ -24,6 +24,9 @@
     $itemsBeforeTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[true] ?? collect();
     $itemsAfterTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[false] ?? collect();
 
+    $multiGroupAfterSwitcher = $this->hasMultipleTenantMenuItemGroups();
+    $afterSwitcherItemGroups = $multiGroupAfterSwitcher ? $this->getTenantMenuItemGroupsAfterSwitcher() : [];
+
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
@@ -140,7 +143,15 @@
         </div>
     @endif
 
-    @if ($itemsAfterTenantSwitcher->isNotEmpty())
+    @if ($multiGroupAfterSwitcher && $afterSwitcherItemGroups !== [])
+        @foreach ($afterSwitcherItemGroups as $afterSwitcherGroup)
+            <x-filament::dropdown.list>
+                @foreach ($afterSwitcherGroup as $item)
+                    {{ $item }}
+                @endforeach
+            </x-filament::dropdown.list>
+        @endforeach
+    @elseif ($itemsAfterTenantSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
             @foreach ($itemsAfterTenantSwitcher as $item)
                 {{ $item }}
