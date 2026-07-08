@@ -2,12 +2,16 @@
 
 use Filament\Actions\ManageSpatieTagsBulkAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
+use Filament\Tests\Fixtures\Livewire\SpatieTagsBulkActionsNonTaggableTable;
 use Filament\Tests\Fixtures\Livewire\SpatieTagsBulkActionsTable;
 use Filament\Tests\Fixtures\Models\Article;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\ThrowingTag;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
 use Spatie\Tags\Tag;
 
 use function Filament\Tests\livewire;
@@ -305,4 +309,130 @@ describe('integration', function (): void {
         }
     });
 
+});
+
+describe('failure and authorization paths', function (): void {
+    it('attaches and detaches tags via a database cursor when `fetchSelectedRecords(false)` is set', function (): void {
+        $records = Article::factory()->count(3)->create();
+
+        foreach ($records as $record) {
+            $record->attachTags(['Old', 'Kept']);
+        }
+
+        // `fetchSelectedRecords(false)` makes the action iterate `getSelectedRecordsQuery()->cursor()`
+        // instead of an eagerly-fetched collection. The outcome must be identical to the eager path.
+        livewire(SpatieTagsBulkActionsTable::class, ['shouldFetchSelectedRecords' => false])
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => ['New'],
+                'tagsToDetach' => ['Old'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(__('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated.title'));
+
+        foreach ($records as $record) {
+            expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags')->pluck('name')->sort()->values()->all())
+                ->toBe(['Kept', 'New']);
+        }
+    });
+
+    it('skips records that fail `authorizeIndividualRecords()` and reports a partial failure', function (): void {
+        $authorizedRecords = Article::factory()->count(2)->create(['is_published' => true]);
+        $unauthorizedRecord = Article::factory()->create(['is_published' => false]);
+
+        foreach ([...$authorizedRecords, $unauthorizedRecord] as $record) {
+            $record->attachTags(['Old']);
+        }
+
+        livewire(SpatieTagsBulkActionsTable::class, ['authorizeUsingPublished' => true])
+            ->selectTableRecords([...$authorizedRecords->modelKeys(), $unauthorizedRecord->getKey()])
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => ['New'],
+                'tagsToDetach' => ['Old'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(
+                Notification::make()
+                    ->warning()
+                    ->title(trans_choice('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated_partial.title', 2, [
+                        'count' => Number::format(2),
+                        'total' => Number::format(3),
+                    ]))
+                    ->body('<p>' . trans_choice('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated_partial.missing_authorization_failure_message', 1, [
+                        'count' => Number::format(1),
+                    ]) . '</p>')
+                    ->persistent(),
+            );
+
+        foreach ($authorizedRecords as $record) {
+            // `Old` was detached and `New` attached on the authorized records.
+            expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags')->pluck('name')->all())
+                ->toBe(['New']);
+        }
+
+        // The unauthorized record was skipped entirely: it keeps `Old` and never received `New`.
+        expect(Article::with('tags')->find($unauthorizedRecord->getKey())->getRelationValue('tags')->pluck('name')->all())
+            ->toBe(['Old']);
+    });
+
+    it('reports a complete failure when `authorizeIndividualRecords()` denies every record', function (): void {
+        $records = Article::factory()->count(2)->create(['is_published' => false]);
+
+        foreach ($records as $record) {
+            $record->attachTags(['Old']);
+        }
+
+        livewire(SpatieTagsBulkActionsTable::class, ['authorizeUsingPublished' => true])
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => ['New'],
+                'tagsToDetach' => ['Old'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(
+                Notification::make()
+                    ->danger()
+                    ->title(trans_choice('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated_none.title', 2, [
+                        'count' => Number::format(2),
+                        'total' => Number::format(2),
+                    ]))
+                    ->body('<p>' . trans_choice('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated_none.missing_authorization_failure_message', 2, [
+                        'count' => Number::format(2),
+                    ]) . '</p>')
+                    ->persistent(),
+            );
+
+        foreach ($records as $record) {
+            expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags')->pluck('name')->all())
+                ->toBe(['Old']);
+        }
+    });
+
+    it('reports a processing failure instead of throwing when a selected record is not taggable', function (): void {
+        $records = Post::factory()->count(2)->create();
+
+        // `Post` has no `tags()` relationship method, so every record hits the `method_exists()` guard
+        // and is reported via `reportBulkProcessingFailure()`, exercising the processing-failure
+        // notification message and its lang keys rather than throwing a `BadMethodCallException`.
+        // Attaching find-or-creates the tag, so the per-record loop is reached without pre-seeding.
+        livewire(SpatieTagsBulkActionsNonTaggableTable::class)
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => ['New'],
+                'tagsToDetach' => [],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(
+                Notification::make()
+                    ->danger()
+                    ->title(trans_choice('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated_none.title', 2, [
+                        'count' => Number::format(2),
+                        'total' => Number::format(2),
+                    ]))
+                    ->body('<p>' . trans_choice('filament-spatie-laravel-tags-plugin::manage-tags.notifications.updated_none.missing_processing_failure_message', 2, [
+                        'count' => Number::format(2),
+                    ]) . '</p>')
+                    ->persistent(),
+            );
+    });
 });

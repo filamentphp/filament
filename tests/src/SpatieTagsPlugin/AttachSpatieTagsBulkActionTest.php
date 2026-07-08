@@ -2,11 +2,15 @@
 
 use Filament\Actions\AttachSpatieTagsBulkAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Notifications\Notification;
 use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
+use Filament\Tests\Fixtures\Livewire\SpatieTagsBulkActionsNonTaggableTable;
 use Filament\Tests\Fixtures\Livewire\SpatieTagsBulkActionsTable;
 use Filament\Tests\Fixtures\Models\Article;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\ThrowingTag;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Number;
 use Spatie\Tags\Tag;
 
 use function Filament\Tests\livewire;
@@ -283,5 +287,110 @@ describe('integration', function (): void {
         foreach ($records as $record) {
             expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags'))->toBeEmpty();
         }
+    });
+});
+
+describe('failure and authorization paths', function (): void {
+    it('attaches tags via a database cursor when `fetchSelectedRecords(false)` is set', function (): void {
+        $records = Article::factory()->count(3)->create();
+
+        // `fetchSelectedRecords(false)` makes the action iterate `getSelectedRecordsQuery()->cursor()`
+        // instead of an eagerly-fetched collection. The outcome must be identical to the eager path.
+        livewire(SpatieTagsBulkActionsTable::class, ['shouldFetchSelectedRecords' => false])
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(AttachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Laravel'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(__('filament-spatie-laravel-tags-plugin::attach-tags.notifications.attached.title'));
+
+        foreach ($records as $record) {
+            expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags')->pluck('name')->all())
+                ->toBe(['Laravel']);
+        }
+    });
+
+    it('skips records that fail `authorizeIndividualRecords()` and reports a partial failure', function (): void {
+        $authorizedRecords = Article::factory()->count(2)->create(['is_published' => true]);
+        $unauthorizedRecord = Article::factory()->create(['is_published' => false]);
+
+        livewire(SpatieTagsBulkActionsTable::class, ['authorizeUsingPublished' => true])
+            ->selectTableRecords([...$authorizedRecords->modelKeys(), $unauthorizedRecord->getKey()])
+            ->callAction(TestAction::make(AttachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Laravel'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(
+                Notification::make()
+                    ->warning()
+                    ->title(trans_choice('filament-spatie-laravel-tags-plugin::attach-tags.notifications.attached_partial.title', 2, [
+                        'count' => Number::format(2),
+                        'total' => Number::format(3),
+                    ]))
+                    ->body('<p>' . trans_choice('filament-spatie-laravel-tags-plugin::attach-tags.notifications.attached_partial.missing_authorization_failure_message', 1, [
+                        'count' => Number::format(1),
+                    ]) . '</p>')
+                    ->persistent(),
+            );
+
+        foreach ($authorizedRecords as $record) {
+            expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags')->pluck('name')->all())
+                ->toBe(['Laravel']);
+        }
+
+        expect(Article::with('tags')->find($unauthorizedRecord->getKey())->getRelationValue('tags'))->toBeEmpty();
+    });
+
+    it('reports a complete failure when `authorizeIndividualRecords()` denies every record', function (): void {
+        $records = Article::factory()->count(2)->create(['is_published' => false]);
+
+        livewire(SpatieTagsBulkActionsTable::class, ['authorizeUsingPublished' => true])
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(AttachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Laravel'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(
+                Notification::make()
+                    ->danger()
+                    ->title(trans_choice('filament-spatie-laravel-tags-plugin::attach-tags.notifications.attached_none.title', 2, [
+                        'count' => Number::format(2),
+                        'total' => Number::format(2),
+                    ]))
+                    ->body('<p>' . trans_choice('filament-spatie-laravel-tags-plugin::attach-tags.notifications.attached_none.missing_authorization_failure_message', 2, [
+                        'count' => Number::format(2),
+                    ]) . '</p>')
+                    ->persistent(),
+            );
+
+        foreach ($records as $record) {
+            expect(Article::with('tags')->find($record->getKey())->getRelationValue('tags'))->toBeEmpty();
+        }
+    });
+
+    it('reports a processing failure instead of throwing when a selected record is not taggable', function (): void {
+        $records = Post::factory()->count(2)->create();
+
+        // `Post` has no `tags()` relationship method, so every record hits the `method_exists()` guard
+        // and is reported via `reportBulkProcessingFailure()`, exercising the processing-failure
+        // notification message and its lang keys rather than throwing a `BadMethodCallException`.
+        livewire(SpatieTagsBulkActionsNonTaggableTable::class)
+            ->selectTableRecords($records)
+            ->callAction(TestAction::make(AttachSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tags' => ['Laravel'],
+            ])
+            ->assertHasNoFormErrors()
+            ->assertNotified(
+                Notification::make()
+                    ->danger()
+                    ->title(trans_choice('filament-spatie-laravel-tags-plugin::attach-tags.notifications.attached_none.title', 2, [
+                        'count' => Number::format(2),
+                        'total' => Number::format(2),
+                    ]))
+                    ->body('<p>' . trans_choice('filament-spatie-laravel-tags-plugin::attach-tags.notifications.attached_none.missing_processing_failure_message', 2, [
+                        'count' => Number::format(2),
+                    ]) . '</p>')
+                    ->persistent(),
+            );
     });
 });

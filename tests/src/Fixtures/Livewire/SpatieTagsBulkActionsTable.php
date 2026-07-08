@@ -28,6 +28,10 @@ class SpatieTagsBulkActionsTable extends Component implements HasActions, HasSch
 
     public bool $useNullType = false;
 
+    public bool $shouldFetchSelectedRecords = true;
+
+    public bool $authorizeUsingPublished = false;
+
     protected function getTableQuery(): Builder
     {
         return Article::query();
@@ -39,25 +43,32 @@ class SpatieTagsBulkActionsTable extends Component implements HasActions, HasSch
         $detachTagsAction = DetachSpatieTagsBulkAction::make();
         $manageTagsAction = ManageSpatieTagsBulkAction::make();
 
-        if ($this->useNullType) {
-            $attachTagsAction->type(null);
-            $detachTagsAction->type(null);
-            $manageTagsAction->type(null);
-        } elseif ($this->tagType !== null) {
-            $attachTagsAction->type($this->tagType);
-            $detachTagsAction->type($this->tagType);
-            $manageTagsAction->type($this->tagType);
+        $actions = [$attachTagsAction, $detachTagsAction, $manageTagsAction];
+
+        foreach ($actions as $action) {
+            if ($this->useNullType) {
+                $action->type(null);
+            } elseif ($this->tagType !== null) {
+                $action->type($this->tagType);
+            }
+
+            if (! $this->shouldFetchSelectedRecords) {
+                // Exercises the `getSelectedRecordsQuery()->cursor()` branch instead of the eager fetch.
+                $action->fetchSelectedRecords(false);
+            }
+
+            if ($this->authorizeUsingPublished) {
+                // Skips unpublished records so the individual-authorization path documented in the
+                // README is exercised: authorized records are processed and denied ones are reported.
+                $action->authorizeIndividualRecords(fn (Article $record): bool => (bool) $record->is_published);
+            }
         }
 
         return $table
             ->columns([
                 TextColumn::make('title'),
             ])
-            ->toolbarActions([
-                $attachTagsAction,
-                $detachTagsAction,
-                $manageTagsAction,
-            ]);
+            ->toolbarActions($actions);
     }
 
     public function render(): View
