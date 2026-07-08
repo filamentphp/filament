@@ -187,7 +187,7 @@ AttachSpatieTagsBulkAction::make()
 
 When no `type()` is passed, the actions match tags across every type, in the same way as the `SpatieTagsInput` field. The [security caveats around tag types and privilege namespaces](#security-tag-types-and-privilege-namespaces) apply equally to these bulk actions, so pass `->type(...)` (or `->type(null)` for untyped tags only) when tag types are used as a privilege namespace in your application.
 
-You may authorize each selected record individually using [`authorizeIndividualRecords()`](https://filamentphp.com/docs/actions/create#authorization), passing the name of a policy method. Records that fail the authorization check are skipped, and the user is notified:
+You may authorize each selected record individually using [`authorizeIndividualRecords()`](https://filamentphp.com/docs/actions/overview#authorization), passing the name of a policy method. Records that fail the authorization check are skipped, and the user is notified:
 
 ```php
 use Filament\Actions\AttachSpatieTagsBulkAction;
