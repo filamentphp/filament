@@ -187,4 +187,33 @@ describe('integration', function (): void {
         expect($untypedTagNames)->toBe(['Old']);
     });
 
+    it('treats an empty string `type()` as untyped when attaching and detaching, matching the suggestions', function (): void {
+        $record = Article::factory()->create();
+
+        // An untyped tag already attached to the record, plus a pre-existing untyped tag that is
+        // not yet attached. `getTagSuggestions()` surfaces untyped tags for an empty string type
+        // (via `filled()`), so attaching and detaching must operate on those same untyped tags
+        // rather than a distinct empty-string type.
+        $record->attachTag('Old');
+        Tag::findOrCreate('New');
+
+        livewire(SpatieTagsBulkActionsTable::class, ['tagType' => ''])
+            ->selectTableRecords([$record->getKey()])
+            ->callAction(TestAction::make(ManageSpatieTagsBulkAction::class)->table()->bulk(), data: [
+                'tagsToAttach' => ['New'],
+                'tagsToDetach' => ['Old'],
+            ])
+            ->assertHasNoFormErrors();
+
+        $freshRecord = Article::with('tags')->find($record->getKey());
+        $remainingTags = $freshRecord->getRelationValue('tags');
+
+        // The untyped `Old` was detached and the untyped `New` was attached.
+        expect($remainingTags->pluck('name')->all())->toBe(['New']);
+        expect($remainingTags->pluck('type')->all())->toBe([null]);
+
+        // The pre-existing untyped `New` tag was reused rather than duplicated as an empty-string type.
+        expect(Tag::all()->filter(fn (Tag $tag): bool => $tag->name === 'New'))->toHaveCount(1);
+    });
+
 });

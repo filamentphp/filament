@@ -75,7 +75,12 @@ trait InteractsWithSpatieTags
         $tagClassName = $this->getTagClassName();
 
         if (! $this->isAnyTagTypeAllowed()) {
-            return collect($tagClassName::findOrCreate($tagNames, $this->getType()));
+            $type = $this->getType();
+
+            // An empty string type means "untyped", mirroring `getTagSuggestions()`, which uses
+            // `filled()` to surface untyped tags. Normalize it to `null` so Spatie finds or creates
+            // untyped tags rather than a distinct empty-string type.
+            return collect($tagClassName::findOrCreate($tagNames, filled($type) ? $type : null));
         }
 
         return collect($tagNames)
@@ -111,6 +116,11 @@ trait InteractsWithSpatieTags
 
         if (! $this->isAnyTagTypeAllowed()) {
             $type = $this->getType();
+
+            // An empty string type means "untyped", mirroring `getTagSuggestions()`, which uses
+            // `filled()` to surface untyped tags. Normalize it to `null` so an untyped tag can be
+            // matched for detaching instead of silently no-opping against a distinct empty-string type.
+            $type = filled($type) ? $type : null;
 
             return collect($tagNames)
                 ->map(static fn (string $tagName) => $tagClassName::findFromString($tagName, $type))
