@@ -48,6 +48,7 @@ trait CanGenerateIconButtonHtml
         string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
     ): string {
+        $badgeColor ??= 'primary';
         $color ??= 'primary';
 
         if (! $size instanceof Size) {
