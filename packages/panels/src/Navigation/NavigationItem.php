@@ -171,9 +171,9 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function getKey(): ?string
+    public function getKey(): string
     {
-        return $this->evaluate($this->key);
+        return $this->evaluate($this->key) ?? $this->getLabel();
     }
 
     public function getBadge(): ?string
