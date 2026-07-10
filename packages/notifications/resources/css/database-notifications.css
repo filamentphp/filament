@@ -27,6 +27,10 @@
         &.fi-modal-window-has-footer .fi-modal-content {
             @apply border-b border-gray-200 dark:border-white/10;
         }
+
+        & .fi-modal-footer {
+            @apply pt-6;
+        }
     }
 
     & .fi-no-notification-unread-ctn {
