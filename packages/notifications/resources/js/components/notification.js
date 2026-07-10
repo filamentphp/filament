@@ -76,10 +76,15 @@ export default (Alpine) => {
         },
 
         configureAnimations() {
-            let animation
-
             this.unsubscribeLivewireHook = Livewire.interceptMessage(
-                ({ onFinish, onSuccess }) => {
+                ({ message, onSuccess }) => {
+                    if (
+                        !message.component.snapshot.data
+                            .isFilamentNotificationsComponent
+                    ) {
+                        return
+                    }
+
                     // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
                     // occasionally cause the page to scroll to the top.
                     requestAnimationFrame(() => {
@@ -87,16 +92,32 @@ export default (Alpine) => {
                             this.$el.getBoundingClientRect().top
                         const oldTop = getTop()
 
-                        onFinish(() => {
-                            animation = () => {
+                        onSuccess(({ onRender }) => {
+                            // `onRender` runs once the DOM has been morphed, inside a
+                            // `requestAnimationFrame()` before the browser paints, so the
+                            // new position can be measured and the animation started
+                            // without the notification flashing in its final position.
+                            onRender(() => {
                                 if (!this.isShown) {
+                                    return
+                                }
+
+                                // Finish any running animations so they do not distort
+                                // the measurement of the new position.
+                                this.$el
+                                    .getAnimations()
+                                    .forEach((animation) => animation.finish())
+
+                                const newTop = getTop()
+
+                                if (oldTop === newTop) {
                                     return
                                 }
 
                                 this.$el.animate(
                                     [
                                         {
-                                            transform: `translateY(${oldTop - getTop()}px)`,
+                                            transform: `translateY(${oldTop - newTop}px)`,
                                         },
                                         { transform: 'translateY(0px)' },
                                     ],
@@ -105,24 +126,7 @@ export default (Alpine) => {
                                         easing: this.transitionEasing,
                                     },
                                 )
-                            }
-
-                            this.$el
-                                .getAnimations()
-                                .forEach((animation) => animation.finish())
-                        })
-
-                        onSuccess(({ payload }) => {
-                            if (
-                                !payload?.snapshot?.data
-                                    ?.isFilamentNotificationsComponent
-                            ) {
-                                return
-                            }
-
-                            if (typeof animation === 'function') {
-                                animation()
-                            }
+                            })
                         })
                     })
                 },
