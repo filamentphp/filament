@@ -124,21 +124,18 @@ All items in the same navigation group will be displayed together under the same
 
 ### Grouping navigation items under other items
 
-You may group navigation items as children of other items by setting the `$navigationParentItem` property.
-
-You may reference the parent item either by its label or by its page/resource class:
+You may group navigation items as children of other items by setting the `$navigationParentItem` property. You may reference the parent item either by its page or resource class, or by its label:
 
 ```php
-use App\Filament\Resources\NotificationsResource;
+use App\Filament\Resources\Notifications\NotificationResource;
 use UnitEnum;
 
-// By class name
-protected static ?string $navigationParentItem = NotificationsResource::class;
+protected static ?string $navigationParentItem = NotificationResource::class;
 
 protected static string | UnitEnum | null $navigationGroup = 'Settings';
 ```
 
-You may still reference the parent by its label:
+Alternatively, you may reference the parent by its label:
 
 ```php
 use UnitEnum;
@@ -151,15 +148,15 @@ protected static string | UnitEnum | null $navigationGroup = 'Settings';
 You may also use the `getNavigationParentItem()` method to determine the parent dynamically:
 
 ```php
-use App\Filament\Resources\NotificationsResource;
+use App\Filament\Resources\Notifications\NotificationResource;
 
 public static function getNavigationParentItem(): ?string
 {
-    return NotificationsResource::class;
+    return NotificationResource::class;
 }
 ```
 
-or
+Alternatively, you may return the parent's label:
 
 ```php
 public static function getNavigationParentItem(): ?string

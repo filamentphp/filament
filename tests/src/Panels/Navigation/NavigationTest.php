@@ -164,7 +164,9 @@ describe('registration and ordering', function (): void {
         expect($settingsPosition)->not->toBeFalse();
         expect($usersPosition)->toBeLessThan($settingsPosition);
     });
+});
 
+describe('navigation parent-child', function (): void {
     it('can group a navigation item under a resource\'s default item by referencing the resource class name', function (): void {
         // `UserResource`'s default navigation item is automatically keyed
         // with `->key(static::class)`, so it can now be targeted as a parent
@@ -235,6 +237,25 @@ describe('registration and ordering', function (): void {
             ->all();
 
         expect($childLabels)->toBe(['Login History', 'Impersonations']);
+    });
+
+    it('drops a navigation item whose parent matches neither an existing key nor an existing label', function (): void {
+        Filament::getCurrentOrDefaultPanel()->navigationItems([
+            NavigationItem::make('Impersonations')
+                ->parentItem('App\\Filament\\Resources\\SomeOtherResource')
+                ->url('#'),
+        ]);
+
+        $allItems = collect(Filament::getNavigation())
+            ->flatMap(fn (NavigationGroup $group) => $group->getItems());
+
+        $itemLabels = $allItems->map(fn (NavigationItem $item) => $item->getLabel());
+
+        expect($itemLabels)->not->toContain('Impersonations');
+
+        $users = $allItems->first(fn (NavigationItem $item) => $item->getLabel() === 'Users');
+
+        expect($users->getChildItems())->toBeEmpty();
     });
 });
 
@@ -442,7 +463,7 @@ describe('sub-navigation parent-child', function (): void {
         $childItems = $items[0]->getChildItems();
         expect($childItems)->toHaveCount(2);
 
-        $childLabels = $childItems->map(fn ($item) => $item->getLabel())->all();
+        $childLabels = $childItems->map(fn (NavigationItem $item) => $item->getLabel())->all();
         expect($childLabels)->toContain('Roles');
         expect($childLabels)->toContain('Permissions');
     });
@@ -478,9 +499,9 @@ describe('sub-navigation parent-child', function (): void {
 
     it('merges sub-navigation child items onto a parent referenced by both key and label instead of overwriting them', function (): void {
         // "Roles" targets the parent by label ("Users"); "Permissions" targets
-        // the same parent by its key. Prior to #20107 these landed in two
-        // separate `groupBy()` buckets and the second assignment overwrote
-        // the first parent's child items instead of merging with them.
+        // the same parent by its key. These land in two separate `groupBy()`
+        // buckets, so their child items must be merged onto the parent rather
+        // than the second bucket overwriting the first.
         $page = new class extends Page
         {
             protected string $view = 'filament-panels::pages.page';
@@ -509,7 +530,7 @@ describe('sub-navigation parent-child', function (): void {
         $childItems = $items[0]->getChildItems();
         expect($childItems)->toHaveCount(2);
 
-        $childLabels = $childItems->map(fn ($item) => $item->getLabel())->all();
+        $childLabels = $childItems->map(fn (NavigationItem $item) => $item->getLabel())->all();
         expect($childLabels)->toContain('Roles');
         expect($childLabels)->toContain('Permissions');
     });
@@ -540,7 +561,7 @@ describe('sub-navigation parent-child', function (): void {
         $navigation = $page->getCachedSubNavigation();
         $childItems = $navigation[0]->getItems()[0]->getChildItems();
 
-        expect($childItems->map(fn ($item) => $item->getLabel())->values()->all())
+        expect($childItems->map(fn (NavigationItem $item) => $item->getLabel())->values()->all())
             ->toBe(['Permissions', 'Roles']);
     });
 
