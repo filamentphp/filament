@@ -59,12 +59,33 @@ protected function getHeaderActions(): array
 
 #### Aligning header actions
 
-By default, header actions are aligned to the left on mobile. To change the alignment of the header actions on mobile, set `$headerActionsAlignment`:
+By default, header actions are aligned to the start of the header on mobile (the left in left-to-right languages). To change the alignment of the header actions on mobile for a specific page, set the `$headerActionsAlignment` property:
 
 ```php
 use Filament\Support\Enums\Alignment;
 
 protected ?Alignment $headerActionsAlignment = Alignment::End;
+```
+
+<Aside variant="tip">
+    If you need to set the alignment conditionally, you can use the `headerActionsAlignment()` method instead, for example in the `mount()` method of the page:
+
+    ```php
+    use Filament\Support\Enums\Alignment;
+
+    public function mount(): void
+    {
+        $this->headerActionsAlignment(Alignment::End);
+    }
+    ```
+</Aside>
+
+To change the default header actions alignment for every page in your app, call the `alignHeaderActionsStart()`, `alignHeaderActionsCenter()` or `alignHeaderActionsEnd()` method in the `boot()` method of a service provider such as `AppServiceProvider`:
+
+```php
+use Filament\Pages\Page;
+
+Page::alignHeaderActionsEnd();
 ```
 
 ### Opening an action modal when a page loads

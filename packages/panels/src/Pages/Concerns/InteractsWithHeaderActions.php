@@ -13,7 +13,9 @@ trait InteractsWithHeaderActions
      */
     protected array $cachedHeaderActions = [];
 
-    protected ?Alignment $headerActionsAlignment = null;
+    public static string | Alignment $defaultHeaderActionsAlignment = Alignment::Start;
+
+    protected string | Alignment | null $headerActionsAlignment = null;
 
     public function cacheInteractsWithHeaderActions(): void
     {
@@ -67,8 +69,35 @@ trait InteractsWithHeaderActions
         return [];
     }
 
-    public function getHeaderActionsAlignment(): ?Alignment
+    public function headerActionsAlignment(string | Alignment | null $alignment): static
     {
-        return $this->headerActionsAlignment;
+        $this->headerActionsAlignment = $alignment;
+
+        return $this;
+    }
+
+    public function getHeaderActionsAlignment(): string | Alignment | null
+    {
+        return $this->headerActionsAlignment ?? static::$defaultHeaderActionsAlignment;
+    }
+
+    public static function alignHeaderActionsStart(): void
+    {
+        static::$defaultHeaderActionsAlignment = Alignment::Start;
+    }
+
+    public static function alignHeaderActionsCenter(): void
+    {
+        static::$defaultHeaderActionsAlignment = Alignment::Center;
+    }
+
+    public static function alignHeaderActionsEnd(): void
+    {
+        static::$defaultHeaderActionsAlignment = Alignment::End;
+    }
+
+    public static function defaultHeaderActionsAlignment(string | Alignment $alignment): void
+    {
+        static::$defaultHeaderActionsAlignment = $alignment;
     }
 }
