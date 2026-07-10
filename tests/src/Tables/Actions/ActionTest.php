@@ -511,4 +511,27 @@ describe('record actions column visibility', function (): void {
             ->assertActionHidden(TestAction::make('test')->table($posts->first()))
             ->assertDontSeeHtml('fi-ta-actions-header-cell');
     });
+
+    it('does not render the record actions column when every record in a large result set has no visible record action', function (): void {
+        // Guards the full-scan branch: the column visibility check must walk every
+        // record without accumulating their cloned actions in memory.
+        Post::factory()->count(100)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => false])
+            ->assertDontSeeHtml('fi-ta-actions-header-cell');
+    });
+
+    it('renders the record actions column when only a later record has a visible record action', function (): void {
+        // Guards the prefix-scan branch: the check must walk past the leading records
+        // whose actions are hidden until it finds the one visible action.
+        $posts = Post::factory()->count(5)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, [
+            'hasVisibleRecordActions' => true,
+            'visibleRecordActionForKey' => $posts->last()->getKey(),
+        ])
+            ->assertActionHidden(TestAction::make('test')->table($posts->first()))
+            ->assertActionVisible(TestAction::make('test')->table($posts->last()))
+            ->assertSeeHtml('fi-ta-actions-header-cell');
+    });
 });

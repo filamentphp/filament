@@ -146,33 +146,42 @@
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
     $sortDirection = $getSortDirection();
 
+    $reduceVisibleRecordActions = function ($record) use ($defaultRecordActions): array {
+        return array_reduce(
+            $defaultRecordActions,
+            function (array $carry, $action) use ($record): array {
+                $action = $action->getClone();
+
+                if (! $action instanceof \Filament\Actions\BulkAction) {
+                    $action->record($record);
+                }
+
+                if ($action->isHidden()) {
+                    return $carry;
+                }
+
+                $carry[] = $action;
+
+                return $carry;
+            },
+            initial: [],
+        );
+    };
+
     $recordActionsByRecordKey = [];
     $hasRecordActionsForAnyRecord = false;
 
-    if ($records !== null) {
+    // Determine whether the record actions column should be rendered by scanning
+    // records until one exposes a visible action. Every record that gets checked
+    // is cached so the row loop below never re-evaluates its visibility.
+    if (($records !== null) && (! $isReordering)) {
         foreach ($records as $record) {
-            $recordActionsByRecordKey[$getRecordKey($record)] = $currentRecordActions = array_reduce(
-                $defaultRecordActions,
-                function (array $carry, $action) use ($record): array {
-                    $action = $action->getClone();
-
-                    if (! $action instanceof \Filament\Actions\BulkAction) {
-                        $action->record($record);
-                    }
-
-                    if ($action->isHidden()) {
-                        return $carry;
-                    }
-
-                    $carry[] = $action;
-
-                    return $carry;
-                },
-                initial: [],
-            );
+            $recordActionsByRecordKey[$getRecordKey($record)] = $currentRecordActions = $reduceVisibleRecordActions($record);
 
             if ($currentRecordActions !== []) {
                 $hasRecordActionsForAnyRecord = true;
+
+                break;
             }
         }
     }
@@ -1051,7 +1060,8 @@
                                         $collapsibleColumnsLayout?->record($record)->recordKey($recordKey);
                                         $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
 
-                                        $recordActions = $recordActionsByRecordKey[$recordKey];
+                                        $recordActions = $recordActionsByRecordKey[$recordKey]
+                                            ?? ($hasRecordActionsForAnyRecord ? $reduceVisibleRecordActions($record) : []);
                                     @endphp
 
                                     @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
@@ -1934,7 +1944,8 @@
                                                 $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
                                                 $recordIsSelectable = $isSelectionEnabled && $isRecordSelectable($record);
 
-                                                $recordActions = $recordActionsByRecordKey[$recordKey];
+                                                $recordActions = $recordActionsByRecordKey[$recordKey]
+                                                    ?? ($hasRecordActionsForAnyRecord ? $reduceVisibleRecordActions($record) : []);
                                             @endphp
 
                                             @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)

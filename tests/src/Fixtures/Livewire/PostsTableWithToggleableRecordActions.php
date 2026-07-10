@@ -21,9 +21,12 @@ class PostsTableWithToggleableRecordActions extends Component implements HasActi
 
     public bool $hasVisibleRecordActions = true;
 
-    public function mount(bool $hasVisibleRecordActions = true): void
+    public ?int $visibleRecordActionForKey = null;
+
+    public function mount(bool $hasVisibleRecordActions = true, ?int $visibleRecordActionForKey = null): void
     {
         $this->hasVisibleRecordActions = $hasVisibleRecordActions;
+        $this->visibleRecordActionForKey = $visibleRecordActionForKey;
     }
 
     public function table(Table $table): Table
@@ -35,7 +38,8 @@ class PostsTableWithToggleableRecordActions extends Component implements HasActi
             ])
             ->recordActions([
                 Action::make('test')
-                    ->visible(fn (): bool => $this->hasVisibleRecordActions),
+                    ->visible(fn (Post $record): bool => $this->hasVisibleRecordActions
+                        && (($this->visibleRecordActionForKey === null) || ($record->getKey() === $this->visibleRecordActionForKey))),
             ]);
     }
 
