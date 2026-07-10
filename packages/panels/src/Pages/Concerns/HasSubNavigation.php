@@ -153,7 +153,7 @@ trait HasSubNavigation
             $parent->childItems($mergedChildren);
         });
 
-        return $items->values();
+        return $items;
     }
 
     /**
