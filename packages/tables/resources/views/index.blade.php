@@ -1366,6 +1366,41 @@
                                 $columns,
                                 fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
                             ) : [];
+
+                            $recordActionsByRecordKey = [];
+                            $hasRecordActionsForAnyRecord = false;
+
+                            foreach ($records as $record) {
+                                $recordActionsByRecordKey[$getRecordKey($record)] = $currentRecordActions = array_reduce(
+                                    $defaultRecordActions,
+                                    function (array $carry, $action) use ($record): array {
+                                        $action = $action->getClone();
+
+                                        if (! $action instanceof \Filament\Actions\BulkAction) {
+                                            $action->record($record);
+                                        }
+
+                                        if ($action->isHidden()) {
+                                            return $carry;
+                                        }
+
+                                        $carry[] = $action;
+
+                                        return $carry;
+                                    },
+                                    initial: [],
+                                );
+
+                                if ($currentRecordActions !== []) {
+                                    $hasRecordActionsForAnyRecord = true;
+                                }
+                            }
+
+                            $recordActionsHeaderCellClasses = \Illuminate\Support\Arr::toCssClasses([
+                                'fi-ta-actions-header-cell',
+                                'fi-ta-empty-header-cell',
+                                'fi-ta-no-actions-header-cell' => ! $hasRecordActionsForAnyRecord,
+                            ]);
                         @endphp
 
                         <table
@@ -1592,7 +1627,7 @@
                                                 @else
                                                     <th
                                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
-                                                        class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
+                                                        class="{{ $recordActionsHeaderCellClasses }}"
                                                     ></th>
                                                 @endif
                                             @endif
@@ -1648,7 +1683,7 @@
                                                 @else
                                                     <th
                                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
-                                                        class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
+                                                        class="{{ $recordActionsHeaderCellClasses }}"
                                                     ></th>
                                                 @endif
                                             @endif
@@ -1774,7 +1809,7 @@
                                             @else
                                                 <th
                                                     aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
-                                                    class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
+                                                    class="{{ $recordActionsHeaderCellClasses }}"
                                                 ></th>
                                             @endif
                                         @endif
@@ -1830,7 +1865,7 @@
                                             @else
                                                 <th
                                                     aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
-                                                    class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
+                                                    class="{{ $recordActionsHeaderCellClasses }}"
                                                 ></th>
                                             @endif
                                         @endif
@@ -1921,25 +1956,7 @@
                                                 $recordGroupTitle = $group?->getTitle($record, $recordGroupKey);
                                                 $recordIsSelectable = $isSelectionEnabled && $isRecordSelectable($record);
 
-                                                $recordActions = array_reduce(
-                                                    $defaultRecordActions,
-                                                    function (array $carry, $action) use ($record): array {
-                                                        $action = $action->getClone();
-
-                                                        if (! $action instanceof \Filament\Actions\BulkAction) {
-                                                            $action->record($record);
-                                                        }
-
-                                                        if ($action->isHidden()) {
-                                                            return $carry;
-                                                        }
-
-                                                        $carry[] = $action;
-
-                                                        return $carry;
-                                                    },
-                                                    initial: [],
-                                                );
+                                                $recordActions = $recordActionsByRecordKey[$recordKey];
                                             @endphp
 
                                             @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)

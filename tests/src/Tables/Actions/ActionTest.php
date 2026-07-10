@@ -6,6 +6,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithToggleableRecordActions;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
@@ -491,5 +492,23 @@ describe('extra modal footer actions', function (): void {
             ->callMountedTableAction()
             ->assertHasNoTableActionErrors()
             ->assertDispatched('grouped-extra-actions-called', content: $content, recordKey: $post->getKey());
+    });
+});
+
+describe('record actions header cell', function (): void {
+    it('does not add `fi-ta-no-actions-header-cell` when a record has a visible record action', function (): void {
+        Post::factory()->count(3)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => true])
+            ->assertSeeHtml('fi-ta-actions-header-cell')
+            ->assertDontSeeHtml('fi-ta-no-actions-header-cell');
+    });
+
+    it('adds `fi-ta-no-actions-header-cell` when no record has a visible record action', function (): void {
+        Post::factory()->count(3)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => false])
+            ->assertSeeHtml('fi-ta-actions-header-cell')
+            ->assertSeeHtml('fi-ta-no-actions-header-cell');
     });
 });
