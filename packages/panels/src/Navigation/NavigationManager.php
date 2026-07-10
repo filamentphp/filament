@@ -67,8 +67,7 @@ class NavigationManager
             ->map(function (Collection $items, string $groupIndex) use ($groups): NavigationGroup {
                 $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
 
-                $items = $parentItems->get('', collect())
-                    ->keyBy(fn (NavigationItem $item): string => $item->getKey());
+                $items = $parentItems->get('', collect());
 
                 $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
                     $parent = $items->first(fn (NavigationItem $item): bool =>
