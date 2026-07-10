@@ -7,6 +7,7 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Illuminate\Support\HtmlString;
 
 class Checkbox extends Field implements HasEmbeddedView
 {
@@ -53,7 +54,7 @@ class Checkbox extends Field implements HasEmbeddedView
         if ($this->isInline()) {
             return $this->wrapEmbeddedHtml(
                 '',
-                labelPrefix: $inputHtml,
+                labelPrefix: new HtmlString($inputHtml),
                 inlineLabelVerticalAlignment: VerticalAlignment::Center,
             );
         }
