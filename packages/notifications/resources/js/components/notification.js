@@ -76,6 +76,12 @@ export default (Alpine) => {
         },
 
         configureAnimations() {
+            // Inline notifications, such as those in the database
+            // notifications modal, are removed instantly, without animation.
+            if (this.$el.classList.contains('fi-inline')) {
+                return
+            }
+
             this.unsubscribeLivewireHook = Livewire.interceptMessage(
                 ({ message, onSuccess }) => {
                     if (
@@ -134,8 +140,6 @@ export default (Alpine) => {
         },
 
         close(isImmediate = false) {
-            this.isShown = false
-
             const dispatchClosedEvent = () =>
                 window.dispatchEvent(
                     new CustomEvent('notificationClosed', {
@@ -146,10 +150,24 @@ export default (Alpine) => {
                 )
 
             if (isImmediate === true) {
+                this.isShown = false
+
                 dispatchClosedEvent()
 
                 return
             }
+
+            // Inline notifications, such as those in the database
+            // notifications modal, are part of a list, so they are removed
+            // from it as soon as possible instead of fading out first, and
+            // the list is reflowed by the animation in `configureAnimations()`.
+            if (this.$root.classList.contains('fi-inline')) {
+                dispatchClosedEvent()
+
+                return
+            }
+
+            this.isShown = false
 
             setTimeout(dispatchClosedEvent, this.transitionDuration)
         },
