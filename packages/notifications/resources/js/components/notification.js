@@ -159,8 +159,7 @@ export default (Alpine) => {
 
             // Inline notifications, such as those in the database
             // notifications modal, are part of a list, so they are removed
-            // from it as soon as possible instead of fading out first, and
-            // the list is reflowed by the animation in `configureAnimations()`.
+            // from it as soon as possible instead of fading out first.
             if (this.$root.classList.contains('fi-inline')) {
                 dispatchClosedEvent()
 
