@@ -341,8 +341,8 @@ class Field extends Component implements Contracts\HasValidationRules
             return view($absoluteView, [
                 'field' => $this,
                 'slot' => new ComponentSlot($html),
-                'labelPrefix' => $labelPrefix,
-                'labelSuffix' => $labelSuffix,
+                'labelPrefix' => filled($labelPrefix) ? new ComponentSlot($labelPrefix) : null,
+                'labelSuffix' => filled($labelSuffix) ? new ComponentSlot($labelSuffix) : null,
                 'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
                 'labelTag' => $labelTag,
                 'attributes' => (new FilamentComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
