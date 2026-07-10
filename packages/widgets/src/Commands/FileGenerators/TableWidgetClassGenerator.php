@@ -4,6 +4,7 @@ namespace Filament\Widgets\Commands\FileGenerators;
 
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
 use Filament\Tables\Commands\FileGenerators\Concerns\CanGenerateModelTables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 
-class TableWidgetClassGenerator extends ClassGenerator
+class TableWidgetClassGenerator extends ClassGenerator implements HasSkippedColumns
 {
     use CanGenerateModelTables;
     use CanReadModelSchemas;

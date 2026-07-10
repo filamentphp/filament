@@ -143,6 +143,38 @@ ExportAction::make()
     ->enableVisibleTableColumnsByDefault()
 ```
 
+### Hiding an export column
+
+You may hide a column entirely by using the `hidden()` or `visible()` method. A hidden column is not shown in the column selection form, and is never written to the exported file:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('sku')
+    ->hidden()
+
+ExportColumn::make('sku')
+    ->visible()
+```
+
+To hide a column conditionally, you may pass a boolean value to either method:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('cost_price')
+    ->hidden(fn (): bool => ! auth()->user()->isAdmin())
+
+ExportColumn::make('cost_price')
+    ->visible(fn (): bool => auth()->user()->isAdmin())
+```
+
+<Aside variant="info">
+    Unlike table columns, export columns are resolved without a record, so a `hidden()` or `visible()` closure cannot depend on row data. Use it for schema-level conditions such as the authenticated user, feature flags, or configuration.
+
+    To keep a column selectable but unchecked by default instead of hiding it entirely, use [`enabledByDefault(false)`](#configuring-the-default-column-selection).
+</Aside>
+
 ### Configuring the column selection form layout
 
 By default, the column selection form uses a single column layout. You can change this using the `columnMappingColumns()` method, passing the number of columns you would like to use for the layout on large screens:

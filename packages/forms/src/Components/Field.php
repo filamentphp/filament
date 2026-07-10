@@ -290,8 +290,8 @@ class Field extends Component implements Contracts\HasValidationRules
         string $html,
         array $extraWrapperAttributes = [],
         ?VerticalAlignment $inlineLabelVerticalAlignment = null,
-        ?string $labelPrefix = null,
-        ?string $labelSuffix = null,
+        string | Htmlable | null $labelPrefix = null,
+        string | Htmlable | null $labelSuffix = null,
         string $labelTag = 'label',
     ): string {
         $statePath = $this->getStatePath();
@@ -424,7 +424,7 @@ class Field extends Component implements Contracts\HasValidationRules
                                 <?php } ?>
                                 class="fi-fo-field-label"
                             >
-                                <?= $labelPrefix ?>
+                                <?= e($labelPrefix) ?>
 
                                 <?php if (filled($label) && (! $labelSrOnly)) { ?>
                                     <span class="fi-fo-field-label-content">
@@ -433,7 +433,7 @@ class Field extends Component implements Contracts\HasValidationRules
                                     </span>
                                 <?php } ?>
 
-                                <?= $labelSuffix ?>
+                                <?= e($labelSuffix) ?>
                             </<?= $labelTag ?>>
                         <?php } ?>
 

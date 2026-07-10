@@ -2,6 +2,7 @@
 title: Edit action
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -39,6 +40,18 @@ EditAction::make()
 ```
 
 <UtilityInjection set="actions" version="5.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
+
+<Aside variant="warning">
+    Filament fills the form using the record's array representation, which is sent to the browser as part of the Livewire request. If your model has a column containing binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column, it cannot be serialized to JSON and the modal will fail to open, often with no error in the Laravel log.
+
+    To resolve this, add the column to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model, which excludes it from the model's array and JSON representations:
+
+    ```php
+    protected $hidden = ['location'];
+    ```
+
+    This applies equally to the [View](view) and [Replicate](replicate) actions.
+</Aside>
 
 ## Customizing data before saving
 

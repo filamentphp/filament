@@ -82,3 +82,71 @@ it('returns `null` from `getRecord()` when no exporter set', function (): void {
 
     expect($column->getRecord())->toBeNull();
 });
+
+describe('visibility', function (): void {
+    test('is visible by default', function (): void {
+        $column = ExportColumn::make('title');
+
+        expect($column->isVisible())->toBeTrue();
+        expect($column->isHidden())->toBeFalse();
+    });
+
+    it('can be hidden with `hidden()`', function (): void {
+        $column = ExportColumn::make('title')
+            ->hidden();
+
+        expect($column->isHidden())->toBeTrue();
+        expect($column->isVisible())->toBeFalse();
+    });
+
+    it('can undo `hidden()` by passing `false`', function (): void {
+        $column = ExportColumn::make('title')
+            ->hidden()
+            ->hidden(false);
+
+        expect($column->isHidden())->toBeFalse();
+        expect($column->isVisible())->toBeTrue();
+    });
+
+    it('can set `hidden()` with a `Closure`', function (): void {
+        $column = ExportColumn::make('title')
+            ->hidden(static fn (): bool => true);
+
+        expect($column->isHidden())->toBeTrue();
+        expect($column->isVisible())->toBeFalse();
+    });
+
+    it('can be made not visible with `visible(false)`', function (): void {
+        $column = ExportColumn::make('title')
+            ->visible(false);
+
+        expect($column->isVisible())->toBeFalse();
+        expect($column->isHidden())->toBeTrue();
+    });
+
+    it('can undo `visible(false)` by passing `true`', function (): void {
+        $column = ExportColumn::make('title')
+            ->visible(false)
+            ->visible();
+
+        expect($column->isVisible())->toBeTrue();
+        expect($column->isHidden())->toBeFalse();
+    });
+
+    it('can set `visible()` with a `Closure`', function (): void {
+        $column = ExportColumn::make('title')
+            ->visible(static fn (): bool => false);
+
+        expect($column->isVisible())->toBeFalse();
+        expect($column->isHidden())->toBeTrue();
+    });
+
+    test('`hidden()` takes priority over `visible()`', function (): void {
+        $column = ExportColumn::make('title')
+            ->hidden()
+            ->visible();
+
+        expect($column->isHidden())->toBeTrue();
+        expect($column->isVisible())->toBeFalse();
+    });
+});
