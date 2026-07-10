@@ -2173,15 +2173,17 @@
                                                     @endif
 
                                                     @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::BeforeCells && (! $isReordering))
-                                                        <td @class([
-                                                            'fi-ta-cell',
-                                                            'fi-ta-cell-actions',
-                                                            'fi-ta-cell-no-actions' => !count($recordActions),
-                                                        ])>
+                                                        <td
+                                                            @class([
+                                                                'fi-ta-cell',
+                                                                'fi-ta-cell-actions',
+                                                                'fi-ta-cell-no-actions' => ! count($recordActions),
+                                                            ])
+                                                        >
                                                             <div
                                                                 @class([
                                                                     'fi-ta-actions',
-                                                                    'fi-ta-no-actions' => !count($recordActions),
+                                                                    'fi-ta-no-actions' => ! count($recordActions),
                                                                     match ($recordActionsAlignment) {
                                                                         Alignment::Center => 'fi-align-center',
                                                                         Alignment::Start, Alignment::Left => 'fi-align-start',
@@ -2224,15 +2226,17 @@
                                                     @endif
 
                                                     @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::BeforeColumns && (! $isReordering))
-                                                        <td @class([
-                                                            'fi-ta-cell',
-                                                            'fi-ta-cell-actions',
-                                                            'fi-ta-cell-no-actions' => !count($recordActions),
-                                                        ])>
+                                                        <td
+                                                            @class([
+                                                                'fi-ta-cell',
+                                                                'fi-ta-cell-actions',
+                                                                'fi-ta-cell-no-actions' => ! count($recordActions),
+                                                            ])
+                                                        >
                                                             <div
                                                                 @class([
                                                                     'fi-ta-actions',
-                                                                    'fi-ta-no-actions' => !count($recordActions),
+                                                                    'fi-ta-no-actions' => ! count($recordActions),
                                                                     match ($recordActionsAlignment) {
                                                                         Alignment::Center => 'fi-align-center',
                                                                         Alignment::Start, Alignment::Left => 'fi-align-start',
@@ -2310,15 +2314,17 @@
                                                     @endforeach
 
                                                     @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
-                                                        <td @class([
-                                                            'fi-ta-cell',
-                                                            'fi-ta-cell-actions',
-                                                            'fi-ta-cell-no-actions' => !count($recordActions),
-                                                        ])>
+                                                        <td
+                                                            @class([
+                                                                'fi-ta-cell',
+                                                                'fi-ta-cell-actions',
+                                                                'fi-ta-cell-no-actions' => ! count($recordActions),
+                                                            ])
+                                                        >
                                                             <div
                                                                 @class([
                                                                     'fi-ta-actions',
-                                                                    'fi-ta-no-actions' => !count($recordActions),
+                                                                    'fi-ta-no-actions' => ! count($recordActions),
                                                                     match ($recordActionsAlignment) {
                                                                         Alignment::Center => 'fi-align-center',
                                                                         Alignment::Start, Alignment::Left => 'fi-align-start',
@@ -2361,15 +2367,17 @@
                                                     @endif
 
                                                     @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::AfterCells && (! $isReordering))
-                                                        <td @class([
-                                                            'fi-ta-cell',
-                                                            'fi-ta-cell-actions',
-                                                            'fi-ta-cell-no-actions' => !count($recordActions),
-                                                        ])>
+                                                        <td
+                                                            @class([
+                                                                'fi-ta-cell',
+                                                                'fi-ta-cell-actions',
+                                                                'fi-ta-cell-no-actions' => ! count($recordActions),
+                                                            ])
+                                                        >
                                                             <div
                                                                 @class([
                                                                     'fi-ta-actions',
-                                                                    'fi-ta-no-actions' => !count($recordActions),
+                                                                    'fi-ta-no-actions' => ! count($recordActions),
                                                                     match ($recordActionsAlignment) {
                                                                         Alignment::Center => 'fi-align-center',
                                                                         Alignment::Start, Alignment::Left => 'fi-align-start',
@@ -2379,7 +2387,6 @@
                                                                     },
                                                                 ])
                                                             >
-
                                                                 @foreach ($recordActions as $action)
                                                                     {{ $action }}
                                                                 @endforeach
