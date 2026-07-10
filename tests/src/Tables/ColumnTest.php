@@ -4,6 +4,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\CustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingDisabled;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingEnabled;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithReservedJsPropertyColumnSearch;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithTableSearchableColumns;
@@ -354,6 +356,44 @@ describe('searching', function (): void {
             ])
             ->assertCanSeeTableRecords($posts->where('author.email', $authorEmail))
             ->assertCanNotSeeTableRecords($posts->where('author.email', '!=', $authorEmail));
+    });
+
+    it('can use `splitIndividualSearchTerms(false)` on a column to disable search term splitting for its individual search', function (): void {
+        $exactPhrasePost = Post::factory()->create(['content' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['content' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingDisabled::class)
+            ->searchTableColumns(['content' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost])
+            ->assertCanNotSeeTableRecords([$separateWordsPost]);
+    });
+
+    it('splits search terms for an individual column search by default, when the column does not define `splitIndividualSearchTerms()`', function (): void {
+        $exactPhrasePost = Post::factory()->create(['title' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['title' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingDisabled::class)
+            ->searchTableColumns(['title' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost, $separateWordsPost]);
+    });
+
+    it('can use `splitIndividualSearchTerms()` on a column to enable search term splitting for its individual search when the table uses `splitSearchTerms(false)`', function (): void {
+        $exactPhrasePost = Post::factory()->create(['content' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['content' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingEnabled::class)
+            ->searchTableColumns(['content' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost, $separateWordsPost]);
+    });
+
+    it('does not split search terms for an individual column search when the table uses `splitSearchTerms(false)` and the column does not define `splitIndividualSearchTerms()`', function (): void {
+        $exactPhrasePost = Post::factory()->create(['title' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['title' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingEnabled::class)
+            ->searchTableColumns(['title' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost])
+            ->assertCanNotSeeTableRecords([$separateWordsPost]);
     });
 
     it('seeds individually searchable columns whose names collide with JS array properties on mount so `tableColumnSearches` serializes as a JSON object', function (): void {

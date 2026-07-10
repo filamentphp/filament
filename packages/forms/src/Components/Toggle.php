@@ -11,6 +11,7 @@ use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\ToggleComponent;
 use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 
 use function Filament\Support\generate_icon_html;
@@ -114,7 +115,7 @@ class Toggle extends Field implements HasEmbeddedView
         if ($this->isInline()) {
             return $this->wrapEmbeddedHtml(
                 '',
-                labelPrefix: $toggleHtml,
+                labelPrefix: new HtmlString($toggleHtml),
                 inlineLabelVerticalAlignment: VerticalAlignment::Center,
             );
         }

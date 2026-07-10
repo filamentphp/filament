@@ -73,6 +73,17 @@ abstract class Exporter
     abstract public static function getColumns(): array;
 
     /**
+     * @return array<ExportColumn>
+     */
+    public static function getVisibleColumns(): array
+    {
+        return array_filter(
+            static::getColumns(),
+            fn (ExportColumn $column): bool => $column->isVisible(),
+        );
+    }
+
+    /**
      * @return array<Component | Action | ActionGroup>
      */
     public static function getOptionsFormComponents(): array
