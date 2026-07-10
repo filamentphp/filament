@@ -672,3 +672,15 @@ protected function mutateFormDataBeforeFill(array $data): array
 ```
 
 In this example, we remove the `is_admin` attribute from JavaScript, as it's not being used by the form.
+
+<Aside variant="warning">
+    Adding a column to `$hidden` is required, not just recommended, when it contains binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column. Since Filament exposes model attributes to JavaScript, these values are sent to the browser as part of the Livewire request, but they cannot be serialized to JSON. This causes the page to fail to load, often with a blank screen and no error in the Laravel log.
+
+    Adding such columns to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model excludes them from its array and JSON representations, resolving the issue:
+
+    ```php
+    protected $hidden = ['location'];
+    ```
+
+    If you need to work with the value, expose it through an [accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) instead of the raw column.
+</Aside>

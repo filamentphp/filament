@@ -11,6 +11,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,7 @@ use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Property;
 
-class ResourceManageRelatedRecordsPageClassGenerator extends ClassGenerator
+class ResourceManageRelatedRecordsPageClassGenerator extends ClassGenerator implements HasSkippedColumns
 {
     use CanGenerateResourceForms;
     use CanGenerateResourceProperty;
