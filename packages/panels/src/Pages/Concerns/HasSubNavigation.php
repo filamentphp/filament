@@ -137,8 +137,8 @@ trait HasSubNavigation
         $items = $parentItems->get('', collect());
 
         $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
-            $parent = $items->first(fn (NavigationItem $item): bool =>
-                $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
+            $parent = $items->first(
+                fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
             );
 
             if (! $parent) {
