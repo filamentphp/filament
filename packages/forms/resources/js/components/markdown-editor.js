@@ -196,20 +196,32 @@ export default function markdownEditorFormComponent({
                 }
             })
 
-            this.editor.codemirror.on(
-                'change',
-                Alpine.debounce(() => {
-                    if (!this.editor) {
-                        return
-                    }
+            const debouncedCommit = Alpine.debounce(() => {
+                if (!this.editor) {
+                    return
+                }
 
-                    this.state = this.editor.value()
+                this.$wire.commit()
+            }, liveDebounce ?? 300)
 
-                    if (isLiveDebounced) {
-                        this.$wire.commit()
-                    }
-                }, liveDebounce ?? 300),
-            )
+            this.editor.codemirror.on('change', (instance, changeObject) => {
+                if (!this.editor) {
+                    return
+                }
+
+                // `setValue` changes originate from the `state` watcher applying
+                // an external state change to the editor, not from user input, so
+                // they should not be echoed back into the state.
+                if (changeObject.origin === 'setValue') {
+                    return
+                }
+
+                this.state = this.editor.value()
+
+                if (isLiveDebounced) {
+                    debouncedCommit()
+                }
+            })
 
             if (isLiveOnBlur) {
                 this.editor.codemirror.on('blur', () => this.$wire.commit())
@@ -220,7 +232,10 @@ export default function markdownEditorFormComponent({
                     return
                 }
 
-                if (this.editor.codemirror.hasFocus()) {
+                // Skip the echo of the editor's own input to avoid resetting the
+                // cursor position, but still apply genuine external state changes,
+                // even while the editor is focused.
+                if ((this.state ?? '') === this.editor.value()) {
                     return
                 }
 
