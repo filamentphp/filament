@@ -730,7 +730,7 @@ describe('notifications', function (): void {
 
     it('will raise an exception if a notification was sent checking with a different notification title', function (): void {
         $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-        $this->expectExceptionMessage('Failed asserting that two arrays are identical.');
+        $this->expectExceptionMessage('A notification was not sent');
 
         livewire(Actions::class)
             ->callAction('shows-notification-with-id')
