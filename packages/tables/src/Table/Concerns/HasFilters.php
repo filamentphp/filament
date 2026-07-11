@@ -307,7 +307,7 @@ trait HasFilters
     }
 
     /**
-     * @return array<string, Group>
+     * @return array<Group>
      */
     public function getFiltersFormSchema(): array
     {

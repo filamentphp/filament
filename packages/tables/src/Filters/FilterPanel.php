@@ -17,6 +17,9 @@ class FilterPanel extends Component
      */
     protected array $filters = [];
 
+    /**
+     * @var int | array<string, int | null> | Closure | null
+     */
     protected int | array | Closure | null $columns = null;
 
     protected Width | string | Closure | null $width = null;
@@ -59,6 +62,9 @@ class FilterPanel extends Component
         return $this;
     }
 
+    /**
+     * @param  int | array<string, int | null> | Closure | null  $columns
+     */
     public function columns(int | array | Closure | null $columns): static
     {
         $this->columns = $columns;
