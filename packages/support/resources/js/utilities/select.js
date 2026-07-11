@@ -332,15 +332,16 @@ export class Select {
         // Create the options list
         this.optionsList = document.createElement('ul')
 
-        // Render options
-        this.renderOptions()
-
-        // Create a visually hidden live region to announce loading / empty / limit messages
+        // Create a visually hidden live region to announce loading / empty / limit messages,
+        // before `renderOptions()` since it may announce a "no options" message
         this.statusRegion = document.createElement('div')
         this.statusRegion.className = 'fi-sr-only'
         this.statusRegion.setAttribute('role', 'status')
         this.statusRegion.setAttribute('aria-live', 'polite')
         this.statusRegion.setAttribute('aria-atomic', 'true')
+
+        // Render options
+        this.renderOptions()
 
         // Append everything to the container
         this.container.appendChild(this.selectButton)
@@ -1876,8 +1877,11 @@ export class Select {
             : this.loadingMessage
         this.dropdown.appendChild(loadingItem)
 
-        // Announce the message to screen readers
-        this.statusRegion.textContent = loadingItem.textContent
+        // Announce the message to screen readers, unless the dropdown is closed,
+        // such as when rendering the initial options on page load
+        if (this.isOpen) {
+            this.statusRegion.textContent = loadingItem.textContent
+        }
     }
 
     hideLoadingState() {
@@ -1907,8 +1911,11 @@ export class Select {
         noOptionsItem.textContent = this.noOptionsMessage
         this.dropdown.appendChild(noOptionsItem)
 
-        // Announce the message to screen readers
-        this.statusRegion.textContent = this.noOptionsMessage
+        // Announce the message to screen readers, unless the dropdown is closed,
+        // such as when rendering the initial options on page load
+        if (this.isOpen) {
+            this.statusRegion.textContent = this.noOptionsMessage
+        }
     }
 
     showNoResultsMessage() {
@@ -1926,8 +1933,11 @@ export class Select {
         noResultsItem.textContent = this.noSearchResultsMessage
         this.dropdown.appendChild(noResultsItem)
 
-        // Announce the message to screen readers
-        this.statusRegion.textContent = this.noSearchResultsMessage
+        // Announce the message to screen readers, unless the dropdown is closed,
+        // such as when rendering the initial options on page load
+        if (this.isOpen) {
+            this.statusRegion.textContent = this.noSearchResultsMessage
+        }
     }
 
     showMaxItemsMessage() {
