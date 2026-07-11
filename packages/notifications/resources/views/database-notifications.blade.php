@@ -13,7 +13,6 @@
 <div class="fi-no-database">
     <x-filament::modal
         :alignment="$hasNotifications ? null : Alignment::Center"
-        aria-labelledby="database-notifications.heading"
         close-button
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
         :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
@@ -45,10 +44,7 @@
         @if ($hasNotifications)
             <x-slot name="header">
                 <div>
-                    <h2
-                        id="database-notifications.heading"
-                        class="fi-modal-heading"
-                    >
+                    <h2 class="fi-modal-heading">
                         {{ __('filament-notifications::database.modal.heading') }}
 
                         @if ($unreadNotificationsCount)
