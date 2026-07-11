@@ -245,9 +245,30 @@ The `Dropdown` and `Modal` locations each render their own trigger, so a table w
 
 Each panel has its own reset action that clears only the filters shown in that panel. To clear every filter at once, use the "remove all" button in the active filter indicators above the table. The apply button (when deferring filters) and the indicators are always global - filter state is a single value, so applying always submits every panel's filters.
 
-### Adding filters to a location that already has a panel
+### Merging panels that share a location
 
-If a panel targets a location that another panel already occupies - for example a plugin appending `FilterPanel::make(FiltersLayout::Dropdown, [...])` to a table that already has a dropdown panel — its filters are **merged into the existing panel**, keeping the existing panel's configuration. This lets extensions add filters to a shared location without conflicting.
+Declaring more than one panel for the same location - whether twice in the same `filters()` array, or by appending one later with `pushFilters()` (for example from a plugin) — **merges their filters into a single panel** for that location. The configuration of the **first** panel at that location wins; any configuration set on the later panels is ignored:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+use Filament\Tables\Filters\SelectFilter;
+
+$table
+    ->filters([
+        FilterPanel::make(FiltersLayout::AboveContent, [
+            SelectFilter::make('status'),
+        ])->columns(2),
+
+        // The same location again: its filters are merged into the panel above,
+        // and its own configuration (such as `columns()`) is ignored.
+        FilterPanel::make(FiltersLayout::AboveContent, [
+            SelectFilter::make('category'),
+        ]),
+    ]);
+```
+
+This lets a plugin add filters to a shared location (such as the dropdown) without conflicting with the table's own panels.
 
 <Aside variant="danger">
     A [custom filter form schema](#customizing-the-filter-form-schema) (`filtersFormSchema()`) cannot be combined with `FilterPanel` objects, as they are competing layout mechanisms. Use `filtersFormSchema()` with a flat `filters()` array only.
