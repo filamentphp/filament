@@ -16,6 +16,7 @@ class BaseFilter extends Component
     use Concerns\HasIndicators;
     use Concerns\HasLabel;
     use Concerns\HasName;
+    use Concerns\HasPlacement;
     use Concerns\HasSchema;
     use Concerns\InteractsWithTableQuery;
 
