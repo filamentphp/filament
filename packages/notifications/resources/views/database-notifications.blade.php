@@ -72,17 +72,24 @@
                 </div>
             </x-slot>
 
-            @foreach ($notifications as $notification)
-                <div
-                    wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
-                    @class([
-                        'fi-no-notification-read-ctn' => ! $notification->unread(),
-                        'fi-no-notification-unread-ctn' => $notification->unread(),
-                    ])
-                >
-                    {{ $this->getNotification($notification)->inline() }}
-                </div>
-            @endforeach
+            <div
+                aria-label="{{ __('filament-notifications::database.modal.heading') }}"
+                role="list"
+                class="fi-no-notifications"
+            >
+                @foreach ($notifications as $notification)
+                    <div
+                        role="listitem"
+                        wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
+                        @class([
+                            'fi-no-notification-read-ctn' => ! $notification->unread(),
+                            'fi-no-notification-unread-ctn' => $notification->unread(),
+                        ])
+                    >
+                        {{ $this->getNotification($notification)->inline() }}
+                    </div>
+                @endforeach
+            </div>
 
             @if ($broadcastChannel = $this->getBroadcastChannel())
                 @script

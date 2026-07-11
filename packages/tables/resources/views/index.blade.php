@@ -1030,6 +1030,8 @@
                                     x-sortable
                                     data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                                 @endif
+                                aria-label="{{ $pluralModelLabel }}"
+                                role="list"
                                 {{
                                     (new FilamentComponentAttributeBag)
                                         ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
@@ -1184,6 +1186,7 @@
                                             x-on:expand-all-table-rows.window="isCollapsed = false"
                                             x-bind:class="isCollapsed && 'fi-ta-record-collapsed'"
                                         @endif
+                                        role="listitem"
                                         wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                         @if ($isReordering)
                                             x-sortable-item="{{ $recordKey }}"
@@ -1208,6 +1211,7 @@
 
                                         @if ($isReordering)
                                             <button
+                                                aria-label="{{ __('filament-tables::table.actions.reorder_record.label', ['key' => $recordKey]) }}"
                                                 class="fi-ta-reorder-handle fi-icon-btn"
                                                 type="button"
                                             >
@@ -1322,6 +1326,8 @@
 
                                         @if ($hasCollapsibleColumnsLayout && (! $isReordering))
                                             <button
+                                                aria-label="{{ __('filament-tables::table.actions.toggle_record_content.label', ['key' => $recordKey]) }}"
+                                                x-bind:aria-expanded="! isCollapsed"
                                                 type="button"
                                                 x-on:click="isCollapsed = ! isCollapsed"
                                                 class="fi-ta-record-collapse-btn fi-icon-btn"
@@ -2153,6 +2159,7 @@
                                                     @if ($isReordering)
                                                         <td class="fi-ta-cell">
                                                             <button
+                                                                aria-label="{{ __('filament-tables::table.actions.reorder_record.label', ['key' => $recordKey]) }}"
                                                                 class="fi-ta-reorder-handle fi-icon-btn"
                                                                 type="button"
                                                             >
