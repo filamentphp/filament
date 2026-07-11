@@ -826,6 +826,18 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return null;
         }
 
+        // Security: When `preventFilePathTampering()` is enabled, a string value is a
+        // client-controlled path that must trace back to the record (or be approved by
+        // `allowFilePathUsing`). Refuse unauthorized paths here so a tampered path can
+        // never reach the `deleteUploadedFileUsing` callback or be removed from state.
+        if (
+            is_string($file) &&
+            $this->shouldPreventFilePathTampering() &&
+            ! $this->isFilePathAuthorized($file)
+        ) {
+            return null;
+        }
+
         if (is_string($file)) {
             $this->removeStoredFileName($file);
         } elseif ($file instanceof TemporaryUploadedFile) {
