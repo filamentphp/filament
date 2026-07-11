@@ -17,6 +17,14 @@ class OptionStateCast implements StateCast
             return null;
         }
 
+        // Security: this cast backs single-value option fields, so a legitimate state is
+        // always a scalar or `null`. A tampered request payload can deliver an array (or
+        // other non-scalar), which would throw a `TypeError` at the `strval()` below and
+        // crash the request. Fail closed by treating it as no selection instead.
+        if (! is_scalar($state) && (! $state instanceof BackedEnum)) {
+            return null;
+        }
+
         if ($state instanceof BackedEnum) {
             $state = $state->value;
         }
@@ -47,6 +55,12 @@ class OptionStateCast implements StateCast
     public function set(mixed $state): ?string
     {
         if ($this->isNullable && blank($state)) {
+            return null;
+        }
+
+        // Security: mirror `get()` and fail closed on a tampered non-scalar value so a
+        // malformed array cannot reach `strval()` and crash the request.
+        if (! is_scalar($state) && (! $state instanceof BackedEnum)) {
             return null;
         }
 
