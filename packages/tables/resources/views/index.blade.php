@@ -1030,6 +1030,8 @@
                                     x-sortable
                                     data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                                 @endif
+                                aria-label="{{ $pluralModelLabel }}"
+                                role="list"
                                 {{
                                     (new FilamentComponentAttributeBag)
                                         ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
@@ -1184,6 +1186,7 @@
                                             x-on:expand-all-table-rows.window="isCollapsed = false"
                                             x-bind:class="isCollapsed && 'fi-ta-record-collapsed'"
                                         @endif
+                                        role="listitem"
                                         wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                         @if ($isReordering)
                                             x-sortable-item="{{ $recordKey }}"
@@ -1208,6 +1211,7 @@
 
                                         @if ($isReordering)
                                             <button
+                                                aria-label="{{ __('filament-tables::table.actions.reorder_record.label', ['key' => $recordKey]) }}"
                                                 class="fi-ta-reorder-handle fi-icon-btn"
                                                 type="button"
                                             >
@@ -1322,6 +1326,8 @@
 
                                         @if ($hasCollapsibleColumnsLayout && (! $isReordering))
                                             <button
+                                                aria-label="{{ __('filament-tables::table.actions.toggle_record_content.label', ['key' => $recordKey]) }}"
+                                                x-bind:aria-expanded="! isCollapsed"
                                                 type="button"
                                                 x-on:click="isCollapsed = ! isCollapsed"
                                                 class="fi-ta-record-collapse-btn fi-icon-btn"
@@ -1392,6 +1398,7 @@
                         @endphp
 
                         <table
+                            aria-label="{{ filled($tableAccessibleLabel = trim(strip_tags((string) $heading))) ? $tableAccessibleLabel : $pluralModelLabel }}"
                             @class([
                                 'fi-ta-table',
                                 'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
@@ -1400,7 +1407,7 @@
                             <thead>
                                 @if ($isStackedOnMobile && (count($sortableColumns) || ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))) && (! $isReordering))
                                     <tr class="fi-ta-table-stacked-header-row">
-                                        <th
+                                        <td
                                             colspan="100%"
                                             class="fi-ta-table-stacked-header-cell"
                                         >
@@ -1539,7 +1546,7 @@
                                                     class="fi-ta-page-checkbox fi-checkbox-input"
                                                 />
                                             @endif
-                                        </th>
+                                        </td>
                                     </tr>
                                 @endif
 
@@ -1572,6 +1579,7 @@
                                                 @if ($columnGroupColumnsCount)
                                                     <th
                                                         colspan="{{ $columnGroupColumnsCount }}"
+                                                        scope="colgroup"
                                                         {{
                                                             $columnGroup->getExtraHeaderAttributeBag()->class([
                                                                 'fi-ta-header-group-cell',
@@ -1608,6 +1616,7 @@
                                             @if ($hasRecordActionsForAnyRecord && $recordActionsPosition === RecordActionsPosition::BeforeCells)
                                                 @if ($recordActionsColumnLabel)
                                                     <th
+                                                        scope="col"
                                                         class="fi-ta-header-cell"
                                                     >
                                                         {{ $recordActionsColumnLabel }}
@@ -1615,6 +1624,7 @@
                                                 @else
                                                     <th
                                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
+                                                        scope="col"
                                                         class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                     ></th>
                                                 @endif
@@ -1622,6 +1632,7 @@
 
                                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                                 <th
+                                                    scope="col"
                                                     class="fi-ta-cell fi-ta-selection-cell"
                                                 >
                                                     @if (($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
@@ -1664,6 +1675,7 @@
                                             @if ($hasRecordActionsForAnyRecord && $recordActionsPosition === RecordActionsPosition::BeforeColumns)
                                                 @if ($recordActionsColumnLabel)
                                                     <th
+                                                        scope="col"
                                                         class="fi-ta-header-cell"
                                                     >
                                                         {{ $recordActionsColumnLabel }}
@@ -1671,6 +1683,7 @@
                                                 @else
                                                     <th
                                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
+                                                        scope="col"
                                                         class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                     ></th>
                                                 @endif
@@ -1696,6 +1709,10 @@
                                                 $columnWidth = $column->getWidth();
                                                 $isColumnActivelySorted = $getSortColumn() === $column->getName();
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
+
+                                                // A custom label may contain interactive elements, which are invalid inside a native `<button>`, so a `<span>` with button semantics is used instead.
+                                                $columnSortControlTag = ($columnLabel instanceof \Illuminate\Contracts\Support\Htmlable) ? 'span' : 'button';
+
                                                 $columnHeaderTooltip = $column->getHeaderTooltip();
                                                 $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
                                                     ? 'x-tooltip.html'
@@ -1703,9 +1720,10 @@
                                             @endphp
 
                                             <th
-                                                @if ($isColumnActivelySorted)
-                                                    aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+                                                @if ($isColumnSortable)
+                                                    aria-sort="{{ $isColumnActivelySorted ? ($sortDirection === 'asc' ? 'ascending' : 'descending') : 'none' }}"
                                                 @endif
+                                                scope="col"
                                                 {{
                                                     $column->getExtraHeaderAttributeBag()
                                                         ->class([
@@ -1725,14 +1743,18 @@
                                                 }}
                                             >
                                                 @if ($isColumnSortable)
-                                                    <span
-                                                        aria-label="{{ trim(strip_tags($columnLabel)) }}"
-                                                        role="button"
-                                                        tabindex="0"
+                                                    <{{ $columnSortControlTag }}
+                                                        @if ($columnSortControlTag === 'button')
+                                                            type="button"
+                                                        @else
+                                                            role="button"
+                                                            tabindex="0"
+                                                            x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                            x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                        @endif
                                                         wire:click="sortTable('{{ $columnName }}')"
-                                                        x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                        x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
                                                         wire:loading.attr="disabled"
+                                                        wire:target="sortTable('{{ $columnName }}')"
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >
                                                         @if (filled($columnHeaderTooltip))
@@ -1766,7 +1788,7 @@
                                                                 'wire:target' => "sortTable('{$columnName}')",
                                                             ]))
                                                         }}
-                                                    </span>
+                                                    </{{ $columnSortControlTag }}>
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
                                                         <span
@@ -1790,6 +1812,7 @@
                                         @if ($hasRecordActionsForAnyRecord && $recordActionsPosition === RecordActionsPosition::AfterColumns)
                                             @if ($recordActionsColumnLabel)
                                                 <th
+                                                    scope="col"
                                                     class="fi-ta-header-cell fi-align-end"
                                                 >
                                                     {{ $recordActionsColumnLabel }}
@@ -1797,6 +1820,7 @@
                                             @else
                                                 <th
                                                     aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
+                                                    scope="col"
                                                     class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                 ></th>
                                             @endif
@@ -1804,6 +1828,7 @@
 
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                             <th
+                                                scope="col"
                                                 class="fi-ta-cell fi-ta-selection-cell"
                                             >
                                                 @if (($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
@@ -1846,6 +1871,7 @@
                                         @if ($hasRecordActionsForAnyRecord && $recordActionsPosition === RecordActionsPosition::AfterCells)
                                             @if ($recordActionsColumnLabel)
                                                 <th
+                                                    scope="col"
                                                     class="fi-ta-header-cell fi-align-end"
                                                 >
                                                     {{ $recordActionsColumnLabel }}
@@ -1853,6 +1879,7 @@
                                             @else
                                                 <th
                                                     aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatRecordActionsCount) }}"
+                                                    scope="col"
                                                     class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                                 ></th>
                                             @endif
@@ -2153,6 +2180,7 @@
                                                     @if ($isReordering)
                                                         <td class="fi-ta-cell">
                                                             <button
+                                                                aria-label="{{ __('filament-tables::table.actions.reorder_record.label', ['key' => $recordKey]) }}"
                                                                 class="fi-ta-reorder-handle fi-icon-btn"
                                                                 type="button"
                                                             >

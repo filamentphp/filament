@@ -88,10 +88,15 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             $containerAttributes = $containerAttributes->grid($this->getColumns(), $gridDirection);
         }
 
-        $containerAttributes = $containerAttributes->class([
-            'fi-fo-toggle-buttons',
-            'fi-inline' => $isInline,
-        ]);
+        $containerAttributes = $containerAttributes
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'role' => $isMultiple ? 'group' : 'radiogroup',
+            ], escape: false)
+            ->class([
+                'fi-fo-toggle-buttons',
+                'fi-inline' => $isInline,
+            ]);
 
         $first = true;
 
@@ -154,7 +159,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1'], labelTag: 'div');
     }
 
     protected function toGroupedEmbeddedHtml(): string
@@ -167,7 +172,12 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
 
-        $containerAttributes = $this->getExtraAttributeBag()->class(['fi-fo-toggle-buttons fi-btn-group']);
+        $containerAttributes = $this->getExtraAttributeBag()
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'role' => $isMultiple ? 'group' : 'radiogroup',
+            ], escape: false)
+            ->class(['fi-fo-toggle-buttons fi-btn-group']);
 
         ob_start(); ?>
 
@@ -226,7 +236,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1'], labelTag: 'div');
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
