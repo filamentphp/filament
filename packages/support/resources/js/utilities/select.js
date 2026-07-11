@@ -110,6 +110,7 @@ export class Select {
         this.searchQuery = ''
         this.searchTimeout = null
         this.isSearching = false
+        this.maxItemsMessageElement = null
         // Version token to prevent race conditions when updating the selected display
         this.selectedDisplayVersion = 0
 
@@ -1588,6 +1589,7 @@ export class Select {
 
         // Remove any loading / no-results messages
         this.hideLoadingState()
+        this.hideMaxItemsMessage()
 
         // Remove resize listener
         if (this.resizeListener) {
@@ -1928,6 +1930,38 @@ export class Select {
         this.statusRegion.textContent = this.noSearchResultsMessage
     }
 
+    showMaxItemsMessage() {
+        // Remove any existing message so it is re-inserted in the correct position
+        this.hideMaxItemsMessage()
+
+        this.maxItemsMessageElement = document.createElement('div')
+        this.maxItemsMessageElement.className =
+            'fi-select-input-max-items-message'
+        this.maxItemsMessageElement.textContent = this.maxItemsMessage
+
+        // Insert the message above the options list so it is visible without scrolling
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.dropdown.insertBefore(
+                this.maxItemsMessageElement,
+                this.optionsList,
+            )
+        } else {
+            this.dropdown.appendChild(this.maxItemsMessageElement)
+        }
+
+        // Announce the message to screen readers
+        this.statusRegion.textContent = this.maxItemsMessage
+    }
+
+    hideMaxItemsMessage() {
+        if (!this.maxItemsMessageElement) {
+            return
+        }
+
+        this.maxItemsMessageElement.remove()
+        this.maxItemsMessageElement = null
+    }
+
     filterOptions(query) {
         const searchInLabel = this.searchableOptionFields.includes('label')
         const searchInValue = this.searchableOptionFields.includes('value')
@@ -2039,6 +2073,9 @@ export class Select {
                 this.updateSelectedDisplay()
             }
 
+            // An item was deselected, so any previous limit message is stale
+            this.hideMaxItemsMessage()
+
             this.renderOptions()
 
             // Reevaluate dropdown position after options are removed
@@ -2053,12 +2090,15 @@ export class Select {
 
         // Check if maxItems limit has been reached
         if (this.maxItems && newState.length >= this.maxItems) {
-            // Announce that the limit has been reached, without a blocking `alert()`
+            // Show and announce a message about reaching the limit, without a blocking `alert()`
             if (this.maxItemsMessage) {
-                this.statusRegion.textContent = this.maxItemsMessage
+                this.showMaxItemsMessage()
             }
             return // Don't add more items
         }
+
+        // A new item can be selected, so any previous limit message is stale
+        this.hideMaxItemsMessage()
 
         // Add the new value
         newState.push(value)
