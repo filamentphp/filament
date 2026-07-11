@@ -1960,6 +1960,11 @@ export class Select {
 
         this.maxItemsMessageElement.remove()
         this.maxItemsMessageElement = null
+
+        // Clear the announcement so reaching the limit again re-announces the same text
+        if (this.statusRegion.textContent === this.maxItemsMessage) {
+            this.statusRegion.textContent = ''
+        }
     }
 
     filterOptions(query) {
