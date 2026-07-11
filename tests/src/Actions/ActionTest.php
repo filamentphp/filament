@@ -22,6 +22,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -55,6 +56,23 @@ describe('calling actions', function (): void {
             ->assertDispatched('arguments-called', arguments: [
                 'payload' => $payload,
             ]);
+    });
+
+    it('finalizes the database transaction exactly once when a `databaseTransaction()` action is cancelled', function (): void {
+        $levelBeforeOuterTransaction = DB::transactionLevel();
+
+        // Simulate the action running inside a surrounding transaction.
+        DB::beginTransaction();
+
+        livewire(Actions::class)
+            ->callAction('cancelWithDatabaseTransaction');
+
+        // The cancelled inner action must NOT pop the outer transaction. With the
+        // double-commit bug, the stray second commit drops the level back to where
+        // it was before we opened the outer transaction.
+        expect(DB::transactionLevel())->toBe($levelBeforeOuterTransaction + 1);
+
+        DB::rollBack();
     });
 
     it('can call an action and halt', function (): void {
@@ -730,7 +748,7 @@ describe('notifications', function (): void {
 
     it('will raise an exception if a notification was sent checking with a different notification title', function (): void {
         $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-        $this->expectExceptionMessage('Failed asserting that two arrays are identical.');
+        $this->expectExceptionMessage('A notification was not sent');
 
         livewire(Actions::class)
             ->callAction('shows-notification-with-id')

@@ -160,6 +160,12 @@ class InstallCommand extends Command
 
         $configuration = json_decode(file_get_contents($path), associative: true);
 
+        if (! is_array($configuration)) {
+            $this->components->warn('Could not update [composer.json] because it could not be parsed as JSON. Please add "@php artisan filament:upgrade" to the "post-autoload-dump" scripts manually.');
+
+            return;
+        }
+
         $command = '@php artisan filament:upgrade';
 
         if (in_array($command, $configuration['scripts']['post-autoload-dump'] ?? [])) {
