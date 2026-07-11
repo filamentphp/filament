@@ -576,81 +576,81 @@
                                         @endphp
 
                                         @if ($dialogIsModal)
-                                        @php
-                                            $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
-                                            $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
-                                            $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
-                                            $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
-                                            $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
-                                            $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
-                                            $filtersTriggerActionExtraModalWindowAttributeBag = $filtersTriggerAction->getExtraModalWindowAttributeBag();
-                                            $filtersTriggerActionExtraModalOverlayAttributeBag = $filtersTriggerAction->getExtraModalOverlayAttributeBag();
-                                            $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
-                                            $filtersTriggerActionModalFooterActionsAlignment = $filtersTriggerAction->getModalFooterActionsAlignment();
-                                            $filtersTriggerActionModalHeading = $filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading');
-                                            $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
-                                            $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
-                                            $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
-                                            $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
-                                            $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
-                                            $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
-                                        @endphp
+                                            @php
+                                                $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
+                                                $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
+                                                $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
+                                                $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
+                                                $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
+                                                $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
+                                                $filtersTriggerActionExtraModalWindowAttributeBag = $filtersTriggerAction->getExtraModalWindowAttributeBag();
+                                                $filtersTriggerActionExtraModalOverlayAttributeBag = $filtersTriggerAction->getExtraModalOverlayAttributeBag();
+                                                $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
+                                                $filtersTriggerActionModalFooterActionsAlignment = $filtersTriggerAction->getModalFooterActionsAlignment();
+                                                $filtersTriggerActionModalHeading = $filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading');
+                                                $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
+                                                $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
+                                                $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
+                                                $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
+                                                $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
+                                                $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
+                                            @endphp
 
-                                        <x-filament::modal
-                                            :alignment="$filtersTriggerActionModalAlignment"
-                                            :autofocus="$filtersTriggerActionIsModalAutofocused"
-                                            :close-button="$filtersTriggerActionHasModalCloseButton"
-                                            :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
-                                            :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
-                                            :description="$filtersTriggerActionModalDescription"
-                                            :extra-modal-window-attribute-bag="$filtersTriggerActionExtraModalWindowAttributeBag"
-                                            :extra-modal-overlay-attribute-bag="$filtersTriggerActionExtraModalOverlayAttributeBag"
-                                            :footer-actions="$filtersTriggerActionVisibleModalFooterActions"
-                                            :footer-actions-alignment="$filtersTriggerActionModalFooterActionsAlignment"
-                                            :heading="$filtersTriggerActionModalHeading"
-                                            :icon="$filtersTriggerActionModalIcon"
-                                            :icon-color="$filtersTriggerActionModalIconColor"
-                                            :slide-over="$filtersTriggerActionIsModalSlideOver"
-                                            :slide-over-position="$filtersTriggerActionModalSlideOverPosition"
-                                            :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
-                                            :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
-                                            :width="$filtersFormWidth"
-                                            :wire:key="$dialogWireKey"
-                                            class="fi-ta-filters-modal"
-                                        >
-                                            <x-slot name="trigger">
-                                                {{ $filtersTriggerAction->badge($dialogActiveFiltersCount) }}
-                                            </x-slot>
+                                            <x-filament::modal
+                                                :alignment="$filtersTriggerActionModalAlignment"
+                                                :autofocus="$filtersTriggerActionIsModalAutofocused"
+                                                :close-button="$filtersTriggerActionHasModalCloseButton"
+                                                :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
+                                                :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
+                                                :description="$filtersTriggerActionModalDescription"
+                                                :extra-modal-window-attribute-bag="$filtersTriggerActionExtraModalWindowAttributeBag"
+                                                :extra-modal-overlay-attribute-bag="$filtersTriggerActionExtraModalOverlayAttributeBag"
+                                                :footer-actions="$filtersTriggerActionVisibleModalFooterActions"
+                                                :footer-actions-alignment="$filtersTriggerActionModalFooterActionsAlignment"
+                                                :heading="$filtersTriggerActionModalHeading"
+                                                :icon="$filtersTriggerActionModalIcon"
+                                                :icon-color="$filtersTriggerActionModalIconColor"
+                                                :slide-over="$filtersTriggerActionIsModalSlideOver"
+                                                :slide-over-position="$filtersTriggerActionModalSlideOverPosition"
+                                                :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
+                                                :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
+                                                :width="$filtersFormWidth"
+                                                :wire:key="$dialogWireKey"
+                                                class="fi-ta-filters-modal"
+                                            >
+                                                <x-slot name="trigger">
+                                                    {{ $filtersTriggerAction->badge($dialogActiveFiltersCount) }}
+                                                </x-slot>
 
-                                            {{ $filtersTriggerAction->getModalContent() }}
+                                                {{ $filtersTriggerAction->getModalContent() }}
 
-                                            {{ $dialogFiltersForm }}
+                                                {{ $dialogFiltersForm }}
 
-                                            {{ $filtersTriggerAction->getModalContentFooter() }}
-                                        </x-filament::modal>
-                                    @else
-                                        <x-filament::dropdown
-                                            :max-height="$filtersFormMaxHeight"
-                                            placement="bottom-end"
-                                            shift
-                                            :flip="false"
-                                            :width="$filtersFormWidth ?? Width::ExtraSmall"
-                                            :wire:key="$dialogWireKey"
-                                            class="fi-ta-filters-dropdown"
-                                        >
-                                            <x-slot name="trigger">
-                                                {{ $filtersTriggerAction->badge($dialogActiveFiltersCount) }}
-                                            </x-slot>
+                                                {{ $filtersTriggerAction->getModalContentFooter() }}
+                                            </x-filament::modal>
+                                        @else
+                                            <x-filament::dropdown
+                                                :max-height="$filtersFormMaxHeight"
+                                                placement="bottom-end"
+                                                shift
+                                                :flip="false"
+                                                :width="$filtersFormWidth ?? Width::ExtraSmall"
+                                                :wire:key="$dialogWireKey"
+                                                class="fi-ta-filters-dropdown"
+                                            >
+                                                <x-slot name="trigger">
+                                                    {{ $filtersTriggerAction->badge($dialogActiveFiltersCount) }}
+                                                </x-slot>
 
-                                            <x-filament-tables::filters
-                                                :apply-action="$filtersApplyAction"
-                                                :form="$dialogFiltersForm"
-                                                :placement="(count($filterPlacementNames) > 1) ? $dialogPlacement->name : null"
-                                                :heading-tag="$secondLevelHeadingTag"
-                                                :reset-action-position="$filtersResetActionPosition"
-                                            />
-                                        </x-filament::dropdown>
-                                    @endif
+                                                <x-filament-tables::filters
+                                                    :apply-action="$filtersApplyAction"
+                                                    :form="$dialogFiltersForm"
+                                                    :placement="(count($filterPlacementNames) > 1) ? $dialogPlacement->name : null"
+                                                    :heading-tag="$secondLevelHeadingTag"
+                                                    :reset-action-position="$filtersResetActionPosition"
+                                                />
+                                            </x-filament::dropdown>
+                                        @endif
                                     @endforeach
                                 @elseif ($hasFiltersBeforeContent || $hasFiltersAfterContent)
                                     <span
