@@ -42,7 +42,6 @@
         $recordActionsAlignment = filled($recordActionsAlignment) ? (Alignment::tryFrom($recordActionsAlignment) ?? $recordActionsAlignment) : null;
     }
 
-    $activeFiltersCount = $getActiveFiltersCount();
     $isSelectionDisabled = $isSelectionDisabled();
     $maxSelectableRecords = $getMaxSelectableRecords();
     $columns = $getVisibleColumns();
@@ -53,7 +52,6 @@
     $contentFooter = $getContentFooter();
     $filterIndicators = $getFilterIndicators();
     $filtersApplyAction = $getFiltersApplyAction();
-    $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
     $filtersResetActionPosition = $getFiltersResetActionPosition();
     $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
@@ -121,14 +119,34 @@
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
+    $filterPanels = $hasFilters ? $getFilterPanels() : [];
+    $filterPanelsByLocation = [];
+
+    foreach ($filterPanels as $filterPanel) {
+        $filterPanelsByLocation[$filterPanel->getLocation()->name] = $filterPanel;
+    }
+
+    $filterPanelLocationNames = array_keys($filterPanelsByLocation);
     $filtersTriggerAction = $getFiltersTriggerAction();
-    $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
-    $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
-    $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
-    $hasFiltersBeforeContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible]);
-    $hasFiltersAfterContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AfterContent, FiltersLayout::AfterContentCollapsible]);
-    $hasCollapsibleFilters = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContentCollapsible, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]);
+    $hasFiltersDialog = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::Dropdown->name, FiltersLayout::Modal->name]);
+    $hasFiltersAboveContent = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::AboveContent->name, FiltersLayout::AboveContentCollapsible->name]);
+    $hasFiltersBelowContent = in_array(FiltersLayout::BelowContent->name, $filterPanelLocationNames, strict: true);
+    $hasFiltersBeforeContent = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::BeforeContent->name, FiltersLayout::BeforeContentCollapsible->name]);
+    $hasFiltersAfterContent = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::AfterContent->name, FiltersLayout::AfterContentCollapsible->name]);
+    $hasCollapsibleFilters = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::AboveContentCollapsible->name, FiltersLayout::BeforeContentCollapsible->name, FiltersLayout::AfterContentCollapsible->name]);
     $hasFiltersTrigger = $hasFilters && ($hasFiltersDialog || $hasFiltersBeforeContent || $hasFiltersAfterContent);
+    $aboveContentPanel = $filterPanelsByLocation[FiltersLayout::AboveContent->name] ?? $filterPanelsByLocation[FiltersLayout::AboveContentCollapsible->name] ?? null;
+    $beforeContentPanel = $filterPanelsByLocation[FiltersLayout::BeforeContent->name] ?? $filterPanelsByLocation[FiltersLayout::BeforeContentCollapsible->name] ?? null;
+    $afterContentPanel = $filterPanelsByLocation[FiltersLayout::AfterContent->name] ?? $filterPanelsByLocation[FiltersLayout::AfterContentCollapsible->name] ?? null;
+    $belowContentPanel = $filterPanelsByLocation[FiltersLayout::BelowContent->name] ?? null;
+    $aboveContentFiltersForm = $aboveContentPanel ? $getFiltersFormForPanel($aboveContentPanel) : null;
+    $beforeContentFiltersForm = $beforeContentPanel ? $getFiltersFormForPanel($beforeContentPanel) : null;
+    $afterContentFiltersForm = $afterContentPanel ? $getFiltersFormForPanel($afterContentPanel) : null;
+    $belowContentFiltersForm = $belowContentPanel ? $getFiltersFormForPanel($belowContentPanel) : null;
+    $aboveContentActiveFiltersCount = $aboveContentPanel ? $getActiveFiltersCountForPanel($aboveContentPanel) : 0;
+    $beforeContentActiveFiltersCount = $beforeContentPanel ? $getActiveFiltersCountForPanel($beforeContentPanel) : 0;
+    $afterContentActiveFiltersCount = $afterContentPanel ? $getActiveFiltersCountForPanel($afterContentPanel) : 0;
+    $dialogPanels = array_values(array_filter($filterPanels, fn ($filterPanel): bool => in_array($filterPanel->getLocation()->name, [FiltersLayout::Dropdown->name, FiltersLayout::Modal->name], strict: true)));
     $filtersFormMaxHeight = $getFiltersFormMaxHeight();
     $hasColumnManager = $hasColumnManager();
     $columnManagerLayout = $getColumnManagerLayout();
@@ -268,7 +286,7 @@
             >
                 <x-filament-tables::filters
                     :apply-action="$filtersApplyAction"
-                    :form="$filtersForm"
+                    :form="$beforeContentFiltersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
                     :reset-action-position="$filtersResetActionPosition"
@@ -337,7 +355,7 @@
                     >
                         <x-filament-tables::filters
                             :apply-action="$filtersApplyAction"
-                            :form="$filtersForm"
+                            :form="$aboveContentFiltersForm"
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
                             :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
@@ -349,7 +367,7 @@
                                 x-on:click="areFiltersOpen = ! areFiltersOpen"
                                 class="fi-ta-filters-trigger-action-ctn"
                             >
-                                {{ $filtersTriggerAction->badge($activeFiltersCount) }}
+                                {{ $filtersTriggerAction->badge($aboveContentActiveFiltersCount) }}
                             </span>
                         @endif
                     </div>
@@ -564,7 +582,17 @@
 
                             @if ($hasFiltersTrigger || $hasColumnManager)
                                 @if ($hasFiltersDialog)
-                                    @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
+                                    @foreach ($dialogPanels as $dialogPanel)
+                                        @php
+                                            $dialogFiltersForm = $getFiltersFormForPanel($dialogPanel);
+                                            $dialogActiveFiltersCount = $getActiveFiltersCountForPanel($dialogPanel);
+                                            $dialogFiltersFormWidth = $getFiltersFormWidthForPanel($dialogPanel);
+                                            $dialogFiltersFormMaxHeight = $getFiltersFormMaxHeightForPanel($dialogPanel);
+                                            $dialogIsModal = ($dialogPanel->getLocation() === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver();
+                                            $dialogWireKey = $this->getId() . '.table.filters.' . $dialogPanel->getLocation()->name;
+                                        @endphp
+
+                                        @if ($dialogIsModal)
                                         @php
                                             $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
                                             $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
@@ -603,42 +631,43 @@
                                             :slide-over-position="$filtersTriggerActionModalSlideOverPosition"
                                             :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
                                             :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
-                                            :width="$filtersFormWidth"
-                                            :wire:key="$this->getId() . '.table.filters'"
+                                            :width="$dialogFiltersFormWidth"
+                                            :wire:key="$dialogWireKey"
                                             class="fi-ta-filters-modal"
                                         >
                                             <x-slot name="trigger">
-                                                {{ $filtersTriggerAction->badge($activeFiltersCount) }}
+                                                {{ $filtersTriggerAction->badge($dialogActiveFiltersCount) }}
                                             </x-slot>
 
                                             {{ $filtersTriggerAction->getModalContent() }}
 
-                                            {{ $filtersForm }}
+                                            {{ $dialogFiltersForm }}
 
                                             {{ $filtersTriggerAction->getModalContentFooter() }}
                                         </x-filament::modal>
                                     @else
                                         <x-filament::dropdown
-                                            :max-height="$filtersFormMaxHeight"
+                                            :max-height="$dialogFiltersFormMaxHeight"
                                             placement="bottom-end"
                                             shift
                                             :flip="false"
-                                            :width="$filtersFormWidth ?? Width::ExtraSmall"
-                                            :wire:key="$this->getId() . '.table.filters'"
+                                            :width="$dialogFiltersFormWidth ?? Width::ExtraSmall"
+                                            :wire:key="$dialogWireKey"
                                             class="fi-ta-filters-dropdown"
                                         >
                                             <x-slot name="trigger">
-                                                {{ $filtersTriggerAction->badge($activeFiltersCount) }}
+                                                {{ $filtersTriggerAction->badge($dialogActiveFiltersCount) }}
                                             </x-slot>
 
                                             <x-filament-tables::filters
                                                 :apply-action="$filtersApplyAction"
-                                                :form="$filtersForm"
+                                                :form="$dialogFiltersForm"
                                                 :heading-tag="$secondLevelHeadingTag"
                                                 :reset-action-position="$filtersResetActionPosition"
                                             />
                                         </x-filament::dropdown>
                                     @endif
+                                    @endforeach
                                 @elseif ($hasFiltersBeforeContent || $hasFiltersAfterContent)
                                     <span
                                         x-ref="filtersTriggerActionContainer"
@@ -648,7 +677,7 @@
                                             'lg:fi-hidden' => ! $hasCollapsibleFilters,
                                         ])
                                     >
-                                        {{ $filtersTriggerAction->badge($activeFiltersCount) }}
+                                        {{ $filtersTriggerAction->badge($beforeContentActiveFiltersCount + $afterContentActiveFiltersCount) }}
                                     </span>
                                 @endif
 
@@ -2587,7 +2616,7 @@
             @if ($hasFiltersBelowContent)
                 <x-filament-tables::filters
                     :apply-action="$filtersApplyAction"
-                    :form="$filtersForm"
+                    :form="$belowContentFiltersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
                     :reset-action-position="$filtersResetActionPosition"
@@ -2610,7 +2639,7 @@
             >
                 <x-filament-tables::filters
                     :apply-action="$filtersApplyAction"
-                    :form="$filtersForm"
+                    :form="$afterContentFiltersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
                     :reset-action-position="$filtersResetActionPosition"
