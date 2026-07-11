@@ -87,6 +87,17 @@ class ModalBrowserTest extends Page
                         ->action(static fn () => null)
                         ->extraModalWindowAttributes(['data-testid' => 'scroll-nested-modal']),
                 ]),
+            Action::make('focusRecovery')
+                ->label('Focus recovery')
+                ->schema([
+                    TextInput::make('name')
+                        // A rule without a native browser validation counterpart,
+                        // so a failing submission always reaches the server.
+                        ->rules(['starts_with:foo']),
+                ])
+                ->action(static fn () => null)
+                ->extraAttributes(['data-testid' => 'focus-recovery-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'focus-recovery-modal']),
             Action::make('clickThrough')
                 ->label('Click through')
                 ->modalClickThrough()

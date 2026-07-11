@@ -46,6 +46,51 @@ const releaseScrollLock = () => {
     }
 }
 
+const recoverFocusAfterLivewireRequest = () => {
+    // `x-trap` only reacts to `focusin` events, but the browser fires no event
+    // when it moves focus to the `<body>` because the focused element was
+    // disabled (e.g. a submit button with `wire:loading.attr="disabled"`) or
+    // removed by a morph. Screen readers then stop scoping themselves to the
+    // open `aria-modal` dialog and read the entire page instead, with no way
+    // back in. https://github.com/filamentphp/filament/issues/8954
+
+    // Click-through modals do not trap focus, since the user can interact
+    // with the page behind them.
+    const openModals = document.querySelectorAll(
+        '.fi-modal-open:not(.fi-modal-click-through)',
+    )
+
+    // The topmost modal, when multiple are stacked.
+    const modal = openModals[openModals.length - 1]
+
+    if (!modal) {
+        return
+    }
+
+    if (modal.contains(document.activeElement)) {
+        return
+    }
+
+    const firstTabbableElement = modal.querySelector(
+        '.fi-modal-window :is(a[href], button:enabled, input:enabled, select:enabled, textarea:enabled, [tabindex]):not([tabindex="-1"], [type="hidden"])',
+    )
+
+    // The modal itself has `tabindex="-1"`, so it can hold focus if nothing
+    // inside it is tabbable.
+    ;(firstTabbableElement ?? modal).focus({ preventScroll: true })
+}
+
+document.addEventListener('livewire:init', () => {
+    window.Livewire.hook('commit', ({ succeed, fail }) => {
+        // Wait a frame so the morph and `wire:loading` states have settled.
+        const recover = () =>
+            requestAnimationFrame(recoverFocusAfterLivewireRequest)
+
+        succeed(recover)
+        fail(recover)
+    })
+})
+
 export default ({ id, isScrollLocked = true }) => ({
     isOpen: false,
 

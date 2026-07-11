@@ -159,6 +159,34 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('recovers focus into the modal after a failed form submission', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->click('Focus recovery')
+                ->assertVisible('[data-testid="focus-recovery-modal"]')
+                ->fill('input[wire\\:model="mountedActions.0.data.name"]', 'bar')
+                // Submitting via the footer button disables it with `wire:loading`,
+                // which silently drops focus to the `<body>`, outside the focus
+                // trap. Once the request settles, focus must be recovered inside
+                // the modal so `aria-modal` screen reader scoping is preserved.
+                ->click('[data-testid="focus-recovery-modal"] .fi-modal-footer-actions button >> text=Submit')
+                ->assertSee('The name field must start with one of the following: foo.')
+                ->wait(1)
+                ->assertScript('(() => { const modal = document.querySelector(\'[data-testid="focus-recovery-modal"]\'); return modal.contains(document.activeElement) })()', true)
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/modal-browser-test')
+                ->inDarkMode()
+                ->click('Focus recovery')
+                ->assertVisible('[data-testid="focus-recovery-modal"]')
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
     it('lets clicks reach the page behind a click-through modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

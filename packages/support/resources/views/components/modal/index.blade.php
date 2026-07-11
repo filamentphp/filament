@@ -119,6 +119,7 @@
     aria-modal="{{ $isClickThrough ? 'false' : 'true' }}"
     id="{{ $id }}"
     role="{{ $alert ? 'alertdialog' : 'dialog' }}"
+    tabindex="-1"
     x-data="filamentModal({
                 id: @js($id),
                 isScrollLocked: @js(! $isClickThrough),
