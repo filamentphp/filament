@@ -46,6 +46,19 @@ class FilterPanel extends Component
         return $static;
     }
 
+    /**
+     * @param  array<BaseFilter>  $filters
+     */
+    public function pushFilters(array $filters): static
+    {
+        $this->filters = [
+            ...$this->filters,
+            ...$filters,
+        ];
+
+        return $this;
+    }
+
     public function columns(int | array | Closure | null $columns): static
     {
         $this->columns = $columns;

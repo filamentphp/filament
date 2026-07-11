@@ -80,13 +80,39 @@ it('throws when mixing a `FilterPanel` and a loose filter in `filters()`', funct
     ]))->toThrow(LogicException::class);
 });
 
-it('throws when two panels target the same location', function (): void {
-    $table = Table::make(livewire(PostsTable::class)->instance());
+it('merges panels that share a location, keeping the first panel\'s configuration', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('a')])->columns(4),
+            FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('b')]),
+        ]);
 
-    expect(fn () => $table->filters([
-        FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('a')]),
-        FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('b')]),
-    ]))->toThrow(LogicException::class);
+    $panels = $table->getFilterPanels();
+
+    expect($panels)->toHaveCount(1);
+    expect($panels[0]->getColumns())->toBe(4); // The first panel's config wins.
+    expect(array_map(fn ($filter): string => $filter->getName(), $panels[0]->getFilters()))->toBe(['a', 'b']);
+    expect(array_keys($table->getFilters()))->toContain('a', 'b');
+});
+
+it('merges a pushed panel into the existing panel at the same location', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('a')])->columns(3),
+            FilterPanel::make(FiltersLayout::Dropdown, [Filter::make('b')]),
+        ]);
+
+    // A plugin appends another panel at an already-occupied location.
+    $table->pushFilters([
+        FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('c')])->columns(1),
+    ]);
+
+    $abovePanel = collect($table->getFilterPanels())
+        ->first(fn ($panel): bool => $panel->getLocation() === FiltersLayout::AboveContent);
+
+    expect($abovePanel->getColumns())->toBe(3); // The existing panel's config wins.
+    expect(array_map(fn ($filter): string => $filter->getName(), $abovePanel->getFilters()))->toBe(['a', 'c']);
+    expect(array_keys($table->getFilters()))->toContain('a', 'b', 'c');
 });
 
 it('builds one container per panel keyed by location', function (): void {

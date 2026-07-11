@@ -149,10 +149,10 @@ trait HasFilters
             $locationName = $panel->getLocation()->name;
 
             if (array_key_exists($locationName, $this->filterPanels)) {
-                throw new LogicException("A table can only have one filter panel per location; [{$locationName}] is used more than once.");
+                $this->filterPanels[$locationName]->pushFilters($panel->getFilters());
+            } else {
+                $this->filterPanels[$locationName] = $panel;
             }
-
-            $this->filterPanels[$locationName] = $panel;
 
             foreach ($panel->getFilters() as $filter) {
                 $filter->table($this);
