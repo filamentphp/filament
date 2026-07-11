@@ -28,6 +28,12 @@ it('can format state using `formatStateUsing()`', function (): void {
         ->assertSeeText('HELLO WORLD');
 });
 
+it('renders array state as JSON instead of crashing', function (): void {
+    livewire(TestComponentWithArrayStateTextEntry::class)
+        ->assertSuccessful()
+        ->assertSeeText('{"key":"value"}');
+});
+
 it('can display multiple values', function (): void {
     livewire(TestComponentWithMultipleTextEntry::class)
         ->assertSuccessful()
@@ -290,6 +296,32 @@ class TestComponentWithFormattedTextEntry extends Component implements HasSchema
             ->components([
                 TextEntry::make('message')
                     ->formatStateUsing(fn (string $state): string => strtoupper($state)),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
+    }
+}
+
+class TestComponentWithArrayStateTextEntry extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([
+                'data' => 'placeholder',
+            ])
+            ->components([
+                TextEntry::make('data')
+                    ->formatStateUsing(fn (): array => ['key' => 'value']),
             ]);
     }
 

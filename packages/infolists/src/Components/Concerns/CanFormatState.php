@@ -381,6 +381,10 @@ trait CanFormatState
             'state' => $state,
         ]);
 
+        if (is_array($state)) {
+            $state = json_encode($state);
+        }
+
         if ($state instanceof RichContentAttribute) {
             $isHtml = true;
             $state = Str::sanitizeHtml($state->toHtml());
