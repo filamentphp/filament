@@ -118,16 +118,17 @@
     $aboveContentPlacement = $hasFiltersAboveContent ? (in_array(FiltersLayout::AboveContent->name, $filterPlacementNames, strict: true) ? FiltersLayout::AboveContent : FiltersLayout::AboveContentCollapsible) : null;
     $beforeContentPlacement = $hasFiltersBeforeContent ? (in_array(FiltersLayout::BeforeContent->name, $filterPlacementNames, strict: true) ? FiltersLayout::BeforeContent : FiltersLayout::BeforeContentCollapsible) : null;
     $afterContentPlacement = $hasFiltersAfterContent ? (in_array(FiltersLayout::AfterContent->name, $filterPlacementNames, strict: true) ? FiltersLayout::AfterContent : FiltersLayout::AfterContentCollapsible) : null;
-    $dialogPlacement = $hasFiltersDialog ? (in_array(FiltersLayout::Dropdown->name, $filterPlacementNames, strict: true) ? FiltersLayout::Dropdown : FiltersLayout::Modal) : null;
+    $activeDialogPlacements = array_values(array_filter(
+        [FiltersLayout::Dropdown, FiltersLayout::Modal],
+        fn (FiltersLayout $placement): bool => in_array($placement->name, $filterPlacementNames, strict: true),
+    ));
     $aboveContentFiltersForm = $aboveContentPlacement ? $getFiltersFormForPlacement($aboveContentPlacement) : null;
     $belowContentFiltersForm = $hasFiltersBelowContent ? $getFiltersFormForPlacement(FiltersLayout::BelowContent) : null;
     $beforeContentFiltersForm = $beforeContentPlacement ? $getFiltersFormForPlacement($beforeContentPlacement) : null;
     $afterContentFiltersForm = $afterContentPlacement ? $getFiltersFormForPlacement($afterContentPlacement) : null;
-    $dialogFiltersForm = $dialogPlacement ? $getFiltersFormForPlacement($dialogPlacement) : null;
     $aboveContentActiveFiltersCount = $aboveContentPlacement ? $getActiveFiltersCountForPlacement($aboveContentPlacement) : 0;
     $beforeContentActiveFiltersCount = $beforeContentPlacement ? $getActiveFiltersCountForPlacement($beforeContentPlacement) : 0;
     $afterContentActiveFiltersCount = $afterContentPlacement ? $getActiveFiltersCountForPlacement($afterContentPlacement) : 0;
-    $dialogActiveFiltersCount = $dialogPlacement ? $getActiveFiltersCountForPlacement($dialogPlacement) : 0;
     $filtersFormMaxHeight = $getFiltersFormMaxHeight();
     $hasColumnManager = $hasColumnManager();
     $columnManagerLayout = $getColumnManagerLayout();
@@ -565,7 +566,16 @@
 
                             @if ($hasFiltersTrigger || $hasColumnManager)
                                 @if ($hasFiltersDialog)
-                                    @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
+                                    @foreach ($activeDialogPlacements as $dialogPlacement)
+                                        @php
+                                            $filtersTriggerAction = $getFiltersTriggerAction((count($filterPlacementNames) > 1) ? $dialogPlacement : null);
+                                            $dialogFiltersForm = $getFiltersFormForPlacement($dialogPlacement);
+                                            $dialogActiveFiltersCount = $getActiveFiltersCountForPlacement($dialogPlacement);
+                                            $dialogIsModal = ($dialogPlacement === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver();
+                                            $dialogWireKey = $this->getId() . '.table.filters.' . $dialogPlacement->name;
+                                        @endphp
+
+                                        @if ($dialogIsModal)
                                         @php
                                             $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
                                             $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
@@ -605,7 +615,7 @@
                                             :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
                                             :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
                                             :width="$filtersFormWidth"
-                                            :wire:key="$this->getId() . '.table.filters'"
+                                            :wire:key="$dialogWireKey"
                                             class="fi-ta-filters-modal"
                                         >
                                             <x-slot name="trigger">
@@ -625,7 +635,7 @@
                                             shift
                                             :flip="false"
                                             :width="$filtersFormWidth ?? Width::ExtraSmall"
-                                            :wire:key="$this->getId() . '.table.filters'"
+                                            :wire:key="$dialogWireKey"
                                             class="fi-ta-filters-dropdown"
                                         >
                                             <x-slot name="trigger">
@@ -641,6 +651,7 @@
                                             />
                                         </x-filament::dropdown>
                                     @endif
+                                    @endforeach
                                 @elseif ($hasFiltersBeforeContent || $hasFiltersAfterContent)
                                     <span
                                         x-ref="filtersTriggerActionContainer"

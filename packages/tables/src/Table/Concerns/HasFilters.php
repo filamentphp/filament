@@ -284,7 +284,7 @@ trait HasFilters
         return $containers;
     }
 
-    public function getFiltersTriggerAction(): Action
+    public function getFiltersTriggerAction(?FiltersLayout $placement = null): Action
     {
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
@@ -299,7 +299,11 @@ trait HasFilters
                 Action::make('resetFilters')
                     ->label(__('filament-tables::table.filters.actions.reset.label'))
                     ->color('danger')
-                    ->action('resetTableFiltersForm')
+                    ->action(
+                        $placement
+                            ? "resetTableFiltersForm('{$placement->name}')"
+                            : 'resetTableFiltersForm',
+                    )
                     ->button(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))

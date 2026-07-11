@@ -140,3 +140,21 @@ it('ignores per-filter placement when a custom `filtersFormSchema()` is set', fu
     expect(collect($keys)->contains(fn (?string $key): bool => str_starts_with((string) $key, 'placement::')))
         ->toBeFalse();
 });
+
+it('scopes the filter trigger reset action to its placement', function (): void {
+    $table = livewire(PostsTableWithFilterPlacements::class)->instance()->getTable();
+
+    $resetAction = collect($table->getFiltersTriggerAction(FiltersLayout::Modal)->getExtraModalFooterActions())
+        ->first(fn ($action): bool => $action->getName() === 'resetFilters');
+
+    expect($resetAction?->getLivewireClickHandler())->toBe("resetTableFiltersForm('Modal')");
+});
+
+it('keeps the filter trigger reset action global when no placement is given', function (): void {
+    $table = livewire(PostsTableWithFilterPlacements::class)->instance()->getTable();
+
+    $resetAction = collect($table->getFiltersTriggerAction()->getExtraModalFooterActions())
+        ->first(fn ($action): bool => $action->getName() === 'resetFilters');
+
+    expect($resetAction?->getLivewireClickHandler())->toBe('resetTableFiltersForm');
+});
