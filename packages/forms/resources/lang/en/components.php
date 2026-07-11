@@ -126,6 +126,8 @@ return [
 
         'editor' => [
 
+            'label' => 'Image editor',
+
             'actions' => [
 
                 'cancel' => [

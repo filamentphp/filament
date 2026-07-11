@@ -499,9 +499,13 @@ class TableSelect extends Field implements HasEmbeddedView
         $livewireHtml = Livewire::mount(TableSelectLivewireComponent::class, $properties, $this->getLivewireKey());
 
         $attributes = (new FilamentComponentAttributeBag)
-            ->merge(['id' => $id], escape: false)
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
             ->merge($extraAttributes, escape: false);
 
-        return $this->wrapEmbeddedHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>');
+        return $this->wrapEmbeddedHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>', labelTag: 'div');
     }
 }

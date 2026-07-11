@@ -1,4 +1,6 @@
 .fi-modal {
+    @apply outline-none;
+
     &.fi-modal-slide-over,
     &.fi-width-screen {
         & > .fi-modal-window-ctn > .fi-modal-window {

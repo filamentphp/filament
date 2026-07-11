@@ -13,6 +13,7 @@
 <div class="fi-no-database">
     <x-filament::modal
         :alignment="$hasNotifications ? null : Alignment::Center"
+        aria-labelledby="database-notifications.heading"
         close-button
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
         :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
@@ -44,7 +45,10 @@
         @if ($hasNotifications)
             <x-slot name="header">
                 <div>
-                    <h2 class="fi-modal-heading">
+                    <h2
+                        id="database-notifications.heading"
+                        class="fi-modal-heading"
+                    >
                         {{ __('filament-notifications::database.modal.heading') }}
 
                         @if ($unreadNotificationsCount)
@@ -72,17 +76,24 @@
                 </div>
             </x-slot>
 
-            @foreach ($notifications as $notification)
-                <div
-                    wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
-                    @class([
-                        'fi-no-notification-read-ctn' => ! $notification->unread(),
-                        'fi-no-notification-unread-ctn' => $notification->unread(),
-                    ])
-                >
-                    {{ $this->getNotification($notification)->inline() }}
-                </div>
-            @endforeach
+            <div
+                aria-label="{{ __('filament-notifications::database.modal.heading') }}"
+                role="list"
+                class="fi-no-notifications"
+            >
+                @foreach ($notifications as $notification)
+                    <div
+                        role="listitem"
+                        wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
+                        @class([
+                            'fi-no-notification-read-ctn' => ! $notification->unread(),
+                            'fi-no-notification-unread-ctn' => $notification->unread(),
+                        ])
+                    >
+                        {{ $this->getNotification($notification)->inline() }}
+                    </div>
+                @endforeach
+            </div>
 
             @if ($broadcastChannel = $this->getBroadcastChannel())
                 @script

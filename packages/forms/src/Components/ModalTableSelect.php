@@ -913,7 +913,11 @@ class ModalTableSelect extends Field implements HasEmbeddedView
         $placeholder = $this->getPlaceholder();
 
         $attributes = (new FilamentComponentAttributeBag)
-            ->merge(['id' => $id], escape: false)
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
             ->merge($extraAttributes, escape: false)
             ->class([
                 'fi-fo-modal-table-select',
@@ -960,7 +964,7 @@ class ModalTableSelect extends Field implements HasEmbeddedView
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 
     protected function generateBadgeHtml(string | Htmlable $label, ?string $color): string

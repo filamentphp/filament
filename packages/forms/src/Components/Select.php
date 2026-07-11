@@ -1977,6 +1977,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
                                     hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,
+                                    id: <?= Js::from($id) ?>,
                                     initialOptionLabel: <?= Js::from((blank($state) || $isMultiple) ? null : $this->resolveOptionLabel(options: $options)) ?>,
                                     initialOptionLabels: <?= Js::from((filled($state) && $isMultiple) ? $this->transformOptionsForJs($this->getOptionLabels(options: $options)) : []) ?>,
                                     initialState: <?= Js::from($state) ?>,
