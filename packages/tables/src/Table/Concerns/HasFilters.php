@@ -434,6 +434,18 @@ trait HasFilters
         );
     }
 
+    public function getActiveFiltersCountForPlacement(FiltersLayout $placement): int
+    {
+        return array_reduce(
+            array_filter(
+                $this->getFilters(),
+                fn (BaseFilter $filter): bool => $filter->getPlacement() === $placement,
+            ),
+            fn (int $carry, BaseFilter $filter): int => $carry + $filter->getActiveCount(),
+            0,
+        );
+    }
+
     public function isFiltered(): bool
     {
         return $this->getActiveFiltersCount() > 0;

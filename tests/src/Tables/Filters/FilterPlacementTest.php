@@ -92,3 +92,17 @@ it('returns the whole form for the only placement when placements do not differ'
     expect($table->getFiltersFormForPlacement(FiltersLayout::Dropdown))
         ->toBe($table->getFiltersForm());
 });
+
+it('counts active filters per placement, so a dialog badge ignores filters placed elsewhere', function (): void {
+    Post::factory()->count(5)->create();
+
+    $table = livewire(PostsTableWithFilterPlacements::class)
+        ->filterTable('is_published')
+        ->instance()
+        ->getTable();
+
+    expect($table->getActiveFiltersCount())->toBe(1);
+
+    expect($table->getActiveFiltersCountForPlacement(FiltersLayout::Dropdown))->toBe(0);
+    expect($table->getActiveFiltersCountForPlacement(FiltersLayout::AboveContent))->toBe(1);
+});
