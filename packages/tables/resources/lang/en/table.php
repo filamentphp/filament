@@ -26,6 +26,15 @@ return [
             'label' => 'Action|Actions',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Yes',
+                'false' => 'No',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Loading...',
