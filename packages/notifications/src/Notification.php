@@ -342,6 +342,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $hasDate = filled($date);
         $body = $this->getBody();
         $hasBody = filled($body);
+        $closeButtonLabel = __('filament-notifications::notification.actions.close.label');
 
         $attributes = (new FilamentComponentAttributeBag)
             ->merge([
@@ -409,6 +410,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
             <button
                 type="button"
                 x-on:click="close"
+                aria-label="<?= e($closeButtonLabel) ?>"
+                title="<?= e($closeButtonLabel) ?>"
                 class="fi-icon-btn fi-no-notification-close-btn"
             >
                 <?= generate_icon_html(Heroicon::XMark, alias: NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON)->toHtml() ?>
