@@ -261,7 +261,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if ($notification instanceof Notification) {
-            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+            $expectedNotificationArray = collect($notification->toArray())->except(['id'])->toArray();
+
+            $expectedNotification = $notifications->first(
+                fn (Notification $mountedNotification): bool => collect($mountedNotification->toArray())->except(['id'])->toArray() === $expectedNotificationArray,
+            );
         }
 
         if (blank($notification)) {
@@ -302,7 +306,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if ($notification instanceof Notification) {
-            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+            $expectedNotificationArray = collect($notification->toArray())->except(['id'])->toArray();
+
+            $expectedNotification = $notifications->first(
+                fn (Notification $mountedNotification): bool => collect($mountedNotification->toArray())->except(['id'])->toArray() === $expectedNotificationArray,
+            );
         }
 
         if (blank($notification)) {
