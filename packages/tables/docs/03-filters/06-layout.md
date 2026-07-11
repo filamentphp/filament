@@ -2,6 +2,7 @@
 title: Filter layout
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Positioning filters into grid columns
 
@@ -171,6 +172,39 @@ public function table(Table $table): Table
         ], layout: FiltersLayout::BeforeContentCollapsible); // or `FiltersLayout::AfterContentCollapsible`
 }
 ```
+
+## Placing individual filters in different locations
+
+By default, all filters render together in the location set by the table's layout. You may instead give an individual filter its own location using the `placement()` method, passing a `FiltersLayout`. This lets filters appear in several places at once - for example, a status filter that is always visible above the table, while the rest stay in the dropdown:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            SelectFilter::make('status')
+                ->placement(FiltersLayout::AboveContent),
+            SelectFilter::make('category'),
+            SelectFilter::make('author'),
+        ]);
+}
+```
+
+In this example, the `status` filter renders above the table, while `category` and `author` stay in the dropdown.
+
+A filter without a `placement()` falls back to the table's `filtersLayout()`, which defaults to `FiltersLayout::Dropdown`. When every filter resolves to the same location, the table renders exactly as it did before, so adding `placement()` to a single filter is all that is needed to split filters across locations.
+
+Each rendered filter panel has its own reset action that clears only the filters shown in that panel. To clear every filter at once, use the "remove all" button in the active filter indicators above the table. Similarly, each trigger button's badge counts only the active filters in its own location, so the dropdown funnel does not count filters that are displayed elsewhere.
+
+<Aside variant="info">
+    Placing filters in two collapsible locations at the same time is not supported, as they would share their open and closed state.
+</Aside>
+
+A [custom filter form schema](#customizing-the-filter-form-schema) takes precedence over per-filter placement: when `filtersFormSchema()` is set, all filters use that schema and `placement()` is ignored.
 
 ## Hiding the filter indicators
 
