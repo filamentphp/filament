@@ -18,6 +18,7 @@ function filled(value) {
 
 export class Select {
     constructor({
+        ariaLabel = null,
         canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
         element,
@@ -28,6 +29,7 @@ export class Select {
         hasDynamicOptions = false,
         hasDynamicSearchResults = true,
         hasInitialNoOptionsMessage = false,
+        id = null,
         initialOptionLabel = null,
         initialOptionLabels = null,
         initialState = null,
@@ -55,6 +57,7 @@ export class Select {
         state,
         statePath = null,
     }) {
+        this.ariaLabel = ariaLabel
         this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
         this.element = element
@@ -65,6 +68,7 @@ export class Select {
         this.hasDynamicOptions = hasDynamicOptions
         this.hasDynamicSearchResults = hasDynamicSearchResults
         this.hasInitialNoOptionsMessage = hasInitialNoOptionsMessage
+        this.id = id
         this.initialOptionLabel = initialOptionLabel
         this.initialOptionLabels = initialOptionLabels
         this.initialState = initialState
@@ -106,6 +110,7 @@ export class Select {
         this.searchQuery = ''
         this.searchTimeout = null
         this.isSearching = false
+        this.maxItemsMessageElement = null
         // Version token to prevent race conditions when updating the selected display
         this.selectedDisplayVersion = 0
 
@@ -151,13 +156,22 @@ export class Select {
             )
         }
 
-        this.container.setAttribute('aria-haspopup', 'listbox')
-
         // Create the button that toggles the dropdown
         this.selectButton = document.createElement('button')
         this.selectButton.className = 'fi-select-input-btn'
         this.selectButton.type = 'button'
+        this.selectButton.setAttribute('role', 'combobox')
+        this.selectButton.setAttribute('aria-haspopup', 'listbox')
         this.selectButton.setAttribute('aria-expanded', 'false')
+
+        // Associate the button with the field's `<label>`, or name it directly
+        if (filled(this.id)) {
+            this.selectButton.id = this.id
+        }
+
+        if (filled(this.ariaLabel)) {
+            this.selectButton.setAttribute('aria-label', this.ariaLabel)
+        }
 
         // Create the selected value display
         this.selectedDisplay = document.createElement('div')
@@ -178,6 +192,7 @@ export class Select {
         // Generate a unique ID for the dropdown
         this.dropdownId = `fi-select-input-dropdown-${Math.random().toString(36).substring(2, 11)}`
         this.dropdown.id = this.dropdownId
+        this.selectButton.setAttribute('aria-controls', this.dropdownId)
 
         // Set aria-multiselectable for multi-select
         if (this.isMultiple) {
@@ -317,12 +332,21 @@ export class Select {
         // Create the options list
         this.optionsList = document.createElement('ul')
 
+        // Create a visually hidden live region to announce loading / empty / limit messages,
+        // before `renderOptions()` since it may announce a "no options" message
+        this.statusRegion = document.createElement('div')
+        this.statusRegion.className = 'fi-sr-only'
+        this.statusRegion.setAttribute('role', 'status')
+        this.statusRegion.setAttribute('aria-live', 'polite')
+        this.statusRegion.setAttribute('aria-atomic', 'true')
+
         // Render options
         this.renderOptions()
 
         // Append everything to the container
         this.container.appendChild(this.selectButton)
         this.container.appendChild(this.dropdown)
+        this.container.appendChild(this.statusRegion)
 
         // Append the container to the element
         this.element.appendChild(this.container)
@@ -1585,6 +1609,7 @@ export class Select {
 
         // Remove any loading / no-results messages
         this.hideLoadingState()
+        this.hideMaxItemsMessage()
 
         // Remove resize listener
         if (this.resizeListener) {
@@ -1871,9 +1896,13 @@ export class Select {
             : this.loadingMessage
         this.dropdown.appendChild(loadingItem)
 
-        // Reposition dropdown after DOM changes
+        // Reposition the dropdown after DOM changes, and announce the message to
+        // screen readers, unless the dropdown is closed, such as when rendering
+        // the initial options on page load
         if (this.isOpen) {
             this.deferPositionDropdown()
+
+            this.statusRegion.textContent = loadingItem.textContent
         }
     }
 
@@ -1884,6 +1913,8 @@ export class Select {
         )
         if (loadingItem) {
             loadingItem.remove()
+
+            this.statusRegion.textContent = ''
         }
     }
 
@@ -1902,9 +1933,13 @@ export class Select {
         noOptionsItem.textContent = this.noOptionsMessage
         this.dropdown.appendChild(noOptionsItem)
 
-        // Reposition dropdown after DOM changes
+        // Reposition the dropdown after DOM changes, and announce the message to
+        // screen readers, unless the dropdown is closed, such as when rendering
+        // the initial options on page load
         if (this.isOpen) {
             this.deferPositionDropdown()
+
+            this.statusRegion.textContent = this.noOptionsMessage
         }
     }
 
@@ -1923,9 +1958,53 @@ export class Select {
         noResultsItem.textContent = this.noSearchResultsMessage
         this.dropdown.appendChild(noResultsItem)
 
-        // Reposition dropdown after DOM changes
+        // Reposition the dropdown after DOM changes, and announce the message to
+        // screen readers, unless the dropdown is closed, such as when rendering
+        // the initial options on page load
         if (this.isOpen) {
             this.deferPositionDropdown()
+
+            this.statusRegion.textContent = this.noSearchResultsMessage
+        }
+    }
+
+    showMaxItemsMessage() {
+        // Remove any existing message so it is re-inserted in the correct position
+        this.hideMaxItemsMessage()
+
+        this.maxItemsMessageElement = document.createElement('div')
+        this.maxItemsMessageElement.className =
+            'fi-select-input-max-items-message'
+        this.maxItemsMessageElement.textContent = this.maxItemsMessage
+
+        // Insert the message above the options list so it is visible without scrolling
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.dropdown.insertBefore(
+                this.maxItemsMessageElement,
+                this.optionsList,
+            )
+        } else {
+            this.dropdown.appendChild(this.maxItemsMessageElement)
+        }
+
+        // Reposition the dropdown after DOM changes
+        this.deferPositionDropdown()
+
+        // Announce the message to screen readers
+        this.statusRegion.textContent = this.maxItemsMessage
+    }
+
+    hideMaxItemsMessage() {
+        if (!this.maxItemsMessageElement) {
+            return
+        }
+
+        this.maxItemsMessageElement.remove()
+        this.maxItemsMessageElement = null
+
+        // Clear the announcement so reaching the limit again re-announces the same text
+        if (this.statusRegion.textContent === this.maxItemsMessage) {
+            this.statusRegion.textContent = ''
         }
     }
 
@@ -2040,6 +2119,9 @@ export class Select {
                 this.updateSelectedDisplay()
             }
 
+            // An item was deselected, so any previous limit message is stale
+            this.hideMaxItemsMessage()
+
             this.renderOptions()
 
             // Reevaluate dropdown position after options are removed
@@ -2054,12 +2136,15 @@ export class Select {
 
         // Check if maxItems limit has been reached
         if (this.maxItems && newState.length >= this.maxItems) {
-            // Show a message or alert about reaching the limit
+            // Show and announce a message about reaching the limit, without a blocking `alert()`
             if (this.maxItemsMessage) {
-                alert(this.maxItemsMessage)
+                this.showMaxItemsMessage()
             }
             return // Don't add more items
         }
+
+        // A new item can be selected, so any previous limit message is stale
+        this.hideMaxItemsMessage()
 
         // Add the new value
         newState.push(value)

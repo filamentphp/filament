@@ -1516,6 +1516,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         ob_start(); ?>
 
         <div
+            aria-labelledby="<?= e($id) ?>-label"
+            id="<?= e($id) ?>"
+            role="group"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
             x-data="richEditorFormComponent({
@@ -1727,6 +1730,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 $slotHtml,
                 attributes: $wrapperAttributes,
             ),
+            labelTag: 'div',
         );
     }
 }

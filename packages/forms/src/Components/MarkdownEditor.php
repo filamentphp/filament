@@ -82,11 +82,11 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         if ($isDisabled) {
             ob_start(); ?>
 
-            <div id="<?= e($id) ?>" class="fi-fo-markdown-editor fi-disabled fi-prose">
+            <div aria-labelledby="<?= e($id) ?>-label" id="<?= e($id) ?>" role="group" class="fi-fo-markdown-editor fi-disabled fi-prose">
                 <?= str($this->getState())->markdown($this->getCommonMarkOptions(), $this->getCommonMarkExtensions())->sanitizeHtml() ?>
             </div>
 
-            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
         }
 
         $key = $this->getKey();
@@ -159,6 +159,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
                 $slotHtml,
                 attributes: $wrapperAttributes,
             ),
+            labelTag: 'div',
         );
     }
 }

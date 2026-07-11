@@ -28,6 +28,10 @@ Action::make('delete')
     The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
 </Aside>
 
+<Aside variant="info">
+    Confirmation modals use the `alertdialog` ARIA role instead of `dialog`, so screen readers announce them as alerts and automatically read the modal's description when they open.
+</Aside>
+
 ## Controlling modal content
 
 ### Customizing the modal's heading, description, and submit action label

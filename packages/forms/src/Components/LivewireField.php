@@ -92,12 +92,16 @@ class LivewireField extends Field implements HasEmbeddedView
 
         if ($hasWrapper) {
             $attributes = (new FilamentComponentAttributeBag)
-                ->merge(['id' => $id], escape: false)
+                ->merge([
+                    'aria-labelledby' => filled($id) ? "{$id}-label" : null,
+                    'id' => $id,
+                    'role' => filled($id) ? 'group' : null,
+                ], escape: false)
                 ->merge($extraAttributes, escape: false);
 
             $livewireHtml = '<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>';
         }
 
-        return $this->wrapEmbeddedHtml($livewireHtml);
+        return $this->wrapEmbeddedHtml($livewireHtml, labelTag: filled($id) ? 'div' : 'label');
     }
 }

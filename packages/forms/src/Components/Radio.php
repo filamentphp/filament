@@ -65,10 +65,15 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
             $containerAttributes = $containerAttributes->grid($this->getColumns(), $gridDirection);
         }
 
-        $containerAttributes = $containerAttributes->class([
-            'fi-fo-radio',
-            'fi-inline' => $isInline,
-        ]);
+        $containerAttributes = $containerAttributes
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'role' => 'radiogroup',
+            ], escape: false)
+            ->class([
+                'fi-fo-radio',
+                'fi-inline' => $isInline,
+            ]);
 
         ob_start(); ?>
 
@@ -109,7 +114,7 @@ class Radio extends Field implements Contracts\CanDisableOptions, HasEmbeddedVie
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 
     public function getDefaultState(): mixed

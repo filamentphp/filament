@@ -1,6 +1,7 @@
 import { Select } from '../../../../../support/resources/js/utilities/select.js'
 
 export default function selectTableColumn({
+    ariaLabel,
     canOptionLabelsWrap,
     canSelectPlaceholder,
     getOptionLabelUsing,
@@ -43,6 +44,7 @@ export default function selectTableColumn({
         init() {
             if (!isNative) {
                 this.select = new Select({
+                    ariaLabel,
                     canOptionLabelsWrap,
                     canSelectPlaceholder,
                     element: this.$refs.select,

@@ -1,4 +1,6 @@
 .fi-modal {
+    @apply outline-none;
+
     &.fi-modal-slide-over,
     &.fi-width-screen {
         & > .fi-modal-window-ctn > .fi-modal-window {
@@ -144,7 +146,7 @@
         & > .fi-modal-window-ctn {
             @apply p-4;
 
-            & .fi-modal-window {
+            & > .fi-modal-window {
                 @apply mx-auto rounded-xl;
             }
         }

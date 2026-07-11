@@ -33,10 +33,12 @@ class CodeEditor extends Field implements HasEmbeddedView
 
     public function toEmbeddedHtml(): string
     {
+        $id = $this->getId();
         $isDisabled = $this->isDisabled();
         $isLive = $this->isLive();
         $isLiveOnBlur = $this->isLiveOnBlur();
         $isLiveDebounced = $this->isLiveDebounced();
+        $label = $this->getLabel();
         $liveDebounce = $this->getLiveDebounce();
         $language = $this->getLanguage();
         $statePath = $this->getStatePath();
@@ -48,6 +50,9 @@ class CodeEditor extends Field implements HasEmbeddedView
         ob_start(); ?>
 
         <div
+            aria-labelledby="<?= e($id) ?>-label"
+            id="<?= e($id) ?>"
+            role="group"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms')) ?>"
             x-data="codeEditorFormComponent({
@@ -56,6 +61,7 @@ class CodeEditor extends Field implements HasEmbeddedView
                         isLive: <?= Js::from($isLive) ?>,
                         isLiveDebounced: <?= Js::from($isLiveDebounced) ?>,
                         isLiveOnBlur: <?= Js::from($isLiveOnBlur) ?>,
+                        label: <?= Js::from($label) ?>,
                         liveDebounce: <?= Js::from($liveDebounce) ?>,
                         language: <?= Js::from($language?->value) ?>,
                         state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) ?>,
@@ -74,6 +80,7 @@ class CodeEditor extends Field implements HasEmbeddedView
                 $slotHtml,
                 attributes: $wrapperAttributes,
             ),
+            labelTag: 'div',
         );
     }
 }
