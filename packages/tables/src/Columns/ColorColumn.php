@@ -11,6 +11,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
+use Illuminate\Support\Str;
 
 class ColorColumn extends Column implements HasEmbeddedView
 {
@@ -110,7 +111,7 @@ class ColorColumn extends Column implements HasEmbeddedView
                         'fi-copyable' => $isCopyable,
                     ])
                     ->style([
-                        'background-color: ' . e($stateItem) => $stateItem,
+                        'background-color: ' . e($sanitizedColor = Str::sanitizeCssColor($stateItem)) => filled($sanitizedColor),
                     ])
                     ->toHtml() ?>></div>
             <?php } ?>
