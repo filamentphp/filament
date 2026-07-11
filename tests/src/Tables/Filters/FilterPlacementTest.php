@@ -106,3 +106,25 @@ it('counts active filters per placement, so a dialog badge ignores filters place
     expect($table->getActiveFiltersCountForPlacement(FiltersLayout::Dropdown))->toBe(0);
     expect($table->getActiveFiltersCountForPlacement(FiltersLayout::AboveContent))->toBe(1);
 });
+
+it('resets only the filters belonging to the given placement', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    $author = $posts->first()->author;
+
+    $livewire = livewire(PostsTableWithFilterPlacements::class)
+        ->filterTable('is_published')      // placed `AboveContent`
+        ->filterTable('author', $author);  // placed `Dropdown`
+
+    // Both filters are active to begin with.
+    expect($livewire->instance()->getTable()->getActiveFiltersCount())->toBe(2);
+
+    // Reset only the `AboveContent` panel.
+    $livewire->call('resetTableFiltersForm', 'AboveContent');
+
+    $table = $livewire->instance()->getTable();
+
+    // The `AboveContent` filter is cleared; the `Dropdown` filter is untouched.
+    expect($table->getActiveFiltersCountForPlacement(FiltersLayout::AboveContent))->toBe(0);
+    expect($table->getActiveFiltersCountForPlacement(FiltersLayout::Dropdown))->toBe(1);
+});

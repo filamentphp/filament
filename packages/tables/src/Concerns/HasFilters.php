@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\QueryBuilder;
@@ -146,9 +147,19 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
-    public function resetTableFiltersForm(): void
+    public function resetTableFiltersForm(?string $placement = null): void
     {
-        $this->getTableFiltersForm()->fill();
+        // `$placement` arrives as a `FiltersLayout` case name (e.g. `'AboveContent'`) from the Blade,
+        // so the reset action in each placement's panel only clears the filters shown in that panel.
+        $placementCase = filled($placement)
+            ? constant(FiltersLayout::class . '::' . $placement)
+            : null;
+
+        $form = $placementCase
+            ? ($this->getTable()->getFiltersFormForPlacement($placementCase) ?? $this->getTableFiltersForm())
+            : $this->getTableFiltersForm();
+
+        $form->fill();
 
         if ($this->getTable()->hasDeferredFilters()) {
             $this->applyTableFilters();

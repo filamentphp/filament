@@ -6,6 +6,7 @@
     'applyAction',
     'form',
     'headingTag' => 'h3',
+    'placement' => null,
     'resetActionPosition' => FiltersResetActionPosition::Header,
 ])
 
@@ -23,7 +24,7 @@
                             new \Filament\Support\View\ComponentAttributeBag([
                                 'color' => 'danger',
                                 'tag' => 'button',
-                                'wire:click' => 'resetTableFiltersForm',
+                                'wire:click' => filled($placement) ? ('resetTableFiltersForm(' . \Illuminate\Support\Js::from($placement) . ')') : 'resetTableFiltersForm',
                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => 'resetTableFiltersForm',
                             ])
@@ -47,7 +48,7 @@
             @if ($resetActionPosition === FiltersResetActionPosition::Footer)
                 <x-filament::button
                     color="danger"
-                    wire:click="resetTableFiltersForm"
+                    wire:click="resetTableFiltersForm({{ filled($placement) ? \Illuminate\Support\Js::from($placement) : '' }})"
                 >
                     {{ __('filament-tables::table.filters.actions.reset.label') }}
                 </x-filament::button>
