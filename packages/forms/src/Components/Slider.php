@@ -523,9 +523,13 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
         $isDisabled = $this->isDisabled();
         $statePath = $this->getStatePath();
 
+        $id = $this->getId();
+
         $attributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'id' => $this->getId(),
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->merge($this->getExtraAlpineAttributes(), escape: false)
@@ -573,7 +577,7 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
             <?= $attributes->toHtml() ?>
         ></div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: VerticalAlignment::Center);
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: VerticalAlignment::Center, labelTag: 'div');
     }
 
     /**

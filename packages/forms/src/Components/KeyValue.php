@@ -377,6 +377,7 @@ class KeyValue extends Field implements HasEmbeddedView
         $canEditKeys = $this->canEditKeys();
         $canEditValues = $this->canEditValues();
         $debounce = $this->getLiveDebounce();
+        $id = $this->getId();
         $isAddable = $this->isAddable();
         $isDeletable = $this->isDeletable();
         $isDisabled = $this->isDisabled();
@@ -404,7 +405,7 @@ class KeyValue extends Field implements HasEmbeddedView
             wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled])), 0, 64)) ?>"
             <?= $alpineDivAttributes->toHtml() ?>
         >
-                <table class="fi-fo-key-value-table">
+                <table aria-labelledby="<?= e($id) ?>-label" id="<?= e($id) ?>" class="fi-fo-key-value-table">
                     <thead>
                         <tr>
                             <?php if ($isReorderable && (! $isDisabled)) { ?>
@@ -512,6 +513,7 @@ class KeyValue extends Field implements HasEmbeddedView
                 attributes: $wrapperAttributes,
             ),
             extraWrapperAttributes: ['class' => 'fi-fo-key-value-wrp'],
+            labelTag: 'div',
         );
     }
 

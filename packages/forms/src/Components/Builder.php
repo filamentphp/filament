@@ -1449,8 +1449,15 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
         $isBlockLabelTruncated = $this->isBlockLabelTruncated();
         $labelBetweenItems = $this->getLabelBetweenItems();
 
+        $id = $this->getId();
+
         $outerAttributes = (new FilamentComponentAttributeBag)
             ->merge($this->getExtraAttributes(), escape: false)
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
             ->class([
                 'fi-fo-builder',
                 'fi-collapsible' => $isCollapsible,
@@ -1687,6 +1694,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             <?php } ?>
         </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 }
