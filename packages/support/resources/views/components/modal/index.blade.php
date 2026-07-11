@@ -4,9 +4,11 @@
     use Filament\Support\Enums\Width;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
+    use Illuminate\Contracts\Support\Htmlable;
 @endphp
 
 @props([
+    'alert' => false,
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
     'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
@@ -47,6 +49,12 @@
     $hasHeading = filled($heading);
     $iconHtml = ($icon || $iconAlias) ? \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) : null;
     $hasIcon = $iconHtml !== null;
+
+    $headingId = filled($id) ? "{$id}.heading" : null;
+
+    // The description is only rendered when the built-in heading is, so the
+    // `aria-describedby` reference must be gated to the same conditions.
+    $descriptionId = ($hasDescription && $hasHeading && (! $header) && filled($id)) ? "{$id}.description" : null;
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
@@ -98,14 +106,19 @@
 @endif
 
 <div
+    @if ($descriptionId)
+        aria-describedby="{{ $descriptionId }}"
+    @endif
     @if ($ariaLabelledby)
         aria-labelledby="{{ $ariaLabelledby }}"
-    @elseif ($heading)
-        aria-labelledby="{{ "{$id}.heading" }}"
+    @elseif ($hasHeading && $headingId)
+        aria-labelledby="{{ $headingId }}"
+    @elseif ($hasHeading)
+        aria-label="{{ trim(strip_tags($heading instanceof Htmlable ? $heading->toHtml() : $heading)) }}"
     @endif
     aria-modal="{{ $isClickThrough ? 'false' : 'true' }}"
     id="{{ $id }}"
-    role="dialog"
+    role="{{ $alert ? 'alertdialog' : 'dialog' }}"
     x-data="filamentModal({
                 id: @js($id),
                 isScrollLocked: @js(! $isClickThrough),
@@ -233,12 +246,22 @@
                         @endif
 
                         <div>
-                            <h2 class="fi-modal-heading">
+                            <h2
+                                @if ($headingId)
+                                    id="{{ $headingId }}"
+                                @endif
+                                class="fi-modal-heading"
+                            >
                                 {{ $heading }}
                             </h2>
 
                             @if ($hasDescription)
-                                <p class="fi-modal-description">
+                                <p
+                                    @if ($descriptionId)
+                                        id="{{ $descriptionId }}"
+                                    @endif
+                                    class="fi-modal-description"
+                                >
                                     {{ $description }}
                                 </p>
                             @endif

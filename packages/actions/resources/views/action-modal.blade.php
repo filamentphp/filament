@@ -3,6 +3,7 @@
     use Filament\Support\Facades\FilamentView;
     use Illuminate\Support\Js;
 
+    $actionIsModalAlert = $action->isConfirmationRequired();
     $actionModalAlignment = $action->getModalAlignment();
     $actionIsModalAutofocused = $action->isModalAutofocused();
     $actionIsModalClickThrough = $action->isModalClickThrough();
@@ -33,6 +34,7 @@
 @endphp
 
 <x-filament::modal
+    :alert="$actionIsModalAlert"
     :alignment="$actionModalAlignment"
     :autofocus="$actionIsModalAutofocused"
     :click-through="$actionIsModalClickThrough"
