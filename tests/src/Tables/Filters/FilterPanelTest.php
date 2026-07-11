@@ -1,7 +1,9 @@
 <?php
 
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\FilterPanel;
 use Filament\Tables\Filters\SelectFilter;
@@ -187,4 +189,70 @@ it('keeps the filter trigger reset action global when no location is given', fun
         ->first(fn ($action): bool => $action->getName() === 'resetFilters');
 
     expect($resetAction?->getLivewireClickHandler())->toBe('resetTableFiltersForm');
+});
+
+it('normalises a flat `filters($filters, layout:)` array to an implicit panel at that layout', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters([Filter::make('a'), Filter::make('b')], layout: FiltersLayout::AboveContent);
+
+    $panels = $table->getFilterPanels();
+
+    expect($panels)->toHaveCount(1);
+    expect($panels[0]->getLocation())->toBe(FiltersLayout::AboveContent);
+    expect(count($panels[0]->getFilters()))->toBe(2);
+});
+
+it('removes filters from every panel with the global "remove all"', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    $author = $posts->first()->author;
+
+    $livewire = livewire(PostsTableWithFilterPanels::class)
+        ->filterTable('is_published')      // AboveContent panel
+        ->filterTable('author', $author);  // Dropdown panel
+
+    expect($livewire->instance()->getTable()->getActiveFiltersCount())->toBe(2);
+
+    $livewire->call('removeTableFilters');
+
+    expect($livewire->instance()->getTable()->getActiveFiltersCount())->toBe(0);
+});
+
+it('throws when `pushFilters()` adds a loose filter to a panel-mode table', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters([FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('a')])]);
+
+    expect(fn () => $table->pushFilters([Filter::make('b')]))->toThrow(LogicException::class);
+});
+
+it('throws when `pushFilters()` adds a panel to a flat-mode table', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters([Filter::make('a')]);
+
+    expect(fn () => $table->pushFilters([
+        FilterPanel::make(FiltersLayout::Dropdown, [Filter::make('b')]),
+    ]))->toThrow(LogicException::class);
+});
+
+it('resolves per-panel `width()`, `maxHeight()` and `resetActionPosition()` with fallthrough', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filtersFormMaxHeight('300px')
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('a')])
+                ->width(Width::Large)
+                ->maxHeight('500px')
+                ->resetActionPosition(FiltersResetActionPosition::Footer),
+            FilterPanel::make(FiltersLayout::Dropdown, [Filter::make('b')]),
+        ]);
+
+    [$abovePanel, $dropdownPanel] = $table->getFilterPanels();
+
+    // Panel overrides win.
+    expect($table->getFiltersFormWidthForPanel($abovePanel))->toBe(Width::Large);
+    expect($table->getFiltersFormMaxHeightForPanel($abovePanel))->toBe('500px');
+    expect($table->getResetActionPositionForPanel($abovePanel))->toBe(FiltersResetActionPosition::Footer);
+
+    // Unset falls through to the table-level default, then the per-layout default.
+    expect($table->getFiltersFormMaxHeightForPanel($dropdownPanel))->toBe('300px');
+    expect($table->getResetActionPositionForPanel($dropdownPanel))->toBe(FiltersResetActionPosition::Header);
 });
