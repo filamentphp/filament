@@ -206,6 +206,7 @@ trait HasFilters
     public function getFiltersFormSchema(): array
     {
         $filters = [];
+        $placementsByFilter = [];
 
         foreach ($this->getFilters() as $filterName => $filter) {
             $filters[$filterName] = Group::make()
@@ -215,9 +216,39 @@ trait HasFilters
                 ->columnSpan($filter->getColumnSpan())
                 ->columnStart($filter->getColumnStart())
                 ->columns($filter->getColumns());
+
+            $placementsByFilter[$filterName] = $filter->getPlacement();
         }
 
-        return $this->evaluate($this->filtersFormSchema, ['filters' => $filters]) ?? array_values($filters);
+        if ($this->filtersFormSchema) {
+            return $this->evaluate($this->filtersFormSchema, ['filters' => $filters]) ?? array_values($filters);
+        }
+
+        $distinctPlacements = [];
+
+        foreach ($placementsByFilter as $placement) {
+            $distinctPlacements[$placement->name] = $placement;
+        }
+
+        if (count($distinctPlacements) <= 1) {
+            return array_values($filters);
+        }
+
+        $containers = [];
+
+        foreach ($distinctPlacements as $placement) {
+            $placementFilterGroups = array_values(array_intersect_key(
+                $filters,
+                array_filter($placementsByFilter, fn (FiltersLayout $filterPlacement): bool => $filterPlacement === $placement),
+            ));
+
+            $containers[] = Group::make()
+                ->schema($placementFilterGroups)
+                ->key('placement::' . $placement->name)
+                ->columns($this->getFiltersFormColumns());
+        }
+
+        return $containers;
     }
 
     public function getFiltersTriggerAction(): Action
