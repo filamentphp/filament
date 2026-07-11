@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Schemas\Schema;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
@@ -62,4 +63,32 @@ it('still filters the query when filters are split across placements', function 
         ->filterTable('is_published')
         ->assertCanSeeTableRecords($posts->where('is_published', true))
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
+});
+
+it('lists the active filter placements', function (): void {
+    $table = livewire(PostsTableWithFilterPlacements::class)->instance()->getTable();
+
+    expect($table->getActiveFilterPlacements())
+        ->toContain(FiltersLayout::AboveContent)
+        ->toContain(FiltersLayout::Dropdown);
+});
+
+it('returns a scoped child schema per placement', function (): void {
+    $table = livewire(PostsTableWithFilterPlacements::class)->instance()->getTable();
+
+    $aboveContent = $table->getFiltersFormForPlacement(FiltersLayout::AboveContent);
+
+    expect($aboveContent)->toBeInstanceOf(Schema::class);
+    expect($aboveContent->toHtml())
+        ->toContain('is_published')
+        ->not->toContain('tableFilters.author')
+        ->not->toContain('tableDeferredFilters.author');
+});
+
+it('returns the whole form for the only placement when placements do not differ', function (): void {
+    $table = livewire(PostsTable::class)->instance()->getTable();
+
+    // `PostsTable` resolves every filter to `Dropdown`; the flat form is returned as-is.
+    expect($table->getFiltersFormForPlacement(FiltersLayout::Dropdown))
+        ->toBe($table->getFiltersForm());
 });

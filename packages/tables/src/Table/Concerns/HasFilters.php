@@ -193,6 +193,39 @@ trait HasFilters
         return $this->getLivewire()->getTableFiltersForm();
     }
 
+    /**
+     * @return array<FiltersLayout>
+     */
+    public function getActiveFilterPlacements(): array
+    {
+        $placements = [];
+
+        foreach ($this->getFilters() as $filter) {
+            $placement = $filter->getPlacement();
+
+            $placements[$placement->name] = $placement;
+        }
+
+        return array_values($placements);
+    }
+
+    public function getFiltersFormForPlacement(FiltersLayout $placement): ?Schema
+    {
+        $form = $this->getFiltersForm();
+
+        if (count($this->getActiveFilterPlacements()) <= 1) {
+            return $form;
+        }
+
+        foreach ($form->getComponents(withHidden: true) as $component) {
+            if ($component->getKey(isAbsolute: false) === 'placement::' . $placement->name) {
+                return $component->getChildSchema();
+            }
+        }
+
+        return null;
+    }
+
     public function filtersFormSchema(?Closure $schema): static
     {
         $this->filtersFormSchema = $schema;
@@ -245,7 +278,7 @@ trait HasFilters
             $containers[] = Group::make()
                 ->schema($placementFilterGroups)
                 ->key('placement::' . $placement->name)
-                ->columns($this->getFiltersFormColumns());
+                ->columns($this->getFiltersFormColumnsForPlacement($placement));
         }
 
         return $containers;
@@ -333,9 +366,20 @@ trait HasFilters
     /**
      * @return int | array<string, int | null>
      */
+    /**
+     * @return int | array<string, int | null>
+     */
     public function getFiltersFormColumns(): int | array
     {
-        return $this->evaluate($this->filtersFormColumns) ?? match ($this->getFiltersLayout()) {
+        return $this->getFiltersFormColumnsForPlacement($this->getFiltersLayout());
+    }
+
+    /**
+     * @return int | array<string, int | null>
+     */
+    public function getFiltersFormColumnsForPlacement(FiltersLayout $placement): int | array
+    {
+        return $this->evaluate($this->filtersFormColumns) ?? match ($placement) {
             FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible, FiltersLayout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
