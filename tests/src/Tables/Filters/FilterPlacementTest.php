@@ -4,6 +4,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersFormSchemaAndPlacements;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithFilterPlacements;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
@@ -127,4 +128,15 @@ it('resets only the filters belonging to the given placement', function (): void
     // The `AboveContent` filter is cleared; the `Dropdown` filter is untouched.
     expect($table->getActiveFiltersCountForPlacement(FiltersLayout::AboveContent))->toBe(0);
     expect($table->getActiveFiltersCountForPlacement(FiltersLayout::Dropdown))->toBe(1);
+});
+
+it('ignores per-filter placement when a custom `filtersFormSchema()` is set', function (): void {
+    $livewire = livewire(PostsTableWithCustomFiltersFormSchemaAndPlacements::class);
+
+    $keys = collect($livewire->instance()->getTableFiltersForm()->getComponents(withHidden: true))
+        ->map(fn ($component): ?string => $component->getKey(isAbsolute: false))
+        ->all();
+
+    expect(collect($keys)->contains(fn (?string $key): bool => str_starts_with((string) $key, 'placement::')))
+        ->toBeFalse();
 });
