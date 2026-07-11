@@ -99,6 +99,60 @@ describe('calling actions', function (): void {
     });
 });
 
+describe('authorization enforcement', function (): void {
+    // These tests prove that INVOKING a hidden, disabled, or unauthorized action is a
+    // no-op, not merely that it renders as such. `mountAction()` and `callMountedAction()`
+    // in `InteractsWithActions` early-return when `$action->isDisabled()`, which is `true`
+    // for `hidden()`, `visible(false)`, `disabled()`, and `authorize(false)` actions.
+
+    it('does not invoke a `hidden()` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementHidden')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-hidden-called');
+    });
+
+    it('does not invoke a `visible(false)` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementInvisible')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-invisible-called');
+    });
+
+    it('does not invoke a `disabled()` action when it is called via `callAction()`', function (): void {
+        livewire(Actions::class)
+            ->callAction('enforcementDisabled')
+            ->assertActionNotMounted()
+            ->assertNotDispatched('enforcement-disabled-called');
+    });
+
+    it('does not invoke a `disabled()` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementDisabled')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-disabled-called');
+    });
+
+    it('does not invoke an `authorize(false)` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementUnauthorized')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-unauthorized-called');
+    });
+
+    it('does invoke an `authorize(true)` action when it is called via `callAction()`', function (): void {
+        // Positive control: proves the negative assertions above are not vacuous. An
+        // authorized action is not disabled, so invoking it runs its `action()` closure.
+        livewire(Actions::class)
+            ->callAction('enforcementAuthorized')
+            ->assertDispatched('enforcement-authorized-called');
+    });
+});
+
 describe('validation', function (): void {
     it('can validate an action\'s data', function (): void {
         livewire(Actions::class)
