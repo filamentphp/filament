@@ -18,6 +18,7 @@ function filled(value) {
 
 export class Select {
     constructor({
+        ariaLabel = null,
         canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
         element,
@@ -28,6 +29,7 @@ export class Select {
         hasDynamicOptions = false,
         hasDynamicSearchResults = true,
         hasInitialNoOptionsMessage = false,
+        id = null,
         initialOptionLabel = null,
         initialOptionLabels = null,
         initialState = null,
@@ -55,6 +57,7 @@ export class Select {
         state,
         statePath = null,
     }) {
+        this.ariaLabel = ariaLabel
         this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
         this.element = element
@@ -65,6 +68,7 @@ export class Select {
         this.hasDynamicOptions = hasDynamicOptions
         this.hasDynamicSearchResults = hasDynamicSearchResults
         this.hasInitialNoOptionsMessage = hasInitialNoOptionsMessage
+        this.id = id
         this.initialOptionLabel = initialOptionLabel
         this.initialOptionLabels = initialOptionLabels
         this.initialState = initialState
@@ -151,13 +155,22 @@ export class Select {
             )
         }
 
-        this.container.setAttribute('aria-haspopup', 'listbox')
-
         // Create the button that toggles the dropdown
         this.selectButton = document.createElement('button')
         this.selectButton.className = 'fi-select-input-btn'
         this.selectButton.type = 'button'
+        this.selectButton.setAttribute('role', 'combobox')
+        this.selectButton.setAttribute('aria-haspopup', 'listbox')
         this.selectButton.setAttribute('aria-expanded', 'false')
+
+        // Associate the button with the field's `<label>`, or name it directly
+        if (filled(this.id)) {
+            this.selectButton.id = this.id
+        }
+
+        if (filled(this.ariaLabel)) {
+            this.selectButton.setAttribute('aria-label', this.ariaLabel)
+        }
 
         // Create the selected value display
         this.selectedDisplay = document.createElement('div')
@@ -178,6 +191,7 @@ export class Select {
         // Generate a unique ID for the dropdown
         this.dropdownId = `fi-select-input-dropdown-${Math.random().toString(36).substring(2, 11)}`
         this.dropdown.id = this.dropdownId
+        this.selectButton.setAttribute('aria-controls', this.dropdownId)
 
         // Set aria-multiselectable for multi-select
         if (this.isMultiple) {
@@ -320,9 +334,17 @@ export class Select {
         // Render options
         this.renderOptions()
 
+        // Create a visually hidden live region to announce loading / empty / limit messages
+        this.statusRegion = document.createElement('div')
+        this.statusRegion.className = 'fi-sr-only'
+        this.statusRegion.setAttribute('role', 'status')
+        this.statusRegion.setAttribute('aria-live', 'polite')
+        this.statusRegion.setAttribute('aria-atomic', 'true')
+
         // Append everything to the container
         this.container.appendChild(this.selectButton)
         this.container.appendChild(this.dropdown)
+        this.container.appendChild(this.statusRegion)
 
         // Append the container to the element
         this.element.appendChild(this.container)
@@ -1851,6 +1873,9 @@ export class Select {
             ? this.searchingMessage
             : this.loadingMessage
         this.dropdown.appendChild(loadingItem)
+
+        // Announce the message to screen readers
+        this.statusRegion.textContent = loadingItem.textContent
     }
 
     hideLoadingState() {
@@ -1860,6 +1885,8 @@ export class Select {
         )
         if (loadingItem) {
             loadingItem.remove()
+
+            this.statusRegion.textContent = ''
         }
     }
 
@@ -1877,6 +1904,9 @@ export class Select {
         noOptionsItem.className = 'fi-select-input-message'
         noOptionsItem.textContent = this.noOptionsMessage
         this.dropdown.appendChild(noOptionsItem)
+
+        // Announce the message to screen readers
+        this.statusRegion.textContent = this.noOptionsMessage
     }
 
     showNoResultsMessage() {
@@ -1893,6 +1923,9 @@ export class Select {
         noResultsItem.className = 'fi-select-input-message'
         noResultsItem.textContent = this.noSearchResultsMessage
         this.dropdown.appendChild(noResultsItem)
+
+        // Announce the message to screen readers
+        this.statusRegion.textContent = this.noSearchResultsMessage
     }
 
     filterOptions(query) {
@@ -2020,9 +2053,9 @@ export class Select {
 
         // Check if maxItems limit has been reached
         if (this.maxItems && newState.length >= this.maxItems) {
-            // Show a message or alert about reaching the limit
+            // Announce that the limit has been reached, without a blocking `alert()`
             if (this.maxItemsMessage) {
-                alert(this.maxItemsMessage)
+                this.statusRegion.textContent = this.maxItemsMessage
             }
             return // Don't add more items
         }
