@@ -995,6 +995,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
             <?php if ($hasImageEditor && ! $isDisabled) { ?>
                 <div
+                    aria-label="<?= e(__('filament-forms::components.file_upload.editor.label')) ?>"
+                    aria-modal="true"
+                    role="dialog"
                     x-show="isEditorOpen"
                     x-cloak
                     x-on:click.stop=""
