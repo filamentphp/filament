@@ -381,8 +381,8 @@ trait HasComponents
                     $component instanceof Action, $component instanceof ActionGroup => (clone $component)
                         ->schemaContainer($this),
                     $component instanceof Component => $component
-                        ->container($this)
-                        ->getClone(),
+                        ->getClone()
+                        ->container($this),
                     default => $component,
                 },
                 Arr::wrap($this->components),
