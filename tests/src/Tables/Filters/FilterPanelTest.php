@@ -149,3 +149,42 @@ it('throws when `filtersFormSchema()` is combined with panels', function (): voi
 
     expect(fn () => $table->getFiltersFormSchema())->toThrow(LogicException::class);
 });
+
+it('resets only the filters belonging to the given panel', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    $author = $posts->first()->author;
+
+    $livewire = livewire(PostsTableWithFilterPanels::class)
+        ->filterTable('is_published')      // AboveContent panel
+        ->filterTable('author', $author);  // Dropdown panel
+
+    expect($livewire->instance()->getTable()->getActiveFiltersCount())->toBe(2);
+
+    $livewire->call('resetTableFiltersForm', 'AboveContent');
+
+    $table = $livewire->instance()->getTable();
+
+    [$abovePanel, $dropdownPanel] = $table->getFilterPanels();
+
+    expect($table->getActiveFiltersCountForPanel($abovePanel))->toBe(0);
+    expect($table->getActiveFiltersCountForPanel($dropdownPanel))->toBe(1);
+});
+
+it('scopes the filter trigger reset action to its panel location', function (): void {
+    $table = livewire(PostsTableWithFilterPanels::class)->instance()->getTable();
+
+    $resetAction = collect($table->getFiltersTriggerAction(FiltersLayout::Dropdown)->getExtraModalFooterActions())
+        ->first(fn ($action): bool => $action->getName() === 'resetFilters');
+
+    expect($resetAction?->getLivewireClickHandler())->toBe("resetTableFiltersForm('Dropdown')");
+});
+
+it('keeps the filter trigger reset action global when no location is given', function (): void {
+    $table = livewire(PostsTableWithFilterPanels::class)->instance()->getTable();
+
+    $resetAction = collect($table->getFiltersTriggerAction()->getExtraModalFooterActions())
+        ->first(fn ($action): bool => $action->getName() === 'resetFilters');
+
+    expect($resetAction?->getLivewireClickHandler())->toBe('resetTableFiltersForm');
+});

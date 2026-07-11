@@ -278,6 +278,11 @@ trait HasFilters
 
     public function getFiltersFormForPanel(FilterPanel $panel): ?Schema
     {
+        return $this->getFiltersFormForLocation($panel->getLocation());
+    }
+
+    public function getFiltersFormForLocation(FiltersLayout $location): ?Schema
+    {
         $form = $this->getFiltersForm();
 
         // Single panel => the whole flat form renders as one.
@@ -286,7 +291,7 @@ trait HasFilters
         }
 
         foreach ($form->getComponents(withHidden: true) as $component) {
-            if ($component->getKey(isAbsolute: false) === 'filterPanel::' . $panel->getLocation()->name) {
+            if ($component->getKey(isAbsolute: false) === 'filterPanel::' . $location->name) {
                 return $component->getChildSchema();
             }
         }
@@ -354,7 +359,7 @@ trait HasFilters
         return $containers;
     }
 
-    public function getFiltersTriggerAction(): Action
+    public function getFiltersTriggerAction(?FiltersLayout $location = null): Action
     {
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
@@ -369,7 +374,11 @@ trait HasFilters
                 Action::make('resetFilters')
                     ->label(__('filament-tables::table.filters.actions.reset.label'))
                     ->color('danger')
-                    ->action('resetTableFiltersForm')
+                    ->action(
+                        $location
+                            ? "resetTableFiltersForm('{$location->name}')"
+                            : 'resetTableFiltersForm',
+                    )
                     ->button(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))

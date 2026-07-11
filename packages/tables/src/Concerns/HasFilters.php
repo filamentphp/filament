@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\QueryBuilder;
@@ -146,9 +147,17 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
-    public function resetTableFiltersForm(): void
+    public function resetTableFiltersForm(?string $location = null): void
     {
-        $this->getTableFiltersForm()->fill();
+        $locationCase = filled($location)
+            ? constant(FiltersLayout::class . '::' . $location)
+            : null;
+
+        $form = $locationCase
+            ? ($this->getTable()->getFiltersFormForLocation($locationCase) ?? $this->getTableFiltersForm())
+            : $this->getTableFiltersForm();
+
+        $form->fill();
 
         if ($this->getTable()->hasDeferredFilters()) {
             $this->applyTableFilters();

@@ -287,6 +287,7 @@
                 <x-filament-tables::filters
                     :apply-action="$filtersApplyAction"
                     :form="$beforeContentFiltersForm"
+                    :location="(count($filterPanels) > 1) ? $beforeContentPanel->getLocation()->name : null"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
                     :reset-action-position="$filtersResetActionPosition"
@@ -356,6 +357,7 @@
                         <x-filament-tables::filters
                             :apply-action="$filtersApplyAction"
                             :form="$aboveContentFiltersForm"
+                            :location="(count($filterPanels) > 1) ? $aboveContentPanel->getLocation()->name : null"
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
                             :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
@@ -584,6 +586,7 @@
                                 @if ($hasFiltersDialog)
                                     @foreach ($dialogPanels as $dialogPanel)
                                         @php
+                                            $filtersTriggerAction = $getFiltersTriggerAction((count($filterPanels) > 1) ? $dialogPanel->getLocation() : null);
                                             $dialogFiltersForm = $getFiltersFormForPanel($dialogPanel);
                                             $dialogActiveFiltersCount = $getActiveFiltersCountForPanel($dialogPanel);
                                             $dialogFiltersFormWidth = $getFiltersFormWidthForPanel($dialogPanel);
@@ -662,6 +665,7 @@
                                             <x-filament-tables::filters
                                                 :apply-action="$filtersApplyAction"
                                                 :form="$dialogFiltersForm"
+                                                :location="(count($filterPanels) > 1) ? $dialogPanel->getLocation()->name : null"
                                                 :heading-tag="$secondLevelHeadingTag"
                                                 :reset-action-position="$filtersResetActionPosition"
                                             />
@@ -2617,6 +2621,7 @@
                 <x-filament-tables::filters
                     :apply-action="$filtersApplyAction"
                     :form="$belowContentFiltersForm"
+                    :location="(count($filterPanels) > 1) ? $belowContentPanel->getLocation()->name : null"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
                     :reset-action-position="$filtersResetActionPosition"
@@ -2640,6 +2645,7 @@
                 <x-filament-tables::filters
                     :apply-action="$filtersApplyAction"
                     :form="$afterContentFiltersForm"
+                    :location="(count($filterPanels) > 1) ? $afterContentPanel->getLocation()->name : null"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
                     :reset-action-position="$filtersResetActionPosition"

@@ -2,12 +2,14 @@
     'applyAction',
     'form',
     'headingTag' => 'h3',
+    'location' => null,
     'resetActionPosition' => null,
 ])
 
 @php
     use Filament\Support\View\ComponentAttributeBag;
     use Filament\Tables\Enums\FiltersResetActionPosition;
+    use Illuminate\Support\Js;
 
     $resetActionPosition ??= FiltersResetActionPosition::Header;
 @endphp
@@ -26,7 +28,7 @@
                             new ComponentAttributeBag([
                                 'color' => 'danger',
                                 'tag' => 'button',
-                                'wire:click' => 'resetTableFiltersForm',
+                                'wire:click' => filled($location) ? ('resetTableFiltersForm(' . Js::from($location) . ')') : 'resetTableFiltersForm',
                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => 'resetTableFiltersForm',
                             ])
@@ -50,7 +52,7 @@
             @if ($resetActionPosition === FiltersResetActionPosition::Footer)
                 <x-filament::button
                     color="danger"
-                    wire:click="resetTableFiltersForm"
+                    wire:click="resetTableFiltersForm({{ filled($location) ? Js::from($location) : '' }})"
                 >
                     {{ __('filament-tables::table.filters.actions.reset.label') }}
                 </x-filament::button>
