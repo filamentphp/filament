@@ -2,6 +2,7 @@
 
 namespace Filament\QueryBuilder\Forms\Components;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
@@ -26,6 +27,14 @@ class RuleBuilder extends Builder
     /** @var array<Constraint> */
     protected array $constraints = [];
 
+    protected int | Closure | null $maxRules = null;
+
+    protected int | Closure | null $maxNestingDepth = null;
+
+    protected int $nestingDepth = 1;
+
+    protected ?RuleBuilder $rootRuleBuilder = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,17 +42,24 @@ class RuleBuilder extends Builder
         $this
             ->label(__('filament-query-builder::query-builder.form.rules.label'))
             ->blocks(function (): array {
+                $blocks = array_map(
+                    fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
+                    $this->getConstraints(),
+                );
+
+                // Security: Only offer the "OR" block, which introduces another level of nesting, while the configured `maxNestingDepth()` allows it. This keeps a user from building a tree in the UI that the query builder would later refuse to apply.
+                if (! $this->canAddOrBlock()) {
+                    return $blocks;
+                }
+
                 return [
-                    ...array_map(
-                        fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
-                        $this->getConstraints(),
-                    ),
+                    ...$blocks,
                     Builder\Block::make(static::OR_BLOCK_NAME)
                         ->label(__('filament-query-builder::query-builder.form.or_groups.block.label'))
                         ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_BLOCK) ?? Heroicon::Slash)
                         ->schema([
                             Flex::make(function (Flex $component): array {
-                                /** @var Builder $builder */
+                                /** @var RuleBuilder $builder */
                                 $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
                                 return [
@@ -56,7 +72,11 @@ class RuleBuilder extends Builder
                                                     ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled())
                                                     ->constraints($this->getConstraints())
                                                     ->blockPickerColumns($this->getBlockPickerColumns())
-                                                    ->blockPickerWidth($this->getBlockPickerWidth()),
+                                                    ->blockPickerWidth($this->getBlockPickerWidth())
+                                                    ->maxRules($this->getMaxRules())
+                                                    ->maxNestingDepth($this->getMaxNestingDepth())
+                                                    ->nestingDepth($this->getNestingDepth() + 1)
+                                                    ->rootRuleBuilder($this->getRootRuleBuilder()),
                                                 Actions::make(function (Actions $component): array {
                                                     /** @var Repeater $repeater */
                                                     $repeater = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
@@ -77,13 +97,18 @@ class RuleBuilder extends Builder
                                         ->addAction(fn (Action $action, Repeater $component) => $action
                                             ->label(__('filament-query-builder::query-builder.actions.add_rule_group.label'))
                                             ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_ADD_GROUP_ACTION) ?? Heroicon::Plus)
-                                            ->hidden(fn (): bool => filled(array_filter($component->getRawState(), fn (array $itemState): bool => blank($itemState['rules'])))))
+                                            ->hidden(fn (): bool => filled(array_filter($component->getRawState(), fn (array $itemState): bool => blank($itemState['rules']))))
+                                            ->disabled(fn (): bool => $this->isAtRuleLimit())
+                                            ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
                                         ->addActionAlignment(Alignment::End)
                                         ->labelBetweenItems(__('filament-query-builder::query-builder.item_separators.or'))
                                         ->itemHeaders(false)
                                         ->defaultItems(2)
                                         ->minItems(2)
                                         ->cloneable()
+                                        ->cloneAction(fn (Action $action) => $action
+                                            ->disabled(fn (): bool => $this->isAtRuleLimit())
+                                            ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
                                         ->hiddenLabel()
                                         ->generateUuidUsing(fn (): string => Str::random(4))
                                         ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled()),
@@ -94,6 +119,8 @@ class RuleBuilder extends Builder
                                             ->color('gray')
                                             ->iconButton()
                                             ->size(Size::Small)
+                                            ->disabled(fn (): bool => $builder->isAtRuleLimit())
+                                            ->tooltip(fn (): ?string => $builder->getRuleLimitReachedTooltip())
                                             ->action($builder->getAction($cloneActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                                         Action::make($deleteActionName = $builder->getDeleteActionName())
                                             ->label(__('filament-forms::components.builder.actions.delete.label'))
@@ -110,12 +137,17 @@ class RuleBuilder extends Builder
             })
             ->addAction(fn (Action $action) => $action
                 ->label(__('filament-query-builder::query-builder.actions.add_rule.label'))
-                ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::ADD_RULE_ACTION) ?? Heroicon::Plus))
+                ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::ADD_RULE_ACTION) ?? Heroicon::Plus)
+                ->disabled(fn (): bool => $this->isAtRuleLimit())
+                ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
             ->addActionAlignment(Alignment::Start)
             ->labelBetweenItems(__('filament-query-builder::query-builder.item_separators.and'))
             ->blockHeaders(false)
             ->cloneable()
+            ->cloneAction(fn (Action $action) => $action
+                ->disabled(fn (): bool => $this->isAtRuleLimit())
+                ->tooltip(fn (): ?string => $this->getRuleLimitReachedTooltip()))
             ->generateUuidUsing(fn (): string => Str::random(4))
             ->partiallyRenderAfterActionsCalled(false)
             ->extraAttributes(['class' => 'fi-fo-builder-not-contained']);
@@ -154,5 +186,120 @@ class RuleBuilder extends Builder
         $this->blockPickerColumns($columns);
 
         return $this;
+    }
+
+    public function maxRules(int | Closure | null $count): static
+    {
+        $this->maxRules = $count;
+
+        return $this;
+    }
+
+    public function getMaxRules(): ?int
+    {
+        $count = $this->evaluate($this->maxRules);
+
+        return ($count === null) ? null : (int) $count;
+    }
+
+    public function maxNestingDepth(int | Closure | null $depth): static
+    {
+        $this->maxNestingDepth = $depth;
+
+        return $this;
+    }
+
+    public function getMaxNestingDepth(): ?int
+    {
+        $depth = $this->evaluate($this->maxNestingDepth);
+
+        return ($depth === null) ? null : (int) $depth;
+    }
+
+    public function nestingDepth(int $depth): static
+    {
+        $this->nestingDepth = $depth;
+
+        return $this;
+    }
+
+    public function getNestingDepth(): int
+    {
+        return $this->nestingDepth;
+    }
+
+    public function rootRuleBuilder(RuleBuilder $ruleBuilder): static
+    {
+        $this->rootRuleBuilder = $ruleBuilder;
+
+        return $this;
+    }
+
+    public function getRootRuleBuilder(): RuleBuilder
+    {
+        return $this->rootRuleBuilder ?? $this;
+    }
+
+    public function canAddOrBlock(): bool
+    {
+        $maxNestingDepth = $this->getMaxNestingDepth();
+
+        if ($maxNestingDepth === null) {
+            return true;
+        }
+
+        // An "OR" block nests its rules one level deeper than the current builder, so it is only offered while that deeper level stays within the limit.
+        return $this->getNestingDepth() < $maxNestingDepth;
+    }
+
+    public function getTreeRuleCount(): int
+    {
+        return $this->countTreeRules($this->getRootRuleBuilder()->getRawState() ?? []);
+    }
+
+    /**
+     * @param  array<string, mixed>  $rules
+     */
+    public function countTreeRules(array $rules): int
+    {
+        $count = 0;
+
+        foreach ($rules as $rule) {
+            if (! is_array($rule)) {
+                continue;
+            }
+
+            $count++;
+
+            if (($rule['type'] ?? null) !== static::OR_BLOCK_NAME) {
+                continue;
+            }
+
+            foreach ($rule['data'][static::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [] as $orGroup) {
+                $count += $this->countTreeRules($orGroup['rules'] ?? []);
+            }
+        }
+
+        return $count;
+    }
+
+    public function isAtRuleLimit(): bool
+    {
+        $maxRules = $this->getMaxRules();
+
+        if ($maxRules === null) {
+            return false;
+        }
+
+        return $this->getTreeRuleCount() >= $maxRules;
+    }
+
+    public function getRuleLimitReachedTooltip(): ?string
+    {
+        if (! $this->isAtRuleLimit()) {
+            return null;
+        }
+
+        return __('filament-query-builder::query-builder.max_rules_reached_tooltip', ['count' => $this->getMaxRules()]);
     }
 }

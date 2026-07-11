@@ -27,6 +27,10 @@ class QueryBuilder extends BaseFilter
     /** @var array<Constraint> */
     protected array $constraints = [];
 
+    protected int | Closure | null $maxRules = null;
+
+    protected int | Closure | null $maxNestingDepth = null;
+
     protected ?RuleBuilder $cachedRuleBuilder = null;
 
     /**
@@ -46,18 +50,35 @@ class QueryBuilder extends BaseFilter
                 ->hiddenLabel()
                 ->constraints($filter->getConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
-                ->blockPickerWidth($filter->getConstraintPickerWidth()),
+                ->blockPickerWidth($filter->getConstraintPickerWidth())
+                ->maxRules($filter->getMaxRules())
+                ->maxNestingDepth($filter->getMaxNestingDepth()),
         ]);
 
         $this->query(function (Builder $query, array $data): void {
+            // Security: Rule trees are stored in tamperable Livewire state with no upstream payload limits, so an authenticated user could submit an enormous or deeply-nested tree to exhaust CPU/memory. If it exceeds the configured `maxRules()` or `maxNestingDepth()` bounds, fail safe by applying no constraints rather than processing it.
+            if ($this->exceedsRuleLimits($data['rules'])) {
+                return;
+            }
+
             $this->applyRulesToQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
         $this->baseQuery(function (Builder $query, array $data): void {
+            // Security: See the note in `query()` above — bound the rule tree so a tampered Livewire payload cannot exhaust CPU/memory, failing safe by applying no constraints when it exceeds the configured limits.
+            if ($this->exceedsRuleLimits($data['rules'])) {
+                return;
+            }
+
             $this->applyRulesToBaseQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
         $this->indicateUsing(function (array $state): array {
+            // Security: See the note in `query()` above — an over-limit tree is treated as no active filter here too, rather than traversing the whole tampered tree to build indicators.
+            if ($this->exceedsRuleLimits($state['rules'])) {
+                return [];
+            }
+
             return $this->getRuleSummaries($state['rules'], $this->getRuleBuilder());
         });
 
@@ -130,7 +151,14 @@ class QueryBuilder extends BaseFilter
 
     public function getActiveCount(): int
     {
-        return $this->countRules($this->getFormState()['rules'], $this->getRuleBuilder());
+        $rules = $this->getFormState()['rules'];
+
+        // Security: See the note in `query()` above — an over-limit tree is treated as no active filter here too, rather than traversing the whole tampered tree to count rules.
+        if ($this->exceedsRuleLimits($rules)) {
+            return 0;
+        }
+
+        return $this->countRules($rules, $this->getRuleBuilder());
     }
 
     /**
@@ -302,6 +330,82 @@ class QueryBuilder extends BaseFilter
     public function getConstraintPickerWidth(): ?string
     {
         return $this->evaluate($this->constraintPickerWidth);
+    }
+
+    public function maxRules(int | Closure | null $count): static
+    {
+        $this->maxRules = $count;
+
+        return $this;
+    }
+
+    public function getMaxRules(): ?int
+    {
+        $count = $this->evaluate($this->maxRules);
+
+        return ($count === null) ? null : (int) $count;
+    }
+
+    public function maxNestingDepth(int | Closure | null $depth): static
+    {
+        $this->maxNestingDepth = $depth;
+
+        return $this;
+    }
+
+    public function getMaxNestingDepth(): ?int
+    {
+        $depth = $this->evaluate($this->maxNestingDepth);
+
+        return ($depth === null) ? null : (int) $depth;
+    }
+
+    /**
+     * @param  array<string, mixed>  $rules
+     */
+    public function exceedsRuleLimits(array $rules): bool
+    {
+        $maxRules = $this->getMaxRules();
+        $maxNestingDepth = $this->getMaxNestingDepth();
+
+        if (($maxRules === null) && ($maxNestingDepth === null)) {
+            return false;
+        }
+
+        $ruleCount = 0;
+
+        // Security: Traverse the raw rule tree without instantiating schemas, so counting the nodes and measuring the nesting depth is itself cheap even for a hostile payload.
+        return $this->rulesExceedLimits($rules, 1, $ruleCount, $maxRules, $maxNestingDepth);
+    }
+
+    /**
+     * @param  array<string, mixed>  $rules
+     */
+    protected function rulesExceedLimits(array $rules, int $depth, int &$ruleCount, ?int $maxRules, ?int $maxNestingDepth): bool
+    {
+        if (($maxNestingDepth !== null) && ($depth > $maxNestingDepth)) {
+            return true;
+        }
+
+        foreach ($rules as $rule) {
+            $ruleCount++;
+
+            if (($maxRules !== null) && ($ruleCount > $maxRules)) {
+                return true;
+            }
+
+            if (($rule['type'] ?? null) !== RuleBuilder::OR_BLOCK_NAME) {
+                continue;
+            }
+
+            foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [] as $orGroup) {
+                if ($this->rulesExceedLimits($orGroup['rules'] ?? [], $depth + 1, $ruleCount, $maxRules, $maxNestingDepth)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     protected function getRuleBuilder(): RuleBuilder

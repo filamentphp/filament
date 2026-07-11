@@ -2,6 +2,7 @@
 
 use Filament\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
@@ -4288,5 +4289,252 @@ describe('properties', function (): void {
 
         // getConstraints/getConstraint need a table model, tested via integration
         expect($qb)->toBeInstanceOf(QueryBuilder::class);
+    });
+});
+
+describe('rule limits', function (): void {
+    it('has no rule limits by default', function (): void {
+        $queryBuilder = QueryBuilder::make();
+
+        expect($queryBuilder->getMaxRules())->toBeNull()
+            ->and($queryBuilder->getMaxNestingDepth())->toBeNull();
+    });
+
+    it('reports no rule tree as exceeding via `exceedsRuleLimits()` when no limits are set', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        $queryBuilder = QueryBuilder::make();
+
+        expect($queryBuilder->exceedsRuleLimits(array_fill(0, 500, $rule)))->toBeFalse();
+    });
+
+    it('can set `maxRules()` and `maxNestingDepth()`, including with a `Closure`', function (): void {
+        $queryBuilder = QueryBuilder::make()
+            ->maxRules(5)
+            ->maxNestingDepth(fn (): int => 3);
+
+        expect($queryBuilder->getMaxRules())->toBe(5)
+            ->and($queryBuilder->getMaxNestingDepth())->toBe(3);
+    });
+
+    it('does not report a rule tree within limits as exceeding via `exceedsRuleLimits()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        $queryBuilder = QueryBuilder::make()
+            ->maxRules(3)
+            ->maxNestingDepth(2);
+
+        expect($queryBuilder->exceedsRuleLimits([$rule, $rule, $rule]))->toBeFalse();
+    });
+
+    it('reports a rule tree exceeding `maxRules()` as exceeding via `exceedsRuleLimits()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        $queryBuilder = QueryBuilder::make()->maxRules(2);
+
+        expect($queryBuilder->exceedsRuleLimits([$rule, $rule, $rule]))->toBeTrue();
+    });
+
+    it('reports a rule tree exceeding `maxNestingDepth()` as exceeding via `exceedsRuleLimits()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // Wrap the rule in three levels of "or" blocks, nesting the inner rule at a depth of 4.
+        for ($iteration = 0; $iteration < 3; $iteration++) {
+            $rule = [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ];
+        }
+
+        $queryBuilder = QueryBuilder::make()->maxNestingDepth(2);
+
+        expect($queryBuilder->exceedsRuleLimits([$rule]))->toBeTrue();
+    });
+
+    it('applies a rule tree that is within the default limits normally', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords($posts->merge($otherPosts))
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => 'contains',
+                        'settings' => ['text' => 'Test Post'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords($posts)
+            ->assertCanNotSeeTableRecords($otherPosts);
+    });
+
+    it('safely ignores a rule tree that exceeds `maxRules()`, applying no constraints', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        // Build a tree of 4 rules, one over the configured `maxRules()` of 3. Applied individually,
+        // these would hide `$otherPosts`, so seeing every record proves the constraints were ignored.
+        $rules = array_fill(0, 4, [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ]);
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxRules(3),
+            during: fn () => livewire(PostsQueryBuilderTable::class)
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->tap(applyQueryBuilderFilter($rules))
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->assertHasNoErrors(),
+        );
+    });
+
+    it('safely ignores a rule tree that exceeds `maxNestingDepth()`, applying no constraints', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // Nest the filtering rule inside three "or" blocks, one level deeper than the configured
+        // `maxNestingDepth()` of 2. Seeing every record proves the constraints were ignored.
+        for ($iteration = 0; $iteration < 3; $iteration++) {
+            $rule = [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ];
+        }
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxNestingDepth(2),
+            during: fn () => livewire(PostsQueryBuilderTable::class)
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->tap(applyQueryBuilderFilter([$rule]))
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->assertHasNoErrors(),
+        );
+    });
+
+    it('counts every node in the tree via `RuleBuilder::countTreeRules()`', function (): void {
+        $ruleBuilder = RuleBuilder::make('rules');
+
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // A flat tree counts each rule.
+        expect($ruleBuilder->countTreeRules([$rule, $rule]))->toBe(2);
+
+        // An "or" block counts itself plus every rule nested inside its groups.
+        $tree = [
+            $rule,
+            [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule, $rule]],
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ],
+        ];
+
+        expect($ruleBuilder->countTreeRules($tree))->toBe(5);
+    });
+
+    it('only offers the "or" block via `canAddOrBlock()` while within `maxNestingDepth()`', function (): void {
+        expect(RuleBuilder::make('rules')->canAddOrBlock())->toBeTrue();
+
+        expect(RuleBuilder::make('rules')->maxNestingDepth(2)->nestingDepth(1)->canAddOrBlock())->toBeTrue();
+
+        expect(RuleBuilder::make('rules')->maxNestingDepth(2)->nestingDepth(2)->canAddOrBlock())->toBeFalse();
+    });
+
+    it('applies a rule tree normally when a limit is configured but not exceeded', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxRules(3)->maxNestingDepth(2),
+            during: fn () => livewire(PostsQueryBuilderTable::class)
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->tap(applyQueryBuilderFilter([
+                    [
+                        'type' => 'title',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => ['text' => 'Test Post'],
+                        ],
+                    ],
+                ]))
+                ->assertCanSeeTableRecords($posts)
+                ->assertCanNotSeeTableRecords($otherPosts),
+        );
     });
 });
