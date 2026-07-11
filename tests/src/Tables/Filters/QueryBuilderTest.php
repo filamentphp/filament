@@ -220,6 +220,54 @@ describe('text constraints', function (): void {
     });
 });
 
+describe('settings type safety', function (): void {
+    it('does not error when a tampered text setting is a non-scalar array', function (): void {
+        $posts = Post::factory()->count(5)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        // Security: a tampered Livewire request can set `settings.text` to an array, which
+        // would reach `trim()` / `mb_substr()` and throw a `TypeError` (HTTP 500). The
+        // operator must fail closed by skipping the constraint, so the table still loads.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => 'contains',
+                        'settings' => ['text' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered text setting is a non-scalar array across all text operators', function (string $operator): void {
+        $posts = Post::factory()->count(5)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => $operator,
+                        'settings' => ['text' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    })->with([
+        'contains',
+        'startsWith',
+        'endsWith',
+        'equals',
+    ]);
+});
+
 describe('boolean constraints', function (): void {
     it('can filter records using boolean constraint with is true operator', function (): void {
         $publishedPosts = Post::factory()->count(10)->create([
