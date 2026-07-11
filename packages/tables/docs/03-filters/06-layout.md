@@ -2,6 +2,7 @@
 title: Filter layout
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Positioning filters into grid columns
 
@@ -171,6 +172,86 @@ public function table(Table $table): Table
         ], layout: FiltersLayout::BeforeContentCollapsible); // or `FiltersLayout::AfterContentCollapsible`
 }
 ```
+
+## Placing filters in multiple locations at once
+
+By default, every filter renders together in a single location (the dropdown, unless you change it with `filtersLayout()`). To split filters across several locations at the same time - for example, a status filter that is always visible above the table while the rest stay in the dropdown — pass `FilterPanel` objects to `filters()` instead of a flat array. Each panel takes a location and the filters that belong there:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [
+                SelectFilter::make('status'),
+                SelectFilter::make('category'),
+            ])->columns(2),
+
+            FilterPanel::make(FiltersLayout::Dropdown, [
+                SelectFilter::make('author'),
+            ]),
+        ]);
+}
+```
+
+Here, the `status` and `category` filters render above the table in a two-column grid, while `author` stays behind the dropdown trigger.
+
+<Aside variant="info">
+    A table's `filters()` array must be **either** all `FilterPanel` objects **or** all filters — mixing the two throws an exception (including across `pushFilters()` calls).
+</Aside>
+
+### Configuring a panel
+
+Each panel accepts the same presentation options as the table. Any option left unset on a panel falls through to the table-level `filtersForm*()` method, which itself falls back to a per-location default - so the table-level methods act as the defaults for every panel:
+
+```php
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\FiltersResetActionPosition;
+use Filament\Tables\Filters\FilterPanel;
+
+FilterPanel::make(FiltersLayout::Dropdown, [
+    // ...
+])
+    ->columns(2)
+    ->width(Width::Medium)
+    ->maxHeight('400px')
+    ->resetActionPosition(FiltersResetActionPosition::Footer)
+    ->triggerAction(fn (Action $action): Action => $action->label('Filter'));
+```
+
+### Using the dropdown and a modal together
+
+The `Dropdown` and `Modal` locations each render their own trigger, so a table with a panel in both shows two filter icons — one opening a dropdown, the other opening a modal:
+
+```php
+->filters([
+    FilterPanel::make(FiltersLayout::Dropdown, [
+        // ...
+    ]),
+    FilterPanel::make(FiltersLayout::Modal, [
+        // ...
+    ]),
+])
+```
+
+### Resetting and applying filters across panels
+
+Each panel has its own reset action that clears only the filters shown in that panel. To clear every filter at once, use the "remove all" button in the active filter indicators above the table. The apply button (when deferring filters) and the indicators are always global - filter state is a single value, so applying always submits every panel's filters.
+
+### Adding filters to a location that already has a panel
+
+If a panel targets a location that another panel already occupies - for example a plugin appending `FilterPanel::make(FiltersLayout::Dropdown, [...])` to a table that already has a dropdown panel — its filters are **merged into the existing panel**, keeping the existing panel's configuration. This lets extensions add filters to a shared location without conflicting.
+
+<Aside variant="danger">
+    A [custom filter form schema](#customizing-the-filter-form-schema) (`filtersFormSchema()`) cannot be combined with `FilterPanel` objects, as they are competing layout mechanisms. Use `filtersFormSchema()` with a flat `filters()` array only.
+</Aside>
 
 ## Hiding the filter indicators
 
