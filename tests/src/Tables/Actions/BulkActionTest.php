@@ -297,6 +297,46 @@ it('returns `true` from `isRecordSelectable()` for any record when no selectabil
     expect($table->isRecordSelectable($post))->toBeTrue();
 });
 
+it('only passes records that pass `authorizeIndividualRecords()` to the action body for a mixed selection', function (): void {
+    $posts = Post::factory()->count(4)->create();
+
+    $authorizedPosts = $posts->take(2);
+
+    PostsTable::$authorizedRecordKeys = $authorizedPosts->pluck('id')->all();
+
+    // Asserting the exact `keys` array proves both the count (only the 2 authorized
+    // records) and their identity, while `assertNotDispatched` proves the denied
+    // records never reached the action body alongside the authorized ones.
+    livewire(PostsTable::class)
+        ->callTableBulkAction('individuallyAuthorized', $posts)
+        ->assertDispatched('individually-authorized-processed', keys: $authorizedPosts->pluck('id')->toArray())
+        ->assertNotDispatched('individually-authorized-processed', keys: $posts->pluck('id')->toArray());
+
+    PostsTable::$authorizedRecordKeys = [];
+});
+
+it('passes no records to the action body when every record fails `authorizeIndividualRecords()`', function (): void {
+    $posts = Post::factory()->count(3)->create();
+
+    PostsTable::$authorizedRecordKeys = [];
+
+    livewire(PostsTable::class)
+        ->callTableBulkAction('individuallyAuthorized', $posts)
+        ->assertDispatched('individually-authorized-processed', keys: []);
+});
+
+it('passes every record to the action body when all records pass `authorizeIndividualRecords()`', function (): void {
+    $posts = Post::factory()->count(3)->create();
+
+    PostsTable::$authorizedRecordKeys = $posts->pluck('id')->all();
+
+    livewire(PostsTable::class)
+        ->callTableBulkAction('individuallyAuthorized', $posts)
+        ->assertDispatched('individually-authorized-processed', keys: $posts->pluck('id')->toArray());
+
+    PostsTable::$authorizedRecordKeys = [];
+});
+
 it('returns `true` from `checksIfRecordIsSelectable()` when a selectability closure is set', function (): void {
     $table = livewire(SelectablePostsTable::class)->instance()->getTable();
 
