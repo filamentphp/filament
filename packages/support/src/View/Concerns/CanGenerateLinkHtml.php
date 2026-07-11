@@ -53,6 +53,7 @@ trait CanGenerateLinkHtml
         ?string $type = 'button',
         string | FontWeight | null $weight = null,
     ): string {
+        $badgeColor ??= 'primary';
         $color ??= 'primary';
 
         if (! $iconPosition instanceof IconPosition) {

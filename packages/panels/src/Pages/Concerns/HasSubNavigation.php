@@ -134,18 +134,26 @@ trait HasSubNavigation
     {
         $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
 
-        $items = $parentItems->get('', collect())
-            ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
+        $items = $parentItems->get('', collect());
 
-        $parentItems->except([''])->each(function (Collection $childItems, string $parentItemLabel) use ($items): void {
-            if (! $items->has($parentItemLabel)) {
+        $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
+            $parent = $items->first(
+                fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
+            );
+
+            if (! $parent) {
                 return;
             }
 
-            $items->get($parentItemLabel)->childItems($childItems);
+            $mergedChildren = collect($parent->getChildItems())
+                ->merge($parentItemItems)
+                ->sortBy(fn (NavigationItem $item): int => $item->getSort())
+                ->values();
+
+            $parent->childItems($mergedChildren);
         });
 
-        return $items->values();
+        return $items;
     }
 
     /**

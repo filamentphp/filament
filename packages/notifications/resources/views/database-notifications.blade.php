@@ -74,6 +74,7 @@
 
             @foreach ($notifications as $notification)
                 <div
+                    wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
                     @class([
                         'fi-no-notification-read-ctn' => ! $notification->unread(),
                         'fi-no-notification-unread-ctn' => $notification->unread(),
