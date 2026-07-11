@@ -233,6 +233,8 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
         $result = null;
 
+        $hasFinalizedDatabaseTransaction = false;
+
         try {
             $action->beginDatabaseTransaction();
 
@@ -295,6 +297,8 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
                 $action->commitDatabaseTransaction();
+
+            $hasFinalizedDatabaseTransaction = true;
         } catch (ValidationException $exception) {
             $action->rollBackDatabaseTransaction();
 
@@ -312,7 +316,9 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             throw $exception;
         }
 
-        $action->commitDatabaseTransaction();
+        if (! $hasFinalizedDatabaseTransaction) {
+            $action->commitDatabaseTransaction();
+        }
 
         if (store($this)->has('redirect')) {
             $this->unmountAction();

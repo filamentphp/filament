@@ -22,6 +22,11 @@ class Actions extends Page
                 ->action(function (): void {
                     $this->dispatch('simple-called');
                 }),
+            Action::make('cancelWithDatabaseTransaction')
+                ->databaseTransaction()
+                ->action(function (Action $action): void {
+                    $action->cancel();
+                }),
             Action::make('data')
                 ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                 ->schema([
