@@ -425,6 +425,76 @@ describe('preventing existing file path tampering', function (): void {
 
         expect($uploadedFiles[0])->not->toBeNull();
     });
+
+    it('does not delete a tampered string path via `deleteUploadedFile()` when using `preventFilePathTampering()`', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
+
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        $deletedFiles = [];
+
+        $component = livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $field->deleteUploadedFileUsing(function (string $file) use (&$deletedFiles): void {
+            $deletedFiles[] = $file;
+        });
+
+        $fileKey = array_key_first($field->getRawState());
+        $field->deleteUploadedFile((string) $fileKey);
+
+        expect($deletedFiles)->toBe([]);
+        expect($field->getRawState())->toHaveKey($fileKey);
+    });
+
+    it('still deletes an authorized original path via `deleteUploadedFile()` when using `preventFilePathTampering()`', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/original.jpg', 'contents');
+
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        $deletedFiles = [];
+
+        $component = livewire(TestComponentWithFileUploadRecordPreventingTampering::class, ['record' => $user])
+            ->set('data.status', ['uploads/original.jpg'])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $field->deleteUploadedFileUsing(function (string $file) use (&$deletedFiles): void {
+            $deletedFiles[] = $file;
+        });
+
+        $fileKey = array_key_first($field->getRawState());
+        $field->deleteUploadedFile((string) $fileKey);
+
+        expect($deletedFiles)->toBe(['uploads/original.jpg']);
+    });
+
+    it('deletes any string path via `deleteUploadedFile()` when `preventFilePathTampering()` is not used', function (): void {
+        Storage::fake('local');
+        Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
+
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        $deletedFiles = [];
+
+        $component = livewire(TestComponentWithFileUploadRecord::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $field->deleteUploadedFileUsing(function (string $file) use (&$deletedFiles): void {
+            $deletedFiles[] = $file;
+        });
+
+        $fileKey = array_key_first($field->getRawState());
+        $field->deleteUploadedFile((string) $fileKey);
+
+        expect($deletedFiles)->toBe(['uploads/tampered.jpg']);
+    });
 });
 
 describe('openable and downloadable URLs', function (): void {
