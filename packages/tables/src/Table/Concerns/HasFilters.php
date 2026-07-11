@@ -13,7 +13,9 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\FilterPanel;
 use Filament\Tables\View\TablesIconAlias;
+use LogicException;
 
 trait HasFilters
 {
@@ -21,6 +23,13 @@ trait HasFilters
      * @var array<string, BaseFilter>
      */
     protected array $filters = [];
+
+    /**
+     * @var array<string, FilterPanel>
+     */
+    protected array $filterPanels = [];
+
+    protected bool $hasFilterPanels = false;
 
     protected ?Closure $filtersFormSchema = null;
 
@@ -83,11 +92,13 @@ trait HasFilters
     }
 
     /**
-     * @param  array<BaseFilter>  $filters
+     * @param  array<BaseFilter | FilterPanel>  $filters
      */
     public function filters(array $filters, FiltersLayout | string | Closure | null $layout = null): static
     {
         $this->filters = [];
+        $this->filterPanels = [];
+        $this->hasFilterPanels = false;
         $this->pushFilters($filters);
 
         if ($layout) {
@@ -98,17 +109,84 @@ trait HasFilters
     }
 
     /**
-     * @param  array<BaseFilter>  $filters
+     * @param  array<BaseFilter | FilterPanel>  $filters
      */
     public function pushFilters(array $filters): static
     {
-        foreach ($filters as $filter) {
-            $filter->table($this);
+        $incomingArePanels = null;
 
-            $this->filters[$filter->getName()] = $filter;
+        foreach ($filters as $filter) {
+            $isPanel = $filter instanceof FilterPanel;
+
+            $incomingArePanels ??= $isPanel;
+
+            if ($isPanel !== $incomingArePanels) {
+                throw new LogicException('A table\'s [filters()] must be either all [FilterPanel] instances or all filters, not a mix.');
+            }
+        }
+
+        if ($incomingArePanels === null) {
+            return $this;
+        }
+
+        if ((filled($this->filters) || filled($this->filterPanels)) && ($this->hasFilterPanels !== $incomingArePanels)) {
+            throw new LogicException('A table cannot mix [FilterPanel] instances with loose filters, including across [pushFilters()] calls.');
+        }
+
+        $this->hasFilterPanels = $incomingArePanels;
+
+        if (! $incomingArePanels) {
+            foreach ($filters as $filter) {
+                $filter->table($this);
+
+                $this->filters[$filter->getName()] = $filter;
+            }
+
+            return $this;
+        }
+
+        foreach ($filters as $panel) {
+            $locationName = $panel->getLocation()->name;
+
+            if (array_key_exists($locationName, $this->filterPanels)) {
+                throw new LogicException("A table can only have one filter panel per location; [{$locationName}] is used more than once.");
+            }
+
+            $this->filterPanels[$locationName] = $panel;
+
+            foreach ($panel->getFilters() as $filter) {
+                $filter->table($this);
+
+                $this->filters[$filter->getName()] = $filter;
+            }
         }
 
         return $this;
+    }
+
+    public function hasFilterPanels(): bool
+    {
+        return $this->hasFilterPanels;
+    }
+
+    /**
+     * @return array<FilterPanel>
+     */
+    public function getFilterPanels(): array
+    {
+        if (! $this->hasFilterPanels) {
+            return [
+                FilterPanel::make($this->getFiltersLayout(), array_values($this->getFilters())),
+            ];
+        }
+
+        return array_values(array_filter(
+            $this->filterPanels,
+            fn (FilterPanel $panel): bool => (bool) array_filter(
+                $panel->getFilters(),
+                fn (BaseFilter $filter): bool => $filter->isVisible(),
+            ),
+        ));
     }
 
     /**
