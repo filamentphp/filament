@@ -144,7 +144,7 @@
         & > .fi-modal-window-ctn {
             @apply p-4;
 
-            & .fi-modal-window {
+            & > .fi-modal-window {
                 @apply mx-auto rounded-xl;
             }
         }
