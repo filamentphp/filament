@@ -6,6 +6,7 @@ use Filament\Tests\Fixtures\Livewire\CustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingDisabled;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingEnabled;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithNonSplitMultiColumnIndividualSearch;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithReservedJsPropertyColumnSearch;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithTableSearchableColumns;
@@ -394,6 +395,30 @@ describe('searching', function (): void {
             ->searchTableColumns(['title' => 'ipsum dolor'])
             ->assertCanSeeTableRecords([$exactPhrasePost])
             ->assertCanNotSeeTableRecords([$separateWordsPost]);
+    });
+
+    it('does not leak the `orWhere` of a non-split individual column search across multiple columns past an active filter', function (): void {
+        // The searchable column matches on both `title` and `content`. With `splitSearchTerms(false)`,
+        // the constraint emits `where(title LIKE ?)->orWhere(content LIKE ?)`. If that pair is not
+        // wrapped in its own `where()` group, the trailing `orWhere` escapes the filter group and
+        // re-exposes records the filter excluded.
+        $search = Str::random();
+
+        $publishedMatch = Post::factory()->create([
+            'is_published' => true,
+            'content' => $search,
+        ]);
+
+        $unpublishedMatch = Post::factory()->create([
+            'is_published' => false,
+            'content' => $search,
+        ]);
+
+        livewire(PostsTableWithNonSplitMultiColumnIndividualSearch::class)
+            ->filterTable('is_published')
+            ->searchTableColumns(['title' => $search])
+            ->assertCanSeeTableRecords([$publishedMatch])
+            ->assertCanNotSeeTableRecords([$unpublishedMatch]);
     });
 
     it('seeds individually searchable columns whose names collide with JS array properties on mount so `tableColumnSearches` serializes as a JSON object', function (): void {

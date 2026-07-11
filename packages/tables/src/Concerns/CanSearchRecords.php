@@ -97,13 +97,15 @@ trait CanSearchRecords
             }
 
             if (! ($column->shouldSplitIndividualSearchTerms() ?? $shouldSplitSearchTermsByDefault)) {
-                $isFirst = true;
+                $query->where(function (Builder $query) use ($column, $search): void {
+                    $isFirst = true;
 
-                $column->applySearchConstraint(
-                    $query,
-                    $search,
-                    $isFirst,
-                );
+                    $column->applySearchConstraint(
+                        $query,
+                        $search,
+                        $isFirst,
+                    );
+                });
 
                 continue;
             }
