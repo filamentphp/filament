@@ -31,6 +31,13 @@ class OptionsArrayStateCast implements StateCast
                     return $carry;
                 }
 
+                // Security: each option must be a scalar or `BackedEnum`, but a tampered
+                // request payload can deliver a nested array, which would throw a `TypeError`
+                // at the `strval()` below and crash the request. Fail closed by skipping it.
+                if ((! is_scalar($stateItem)) && (! $stateItem instanceof BackedEnum)) {
+                    return $carry;
+                }
+
                 if ($stateItem instanceof BackedEnum) {
                     $stateItem = $stateItem->value;
                 }
@@ -83,6 +90,13 @@ class OptionsArrayStateCast implements StateCast
             $state,
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
+                    return $carry;
+                }
+
+                // Security: each option must be a scalar or `BackedEnum`, but a tampered
+                // request payload can deliver a nested array, which would throw a `TypeError`
+                // at the `strval()` below and crash the request. Fail closed by skipping it.
+                if ((! is_scalar($stateItem)) && (! $stateItem instanceof BackedEnum)) {
                     return $carry;
                 }
 

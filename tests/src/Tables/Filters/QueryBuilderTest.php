@@ -1,10 +1,22 @@
 <?php
 
 use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsAfterOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsBeforeOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsDateOperator;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsMonthOperator;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsYearOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator as NumberEqualsOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperator as RelationshipEqualsOperator;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperator as RelationshipHasMaxOperator;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperator as RelationshipHasMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator as SelectIsOperator;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
@@ -221,6 +233,114 @@ describe('text constraints', function (): void {
             ]))
             ->assertCanSeeTableRecords($otherPosts)
             ->assertCanNotSeeTableRecords($posts);
+    });
+});
+
+describe('settings type safety', function (): void {
+    it('does not error when a tampered text setting is a non-scalar array', function (): void {
+        $posts = Post::factory()->count(5)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        // Security: a tampered Livewire request can set `settings.text` to an array, which
+        // would reach `trim()` / `mb_substr()` and throw a `TypeError` (HTTP 500). The
+        // operator must fail closed by skipping the constraint, so the table still loads.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => 'contains',
+                        'settings' => ['text' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered text setting is a non-scalar array across all text operators', function (string $operator): void {
+        $posts = Post::factory()->count(5)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => $operator,
+                        'settings' => ['text' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    })->with([
+        'contains',
+        'startsWith',
+        'endsWith',
+        'equals',
+    ]);
+
+    it('does not error when a tampered multiple select setting contains a non-scalar array element', function (): void {
+        $posts = Post::factory()->count(5)->create([
+            'rating' => 3,
+        ]);
+
+        // Security: a tampered request can nest an array inside the `values` of a multiple
+        // select, which would reach `strval()` in `OptionsArrayStateCast` and throw an
+        // `Array to string conversion` error (HTTP 500). The cast must skip the bad element.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'rating_select_multiple',
+                    'data' => [
+                        'operator' => 'is',
+                        'settings' => ['values' => [['tampered']]],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered multiple relationship setting contains a non-scalar array element', function (): void {
+        $author = User::factory()->create(['name' => 'John Doe']);
+        Post::factory()->count(3)->create(['author_id' => $author->id]);
+
+        // Security: a tampered request can nest an array inside the `values` of a multiple
+        // relationship select, which would reach `whereKey()` binding and crash the request.
+        // The operator must discard the bad element instead of throwing.
+        $constraint = RelationshipConstraint::make('author')->multiple();
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->settings(['values' => [['tampered'], $author->id]])
+            ->titleAttribute('name');
+
+        $filtered = $operator->apply(Post::query(), 'author_id');
+
+        expect($filtered->count())->toBe(3);
+    });
+
+    it('skips the constraint and renders the summary when a single select receives a tampered non-scalar setting', function (): void {
+        // Defense-in-depth: `OptionStateCast` is the primary defense for single selects, but
+        // this invokes `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `Arr::only()` or `where()`.
+        $posts = Post::factory()->count(3)->create(['rating' => 3]);
+
+        $constraint = SelectConstraint::make('rating_select')
+            ->options([3 => 'Three', 5 => 'Five']);
+
+        $operator = SelectIsOperator::make()
+            ->constraint($constraint)
+            ->settings(['value' => ['tampered']]);
+
+        $filtered = $operator->apply(Post::query(), 'rating_select');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
     });
 });
 
@@ -4646,4 +4766,95 @@ describe('date operator setting tampering', function (): void {
 
         expect($filtered->count())->toBe($posts->count());
     });
+
+    it('skips the constraint and renders the summary when a date operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `whereDate()` or `Carbon::parse()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = DateConstraint::make('created_at');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['date' => ['2024-01-01']]);
+
+        $filtered = $operator->apply(Post::query(), 'created_at');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        IsDateOperator::class,
+        IsAfterOperator::class,
+        IsBeforeOperator::class,
+    ]);
+});
+
+describe('number operator setting tampering', function (): void {
+    it('skips the constraint and renders the summary when a number operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `floatval()` or `Number::format()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = NumberConstraint::make('rating');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['number' => ['5']]);
+
+        $filtered = $operator->apply(Post::query(), 'rating');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        NumberEqualsOperator::class,
+        IsMinOperator::class,
+        IsMaxOperator::class,
+    ]);
+
+    it('does not error when a tampered `aggregate` setting is a non-scalar array', function (): void {
+        // Unlike the other number settings, the `aggregate` select is not rejected by
+        // validation, so a tampered array would reach `array_key_exists()` in `getAggregate()`
+        // and throw a `TypeError` (HTTP 500). The operator must treat it as no aggregate.
+        $posts = Post::factory()->count(5)->create(['rating' => 5]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 1, 'aggregate' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+});
+
+describe('relationship count operator setting tampering', function (): void {
+    it('skips the constraint and renders the summary when a count operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to the translator (summary) or `has()` (apply).
+        $author = User::factory()->create();
+        $posts = Post::factory()->count(3)->create(['author_id' => $author->id]);
+
+        $constraint = RelationshipConstraint::make('author');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['count' => ['tampered']]);
+
+        $filtered = $operator->applyToBaseQuery(Post::query());
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        RelationshipHasMinOperator::class,
+        RelationshipHasMaxOperator::class,
+        RelationshipEqualsOperator::class,
+    ]);
 });

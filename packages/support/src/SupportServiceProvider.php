@@ -378,6 +378,39 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeUrl($this->value, $allowedSchemes));
         });
 
+        Str::macro('sanitizeCssColor', function (?string $color): ?string {
+            if (blank($color)) {
+                return null;
+            }
+
+            $color = trim($color);
+
+            // Accept hex colors: `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`.
+            if (preg_match('/^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $color)) {
+                return $color;
+            }
+
+            // Accept a bare CSS keyword such as `red` or `transparent`.
+            if (preg_match('/^[a-z]+$/i', $color)) {
+                return $color;
+            }
+
+            // Security: allow functional color notations, but forbid the CSS metacharacters
+            // `( ) ; : " '` inside the parentheses so the value cannot break out of the
+            // `background-color` declaration to inject additional properties (e.g.
+            // `red;position:fixed;background-image:url(//attacker)`) or extra function calls.
+            if (preg_match('/^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^();:"\']*\)$/i', $color)) {
+                return $color;
+            }
+
+            return null;
+        });
+
+        Stringable::macro('sanitizeCssColor', function (): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::sanitizeCssColor($this->value));
+        });
+
         Str::macro('ucwords', function (string $value): string {
             return implode(' ', array_map(
                 [Str::class, 'ucfirst'],
