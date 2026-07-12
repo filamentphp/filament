@@ -184,6 +184,10 @@ protected function getData(): array
 
 <AutoScreenshot name="widgets/chart/filter" alt="Chart with filter" version="4.x" />
 
+<Aside variant="danger">
+    The `$filter` property is user-controllable. Although the `<select>` element only offers the keys returned from `getFilters()`, a crafted request can set `$this->filter` to any string, so it is not limited to those keys. You must ensure the value is valid before using it in a query — for example, by checking it against the keys of `getFilters()`, or by using a `match` expression with a safe default. Never interpolate `$this->filter` directly into a raw query.
+</Aside>
+
 ### Custom filters
 
 You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
