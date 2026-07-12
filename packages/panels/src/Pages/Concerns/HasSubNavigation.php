@@ -147,6 +147,7 @@ trait HasSubNavigation
 
             $mergedChildren = collect($parent->getChildItems())
                 ->merge($parentItemItems)
+                ->unique()
                 ->sortBy(fn (NavigationItem $item): int => $item->getSort())
                 ->values();
 
