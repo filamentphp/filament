@@ -227,7 +227,7 @@
                             :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
-                            tabindex="-1"
+                            :tabindex="$closeByEscaping ? '-1' : '0'"
                             :x-on:click="$closeEventHandler"
                             class="fi-modal-close-btn"
                         />
