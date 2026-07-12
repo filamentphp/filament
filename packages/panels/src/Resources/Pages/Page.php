@@ -278,6 +278,17 @@ abstract class Page extends BasePage
     }
 
     /**
+     * @return array<string, callable(): \Illuminate\Contracts\View\View|string>
+     */
+    protected function getRenderHooks(): array
+    {
+        return [
+            ...parent::getRenderHooks(),
+            ...static::getResource()::getRenderHooks(),
+        ];
+    }
+
+    /**
      * @return array<string>
      */
     public function getRenderHookScopes(): array
