@@ -269,6 +269,47 @@ describe('settings type safety', function (): void {
         'endsWith',
         'equals',
     ]);
+
+    it('does not error when a tampered multiple select setting contains a non-scalar array element', function (): void {
+        $posts = Post::factory()->count(5)->create([
+            'rating' => 3,
+        ]);
+
+        // Security: a tampered request can nest an array inside the `values` of a multiple
+        // select, which would reach `strval()` in `OptionsArrayStateCast` and throw an
+        // `Array to string conversion` error (HTTP 500). The cast must skip the bad element.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'rating_select_multiple',
+                    'data' => [
+                        'operator' => 'is',
+                        'settings' => ['values' => [['tampered']]],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered multiple relationship setting contains a non-scalar array element', function (): void {
+        $author = User::factory()->create(['name' => 'John Doe']);
+        Post::factory()->count(3)->create(['author_id' => $author->id]);
+
+        // Security: a tampered request can nest an array inside the `values` of a multiple
+        // relationship select, which would reach `whereKey()` binding and crash the request.
+        // The operator must discard the bad element instead of throwing.
+        $constraint = RelationshipConstraint::make('author')->multiple();
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->settings(['values' => [['tampered'], $author->id]])
+            ->titleAttribute('name');
+
+        $filtered = $operator->apply(Post::query(), 'author_id');
+
+        expect($filtered->count())->toBe(3);
+    });
 });
 
 describe('boolean constraints', function (): void {
