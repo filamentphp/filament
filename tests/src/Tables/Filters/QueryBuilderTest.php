@@ -15,6 +15,8 @@ use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOpe
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperator as RelationshipHasMaxOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperator as RelationshipHasMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator as SelectIsOperator;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
@@ -319,6 +321,25 @@ describe('settings type safety', function (): void {
         $filtered = $operator->apply(Post::query(), 'author_id');
 
         expect($filtered->count())->toBe(3);
+    });
+
+    it('skips the constraint and renders the summary when a single select receives a tampered non-scalar setting', function (): void {
+        // Defense-in-depth: `OptionStateCast` is the primary defense for single selects, but
+        // this invokes `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `Arr::only()` or `where()`.
+        $posts = Post::factory()->count(3)->create(['rating' => 3]);
+
+        $constraint = SelectConstraint::make('rating_select')
+            ->options([3 => 'Three', 5 => 'Five']);
+
+        $operator = SelectIsOperator::make()
+            ->constraint($constraint)
+            ->settings(['value' => ['tampered']]);
+
+        $filtered = $operator->apply(Post::query(), 'rating_select');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
     });
 });
 
