@@ -63,9 +63,7 @@
                         :icon="$navigationItemIcon"
                         tag="a"
                         :target="$shouldNavigationItemOpenUrlInNewTab ? '_blank' : null"
-                        @if ($navigationItemChild->isActive())
-                            aria-current="page"
-                        @endif
+                        :aria-current="$navigationItemChild->isActive() ? 'page' : null"
                         :attributes="\Filament\Support\prepare_inherited_attributes($navigationItemExtraAttributes)"
                     >
                         {{ $navigationItemChild->getLabel() }}
