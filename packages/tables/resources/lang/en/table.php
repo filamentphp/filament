@@ -12,6 +12,10 @@ return [
                 'label' => 'Apply columns',
             ],
 
+            'reorder' => [
+                'label' => 'Reorder column',
+            ],
+
             'reset' => [
                 'label' => 'Reset',
             ],

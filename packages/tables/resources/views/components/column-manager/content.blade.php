@@ -34,7 +34,10 @@
             <template x-if="column.type === 'group'">
                 <div class="fi-ta-col-manager-group">
                     <div class="fi-ta-col-manager-item">
-                        <label class="fi-ta-col-manager-label">
+                        <label
+                            @if ($hasToggleableColumns) x-bind:for="'group-' + column.name" @endif
+                            class="fi-ta-col-manager-label"
+                        >
                             @if ($hasToggleableColumns)
                                 <input
                                     type="checkbox"
@@ -53,6 +56,7 @@
                         @if ($hasReorderableColumns)
                             <button
                                 x-sortable-handle
+                                x-bind:aria-label="@js(__('filament-tables::table.column_manager.actions.reorder.label')) + (column.name ? ' ' + column.name : '')"
                                 x-on:click.stop
                                 class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                 type="button"
@@ -82,7 +86,10 @@
                                 @endif
                             >
                                 <div class="fi-ta-col-manager-item">
-                                    <label class="fi-ta-col-manager-label">
+                                    <label
+                                        @if ($hasToggleableColumns) x-bind:for="'column-' + groupColumn.name.replace('.', '-')" @endif
+                                        class="fi-ta-col-manager-label"
+                                    >
                                         @if ($hasToggleableColumns)
                                             <input
                                                 type="checkbox"
@@ -102,6 +109,7 @@
                                     @if ($hasReorderableColumns)
                                         <button
                                             x-sortable-handle
+                                            x-bind:aria-label="@js(__('filament-tables::table.column_manager.actions.reorder.label')) + (groupColumn.name ? ' ' + groupColumn.name : '')"
                                             x-on:click.stop
                                             class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                             type="button"
@@ -117,7 +125,10 @@
             </template>
             <template x-if="column.type !== 'group'">
                 <div class="fi-ta-col-manager-item">
-                    <label class="fi-ta-col-manager-label">
+                    <label
+                        @if ($hasToggleableColumns) x-bind:for="'column-' + column.name.replace('.', '-')" @endif
+                        class="fi-ta-col-manager-label"
+                    >
                         @if ($hasToggleableColumns)
                             <input
                                 type="checkbox"
@@ -135,6 +146,7 @@
                     @if ($hasReorderableColumns)
                         <button
                             x-sortable-handle
+                            x-bind:aria-label="@js(__('filament-tables::table.column_manager.actions.reorder.label')) + (column.name ? ' ' + column.name : '')"
                             x-on:click.stop
                             class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                             type="button"
