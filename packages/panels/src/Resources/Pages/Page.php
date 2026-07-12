@@ -161,11 +161,6 @@ abstract class Page extends BasePage
         return static::getResource()::isTenantSubscriptionRequired($panel);
     }
 
-    public function getBreadcrumb(): ?string
-    {
-        return static::$breadcrumb ?? static::getTitle();
-    }
-
     public function hasResourceBreadcrumbs(): bool
     {
         return true;
