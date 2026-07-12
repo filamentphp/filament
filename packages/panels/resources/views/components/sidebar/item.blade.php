@@ -38,6 +38,7 @@
         @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if ($sidebarCollapsible && (! $subNavigation))
+            x-bind:aria-label="$store.sidebar.isOpen ? null : @js(trim(strip_tags($slot->toHtml())))"
             x-data="{ tooltip: false }"
             x-effect="
                 tooltip = $store.sidebar.isOpen

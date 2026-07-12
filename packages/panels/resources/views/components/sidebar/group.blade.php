@@ -67,6 +67,7 @@
         >
             <x-slot name="trigger">
                 <button
+                    aria-label="{{ $label }}"
                     x-data="{ tooltip: false }"
                     x-effect="
                         tooltip = $store.sidebar.isOpen

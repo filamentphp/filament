@@ -2,7 +2,12 @@
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
-<button class="fi-sidebar-database-notifications-btn">
+<button
+    @if ($isSidebarCollapsibleOnDesktop)
+        x-bind:aria-label="$store.sidebar.isOpen ? null : @js(__('filament-panels::layout.actions.open_database_notifications.label'))"
+    @endif
+    class="fi-sidebar-database-notifications-btn"
+>
     {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::OutlinedBell, alias: \Filament\View\PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON, size: \Filament\Support\Enums\IconSize::Large) }}
 
     <span
