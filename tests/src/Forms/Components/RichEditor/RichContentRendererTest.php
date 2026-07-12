@@ -1637,6 +1637,35 @@ describe('CSS injection', function (): void {
 
         expect($html)->toContain('--color: #00ff00; --dark-color: #00ff00');
     });
+
+    it('rejects a malicious image `width` so it cannot inject CSS declarations', function (): void {
+        $html = RichContentRenderer::make(
+            '<img src="https://example.com/a.jpg" width="100;position:fixed;inset:0;background-image:url(//attacker)">',
+        )->toHtml();
+
+        expect($html)
+            ->not->toContain('position:fixed')
+            ->not->toContain('url(//attacker')
+            ->not->toContain('style=');
+    });
+
+    it('renders legitimate image `width` and `height` into the `style`', function (): void {
+        $html = RichContentRenderer::make(
+            '<img src="https://example.com/a.jpg" width="200" height="150">',
+        )->toHtml();
+
+        expect($html)
+            ->toContain('width: 200')
+            ->toContain('height: 150');
+    });
+
+    it('preserves a legitimate image `width` that carries a CSS unit', function (): void {
+        $html = RichContentRenderer::make(
+            '<img src="https://example.com/a.jpg" style="width: 100px">',
+        )->toHtml();
+
+        expect($html)->toContain('width: 100px');
+    });
 });
 
 // Concrete test blocks for getCustomBlockHtml tests
