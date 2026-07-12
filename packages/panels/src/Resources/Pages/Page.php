@@ -25,6 +25,7 @@ use Filament\Resources\Events\RecordSaved;
 use Filament\Resources\Events\RecordUpdated;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -277,15 +278,13 @@ abstract class Page extends BasePage
         return static::$resource;
     }
 
-    /**
-     * @return array<string, callable(): \Illuminate\Contracts\View\View|string>
-     */
-    protected function getRenderHooks(): array
+    public function bootHasRenderHooks(): void
     {
-        return [
-            ...parent::getRenderHooks(),
-            ...static::getResource()::getRenderHooks(),
-        ];
+        $renderHooks = array_merge(static::getResource()::getRenderHooks(), $this->getRenderHooks());
+
+        foreach ($renderHooks as $name => $hook) {
+            FilamentView::registerRenderHook($name, $hook, static::class);
+        }
     }
 
     /**
