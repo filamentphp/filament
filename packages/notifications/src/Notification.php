@@ -354,6 +354,10 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
         $attributes = (new FilamentComponentAttributeBag)
             ->merge([
+                // `danger` toasts convey errors, so they get an assertive live region
+                // (`role="alert"`) to interrupt; other statuses inherit the polite
+                // `role="status"` container.
+                'role' => $status === 'danger' ? 'alert' : null,
                 'wire:key' => "{$this->getId()}.notifications.{$this->getId()}",
                 'x-on:close-notification.window' => "if (\$event.detail.id == '{$this->getId()}') close()",
             ], escape: false)
