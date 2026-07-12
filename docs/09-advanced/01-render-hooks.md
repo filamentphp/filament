@@ -257,6 +257,76 @@ FilamentView::registerRenderHook(
 );
 ```
 
+## Registering render hooks from within a class
+
+Instead of registering a scoped render hook from a service provider, you can
+declare it directly on the class it belongs to, using the
+`Filament\Livewire\Concerns\HasRenderHooks` trait. This trait is already
+included by default on:
+
+- Pages
+- Table widgets
+- Relation managers
+
+To use it, override `getRenderHooks()`, returning an array that maps render
+hook names to their callbacks:
+
+```php
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
+
+class EditUser extends EditRecord
+{
+    protected function getRenderHooks(): array
+    {
+        return [
+            PanelsRenderHook::PAGE_START => fn (): View => view('warning-banner'),
+        ];
+    }
+}
+```
+
+Each hook registered this way is automatically [scoped](#scoping-render-hooks)
+to the declaring class, so you don't need to pass a `scopes` argument
+yourself. This is functionally equivalent to calling:
+
+```php
+FilamentView::registerRenderHook(
+    PanelsRenderHook::PAGE_START,
+    fn (): View => view('warning-banner'),
+    scopes: EditUser::class,
+);
+```
+
+### Registering render hooks on a resource
+
+`Filament\Resources\Resource` is not a Livewire component, so instead it uses
+`Filament\Resources\Resource\Concerns\HasRenderHooks`, which exposes a
+static `getRenderHooks()` method:
+
+```php
+use Filament\Resources\Resource;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
+
+class UserResource extends Resource
+{
+    public static function getRenderHooks(): array
+    {
+        return [
+            PanelsRenderHook::PAGE_START => fn (): View => view('resource-banner'),
+        ];
+    }
+}
+```
+
+Any hooks declared this way are automatically picked up by every page
+belonging to the resource, and registered scoped to each individual page
+class — so you don't need to repeat the hook on every page.
+
+If a page and its resource both declare a hook under the same name, the
+page's hook takes precedence for that page.
+
 ## Rendering hooks
 
 Plugin developers might find it useful to expose render hooks to their users. You do not need to register them anywhere, simply output them in Blade like so:
