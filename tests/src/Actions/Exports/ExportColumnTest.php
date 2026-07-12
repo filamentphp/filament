@@ -5,6 +5,25 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
+// Overrides `getState()` so formula injection sanitization can be tested
+// without a backing record (`getState()` returns `null` without one).
+class FakeStateExportColumn extends ExportColumn
+{
+    protected mixed $fakeState = null;
+
+    public function fakeState(mixed $state): static
+    {
+        $this->fakeState = $state;
+
+        return $this;
+    }
+
+    public function getState(): mixed
+    {
+        return $this->fakeState;
+    }
+}
+
 describe('construction', function (): void {
     it('can be constructed with a name', function (): void {
         $column = ExportColumn::make('title');
@@ -81,6 +100,82 @@ it('returns `null` from `getRecord()` when no exporter set', function (): void {
     $column = ExportColumn::make('title');
 
     expect($column->getRecord())->toBeNull();
+});
+
+describe('formula injection protection', function (): void {
+    it('does not sanitize formula triggers by default', function (string $value): void {
+        $column = FakeStateExportColumn::make('title')
+            ->fakeState($value);
+
+        expect($column->shouldPreventFormulaInjection())->toBeFalse();
+        expect($column->getFormattedState())->toBe($value);
+    })->with([
+        '-5',
+        '+44 1234 567890',
+        '=1+1',
+        '@SUM(A1:A2)',
+    ]);
+
+    it('prefixes formula triggers with a single quote when `preventFormulaInjection()` is enabled', function (string $value, string $expected): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection()
+            ->fakeState($value);
+
+        expect($column->getFormattedState())->toBe($expected);
+    })->with([
+        ['=1+1', "'=1+1"],
+        ['+44 1234 567890', "'+44 1234 567890"],
+        ['-5', "'-5"],
+        ['@SUM(A1:A2)', "'@SUM(A1:A2)"],
+        ["\tTabbed", "'\tTabbed"],
+        ["\rReturn", "'\rReturn"],
+    ]);
+
+    it('leaves safe values untouched when enabled', function (): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection()
+            ->fakeState('Hello world');
+
+        expect($column->getFormattedState())->toBe('Hello world');
+    });
+
+    it('passes through empty and `null` states when enabled', function (mixed $value, ?string $expected): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection()
+            ->fakeState($value);
+
+        expect($column->getFormattedState())->toBe($expected);
+    })->with([
+        ['', ''],
+        [null, null],
+    ]);
+
+    it('joins array state before sanitizing when enabled', function (): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection()
+            ->fakeState(['=danger', 'safe']);
+
+        expect($column->getFormattedState())->toBe("'=danger, safe");
+    });
+
+    it('can set `preventFormulaInjection()` with a `Closure`', function (): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection(static fn (): bool => true)
+            ->fakeState('=1+1');
+
+        expect($column->shouldPreventFormulaInjection())->toBeTrue();
+        expect($column->getFormattedState())->toBe("'=1+1");
+    });
+
+    it('can opt back out with `preventFormulaInjection(false)`', function (): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection()
+            ->preventFormulaInjection(false)
+            ->fakeState('=1+1');
+
+        expect($column->shouldPreventFormulaInjection())->toBeFalse();
+        expect($column->getFormattedState())->toBe('=1+1');
+    });
 });
 
 describe('visibility', function (): void {
