@@ -3,7 +3,6 @@
 namespace Filament\Resources;
 
 use Filament\Facades\Filament;
-use Filament\Livewire\Concerns\HasRenderHooks;
 use Filament\Panel;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -21,8 +20,6 @@ use Illuminate\Support\Traits\Macroable;
  */
 abstract class Resource
 {
-    use HasRenderHooks;
-
     use Macroable {
         Macroable::__call as dynamicMacroCall;
     }
@@ -47,6 +44,8 @@ abstract class Resource
 
     use Resource\Concerns\HasNavigation;
     use Resource\Concerns\HasPages;
+
+    use Resource\Concerns\HasRenderHooks;
 
     /** @use Resource\Concerns\HasRoutes<TModel> */
     use Resource\Concerns\HasRoutes;
