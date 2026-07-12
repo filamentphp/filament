@@ -41,6 +41,8 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     protected bool | Closure $hasActiveStyling = true;
 
+    protected bool | Closure $isToggle = false;
+
     protected RichEditor $editor;
 
     protected string $evaluationIdentifier = 'tool';
@@ -187,6 +189,18 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return (bool) $this->evaluate($this->hasActiveStyling);
     }
 
+    public function toggle(bool | Closure $condition = true): static
+    {
+        $this->isToggle = $condition;
+
+        return $this;
+    }
+
+    public function isToggle(): bool
+    {
+        return (bool) $this->evaluate($this->isToggle);
+    }
+
     public function toEmbeddedHtml(): string
     {
         $activeJsExpression = $this->getActiveJsExpression();
@@ -206,6 +220,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
                 'type' => 'button',
                 'aria-label' => e($label),
                 'x-bind:class' => '{ \'fi-active\': ' . ($this->hasActiveStyling() ? $activeJsExpression : 'false') . ' }',
+                'x-bind:aria-pressed' => $this->isToggle() ? $activeJsExpression : null,
                 'x-bind:disabled' => $this->isDisabledWhenNotActive() ? '!(' . $activeJsExpression . ')' : null,
                 'x-on:click' => $this->getJsHandler(),
                 'x-tooltip' => (filled($label) && $isLabelHidden)

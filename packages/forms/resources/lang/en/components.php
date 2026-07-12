@@ -612,6 +612,10 @@ return [
             'searching_message' => 'Searching...',
         ],
 
+        'toolbar' => [
+            'aria_label' => 'Editor toolbar',
+        ],
+
         'tools' => [
             'align_center' => 'Align center',
             'align_end' => 'Align end',
