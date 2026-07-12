@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use League\Csv\Bom;
+use League\Csv\EscapeFormula;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -38,6 +39,13 @@ class DownloadImportFailureCsv
 
         $csv = Writer::createFromFileObject(new SplTempFileObject);
         $csv->setOutputBOM(Bom::Utf8);
+
+        if ($import->importer::shouldPreventFormulaInjection()) {
+            // Security: Neutralize CSV formula injection (CWE-1236) using
+            // `league/csv`'s own `EscapeFormula` formatter, which prefixes a
+            // `'` to any cell beginning with a formula-triggering character.
+            $csv->addFormatter((new EscapeFormula)->escapeRecord(...));
+        }
 
         /** @var ?FailedImportRow $firstFailedRow */
         $firstFailedRow = $import->failedRows()->first();
