@@ -122,6 +122,12 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Color picker',
+
+    ],
+
     'file_upload' => [
 
         'editor' => [

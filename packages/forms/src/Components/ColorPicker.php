@@ -109,6 +109,9 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 
         $inputAttributes = $this->getExtraInputAttributeBag()
             ->merge([
+                'aria-controls' => "{$id}-panel",
+                'aria-expanded' => 'false',
+                'aria-haspopup' => 'dialog',
                 'autocomplete' => 'off',
                 'disabled' => $isDisabled,
                 'id' => $id,
@@ -158,6 +161,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
             />
 
             <div
+                aria-hidden="true"
                 class="fi-fo-color-picker-preview my-auto me-3 size-5 shrink-0 rounded-full select-none"
                 x-on:click="togglePanelVisibility()"
                 x-bind:class="{
@@ -172,6 +176,9 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 x-ref="panel"
+                id="<?= e($id) ?>-panel"
+                role="dialog"
+                aria-label="<?= e(__('filament-forms::components.color_picker.panel_label')) ?>"
                 class="fi-fo-color-picker-panel"
             >
                 <<?= $tag ?> x-ref="picker" color="<?= e($this->getState()) ?>" />
