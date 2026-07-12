@@ -1,5 +1,8 @@
 <?php
 
+use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsMonthOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsYearOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder;
@@ -4288,5 +4291,84 @@ describe('properties', function (): void {
 
         // getConstraints/getConstraint need a table model, tested via integration
         expect($qb)->toBeInstanceOf(QueryBuilder::class);
+    });
+});
+
+describe('date operator setting tampering', function (): void {
+    it('does not error when a tampered `isMonth` setting is a non-scalar array', function (): void {
+        $posts = Post::factory()->count(5)->create();
+
+        // Security: a tampered Livewire request can set `settings.month` to an array. The
+        // `month` field is a `Select`, so building its `in:` validation rule reads the state
+        // through `OptionStateCast`, which would `strval()` the array and throw (HTTP 500)
+        // before validation could reject it. The request must stay healthy and the constraint
+        // must be skipped, so the table still loads.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'created_at',
+                    'data' => [
+                        'operator' => 'isMonth',
+                        'settings' => ['month' => ['1']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered `isYear` setting is a non-scalar array', function (): void {
+        $posts = Post::factory()->count(5)->create();
+
+        // Security: a tampered Livewire request can set `settings.year` to an array. The
+        // `year` field is a `TextInput` with the `integer` rule, which rejects the array
+        // before it reaches `whereYear()`, so the request must stay healthy and the table
+        // must still load.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'created_at',
+                    'data' => [
+                        'operator' => 'isYear',
+                        'settings' => ['year' => ['2024']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('skips the constraint when `IsMonthOperator::apply()` receives a tampered non-scalar setting', function (): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` directly to confirm the operator fails closed rather than passing
+        // an array to `whereMonth()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = DateConstraint::make('created_at');
+
+        $operator = IsMonthOperator::make()
+            ->constraint($constraint)
+            ->settings(['month' => ['1']]);
+
+        $filtered = $operator->apply(Post::query(), 'created_at');
+
+        expect($filtered->count())->toBe($posts->count());
+    });
+
+    it('skips the constraint when `IsYearOperator::apply()` receives a tampered non-scalar setting', function (): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` directly to confirm the operator fails closed rather than passing
+        // an array to `whereYear()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = DateConstraint::make('created_at');
+
+        $operator = IsYearOperator::make()
+            ->constraint($constraint)
+            ->settings(['year' => ['2024']]);
+
+        $filtered = $operator->apply(Post::query(), 'created_at');
+
+        expect($filtered->count())->toBe($posts->count());
     });
 });

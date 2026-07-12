@@ -24,6 +24,26 @@ it('can render', function (): void {
         ->assertSuccessful();
 });
 
+it('does not inject CSS from a malicious color value', function (): void {
+    Post::factory()->create([
+        'title' => 'red;position:fixed;inset:0;background-image:url(//attacker)',
+    ]);
+
+    livewire(TestTableWithColorColumn::class)
+        ->assertSuccessful()
+        ->assertDontSee('position:fixed', escape: false);
+});
+
+it('renders a legitimate hex color into the `background-color` style', function (): void {
+    Post::factory()->create([
+        'title' => '#ff0000',
+    ]);
+
+    livewire(TestTableWithColorColumn::class)
+        ->assertSuccessful()
+        ->assertSee('background-color: #ff0000', escape: false);
+});
+
 class TestTableWithColorColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
