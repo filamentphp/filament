@@ -444,8 +444,6 @@ protected static ?string $navigationParentItem = 'Products';
 protected static string | UnitEnum | null $navigationGroup = 'Shop';
 ```
 
-As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
-
 You may also use the `getNavigationParentItem()` method to determine the parent dynamically:
 
 ```php
@@ -465,6 +463,8 @@ public static function getNavigationParentItem(): ?string
     return __('filament/navigation.groups.shop.items.products');
 }
 ```
+
+The parent and child items must belong to the same navigation group. If the parent item has a navigation group, that group must also be defined on the child, otherwise the correct parent item cannot be identified. This applies whether you reference the parent by its class or by its label.
 
 <Aside variant="tip">
     If you're reaching for a third level of navigation like this, you should consider using [clusters](../navigation/clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
