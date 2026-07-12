@@ -33,7 +33,7 @@ class EqualsOperator extends Operator
                 'filament-query-builder::query-builder.operators.relationship.equals.summary.direct',
             [
                 'relationship' => $this->getConstraint()->getAttributeLabel(),
-                'count' => $this->getSettings()['count'],
+                'count' => ($count = $this->getNumericSetting('count')) === null ? null : (int) $count,
             ],
         );
     }
@@ -54,12 +54,19 @@ class EqualsOperator extends Operator
 
     public function applyToBaseQuery(Builder $query): Builder
     {
+        $count = $this->getNumericSetting('count');
+
+        // Security: skip applying the constraint when the tampered setting is not numeric.
+        if ($count === null) {
+            return $query;
+        }
+
         $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
 
         return $query->has(
             $this->getConstraint()->getRelationshipName(),
             $this->isInverse() ? '!=' : '=',
-            intval($this->getSettings()['count']),
+            (int) $count,
             'and',
             function (Builder $query) use ($modifyRelationshipQueryUsing): Builder {
                 if ($modifyRelationshipQueryUsing) {
