@@ -40,8 +40,6 @@ abstract class Page extends BasePage
     use CanAuthorizeResourceAccess;
     use InteractsWithParentRecord;
 
-    protected static ?string $breadcrumb = null;
-
     protected static string $resource;
 
     protected static bool $isDiscovered = false;
@@ -173,9 +171,6 @@ abstract class Page extends BasePage
         return true;
     }
 
-    /**
-     * @return array<string>
-     */
     public function getResourceBreadcrumbs(): array
     {
         $breadcrumbs = [];
@@ -227,16 +222,18 @@ abstract class Page extends BasePage
             }
         }
 
-        if (filled($cluster = static::getCluster())) {
+        if (Filament::getCurrentOrDefaultPanel()->hasStrictHierarchicalBreadcrumbs()) {
+            return [
+                ...static::getHierarchicalBreadcrumbs(),
+                ...$breadcrumbs,
+            ];
+        } elseif (filled($cluster = static::getCluster())) {
             return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
         }
 
         return $breadcrumbs;
     }
 
-    /**
-     * @return array<string>
-     */
     public function getBreadcrumbs(): array
     {
         return [
