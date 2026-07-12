@@ -1556,6 +1556,89 @@ describe('link protocols', function (): void {
     });
 });
 
+describe('CSS injection', function (): void {
+    it('casts a malicious `data-cols` to an integer so it cannot inject CSS declarations', function (): void {
+        $html = RichContentRenderer::make(
+            '<div class="grid-layout" data-cols="1, minmax(0,1fr)); position:fixed; inset:0; background-image:url(//attacker" data-from-breakpoint="lg"><div class="grid-layout-col" data-col-span="1">x</div></div>',
+        )->toHtml();
+
+        expect($html)
+            ->not->toContain('position:fixed')
+            ->not->toContain('url(//attacker')
+            ->toContain('style="--cols: repeat(1, minmax(0, 1fr));"');
+    });
+
+    it('casts a malicious `data-col-span` to an integer so it cannot inject CSS declarations', function (): void {
+        $html = RichContentRenderer::make(
+            '<div class="grid-layout" data-cols="2"><div class="grid-layout-col" data-col-span="1); position:fixed; inset:0; background-image:url(//attacker">x</div></div>',
+        )->toHtml();
+
+        expect($html)
+            ->not->toContain('position:fixed')
+            ->not->toContain('url(//attacker')
+            ->toContain('style="--col-span: span 1 / span 1;"');
+    });
+
+    it('renders a legitimate `data-cols` value into the grid `style`', function (): void {
+        $html = RichContentRenderer::make(
+            '<div class="grid-layout" data-cols="3" data-from-breakpoint="lg"><div class="grid-layout-col" data-col-span="2">x</div></div>',
+        )->toHtml();
+
+        expect($html)
+            ->toContain('style="--cols: repeat(3, minmax(0, 1fr));"')
+            ->toContain('style="--col-span: span 2 / span 2;"');
+    });
+
+    it('rejects a `data-color` that tries to break out of the declaration', function (): void {
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'hi', 'marks' => [
+                        ['type' => 'textColor', 'attrs' => ['data-color' => 'red;position:fixed;inset:0;background-image:url(//attacker)']],
+                    ]],
+                ]],
+            ],
+        ])->toHtml();
+
+        // The raw payload echoes harmlessly inside the `data-color` attribute, but it must never
+        // reach a `style` attribute, where the `;` would inject additional CSS declarations.
+        expect($html)
+            ->not->toContain('style=')
+            ->not->toContain('--color:');
+    });
+
+    it('rejects a `data-color` containing `url()` that the previous looser guard would have allowed', function (): void {
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'hi', 'marks' => [
+                        ['type' => 'textColor', 'attrs' => ['data-color' => 'url(//attacker)']],
+                    ]],
+                ]],
+            ],
+        ])->toHtml();
+
+        expect($html)->not->toContain('--color:');
+    });
+
+    it('renders a legitimate unregistered `data-color` into the text color `style`', function (): void {
+        $html = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'hi', 'marks' => [
+                        ['type' => 'textColor', 'attrs' => ['data-color' => '#00ff00']],
+                    ]],
+                ]],
+            ],
+        ])->toHtml();
+
+        expect($html)->toContain('--color: #00ff00; --dark-color: #00ff00');
+    });
+});
+
 // Concrete test blocks for getCustomBlockHtml tests
 class RendererTestAlertBlock extends RichContentCustomBlock
 {
