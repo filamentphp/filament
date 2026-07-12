@@ -214,6 +214,35 @@ describe('navigation parent-child', function (): void {
         expect($childLabels)->toContain('Login History');
     });
 
+    it('does not duplicate merged navigation children when the navigation is retrieved more than once', function (): void {
+        Filament::getCurrentOrDefaultPanel()->navigationItems([
+            NavigationItem::make('Impersonations')
+                ->parentItem(UserResource::class)
+                ->url('#'),
+            NavigationItem::make('Login History')
+                ->parentItem('Users')
+                ->url('#'),
+        ]);
+
+        // `NavigationManager` is a scoped (per-request) singleton, so `get()`
+        // must be idempotent — retrieving the navigation programmatically
+        // before it is rendered previously duplicated the merged children.
+        Filament::getNavigation();
+
+        $allItems = collect(Filament::getNavigation())
+            ->flatMap(fn (NavigationGroup $group) => $group->getItems());
+
+        $users = $allItems->first(fn (NavigationItem $item) => $item->getLabel() === 'Users');
+
+        $childLabels = $users->getChildItems()
+            ->map(fn (NavigationItem $item) => $item->getLabel())
+            ->all();
+
+        expect($childLabels)->toHaveCount(2);
+        expect($childLabels)->toContain('Impersonations');
+        expect($childLabels)->toContain('Login History');
+    });
+
     it('sorts merged navigation children by their sort order', function (): void {
         Filament::getCurrentOrDefaultPanel()->navigationItems([
             NavigationItem::make('Impersonations')
