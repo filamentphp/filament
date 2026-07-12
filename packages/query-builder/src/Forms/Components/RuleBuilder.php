@@ -255,9 +255,15 @@ class RuleBuilder extends Builder
             return [];
         }
 
+        $blocks = parent::getBlockPickerBlocks();
+
+        if ($this->canAddOrBlock()) {
+            return $blocks;
+        }
+
         return array_filter(
-            parent::getBlockPickerBlocks(),
-            fn (Builder\Block $block): bool => $this->canAddOrBlock() || ($block->getName() !== static::OR_BLOCK_NAME),
+            $blocks,
+            fn (Builder\Block $block): bool => $block->getName() !== static::OR_BLOCK_NAME,
         );
     }
 
@@ -278,15 +284,16 @@ class RuleBuilder extends Builder
                 continue;
             }
 
-            $count++;
+            // Only leaf conditions count towards the limit; "OR" blocks and their groups are structural containers, so the count matches the number of conditions the user sees. Nesting is bounded separately by `maxNestingDepth()`.
+            if (($rule['type'] ?? null) === static::OR_BLOCK_NAME) {
+                foreach ($rule['data'][static::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [] as $orGroup) {
+                    $count += $this->countTreeRules($orGroup['rules'] ?? []);
+                }
 
-            if (($rule['type'] ?? null) !== static::OR_BLOCK_NAME) {
                 continue;
             }
 
-            foreach ($rule['data'][static::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [] as $orGroup) {
-                $count += $this->countTreeRules($orGroup['rules'] ?? []);
-            }
+            $count++;
         }
 
         return $count;

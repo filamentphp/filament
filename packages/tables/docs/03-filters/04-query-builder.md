@@ -98,6 +98,8 @@ QueryBuilder::make()
     ])
 ```
 
+The `maxRules()` limit counts individual conditions only. "OR" groups are structural containers, so they do not count towards the limit themselves — nesting is bounded separately by `maxNestingDepth()`.
+
 When a limit is set, the UI enforces it: once the maximum number of rules is reached, the "add rule" and clone buttons are disabled with a tooltip explaining why, and the "OR" grouping option is hidden once the maximum nesting depth is reached. As a safeguard against a tampered request that bypasses the UI, a submitted rule tree that still exceeds either limit is safely ignored, applying no constraints instead of filtering the table.
 
 <Aside variant="tip">

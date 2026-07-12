@@ -4476,6 +4476,36 @@ describe('rule limits', function (): void {
         expect($queryBuilder->exceedsRuleLimits([$rule, $rule, $rule]))->toBeTrue();
     });
 
+    it('does not count "or" blocks or their groups towards `maxRules()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // This tree has 5 structural nodes (an "or" block + 2 groups + 2 conditions) but only 2 leaf conditions, so a `maxRules(2)` limit is not exceeded.
+        $tree = [
+            [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule]],
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ],
+        ];
+
+        expect(QueryBuilder::make()->maxRules(2)->exceedsRuleLimits($tree))->toBeFalse();
+
+        // Adding a 3rd leaf condition tips it over.
+        $tree[0]['data']['groups'][0]['rules'][] = $rule;
+
+        expect(QueryBuilder::make()->maxRules(2)->exceedsRuleLimits($tree))->toBeTrue();
+    });
+
     it('reports a rule tree exceeding `maxNestingDepth()` as exceeding via `exceedsRuleLimits()`', function (): void {
         $rule = [
             'type' => 'title',
@@ -4595,7 +4625,7 @@ describe('rule limits', function (): void {
         );
     });
 
-    it('counts every node in the tree via `RuleBuilder::countTreeRules()`', function (): void {
+    it('counts only leaf conditions via `RuleBuilder::countTreeRules()`, not "or" containers', function (): void {
         $ruleBuilder = RuleBuilder::make('rules');
 
         $rule = [
@@ -4606,10 +4636,10 @@ describe('rule limits', function (): void {
             ],
         ];
 
-        // A flat tree counts each rule.
+        // A flat tree counts each condition.
         expect($ruleBuilder->countTreeRules([$rule, $rule]))->toBe(2);
 
-        // An "or" block counts itself plus every rule nested inside its groups.
+        // The "or" block and its groups are structural containers, so only the 3 nested conditions count (plus the 1 top-level one), not the "or" block or its 2 groups.
         $tree = [
             $rule,
             [
@@ -4623,7 +4653,7 @@ describe('rule limits', function (): void {
             ],
         ];
 
-        expect($ruleBuilder->countTreeRules($tree))->toBe(5);
+        expect($ruleBuilder->countTreeRules($tree))->toBe(4);
     });
 
     it('only offers the "or" block via `canAddOrBlock()` while within `maxNestingDepth()`', function (): void {

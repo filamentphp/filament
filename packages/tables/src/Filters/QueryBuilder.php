@@ -374,7 +374,7 @@ class QueryBuilder extends BaseFilter
 
         $ruleCount = 0;
 
-        // Security: Traverse the raw rule tree without instantiating schemas, so counting the nodes and measuring the nesting depth is itself cheap even for a hostile payload.
+        // Security: Traverse the raw rule tree without instantiating schemas, so counting the leaf conditions and measuring the nesting depth is itself cheap even for a hostile payload.
         return $this->rulesExceedLimits($rules, 1, $ruleCount, $maxRules, $maxNestingDepth);
     }
 
@@ -388,20 +388,21 @@ class QueryBuilder extends BaseFilter
         }
 
         foreach ($rules as $rule) {
+            // An "OR" block is a structural container, so it does not count towards `maxRules` itself; only the leaf conditions inside its groups do. Its nesting is still bounded by the depth check above.
+            if (($rule['type'] ?? null) === RuleBuilder::OR_BLOCK_NAME) {
+                foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [] as $orGroup) {
+                    if ($this->rulesExceedLimits($orGroup['rules'] ?? [], $depth + 1, $ruleCount, $maxRules, $maxNestingDepth)) {
+                        return true;
+                    }
+                }
+
+                continue;
+            }
+
             $ruleCount++;
 
             if (($maxRules !== null) && ($ruleCount > $maxRules)) {
                 return true;
-            }
-
-            if (($rule['type'] ?? null) !== RuleBuilder::OR_BLOCK_NAME) {
-                continue;
-            }
-
-            foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [] as $orGroup) {
-                if ($this->rulesExceedLimits($orGroup['rules'] ?? [], $depth + 1, $ruleCount, $maxRules, $maxNestingDepth)) {
-                    return true;
-                }
             }
         }
 
