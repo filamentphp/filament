@@ -84,10 +84,20 @@ class ColorEntry extends Entry implements HasEmbeddedView
                 $copyMessageDurationJs = $isCopyable
                     ? Js::from($this->getCopyMessageDuration($stateItem))
                     : null;
+
+                $tooltip = $this->getTooltip($stateItem);
+
+                // The colour value is the swatch's only information, so expose it (or the
+                // developer's tooltip text) as an accessible name on the `role="img"` swatch.
+                $accessibleLabel = filled($tooltip)
+                    ? ($tooltip instanceof Htmlable ? strip_tags($tooltip->toHtml()) : $tooltip)
+                    : $stateItem;
                 ?>
 
                 <div <?= (new FilamentComponentAttributeBag)
                     ->merge([
+                        'role' => 'img',
+                        'aria-label' => e($accessibleLabel),
                         'x-on:click' => $isCopyable
                             ? <<<JS
                             window.navigator.clipboard.writeText({$copyableStateJs})
@@ -97,7 +107,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
                             })
                             JS
                             : null,
-                        'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                        'x-tooltip' => filled($tooltip)
                             ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
