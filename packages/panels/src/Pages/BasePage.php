@@ -5,6 +5,7 @@ namespace Filament\Pages;
 use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Livewire\Concerns\HasRenderHooks;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -19,6 +20,7 @@ use Livewire\Component;
 
 abstract class BasePage extends Component implements HasActions, HasRenderHookScopes, HasSchemas
 {
+    use HasRenderHooks;
     use InteractsWithActions;
     use InteractsWithSchemas;
 
