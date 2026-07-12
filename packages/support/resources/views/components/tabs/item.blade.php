@@ -45,6 +45,7 @@
     {{
         $attributes
             ->merge([
+                'aria-current' => (($tag === 'a') && $active) ? 'page' : null,
                 'aria-selected' => $active,
                 'role' => 'tab',
             ])
