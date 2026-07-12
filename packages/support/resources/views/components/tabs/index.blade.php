@@ -9,7 +9,6 @@
         $attributes
             ->merge([
                 'aria-label' => $label,
-                'role' => 'tablist',
             ])
             ->class([
                 'fi-tabs',
