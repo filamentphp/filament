@@ -29,8 +29,15 @@ trait CanGroupRecords
         return $this->getTable()->getDefaultGroup();
     }
 
-    public function updatedTableGroupColumn(): void
+    public function updatedTableGrouping(): void
     {
+        if ($this->getTable()->persistsGroupInSession()) {
+            session()->put(
+                $this->getTableGroupingSessionKey(),
+                $this->tableGrouping,
+            );
+        }
+
         $this->resetPage();
     }
 
@@ -64,5 +71,12 @@ trait CanGroupRecords
         $group->orderQuery($query, $this->getTableGroupingDirection() ?? 'asc');
 
         return $query;
+    }
+
+    public function getTableGroupingSessionKey(): string
+    {
+        $table = md5($this::class);
+
+        return "tables.{$table}_grouping";
     }
 }

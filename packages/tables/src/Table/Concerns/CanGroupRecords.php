@@ -25,6 +25,8 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupsOnly = false;
 
+    protected bool | Closure | null $persistsGroupInSession = false;
+
     protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
 
     protected bool | Closure $areGroupingSettingsHidden = false;
@@ -100,6 +102,13 @@ trait CanGroupRecords
     public function groupsOnly(bool | Closure $condition = true): static
     {
         $this->isGroupsOnly = $condition;
+
+        return $this;
+    }
+
+    public function persistGroupInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsGroupInSession = $condition;
 
         return $this;
     }
@@ -212,5 +221,10 @@ trait CanGroupRecords
     public function isGroupsOnly(): bool
     {
         return (bool) $this->evaluate($this->isGroupsOnly);
+    }
+
+    public function persistsGroupInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsGroupInSession);
     }
 }

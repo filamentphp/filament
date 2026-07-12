@@ -95,6 +95,24 @@ trait InteractsWithTable
             $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:asc";
         }
 
+        $shouldPersistGroupInSession = $this->getTable()->persistsGroupInSession();
+        $groupingSessionKey = $this->getTableGroupingSessionKey();
+
+        if (
+            $shouldPersistGroupInSession &&
+            session()->has($groupingSessionKey)
+        ) {
+            $sessionGrouping = session()->get($groupingSessionKey);
+            $this->tableGrouping = is_string($sessionGrouping) ? $sessionGrouping : null;
+        }
+
+        if ($shouldPersistGroupInSession) {
+            session()->put(
+                $groupingSessionKey,
+                $this->tableGrouping,
+            );
+        }
+
         $shouldPersistSearchInSession = $this->getTable()->persistsSearchInSession();
         $searchSessionKey = $this->getTableSearchSessionKey();
 

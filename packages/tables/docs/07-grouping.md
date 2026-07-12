@@ -60,6 +60,24 @@ public function table(Table $table): Table
 }
 ```
 
+### Persisting the grouping in the user's session
+
+To persist the grouping in the user's session, use the `persistGroupInSession()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            'status',
+            'category',
+        ])
+        ->persistGroupInSession();
+}
+```
+
 ## Grouping by a relationship attribute
 
 You can also group by a relationship attribute using dot-syntax. For example, if you have an `author` relationship which has a `name` attribute, you can use `author.name` as the name of the attribute:
