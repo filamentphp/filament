@@ -4,6 +4,7 @@ namespace Filament\Widgets;
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Livewire\Concerns\HasRenderHooks;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class TableWidget extends Widget implements HasActions, HasSchemas, HasTable
 {
+    use HasRenderHooks;
     use InteractsWithActions;
     use InteractsWithSchemas;
     use InteractsWithTable {
