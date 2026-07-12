@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Skip to content',
+    ],
+
     'actions' => [
 
         'billing' => [
