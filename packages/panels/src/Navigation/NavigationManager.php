@@ -57,6 +57,7 @@ class NavigationManager
         $groups = collect($this->getNavigationGroups());
 
         return collect($this->getNavigationItems())
+            ->map(fn (NavigationItem $item): NavigationItem => clone $item)
             ->filter(fn (NavigationItem $item): bool => $item->isVisible())
             ->sortBy(fn (NavigationItem $item): int => $item->getSort())
             ->groupBy(function (NavigationItem $item): string {
