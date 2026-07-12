@@ -142,6 +142,9 @@
                             :icon="$itemIcon"
                             tag="a"
                             :target="$shouldItemOpenUrlInNewTab ? '_blank' : null"
+                            @if ($itemIsActive)
+                                aria-current="page"
+                            @endif
                             :attributes="\Filament\Support\prepare_inherited_attributes($itemExtraAttributes)"
                         >
                             {{ $item->getLabel() }}
