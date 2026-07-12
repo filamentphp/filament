@@ -276,6 +276,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Actions',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
