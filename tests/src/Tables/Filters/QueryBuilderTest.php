@@ -1,8 +1,15 @@
 <?php
 
 use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsAfterOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsBeforeOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsDateOperator;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsMonthOperator;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsYearOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator as NumberEqualsOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder;
@@ -4460,4 +4467,50 @@ describe('date operator setting tampering', function (): void {
 
         expect($filtered->count())->toBe($posts->count());
     });
+
+    it('skips the constraint and renders the summary when a date operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `whereDate()` or `Carbon::parse()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = DateConstraint::make('created_at');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['date' => ['2024-01-01']]);
+
+        $filtered = $operator->apply(Post::query(), 'created_at');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        IsDateOperator::class,
+        IsAfterOperator::class,
+        IsBeforeOperator::class,
+    ]);
+});
+
+describe('number operator setting tampering', function (): void {
+    it('skips the constraint and renders the summary when a number operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `floatval()` or `Number::format()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = NumberConstraint::make('rating');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['number' => ['5']]);
+
+        $filtered = $operator->apply(Post::query(), 'rating');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        NumberEqualsOperator::class,
+        IsMinOperator::class,
+        IsMaxOperator::class,
+    ]);
 });

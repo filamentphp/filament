@@ -231,6 +231,34 @@ class Operator extends Component
         return trim((string) $value);
     }
 
+    protected function getNumericSetting(string $key): ?float
+    {
+        $value = $this->getSettings()[$key] ?? null;
+
+        // Security: settings arrive from the request payload and can be tampered with, so a
+        // non-numeric value (e.g. an array) must not reach `floatval()` / `Number::format()`
+        // where it would throw a `TypeError`. Fail closed by returning `null` instead.
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        return (float) $value;
+    }
+
+    protected function getDateSetting(string $key): ?string
+    {
+        $value = $this->getSettings()[$key] ?? null;
+
+        // Security: settings arrive from the request payload and can be tampered with, so a
+        // non-scalar value (e.g. an array) must not reach `Carbon::parse()` / `whereDate()`
+        // where it would throw a `TypeError`. Fail closed by returning `null` instead.
+        if (! is_scalar($value)) {
+            return null;
+        }
+
+        return (string) $value;
+    }
+
     public function isInverse(): ?bool
     {
         return $this->isInverse;
