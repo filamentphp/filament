@@ -59,6 +59,14 @@ return [
 
     ],
 
+    'navigation' => [
+        'label' => 'Sidebar navigation',
+    ],
+
+    'topbar' => [
+        'label' => 'Topbar',
+    ],
+
     'avatar' => [
         'alt' => 'Avatar of :name',
     ],

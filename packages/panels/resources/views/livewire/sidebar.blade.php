@@ -106,7 +106,10 @@
             </div>
         @endif
 
-        <nav class="fi-sidebar-nav">
+        <nav
+            aria-label="{{ __('filament-panels::layout.navigation.label') }}"
+            class="fi-sidebar-nav"
+        >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
             <ul class="fi-sidebar-nav-groups">

@@ -8,7 +8,10 @@
         $hasTenancy = filament()->hasTenancy();
     @endphp
 
-    <nav class="fi-topbar">
+    <nav
+        aria-label="{{ __('filament-panels::layout.topbar.label') }}"
+        class="fi-topbar"
+    >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
 
         @if ($hasNavigation)
