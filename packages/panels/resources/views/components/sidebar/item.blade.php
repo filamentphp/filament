@@ -33,6 +33,9 @@
 >
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
+        @if ($active)
+            aria-current="page"
+        @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if ($sidebarCollapsible && (! $subNavigation))
             x-data="{ tooltip: false }"
