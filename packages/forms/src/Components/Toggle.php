@@ -50,7 +50,7 @@ class Toggle extends Field implements HasEmbeddedView
 
         $toggleAttributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'aria-checked' => 'false',
+                'aria-checked' => $isOn ? 'true' : 'false',
                 'autofocus' => $this->isAutofocused(),
                 'disabled' => $this->isDisabled(),
                 'id' => $this->getId(),
@@ -78,7 +78,7 @@ class Toggle extends Field implements HasEmbeddedView
 
         <button
             x-data="{ state: <?= $stateExpression ?> }"
-            x-bind:aria-checked="state?.toString()"
+            x-bind:aria-checked="state ? 'true' : 'false'"
             x-on:click="state = ! state"
             x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
             <?php if ($isOn) { ?>
