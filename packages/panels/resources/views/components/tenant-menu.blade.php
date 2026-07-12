@@ -107,7 +107,7 @@
                         <x-filament::input
                             x-bind:id="$id('input')"
                             x-model="search"
-                            placeholder="{{ __('filament-panels::layout.tenant_menu.search_field.placeholder') }}"
+                            :placeholder="__('filament-panels::layout.tenant_menu.search_field.placeholder')"
                             type="search"
                         />
                     </div>

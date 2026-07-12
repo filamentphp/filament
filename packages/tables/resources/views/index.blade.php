@@ -420,7 +420,7 @@
                                     placement="bottom-start"
                                     shift
                                     width="xs"
-                                    wire:key="{{ $this->getId() }}.table.grouping"
+                                    :wire:key="$this->getId() . '.table.grouping'"
                                     @class([
                                         'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
                                     ])

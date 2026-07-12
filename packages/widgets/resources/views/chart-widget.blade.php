@@ -28,7 +28,7 @@
                         class="fi-wi-chart-filter"
                     >
                         <x-filament::input.select
-                            aria-label="{{ __('filament-widgets::chart.filter.label') }}"
+                            :aria-label="__('filament-widgets::chart.filter.label')"
                             inline-prefix
                             wire:model.live="filter"
                         >
