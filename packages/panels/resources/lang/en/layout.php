@@ -40,6 +40,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Theme',
+
             'dark' => [
                 'label' => 'Enable dark theme',
             ],
