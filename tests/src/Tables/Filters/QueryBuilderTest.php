@@ -11,6 +11,9 @@ use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator 
 use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
 use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperator as RelationshipEqualsOperator;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperator as RelationshipHasMaxOperator;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperator as RelationshipHasMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
@@ -4512,5 +4515,50 @@ describe('number operator setting tampering', function (): void {
         NumberEqualsOperator::class,
         IsMinOperator::class,
         IsMaxOperator::class,
+    ]);
+
+    it('does not error when a tampered `aggregate` setting is a non-scalar array', function (): void {
+        // Unlike the other number settings, the `aggregate` select is not rejected by
+        // validation, so a tampered array would reach `array_key_exists()` in `getAggregate()`
+        // and throw a `TypeError` (HTTP 500). The operator must treat it as no aggregate.
+        $posts = Post::factory()->count(5)->create(['rating' => 5]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 1, 'aggregate' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+});
+
+describe('relationship count operator setting tampering', function (): void {
+    it('skips the constraint and renders the summary when a count operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to the translator (summary) or `has()` (apply).
+        $author = User::factory()->create();
+        $posts = Post::factory()->count(3)->create(['author_id' => $author->id]);
+
+        $constraint = RelationshipConstraint::make('author');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['count' => ['tampered']]);
+
+        $filtered = $operator->applyToBaseQuery(Post::query());
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        RelationshipHasMinOperator::class,
+        RelationshipHasMaxOperator::class,
+        RelationshipEqualsOperator::class,
     ]);
 });
