@@ -1,6 +1,6 @@
 .fi-sc-text {
     &.fi-copyable {
-        @apply cursor-pointer;
+        @apply cursor-pointer outline-none focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current;
     }
 
     &.fi-font-sans {
