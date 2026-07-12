@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -9,6 +10,21 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 
 uses(TestCase::class, RefreshDatabase::class);
+
+// A real importer so the controller can resolve `$import->importer` (e.g. for the
+// `shouldPreventFormulaInjection()` static call) instead of a non-existent class string.
+class DownloadFailureTestImporter extends Importer
+{
+    public static function getColumns(): array
+    {
+        return [];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        return '';
+    }
+}
 
 // Policy that grants `view` access to any user, so that a non-owner can download.
 class AllowImportViewPolicy
@@ -33,7 +49,7 @@ function createImportForOwner(User $owner): Import
     return Import::create([
         'file_name' => 'import.csv',
         'file_path' => 'imports/import.csv',
-        'importer' => 'App\\Filament\\Imports\\TestImporter',
+        'importer' => DownloadFailureTestImporter::class,
         'total_rows' => 1,
         'successful_rows' => 0,
         'user_id' => $owner->getKey(),

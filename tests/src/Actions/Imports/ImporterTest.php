@@ -59,13 +59,6 @@ describe('`shouldPreventFormulaInjection()`', function (): void {
 });
 
 describe('failure CSV formula injection', function (): void {
-    beforeEach(function (): void {
-        $migrations = dirname(__DIR__, 4) . '/packages/actions/database/migrations';
-
-        (include "{$migrations}/create_imports_table.php")->up();
-        (include "{$migrations}/create_failed_import_rows_table.php")->up();
-    });
-
     $downloadFailureCsv = function (string $importer): string {
         $user = User::factory()->create();
         $this->actingAs($user);
