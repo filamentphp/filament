@@ -25,6 +25,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Livewire\Concerns\HasRenderHooks;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
@@ -55,6 +56,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 {
     use CanAuthorizeAccess;
     use CanBeLazy;
+    use HasRenderHooks;
     use InteractsWithActions;
     use InteractsWithRelationshipTable {
         InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
