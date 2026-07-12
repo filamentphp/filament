@@ -188,7 +188,7 @@ trait CanOpenModal
     /**
      * @param  array<Action> | Closure | null  $actions
      *
-     *@deprecated Use `modalFooterActions()` instead.
+     * @deprecated Use `modalFooterActions()` instead.
      */
     public function modalActions(array | Closure | null $actions = null): static
     {
@@ -217,7 +217,7 @@ trait CanOpenModal
     /**
      * @param  array<Action> | Closure  $actions
      *
-     *@deprecated Use `extraModalFooterActions()` instead.
+     * @deprecated Use `extraModalFooterActions()` instead.
      */
     public function extraModalActions(array | Closure $actions): static
     {
