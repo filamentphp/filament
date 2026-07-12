@@ -72,6 +72,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
 
         $buttonAttributes = (new FilamentComponentAttributeBag)
             ->merge([
+                'aria-disabled' => $this->isDisabled() ? 'true' : null,
                 'aria-label' => e(trim(strip_tags((string) $this->getLabel()))),
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',
@@ -88,8 +89,13 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
             <input type="hidden" value="<?= $state ? 1 : 0 ?>" x-ref="serverState" />
 
             <div
-                x-bind:aria-checked="state?.toString()"
+                aria-checked="<?= $state ? 'true' : 'false' ?>"
+                x-bind:aria-checked="state ? 'true' : 'false'"
+                x-bind:tabindex="$el.hasAttribute('disabled') ? '-1' : '0'"
+                x-bind:aria-disabled="$el.hasAttribute('disabled') ? 'true' : null"
                 x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:keydown.enter.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? '<?= Arr::toCssClasses([
                     'fi-toggle-on',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),
