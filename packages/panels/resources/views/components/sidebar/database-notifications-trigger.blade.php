@@ -1,10 +1,14 @@
 @php
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+
+    $databaseNotificationsLabel = $unreadNotificationsCount
+        ? trans_choice('filament-panels::layout.actions.open_database_notifications.label_with_unread_count', $unreadNotificationsCount, ['count' => \Illuminate\Support\Number::format($unreadNotificationsCount, locale: app()->getLocale())])
+        : __('filament-panels::layout.actions.open_database_notifications.label');
 @endphp
 
 <button
     @if ($isSidebarCollapsibleOnDesktop)
-        x-bind:aria-label="$store.sidebar.isOpen ? null : @js(__('filament-panels::layout.actions.open_database_notifications.label'))"
+        x-bind:aria-label="$store.sidebar.isOpen ? null : @js($databaseNotificationsLabel)"
     @endif
     class="fi-sidebar-database-notifications-btn"
 >

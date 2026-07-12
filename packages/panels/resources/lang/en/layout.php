@@ -20,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Notifications',
+            'label_with_unread_count' => 'Notifications, {1} :count unread notification|Notifications, [2,*] :count unread notifications',
         ],
 
         'open_user_menu' => [
