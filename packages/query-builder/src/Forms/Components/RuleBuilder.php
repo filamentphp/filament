@@ -42,18 +42,11 @@ class RuleBuilder extends Builder
         $this
             ->label(__('filament-query-builder::query-builder.form.rules.label'))
             ->blocks(function (): array {
-                $blocks = array_map(
-                    fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
-                    $this->getConstraints(),
-                );
-
-                // Security: Only offer the "OR" block, which introduces another level of nesting, while the configured `maxNestingDepth()` allows it. This keeps a user from building a tree in the UI that the query builder would later refuse to apply.
-                if (! $this->canAddOrBlock()) {
-                    return $blocks;
-                }
-
                 return [
-                    ...$blocks,
+                    ...array_map(
+                        fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
+                        $this->getConstraints(),
+                    ),
                     Builder\Block::make(static::OR_BLOCK_NAME)
                         ->label(__('filament-query-builder::query-builder.form.or_groups.block.label'))
                         ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_BLOCK) ?? Heroicon::Slash)
@@ -250,6 +243,22 @@ class RuleBuilder extends Builder
 
         // An "OR" block nests its rules one level deeper than the current builder, so it is only offered while that deeper level stays within the limit.
         return $this->getNestingDepth() < $maxNestingDepth;
+    }
+
+    /**
+     * @return array<Builder\Block>
+     */
+    public function getBlockPickerBlocks(): array
+    {
+        // Security: The picker dropdown opens from its wrapper regardless of the trigger button's disabled state, so removing the pickable blocks is what actually prevents adding rules. Offer nothing once the tree is at the `maxRules()` limit, and drop the "OR" block, which nests one level deeper, once `maxNestingDepth()` would be exceeded. The disabled state and tooltip on the add button remain purely for feedback.
+        if ($this->isAtRuleLimit()) {
+            return [];
+        }
+
+        return array_filter(
+            parent::getBlockPickerBlocks(),
+            fn (Builder\Block $block): bool => $this->canAddOrBlock() || ($block->getName() !== static::OR_BLOCK_NAME),
+        );
     }
 
     public function getTreeRuleCount(): int

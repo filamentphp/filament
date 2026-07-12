@@ -4514,6 +4514,33 @@ describe('rule limits', function (): void {
         expect(RuleBuilder::make('rules')->maxNestingDepth(2)->nestingDepth(2)->canAddOrBlock())->toBeFalse();
     });
 
+    it('offers no pickable blocks in the rule builder once at the `maxRules()` limit', function (): void {
+        // The picker dropdown opens regardless of the disabled add button, so an empty block list is what actually prevents adding.
+        $rules = array_fill(0, 4, [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ]);
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxRules(3),
+            during: function () use ($rules): void {
+                $livewire = livewire(PostsQueryBuilderTable::class)
+                    ->set('tableDeferredFilters.query_builder.rules', $rules);
+
+                $ruleBuilder = $livewire->instance()
+                    ->getTableFiltersForm()
+                    ->getComponent(fn ($component): bool => $component instanceof RuleBuilder, withHidden: true);
+
+                expect($ruleBuilder)->toBeInstanceOf(RuleBuilder::class)
+                    ->and($ruleBuilder->isAtRuleLimit())->toBeTrue()
+                    ->and($ruleBuilder->getBlockPickerBlocks())->toBe([]);
+            },
+        );
+    });
+
     it('applies a rule tree normally when a limit is configured but not exceeded', function (): void {
         $posts = Post::factory()->count(10)->create([
             'title' => 'Test Post Title',
