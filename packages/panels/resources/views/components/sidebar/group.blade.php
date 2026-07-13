@@ -11,6 +11,7 @@
 @php
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
     $hasDropdown = filled($label) && filled($icon) && $sidebarCollapsible;
+    $groupItemsId = 'fi-sidebar-group-items-' . \Illuminate\Support\Str::slug($subNavigation ? "sub_navigation_{$label}" : (string) $label);
 @endphp
 
 <li
@@ -52,6 +53,7 @@
                     :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
                     :icon-alias="\Filament\View\PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON"
                     :label="$label"
+                    :aria-controls="$groupItemsId"
                     x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
                     class="fi-sidebar-group-collapse-btn"
@@ -155,6 +157,7 @@
 
     <ul
         @if (filled($label))
+            id="{{ $groupItemsId }}"
             @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen ? ! $store.sidebar.groupIsCollapsed(label) : ! @js($hasDropdown)"
             @else
