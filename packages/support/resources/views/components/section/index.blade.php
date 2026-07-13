@@ -38,6 +38,7 @@
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
     $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || (! is_slot_empty($afterHeader));
+    $hasContentContainer = (! is_slot_empty($slot)) || (! is_slot_empty($footer));
 @endphp
 
 <section
@@ -103,6 +104,7 @@
             @endif
 
             @if ($collapsible)
+                {{-- The content container is not rendered when the slot and footer are empty, so `aria-controls` must not reference it then. --}}
                 <x-filament::icon-button
                     color="gray"
                     :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
@@ -111,7 +113,7 @@
                     :x-bind:aria-label="'isCollapsed ? ' . Js::from(__('filament::components/section.actions.expand.label')) . ' : ' . Js::from(__('filament::components/section.actions.collapse.label'))"
                     aria-expanded="{{ $collapsed ? 'false' : 'true' }}"
                     x-bind:aria-expanded="(! isCollapsed).toString()"
-                    x-bind:aria-controls="$id('fi-section-content')"
+                    :x-bind:aria-controls="$hasContentContainer ? '$id(\'fi-section-content\')' : null"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
                     class="fi-section-collapse-btn"
                 />
@@ -119,7 +121,7 @@
         </header>
     @endif
 
-    @if ((! is_slot_empty($slot)) || (! is_slot_empty($footer)))
+    @if ($hasContentContainer)
         <div
             @if ($collapsible)
                 x-bind:id="$id('fi-section-content')"
