@@ -603,24 +603,26 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php if ($stateOverListLimitCount) { ?>
                     <div class="fi-ta-text-list-limited-message">
                         <?php if ($isLimitedListExpandable) { ?>
-                            <div
-                                role="button"
+                            <button
+                                type="button"
+                                x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = false"
                                 x-show="isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-tables::table.columns.text.actions.expand_list', $stateOverListLimitCount) ?>
-                            </div>
+                            </button>
 
-                            <div
-                                role="button"
+                            <button
+                                type="button"
+                                x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = true"
                                 x-cloak
                                 x-show="! isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-tables::table.columns.text.actions.collapse_list', $stateOverListLimitCount) ?>
-                            </div>
+                            </button>
                         <?php } else { ?>
                             <?= trans_choice('filament-tables::table.columns.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>
