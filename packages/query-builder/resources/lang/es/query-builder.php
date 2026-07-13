@@ -35,6 +35,8 @@ return [
 
     'no_rules' => '(Sin reglas)',
 
+    'max_rules_reached_tooltip' => 'Usted ha alcanzado el límite de :count reglas.',
+
     'item_separators' => [
         'and' => 'Y',
         'or' => 'O',
