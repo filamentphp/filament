@@ -32,6 +32,7 @@ use Filament\Tests\Fixtures\Pages\CheckboxTest;
 use Filament\Tests\Fixtures\Pages\CodeEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColorPickerTest;
 use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
+use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
@@ -121,6 +122,7 @@ class AdminPanelProvider extends PanelProvider
                 ColumnsBrowserTest::class,
                 CheckboxTest::class,
                 ColorPickerTest::class,
+                DatabaseNotificationsBrowserTest::class,
                 DatePickerBrowserTest::class,
                 DateTimePickerTest::class,
                 FileUploadBrowserTest::class,
