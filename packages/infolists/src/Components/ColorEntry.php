@@ -92,9 +92,14 @@ class ColorEntry extends Entry implements HasEmbeddedView
                 // The colour value is the swatch's only information, so expose it (or the
                 // developer's tooltip text) as an accessible name on the `role="img"` swatch.
                 // Only the sanitized colour is used, so an invalid value is never announced.
-                $accessibleLabel = filled($tooltip)
-                    ? ($tooltip instanceof Htmlable ? strip_tags($tooltip->toHtml()) : $tooltip)
-                    : $sanitizedColor;
+                // The copyable swatch is an interactive control that needs separate treatment (an
+                // accessible name and keyboard operability), so it is not named here — matching
+                // `ColorColumn`.
+                $accessibleLabel = $isCopyable
+                    ? null
+                    : (filled($tooltip)
+                        ? ($tooltip instanceof Htmlable ? strip_tags($tooltip->toHtml()) : $tooltip)
+                        : $sanitizedColor);
                 ?>
 
                 <div <?= (new FilamentComponentAttributeBag)
