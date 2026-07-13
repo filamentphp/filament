@@ -1019,7 +1019,9 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
 
                     <div class="fi-fo-file-upload-editor-window">
                         <div class="fi-fo-file-upload-editor-image-ctn">
+                            <?php // Decorative: Cropper.js drives this image and the editor dialog is labelled elsewhere. ?>
                             <img
+                                alt=""
                                 x-ref="editor"
                                 class="fi-fo-file-upload-editor-image"
                             />
