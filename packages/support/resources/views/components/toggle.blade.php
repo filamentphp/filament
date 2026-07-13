@@ -30,7 +30,7 @@
     {{
         $attributes
             ->merge([
-                'aria-checked' => 'false',
+                'aria-checked' => $state ? 'true' : 'false',
                 'role' => 'switch',
                 'type' => 'button',
             ], escape: false)

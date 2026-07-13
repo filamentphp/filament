@@ -104,10 +104,9 @@ trait CanGenerateLinkHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
-                // `e()` is required: this merge uses `escape: false`, so the label — which may derive
-                // from record data — would otherwise break out of the attribute.
+                // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
                 'aria-label' => $isLabelSrOnly
-                    ? e(trim(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))) . ($opensInNewTab ? " {$newTabLabel}" : '')))
+                    ? e(trim(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))) . ($opensInNewTab ? " {$newTabLabel}" : '')), doubleEncode: false)
                     : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
