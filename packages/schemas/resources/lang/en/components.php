@@ -13,6 +13,22 @@ return [
 
     ],
 
+    'section' => [
+
+        'actions' => [
+
+            'collapse' => [
+                'label' => 'Collapse section',
+            ],
+
+            'expand' => [
+                'label' => 'Expand section',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

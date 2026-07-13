@@ -317,6 +317,10 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $hasContent = ! is_slot_empty(filled($contentHtml) ? new HtmlString($contentHtml) : null);
         $hasFooter = ! is_slot_empty($footer);
 
+        // The disclosure button uses this to reference the collapsible region via `aria-controls`. Only set
+        // when there is both an `$id` and a content region to point at, so the reference never dangles.
+        $contentId = (filled($id) && ($hasContent || $hasFooter)) ? "{$id}-content" : null;
+
         // Label schemas
         $label = $this->getLabel();
         $beforeLabelSchema = $this->getChildSchema(static::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
@@ -397,6 +401,15 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
                                         'x-on:click.stop' => 'isCollapsed = ! isCollapsed',
+                                        // The button only contains a decorative chevron, so give it an accessible
+                                        // name. Static values cover the pre-Alpine/no-JS render; `x-bind` keeps the
+                                        // name and expanded state correct as the section is toggled. `aria-expanded`
+                                        // belongs on the control, not the region, and `aria-controls` points at it.
+                                        'aria-label' => __('filament-schemas::components.section.actions.collapse.label'),
+                                        'x-bind:aria-label' => 'isCollapsed ? ' . Js::from(__('filament-schemas::components.section.actions.expand.label')) . ' : ' . Js::from(__('filament-schemas::components.section.actions.collapse.label')),
+                                        'aria-expanded' => $isCollapsed ? 'false' : 'true',
+                                        'x-bind:aria-expanded' => '(! isCollapsed).toString()',
+                                        'aria-controls' => $contentId,
                                     ], escape: false)
                                     ->class([
                                         'fi-icon-btn',
@@ -415,11 +428,11 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
 
                 <?php if ($hasContent || $hasFooter) { ?>
                     <div
-                        <?php if ($collapsible) { ?>
-                            x-bind:aria-expanded="(! isCollapsed).toString()"
-                            <?php if ($isCollapsed || $shouldPersistCollapsed) { ?>
-                                x-cloak
-                            <?php } ?>
+                        <?php if (filled($contentId)) { ?>
+                            id="<?= e($contentId) ?>"
+                        <?php } ?>
+                        <?php if ($collapsible && ($isCollapsed || $shouldPersistCollapsed)) { ?>
+                            x-cloak
                         <?php } ?>
                         class="fi-section-content-ctn"
                     >
