@@ -121,7 +121,8 @@
         $attributes
             ->merge([
                 'aria-disabled' => $disabled ? 'true' : null,
-                'aria-label' => $labelSrOnly ? trim(strip_tags($slot->toHtml())) : null,
+                // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in the slot.
+                'aria-label' => $labelSrOnly ? e(trim(strip_tags($slot->toHtml())), doubleEncode: false) : null,
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
                 'tabindex' => (($tag === 'a') && $disabled && $hasTooltip) ? '0' : null,
