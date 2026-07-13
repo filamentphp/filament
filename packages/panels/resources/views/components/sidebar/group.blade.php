@@ -11,7 +11,11 @@
 @php
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
     $hasDropdown = filled($label) && filled($icon) && $sidebarCollapsible;
-    $groupItemsId = 'fi-sidebar-group-items-' . \Illuminate\Support\Str::slug($subNavigation ? "sub_navigation_{$label}" : (string) $label);
+    // A slug alone is not unique: non-Latin labels slug to an empty string and distinct labels can
+    // share a slug, producing duplicate ids that break each disclosure button's `aria-controls`.
+    // A short hash of the raw label keeps the id unique per label and stable across renders.
+    $groupLabel = $subNavigation ? "sub_navigation_{$label}" : (string) $label;
+    $groupItemsId = 'fi-sidebar-group-items-' . \Illuminate\Support\Str::slug($groupLabel) . '-' . substr(md5($groupLabel), 0, 8);
 @endphp
 
 <li
