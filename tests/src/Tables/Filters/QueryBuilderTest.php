@@ -3779,6 +3779,33 @@ describe('absolute and relative date filtering', function (): void {
 
     // Time-Based Date Filtering Tests
 
+    it('can filter records using datetime constraint with is after operator in `absolute` mode', function (): void {
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 09:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$afterThresholdPost])
+            ->assertCanNotSeeTableRecords([$beforeThresholdPost]);
+    });
+
     it('can filter records using datetime constraint with is after operator with `this_minute` preset', function (): void {
         $currentMinutePosts = Post::factory()->count(3)->create([
             'published_at' => now()->startOfMinute()->addSeconds(30),
@@ -4130,6 +4157,33 @@ describe('absolute and relative date filtering', function (): void {
     });
 
     // IsBeforeOperator Time-Based Tests
+
+    it('can filter records using datetime constraint with is before operator in `absolute` mode', function (): void {
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 09:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isBefore',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$beforeThresholdPost])
+            ->assertCanNotSeeTableRecords([$afterThresholdPost]);
+    });
 
     it('can filter records using datetime constraint with is before operator with `this_minute` preset', function (): void {
         $oldPosts = Post::factory()->count(5)->create([
