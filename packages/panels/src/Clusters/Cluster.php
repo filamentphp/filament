@@ -3,6 +3,7 @@
 namespace Filament\Clusters;
 
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Pages\PageConfiguration;
 use Filament\Panel;
@@ -36,6 +37,34 @@ class Cluster extends Page
     public static function shouldRegisterNavigation(): bool
     {
         return parent::shouldRegisterNavigation() && static::canAccessClusteredComponents();
+    }
+
+    public static function getClusterHierarchicalBreadcrumbs(): array
+    {
+        $breadcrumbs = [];
+
+        $navigationGroupKey = static::getNavigationGroup();
+        $navigationParentItemKey = static::getNavigationParentItem();
+
+        $panelNavigation = Filament::getCurrentOrDefaultPanel()->getNavigation();
+
+        $navigationGroup = $panelNavigation[serialize($navigationGroupKey)];
+        $navigationParentItem = collect($navigationGroup?->getItems() ?? [])
+            ->first(fn (NavigationItem $item): bool => $item->getKey() === $navigationParentItemKey || $item->getLabel() === $navigationParentItemKey);
+
+        if (filled($navigationGroup) && filled($navigationGroup->getLabel())) {
+            $breadcrumbs[] = $navigationGroup->getLabel();
+        }
+
+        if (filled($navigationParentItem)) {
+            $navigationParentItemUrl = $navigationParentItem->getUrl();
+
+            filled($navigationParentItemUrl)
+                ? $breadcrumbs[$navigationParentItemUrl] = $navigationParentItem->getLabel()
+                : $breadcrumbs[] = $navigationParentItem->getLabel();
+        }
+
+        return $breadcrumbs;
     }
 
     public function mount(): void
