@@ -2,6 +2,17 @@
 
 return [
 
+    'callout' => [
+
+        'statuses' => [
+            'danger' => 'Error:',
+            'info' => 'Note:',
+            'success' => 'Success:',
+            'warning' => 'Warning:',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [
