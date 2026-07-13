@@ -16,7 +16,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Schema;
-use Filament\Support\Contracts\HasLabel;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
@@ -191,7 +190,7 @@ abstract class Page extends BasePage
     {
         if (Filament::getCurrentOrDefaultPanel()->hasStrictHierarchicalBreadcrumbs()) {
             return [
-                ...static::getHierarchicalBreadcrumbs(),
+                ...$this->getHierarchicalBreadcrumbs(),
                 $this->getBreadcrumb(),
             ];
         }
@@ -203,39 +202,44 @@ abstract class Page extends BasePage
         return [];
     }
 
-    public static function getHierarchicalBreadcrumbs(): array
+    public function getHierarchicalBreadcrumbs(): array
     {
         $breadcrumbs = [];
 
         $cluster = static::getCluster();
-        $navigationGroup = static::getNavigationGroup();
-        $navigationParentItem = static::getNavigationParentItem();
+        $navigationGroupKey = static::getNavigationGroup();
+        $navigationParentItemKey = static::getNavigationParentItem();
 
         if (filled($cluster)) {
-            $breadcrumbs = $cluster::getHierarchicalBreadcrumbs();
+            $breadcrumbs = $cluster::getClusterHierarchicalBreadcrumbs();
             $breadcrumbs[$cluster::getUrl()] = $cluster::getClusterBreadcrumb();
+
+            $subNavigation = $this->getCachedSubNavigation();
+
+            if ($navigationGroupKey instanceof UnitEnum) {
+                $navigationGroupKey = $navigationGroupKey->name;
+            }
+
+            $navigationGroup = $subNavigation[$navigationGroupKey ?? 0];
+        } else {
+            $panelNavigation = Filament::getCurrentOrDefaultPanel()->getNavigation();
+
+            $navigationGroup = $panelNavigation[serialize($navigationGroupKey)];
         }
 
-        if (filled($navigationGroup)) {
-            $breadcrumbs[] = $navigationGroup instanceof HasLabel
-                ? $navigationGroup->getLabel()
-                : enum_value($navigationGroup);
+        $navigationParentItem = collect($navigationGroup?->getItems() ?? [])
+            ->first(fn (NavigationItem $item): bool => $item->getKey() === $navigationParentItemKey || $item->getLabel() === $navigationParentItemKey);
+
+        if (filled($navigationGroup) && filled($navigationGroup->getLabel())) {
+            $breadcrumbs[] = $navigationGroup->getLabel();
         }
 
         if (filled($navigationParentItem)) {
-            $parentItem = collect(Filament::getCurrentOrDefaultPanel()
-                ->getNavigation()[serialize($navigationGroup)]
-                ->getItems())
-                ->first(fn (NavigationItem $item): bool =>
-                    $item->getKey() === $navigationParentItem || $item->getLabel() === $navigationParentItem);
+            $navigationParentItemUrl = $navigationParentItem->getUrl();
 
-            if (filled($parentItem)) {
-                $navigationParentItemUrl = $parentItem->getUrl();
-
-                filled($navigationParentItemUrl)
-                    ? $breadcrumbs[$navigationParentItemUrl] = $parentItem->getLabel()
-                    : $breadcrumbs[] = $parentItem->getLabel();
-            }
+            filled($navigationParentItemUrl)
+                ? $breadcrumbs[$navigationParentItemUrl] = $navigationParentItem->getLabel()
+                : $breadcrumbs[] = $navigationParentItem->getLabel();
         }
 
         return $breadcrumbs;
