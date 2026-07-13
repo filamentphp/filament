@@ -145,6 +145,7 @@
         >
             {{
                 \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Support\View\SupportIconAlias::BADGE_DELETE_BUTTON, attributes: (new \Filament\Support\View\ComponentAttributeBag([
+                    'aria-hidden' => 'true',
                     'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
                     'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
                 ])), size: \Filament\Support\Enums\IconSize::ExtraSmall)
@@ -159,11 +160,9 @@
                 }}
             @endif
 
-            @if (filled($label = $deleteButton->attributes->get('label')))
-                <span class="fi-sr-only">
-                    {{ $label }}
-                </span>
-            @endif
+            <span class="fi-sr-only">
+                {{ filled($label = $deleteButton->attributes->get('label')) ? $label : __('filament::components/badge.actions.delete.label') }}
+            </span>
         </button>
     @elseif ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
