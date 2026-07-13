@@ -755,6 +755,8 @@
             @if ($isReordering)
                 <div
                     x-cloak
+                    role="status"
+                    aria-live="polite"
                     wire:key="{{ $this->getId() }}.table.reorder.indicator"
                     class="fi-ta-reorder-indicator"
                 >
@@ -770,6 +772,9 @@
             @elseif ($isSelectionEnabled && ($maxSelectableRecords !== 1) && $isLoaded)
                 <div
                     x-cloak
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
                     x-bind:hidden="! getSelectedRecordsCount()"
                     x-show="getSelectedRecordsCount()"
                     wire:key="{{ $this->getId() }}.table.selection.indicator"
@@ -877,6 +882,17 @@
                     @endif
                     class="fi-ta-content-ctn fi-fixed-positioning-context"
                 >
+                    @if ($records !== null)
+                        <div
+                            role="status"
+                            aria-live="polite"
+                            aria-atomic="true"
+                            class="fi-sr-only"
+                        >
+                            {{ trans_choice('filament-tables::table.result_count', count($records), ['count' => count($records)]) }}
+                        </div>
+                    @endif
+
                     @if ($hasContentLayout && ($records !== null) && count($records))
                         @if (! $isReordering)
                             @php
@@ -2464,8 +2480,15 @@
                             @endif
                         </table>
                     @elseif ($records === null)
-                        <div class="fi-ta-table-loading-ctn">
+                        <div
+                            role="status"
+                            aria-busy="true"
+                            aria-live="polite"
+                            class="fi-ta-table-loading-ctn"
+                        >
                             {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::TwoExtraLarge) }}
+
+                            <span class="fi-sr-only">{{ __('filament-tables::table.loading') }}</span>
                         </div>
                     @endif
                 </div>
@@ -2475,7 +2498,7 @@
                 @if ($emptyState = $getEmptyState())
                     {{ $emptyState }}
                 @else
-                    <div class="fi-ta-empty-state">
+                    <div class="fi-ta-empty-state" role="status">
                         <div class="fi-ta-empty-state-content">
                             <div class="fi-ta-empty-state-icon-bg">
                                 {{ \Filament\Support\generate_icon_html($getEmptyStateIcon(), size: \Filament\Support\Enums\IconSize::Large) }}

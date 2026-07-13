@@ -240,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Loading...',
+
     'reorder_indicator' => 'Drag and drop the records into order.',
+
+    'result_count' => '{0} No results|{1} :count result|[2,*] :count results',
 
     'selection_indicator' => [
 
