@@ -960,6 +960,8 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
                         uploadButtonPosition: <?= Js::from($this->getUploadButtonPosition()) ?>,
                         uploadingMessage: <?= Js::from($this->getUploadingMessage()) ?>,
+                        downloadActionLabel: <?= Js::from(__('filament-forms::components.file_upload.actions.download.label')) ?>,
+                        openActionLabel: <?= Js::from(__('filament-forms::components.file_upload.actions.open.label')) ?>,
                         uploadProgressIndicatorPosition: <?= Js::from($this->getUploadProgressIndicatorPosition()) ?>,
                         uploadUsing: (fileKey, file, success, error, progress) => {
                             $wire.upload(
@@ -990,6 +992,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                 x-show="error"
                 x-text="error"
                 x-cloak
+                role="alert"
                 class="fi-fo-file-upload-error-message"
             ></div>
 

@@ -130,6 +130,18 @@ return [
 
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Download',
+            ],
+
+            'open' => [
+                'label' => 'Open in new tab',
+            ],
+
+        ],
+
         'editor' => [
 
             'label' => 'Image editor',
