@@ -3,7 +3,7 @@
 
     &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
-        @apply hover:underline focus-visible:underline;
+        @apply hover:underline focus-visible:rounded-sm focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current;
     }
 
     &.fi-disabled:not(.fi-force-enabled),

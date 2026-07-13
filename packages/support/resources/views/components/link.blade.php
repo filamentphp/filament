@@ -70,6 +70,10 @@
 
     $hasTooltip = filled($tooltip);
 
+    $opensInNewTab = ($tag === 'a') && ($target === '_blank');
+
+    $newTabLabel = __('filament::components/link.sr_only.opens_in_new_tab');
+
     $loadingDelay = ($icon || $hasLoadingIndicator)
         ? config('filament.livewire_loading_delay', 'default')
         : null;
@@ -94,8 +98,12 @@
         $attributes
             ->merge([
                 'aria-disabled' => $disabled ? 'true' : null,
+                'aria-label' => $labelSrOnly
+                    ? trim(trim(strip_tags($slot->toHtml())) . ($opensInNewTab ? " {$newTabLabel}" : ''))
+                    : null,
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
+                'rel' => $opensInNewTab ? 'noopener noreferrer' : null,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
@@ -137,6 +145,10 @@
 
     @if (! $labelSrOnly)
         {{ $slot }}
+    @endif
+
+    @if ($opensInNewTab && (! $labelSrOnly))
+        <span class="fi-sr-only">{{ $newTabLabel }}</span>
     @endif
 
     @if ($iconPosition === IconPosition::After)

@@ -91,6 +91,10 @@ trait CanGenerateLinkHtml
 
         $hasTooltip = filled($tooltip);
 
+        $opensInNewTab = ($tag === 'a') && ($target === '_blank');
+
+        $newTabLabel = __('filament::components/link.sr_only.opens_in_new_tab');
+
         $formAttributes = $attributes->only(['action', 'method', 'wire:submit']);
 
         $attributes = $attributes
@@ -100,8 +104,12 @@ trait CanGenerateLinkHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
+                'aria-label' => $isLabelSrOnly
+                    ? trim(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))) . ($opensInNewTab ? " {$newTabLabel}" : ''))
+                    : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
+                'rel' => $opensInNewTab ? 'noopener noreferrer' : null,
                 'type' => match ($tag) {
                     'button' => $type,
                     'form' => 'submit',
@@ -166,6 +174,10 @@ trait CanGenerateLinkHtml
 
             <?php if (! $isLabelSrOnly) { ?>
                 <?= e($label) ?>
+            <?php } ?>
+
+            <?php if ($opensInNewTab && (! $isLabelSrOnly)) { ?>
+                <span class="fi-sr-only"><?= e($newTabLabel) ?></span>
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>
