@@ -75,9 +75,6 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'aria-disabled' => $this->isDisabled() ? 'true' : null,
                 'aria-label' => e(trim(strip_tags((string) $this->getLabel()))),
                 'disabled' => $this->isDisabled(),
-                // Rendered statically so the switch is focusable on first paint (before Alpine boots),
-                // rather than via a one-time `x-bind` that never re-runs.
-                'tabindex' => $this->isDisabled() ? '-1' : '0',
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
             ], escape: false)
@@ -94,6 +91,12 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
             <div
                 aria-checked="<?= $state ? 'true' : 'false' ?>"
                 x-bind:aria-checked="state ? 'true' : 'false'"
+                <?php // `tabindex` is bound client-side rather than server-rendered on purpose: a `ToggleColumn`
+                      // in a table with a record URL/action is rendered inside the record `<a>`/`<button>`, and a
+                      // `tabindex` descendant is invalid inside an `<a>`. Applying it after Alpine boots keeps the
+                      // served markup valid while still making the switch keyboard-focusable. ?>
+                x-bind:tabindex="$el.hasAttribute('disabled') ? '-1' : '0'"
+                x-bind:aria-disabled="$el.hasAttribute('disabled') ? 'true' : null"
                 x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-on:keydown.enter.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
