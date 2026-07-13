@@ -351,7 +351,7 @@ it('can add and remove tags in the browser', function (): void {
             ->assertSee('MyNewTag')
             ->assertSee('MyNewTag')
             ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
-            ->assertDontSee('MyNewTag')
+            ->assertNotPresent('[data-testid="basic-tags"] .fi-badge') // The live region briefly announces the removal, so assert on the badge element instead of the page text.
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

@@ -9,6 +9,24 @@ export default function tagsInputFormComponent({
 
         state,
 
+        liveRegionClearTimeout: null,
+
+        announce(message) {
+            if (this.liveRegionClearTimeout !== null) {
+                clearTimeout(this.liveRegionClearTimeout)
+            }
+
+            this.$refs.liveRegion.textContent = message
+
+            // Clear the announcement once it has been read, so stale messages do not
+            // remain reachable by the screen reader virtual cursor.
+            this.liveRegionClearTimeout = setTimeout(() => {
+                this.$refs.liveRegion.textContent = ''
+
+                this.liveRegionClearTimeout = null
+            }, 3000)
+        },
+
         createTag() {
             this.newTag = this.newTag.trim()
 
@@ -24,10 +42,7 @@ export default function tagsInputFormComponent({
 
             this.state.push(this.newTag)
 
-            this.$refs.liveRegion.textContent = tagAddedMessage.replace(
-                ':tag',
-                this.newTag,
-            )
+            this.announce(tagAddedMessage.replace(':tag', this.newTag))
 
             this.newTag = ''
         },
@@ -35,10 +50,7 @@ export default function tagsInputFormComponent({
         deleteTag(tagToDelete) {
             this.state = this.state.filter((tag) => tag !== tagToDelete)
 
-            this.$refs.liveRegion.textContent = tagRemovedMessage.replace(
-                ':tag',
-                tagToDelete,
-            )
+            this.announce(tagRemovedMessage.replace(':tag', tagToDelete))
         },
 
         reorderTags(event) {
