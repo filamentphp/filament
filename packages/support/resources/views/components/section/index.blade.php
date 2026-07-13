@@ -45,6 +45,7 @@
         isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`section-${@js($collapseId) ?? $el.id}-isCollapsed`) @else @js($collapsed) @endif,
     }"
     @if ($collapsible)
+        x-id="['fi-section-content']"
         x-on:collapse-section.window="if ($event.detail.id == (@js($collapseId) ?? $el.id)) isCollapsed = true"
         x-on:expand="isCollapsed = false"
         x-on:expand-section.window="if ($event.detail.id == (@js($collapseId) ?? $el.id)) isCollapsed = false"
@@ -105,6 +106,10 @@
                     color="gray"
                     :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
                     :icon-alias="\Filament\Support\View\SupportIconAlias::SECTION_COLLAPSE_BUTTON"
+                    :label="__('filament::components/section.collapse_button.label')"
+                    aria-expanded="{{ $collapsed ? 'false' : 'true' }}"
+                    x-bind:aria-expanded="(! isCollapsed).toString()"
+                    x-bind:aria-controls="$id('fi-section-content')"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
                     class="fi-section-collapse-btn"
                 />
@@ -115,7 +120,7 @@
     @if ((! is_slot_empty($slot)) || (! is_slot_empty($footer)))
         <div
             @if ($collapsible)
-                x-bind:aria-expanded="(! isCollapsed).toString()"
+                x-bind:id="$id('fi-section-content')"
                 @if ($collapsed || $persistCollapsed)
                     x-cloak
                 @endif
