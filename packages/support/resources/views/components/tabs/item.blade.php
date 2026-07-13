@@ -45,7 +45,7 @@
     {{
         $attributes
             ->merge([
-                'aria-current' => (($tag === 'a') && $active) ? 'page' : null,
+                'aria-current' => $active ? (($tag === 'a') ? 'page' : 'true') : null,
             ])
             ->class([
                 'fi-tabs-item',
