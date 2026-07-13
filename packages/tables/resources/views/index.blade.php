@@ -883,13 +883,23 @@
                     class="fi-ta-content-ctn fi-fixed-positioning-context"
                 >
                     @if ($records !== null)
+                        @php
+                            // The total across all pages, not the current page's count — and since the total is
+                            // stable across pages, the live region only announces when the result set really
+                            // changes, not on every pagination click. Non-length-aware paginators fall back to
+                            // the page count.
+                            $resultCount = ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
+                                ? $records->total()
+                                : count($records);
+                        @endphp
+
                         <div
                             role="status"
                             aria-live="polite"
                             aria-atomic="true"
                             class="fi-sr-only"
                         >
-                            {{ trans_choice('filament-tables::table.result_count', count($records), ['count' => count($records)]) }}
+                            {{ trans_choice('filament-tables::table.result_count', $resultCount, ['count' => $resultCount]) }}
                         </div>
                     @endif
 
