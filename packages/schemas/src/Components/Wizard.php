@@ -455,6 +455,7 @@ class Wizard extends Component implements HasEmbeddedView
                                     <?php } else { ?>
                                         <span
                                             x-show="getStepIndex(step) <= <?= $stepIndex ?>"
+                                            aria-hidden="true"
                                             class="fi-sc-wizard-header-step-number"
                                         >
                                             <?= str_pad((string) ($stepIndex + 1), 2, '0', STR_PAD_LEFT) ?>
@@ -463,13 +464,18 @@ class Wizard extends Component implements HasEmbeddedView
                                 </div>
 
                                 <div class="fi-sc-wizard-header-step-text">
-                                    <?php if (! $step->isLabelHidden()) { ?>
-                                        <span class="fi-sc-wizard-header-step-label"><?= e($step->getLabel()) ?></span>
-                                    <?php } ?>
+                                    <?php // Always render the label so the button (and the panel it labels via `aria-labelledby`) keeps an accessible name; visually hide it when `hiddenLabel()` is set. ?>
+                                    <span class="fi-sc-wizard-header-step-label<?= $step->isLabelHidden() ? ' fi-sr-only' : '' ?>"><?= e($step->getLabel()) ?></span>
 
                                     <?php if (filled($description = $step->getDescription())) { ?>
                                         <span class="fi-sc-wizard-header-step-description"><?= e($description) ?></span>
                                     <?php } ?>
+
+                                    <?php // Announce completed/upcoming state to screen readers. The current step is owned by `aria-current="step"`, so its status text stays empty to avoid a redundant, doubly-announced name. ?>
+                                    <span
+                                        class="fi-sr-only"
+                                        x-text="getStepIndex(step) > <?= $stepIndex ?> ? <?= Js::from(__('filament-schemas::components.wizard.header.step.statuses.completed')) ?> : (getStepIndex(step) === <?= $stepIndex ?> ? '' : <?= Js::from(__('filament-schemas::components.wizard.header.step.statuses.upcoming')) ?>)"
+                                    ></span>
                                 </div>
                             </button>
 

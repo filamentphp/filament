@@ -43,6 +43,19 @@ return [
 
         ],
 
+        'header' => [
+
+            'step' => [
+
+                'statuses' => [
+                    'completed' => 'Completed',
+                    'upcoming' => 'Not completed',
+                ],
+
+            ],
+
+        ],
+
     ],
 
 ];
