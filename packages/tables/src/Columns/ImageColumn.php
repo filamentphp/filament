@@ -200,7 +200,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function getImageAlt(mixed $state = null): ?string
+    public function getAlt(mixed $state = null): ?string
     {
         return $this->evaluate($this->alt, ['state' => $state]);
     }
@@ -508,7 +508,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
-                    'alt' => e($this->getImageAlt($stateItem) ?? ''),
+                    'alt' => e($this->getAlt($stateItem) ?? ''),
                     'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{
