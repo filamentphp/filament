@@ -396,6 +396,7 @@ class TextColumn extends Column implements HasEmbeddedView
             $size = $this->getSize($stateItem);
 
             $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new FilamentComponentAttributeBag)
+                ->merge(['aria-hidden' => 'true'], escape: false)
                 ->color(IconComponent::class, $iconColor), size: match ($size) {
                     TextSize::Medium => IconSize::Medium,
                     TextSize::Large => IconSize::Large,
