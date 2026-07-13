@@ -43,6 +43,8 @@ class Stat extends Component
      */
     protected string | array | null $descriptionColor = null;
 
+    protected string | Htmlable | Closure | null $emptyState = null;
+
     /**
      * @var scalar | Htmlable | Closure
      */
@@ -96,6 +98,13 @@ class Stat extends Component
     {
         $this->descriptionIcon = $icon;
         $this->descriptionIconPosition = $position;
+
+        return $this;
+    }
+
+    public function emptyState(string | Htmlable | Closure | null $emptyState): static
+    {
+        $this->emptyState = $emptyState;
 
         return $this;
     }
@@ -165,6 +174,11 @@ class Stat extends Component
     public function getDescriptionIconPosition(): IconPosition | string
     {
         return $this->descriptionIconPosition ?? IconPosition::After;
+    }
+
+    public function getEmptyState(): string | Htmlable | null
+    {
+        return $this->evaluate($this->emptyState);
     }
 
     /**
