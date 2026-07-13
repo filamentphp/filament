@@ -11,6 +11,10 @@
 ])
 
 <div
+    @if ($hasToggleableColumns)
+        {{-- The checkbox ids are scoped with `x-id` so they stay unique when multiple tables on the same page share column names, otherwise a label's `for` could activate a checkbox in another table's column manager. --}}
+        x-id="['fi-ta-col-manager-group-checkbox', 'fi-ta-col-manager-column-checkbox']"
+    @endif
     @if ($hasReorderableColumns)
         x-sortable
         x-on:end.stop="reorderColumns($event.target.sortable.toArray())"
@@ -35,14 +39,14 @@
                 <div class="fi-ta-col-manager-group">
                     <div class="fi-ta-col-manager-item">
                         <label
-                            @if ($hasToggleableColumns) x-bind:for="'group-' + column.name" @endif
+                            @if ($hasToggleableColumns) x-bind:for="$id('fi-ta-col-manager-group-checkbox', column.name)" @endif
                             class="fi-ta-col-manager-label"
                         >
                             @if ($hasToggleableColumns)
                                 <input
                                     type="checkbox"
                                     class="fi-checkbox-input fi-valid"
-                                    x-bind:id="'group-' + column.name"
+                                    x-bind:id="$id('fi-ta-col-manager-group-checkbox', column.name)"
                                     x-bind:checked="(groupedColumns[column.name] || {}).checked || false"
                                     x-bind:disabled="(groupedColumns[column.name] || {}).disabled || false"
                                     x-effect="$el.indeterminate = (groupedColumns[column.name] || {}).indeterminate || false"
@@ -87,14 +91,14 @@
                             >
                                 <div class="fi-ta-col-manager-item">
                                     <label
-                                        @if ($hasToggleableColumns) x-bind:for="'column-' + groupColumn.name.replace('.', '-')" @endif
+                                        @if ($hasToggleableColumns) x-bind:for="$id('fi-ta-col-manager-column-checkbox', groupColumn.name)" @endif
                                         class="fi-ta-col-manager-label"
                                     >
                                         @if ($hasToggleableColumns)
                                             <input
                                                 type="checkbox"
                                                 class="fi-checkbox-input fi-valid"
-                                                x-bind:id="'column-' + groupColumn.name.replace('.', '-')"
+                                                x-bind:id="$id('fi-ta-col-manager-column-checkbox', groupColumn.name)"
                                                 x-bind:checked="(getColumn(groupColumn.name, column.name) || {}).isToggled || false"
                                                 x-bind:disabled="(getColumn(groupColumn.name, column.name) || {}).isToggleable === false"
                                                 x-on:change="toggleColumn(groupColumn.name, column.name)"
@@ -126,14 +130,14 @@
             <template x-if="column.type !== 'group'">
                 <div class="fi-ta-col-manager-item">
                     <label
-                        @if ($hasToggleableColumns) x-bind:for="'column-' + column.name.replace('.', '-')" @endif
+                        @if ($hasToggleableColumns) x-bind:for="$id('fi-ta-col-manager-column-checkbox', column.name)" @endif
                         class="fi-ta-col-manager-label"
                     >
                         @if ($hasToggleableColumns)
                             <input
                                 type="checkbox"
                                 class="fi-checkbox-input fi-valid"
-                                x-bind:id="'column-' + column.name.replace('.', '-')"
+                                x-bind:id="$id('fi-ta-col-manager-column-checkbox', column.name)"
                                 x-bind:checked="(getColumn(column.name, null) || {}).isToggled || false"
                                 x-bind:disabled="(getColumn(column.name, null) || {}).isToggleable === false"
                                 x-on:change="toggleColumn(column.name)"
