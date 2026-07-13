@@ -18,6 +18,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
+use Stringable;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -322,6 +323,7 @@ class IconEntry extends Entry implements HasEmbeddedView
                 $stateItem instanceof BackedEnum => $stateItem->value,
                 $stateItem instanceof Htmlable => strip_tags($stateItem->toHtml()),
                 is_scalar($stateItem) => (string) $stateItem,
+                $stateItem instanceof Stringable => (string) $stateItem,
                 default => '',
             };
 
