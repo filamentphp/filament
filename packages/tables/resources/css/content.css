@@ -78,7 +78,7 @@
         }
 
         &:not(.fi-ta-content-grid) {
-            @apply gap-y-px bg-gray-200 dark:bg-white/5;
+            @apply divide-y divide-gray-200 dark:divide-white/10;
 
             & .fi-ta-record {
                 &.fi-clickable {

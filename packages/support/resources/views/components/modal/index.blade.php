@@ -2,20 +2,24 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\Contracts\Support\Htmlable;
 @endphp
 
 @props([
+    'alert' => false,
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
     'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
+    'clickThrough' => false,
     'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
+    'focusTrapReturnsFocus' => true,
     'extraModalWindowAttributeBag' => null,
     'extraModalOverlayAttributeBag' => null,
     'footer' => null,
@@ -43,7 +47,14 @@
     $hasDescription = filled($description);
     $hasFooter = (! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions)));
     $hasHeading = filled($heading);
-    $hasIcon = filled($icon);
+    $iconHtml = ($icon || $iconAlias) ? \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) : null;
+    $hasIcon = $iconHtml !== null;
+
+    $headingId = filled($id) ? "{$id}.heading" : null;
+
+    // The description is only rendered when the built-in heading is, so the
+    // `aria-describedby` reference must be gated to the same conditions.
+    $descriptionId = ($hasDescription && $hasHeading && (! $header) && filled($id)) ? "{$id}.description" : null;
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
@@ -61,6 +72,14 @@
 
     $wireSubmitHandler = $attributes->get('wire:submit.prevent');
     $attributes = $attributes->except(['wire:submit.prevent']);
+
+    $isClickThrough = (bool) $clickThrough;
+
+    // Click-through and closing by clicking away are incompatible, so enabling
+    // click-through silently disables closing the modal by clicking away.
+    if ($isClickThrough) {
+        $closeByClickingAway = false;
+    }
 @endphp
 
 @if ($trigger)
@@ -87,16 +106,23 @@
 @endif
 
 <div
+    @if ($descriptionId)
+        aria-describedby="{{ $descriptionId }}"
+    @endif
     @if ($ariaLabelledby)
         aria-labelledby="{{ $ariaLabelledby }}"
-    @elseif ($heading)
-        aria-labelledby="{{ "{$id}.heading" }}"
+    @elseif ($hasHeading && $headingId)
+        aria-labelledby="{{ $headingId }}"
+    @elseif ($hasHeading)
+        aria-label="{{ trim(strip_tags($heading instanceof Htmlable ? $heading->toHtml() : $heading)) }}"
     @endif
-    aria-modal="true"
+    aria-modal="{{ $isClickThrough ? 'false' : 'true' }}"
     id="{{ $id }}"
-    role="dialog"
+    role="{{ $alert ? 'alertdialog' : 'dialog' }}"
+    tabindex="-1"
     x-data="filamentModal({
                 id: @js($id),
+                isScrollLocked: @js(! $isClickThrough),
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
@@ -113,7 +139,9 @@
     }"
     x-cloak
     x-show="isOpen"
-    x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
+    @if (! $isClickThrough)
+        x-trap{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+    @endif
     {{
         $attributes->class([
             'fi-modal',
@@ -124,19 +152,22 @@
             'fi-modal-has-sticky-header' => $stickyHeader,
             'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
+            'fi-modal-click-through' => $isClickThrough,
         ])
     }}
 >
-    <div
-        aria-hidden="true"
-        x-show="isOpen"
-        x-transition.duration.300ms.opacity
-        {{
-            ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
-                'fi-modal-close-overlay',
-            ])
-        }}
-    ></div>
+    @if (! $isClickThrough)
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            {{
+                ($extraModalOverlayAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
+                    'fi-modal-close-overlay',
+                ])
+            }}
+        ></div>
+    @endif
 
     <div
         @if ($closeByClickingAway)
@@ -167,7 +198,7 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
+                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
                     'fi-modal-window',
                     'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
@@ -208,20 +239,30 @@
                         @if ($hasIcon)
                             <div class="fi-modal-icon-ctn">
                                 <div
-                                    {{ (new ComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
+                                    {{ (new FilamentComponentAttributeBag)->color(IconComponent::class, $iconColor)->class(['fi-modal-icon-bg']) }}
                                 >
-                                    {{ \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) }}
+                                    {{ $iconHtml }}
                                 </div>
                             </div>
                         @endif
 
                         <div>
-                            <h2 class="fi-modal-heading">
+                            <h2
+                                @if ($headingId)
+                                    id="{{ $headingId }}"
+                                @endif
+                                class="fi-modal-heading"
+                            >
                                 {{ $heading }}
                             </h2>
 
                             @if ($hasDescription)
-                                <p class="fi-modal-description">
+                                <p
+                                    @if ($descriptionId)
+                                        id="{{ $descriptionId }}"
+                                    @endif
+                                    class="fi-modal-description"
+                                >
                                     {{ $description }}
                                 </p>
                             @endif

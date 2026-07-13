@@ -9,11 +9,13 @@ use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
+use SensitiveParameter;
 
 class SetUpEmailAuthenticationAction
 {
@@ -24,7 +26,9 @@ class SetUpEmailAuthenticationAction
             ->color('primary')
             ->icon(Heroicon::LockClosed)
             ->link()
-            ->mountUsing(function () use ($emailAuthentication): void {
+            ->mountUsing(function (Schema $schema) use ($emailAuthentication): void {
+                $schema->fill();
+
                 /** @var HasEmailAuthentication $user */
                 $user = Filament::auth()->user();
 
@@ -62,7 +66,7 @@ class SetUpEmailAuthenticationAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.validation_attribute'))
                     ->required()
                     ->rule(function () use ($emailAuthentication): Closure {
-                        return function (string $attribute, $value, Closure $fail) use ($emailAuthentication): void {
+                        return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($emailAuthentication): void {
                             $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::auth()->id();
 
                             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {

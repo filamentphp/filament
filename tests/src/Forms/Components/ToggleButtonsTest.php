@@ -99,14 +99,91 @@ describe('properties', function (): void {
         expect($toggleButtons->hasNullableBooleanState())->toBeTrue();
     });
 
-    it('can set `grouped()` view', function (): void {
+    it('can set `grouped()`', function (): void {
         $grouped = ToggleButtons::make('status')
             ->options(['a' => 'A'])
             ->grouped();
 
-        expect($grouped->getView())->toBe(ToggleButtons::GROUPED_VIEW);
+        expect($grouped->isGrouped())->toBeTrue();
     });
 });
+
+describe('validation', function (): void {
+    it('automatically validates against options array', function (): void {
+        livewire(TestComponentWithToggleButtonsValidation::class)
+            ->fillForm(['status' => 'active'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithToggleButtonsValidation::class)
+            ->fillForm(['status' => 'archived'])
+            ->call('save')
+            ->assertHasFormErrors(['status' => ['in']]);
+    });
+
+    it('automatically validates multiple options', function (): void {
+        livewire(TestComponentWithMultipleToggleButtonsValidation::class)
+            ->fillForm(['tags' => ['one', 'two']])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        livewire(TestComponentWithMultipleToggleButtonsValidation::class)
+            ->fillForm(['tags' => ['one', 'four']])
+            ->call('save')
+            ->assertHasFormErrors(['tags.1' => ['in']]);
+    });
+
+    it('passes validation when state is blank', function (): void {
+        livewire(TestComponentWithToggleButtonsValidation::class)
+            ->fillForm(['status' => null])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
+});
+
+class TestComponentWithToggleButtonsValidation extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ToggleButtons::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithMultipleToggleButtonsValidation extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ToggleButtons::make('tags')
+                    ->multiple()
+                    ->options([
+                        'one' => 'One',
+                        'two' => 'Two',
+                        'three' => 'Three',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
 
 class TestComponentWithToggleButtons extends Livewire
 {
@@ -292,6 +369,36 @@ describe('rendering', function (): void {
             ->assertSuccessful()
             ->assertSeeHtml('Active')
             ->assertSeeHtml('Archived');
+    });
+
+    it('emits `allowHTML: true` when an option tooltip is `Htmlable`', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->tooltips(['active' => new \Illuminate\Support\HtmlString('<strong>Tip</strong>')]),
+            ])
+            ->fill();
+
+        $html = $field->toHtml();
+
+        expect($html)->toContain('allowHTML: true');
+    });
+
+    it('emits `allowHTML: false` when an option tooltip is a plain string', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->tooltips(['active' => 'Plain tooltip']),
+            ])
+            ->fill();
+
+        $html = $field->toHtml();
+
+        expect($html)->toContain('allowHTML: false');
     });
 });
 

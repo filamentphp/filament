@@ -3,6 +3,7 @@
 namespace Filament\Support\Commands\Concerns;
 
 use Filament\Support\Commands\FileGenerators\Contracts\FileGenerator;
+use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use ReflectionClass;
@@ -11,6 +12,13 @@ use function Laravel\Prompts\confirm;
 
 trait CanManipulateFiles
 {
+    /**
+     * Columns already reported to the user as skipped, to avoid warning about the same column more than once per command.
+     *
+     * @var array<string, string>
+     */
+    protected array $reportedSkippedColumns = [];
+
     /**
      * @param  string | array<string>  $paths
      */
@@ -73,7 +81,40 @@ trait CanManipulateFiles
             pathinfo($path, PATHINFO_DIRNAME),
         );
 
-        $filesystem->put($path, (($contents instanceof FileGenerator) ? $contents->generate() : $contents));
+        if ($contents instanceof FileGenerator) {
+            $filesystem->put($path, $contents->generate());
+
+            if ($contents instanceof HasSkippedColumns) {
+                $this->reportSkippedColumns($contents->getSkippedColumns());
+            }
+
+            return;
+        }
+
+        $filesystem->put($path, $contents);
+    }
+
+    /**
+     * @param  array<string, string>  $skippedColumns  Column names, keyed by name with their database type as the value.
+     */
+    protected function reportSkippedColumns(array $skippedColumns): void
+    {
+        $newlySkippedColumns = array_diff_key($skippedColumns, $this->reportedSkippedColumns);
+
+        if (empty($newlySkippedColumns)) {
+            return;
+        }
+
+        $this->reportedSkippedColumns = [
+            ...$this->reportedSkippedColumns,
+            ...$newlySkippedColumns,
+        ];
+
+        $columnsList = collect($newlySkippedColumns)
+            ->map(fn (string $type, string $name): string => "{$name} ({$type})")
+            ->join(', ');
+
+        $this->components->warn("Binary columns were skipped, as they cannot be displayed in the browser: {$columnsList}. Add them to your model's `\$hidden` property to prevent errors.");
     }
 
     protected function getDefaultStubPath(): string

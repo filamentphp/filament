@@ -57,6 +57,7 @@ namespace App\Livewire;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
 use Filament\Schemas\Schema;
@@ -65,6 +66,7 @@ use Livewire\Component;
 class CreatePost extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
+    use RestrictsFileUploadsToSchemaComponents;
     
     public ?array $data = [];
     
@@ -157,6 +159,16 @@ public function mount(Post $post): void
 ```
 
 It's important that you use the `$this->form->fill()` method instead of assigning the data directly to the `$this->data` property. This is because the post's data needs to be internally transformed into a useful format before being stored.
+
+<Aside variant="warning">
+    The data you pass to `fill()` is exposed to JavaScript as part of the Livewire request. If your model has a column containing binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column, it cannot be serialized to JSON and the page will fail to load, often with a blank screen and no error in the Laravel log.
+
+    To resolve this, add the column to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model, which excludes it from `attributesToArray()`:
+
+    ```php
+    protected $hidden = ['location'];
+    ```
+</Aside>
 
 ## Setting a form model
 
@@ -343,3 +355,7 @@ Filament is also able to guess which form fields you want in the schema, based o
 ```bash
 php artisan make:filament-livewire-form Products/CreateProduct --generate
 ```
+
+## Security considerations for file uploads
+
+The `InteractsWithSchemas` trait exposes Livewire's file upload RPC methods on every component that uses it — whether or not the form contains an upload field. If your Livewire component is reachable to users you do not want uploading arbitrary files, add the `RestrictsFileUploadsToSchemaComponents` trait. See [Restricting Livewire file uploads to schema components](../advanced/security#restricting-livewire-file-uploads-to-schema-components) for details.

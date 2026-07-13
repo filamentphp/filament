@@ -3791,6 +3791,23 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'panels/navigation/user-menu-grouping': {
+        url: 'panels/navigation/user-menu-grouping',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1620, height: 1000, left: 1620, top: 0 })
+        },
+        before: async (page) => {
+            await page.click('.fi-user-menu button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'panels/navigation/disabled-navigation': {
         url: 'panels/navigation/disabled-navigation',
         selector: 'body',
@@ -7062,6 +7079,24 @@ export default {
         crop: (image) => {
             const scale = 3;
             return image.extract({ width: 600 * scale, height: 250 * scale, left: 0, top: 0 })
+        },
+    },
+    'tenancy/tenant-menu-grouping': {
+        url: 'tenant-menu-grouping/acme-inc',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 900,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.waitForSelector('.fi-tenant-menu-trigger')
+            await page.click('.fi-tenant-menu-trigger')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+        crop: (image) => {
+            const scale = 3;
+            return image.extract({ width: 600 * scale, height: 470 * scale, left: 0, top: 0 })
         },
     },
     'panels/tenancy/registration': {

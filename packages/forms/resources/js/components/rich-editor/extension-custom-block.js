@@ -1,6 +1,6 @@
-import { mergeAttributes, Node, NodePos } from '@tiptap/core'
+import { mergeAttributes, Node } from '@tiptap/core'
 import { Node as ProseMirrorNode } from '@tiptap/pm/model'
-import { Plugin, PluginKey } from '@tiptap/pm/state'
+import { Plugin } from '@tiptap/pm/state'
 
 export default Node.create({
     name: 'customBlock',

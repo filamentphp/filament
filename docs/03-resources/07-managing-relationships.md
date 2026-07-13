@@ -307,6 +307,10 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="4.x" />
 
+<Aside variant="danger">
+    `AssociateAction`, `AttachAction`, `DetachAction`, and `DissociateAction` (and their bulk variants) only check the relation manager's `isReadOnly()` state — they do not consult any model policy method by default. Bulk delete, force-delete, and restore actions use the `deleteAny()`, `forceDeleteAny()`, and `restoreAny()` policy methods (one call for the whole batch) for performance. If you need per-record authorization on a bulk action, call [`authorizeIndividualRecords('ability')`](../actions/overview#authorizing-individual-records-of-a-bulk-action) on it, accepting the extra query cost.
+</Aside>
+
 ### Preloading the attachment modal select options
 
 By default, as you search for a record to attach, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `preloadRecordSelect()` method of `AttachAction`:
@@ -416,6 +420,22 @@ public static function configure(Table $table): Table
         ]);
 }
 ```
+
+<Aside variant="danger">
+    Filtering the table's query (via `modifyQueryUsing()`, filters, or table arguments) is **presentational** — it only affects which records are displayed for selection. It is **not** a security boundary: a user who tampers with the submitted modal state can attach a record that was excluded from the visible table.
+
+    To restrict which records may actually be attached, scope the options using the [`recordSelectOptionsQuery()` method](#scoping-the-options-to-attach). Filament resolves the submitted record against that query, so records outside it are rejected:
+
+    ```php
+    use App\Filament\Resources\Products\Tables\ProductsTable;
+    use Filament\Actions\AttachAction;
+    use Illuminate\Database\Eloquent\Builder;
+
+    AttachAction::make()
+        ->tableSelect(ProductsTable::class)
+        ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
+    ```
+</Aside>
 
 ### Handling duplicates
 

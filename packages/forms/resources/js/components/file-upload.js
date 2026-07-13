@@ -86,6 +86,8 @@ export default function fileUploadFormComponent({
 
         shouldUpdateState: true,
 
+        activeUploads: 0,
+
         state,
 
         lastState: null,
@@ -173,6 +175,29 @@ export default function fileUploadFormComponent({
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
                 allowImageTransform: shouldTransformImage,
+                beforeAddFile: async (fileItem) => {
+                    if (!automaticallyOpenImageEditorForAspectRatio) {
+                        return true
+                    }
+
+                    if (!(fileItem.file instanceof File)) {
+                        return true
+                    }
+
+                    if (!fileItem.file.type.startsWith('image/')) {
+                        return true
+                    }
+
+                    if (await this.checkImageAspectRatio(fileItem.file)) {
+                        return true
+                    }
+
+                    this.isEditorOpenedForAspectRatio = true
+
+                    this.loadEditor(fileItem.file)
+
+                    return false
+                },
                 credits: false,
                 files: await this.getFiles(),
                 imageCropAspectRatio: automaticallyCropImagesAspectRatio,
@@ -215,6 +240,7 @@ export default function fileUploadFormComponent({
                         progress,
                         abort,
                     ) => {
+                        this.activeUploads++
                         this.shouldUpdateState = false
 
                         let fileKey = (
@@ -231,20 +257,34 @@ export default function fileUploadFormComponent({
                             ).toString(16),
                         )
 
+                        const finishUpload = () => {
+                            this.activeUploads--
+
+                            if (this.activeUploads <= 0) {
+                                this.shouldUpdateState = true
+                            }
+                        }
+
                         uploadUsing(
                             fileKey,
                             file,
                             (fileKey) => {
-                                this.shouldUpdateState = true
+                                finishUpload()
 
                                 load(fileKey)
                             },
-                            error,
+                            (...args) => {
+                                finishUpload()
+
+                                error(...args)
+                            },
                             progress,
                         )
 
                         return {
                             abort: () => {
+                                finishUpload()
+
                                 cancelUploadUsing(fileKey)
                                 abort()
                             },
@@ -365,12 +405,20 @@ export default function fileUploadFormComponent({
                 this.insertOpenLink(fileItem)
             })
 
+            let isProcessingFiles = false
+
             this.pond.on('addfilestart', async (file) => {
                 this.error = null
 
                 if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
                     return
                 }
+
+                if (isProcessingFiles) {
+                    return
+                }
+
+                isProcessingFiles = true
 
                 this.dispatchFormEvent('form-processing-started', {
                     message: uploadingMessage,
@@ -391,6 +439,12 @@ export default function fileUploadFormComponent({
                 ) {
                     return
                 }
+
+                if (!isProcessingFiles) {
+                    return
+                }
+
+                isProcessingFiles = false
 
                 this.dispatchFormEvent('form-processing-finished')
             }
@@ -426,24 +480,6 @@ export default function fileUploadFormComponent({
             }
 
             this.pond.on('removefile', () => (this.error = null))
-
-            if (automaticallyOpenImageEditorForAspectRatio) {
-                this.pond.on('addfile', (error, fileItem) => {
-                    if (error) {
-                        return
-                    }
-
-                    if (!(fileItem.file instanceof File)) {
-                        return
-                    }
-
-                    if (!fileItem.file.type.startsWith('image/')) {
-                        return
-                    }
-
-                    this.checkImageAspectRatio(fileItem.file)
-                })
-            }
 
             this.isInitializing = false
         },
@@ -809,16 +845,18 @@ export default function fileUploadFormComponent({
 
             croppedCanvas.toBlob(
                 (croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
-                            )?.id,
-                        { revert: true },
-                    )
+                    const editingFileItem = this.pond
+                        .getFiles()
+                        .find(
+                            (uploadedFile) =>
+                                uploadedFile.filename === this.editingFile.name,
+                        )
+
+                    if (editingFileItem) {
+                        this.pond.removeFile(editingFileItem.id, {
+                            revert: true,
+                        })
+                    }
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
@@ -888,34 +926,35 @@ export default function fileUploadFormComponent({
 
         checkImageAspectRatio(file) {
             if (!automaticallyOpenImageEditorForAspectRatio) {
-                return
+                return Promise.resolve(true)
             }
 
-            const img = new Image()
-            const objectUrl = URL.createObjectURL(file)
+            return new Promise((resolve) => {
+                const img = new Image()
+                const objectUrl = URL.createObjectURL(file)
 
-            img.onload = () => {
-                URL.revokeObjectURL(objectUrl)
+                img.onload = () => {
+                    URL.revokeObjectURL(objectUrl)
 
-                const imageRatio = img.width / img.height
-                const tolerance = 0.01
+                    const imageRatio = img.width / img.height
+                    const tolerance = 0.01
 
-                if (
-                    Math.abs(
-                        imageRatio - automaticallyOpenImageEditorForAspectRatio,
-                    ) > tolerance
-                ) {
-                    this.isEditorOpenedForAspectRatio = true
-
-                    this.loadEditor(file)
+                    resolve(
+                        Math.abs(
+                            imageRatio -
+                                automaticallyOpenImageEditorForAspectRatio,
+                        ) <= tolerance,
+                    )
                 }
-            }
 
-            img.onerror = () => {
-                URL.revokeObjectURL(objectUrl)
-            }
+                img.onerror = () => {
+                    URL.revokeObjectURL(objectUrl)
 
-            img.src = objectUrl
+                    resolve(true)
+                }
+
+                img.src = objectUrl
+            })
         },
     }
 }

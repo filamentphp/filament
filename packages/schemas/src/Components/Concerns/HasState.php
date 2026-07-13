@@ -214,7 +214,7 @@ trait HasState
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
-        $this->clearCachedDefaultChildSchemas();
+        $this->clearCachedChildSchemas();
 
         return $this;
     }
@@ -441,8 +441,9 @@ trait HasState
 
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
+     * @param  array<string, true>  $appliedStateCastPaths
      */
-    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true): void
+    public function hydrateState(?array &$hydratedDefaultState, bool $shouldCallHydrationHooks = true, bool $shouldApplyStateCasts = true, array &$appliedStateCastPaths = []): void
     {
         $this->hydrateDefaultState($hydratedDefaultState);
 
@@ -461,18 +462,28 @@ trait HasState
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-            $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks);
+            $childSchema->hydrateState($hydratedDefaultState, $shouldCallHydrationHooks, $shouldApplyStateCasts, $appliedStateCastPaths);
         }
 
-        $rawState = $this->getRawState();
-        $originalRawState = $rawState;
+        if ($shouldApplyStateCasts && filled($stateCasts = $this->getStateCasts())) {
+            $statePath = $this->getStatePath();
 
-        foreach ($this->getStateCasts() as $stateCast) {
-            $rawState = $stateCast->set($rawState);
-        }
+            if (blank($statePath) || ! isset($appliedStateCastPaths[$statePath])) {
+                $rawState = $this->getRawState();
+                $originalRawState = $rawState;
 
-        if ($rawState !== $originalRawState) {
-            $this->rawState($rawState);
+                foreach ($stateCasts as $stateCast) {
+                    $rawState = $stateCast->set($rawState);
+                }
+
+                if ($rawState !== $originalRawState) {
+                    $this->rawState($rawState);
+                }
+
+                if (filled($statePath)) {
+                    $appliedStateCastPaths[$statePath] = true;
+                }
+            }
         }
 
         if ($shouldCallHydrationHooks) {
@@ -654,7 +665,7 @@ trait HasState
         // it is already present, cached child schemas must be
         // cleared so they can be re-evaluated. `rawState()`
         // is called during this process.
-        $this->clearCachedDefaultChildSchemas();
+        $this->clearCachedChildSchemas();
 
         return $this;
     }
@@ -708,7 +719,8 @@ trait HasState
     public function getStatePath(bool $isAbsolute = true): ?string
     {
         if (! $isAbsolute) {
-            return $this->statePath;
+            // Security: Strip characters that could break out of a quoted HTML attribute or a JS string (e.g. `$entangle()`, `wire:model`), so every downstream sink that embeds the state path raw is safe without per-sink escaping. Client-influenced repeater item keys flow in here, and legitimate state paths never contain these characters.
+            return ($this->statePath === null) ? null : preg_replace('/[<>"\'`\x00-\x1F\x7F]/', '', $this->statePath);
         }
 
         if (isset($this->cachedAbsoluteStatePath)) {
@@ -722,7 +734,7 @@ trait HasState
         }
 
         if ($this->hasStatePath()) {
-            $pathComponents[] = $this->statePath;
+            $pathComponents[] = $this->getStatePath(isAbsolute: false);
         }
 
         return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);

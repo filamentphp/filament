@@ -14,7 +14,7 @@ use Spatie\LaravelSettings\Settings as BaseSettings;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class)->group('commands');
+uses(TestCase::class)->group('serial');
 
 beforeEach(function (): void {
     config()->set('filament.file_generation.flags', [

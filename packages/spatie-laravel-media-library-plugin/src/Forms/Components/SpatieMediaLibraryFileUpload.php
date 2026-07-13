@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
@@ -112,7 +113,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 'name' => $media?->getAttributeValue('name') ?? $media?->getAttributeValue('file_name'),
                 'size' => $media?->getAttributeValue('size'),
                 'type' => $media?->getAttributeValue('mime_type'),
-                'url' => $url,
+                'url' => Str::sanitizeUrl($url),
             ];
         });
 
@@ -156,7 +157,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $rawState): array {
             $uuids = array_filter(array_keys($rawState));
 
-            $recordMediaUuids = $record?->getRelationValue('media')?->pluck('uuid')->all() ?? [];
+            $collectionName = $component->getCollection() ?? 'default';
+
+            $recordMediaUuids = $record?->getRelationValue('media')
+                ?->where('collection_name', $collectionName)
+                ?->pluck('uuid')
+                ?->all() ?? [];
 
             $uuids = array_values(array_filter(
                 $uuids,

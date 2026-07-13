@@ -29,7 +29,7 @@ use Throwable;
 
 use function Livewire\store;
 
-trait InteractsWithActions
+trait InteractsWithActions /** @phpstan-ignore trait.unused */
 {
     use WithRateLimiting;
 
@@ -123,13 +123,13 @@ trait InteractsWithActions
         }
 
         if (! $action) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         }
 
         if ($action->isDisabled()) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         }
@@ -167,15 +167,15 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         } catch (Cancel $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         } catch (ValidationException $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             throw $exception;
         }
@@ -232,6 +232,8 @@ trait InteractsWithActions
         $originallyMountedActions = $this->mountedActions;
 
         $result = null;
+
+        $hasFinalizedDatabaseTransaction = false;
 
         try {
             $action->beginDatabaseTransaction();
@@ -295,6 +297,8 @@ trait InteractsWithActions
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
                 $action->commitDatabaseTransaction();
+
+            $hasFinalizedDatabaseTransaction = true;
         } catch (ValidationException $exception) {
             $action->rollBackDatabaseTransaction();
 
@@ -312,7 +316,9 @@ trait InteractsWithActions
             throw $exception;
         }
 
-        $action->commitDatabaseTransaction();
+        if (! $hasFinalizedDatabaseTransaction) {
+            $action->commitDatabaseTransaction();
+        }
 
         if (store($this)->has('redirect')) {
             $this->unmountAction();
@@ -723,7 +729,7 @@ trait InteractsWithActions
         return null;
     }
 
-    public function unmountAction(bool $canCancelParentActions = true): void
+    public function unmountAction(bool | string | null $cancelParentActions = null): void
     {
         try {
             $action = $this->getMountedAction();
@@ -731,18 +737,24 @@ trait InteractsWithActions
             $action = null;
         }
 
-        if (! ($canCancelParentActions && $action)) {
+        if (($cancelParentActions === false) || (! $action)) {
             array_pop($this->mountedActions);
-        } elseif ($action->shouldCancelAllParentActions()) {
+        } elseif (
+            ($cancelParentActions === true) ||
+            (($cancelParentActions === null) && $action->shouldCancelAllParentActions())
+        ) {
             $this->mountedActions = [];
         } else {
-            $parentActionToCancelTo = $action->getParentActionToCancelTo();
+            $parentActionToCancelTo = is_string($cancelParentActions)
+                ? $cancelParentActions
+                : $action->getParentActionToCancelTo();
 
             while (true) {
                 $recentlyClosedParentAction = array_pop($this->mountedActions);
 
                 if (
                     blank($parentActionToCancelTo) ||
+                    ($recentlyClosedParentAction === null) ||
                     ($recentlyClosedParentAction['name'] === $parentActionToCancelTo)
                 ) {
                     break;

@@ -31,6 +31,12 @@ use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProv
 use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugTenancyPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenancyPanelProvider;
+use Filament\Tests\Fixtures\Providers\TenantMenuFlatPanelProvider;
+use Filament\Tests\Fixtures\Providers\TenantMenuGroupingPanelProvider;
+use Filament\Tests\Fixtures\Providers\TenantMenuRegisterPlacementPanelProvider;
+use Filament\Tests\Fixtures\Providers\UserMenuFlatPanelProvider;
+use Filament\Tests\Fixtures\Providers\UserMenuGroupingPanelProvider;
+use Filament\Tests\Fixtures\Providers\UserMenuLogoutPlacementPanelProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
@@ -82,6 +88,12 @@ abstract class TestCase extends BaseTestCase
             SlugsPanelProvider::class,
             SlugTenancyPanelProvider::class,
             TenancyPanelProvider::class,
+            TenantMenuFlatPanelProvider::class,
+            TenantMenuGroupingPanelProvider::class,
+            TenantMenuRegisterPlacementPanelProvider::class,
+            UserMenuFlatPanelProvider::class,
+            UserMenuGroupingPanelProvider::class,
+            UserMenuLogoutPlacementPanelProvider::class,
             PowerJoinsServiceProvider::class,
         ];
 

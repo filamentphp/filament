@@ -26,6 +26,15 @@ return [
             'label' => 'Action|Actions',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Yes',
+                'false' => 'No',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Loading...',
@@ -115,6 +124,10 @@ return [
             'label' => 'Reorder records',
         ],
 
+        'reorder_record' => [
+            'label' => 'Reorder item :key',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -129,6 +142,10 @@ return [
 
         'column_manager' => [
             'label' => 'Column manager',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Expand/collapse item :key',
         ],
 
     ],

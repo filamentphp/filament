@@ -1,9 +1,12 @@
 @php
     use Filament\Actions\View\ActionsRenderHook;
     use Filament\Support\Facades\FilamentView;
+    use Illuminate\Support\Js;
 
+    $actionIsModalAlert = $action->isConfirmationRequired();
     $actionModalAlignment = $action->getModalAlignment();
     $actionIsModalAutofocused = $action->isModalAutofocused();
+    $actionIsModalClickThrough = $action->isModalClickThrough();
     $actionHasModalCloseButton = $action->hasModalCloseButton();
     $actionIsModalClosedByClickingAway = $action->isModalClosedByClickingAway();
     $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
@@ -23,15 +26,23 @@
     $actionModalWidth = $action->getModalWidth();
     $actionLivewireCallMountedActionName = $action->hasFormWrapper() ? $action->getLivewireCallMountedActionName() : null;
     $actionModalWireKey = "{$this->getId()}.actions.{$action->getName()}.modal";
+    $actionModalClosedEventHandler = 'if ($event.detail.id === ' .
+        Js::from($actionModalId) .
+        ') $wire.unmountAction(' .
+        Js::from($action->getParentActionsToCancelOnClose()) .
+        ')';
 @endphp
 
 <x-filament::modal
+    :alert="$actionIsModalAlert"
     :alignment="$actionModalAlignment"
     :autofocus="$actionIsModalAutofocused"
+    :click-through="$actionIsModalClickThrough"
     :close-button="$actionHasModalCloseButton"
     :close-by-clicking-away="$actionIsModalClosedByClickingAway"
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"
+    :focus-trap-returns-focus="false"
     :extra-modal-window-attribute-bag="$actionExtraModalWindowAttributeBag"
     :extra-modal-overlay-attribute-bag="$actionExtraModalOverlayAttributeBag"
     :footer-actions="$actionModalFooterActions"
@@ -47,7 +58,7 @@
     :width="$actionModalWidth"
     :wire:key="$actionModalWireKey"
     :wire:submit.prevent="$actionLivewireCallMountedActionName"
-    :x-on:modal-closed="'if ($event.detail.id === ' . \Illuminate\Support\Js::from($actionModalId) . ') $wire.unmountAction(false)'"
+    :x-on:modal-closed="$actionModalClosedEventHandler"
 >
     {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CUSTOM_CONTENT_BEFORE, scopes: static::class, data: ['action' => $action]) }}
 

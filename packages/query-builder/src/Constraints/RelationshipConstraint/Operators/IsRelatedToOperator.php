@@ -12,7 +12,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
@@ -70,7 +69,7 @@ class IsRelatedToOperator extends Operator
     {
         $constraint = $this->getConstraint();
 
-        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
+        $values = $this->getValueSetting();
 
         $relationshipQuery = $this->getRelationshipQuery();
 
@@ -184,12 +183,39 @@ class IsRelatedToOperator extends Operator
     {
         $constraint = $this->getConstraint();
 
-        $value = $this->getSettings()[$constraint->isMultiple() ? 'values' : 'value'];
+        $value = $this->getValueSetting();
 
         return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
             $constraint->getRelationshipName(),
-            fn (Builder $query) => $query->whereKey($value),
+            function (Builder $query) use ($value): Builder {
+                if ($this->modifyRelationshipQueryUsing) {
+                    $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                return $query->whereKey($value);
+            },
         );
+    }
+
+    protected function getValueSetting(): mixed
+    {
+        $isMultiple = $this->getConstraint()->isMultiple();
+
+        $value = $this->getSettings()[$isMultiple ? 'values' : 'value'] ?? null;
+
+        // Security: settings arrive from the request payload and can be tampered with. A single
+        // related value must be a scalar key, and a multiple value must be a list of scalar keys;
+        // any other shape (e.g. a nested array) would reach `whereKey()` binding and crash the
+        // request. Fail closed by discarding non-scalar values.
+        if ($isMultiple) {
+            return is_array($value)
+                ? array_values(array_filter($value, is_scalar(...)))
+                : [];
+        }
+
+        return is_scalar($value) ? $value : null;
     }
 
     public function getConstraint(): ?RelationshipConstraint

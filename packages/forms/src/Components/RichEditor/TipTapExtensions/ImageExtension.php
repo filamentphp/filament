@@ -35,17 +35,25 @@ class ImageExtension extends BaseImage
             ],
             'width' => [
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('width') ?: $this->getStyleValue($DOMNode, 'width'),
-                'renderHTML' => fn ($attributes) => [
-                    'width' => $attributes->width ?? null,
-                    'style' => isset($attributes->width) ? "width: {$attributes->width}" : null,
-                ],
+                'renderHTML' => function ($attributes) {
+                    $width = $this->sanitizeStyleLength($attributes->width ?? null);
+
+                    return [
+                        'width' => $width,
+                        'style' => filled($width) ? "width: {$width}" : null,
+                    ];
+                },
             ],
             'height' => [
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('height') ?: $this->getStyleValue($DOMNode, 'height'),
-                'renderHTML' => fn ($attributes) => [
-                    'height' => $attributes->height ?? null,
-                    'style' => isset($attributes->height) ? "height: {$attributes->height}" : null,
-                ],
+                'renderHTML' => function ($attributes) {
+                    $height = $this->sanitizeStyleLength($attributes->height ?? null);
+
+                    return [
+                        'height' => $height,
+                        'style' => filled($height) ? "height: {$height}" : null,
+                    ];
+                },
             ],
             'loading' => [],
         ];
@@ -62,5 +70,23 @@ class ImageExtension extends BaseImage
         preg_match("/{$property}:\s*([^;]+)/", $style, $matches);
 
         return $matches[1] ?? null;
+    }
+
+    protected function sanitizeStyleLength(mixed $value): ?string
+    {
+        if (blank($value) || (! is_string($value) && ! is_int($value) && ! is_float($value))) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        // Security: `width` and `height` originate from stored rich content and are interpolated
+        // into a `style` attribute. The HTML sanitizer does not sanitize CSS, so only allow a bare
+        // number optionally followed by a CSS length unit; a value containing CSS metacharacters
+        // (`;`, `:`, `(`, ...) is rejected so it cannot inject additional declarations (e.g.
+        // `position: fixed` / `background-image: url(...)`).
+        return preg_match('/^\d+(?:\.\d+)?(?:%|px|em|rem|vw|vh|vmin|vmax|pt|pc|cm|mm|in|ch|ex)?$/i', $value)
+            ? $value
+            : null;
     }
 }

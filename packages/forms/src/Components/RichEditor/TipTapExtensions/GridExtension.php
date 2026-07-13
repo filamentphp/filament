@@ -36,9 +36,15 @@ class GridExtension extends Node
                 'renderHTML' => function ($attributes): array {
                     $attributes = (array) $attributes;
 
+                    // Security: `data-cols` originates from stored rich content, so cast it to a
+                    // positive integer before interpolating it into the `style` attribute. The HTML
+                    // sanitizer does not sanitize CSS, so a raw value could otherwise inject extra
+                    // declarations (e.g. `position: fixed` / `background-image: url(...)`).
+                    $columns = max(1, (int) ($attributes['data-cols'] ?? 2));
+
                     return [
-                        'data-cols' => $attributes['data-cols'],
-                        'style' => "--cols: repeat({$attributes['data-cols']}, minmax(0, 1fr))",
+                        'data-cols' => $columns,
+                        'style' => "--cols: repeat({$columns}, minmax(0, 1fr))",
                     ];
                 },
             ],

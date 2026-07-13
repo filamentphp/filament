@@ -205,6 +205,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return preg_replace('/\s*@trim\s*/m', '', $view);
         });
 
+        // When updating this macro, also update the corresponding method in `Filament\Support\View\ComponentAttributeBag`.
         ComponentAttributeBag::macro('color', function (string | HasColor $component, string | array | null $color): ComponentAttributeBag {
             if (is_array($color)) {
                 return $this
@@ -215,6 +216,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return $this->class(FilamentColor::getComponentClasses($component, $color));
         });
 
+        // When updating this macro, also update the corresponding method in `Filament\Support\View\ComponentAttributeBag`.
         ComponentAttributeBag::macro('grid', function (array | int | null $columns = [], GridDirection $direction = GridDirection::Row): ComponentAttributeBag {
             if (! is_array($columns)) {
                 $columns = ['lg' => $columns];
@@ -246,7 +248,8 @@ class SupportServiceProvider extends PackageServiceProvider
                 ));
         });
 
-        ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | null $start = [], array | int | string | null $order = [], bool $isHidden = false): ComponentAttributeBag {
+        // When updating this macro, also update the corresponding method in `Filament\Support\View\ComponentAttributeBag`.
+        ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | string | null $start = [], array | int | string | null $order = [], bool $isHidden = false): ComponentAttributeBag {
             if (! is_array($span)) {
                 $span = ['lg' => $span];
             }
@@ -320,6 +323,92 @@ class SupportServiceProvider extends PackageServiceProvider
         Stringable::macro('sanitizeHtml', function (): Stringable {
             /** @phpstan-ignore-next-line */
             return new Stringable(Str::sanitizeHtml($this->value));
+        });
+
+        Str::macro('sanitizeUrl', function (?string $url, array $allowedSchemes = ['http', 'https']): ?string {
+            if (blank($url)) {
+                return null;
+            }
+
+            // Reject URLs containing raw whitespace or control characters. Legitimate URLs
+            // percent-encode these; a raw byte here is either a typo or an obfuscation attempt.
+            if (preg_match('/[\x00-\x20\x7F]/', $url)) {
+                return null;
+            }
+
+            // Predict the scheme the browser will see after HTML-decoding the attribute value.
+            // We pre-decode ASCII numeric entities ourselves because `html_entity_decode(ENT_HTML5)`
+            // replaces "forbidden" C0 control character entities (e.g. `&#0;`) with U+FFFD, which
+            // would mask them from the control-character strip below.
+            $decoded = preg_replace_callback(
+                '/&#(?:x([0-9a-f]+)|([0-9]+));?/i',
+                function (array $match): string {
+                    $code = ($match[1] !== '') ? hexdec($match[1]) : (int) $match[2];
+
+                    return ($code <= 127) ? chr((int) $code) : $match[0];
+                },
+                $url,
+            );
+            $decoded = html_entity_decode($decoded, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            // Reject if either the HTML-decoded form or its percent-decoded form contains
+            // control characters — catches `%09`-style obfuscation that would be dangerous
+            // if the URL is later decoded by other code.
+            if (
+                preg_match('/[\x00-\x1F\x7F]/', $decoded) ||
+                preg_match('/[\x00-\x1F\x7F]/', rawurldecode($decoded))
+            ) {
+                return null;
+            }
+
+            // Scheme check uses the HTML-decoded form only — the browser does NOT percent-decode
+            // the scheme, so a `%6A` literally in the scheme position is not dangerous.
+            if (
+                preg_match('/^([a-z][a-z0-9+\-.]*):/i', $decoded, $matches) &&
+                (! in_array(strtolower($matches[1]), array_map(strtolower(...), $allowedSchemes), strict: true))
+            ) {
+                return null;
+            }
+
+            return $url;
+        });
+
+        Stringable::macro('sanitizeUrl', function (array $allowedSchemes = ['http', 'https']): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::sanitizeUrl($this->value, $allowedSchemes));
+        });
+
+        Str::macro('sanitizeCssColor', function (?string $color): ?string {
+            if (blank($color)) {
+                return null;
+            }
+
+            $color = trim($color);
+
+            // Accept hex colors: `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`.
+            if (preg_match('/^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $color)) {
+                return $color;
+            }
+
+            // Accept a bare CSS keyword such as `red` or `transparent`.
+            if (preg_match('/^[a-z]+$/i', $color)) {
+                return $color;
+            }
+
+            // Security: allow functional color notations, but forbid the CSS metacharacters
+            // `( ) ; : " '` inside the parentheses so the value cannot break out of the
+            // `background-color` declaration to inject additional properties (e.g.
+            // `red;position:fixed;background-image:url(//attacker)`) or extra function calls.
+            if (preg_match('/^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^();:"\']*\)$/i', $color)) {
+                return $color;
+            }
+
+            return null;
+        });
+
+        Stringable::macro('sanitizeCssColor', function (): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::sanitizeCssColor($this->value));
         });
 
         Str::macro('ucwords', function (string $value): string {

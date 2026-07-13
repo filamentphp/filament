@@ -6,13 +6,14 @@ use Filament\Commands\FileGenerators\Resources\Concerns\CanGenerateResourceInfol
 use Filament\Schemas\Schema;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 
-class ResourceInfolistSchemaClassGenerator extends ClassGenerator
+class ResourceInfolistSchemaClassGenerator extends ClassGenerator implements HasSkippedColumns
 {
     use CanGenerateResourceInfolists;
     use CanReadModelSchemas;

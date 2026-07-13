@@ -4,7 +4,11 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\CustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingDisabled;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingEnabled;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithNonSplitMultiColumnIndividualSearch;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithReservedJsPropertyColumnSearch;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithTableSearchableColumns;
 use Filament\Tests\Fixtures\Livewire\UsersTable;
 use Filament\Tests\Fixtures\Livewire\UsersWithTeamTable;
@@ -17,6 +21,7 @@ use Filament\Tests\Fixtures\Models\Setting;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -352,6 +357,143 @@ describe('searching', function (): void {
             ])
             ->assertCanSeeTableRecords($posts->where('author.email', $authorEmail))
             ->assertCanNotSeeTableRecords($posts->where('author.email', '!=', $authorEmail));
+    });
+
+    it('can use `splitIndividualSearchTerms(false)` on a column to disable search term splitting for its individual search', function (): void {
+        $exactPhrasePost = Post::factory()->create(['content' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['content' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingDisabled::class)
+            ->searchTableColumns(['content' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost])
+            ->assertCanNotSeeTableRecords([$separateWordsPost]);
+    });
+
+    it('splits search terms for an individual column search by default, when the column does not define `splitIndividualSearchTerms()`', function (): void {
+        $exactPhrasePost = Post::factory()->create(['title' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['title' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingDisabled::class)
+            ->searchTableColumns(['title' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost, $separateWordsPost]);
+    });
+
+    it('can use `splitIndividualSearchTerms()` on a column to enable search term splitting for its individual search when the table uses `splitSearchTerms(false)`', function (): void {
+        $exactPhrasePost = Post::factory()->create(['content' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['content' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingEnabled::class)
+            ->searchTableColumns(['content' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost, $separateWordsPost]);
+    });
+
+    it('does not split search terms for an individual column search when the table uses `splitSearchTerms(false)` and the column does not define `splitIndividualSearchTerms()`', function (): void {
+        $exactPhrasePost = Post::factory()->create(['title' => 'ipsum dolor']);
+        $separateWordsPost = Post::factory()->create(['title' => 'ipsum sit dolor']);
+
+        livewire(PostsTableWithColumnIndividualSearchTermSplittingEnabled::class)
+            ->searchTableColumns(['title' => 'ipsum dolor'])
+            ->assertCanSeeTableRecords([$exactPhrasePost])
+            ->assertCanNotSeeTableRecords([$separateWordsPost]);
+    });
+
+    it('does not leak the `orWhere` of a non-split individual column search across multiple columns past an active filter', function (): void {
+        // The searchable column matches on both `title` and `content`. With `splitSearchTerms(false)`,
+        // the constraint emits `where(title LIKE ?)->orWhere(content LIKE ?)`. If that pair is not
+        // wrapped in its own `where()` group, the trailing `orWhere` escapes the filter group and
+        // re-exposes records the filter excluded.
+        $search = Str::random();
+
+        $publishedMatch = Post::factory()->create([
+            'is_published' => true,
+            'content' => $search,
+        ]);
+
+        $unpublishedMatch = Post::factory()->create([
+            'is_published' => false,
+            'content' => $search,
+        ]);
+
+        livewire(PostsTableWithNonSplitMultiColumnIndividualSearch::class)
+            ->filterTable('is_published')
+            ->searchTableColumns(['title' => $search])
+            ->assertCanSeeTableRecords([$publishedMatch])
+            ->assertCanNotSeeTableRecords([$unpublishedMatch]);
+    });
+
+    it('seeds individually searchable columns whose names collide with JS array properties on mount so `tableColumnSearches` serializes as a JSON object', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->assertSet('tableColumnSearches', ['length' => '', 'sort' => '']);
+    });
+
+    it('does not seed individually searchable columns whose names do not collide with JS array properties', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->assertSet('tableColumnSearches', fn (array $tableColumnSearches): bool => ! array_key_exists('title', $tableColumnSearches));
+    });
+
+    it('does not remove a reserved key from `tableColumnSearches` when clearing an individual column search value', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->set('tableColumnSearches.length', 'foo')
+            ->assertSet('tableColumnSearches.length', 'foo')
+            ->set('tableColumnSearches.length', '')
+            ->assertSet('tableColumnSearches.length', '');
+    });
+
+    it('removes a non-reserved key from `tableColumnSearches` when clearing an individual column search value', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->set('tableColumnSearches.title', 'foo')
+            ->assertSet('tableColumnSearches.title', 'foo')
+            ->set('tableColumnSearches.title', '')
+            ->assertSet('tableColumnSearches', fn (array $tableColumnSearches): bool => ! array_key_exists('title', $tableColumnSearches));
+    });
+
+    it('keeps reserved keys present in `tableColumnSearches` after resetting all column searches', function (): void {
+        livewire(PostsTableWithReservedJsPropertyColumnSearch::class)
+            ->set('tableColumnSearches.length', 'foo')
+            ->set('tableColumnSearches.sort', 'bar')
+            ->call('resetTableColumnSearches')
+            ->assertSet('tableColumnSearches', ['length' => '', 'sort' => '']);
+    });
+
+    it('renders empty individual column search inputs for columns named after JavaScript array properties in the browser', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            $this->actingAs(User::factory()->create());
+
+            Post::factory()->count(3)->create();
+
+            visit('/individual-column-search-browser-test')
+                ->assertValue('.fi-ta-individual-search-cell-length input', '')
+                ->assertValue('.fi-ta-individual-search-cell-sort input', '')
+                ->assertValue('.fi-ta-individual-search-cell-title input', '')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/individual-column-search-browser-test')
+                ->inDarkMode()
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
+    it('keeps an individual column search input empty after clearing it in the browser', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            $this->actingAs(User::factory()->create());
+
+            Post::factory()->count(3)->create();
+
+            visit('/individual-column-search-browser-test')
+                ->fill('.fi-ta-individual-search-cell-length input', 'foo')
+                ->wait(1)
+                ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
+                ->fill('.fi-ta-individual-search-cell-length input', '')
+                ->wait(1)
+                ->assertValue('.fi-ta-individual-search-cell-length input', '')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+        });
     });
 });
 

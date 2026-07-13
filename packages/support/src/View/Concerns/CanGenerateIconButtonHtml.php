@@ -5,6 +5,7 @@ namespace Filament\Support\View\Concerns;
 use BackedEnum;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\IconButtonComponent;
 use Illuminate\Contracts\Support\Htmlable;
@@ -47,6 +48,7 @@ trait CanGenerateIconButtonHtml
         string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
     ): string {
+        $badgeColor ??= 'primary';
         $color ??= 'primary';
 
         if (! $size instanceof Size) {
@@ -86,7 +88,7 @@ trait CanGenerateIconButtonHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
-                'aria-label' => $label,
+                'aria-label' => e($label),
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
                 'type' => match ($tag) {
@@ -113,6 +115,10 @@ trait CanGenerateIconButtonHtml
             ])
             ->color(IconButtonComponent::class, $color);
 
+        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
+            ? config('filament.livewire_loading_delay', 'default')
+            : null;
+
         ob_start(); ?>
 
         <?= ($tag === 'form') ? ('<form ' . $formAttributes->toHtml() . '>' . csrf_field()) : '' ?>
@@ -134,18 +140,18 @@ trait CanGenerateIconButtonHtml
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >
-            <?= $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+            <?= ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
+                'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ])), size: $iconSize)->toHtml() : '' ?>
-            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+            ])), size: $iconSize)?->toHtml() ?? '' : '' ?>
+            <?= $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
+                'wire:loading.delay.' . $loadingDelay => '',
                 'wire:target' => $loadingIndicatorTarget,
             ])), size: $iconSize)->toHtml() : '' ?>
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-icon-btn-badge-ctn">
-                    <span <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                    <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>

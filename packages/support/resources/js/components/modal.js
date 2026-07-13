@@ -1,7 +1,59 @@
-export default ({ id }) => ({
+let scrollLockCount = 0
+
+let restoreScroll = null
+
+const acquireScrollLock = () => {
+    if (scrollLockCount === 0) {
+        const overflow = document.documentElement.style.overflow
+        const paddingRight = document.documentElement.style.paddingRight
+
+        const scrollbarWidth =
+            window.innerWidth - document.documentElement.clientWidth
+        const scrollbarGutter = window.getComputedStyle(
+            document.documentElement,
+        ).scrollbarGutter
+
+        document.documentElement.style.overflow = 'hidden'
+
+        // A reserved scrollbar gutter already compensates for the scrollbar.
+        if (scrollbarGutter && scrollbarGutter !== 'auto') {
+            restoreScroll = () => {
+                document.documentElement.style.overflow = overflow
+            }
+        } else {
+            document.documentElement.style.paddingRight = `${scrollbarWidth}px`
+
+            restoreScroll = () => {
+                document.documentElement.style.overflow = overflow
+                document.documentElement.style.paddingRight = paddingRight
+            }
+        }
+    }
+
+    scrollLockCount++
+}
+
+const releaseScrollLock = () => {
+    if (scrollLockCount === 0) {
+        return
+    }
+
+    scrollLockCount--
+
+    if (scrollLockCount === 0) {
+        restoreScroll?.()
+        restoreScroll = null
+    }
+}
+
+export default ({ id, isScrollLocked = true }) => ({
     isOpen: false,
 
     isWindowVisible: false,
+
+    isTrapActive: false,
+
+    isHoldingScrollLock: false,
 
     livewire: null,
 
@@ -103,8 +155,32 @@ export default ({ id }) => ({
         return openModals[openModals.length - 1].id === id
     },
 
+    acquireScrollLock() {
+        if (this.isHoldingScrollLock) {
+            return
+        }
+
+        this.isHoldingScrollLock = true
+
+        acquireScrollLock()
+    },
+
+    releaseScrollLock() {
+        if (!this.isHoldingScrollLock) {
+            return
+        }
+
+        this.isHoldingScrollLock = false
+
+        releaseScrollLock()
+    },
+
     close() {
         this.closeQuietly()
+
+        this.isTrapActive = false
+
+        this.releaseScrollLock()
 
         this.$dispatch('modal-closed', { id })
     },
@@ -116,6 +192,13 @@ export default ({ id }) => ({
     open() {
         this.$nextTick(() => {
             this.isOpen = true
+            this.isTrapActive = true
+
+            // Click-through modals let you interact with the page behind them,
+            // so they must not lock scrolling.
+            if (isScrollLocked) {
+                this.acquireScrollLock()
+            }
 
             document.dispatchEvent(
                 new CustomEvent('x-modal-opened', {
@@ -128,6 +211,9 @@ export default ({ id }) => ({
     },
 
     destroy() {
+        // Release in case the modal is removed while still holding the lock.
+        this.releaseScrollLock()
+
         const capture = true
 
         if (this.textSelectionClosePreventionMouseDownHandler) {

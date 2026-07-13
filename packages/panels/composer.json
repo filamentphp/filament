@@ -19,7 +19,7 @@
         "filament/tables": "self.version",
         "filament/widgets": "self.version",
         "pragmarx/google2fa": "^8.0|^9.0",
-        "pragmarx/google2fa-qrcode": "^3.0"
+        "pragmarx/google2fa-qrcode": "^3.0|^4.0"
     },
     "autoload": {
         "files": [

@@ -1,6 +1,7 @@
 ---
 title: Query builder
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
@@ -67,6 +68,53 @@ public function table(Table $table): Table
         ], layout: FiltersLayout::AboveContent);
 }
 ```
+
+## Limiting the size of the rule tree
+
+The set of rules a user builds is stored in the Livewire component's state and submitted with each request. To protect against a request that contains an excessively large or deeply-nested set of rules consuming too much server memory or CPU, you can limit how many rules and how deeply nested they can be.
+
+By default, no limits are applied. You can set them using the `maxRules()` and `maxNestingDepth()` methods:
+
+```php
+use Filament\Tables\Filters\QueryBuilder;
+
+QueryBuilder::make()
+    ->maxRules(100)
+    ->maxNestingDepth(10)
+    ->constraints([
+        // ...
+    ])
+```
+
+Both methods also accept a function to compute the value dynamically:
+
+```php
+use Filament\Tables\Filters\QueryBuilder;
+
+QueryBuilder::make()
+    ->maxRules(fn (): int => auth()->user()->isAdmin() ? 200 : 50)
+    ->constraints([
+        // ...
+    ])
+```
+
+The `maxRules()` limit counts individual conditions only. "OR" groups are structural containers, so they do not count towards the limit themselves — nesting is bounded separately by `maxNestingDepth()`.
+
+When a limit is set, the UI enforces it: once the maximum number of rules is reached, the "add rule" and clone buttons are disabled with a tooltip explaining why, and the "OR" grouping option is hidden once the maximum nesting depth is reached. As a safeguard against a tampered request that bypasses the UI, a submitted rule tree that still exceeds either limit is safely ignored, applying no constraints instead of filtering the table.
+
+<Aside variant="tip">
+    Since these limits are the same for every query builder, you will usually want to apply them globally rather than repeating them on each filter. You can do this using `configureUsing()` in the `boot()` method of a service provider, so that every query builder in your app is bounded:
+
+    ```php
+    use Filament\Tables\Filters\QueryBuilder;
+
+    QueryBuilder::configureUsing(function (QueryBuilder $queryBuilder): void {
+        $queryBuilder
+            ->maxRules(100)
+            ->maxNestingDepth(10);
+    });
+    ```
+</Aside>
 
 ## Available constraints
 
@@ -215,6 +263,12 @@ SelectConstraint::make('creator.department') // Filter the `department` column o
         'purchasing' => 'Purchasing',
     ])
 ```
+
+<Aside variant="danger">
+    `options()` is a UI affordance, not an authorization boundary. The list constrains what the dropdown displays, but the submitted value is not checked against it before the constraint runs. Query-builder rules are stored in Livewire state and can be tampered with — a crafted request can submit any value into the constraint's `settings`, and `IsOperator::apply()` passes it straight into `whereIn`/`where` on the query.
+
+    If you are using `options()` to hide certain values from a group of users (for example, hiding `archived` from non-admins), scope the underlying query itself — for example with [`modifyRelationshipQueryUsing()`](#scoping-relationships) on the constraint, a [`modifyQueryUsing()`](../../resources/listing-records#customizing-the-eloquent-query) on the resource, or a global scope on the model — so the restricted rows are never reachable regardless of what the constraint submits.
+</Aside>
 
 #### Searchable select constraints
 

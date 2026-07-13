@@ -64,6 +64,19 @@ export default function sliderFormComponent({
                 tooltips,
             })
 
+            if (this.$el.id) {
+                // `noUiSlider` handles are focusable `role="slider"` elements, but it does not
+                // give them an accessible name, so they inherit the field's label element.
+                this.$el
+                    .querySelectorAll('.noUi-handle')
+                    .forEach((handle) =>
+                        handle.setAttribute(
+                            'aria-labelledby',
+                            `${this.$el.id}-label`,
+                        ),
+                    )
+            }
+
             if (isDisabled) {
                 this.slider.disable()
             }

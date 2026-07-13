@@ -20,6 +20,7 @@ class ExportColumn extends Component
     // content, e.g. by prefixing with a single quote.
 
     use CanAggregateRelatedModels;
+    use Concerns\CanBeHidden;
     use Concerns\CanFormatState;
     use HasCellState;
 

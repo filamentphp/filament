@@ -3,9 +3,13 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Services\RelationshipJoiner;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -15,19 +19,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Livewire\Livewire;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
-class TableSelect extends Field
+class TableSelect extends Field implements HasEmbeddedView
 {
     use Concerns\CanLimitItemsLength;
     use Concerns\HasPivotData;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.table-select';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.table-select';
 
     protected string | Closure | null $tableConfiguration = null;
 
@@ -407,6 +410,59 @@ class TableSelect extends Field
     }
 
     /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if ($values !== null) {
+            return $values;
+        }
+
+        if (! $this->hasRelationship()) {
+            return null;
+        }
+
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+        $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+        $relatedKeyName = $relationship->getRelated()->getKeyName();
+        $qualifiedRelatedKeyName = $relationshipQuery->qualifyColumn($relatedKeyName);
+
+        if ($this->isMultiple()) {
+            $stateArray = Arr::wrap($state);
+
+            if (empty($stateArray)) {
+                return null;
+            }
+
+            return $relationshipQuery
+                ->whereIn($qualifiedRelatedKeyName, $stateArray)
+                ->pluck($relatedKeyName)
+                ->map(static fn ($id): string => (string) $id)
+                ->all();
+        }
+
+        $exists = $relationshipQuery
+            ->where($qualifiedRelatedKeyName, $state)
+            ->exists();
+
+        return $exists ? null : [];
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return $this->isMultiple();
+    }
+
+    /**
      * @return array<StateCast>
      */
     public function getDefaultStateCasts(): array
@@ -420,5 +476,36 @@ class TableSelect extends Field
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true])];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAttributes = $this->getExtraAttributes();
+        $id = $this->getId();
+        $statePath = $this->getStatePath();
+
+        $properties = [
+            'isDisabled' => $this->isDisabled(),
+            'maxSelectableRecords' => $this->getMaxItems(),
+            'model' => $this->getModel(),
+            'record' => $this->getRecord(),
+            'relationshipName' => $this->getRelationshipName(),
+            'shouldIgnoreRelatedRecords' => $this->shouldIgnoreRelatedRecords(),
+            'tableConfiguration' => base64_encode($this->getTableConfiguration()),
+            'tableArguments' => $this->getTableArguments(),
+            $this->applyStateBindingModifiers('wire:model') => $statePath,
+        ];
+
+        $livewireHtml = Livewire::mount(TableSelectLivewireComponent::class, $properties, $this->getLivewireKey());
+
+        $attributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
+            ->merge($extraAttributes, escape: false);
+
+        return $this->wrapEmbeddedHtml('<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>', labelTag: 'div');
     }
 }

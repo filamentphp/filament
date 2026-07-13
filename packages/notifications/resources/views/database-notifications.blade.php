@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
-    use Illuminate\View\ComponentAttributeBag;
 
     $notifications = $this->getNotifications();
     $unreadNotificationsCount = $this->getUnreadNotificationsCount();
@@ -13,6 +13,7 @@
 <div class="fi-no-database">
     <x-filament::modal
         :alignment="$hasNotifications ? null : Alignment::Center"
+        aria-labelledby="database-notifications.heading"
         close-button
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
         :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
@@ -30,7 +31,7 @@
         width="md"
         class="fi-no-database"
         :attributes="
-            new \Illuminate\View\ComponentAttributeBag([
+            new \Filament\Support\View\ComponentAttributeBag([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? '' : false,
             ])
         "
@@ -44,13 +45,16 @@
         @if ($hasNotifications)
             <x-slot name="header">
                 <div>
-                    <h2 class="fi-modal-heading">
+                    <h2
+                        id="database-notifications.heading"
+                        class="fi-modal-heading"
+                    >
                         {{ __('filament-notifications::database.modal.heading') }}
 
                         @if ($unreadNotificationsCount)
                             <span
                                 {{
-                                    (new ComponentAttributeBag)->color(BadgeComponent::class, 'primary')->class([
+                                    (new FilamentComponentAttributeBag)->color(BadgeComponent::class, 'primary')->class([
                                         'fi-badge fi-size-xs',
                                     ])
                                 }}
@@ -72,16 +76,24 @@
                 </div>
             </x-slot>
 
-            @foreach ($notifications as $notification)
-                <div
-                    @class([
-                        'fi-no-notification-read-ctn' => ! $notification->unread(),
-                        'fi-no-notification-unread-ctn' => $notification->unread(),
-                    ])
-                >
-                    {{ $this->getNotification($notification)->inline() }}
-                </div>
-            @endforeach
+            <div
+                aria-label="{{ __('filament-notifications::database.modal.heading') }}"
+                role="list"
+                class="fi-no-notifications"
+            >
+                @foreach ($notifications as $notification)
+                    <div
+                        role="listitem"
+                        wire:key="{{ $notification->getKey() }}.database-notifications.ctn"
+                        @class([
+                            'fi-no-notification-read-ctn' => ! $notification->unread(),
+                            'fi-no-notification-unread-ctn' => $notification->unread(),
+                        ])
+                    >
+                        {{ $this->getNotification($notification)->inline() }}
+                    </div>
+                @endforeach
+            </div>
 
             @if ($broadcastChannel = $this->getBroadcastChannel())
                 @script
