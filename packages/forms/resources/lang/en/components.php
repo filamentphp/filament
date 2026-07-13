@@ -371,6 +371,18 @@ return [
 
     'repeater' => [
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Actions',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder',
+            ],
+
+        ],
+
         'actions' => [
 
             'add' => [
