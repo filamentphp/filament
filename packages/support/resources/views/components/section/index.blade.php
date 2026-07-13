@@ -108,7 +108,7 @@
                     :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
                     :icon-alias="\Filament\Support\View\SupportIconAlias::SECTION_COLLAPSE_BUTTON"
                     :label="__($collapsed ? 'filament::components/section.actions.expand.label' : 'filament::components/section.actions.collapse.label')"
-                    x-bind:aria-label="isCollapsed ? {{ Js::from(__('filament::components/section.actions.expand.label')) }} : {{ Js::from(__('filament::components/section.actions.collapse.label')) }}"
+                    :x-bind:aria-label="'isCollapsed ? ' . Js::from(__('filament::components/section.actions.expand.label')) . ' : ' . Js::from(__('filament::components/section.actions.collapse.label'))"
                     aria-expanded="{{ $collapsed ? 'false' : 'true' }}"
                     x-bind:aria-expanded="(! isCollapsed).toString()"
                     x-bind:aria-controls="$id('fi-section-content')"
