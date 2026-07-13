@@ -328,6 +328,14 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
         $belowContentSchema = $this->getChildSchema(static::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
 
+        // Name the `<section>` as a landmark region by referencing its heading (or, failing that, its `label()`),
+        // and associate its description. An unnamed `<section>` is not exposed as a `region` by assistive tech, so
+        // this promotes it to a navigable landmark. Every id is guarded so a reference is never left dangling. The
+        // `-heading`/`-description`/`-label` suffixes are disjoint from the disclosure `-content` id above.
+        $headingId = (filled($id) && $hasHeading) ? "{$id}-heading" : null;
+        $descriptionId = (filled($id) && $hasDescription) ? "{$id}-description" : null;
+        $labelId = (filled($id) && filled($label) && (! $hasHeading)) ? "{$id}-label" : null;
+
         ob_start(); ?>
 
         <div <?= $outerAttributes->toHtml() ?>>
@@ -335,7 +343,10 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                 <div class="fi-sc-section-label-ctn">
                     <?= $beforeLabelSchema?->toHtml() ?>
 
-                    <div class="fi-sc-section-label">
+                    <div
+                        <?php if (filled($labelId)) { ?>id="<?= e($labelId) ?>"<?php } ?>
+                        class="fi-sc-section-label"
+                    >
                         <?= e($label) ?>
                     </div>
 
@@ -360,6 +371,12 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                     <?php } ?>
                     x-bind:class="isCollapsed && 'fi-collapsed'"
                 <?php } ?>
+                <?php if (filled($labelledById = $headingId ?? $labelId)) { ?>
+                    aria-labelledby="<?= e($labelledById) ?>"
+                <?php } ?>
+                <?php if (filled($descriptionId)) { ?>
+                    aria-describedby="<?= e($descriptionId) ?>"
+                <?php } ?>
                 <?= $sectionAttributes->toHtml() ?>
             >
                 <?php if ($hasHeader) { ?>
@@ -375,13 +392,19 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                         <?php if ($hasHeading || $hasDescription) { ?>
                             <div class="fi-section-header-text-ctn">
                                 <?php if ($hasHeading) { ?>
-                                    <<?= $headingTag ?> class="fi-section-header-heading">
+                                    <<?= $headingTag ?>
+                                        <?php if (filled($headingId)) { ?>id="<?= e($headingId) ?>"<?php } ?>
+                                        class="fi-section-header-heading"
+                                    >
                                         <?= e($heading) ?>
                                     </<?= $headingTag ?>>
                                 <?php } ?>
 
                                 <?php if ($hasDescription) { ?>
-                                    <p class="fi-section-header-description">
+                                    <p
+                                        <?php if (filled($descriptionId)) { ?>id="<?= e($descriptionId) ?>"<?php } ?>
+                                        class="fi-section-header-description"
+                                    >
                                         <?= e($description) ?>
                                     </p>
                                 <?php } ?>
