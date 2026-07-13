@@ -88,25 +88,27 @@ class Icon extends Component implements HasEmbeddedView
             'x-tooltip' => $hasTooltip ? '{ content: ' . Js::from($tooltip) . ', theme: $store.theme, allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ' }' : null,
         ];
 
-        // When the icon carries a tooltip, that tooltip is its meaning, so expose it
-        // as the icon's accessible name (`aria-label` + `role="img"`, which makes
-        // Blade Icons drop the default `aria-hidden`). A name the user set via
-        // `extraAttributes()` always wins.
+        $html = generate_icon_html($this->getIcon(), attributes: (new FilamentComponentAttributeBag($iconAttributes))->merge($extraAttributes, escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']), size: $size instanceof IconSize ? $size : null)?->toHtml() ?? '';
+
+        // When the icon carries a tooltip, that tooltip is its meaning, but `x-tooltip` is
+        // hover-only and the icon itself is decorative (`aria-hidden` is embedded in the SVG
+        // source, so an `aria-label` on it would be ignored). Emit a visually-hidden text
+        // alternative alongside the icon instead, unless the user has already named it via
+        // `extraAttributes()`.
         if (
             $hasTooltip &&
             blank($extraAttributes['aria-label'] ?? null) &&
             blank($extraAttributes['aria-labelledby'] ?? null)
         ) {
-            $ariaLabel = $tooltip instanceof Htmlable
-                ? trim(html_entity_decode(strip_tags($tooltip->toHtml())))
+            $accessibleText = $tooltip instanceof Htmlable
+                ? trim(strip_tags($tooltip->toHtml()))
                 : $tooltip;
 
-            if (filled($ariaLabel)) {
-                $iconAttributes['aria-label'] = $ariaLabel;
-                $iconAttributes['role'] = 'img';
+            if (filled($accessibleText)) {
+                $html .= '<span class="fi-sr-only">' . e($accessibleText) . '</span>';
             }
         }
 
-        return generate_icon_html($this->getIcon(), attributes: (new FilamentComponentAttributeBag($iconAttributes))->merge($extraAttributes, escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']), size: $size instanceof IconSize ? $size : null)?->toHtml() ?? '';
+        return $html;
     }
 }
