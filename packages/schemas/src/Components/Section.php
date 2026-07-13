@@ -428,7 +428,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                                         // name. Static values cover the pre-Alpine/no-JS render; `x-bind` keeps the
                                         // name and expanded state correct as the section is toggled. `aria-expanded`
                                         // belongs on the control, not the region, and `aria-controls` points at it.
-                                        'aria-label' => __('filament-schemas::components.section.actions.collapse.label'),
+                                        'aria-label' => __($isCollapsed ? 'filament-schemas::components.section.actions.expand.label' : 'filament-schemas::components.section.actions.collapse.label'),
                                         'x-bind:aria-label' => 'isCollapsed ? ' . Js::from(__('filament-schemas::components.section.actions.expand.label')) . ' : ' . Js::from(__('filament-schemas::components.section.actions.collapse.label')),
                                         'aria-expanded' => $isCollapsed ? 'false' : 'true',
                                         'x-bind:aria-expanded' => '(! isCollapsed).toString()',
