@@ -220,14 +220,15 @@
                         'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
                     ])
                 >
-                    @if ($closeButton)
+                    @if ($closeButton && $closeByEscaping)
+                        {{-- The close button is removed from the tab order when `Escape` also closes the modal, so it can sit first in the focus trap without being autofocused when the modal opens. --}}
                         <x-filament::icon-button
                             color="gray"
                             :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
                             :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
-                            :tabindex="$closeByEscaping ? '-1' : '0'"
+                            tabindex="-1"
                             :x-on:click="$closeEventHandler"
                             class="fi-modal-close-btn"
                         />
@@ -306,6 +307,19 @@
                         </div>
                     @endif
                 </div>
+            @endif
+
+            @if ($closeButton && (! $closeByEscaping) && ($heading || $header))
+                {{-- When `Escape` does not close the modal, the close button is the only keyboard way to dismiss it, so it stays in the tab order. It is rendered after the modal content so that the focus trap autofocuses the first form control instead of it when the modal opens, while absolute positioning keeps it visually in the header. --}}
+                <x-filament::icon-button
+                    color="gray"
+                    :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
+                    :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
+                    icon-size="lg"
+                    :label="__('filament::components/modal.actions.close.label')"
+                    :x-on:click="$closeEventHandler"
+                    class="fi-modal-close-btn"
+                />
             @endif
         </{{ filled($wireSubmitHandler) ? 'form' : 'div' }}>
     </div>

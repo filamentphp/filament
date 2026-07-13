@@ -88,6 +88,33 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('focuses the first form control instead of the tab-reachable close button when a modal using `closeModalByEscaping(false)` opens', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->click('Escape close disabled')
+                ->assertVisible('[data-testid="escape-close-disabled-modal"]')
+                ->wait(0.5)
+                ->assertScript('document.activeElement === document.querySelector(\'input[wire\\\\:model="mountedActions.0.data.name"]\')', true)
+                // The close button stays in the tab order, after the modal content.
+                ->assertScript('document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn\').tabIndex', 0)
+                ->assertScript('Boolean(document.activeElement.compareDocumentPosition(document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn\')) & Node.DOCUMENT_POSITION_FOLLOWING)', true)
+                // The relocated close button still closes the modal.
+                ->click('[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn')
+                ->assertMissing('[data-testid="escape-close-disabled-modal"]')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/modal-browser-test')
+                ->inDarkMode()
+                ->click('Escape close disabled')
+                ->assertVisible('[data-testid="escape-close-disabled-modal"]')
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
     it('cancels parent actions when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

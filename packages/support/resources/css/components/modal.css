@@ -341,8 +341,9 @@
             }
         }
 
+        /* The `z-index` keeps the close button above a sticky header (`z-10`) when it is rendered after the modal content for focus order. */
         & .fi-modal-close-btn {
-            @apply absolute;
+            @apply absolute z-20;
         }
 
         & .fi-modal-footer {

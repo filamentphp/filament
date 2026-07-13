@@ -71,6 +71,16 @@ class ModalBrowserTest extends Page
                         ->action(static fn () => null)
                         ->extraModalWindowAttributes(['data-testid' => 'overlay-cancel-modal']),
                 ]),
+            Action::make('escapeCloseDisabled')
+                ->label('Escape close disabled')
+                ->closeModalByEscaping(false)
+                ->schema([
+                    TextInput::make('name'),
+                    TextInput::make('email'),
+                ])
+                ->action(static fn () => null)
+                ->extraAttributes(['data-testid' => 'escape-close-disabled-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'escape-close-disabled-modal']),
             Action::make('scrollPreservation')
                 ->label('Scroll preservation')
                 ->modalSubmitAction(false)
