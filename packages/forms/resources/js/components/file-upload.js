@@ -606,8 +606,13 @@ export default function fileUploadFormComponent({
             anchor.className = 'filepond--download-icon'
             anchor.href = downloadableUrl
             anchor.download = file.file.name
-            anchor.setAttribute('aria-label', downloadActionLabel)
-            anchor.setAttribute('title', downloadActionLabel)
+
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (downloadActionLabel) {
+                anchor.setAttribute('aria-label', downloadActionLabel)
+                anchor.setAttribute('title', downloadActionLabel)
+            }
 
             return anchor
         },
@@ -623,8 +628,13 @@ export default function fileUploadFormComponent({
             anchor.className = 'filepond--open-icon'
             anchor.href = openableUrl
             anchor.target = '_blank'
-            anchor.setAttribute('aria-label', openActionLabel)
-            anchor.setAttribute('title', openActionLabel)
+
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (openActionLabel) {
+                anchor.setAttribute('aria-label', openActionLabel)
+                anchor.setAttribute('title', openActionLabel)
+            }
 
             return anchor
         },
