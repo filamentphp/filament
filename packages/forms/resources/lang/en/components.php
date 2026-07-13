@@ -779,6 +779,10 @@ return [
 
         'placeholder' => 'New tag',
 
+        'tag_added' => 'Added: :tag',
+
+        'tag_removed' => 'Removed: :tag',
+
     ],
 
     'text_input' => [

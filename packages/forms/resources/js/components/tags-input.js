@@ -1,4 +1,9 @@
-export default function tagsInputFormComponent({ state, splitKeys }) {
+export default function tagsInputFormComponent({
+    state,
+    splitKeys,
+    tagAddedMessage,
+    tagRemovedMessage,
+}) {
     return {
         newTag: '',
 
@@ -19,11 +24,21 @@ export default function tagsInputFormComponent({ state, splitKeys }) {
 
             this.state.push(this.newTag)
 
+            this.$refs.liveRegion.textContent = tagAddedMessage.replace(
+                ':tag',
+                this.newTag,
+            )
+
             this.newTag = ''
         },
 
         deleteTag(tagToDelete) {
             this.state = this.state.filter((tag) => tag !== tagToDelete)
+
+            this.$refs.liveRegion.textContent = tagRemovedMessage.replace(
+                ':tag',
+                tagToDelete,
+            )
         },
 
         reorderTags(event) {
