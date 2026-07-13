@@ -58,6 +58,8 @@
                 :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                 x-cloak
                 x-data="{}"
+                aria-controls="fi-main-sidebar"
+                x-bind:aria-expanded="$store.sidebar.isOpen"
                 x-on:click="$store.sidebar.open()"
                 class="fi-layout-sidebar-toggle-btn"
             />

@@ -17,6 +17,7 @@
             x-cloak="-lg"
         @endif
         x-bind:class="{ 'fi-sidebar-open': $store.sidebar.isOpen }"
+        id="fi-main-sidebar"
         class="fi-sidebar fi-main-sidebar"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_START) }}
@@ -42,6 +43,8 @@
                         :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                         x-cloak
                         x-data="{}"
+                        aria-controls="fi-main-sidebar"
+                        x-bind:aria-expanded="$store.sidebar.isOpen"
                         x-on:click="$store.sidebar.open()"
                         x-show="! $store.sidebar.isOpen"
                         class="fi-sidebar-open-collapse-sidebar-btn"
@@ -65,6 +68,8 @@
                         :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                         x-cloak
                         x-data="{}"
+                        aria-controls="fi-main-sidebar"
+                        x-bind:aria-expanded="$store.sidebar.isOpen"
                         x-on:click="$store.sidebar.close()"
                         x-show="$store.sidebar.isOpen"
                         class="fi-sidebar-close-collapse-sidebar-btn"
