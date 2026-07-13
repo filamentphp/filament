@@ -168,11 +168,11 @@ class Stat extends Component
     }
 
     /**
-     * @return scalar | Htmlable | Closure
+     * @return scalar | Htmlable
      */
     public function getValue(): mixed
     {
-        return value($this->value);
+        return $this->evaluate($this->value);
     }
 
     public function generateChartDataChecksum(): string
