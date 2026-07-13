@@ -188,19 +188,32 @@ class ExporterClassGenerator extends ClassGenerator
 
     protected function addGetCompletedNotificationBodyMethodToClass(ClassType $class): void
     {
+        $str = $this->simplifyFqn(Str::class);
+
+        $useCounted = version_compare(app()->version(), '13.19.0', '>=');
+
+        $completedSegment = $useCounted
+            ? "{$str}::of('row')->counted(\$export->successful_rows)"
+            : "{$str}::of('row')->plural(\$export->successful_rows, prependCount: true)";
+
+        $failedSegment = $useCounted
+            ? "{$str}::of('row')->counted(\$failedRowsCount)"
+            : "{$str}::of('row')->plural(\$failedRowsCount, prependCount: true)";
+
         $method = $class->addMethod('getCompletedNotificationBody')
             ->setPublic()
             ->setStatic()
             ->setReturnType('string')
             ->setBody(<<<PHP
-                \$body = 'Your {$this->getModelLabel()} export has completed and ' . {$this->simplifyFqn(Number::class)}::format(\$export->successful_rows) . ' ' . str('row')->plural(\$export->successful_rows) . ' exported.';
+            \$body = 'Your {$this->getModelLabel()} export has completed and ' . {$completedSegment} . ' exported.';
 
-                if (\$failedRowsCount = \$export->getFailedRowsCount()) {
-                    \$body .= ' ' . {$this->simplifyFqn(Number::class)}::format(\$failedRowsCount) . ' ' . str('row')->plural(\$failedRowsCount) . ' failed to export.';
-                }
+            if (\$failedRowsCount = \$export->getFailedRowsCount()) {
+                \$body .= ' ' . {$failedSegment} . ' failed to export.';
+            }
 
-                return \$body;
-                PHP);
+            return \$body;
+            PHP);
+
         $method->addParameter('export')
             ->setType(Export::class);
 
