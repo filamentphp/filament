@@ -8,7 +8,7 @@
     {{
         $attributes
             ->merge([
-                'aria-label' => $label,
+                'aria-label' => $label ?? __('filament::components/tabs.label'),
             ])
             ->class([
                 'fi-tabs',
