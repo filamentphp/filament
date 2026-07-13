@@ -69,7 +69,8 @@
                         })"
                 {{ (new FilamentComponentAttributeBag)->color(StatsOverviewWidgetStatChartComponent::class, $chartColor)->class(['fi-wi-stats-overview-stat-chart']) }}
             >
-                <canvas x-ref="canvas"></canvas>
+                {{-- The label and value are already exposed as text, so the trend sparkline is decorative. --}}
+                <canvas x-ref="canvas" aria-hidden="true"></canvas>
 
                 <span
                     x-ref="backgroundColorElement"
