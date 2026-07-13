@@ -84,29 +84,32 @@ class Icon extends Component implements HasEmbeddedView
 
         $extraAttributes = $this->getExtraAttributes();
 
+        // A user-supplied `aria-label` via `extraAttributes()` would land on the icon's `<svg>`, but the
+        // SVG carries a baked-in `aria-hidden="true"` (from the icon source) that removes it — and every
+        // attribute on it, including the label — from the accessibility tree, leaving the icon unnamed.
+        // Pull the label off the SVG and expose it as the icon's visually-hidden text alternative instead.
+        $userLabel = $extraAttributes['aria-label'] ?? null;
+        unset($extraAttributes['aria-label']);
+
         $iconAttributes = [
             'x-tooltip' => $hasTooltip ? '{ content: ' . Js::from($tooltip) . ', theme: $store.theme, allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ' }' : null,
         ];
 
         $html = generate_icon_html($this->getIcon(), attributes: (new FilamentComponentAttributeBag($iconAttributes))->merge($extraAttributes, escape: false)->color(IconComponent::class, $this->getColor() ?? 'primary')->class(['fi-sc-icon']), size: $size instanceof IconSize ? $size : null)?->toHtml() ?? '';
 
-        // When the icon carries a tooltip, that tooltip is its meaning, but `x-tooltip` is
-        // hover-only and the icon itself is decorative (`aria-hidden` is embedded in the SVG
-        // source, so an `aria-label` on it would be ignored). Emit a visually-hidden text
-        // alternative alongside the icon instead, unless the user has already named it via
-        // `extraAttributes()`.
-        if (
-            $hasTooltip &&
-            blank($extraAttributes['aria-label'] ?? null) &&
-            blank($extraAttributes['aria-labelledby'] ?? null)
-        ) {
-            $accessibleText = $tooltip instanceof Htmlable
-                ? trim(strip_tags($tooltip->toHtml()))
-                : $tooltip;
+        // Give the decorative icon a visually-hidden text alternative. Priority: an explicit user
+        // `aria-label`, then the tooltip (which is the icon's meaning but is hover-only). Skipped when the
+        // user named the icon through `aria-labelledby` — they've deliberately pointed at another element.
+        if (filled($userLabel)) {
+            $accessibleText = $userLabel instanceof Htmlable ? trim(strip_tags($userLabel->toHtml())) : $userLabel;
+        } elseif ($hasTooltip && blank($extraAttributes['aria-labelledby'] ?? null)) {
+            $accessibleText = $tooltip instanceof Htmlable ? trim(strip_tags($tooltip->toHtml())) : $tooltip;
+        } else {
+            $accessibleText = null;
+        }
 
-            if (filled($accessibleText)) {
-                $html .= '<span class="fi-sr-only">' . e($accessibleText) . '</span>';
-            }
+        if (filled($accessibleText)) {
+            $html .= '<span class="fi-sr-only">' . e($accessibleText) . '</span>';
         }
 
         return $html;
