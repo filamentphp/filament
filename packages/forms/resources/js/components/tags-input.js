@@ -42,7 +42,8 @@ export default function tagsInputFormComponent({
 
             this.state.push(this.newTag)
 
-            this.announce(tagAddedMessage.replace(':tag', this.newTag))
+            // A function replacement inserts the tag literally, so `$` sequences in it are not treated as substitution patterns by `String.replace()`.
+            this.announce(tagAddedMessage.replace(':tag', () => this.newTag))
 
             this.newTag = ''
         },
@@ -50,7 +51,7 @@ export default function tagsInputFormComponent({
         deleteTag(tagToDelete) {
             this.state = this.state.filter((tag) => tag !== tagToDelete)
 
-            this.announce(tagRemovedMessage.replace(':tag', tagToDelete))
+            this.announce(tagRemovedMessage.replace(':tag', () => tagToDelete))
         },
 
         reorderTags(event) {
