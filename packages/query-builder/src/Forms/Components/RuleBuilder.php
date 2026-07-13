@@ -85,7 +85,12 @@ class RuleBuilder extends Builder
                                                             ->visible(fn (Get $get): bool => blank($get('rules')) && (count($repeater->getRawState()) > 2)),
                                                     ];
                                                 })->grow(false),
-                                            ])->verticallyAlignCenter(),
+                                            ])
+                                                ->verticallyAlignCenter()
+                                                ->extraAttributes([
+                                                    'role' => 'group',
+                                                    'aria-label' => __('filament-query-builder::query-builder.form.or_groups.group.label'),
+                                                ]),
                                         ])
                                         ->addAction(fn (Action $action, Repeater $component) => $action
                                             ->label(__('filament-query-builder::query-builder.actions.add_rule_group.label'))
@@ -124,7 +129,13 @@ class RuleBuilder extends Builder
                                             ->action($builder->getAction($deleteActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                                     ])->grow(false),
                                 ];
-                            }),
+                            })
+                                // Name the whole OR condition as a group so screen readers convey the boundary of
+                                // each OR-joined branch of the query (WCAG 1.3.1).
+                                ->extraAttributes([
+                                    'role' => 'group',
+                                    'aria-label' => __('filament-query-builder::query-builder.form.or_groups.block.label'),
+                                ]),
                         ]),
                 ];
             })
