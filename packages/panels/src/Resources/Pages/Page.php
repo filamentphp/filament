@@ -32,6 +32,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use LogicException;
+use UnitEnum;
 
 use function Filament\Support\original_request;
 
@@ -219,7 +220,7 @@ abstract class Page extends BasePage
 
         if (Filament::getCurrentOrDefaultPanel()->hasStrictHierarchicalBreadcrumbs()) {
             return [
-                ...static::getHierarchicalBreadcrumbs(),
+                ...$this->getHierarchicalBreadcrumbs(),
                 ...$breadcrumbs,
             ];
         } elseif (filled($cluster = static::getCluster())) {
@@ -235,6 +236,49 @@ abstract class Page extends BasePage
             ...$this->getResourceBreadcrumbs(),
             $this->getBreadcrumb(),
         ];
+    }
+
+    public function getHierarchicalBreadcrumbs(): array
+    {
+        $breadcrumbs = [];
+
+        $cluster = static::getCluster();
+        $navigationGroupKey = static::getResource()::getNavigationGroup();
+        $navigationParentItemKey = static::getResource()::getNavigationParentItem();
+
+        if (filled($cluster)) {
+            $breadcrumbs = $cluster::getClusterHierarchicalBreadcrumbs();
+            $breadcrumbs[$cluster::getUrl()] = $cluster::getClusterBreadcrumb();
+
+            $subNavigation = $this->getCachedSubNavigation();
+
+            if ($navigationGroupKey instanceof UnitEnum) {
+                $navigationGroupKey = $navigationGroupKey->name;
+            }
+
+            $navigationGroup = $subNavigation[$navigationGroupKey ?? 0];
+        } else {
+            $panelNavigation = Filament::getCurrentOrDefaultPanel()->getNavigation();
+
+            $navigationGroup = $panelNavigation[serialize($navigationGroupKey)];
+        }
+
+        $navigationParentItem = collect($navigationGroup?->getItems() ?? [])
+            ->first(fn (NavigationItem $item): bool => $item->getKey() === $navigationParentItemKey || $item->getLabel() === $navigationParentItemKey);
+
+        if (filled($navigationGroup) && filled($navigationGroup->getLabel())) {
+            $breadcrumbs[] = $navigationGroup->getLabel();
+        }
+
+        if (filled($navigationParentItem)) {
+            $navigationParentItemUrl = $navigationParentItem->getUrl();
+
+            filled($navigationParentItemUrl)
+                ? $breadcrumbs[$navigationParentItemUrl] = $navigationParentItem->getLabel()
+                : $breadcrumbs[] = $navigationParentItem->getLabel();
+        }
+
+        return $breadcrumbs;
     }
 
     /**
