@@ -168,9 +168,12 @@ class Step extends Component implements CanConcealComponents, HasEmbeddedView
 
         $attributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'aria-labelledby' => $id,
+                // Name the panel by its header button (`{id}-tab`) rather than itself. The header is an `<ol>`
+                // stepper of plain buttons with `aria-current="step"`, not a `tablist` of `role="tab"` controls,
+                // so `role="tabpanel"` (which implies an owning tab) is incoherent — `role="group"` is honest.
+                'aria-labelledby' => filled($id) ? "{$id}-tab" : null,
                 'id' => $id,
-                'role' => 'tabpanel',
+                'role' => 'group',
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-wizard-step']);

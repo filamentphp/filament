@@ -421,6 +421,10 @@ class Wizard extends Component implements HasEmbeddedView
                         >
                             <button
                                 type="button"
+                                <?php if (filled($stepId = $step->getId())) { ?>
+                                    id="<?= e($stepId) ?>-tab"
+                                    aria-controls="<?= e($stepId) ?>"
+                                <?php } ?>
                                 x-bind:aria-current="getStepIndex(step) === <?= $stepIndex ?> ? 'step' : null"
                                 x-on:click="step = <?= Js::from($step->getKey()) ?>"
                                 x-bind:disabled="! isStepAccessible(<?= Js::from($step->getKey()) ?>) || <?= Js::from($previousAction->isDisabled()) ?>"
