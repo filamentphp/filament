@@ -1598,9 +1598,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
         >
             <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
+                <?php // `role="toolbar"` is withheld until the APG roving-tabindex/arrow-key pattern is
+                      // implemented: the tools are `tabindex="-1"` with no arrow-key navigation, so announcing
+                      // a toolbar would promise keyboard behaviour that does not exist. The `aria-label`
+                      // still names the group. ?>
                 <div
                     class="fi-fo-rich-editor-toolbar"
-                    role="toolbar"
                     aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.aria_label')) ?>"
                 >
                     <?php foreach ($toolbarButtons as $buttonGroup) { ?>
