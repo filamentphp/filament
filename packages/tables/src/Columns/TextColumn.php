@@ -602,19 +602,27 @@ class TextColumn extends Column implements HasEmbeddedView
 
                 <?php if ($stateOverListLimitCount) { ?>
                     <div class="fi-ta-text-list-limited-message">
+                        <?php
+                            // These stay `<div role="button">` — not a real `<button>`, and deliberately without
+                            // `tabindex`. When the column has a record URL or action, the table wraps the whole cell
+                            // content in an `<a>` / `<button>` (see the record-content wrapper in the tables view), and
+                            // a `<button>` — or any element with `tabindex` — is interactive content that is invalid
+                            // nested inside a link/button. `role="button"` + `aria-expanded` expose the control's
+                            // purpose and state to assistive tech without introducing that invalid nesting.
+                        ?>
                         <?php if ($isLimitedListExpandable) { ?>
-                            <button
-                                type="button"
+                            <div
+                                role="button"
                                 x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = false"
                                 x-show="isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-tables::table.columns.text.actions.expand_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
 
-                            <button
-                                type="button"
+                            <div
+                                role="button"
                                 x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = true"
                                 x-cloak
@@ -622,7 +630,7 @@ class TextColumn extends Column implements HasEmbeddedView
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-tables::table.columns.text.actions.collapse_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
                         <?php } else { ?>
                             <?= trans_choice('filament-tables::table.columns.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>

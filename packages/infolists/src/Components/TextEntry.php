@@ -486,19 +486,27 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 
                 <?php if ($stateOverListLimitCount) { ?>
                     <div class="fi-in-text-list-limited-message">
+                        <?php
+                            // These stay `<div role="button">` — not a real `<button>`, and deliberately without
+                            // `tabindex`. When the entry has a URL or action, `entry-wrapper.blade.php` wraps the whole
+                            // entry content in an `<a>` / `<button>`, and a `<button>` — or any element with `tabindex`
+                            // — is interactive content that is invalid nested inside a link/button. `role="button"` +
+                            // `aria-expanded` expose the control's purpose and state to assistive tech without
+                            // introducing that invalid nesting.
+                        ?>
                         <?php if ($isLimitedListExpandable) { ?>
-                            <button
-                                type="button"
+                            <div
+                                role="button"
                                 x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = false"
                                 x-show="isLimited"
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-infolists::components.entries.text.actions.expand_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
 
-                            <button
-                                type="button"
+                            <div
+                                role="button"
                                 x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = true"
                                 x-cloak
@@ -506,7 +514,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                                 class="fi-link fi-size-xs"
                             >
                                 <?= trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $stateOverListLimitCount) ?>
-                            </button>
+                            </div>
                         <?php } else { ?>
                             <?= trans_choice('filament-infolists::components.entries.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>
