@@ -90,8 +90,8 @@ class ColorColumn extends Column implements HasEmbeddedView
                 <div <?= (new FilamentComponentAttributeBag)
                     ->merge([
                         // The swatch conveys its value purely through `background-color`, so expose the color as a
-                        // named `role="img"` for screen readers. The copyable case (interactive control + name) is
-                        // handled separately in #264.
+                        // named `role="img"` for screen readers. The copyable swatch is an interactive control that
+                        // needs separate treatment (an accessible name and keyboard operability), so it is not named here.
                         'aria-label' => $isCopyable ? null : e($stateItem),
                         'role' => $isCopyable ? null : 'img',
                         'x-on:click.prevent.stop' => $isCopyable
