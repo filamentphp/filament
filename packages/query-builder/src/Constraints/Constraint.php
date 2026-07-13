@@ -159,9 +159,11 @@ class Constraint extends Component
                         ->gridContainer()
                         // Name each constraint row as a group so screen readers convey where a rule begins/ends and
                         // which attribute it filters (the per-block header is deliberately hidden, WCAG 1.3.1).
+                        // `e()` is required: extra attributes are rendered without escaping, so the label would
+                        // otherwise break out of the attribute.
                         ->extraAttributes([
                             'role' => 'group',
-                            'aria-label' => $this->getLabel(),
+                            'aria-label' => e(trim(strip_tags($this->getLabel()))),
                         ]),
                 ];
             });

@@ -104,8 +104,10 @@ trait CanGenerateLinkHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
+                // `e()` is required: this merge uses `escape: false`, so the label — which may derive
+                // from record data — would otherwise break out of the attribute.
                 'aria-label' => $isLabelSrOnly
-                    ? trim(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))) . ($opensInNewTab ? " {$newTabLabel}" : ''))
+                    ? e(trim(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))) . ($opensInNewTab ? " {$newTabLabel}" : '')))
                     : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
