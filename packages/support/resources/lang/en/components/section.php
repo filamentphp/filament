@@ -2,8 +2,16 @@
 
 return [
 
-    'collapse_button' => [
-        'label' => 'Collapse section',
+    'actions' => [
+
+        'collapse' => [
+            'label' => 'Collapse section',
+        ],
+
+        'expand' => [
+            'label' => 'Expand section',
+        ],
+
     ],
 
 ];
