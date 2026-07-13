@@ -10,6 +10,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
+use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -294,10 +295,11 @@ class IconEntry extends Entry implements HasEmbeddedView
 
             $color = $this->getColor($stateItem);
             $size = $this->getSize($stateItem);
+            $tooltip = $this->getTooltip($stateItem);
 
             $item = generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                 ->merge([
-                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                    'x-tooltip' => filled($tooltip)
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
@@ -307,6 +309,25 @@ class IconEntry extends Entry implements HasEmbeddedView
                 ], escape: false)
                 ->color(IconComponent::class, $color), size: $size ?? IconSize::Large)
                 ->toHtml();
+
+            // The icon and its color are the only value carriers, but `generate_icon_html()` renders a
+            // decorative icon with no accessible name and `x-tooltip` is hover-only, so screen readers get
+            // nothing. Emit a visually-hidden text alternative (WCAG 1.1.1, 1.4.1) alongside each icon.
+            $accessibleText = match (true) {
+                filled($tooltip) => $tooltip instanceof Htmlable ? strip_tags($tooltip->toHtml()) : $tooltip,
+                $this->isBoolean() => $stateItem
+                    ? __('filament-infolists::components.entries.icon.true')
+                    : __('filament-infolists::components.entries.icon.false'),
+                $stateItem instanceof HasLabel => $stateItem->getLabel() ?? (($stateItem instanceof BackedEnum) ? $stateItem->value : ''),
+                $stateItem instanceof BackedEnum => $stateItem->value,
+                $stateItem instanceof Htmlable => strip_tags($stateItem->toHtml()),
+                is_scalar($stateItem) => (string) $stateItem,
+                default => '',
+            };
+
+            if (filled($accessibleText)) {
+                $item .= '<span class="fi-sr-only">' . e($accessibleText) . '</span>';
+            }
 
             if (filled($url = $this->getUrl($stateItem))) {
                 $item = '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>' . $item . '</a>';
