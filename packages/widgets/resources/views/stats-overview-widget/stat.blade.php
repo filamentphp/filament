@@ -34,7 +34,7 @@
         </div>
 
         <div class="fi-wi-stats-overview-stat-value">
-            {{ $getValue() }}
+            {{ $getValue() ?? $getEmptyState() }}
         </div>
 
         @if ($description = $getDescription())
