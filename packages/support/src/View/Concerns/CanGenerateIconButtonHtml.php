@@ -88,9 +88,10 @@ trait CanGenerateIconButtonHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
-                'aria-label' => e($label),
+                'aria-label' => filled($label) ? e($label) : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
+                'tabindex' => (($tag === 'a') && $isDisabled && $hasTooltip) ? '0' : null,
                 'type' => match ($tag) {
                     'button' => $type,
                     'form' => 'submit',

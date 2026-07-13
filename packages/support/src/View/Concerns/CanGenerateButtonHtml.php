@@ -100,6 +100,7 @@ trait CanGenerateButtonHtml
                 'aria-label' => $isLabelSrOnly ? trim(strip_tags(e($label))) : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
+                'tabindex' => (($tag === 'a') && $isDisabled && $hasTooltip) ? '0' : null,
                 'type' => match ($tag) {
                     'button' => $type,
                     'form' => 'submit',
