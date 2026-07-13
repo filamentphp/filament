@@ -219,8 +219,11 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
                 'tabindex' => -1,
                 'type' => 'button',
                 'aria-label' => e($label),
+                'aria-pressed' => $this->isToggle() ? 'false' : null,
                 'x-bind:class' => '{ \'fi-active\': ' . ($this->hasActiveStyling() ? $activeJsExpression : 'false') . ' }',
-                'x-bind:aria-pressed' => $this->isToggle() ? $activeJsExpression : null,
+                // Guard against the pre-init `undefined` (the TipTap editor loads asynchronously): Alpine
+                // preserves a falsy `aria-pressed` rather than removing it, so coerce to a valid token.
+                'x-bind:aria-pressed' => $this->isToggle() ? '(' . $activeJsExpression . ') ? \'true\' : \'false\'' : null,
                 'x-bind:disabled' => $this->isDisabledWhenNotActive() ? '!(' . $activeJsExpression . ')' : null,
                 'x-on:click' => $this->getJsHandler(),
                 'x-tooltip' => (filled($label) && $isLabelHidden)
