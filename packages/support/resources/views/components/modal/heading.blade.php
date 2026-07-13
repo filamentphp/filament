@@ -3,7 +3,7 @@
 ])
 
 @php
-    $level = (int) $level;
+    $level = max(1, (int) $level);
     $headingTag = ($level > 6) ? 'p' : "h{$level}";
 @endphp
 
