@@ -906,11 +906,13 @@
 
                                                 if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                     $el.checked = true
+                                                    $el.indeterminate = false
 
                                                     return 'checked'
                                                 }
 
                                                 $el.checked = false
+                                                $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                 return null
                                             "
@@ -1130,11 +1132,13 @@
 
                                                         if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                             $el.checked = true
+                                                            $el.indeterminate = false
 
                                                             return 'checked'
                                                         }
 
                                                         $el.checked = false
+                                                        $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                         return null
                                                     "
@@ -1530,11 +1534,13 @@
 
                                                         if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                             $el.checked = true
+                                                            $el.indeterminate = false
 
                                                             return 'checked'
                                                         }
 
                                                         $el.checked = false
+                                                        $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                         return null
                                                     "
@@ -1653,11 +1659,13 @@
 
                                                                 if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                                     $el.checked = true
+                                                                    $el.indeterminate = false
 
                                                                     return 'checked'
                                                                 }
 
                                                                 $el.checked = false
+                                                                $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                                 return null
                                                             "
@@ -1849,11 +1857,13 @@
 
                                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                                 $el.checked = true
+                                                                $el.indeterminate = false
 
                                                                 return 'checked'
                                                             }
 
                                                             $el.checked = false
+                                                            $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                             return null
                                                         "
@@ -2047,11 +2057,13 @@
 
                                                                             if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                                                 $el.checked = true
+                                                                                $el.indeterminate = false
 
                                                                                 return 'checked'
                                                                             }
 
                                                                             $el.checked = false
+                                                                            $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                                             return null
                                                                         "
@@ -2137,11 +2149,13 @@
 
                                                                             if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                                                 $el.checked = true
+                                                                                $el.indeterminate = false
 
                                                                                 return 'checked'
                                                                             }
 
                                                                             $el.checked = false
+                                                                            $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                                             return null
                                                                         "
