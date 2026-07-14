@@ -938,7 +938,8 @@
                                                 }
 
                                                 $el.checked = false
-                                                $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
+                                                $el.indeterminate =
+                                                    recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                 return null
                                             "
@@ -1164,7 +1165,8 @@
                                                         }
 
                                                         $el.checked = false
-                                                        $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
+                                                        $el.indeterminate =
+                                                            recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                         return null
                                                     "
@@ -1566,7 +1568,8 @@
                                                         }
 
                                                         $el.checked = false
-                                                        $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
+                                                        $el.indeterminate =
+                                                            recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                         return null
                                                     "
@@ -1691,7 +1694,8 @@
                                                                 }
 
                                                                 $el.checked = false
-                                                                $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
+                                                                $el.indeterminate =
+                                                                    recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                                 return null
                                                             "
@@ -1889,7 +1893,8 @@
                                                             }
 
                                                             $el.checked = false
-                                                            $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
+                                                            $el.indeterminate =
+                                                                recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                             return null
                                                         "
@@ -2089,7 +2094,8 @@
                                                                             }
 
                                                                             $el.checked = false
-                                                                            $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
+                                                                            $el.indeterminate =
+                                                                                recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                                             return null
                                                                         "
@@ -2181,7 +2187,8 @@
                                                                             }
 
                                                                             $el.checked = false
-                                                                            $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
+                                                                            $el.indeterminate =
+                                                                                recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                                             return null
                                                                         "
@@ -2498,7 +2505,9 @@
                         >
                             {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::TwoExtraLarge) }}
 
-                            <span class="fi-sr-only">{{ __('filament-tables::table.loading') }}</span>
+                            <span class="fi-sr-only">
+                                {{ __('filament-tables::table.loading') }}
+                            </span>
                         </div>
                     @endif
                 </div>

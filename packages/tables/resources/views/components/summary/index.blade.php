@@ -43,7 +43,10 @@
         @endif
 
         @if ($extraHeadingColumn)
-            <th scope="col" class="fi-ta-cell fi-ta-summary-header-cell fi-align-start">
+            <th
+                scope="col"
+                class="fi-ta-cell fi-ta-summary-header-cell fi-align-start"
+            >
                 {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
             </th>
         @endif

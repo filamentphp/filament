@@ -20,10 +20,7 @@
 
     <div class="fi-simple-layout">
         @if (($hasTopbar ?? true) && filament()->auth()->check())
-            <a
-                href="#fi-main-content"
-                class="fi-skip-link fi-sr-only"
-            >
+            <a href="#fi-main-content" class="fi-skip-link fi-sr-only">
                 {{ __('filament-panels::layout.skip_to_content.label') }}
             </a>
         @endif

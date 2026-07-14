@@ -162,6 +162,7 @@
     <ul
         @if (filled($label))
             id="{{ $groupItemsId }}"
+
             @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen ? ! $store.sidebar.groupIsCollapsed(label) : ! @js($hasDropdown)"
             @else

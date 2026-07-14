@@ -98,7 +98,9 @@
                         ])
                     >
                         @if ($notification->unread())
-                            <span class="fi-sr-only">{{ __('filament-notifications::database.modal.unread_label') }}</span>
+                            <span class="fi-sr-only">
+                                {{ __('filament-notifications::database.modal.unread_label') }}
+                            </span>
                         @endif
 
                         {{ $this->getNotification($notification)->inline() }}
