@@ -348,7 +348,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                     ->action(fn (Set $set) => $set('useRecoveryCode', true))
                     ->visible(fn (): bool => $isRecoverable && (! $get('useRecoveryCode'))))
                 ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
-                ->required(fn (Get $get): bool => (! $isRecoverable) || blank($get('recoveryCode')))
+                ->required(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
                 ->rule(function () use ($user): Closure {
                     return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($user): void {
                         if ($this->verifyCode($value, $this->getSecret($user), shouldPreventCodeReuse: true)) {

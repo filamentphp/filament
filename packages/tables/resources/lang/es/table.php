@@ -26,6 +26,15 @@ return [
             'label' => 'Acción|Acciones',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Sí',
+                'false' => 'No',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Cargando...',
@@ -115,6 +124,10 @@ return [
             'label' => 'Reordenar registros',
         ],
 
+        'reorder_record' => [
+            'label' => 'Reordenar elemento :key',
+        ],
+
         'filter' => [
             'label' => 'Filtrar',
         ],
@@ -129,6 +142,10 @@ return [
 
         'column_manager' => [
             'label' => 'Alternar columnas',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Expandir/contraer elemento :key',
         ],
 
     ],

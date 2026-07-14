@@ -210,6 +210,10 @@ class IsBeforeOperator extends Operator
             return $query;
         }
 
+        if ($hasTime) {
+            return $query->where($qualifiedColumn, $this->isInverse() ? '>' : '<=', $date);
+        }
+
         return $query->whereDate($qualifiedColumn, $this->isInverse() ? '>' : '<=', $date);
     }
 

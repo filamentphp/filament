@@ -35,6 +35,8 @@ return [
 
     'no_rules' => '(Ei sääntöjä)',
 
+    'max_rules_reached_tooltip' => 'Olet saavuttanut enimmäismäärän :count sääntöä.',
+
     'item_separators' => [
         'and' => 'AND',
         'or' => 'OR',

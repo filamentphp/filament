@@ -138,6 +138,7 @@ class QueryBuilder extends BaseFilter
                 function (Operator $operator) use ($ruleIndex, &$summaries): void {
                     $summaries[$ruleIndex] = $operator->getSummary();
                 },
+                shouldUseRawSettings: true,
             );
         }
 
@@ -441,7 +442,7 @@ class QueryBuilder extends BaseFilter
     /**
      * @param  array<string, mixed>  $rule
      */
-    protected function tapOperatorFromRule(array $rule, Schema $schema, Closure $callback): void
+    protected function tapOperatorFromRule(array $rule, Schema $schema, Closure $callback, bool $shouldUseRawSettings = false): void
     {
         $constraint = $this->getConstraint($rule['type']);
 
@@ -467,13 +468,15 @@ class QueryBuilder extends BaseFilter
             return;
         }
 
+        $settings = $shouldUseRawSettings ? $rule['data']['settings'] : ($schema->getStateSnapshot()['settings'] ?? []);
+
         $constraint
-            ->settings($rule['data']['settings'])
+            ->settings($settings)
             ->inverse($isInverseOperator);
 
         $operator
             ->constraint($constraint)
-            ->settings($rule['data']['settings'])
+            ->settings($settings)
             ->inverse($isInverseOperator);
 
         $callback($operator);

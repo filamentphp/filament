@@ -26,6 +26,15 @@ return [
             'label' => 'Toiminta|Toiminnat',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Kyllä',
+                'false' => 'Ei',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Ladataan...',
@@ -115,6 +124,10 @@ return [
             'label' => 'Järjestele tietueita',
         ],
 
+        'reorder_record' => [
+            'label' => 'Uudelleenjärjestele kohde :key',
+        ],
+
         'filter' => [
             'label' => 'Suodata',
         ],
@@ -129,6 +142,10 @@ return [
 
         'column_manager' => [
             'label' => 'Näytä sarakkeet',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Laajenna/kutista kohde :key',
         ],
 
     ],

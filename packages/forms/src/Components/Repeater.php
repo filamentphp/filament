@@ -1224,11 +1224,16 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
         $relationshipQuery = $relationship->getQuery();
 
+        // Explicitly select the related table's columns so the query is not ambiguous if it is
+        // later modified to include a join (for example, through `modifyRelationshipQueryUsing()`).
+        // Without this, `select *` across a join can hydrate the key from the wrong table.
         if ($relationship instanceof BelongsToMany) {
             $relationshipQuery->select([
                 $relationship->getTable() . '.*',
                 $relationshipQuery->getModel()->getTable() . '.*',
             ]);
+        } else {
+            $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
         }
 
         if ($this->modifyRelationshipQueryUsing) {
@@ -1238,7 +1243,8 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         }
 
         if (filled($orderColumn)) {
-            $relationshipQuery->orderBy($orderColumn);
+            // Qualify the order column so it is not ambiguous when the query includes a join.
+            $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($orderColumn));
         }
 
         return $this->cachedExistingRecords = $this->modifyRelationshipRecords($relationshipQuery->get()->mapWithKeys(

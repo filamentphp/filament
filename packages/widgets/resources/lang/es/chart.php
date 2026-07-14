@@ -26,4 +26,8 @@ return [
 
     ],
 
+    'empty' => [
+        'heading' => 'No hay datos para mostrar',
+    ],
+
 ];
