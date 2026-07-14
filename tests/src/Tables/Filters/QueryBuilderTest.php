@@ -18,6 +18,7 @@ use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelated
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator as SelectIsOperator;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
@@ -3804,6 +3805,119 @@ describe('absolute and relative date filtering', function (): void {
             ]))
             ->assertCanSeeTableRecords([$afterThresholdPost])
             ->assertCanNotSeeTableRecords([$beforeThresholdPost]);
+    });
+
+    it('can filter records using datetime constraint with is after operator when the Filament timezone differs from the app timezone', function (): void {
+        config(['app.timezone' => 'UTC']);
+        FilamentTimezone::set('America/New_York');
+
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 17:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$afterThresholdPost])
+            ->assertCanNotSeeTableRecords([$beforeThresholdPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 12:00:00');
+    });
+
+    it('can filter records using datetime constraint with is before operator when the Filament timezone differs from the app timezone', function (): void {
+        config(['app.timezone' => 'UTC']);
+        FilamentTimezone::set('America/New_York');
+
+        // The cutoff of `12:00:00` is entered in the Filament timezone (`America/New_York`), so it
+        // must be dehydrated to `16:00:00` in the app timezone (`UTC`) before querying, while the
+        // summary continues to display the raw `12:00:00` the user entered.
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 17:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isBefore',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$beforeThresholdPost])
+            ->assertCanNotSeeTableRecords([$afterThresholdPost])
+            ->assertSee('Published at is before Mon, Jul 13, 2026 12:00:00');
+    });
+
+    it('applies datetime constraints and summaries from the applied state, not unapplied deferred edits', function (): void {
+        $earlyPost = Post::factory()->create([
+            'published_at' => '2026-07-13 10:00:00',
+        ]);
+
+        $latePost = Post::factory()->create([
+            'published_at' => '2026-07-13 20:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$earlyPost, $latePost])
+            // Apply a rule that only matches the late post.
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 15:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$latePost])
+            ->assertCanNotSeeTableRecords([$earlyPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            // Edit the deferred form to a looser threshold that would match both posts, *without* applying it.
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 05:00:00',
+                        ],
+                    ],
+                ],
+            ])
+            // The query and the summary must still reflect the applied threshold (`15:00:00`),
+            // not the unapplied deferred edit (`05:00:00`).
+            ->assertCanSeeTableRecords([$latePost])
+            ->assertCanNotSeeTableRecords([$earlyPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            ->assertDontSee('Published at is after Mon, Jul 13, 2026 05:00:00');
     });
 
     it('can filter records using datetime constraint with is after operator with `this_minute` preset', function (): void {
