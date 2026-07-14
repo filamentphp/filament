@@ -9,6 +9,7 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
@@ -44,7 +45,7 @@ class ExporterClassGenerator extends ClassGenerator
             $this->getExtends(),
             Export::class,
             ExportColumn::class,
-            Str::class,
+            version_compare(Application::VERSION, '13.19.0', '>=') ? Str::class : Number::class,
             $this->getModelFqn(),
         ];
     }
@@ -188,17 +189,17 @@ class ExporterClassGenerator extends ClassGenerator
 
     protected function addGetCompletedNotificationBodyMethodToClass(ClassType $class): void
     {
-        $str = $this->simplifyFqn(Str::class);
+        if (version_compare(Application::VERSION, '13.19.0', '>=')) {
+            $str = $this->simplifyFqn(Str::class);
 
-        $useCounted = version_compare(Application::VERSION, '13.19.0', '>=');
+            $completedSegment = "{$str}::of('row')->counted(\$export->successful_rows)";
+            $failedSegment = "{$str}::of('row')->counted(\$failedRowsCount)";
+        } else {
+            $number = $this->simplifyFqn(Number::class);
 
-        $completedSegment = $useCounted
-            ? "{$str}::of('row')->counted(\$export->successful_rows)"
-            : "{$str}::of('row')->plural(\$export->successful_rows, prependCount: true)";
-
-        $failedSegment = $useCounted
-            ? "{$str}::of('row')->counted(\$failedRowsCount)"
-            : "{$str}::of('row')->plural(\$failedRowsCount, prependCount: true)";
+            $completedSegment = "{$number}::format(\$export->successful_rows) . ' ' . str('row')->plural(\$export->successful_rows)";
+            $failedSegment = "{$number}::format(\$failedRowsCount) . ' ' . str('row')->plural(\$failedRowsCount)";
+        }
 
         $method = $class->addMethod('getCompletedNotificationBody')
             ->setPublic()
