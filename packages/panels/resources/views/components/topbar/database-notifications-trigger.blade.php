@@ -6,8 +6,8 @@
     icon-size="lg"
     :label="
         $unreadNotificationsCount
-            ? trans_choice('filament-panels::layout.actions.open_database_notifications.label_with_unread_count', $unreadNotificationsCount, ['count' => \Illuminate\Support\Number::format($unreadNotificationsCount, locale: app()->getLocale())])
-            : __('filament-panels::layout.actions.open_database_notifications.label')
+        ? trans_choice('filament-panels::layout.actions.open_database_notifications.label_with_unread_count', $unreadNotificationsCount, ['count' => \Illuminate\Support\Number::format($unreadNotificationsCount, locale: app()->getLocale())])
+        : __('filament-panels::layout.actions.open_database_notifications.label')
     "
     class="fi-topbar-database-notifications-btn"
 />

@@ -493,7 +493,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                             // — is interactive content that is invalid nested inside a link/button. `role="button"` +
                             // `aria-expanded` expose the control's purpose and state to assistive tech without
                             // introducing that invalid nesting.
-                        ?>
+                    ?>
                         <?php if ($isLimitedListExpandable) { ?>
                             <div
                                 role="button"

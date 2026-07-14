@@ -94,7 +94,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 <?php // `tabindex` is bound client-side rather than server-rendered on purpose: a `ToggleColumn`
                       // in a table with a record URL/action is rendered inside the record `<a>`/`<button>`, and a
                       // `tabindex` descendant is invalid inside an `<a>`. Applying it after Alpine boots keeps the
-                      // served markup valid while still making the switch keyboard-focusable. ?>
+                      // served markup valid while still making the switch keyboard-focusable.?>
                 x-bind:tabindex="$el.hasAttribute('disabled') ? '-1' : '0'"
                 x-bind:aria-disabled="$el.hasAttribute('disabled') ? 'true' : null"
                 x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"

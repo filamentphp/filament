@@ -51,7 +51,10 @@
     @endif
 
     @if ($extraHeadingColumn || $groupsOnly)
-        <th scope="row" class="fi-ta-cell fi-ta-summary-row-heading-cell fi-align-start">
+        <th
+            scope="row"
+            class="fi-ta-cell fi-ta-summary-row-heading-cell fi-align-start"
+        >
             {{ $heading }}
         </th>
     @else

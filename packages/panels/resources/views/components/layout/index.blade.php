@@ -26,10 +26,7 @@
         'fi-body-has-top-navigation' => $hasTopNavigation,
     ])
 >
-    <a
-        href="#fi-main-content"
-        class="fi-skip-link fi-sr-only"
-    >
+    <a href="#fi-main-content" class="fi-skip-link fi-sr-only">
         {{ __('filament-panels::layout.skip_to_content.label') }}
     </a>
 
