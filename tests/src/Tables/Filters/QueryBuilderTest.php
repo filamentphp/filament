@@ -3834,7 +3834,8 @@ describe('absolute and relative date filtering', function (): void {
                 ],
             ]))
             ->assertCanSeeTableRecords([$afterThresholdPost])
-            ->assertCanNotSeeTableRecords([$beforeThresholdPost]);
+            ->assertCanNotSeeTableRecords([$beforeThresholdPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 12:00:00');
     });
 
     it('can filter records using datetime constraint with is after operator with `this_minute` preset', function (): void {
