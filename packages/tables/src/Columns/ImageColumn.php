@@ -42,6 +42,8 @@ class ImageColumn extends Column implements HasEmbeddedView
      */
     protected array $extraImgAttributes = [];
 
+    protected string | Closure | null $alt = null;
+
     protected string | Closure | null $defaultImageUrl = null;
 
     protected bool | Closure $isStacked = false;
@@ -189,6 +191,18 @@ class ImageColumn extends Column implements HasEmbeddedView
         $this->defaultImageUrl = $url;
 
         return $this;
+    }
+
+    public function alt(string | Closure | null $alt): static
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
+    public function getAlt(mixed $state = null): ?string
+    {
+        return $this->evaluate($this->alt, ['state' => $state]);
     }
 
     public function getImageUrl(?string $state = null): ?string
@@ -494,6 +508,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
+                    'alt' => e($this->getAlt($stateItem) ?? ''),
                     'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{

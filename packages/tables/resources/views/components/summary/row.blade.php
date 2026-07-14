@@ -51,9 +51,9 @@
     @endif
 
     @if ($extraHeadingColumn || $groupsOnly)
-        <td class="fi-ta-cell fi-ta-summary-row-heading-cell">
+        <th scope="row" class="fi-ta-cell fi-ta-summary-row-heading-cell fi-align-start">
             {{ $heading }}
-        </td>
+        </th>
     @else
         @php
             $headingColumnSpan = 1;
@@ -80,24 +80,30 @@
                 if (! $alignment instanceof Alignment) {
                     $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                 }
+
+                // The leading cell labels the whole summary row, so render it as a row header; the aggregate
+                // value cells stay `<td>` and gain a row association from this `<th scope="row">`.
+                $isSummaryRowHeadingCell = $loop->first && (! $extraHeadingColumn) && (! $groupsOnly);
+                $summaryCellTag = $isSummaryRowHeadingCell ? 'th' : 'td';
             @endphp
 
-            <td
-                colspan="{{ ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1)) ? $headingColumnSpan : null }}"
+            <{{ $summaryCellTag }}
+                @if ($isSummaryRowHeadingCell) scope="row" @endif
+                @if ($isSummaryRowHeadingCell && ($headingColumnSpan > 1)) colspan="{{ $headingColumnSpan }}" @endif
                 @class([
                     'fi-ta-cell',
                     ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
-                    'fi-ta-summary-row-heading-cell' => $loop->first && (! $extraHeadingColumn) && (! $groupsOnly),
+                    'fi-ta-summary-row-heading-cell' => $isSummaryRowHeadingCell,
                 ])
             >
-                @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
+                @if ($isSummaryRowHeadingCell)
                     {{ $heading }}
                 @elseif ((! $placeholderColumns) || $columnsWithSummary[$columnKey]['hasSummary'])
                     @foreach ($columnsWithSummary[$columnKey]['summarizers'] as $summarizer)
                         {{ $summarizer->query($query)->selectedState($selectedState) }}
                     @endforeach
                 @endif
-            </td>
+            </{{ $summaryCellTag }}>
         @endif
     @endforeach
 

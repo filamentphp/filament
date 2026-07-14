@@ -213,6 +213,8 @@ class Text extends Component implements HasEmbeddedView
 
         <span
             <?php if ($isCopyable) { ?>
+                role="button"
+                tabindex="0"
                 x-on:click="
                     window.navigator.clipboard.writeText(<?= Js::from($copyableState) ?>)
                     $tooltip(<?= Js::from($copyMessage) ?>, {
@@ -220,6 +222,8 @@ class Text extends Component implements HasEmbeddedView
                         timeout: <?= Js::from($copyMessageDuration) ?>,
                     })
                 "
+                x-on:keydown.enter.prevent="$el.click()"
+                x-on:keydown.space.prevent="$el.click()"
             <?php } ?>
             <?php if ($hasTooltip) { ?>
                 x-tooltip="{

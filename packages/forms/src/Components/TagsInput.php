@@ -308,10 +308,14 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
             x-data="tagsInputFormComponent({
                         state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
                         splitKeys: <?= Js::from($this->getSplitKeys()) ?>,
+                        tagAddedMessage: <?= Js::from(__('filament-forms::components.tags_input.tag_added')) ?>,
+                        tagRemovedMessage: <?= Js::from(__('filament-forms::components.tags_input.tag_removed')) ?>,
                     })"
             <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
         >
             <input <?= $inputAttributes->toHtml() ?> />
+
+            <div x-ref="liveRegion" aria-live="polite" class="fi-sr-only"></div>
 
             <datalist id="<?= e($id) ?>-suggestions">
                 <?php foreach ($this->getSuggestions() as $suggestion) { ?>

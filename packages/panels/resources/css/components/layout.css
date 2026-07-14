@@ -178,3 +178,7 @@ html.fi {
 .fi-simple-main {
     @apply my-16 w-full bg-white px-6 py-12 shadow-xs ring-1 ring-gray-950/5 sm:rounded-xl sm:px-12 dark:bg-gray-900 dark:ring-white/10;
 }
+
+.fi-skip-link:focus {
+    @apply not-sr-only fixed start-4 top-4 z-50 rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-950 shadow-lg outline-none ring-2 ring-primary-600 dark:bg-gray-900 dark:text-white;
+}

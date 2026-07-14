@@ -1,9 +1,11 @@
 @props([
+    'alt' => '',
     'circular' => true,
     'size' => 'md',
 ])
 
 <img
+    alt="{{ $alt }}"
     {{
         $attributes
             ->class([

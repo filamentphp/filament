@@ -528,6 +528,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
                         <div class="fi-input-wrp-content-ctn">
                             <input
+                                aria-label="<?= e($this->getSearchPrompt()) ?>"
                                 placeholder="<?= e($this->getSearchPrompt()) ?>"
                                 type="search"
                                 x-model.debounce.<?= $this->getSearchDebounce() ?>="search"
@@ -627,6 +628,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 <div
                     x-cloak
                     x-show="search && ! visibleCheckboxListOptions.length"
+                    role="status"
+                    aria-live="polite"
                     class="fi-fo-checkbox-list-no-search-results-message"
                 >
                     <?= e($this->getNoSearchResultsMessage()) ?>

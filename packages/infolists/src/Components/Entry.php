@@ -298,7 +298,7 @@ class Entry extends Component
 
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label) && $labelSrOnly) { ?>
-                <div class="fi-in-entry-label fi-hidden" role="term">
+                <div class="fi-in-entry-label fi-sr-only" role="term">
                     <?= e($label) ?>
                 </div>
             <?php } ?>

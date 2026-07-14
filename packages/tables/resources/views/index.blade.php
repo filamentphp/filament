@@ -420,7 +420,7 @@
                                     placement="bottom-start"
                                     shift
                                     width="xs"
-                                    wire:key="{{ $this->getId() }}.table.grouping"
+                                    :wire:key="$this->getId() . '.table.grouping'"
                                     @class([
                                         'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
                                     ])
@@ -755,6 +755,8 @@
             @if ($isReordering)
                 <div
                     x-cloak
+                    role="status"
+                    aria-live="polite"
                     wire:key="{{ $this->getId() }}.table.reorder.indicator"
                     class="fi-ta-reorder-indicator"
                 >
@@ -770,6 +772,9 @@
             @elseif ($isSelectionEnabled && ($maxSelectableRecords !== 1) && $isLoaded)
                 <div
                     x-cloak
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
                     x-bind:hidden="! getSelectedRecordsCount()"
                     x-show="getSelectedRecordsCount()"
                     wire:key="{{ $this->getId() }}.table.selection.indicator"
@@ -877,6 +882,27 @@
                     @endif
                     class="fi-ta-content-ctn fi-fixed-positioning-context"
                 >
+                    @if ($records !== null)
+                        @php
+                            // The total across all pages, not the current page's count — and since the total is
+                            // stable across pages, the live region only announces when the result set really
+                            // changes, not on every pagination click. Non-length-aware paginators fall back to
+                            // the page count.
+                            $resultCount = ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)
+                                ? $records->total()
+                                : count($records);
+                        @endphp
+
+                        <div
+                            role="status"
+                            aria-live="polite"
+                            aria-atomic="true"
+                            class="fi-sr-only"
+                        >
+                            {{ trans_choice('filament-tables::table.result_count', $resultCount, ['count' => $resultCount]) }}
+                        </div>
+                    @endif
+
                     @if ($hasContentLayout && ($records !== null) && count($records))
                         @if (! $isReordering)
                             @php
@@ -906,11 +932,13 @@
 
                                                 if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                     $el.checked = true
+                                                    $el.indeterminate = false
 
                                                     return 'checked'
                                                 }
 
                                                 $el.checked = false
+                                                $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                 return null
                                             "
@@ -1130,11 +1158,13 @@
 
                                                         if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                             $el.checked = true
+                                                            $el.indeterminate = false
 
                                                             return 'checked'
                                                         }
 
                                                         $el.checked = false
+                                                        $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                         return null
                                                     "
@@ -1530,11 +1560,13 @@
 
                                                         if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                             $el.checked = true
+                                                            $el.indeterminate = false
 
                                                             return 'checked'
                                                         }
 
                                                         $el.checked = false
+                                                        $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                         return null
                                                     "
@@ -1653,11 +1685,13 @@
 
                                                                 if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                                     $el.checked = true
+                                                                    $el.indeterminate = false
 
                                                                     return 'checked'
                                                                 }
 
                                                                 $el.checked = false
+                                                                $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                                 return null
                                                             "
@@ -1849,11 +1883,13 @@
 
                                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                                 $el.checked = true
+                                                                $el.indeterminate = false
 
                                                                 return 'checked'
                                                             }
 
                                                             $el.checked = false
+                                                            $el.indeterminate = recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
 
                                                             return null
                                                         "
@@ -2047,11 +2083,13 @@
 
                                                                             if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                                                 $el.checked = true
+                                                                                $el.indeterminate = false
 
                                                                                 return 'checked'
                                                                             }
 
                                                                             $el.checked = false
+                                                                            $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                                             return null
                                                                         "
@@ -2137,11 +2175,13 @@
 
                                                                             if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
                                                                                 $el.checked = true
+                                                                                $el.indeterminate = false
 
                                                                                 return 'checked'
                                                                             }
 
                                                                             $el.checked = false
+                                                                            $el.indeterminate = recordsInGroup.length && areRecordsPartiallySelected(recordsInGroup)
 
                                                                             return null
                                                                         "
@@ -2450,8 +2490,15 @@
                             @endif
                         </table>
                     @elseif ($records === null)
-                        <div class="fi-ta-table-loading-ctn">
+                        <div
+                            role="status"
+                            aria-busy="true"
+                            aria-live="polite"
+                            class="fi-ta-table-loading-ctn"
+                        >
                             {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::TwoExtraLarge) }}
+
+                            <span class="fi-sr-only">{{ __('filament-tables::table.loading') }}</span>
                         </div>
                     @endif
                 </div>
@@ -2461,7 +2508,7 @@
                 @if ($emptyState = $getEmptyState())
                     {{ $emptyState }}
                 @else
-                    <div class="fi-ta-empty-state">
+                    <div class="fi-ta-empty-state" role="status">
                         <div class="fi-ta-empty-state-content">
                             <div class="fi-ta-empty-state-icon-bg">
                                 {{ \Filament\Support\generate_icon_html($getEmptyStateIcon(), size: \Filament\Support\Enums\IconSize::Large) }}

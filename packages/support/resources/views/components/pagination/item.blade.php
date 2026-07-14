@@ -17,14 +17,22 @@
     }}
 >
     <button
-        aria-label="{{ $ariaLabel }}"
+        @if (filled($ariaLabel))
+            aria-label="{{ $ariaLabel }}"
+        @endif
+        @if ($active)
+            aria-current="page"
+        @endif
+        @if ($disabled)
+            aria-hidden="true"
+        @endif
         @disabled($disabled)
         type="button"
         class="fi-pagination-item-btn"
     >
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, attributes: (new \Filament\Support\View\ComponentAttributeBag)->class([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, attributes: (new \Filament\Support\View\ComponentAttributeBag)->merge(['aria-hidden' => 'true'], escape: false)->class([
                     'fi-pagination-item-icon',
                 ]))
             }}

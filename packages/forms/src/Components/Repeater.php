@@ -1951,7 +1951,9 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                     <thead>
                         <tr>
                             <?php if ($hasReorderColumn) { ?>
-                                <th class="fi-fo-table-repeater-empty-header-cell"></th>
+                                <th scope="col" class="fi-fo-table-repeater-empty-header-cell">
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.repeater.columns.reorder.label')) ?></span>
+                                </th>
                             <?php } ?>
 
                             <?php foreach ($tableColumns as $column) { ?>
@@ -1968,7 +1970,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                                     $thAttributes = $thAttributes->style(['width: ' . e($columnWidth)]);
                                 }
                                 ?>
-                                <th <?= $thAttributes->toHtml() ?>>
+                                <th scope="col" <?= $thAttributes->toHtml() ?>>
                                     <?php if (! $column->isHeaderLabelHidden()) { ?>
                                         <?= e($column->getLabel()) ?><?php if ($column->isMarkedAsRequired()) { ?><sup class="fi-fo-table-repeater-header-required-mark">*</sup><?php } ?>
                                     <?php } else { ?>
@@ -1980,7 +1982,9 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                             <?php } ?>
 
                             <?php if ($hasActionsColumn) { ?>
-                                <th class="fi-fo-table-repeater-empty-header-cell"></th>
+                                <th scope="col" class="fi-fo-table-repeater-empty-header-cell">
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.repeater.columns.actions.label')) ?></span>
+                                </th>
                             <?php } ?>
                         </tr>
                     </thead>

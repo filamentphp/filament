@@ -88,6 +88,33 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('focuses the modal window instead of the tab-reachable close button when a modal using `closeModalByEscaping(false)` opens', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->click('Escape close disabled')
+                ->assertVisible('[data-testid="escape-close-disabled-modal"]')
+                ->wait(0.5)
+                // The window is autofocused so the close button does not steal focus, while staying in the tab order as the only keyboard way to dismiss the modal.
+                ->assertScript('document.activeElement === document.querySelector(\'[data-testid="escape-close-disabled-modal"]\')', true)
+                ->assertScript('document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn\').tabIndex', 0)
+                // The close button stays inside the header, so a sticky header keeps it pinned while the modal scrolls.
+                ->assertScript('Boolean(document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-header .fi-modal-close-btn\'))', true)
+                ->click('[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn')
+                ->assertMissing('[data-testid="escape-close-disabled-modal"]')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/modal-browser-test')
+                ->inDarkMode()
+                ->click('Escape close disabled')
+                ->assertVisible('[data-testid="escape-close-disabled-modal"]')
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
     it('cancels parent actions when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

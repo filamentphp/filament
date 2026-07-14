@@ -72,6 +72,8 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
 
         $buttonAttributes = (new FilamentComponentAttributeBag)
             ->merge([
+                'aria-disabled' => $this->isDisabled() ? 'true' : null,
+                'aria-label' => e(trim(strip_tags(($ariaLabel = $this->getLabel()) instanceof Htmlable ? $ariaLabel->toHtml() : $ariaLabel)), doubleEncode: false),
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
@@ -87,8 +89,17 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
             <input type="hidden" value="<?= $state ? 1 : 0 ?>" x-ref="serverState" />
 
             <div
-                x-bind:aria-checked="state?.toString()"
+                aria-checked="<?= $state ? 'true' : 'false' ?>"
+                x-bind:aria-checked="state ? 'true' : 'false'"
+                <?php // `tabindex` is bound client-side rather than server-rendered on purpose: a `ToggleColumn`
+                      // in a table with a record URL/action is rendered inside the record `<a>`/`<button>`, and a
+                      // `tabindex` descendant is invalid inside an `<a>`. Applying it after Alpine boots keeps the
+                      // served markup valid while still making the switch keyboard-focusable. ?>
+                x-bind:tabindex="$el.hasAttribute('disabled') ? '-1' : '0'"
+                x-bind:aria-disabled="$el.hasAttribute('disabled') ? 'true' : null"
                 x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:keydown.enter.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? '<?= Arr::toCssClasses([
                     'fi-toggle-on',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),
