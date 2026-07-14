@@ -124,6 +124,37 @@ describe('authentication flow', function (): void {
 
         $this->assertAuthenticatedAs($userToAuthenticate);
     });
+
+    it('will authenticate the user with a one-time code after enabling the recovery code field', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($appAuthentication->generateRecoveryCodes())
+            ->create();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->assertNoRedirect()
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
+            // Having enabled the recovery code field, the user can still change their mind and authenticate
+            // with their one-time code, leaving the recovery code blank.
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'code' => $appAuthentication->getCurrentCode($userToAuthenticate),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasNoErrors()
+            ->assertRedirect(Filament::getUrl());
+
+        $this->assertAuthenticatedAs($userToAuthenticate);
+    });
 });
 
 describe('failure cases', function (): void {
@@ -194,7 +225,7 @@ describe('failure cases', function (): void {
 });
 
 describe('validation', function (): void {
-    test('recovery codes are required when the recovery code field is enabled', function (): void {
+    test('a one-time code is still required when the recovery code field is enabled but left blank', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
@@ -211,18 +242,18 @@ describe('validation', function (): void {
             ->assertNoRedirect()
             ->callAction(TestAction::make('useRecoveryCode')
                 ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
-            // Once the recovery code field is enabled it becomes the active factor, so a blank recovery
-            // code must fail on the recovery code field rather than falling back to the one-time code.
+            // Enabling the recovery code field does not force the user down the recovery path: with the
+            // recovery code left blank the one-time code is still required, so it can be used instead.
             ->call('authenticate')
             ->assertHasFormErrors([
-                "{$appAuthentication->getId()}.recoveryCode" => 'required',
+                "{$appAuthentication->getId()}.code" => 'required',
             ], 'multiFactorChallengeForm')
             ->assertNoRedirect();
 
         $this->assertGuest();
     });
 
-    test('recovery codes are required when the recovery code field is enabled directly through the form state', function (): void {
+    test('a one-time code is still required when the recovery code field is enabled directly through the form state but left blank', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
@@ -238,11 +269,11 @@ describe('validation', function (): void {
             ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
             ->assertNoRedirect()
             // Enabling the recovery code field by writing directly to the state, rather than through the
-            // action, must still require a recovery code so that exactly one factor is always validated.
+            // action, must still leave the one-time code required while the recovery code is blank.
             ->set("data.multiFactor.{$appAuthentication->getId()}.useRecoveryCode", true)
             ->call('authenticate')
             ->assertHasFormErrors([
-                "{$appAuthentication->getId()}.recoveryCode" => 'required',
+                "{$appAuthentication->getId()}.code" => 'required',
             ], 'multiFactorChallengeForm')
             ->assertNoRedirect();
 

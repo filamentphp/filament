@@ -94,6 +94,28 @@ describe('disabling authentication', function (): void {
             ->toBeNull();
     });
 
+    it('can disable authentication with a one-time code after enabling the recovery code field', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        // Having enabled the recovery code field, the user can still change their mind and confirm with
+        // their one-time code, leaving the recovery code blank.
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm([
+                'code' => $appAuthentication->getCurrentCode($user),
+            ])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
+    });
+
     it('will not disable authentication when an invalid code is used', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -130,11 +152,11 @@ describe('disabling authentication', function (): void {
 });
 
 describe('validation', function (): void {
-    test('recovery codes are required when the recovery code field is enabled', function (): void {
+    test('a one-time code is still required when the recovery code field is enabled but left blank', function (): void {
         $user = auth()->user();
 
-        // Once the recovery code field is enabled it becomes the active factor, so a blank recovery
-        // code must fail on the recovery code field rather than falling back to the one-time code.
+        // Enabling the recovery code field does not force the user down the recovery path: with the
+        // recovery code left blank the one-time code is still required, so it can be used instead.
         livewire(EditProfile::class)
             ->mountAction(TestAction::make('disableAppAuthentication')
                 ->schemaComponent('app', schema: 'content'))
@@ -142,7 +164,7 @@ describe('validation', function (): void {
                 ->schemaComponent('code'))
             ->callMountedAction()
             ->assertHasFormErrors([
-                'recoveryCode' => 'required',
+                'code' => 'required',
             ]);
 
         expect(filled($user->getAppAuthenticationSecret()))
