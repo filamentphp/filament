@@ -176,7 +176,7 @@ class Type
         $this->getOptionLabelUsing(function (Select $component, $value) {
             $query = $this->getModel()::query();
 
-            $query->where($query->getModel()->getKeyName(), $value);
+            $query->where($query->getModel()->getQualifiedKeyName(), $value);
 
             if ($this->modifyOptionsQueryUsing) {
                 $query = $component->evaluate($this->modifyOptionsQueryUsing, [

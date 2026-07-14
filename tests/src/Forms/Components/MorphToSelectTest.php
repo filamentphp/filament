@@ -149,6 +149,18 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasFormErrors(['imageable_id' => ['in']]);
     });
+
+    it('validates a selected option when `modifyOptionsQueryUsing()` adds a join', function (): void {
+        $post = Post::factory()->create(['title' => 'Alpha Article']);
+
+        livewire(TestComponentWithMorphToSelectAndJoinedQuery::class)
+            ->fillForm([
+                'imageable_type' => Post::class,
+                'imageable_id' => (string) $post->id,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
 });
 
 describe('modifier callback clearing', function (): void {
@@ -192,6 +204,47 @@ class TestComponentWithMorphToSelectAndModifyQuery extends Component implements 
                             ->modifyOptionsQueryUsing(fn ($query) => $query->where('title', 'like', 'Alpha%')),
                     ])
                     ->preload(),
+            ])
+            ->model(Image::class)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithMorphToSelectAndJoinedQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                MorphToSelect::make('imageable')
+                    ->types([
+                        MorphToSelect\Type::make(Post::class)
+                            ->titleAttribute('title')
+                            ->modifyOptionsQueryUsing(fn ($query) => $query
+                                ->select('posts.*')
+                                ->leftJoin('users', 'posts.author_id', '=', 'users.id')),
+                    ])
+                    ->searchable(),
             ])
             ->model(Image::class)
             ->statePath('data');
