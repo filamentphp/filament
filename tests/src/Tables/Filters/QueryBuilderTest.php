@@ -18,6 +18,7 @@ use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelated
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator as SelectIsOperator;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
@@ -3786,6 +3787,36 @@ describe('absolute and relative date filtering', function (): void {
 
         $afterThresholdPost = Post::factory()->create([
             'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$afterThresholdPost])
+            ->assertCanNotSeeTableRecords([$beforeThresholdPost]);
+    });
+
+    it('can filter records using datetime constraint with is after operator when the Filament timezone differs from the app timezone', function (): void {
+        config(['app.timezone' => 'UTC']);
+        FilamentTimezone::set('America/New_York');
+
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 17:00:00',
         ]);
 
         livewire(PostsQueryBuilderTable::class)

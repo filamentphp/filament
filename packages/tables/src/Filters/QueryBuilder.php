@@ -236,6 +236,7 @@ class QueryBuilder extends BaseFilter
                 $rule,
                 $ruleBuilderBlockContainer,
                 fn (Operator $operator) => $operator->applyToBaseQuery($query),
+                shouldUseDehydratedSettings: true,
             );
         }
 
@@ -274,6 +275,7 @@ class QueryBuilder extends BaseFilter
                 $rule,
                 $ruleBuilderBlockContainer,
                 fn (Operator $operator) => $operator->applyToBaseFilterQuery($query),
+                shouldUseDehydratedSettings: true,
             );
         }
 
@@ -441,7 +443,7 @@ class QueryBuilder extends BaseFilter
     /**
      * @param  array<string, mixed>  $rule
      */
-    protected function tapOperatorFromRule(array $rule, Schema $schema, Closure $callback): void
+    protected function tapOperatorFromRule(array $rule, Schema $schema, Closure $callback, bool $shouldUseDehydratedSettings = false): void
     {
         $constraint = $this->getConstraint($rule['type']);
 
@@ -467,13 +469,15 @@ class QueryBuilder extends BaseFilter
             return;
         }
 
+        $settings = $shouldUseDehydratedSettings ? ($schema->getStateSnapshot()['settings'] ?? []) : $rule['data']['settings'];
+
         $constraint
-            ->settings($rule['data']['settings'])
+            ->settings($settings)
             ->inverse($isInverseOperator);
 
         $operator
             ->constraint($constraint)
-            ->settings($rule['data']['settings'])
+            ->settings($settings)
             ->inverse($isInverseOperator);
 
         $callback($operator);
