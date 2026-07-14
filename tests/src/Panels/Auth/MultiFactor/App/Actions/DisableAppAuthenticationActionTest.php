@@ -130,6 +130,25 @@ describe('disabling authentication', function (): void {
 });
 
 describe('validation', function (): void {
+    test('recovery codes are required when the recovery code field is enabled', function (): void {
+        $user = auth()->user();
+
+        // Once the recovery code field is enabled it becomes the active factor, so a blank recovery
+        // code must fail on the recovery code field rather than falling back to the one-time code.
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'recoveryCode' => 'required',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
+
     test('codes are required without a recovery code', function (): void {
         $user = auth()->user();
 
@@ -202,6 +221,56 @@ describe('validation', function (): void {
 });
 
 describe('recovery code failures', function (): void {
+    it('will not disable authentication when a recovery code is submitted without enabling the recovery code field', function (string $recoveryCode): void {
+        $user = auth()->user();
+
+        // The recovery code field is hidden until the user chooses to use a recovery code, so a value
+        // present in the field while it is hidden must be ignored and the one-time code remains required.
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['recoveryCode' => $recoveryCode],
+            )
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    })->with([
+        'an arbitrary string' => 'invalid-recovery-code',
+        'a value that is not blank but resembles a falsy value' => '0',
+        'a single character' => 'x',
+    ]);
+
+    it('will not disable authentication with a valid recovery code that is submitted without enabling the recovery code field', function (): void {
+        $user = auth()->user();
+
+        // A valid recovery code should only be honored once the user has enabled the recovery code field;
+        // while it is hidden the code is neither validated nor consumed.
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['recoveryCode' => Arr::first($this->recoveryCodes)],
+            )
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    });
+
     it('will not disable authentication when an invalid recovery code is used', function (): void {
         $user = auth()->user();
 
