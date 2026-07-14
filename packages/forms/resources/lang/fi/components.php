@@ -126,6 +126,8 @@ return [
 
         'editor' => [
 
+            'label' => 'Kuvan muokkaus',
+
             'actions' => [
 
                 'cancel' => [

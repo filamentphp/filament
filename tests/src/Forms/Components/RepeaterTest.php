@@ -455,6 +455,22 @@ describe('relationships', function (): void {
         $undoRepeaterFake();
     });
 
+    it('loads existing records when `modifyQueryUsing()` adds a join and `orderColumn()` is set, without an ambiguous column error', function (): void {
+        $undoRepeaterFake = Repeater::fake();
+
+        $user = User::factory()->create();
+        Post::factory()->count(3)->create(['author_id' => $user->id]);
+
+        livewire(RepeaterWithHasManyRelationshipJoinAndOrderColumn::class, ['record' => $user])
+            ->assertSchemaStateSet(function (array $state) {
+                expect($state['posts'])->toHaveCount(3);
+
+                return [];
+            });
+
+        $undoRepeaterFake();
+    });
+
     it('does not delete out-of-scope records when clearing a Repeater bound to a scoped relationship', function (): void {
         $undoRepeaterFake = Repeater::fake();
 
@@ -1268,6 +1284,51 @@ class RepeaterWithHasManyRelationshipAndModifyQuery extends Component implements
     {
         $this->form->getState();
         $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterWithHasManyRelationshipJoinAndOrderColumn extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship(
+                        'posts',
+                        // The join brings in a second `created_at` column, so the order column must be
+                        // qualified to avoid an ambiguous column error when existing records are loaded.
+                        modifyQueryUsing: fn ($query) => $query->join('users', 'users.id', '=', 'posts.author_id'),
+                    )
+                    ->orderColumn('created_at')
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 
     public function render(): View
