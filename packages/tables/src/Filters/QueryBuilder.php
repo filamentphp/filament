@@ -138,6 +138,7 @@ class QueryBuilder extends BaseFilter
                 function (Operator $operator) use ($ruleIndex, &$summaries): void {
                     $summaries[$ruleIndex] = $operator->getSummary();
                 },
+                shouldUseRawSettings: true,
             );
         }
 
@@ -236,7 +237,6 @@ class QueryBuilder extends BaseFilter
                 $rule,
                 $ruleBuilderBlockContainer,
                 fn (Operator $operator) => $operator->applyToBaseQuery($query),
-                shouldUseDehydratedSettings: true,
             );
         }
 
@@ -275,7 +275,6 @@ class QueryBuilder extends BaseFilter
                 $rule,
                 $ruleBuilderBlockContainer,
                 fn (Operator $operator) => $operator->applyToBaseFilterQuery($query),
-                shouldUseDehydratedSettings: true,
             );
         }
 
@@ -443,7 +442,7 @@ class QueryBuilder extends BaseFilter
     /**
      * @param  array<string, mixed>  $rule
      */
-    protected function tapOperatorFromRule(array $rule, Schema $schema, Closure $callback, bool $shouldUseDehydratedSettings = false): void
+    protected function tapOperatorFromRule(array $rule, Schema $schema, Closure $callback, bool $shouldUseRawSettings = false): void
     {
         $constraint = $this->getConstraint($rule['type']);
 
@@ -469,7 +468,7 @@ class QueryBuilder extends BaseFilter
             return;
         }
 
-        $settings = $shouldUseDehydratedSettings ? ($schema->getStateSnapshot()['settings'] ?? []) : $rule['data']['settings'];
+        $settings = $shouldUseRawSettings ? $rule['data']['settings'] : ($schema->getStateSnapshot()['settings'] ?? []);
 
         $constraint
             ->settings($settings)
