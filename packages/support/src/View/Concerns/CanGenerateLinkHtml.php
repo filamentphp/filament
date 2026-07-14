@@ -91,10 +91,6 @@ trait CanGenerateLinkHtml
 
         $hasTooltip = filled($tooltip);
 
-        $opensInNewTab = ($tag === 'a') && ($target === '_blank');
-
-        $newTabLabel = __('filament::components/link.sr_only.opens_in_new_tab');
-
         $formAttributes = $attributes->only(['action', 'method', 'wire:submit']);
 
         $attributes = $attributes
@@ -106,11 +102,10 @@ trait CanGenerateLinkHtml
                 'aria-disabled' => $isDisabled ? 'true' : null,
                 // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
                 'aria-label' => $isLabelSrOnly
-                    ? e(trim(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))) . ($opensInNewTab ? " {$newTabLabel}" : '')), doubleEncode: false)
+                    ? e(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))), doubleEncode: false)
                     : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
-                'rel' => $opensInNewTab ? 'noopener noreferrer' : null,
                 'type' => match ($tag) {
                     'button' => $type,
                     'form' => 'submit',
@@ -175,10 +170,6 @@ trait CanGenerateLinkHtml
 
             <?php if (! $isLabelSrOnly) { ?>
                 <?= e($label) ?>
-            <?php } ?>
-
-            <?php if ($opensInNewTab && (! $isLabelSrOnly)) { ?>
-                <span class="fi-sr-only"><?= e($newTabLabel) ?></span>
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>

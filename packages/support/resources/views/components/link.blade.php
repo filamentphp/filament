@@ -70,10 +70,6 @@
 
     $hasTooltip = filled($tooltip);
 
-    $opensInNewTab = ($tag === 'a') && ($target === '_blank');
-
-    $newTabLabel = __('filament::components/link.sr_only.opens_in_new_tab');
-
     $loadingDelay = ($icon || $hasLoadingIndicator)
         ? config('filament.livewire_loading_delay', 'default')
         : null;
@@ -100,11 +96,10 @@
                 'aria-disabled' => $disabled ? 'true' : null,
                 // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in the slot.
                 'aria-label' => $labelSrOnly
-                ? e(trim(trim(strip_tags($slot->toHtml())) . ($opensInNewTab ? " {$newTabLabel}" : '')), doubleEncode: false)
-                : null,
+                    ? e(trim(strip_tags($slot->toHtml())), doubleEncode: false)
+                    : null,
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
-                'rel' => $opensInNewTab ? 'noopener noreferrer' : null,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
@@ -146,10 +141,6 @@
 
     @if (! $labelSrOnly)
         {{ $slot }}
-    @endif
-
-    @if ($opensInNewTab && (! $labelSrOnly))
-        <span class="fi-sr-only">{{ $newTabLabel }}</span>
     @endif
 
     @if ($iconPosition === IconPosition::After)
