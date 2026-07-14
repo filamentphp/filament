@@ -8,7 +8,7 @@ use Filament\Actions\Exports\Models\Export;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Number;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Str;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Literal;
@@ -44,7 +44,7 @@ class ExporterClassGenerator extends ClassGenerator
             $this->getExtends(),
             Export::class,
             ExportColumn::class,
-            Number::class,
+            Str::class,
             $this->getModelFqn(),
         ];
     }
@@ -190,7 +190,7 @@ class ExporterClassGenerator extends ClassGenerator
     {
         $str = $this->simplifyFqn(Str::class);
 
-        $useCounted = version_compare(app()->version(), '13.19.0', '>=');
+        $useCounted = version_compare(Application::VERSION, '13.19.0', '>=');
 
         $completedSegment = $useCounted
             ? "{$str}::of('row')->counted(\$export->successful_rows)"
@@ -205,14 +205,14 @@ class ExporterClassGenerator extends ClassGenerator
             ->setStatic()
             ->setReturnType('string')
             ->setBody(<<<PHP
-            \$body = 'Your {$this->getModelLabel()} export has completed and ' . {$completedSegment} . ' exported.';
+                \$body = 'Your {$this->getModelLabel()} export has completed and ' . {$completedSegment} . ' exported.';
 
-            if (\$failedRowsCount = \$export->getFailedRowsCount()) {
-                \$body .= ' ' . {$failedSegment} . ' failed to export.';
-            }
+                if (\$failedRowsCount = \$export->getFailedRowsCount()) {
+                    \$body .= ' ' . {$failedSegment} . ' failed to export.';
+                }
 
-            return \$body;
-            PHP);
+                return \$body;
+                PHP);
 
         $method->addParameter('export')
             ->setType(Export::class);
