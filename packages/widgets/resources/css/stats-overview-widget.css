@@ -23,6 +23,10 @@
         @apply text-3xl font-semibold tracking-tight text-gray-950 tabular-nums dark:text-white;
     }
 
+    & .fi-wi-stats-overview-stat-placeholder {
+        @apply text-3xl font-medium text-gray-400 dark:text-gray-500;
+    }
+
     & .fi-wi-stats-overview-stat-description {
         @apply flex items-center gap-x-1 text-sm text-gray-500 dark:text-gray-400;
 
