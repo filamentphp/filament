@@ -149,6 +149,19 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasFormErrors(['imageable_id' => ['in']]);
     });
+
+    it('validates against a `modifyOptionsQueryUsing` query that adds a join without an ambiguous column error', function (): void {
+        $author = User::factory()->create();
+        $post = Post::factory()->create(['title' => 'Alpha Article', 'author_id' => $author->getKey()]);
+
+        livewire(TestComponentWithMorphToSelectAndJoinQuery::class)
+            ->fillForm([
+                'imageable_type' => Post::class,
+                'imageable_id' => (string) $post->id,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+    });
 });
 
 describe('modifier callback clearing', function (): void {
@@ -168,6 +181,46 @@ describe('modifier callback clearing', function (): void {
         expect($component->getModifyKeySelectUsingCallback())->toBeNull();
     });
 });
+
+class TestComponentWithMorphToSelectAndJoinQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                MorphToSelect::make('imageable')
+                    ->types([
+                        MorphToSelect\Type::make(Post::class)
+                            ->titleAttribute('title')
+                            // The join brings in a second `id` column, so any unqualified
+                            // reference to the key must be qualified to avoid an ambiguous column error.
+                            ->modifyOptionsQueryUsing(fn ($query) => $query->join('users', 'users.id', '=', 'posts.author_id')),
+                    ]),
+            ])
+            ->model(Image::class)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
 
 class TestComponentWithMorphToSelectAndModifyQuery extends Component implements HasActions, HasSchemas
 {
