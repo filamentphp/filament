@@ -214,7 +214,6 @@ class ExporterClassGenerator extends ClassGenerator
 
                 return \$body;
                 PHP);
-
         $method->addParameter('export')
             ->setType(Export::class);
 
