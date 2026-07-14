@@ -45,7 +45,7 @@ class ExporterClassGenerator extends ClassGenerator
             $this->getExtends(),
             Export::class,
             ExportColumn::class,
-            version_compare(Application::VERSION, '13.19.0', '>=') ? Str::class : Number::class,
+            version_compare(Application::VERSION, '13.19.0', '>=') ? Str::class : Number::class, /** @phpstan-ignore ternary.alwaysFalse */
             $this->getModelFqn(),
         ];
     }
@@ -189,7 +189,7 @@ class ExporterClassGenerator extends ClassGenerator
 
     protected function addGetCompletedNotificationBodyMethodToClass(ClassType $class): void
     {
-        if (version_compare(Application::VERSION, '13.19.0', '>=')) {
+        if (version_compare(Application::VERSION, '13.19.0', '>=')) { /** @phpstan-ignore if.alwaysFalse */
             $str = $this->simplifyFqn(Str::class);
 
             $completedSegment = "{$str}::of('row')->counted(\$export->successful_rows)";
