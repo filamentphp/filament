@@ -68,6 +68,10 @@
                     $isFirstSummaryHeading = $loop->first && (! $extraHeadingColumn);
                     $isLabelledHeaderCell = $isFirstSummaryHeading || $hasColumnHeaderLabel;
                     $headerCellTag = $isLabelledHeaderCell ? 'th' : 'td';
+
+                    $alignmentClass = $isFirstSummaryHeading
+                        ? 'fi-align-start'
+                        : (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''));
                 @endphp
 
                 <{{ $headerCellTag }}
@@ -76,8 +80,7 @@
                         $column->getExtraHeaderAttributeBag()->class([
                             'fi-ta-cell fi-ta-summary-header-cell',
                             'fi-wrapped' => $column->canHeaderWrap(),
-                            'fi-align-start' => $isFirstSummaryHeading,
-                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! $isFirstSummaryHeading) && $hasColumnHeaderLabel,
+                            $alignmentClass => $isFirstSummaryHeading || $hasColumnHeaderLabel,
                         ])
                     }}
                 >
