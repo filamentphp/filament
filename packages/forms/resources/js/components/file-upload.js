@@ -35,6 +35,7 @@ export default function fileUploadFormComponent({
     confirmSvgEditingMessage,
     deleteUploadedFileUsing,
     disabledSvgEditingMessage,
+    downloadActionLabel,
     getUploadedFilesUsing,
     hasCircleCropper,
     hasImageEditor,
@@ -63,6 +64,7 @@ export default function fileUploadFormComponent({
     maxSize,
     mimeTypeMap,
     minSize,
+    openActionLabel,
     panelAspectRatio,
     panelLayout,
     placeholder,
@@ -605,6 +607,13 @@ export default function fileUploadFormComponent({
             anchor.href = downloadableUrl
             anchor.download = file.file.name
 
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (downloadActionLabel) {
+                anchor.setAttribute('aria-label', downloadActionLabel)
+                anchor.setAttribute('title', downloadActionLabel)
+            }
+
             return anchor
         },
 
@@ -619,6 +628,13 @@ export default function fileUploadFormComponent({
             anchor.className = 'filepond--open-icon'
             anchor.href = openableUrl
             anchor.target = '_blank'
+
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (openActionLabel) {
+                anchor.setAttribute('aria-label', openActionLabel)
+                anchor.setAttribute('title', openActionLabel)
+            }
 
             return anchor
         },

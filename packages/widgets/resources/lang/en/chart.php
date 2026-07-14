@@ -10,6 +10,10 @@ return [
 
     ],
 
+    'filter' => [
+        'label' => 'Filter chart data',
+    ],
+
     'filters' => [
 
         'actions' => [

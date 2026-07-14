@@ -207,6 +207,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                     <tr>
                         <?php foreach ($tableColumns as $column) { ?>
                             <th
+                                scope="col"
                                 class="<?= Arr::toCssClasses([
                                     'fi-wrapped' => $column->canHeaderWrap(),
                                     (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,

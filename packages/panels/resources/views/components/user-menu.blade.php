@@ -9,6 +9,8 @@
 
     $user = filament()->auth()->user();
 
+    $userName = filament()->getUserName($user);
+
     $items = $this->getUserMenuItems();
 
     $itemsBeforeAndAfterThemeSwitcher = collect($items)
@@ -54,7 +56,7 @@
             </button>
         @else
             <button
-                aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
+                aria-label="{{ filled($userName) ? $userName : __('filament-panels::layout.actions.open_user_menu.label') }}"
                 type="button"
                 class="fi-user-menu-trigger"
             >
@@ -66,7 +68,7 @@
                     @endif
                     class="fi-user-menu-trigger-text"
                 >
-                    {{ filament()->getUserName($user) }}
+                    {{ $userName }}
                 </span>
 
                 {{

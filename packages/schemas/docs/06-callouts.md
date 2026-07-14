@@ -42,6 +42,20 @@ Callout::make('Connection failed')
 
 <AutoScreenshot name="schemas/layout/callout/statuses" alt="Callout statuses" version="5.x" />
 
+### Accessibility of status variants
+
+Since a callout's status is conveyed visually through its icon and background color, Filament also announces it to screen readers. When you use a status variant, a visually-hidden severity prefix (`Error:`, `Note:`, `Success:`, or `Warning:`) is rendered inside the callout's heading, so assistive technology users hear the severity before the message. The leading icon is marked as decorative (`aria-hidden`) so it is not announced separately.
+
+Callouts render as a plain `<div>`, which is correct for content that is present when the page loads. If you reveal a callout dynamically (for example, after an action completes) and want screen readers to announce it, opt into a live region using `extraAttributes()`:
+
+```php
+use Filament\Schemas\Components\Callout;
+
+Callout::make('Changes saved')
+    ->success()
+    ->extraAttributes(['role' => 'status']) // Use `alert` instead of `status` for urgent messages
+```
+
 ## Removing the background color
 
 By default, status callouts have a colored background. You can remove the background color while keeping the status icon and icon color by using `color(null)`:

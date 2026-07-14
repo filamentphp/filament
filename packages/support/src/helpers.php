@@ -189,6 +189,17 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
         }
 
         if (is_string($icon) && str_contains($icon, '/')) {
+            // A custom image-path icon carries no intrinsic accessible name, so it would be announced by
+            // its filename. Default it to decorative (`alt=""`) unless the caller named it, matching the
+            // baked-in `aria-hidden` that the shipped SVG icon sets already carry.
+            if (
+                blank($attributes->get('alt')) &&
+                blank($attributes->get('aria-label')) &&
+                blank($attributes->get('aria-labelledby'))
+            ) {
+                $attributes = $attributes->merge(['alt' => ''], escape: false);
+            }
+
             $icon = e($icon);
 
             return new HtmlString(<<<HTML

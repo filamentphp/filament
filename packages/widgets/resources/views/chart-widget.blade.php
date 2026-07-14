@@ -1,6 +1,7 @@
 @php
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\ChartWidgetComponent;
+    use Illuminate\Contracts\Support\Htmlable;
 
     $color = $this->getColor();
     $heading = $this->getHeading();
@@ -11,6 +12,13 @@
     $maxHeight = $this->getMaxHeight();
     $hasMaxHeight = filled($maxHeight) && $maxHeight !== '100%';
     $isEmpty = $this->isEmpty();
+
+    // The chart paints onto a bare `<canvas>`, which exposes no accessible name, so build a text
+    // alternative from the widget's heading and description (WCAG 1.1.1) for `role="img"` + `aria-label`.
+    $chartAccessibleLabel = trim(implode('. ', array_filter([
+        $heading instanceof Htmlable ? strip_tags($heading->toHtml()) : $heading,
+        $description instanceof Htmlable ? strip_tags($description->toHtml()) : $description,
+    ], fn ($value): bool => filled($value))));
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -28,6 +36,7 @@
                         class="fi-wi-chart-filter"
                     >
                         <x-filament::input.select
+                            :aria-label="__('filament-widgets::chart.filter.label')"
                             inline-prefix
                             wire:model.live="filter"
                         >
@@ -99,6 +108,10 @@
             >
                 <canvas
                     x-ref="canvas"
+                    @if (filled($chartAccessibleLabel))
+                        role="img"
+                        aria-label="{{ $chartAccessibleLabel }}"
+                    @endif
                     @style([
                         'width: 100%',
                         'height: 100%; max-height: 100%' => ! $hasMaxHeight,

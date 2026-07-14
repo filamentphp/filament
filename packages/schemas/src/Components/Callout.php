@@ -255,6 +255,17 @@ class Callout extends Component implements HasEmbeddedView
         $hasIcon = filled($icon);
         $hasControls = filled($controls?->toHtml());
 
+        $status = $this->getStatus();
+        $statusLabel = filled($status)
+            ? __("filament-schemas::components.callout.statuses.{$status}")
+            : null;
+
+        // `__()` returns the key itself when there is no translation (e.g. a custom status), so drop it
+        // rather than announcing a raw translation key to screen readers.
+        if (filled($statusLabel) && str_contains($statusLabel, 'filament-schemas::')) {
+            $statusLabel = null;
+        }
+
         $attributes = $this->getExtraAttributeBag()
             ->color(CalloutComponent::class, $color)
             ->class(['fi-sc-callout', 'fi-callout']);
@@ -265,7 +276,7 @@ class Callout extends Component implements HasEmbeddedView
             <?php if ($hasIcon) { ?>
                 <?= generate_icon_html(
                     $icon,
-                    attributes: (new FilamentComponentAttributeBag)
+                    attributes: (new FilamentComponentAttributeBag(['aria-hidden' => 'true']))
                         ->color(IconComponent::class, $iconColor)
                         ->class(['fi-callout-icon']),
                     size: $iconSize,
@@ -277,11 +288,11 @@ class Callout extends Component implements HasEmbeddedView
                     <?php if ($hasHeading || $hasDescription) { ?>
                         <div class="fi-callout-text">
                             <?php if ($hasHeading) { ?>
-                                <h4 class="fi-callout-heading"><?= e($heading) ?></h4>
+                                <h4 class="fi-callout-heading"><?php if (filled($statusLabel)) { ?><span class="fi-sr-only"><?= e($statusLabel) ?> </span><?php } ?><?= e($heading) ?></h4>
                             <?php } ?>
 
                             <?php if ($hasDescription) { ?>
-                                <p class="fi-callout-description"><?= e($description) ?></p>
+                                <p class="fi-callout-description"><?php if ((! $hasHeading) && filled($statusLabel)) { ?><span class="fi-sr-only"><?= e($statusLabel) ?> </span><?php } ?><?= e($description) ?></p>
                             <?php } ?>
                         </div>
                     <?php } ?>

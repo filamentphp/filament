@@ -2,6 +2,7 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
     use Filament\Support\View\Components\SectionComponent\IconComponent;
+    use Illuminate\Support\Js;
 
     use function Filament\Support\is_slot_empty;
 @endphp
@@ -37,6 +38,7 @@
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
     $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || (! is_slot_empty($afterHeader));
+    $hasContentContainer = (! is_slot_empty($slot)) || (! is_slot_empty($footer));
 @endphp
 
 <section
@@ -45,6 +47,7 @@
         isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`section-${@js($collapseId) ?? $el.id}-isCollapsed`) @else @js($collapsed) @endif,
     }"
     @if ($collapsible)
+        x-id="['fi-section-content']"
         x-on:collapse-section.window="if ($event.detail.id == (@js($collapseId) ?? $el.id)) isCollapsed = true"
         x-on:expand="isCollapsed = false"
         x-on:expand-section.window="if ($event.detail.id == (@js($collapseId) ?? $el.id)) isCollapsed = false"
@@ -101,10 +104,16 @@
             @endif
 
             @if ($collapsible)
+                {{-- The content container is not rendered when the slot and footer are empty, so `aria-controls` must not reference it then. --}}
                 <x-filament::icon-button
                     color="gray"
                     :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
                     :icon-alias="\Filament\Support\View\SupportIconAlias::SECTION_COLLAPSE_BUTTON"
+                    :label="__($collapsed ? 'filament::components/section.actions.expand.label' : 'filament::components/section.actions.collapse.label')"
+                    :x-bind:aria-label="'isCollapsed ? ' . Js::from(__('filament::components/section.actions.expand.label')) . ' : ' . Js::from(__('filament::components/section.actions.collapse.label'))"
+                    aria-expanded="{{ $collapsed ? 'false' : 'true' }}"
+                    x-bind:aria-expanded="(! isCollapsed).toString()"
+                    :x-bind:aria-controls="$hasContentContainer ? '$id(\'fi-section-content\')' : null"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
                     class="fi-section-collapse-btn"
                 />
@@ -112,10 +121,10 @@
         </header>
     @endif
 
-    @if ((! is_slot_empty($slot)) || (! is_slot_empty($footer)))
+    @if ($hasContentContainer)
         <div
             @if ($collapsible)
-                x-bind:aria-expanded="(! isCollapsed).toString()"
+                x-bind:id="$id('fi-section-content')"
                 @if ($collapsed || $persistCollapsed)
                     x-cloak
                 @endif
