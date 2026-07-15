@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Ilmoitukset',
 
+        'unread_label' => 'Lukematon ilmoitus',
+
         'actions' => [
 
             'clear' => [
