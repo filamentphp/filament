@@ -68,6 +68,8 @@
         $width = Width::tryFrom($width) ?? $width;
     }
 
+    $hasStickyBody = (! $slideOver) && ($width !== Width::Screen) && ($stickyHeader || $stickyFooter);
+
     $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
 
     $wireSubmitHandler = $attributes->get('wire:submit.prevent');
@@ -214,6 +216,11 @@
                 ])
             }}
         >
+            @if ($hasStickyBody)
+                {!! '<div class="fi-modal-window-body">' !!}
+                {{-- Avoid formatting issues with unclosed elements --}}
+            @endif
+
             @if ($heading || $header)
                 <div
                     @if (filled($id))
@@ -311,6 +318,11 @@
                         </div>
                     @endif
                 </div>
+            @endif
+
+            @if ($hasStickyBody)
+                {!! '</div>' !!}
+                {{-- Avoid formatting issues with unclosed elements --}}
             @endif
         </{{ filled($wireSubmitHandler) ? 'form' : 'div' }}>
     </div>
