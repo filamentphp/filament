@@ -210,7 +210,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                                 scope="col"
                                 class="<?= Arr::toCssClasses([
                                     'fi-wrapped' => $column->canHeaderWrap(),
-                                    (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
+                                    (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : e($columnAlignment),
                                 ]) ?>"
                                 <?php if (filled($columnWidth = $column->getWidth())) { ?>
                                     style="width: <?= e($columnWidth) ?>"
