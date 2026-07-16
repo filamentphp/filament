@@ -68,7 +68,7 @@
         $width = Width::tryFrom($width) ?? $width;
     }
 
-    $hasStickyBody = (! $slideOver) && ($width !== Width::Screen) && ($stickyHeader || $stickyFooter);
+    $hasScrollableBody = (! $slideOver) && ($width !== Width::Screen) && ($stickyHeader || $stickyFooter);
 
     $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
 
@@ -216,8 +216,8 @@
                 ])
             }}
         >
-            @if ($hasStickyBody)
-                {!! '<div class="fi-modal-window-body">' !!}
+            @if ($hasScrollableBody)
+                {!! '<div class="fi-modal-window-scroll">' !!}
                 {{-- Avoid formatting issues with unclosed elements --}}
             @endif
 
@@ -320,7 +320,7 @@
                 </div>
             @endif
 
-            @if ($hasStickyBody)
+            @if ($hasScrollableBody)
                 {!! '</div>' !!}
                 {{-- Avoid formatting issues with unclosed elements --}}
             @endif

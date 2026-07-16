@@ -72,7 +72,7 @@
                 & > .fi-modal-window-ctn > .fi-modal-window {
                     @apply max-h-[calc(100dvh-2rem)] overflow-hidden;
 
-                    & > .fi-modal-window-body {
+                    & > .fi-modal-window-scroll {
                         @apply min-h-0 flex-1 overflow-y-auto;
                     }
                 }
@@ -156,13 +156,13 @@
         }
 
         &.fi-modal-has-sticky-header {
-            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-body > .fi-modal-header {
+            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-header {
                 @apply rounded-t-xl;
             }
         }
 
         &.fi-modal-has-sticky-footer {
-            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-body > .fi-modal-footer {
+            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-footer {
                 @apply rounded-b-xl;
             }
         }
@@ -400,7 +400,7 @@
     &.fi-modal-has-sticky-header {
         & > .fi-modal-window-ctn > .fi-modal-window {
             & > .fi-modal-header,
-            & > .fi-modal-window-body > .fi-modal-header {
+            & > .fi-modal-window-scroll > .fi-modal-header {
                 @apply sticky top-0 z-10 border-b border-gray-200 bg-white pb-6 dark:border-white/10 dark:bg-gray-900;
             }
 
@@ -419,13 +419,13 @@
 
     &.fi-modal-has-sticky-footer {
         & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-footer,
-        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-body > .fi-modal-footer {
+        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-footer {
             @apply sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900;
         }
     }
 
     &.fi-modal-has-sticky-footer:not(.fi-modal-has-sticky-header) {
-        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-body > .fi-modal-header {
+        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-header {
             @apply relative;
         }
     }
