@@ -123,6 +123,7 @@ class IsRelatedToOperator extends Operator
                 $this->modifyRelationshipQueryUsing,
             )
             ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive())
+            ->dehydrated()
             ->columnSpanFull();
 
         if ($this->getOptionLabelUsing) {
