@@ -127,4 +127,18 @@ To fix an issue where modals with a sticky header or footer could overflow the v
 If you have written custom CSS or a theme that targets `fi-modal-header`, `fi-modal-content`, or `fi-modal-footer` as direct children of `fi-modal-window`, you should update your selectors to account for the new `fi-modal-window-scroll` wrapper.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('support')">
+<span slot="summary">The `ryangjchandler/blade-capture-directive` Composer dependency has been removed</span>
+
+Filament no longer depends on the [`ryangjchandler/blade-capture-directive`](https://github.com/ryangjchandler/blade-capture-directive) package, since Filament registers its own `@capture` and `@endcapture` Blade directives with the same functionality. If you use these directives in your own Blade views, they will continue to work without any changes.
+
+If you use `@capture` outside of Filament and want to ensure that the directives remain available even if you remove Filament from your project, you can install the package yourself:
+
+```bash
+composer require ryangjchandler/blade-capture-directive
+```
+
+If you are a plugin developer and you register the package's service provider in your test cases, for example in the `getPackageProviders()` method of a [Testbench](https://packages.tools/testbench) test case, you should remove `RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider` from the list.
+</Disclosure>
+
 </div>
