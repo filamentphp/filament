@@ -185,6 +185,11 @@ class IsRelatedToOperator extends Operator
 
         $value = $this->getValueSetting();
 
+        // Security: nothing valid remains to filter by after discarding tampered values.
+        if (($value === null) || ($value === [])) {
+            return $query;
+        }
+
         return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
             $constraint->getRelationshipName(),
             function (Builder $query) use ($value): Builder {
@@ -201,18 +206,14 @@ class IsRelatedToOperator extends Operator
 
     protected function getValueSetting(): mixed
     {
-        $isMultiple = $this->getConstraint()->isMultiple();
+        $value = $this->getSettings()[$this->getConstraint()->isMultiple() ? 'values' : 'value'] ?? null;
 
-        $value = $this->getSettings()[$isMultiple ? 'values' : 'value'] ?? null;
-
-        // Security: settings arrive from the request payload and can be tampered with. A single
-        // related value must be a scalar key, and a multiple value must be a list of scalar keys;
-        // any other shape (e.g. a nested array) would reach `whereKey()` binding and crash the
-        // request. Fail closed by discarding non-scalar values.
-        if ($isMultiple) {
-            return is_array($value)
-                ? array_values(array_filter($value, is_scalar(...)))
-                : [];
+        // Security: settings arrive from the request payload and can be tampered with. The value
+        // may be a scalar key or a list of scalar keys, depending on whether the operator is
+        // `multiple()`, but any other shape (e.g. a nested array) would reach `whereKey()`
+        // binding and crash the request. Fail closed by discarding non-scalar values.
+        if (is_array($value)) {
+            return array_values(array_filter($value, is_scalar(...)));
         }
 
         return is_scalar($value) ? $value : null;
