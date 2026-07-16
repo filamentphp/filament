@@ -144,7 +144,7 @@ return [
 
         'editor' => [
 
-        'label' => 'Edytor obrazów',
+            'label' => 'Edytor obrazów',
 
             'actions' => [
 
