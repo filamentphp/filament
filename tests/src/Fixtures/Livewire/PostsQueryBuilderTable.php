@@ -85,6 +85,14 @@ class PostsQueryBuilderTable extends Component implements HasActions, HasSchemas
                                     ->titleAttribute('name')
                                     ->searchable()
                             ),
+                        RelationshipConstraint::make('author_multiple')
+                            ->attribute('author')
+                            ->selectable(
+                                IsRelatedToOperator::make()
+                                    ->titleAttribute('name')
+                                    ->multiple()
+                                    ->searchable()
+                            ),
                         TextConstraint::make('author_email')
                             ->label('Author Email')
                             ->relationship(name: 'author', titleAttribute: 'email'),

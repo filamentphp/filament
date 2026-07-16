@@ -80,6 +80,16 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
             ], escape: false)
             ->class(['fi-toggle']);
 
+        $onClasses = Js::from(Arr::toCssClasses([
+            'fi-toggle-on',
+            ...get_component_color_classes(ToggleComponent::class, $onColor),
+        ]));
+
+        $offClasses = Js::from(Arr::toCssClasses([
+            'fi-toggle-off',
+            ...get_component_color_classes(ToggleComponent::class, $offColor),
+        ]));
+
         ob_start(); ?>
 
         <div
@@ -100,13 +110,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-on:keydown.enter.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
-                x-bind:class="state ? '<?= Arr::toCssClasses([
-                    'fi-toggle-on',
-                    ...get_component_color_classes(ToggleComponent::class, $onColor),
-                ]) ?>' : '<?= Arr::toCssClasses([
-                    'fi-toggle-off',
-                    ...get_component_color_classes(ToggleComponent::class, $offColor),
-                ]) ?>'"
+                x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
                 <?php if ($state) { ?> x-cloak <?php } ?>
                 x-tooltip="
                     error === undefined

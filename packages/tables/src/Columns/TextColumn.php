@@ -260,7 +260,7 @@ class TextColumn extends Column implements HasEmbeddedView
         if ($alignment instanceof Alignment) {
             $classString .= " fi-align-{$alignment->value}";
         } elseif (is_string($alignment) && $alignment !== '') {
-            $classString .= " {$alignment}";
+            $classString .= ' ' . e($alignment);
         }
 
         return '<div class="' . $classString . '"' . $styleString . '>' . $formattedState . '</div>';
