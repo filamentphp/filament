@@ -766,6 +766,53 @@ describe('relationship constraints', function (): void {
             ->assertCanNotSeeTableRecords($nonMatchingPosts);
     });
 
+    it('can filter records using relationship constraint with a `multiple()` is related to operator', function (): void {
+        $firstAuthor = User::factory()->create(['name' => 'John Doe']);
+        $secondAuthor = User::factory()->create(['name' => 'Jane Doe']);
+        Post::factory()->count(5)->create(['author_id' => $firstAuthor->id]);
+        Post::factory()->count(5)->create(['author_id' => $secondAuthor->id]);
+        Post::factory()->count(5)->create();
+
+        $allPosts = Post::all();
+        $matchingPosts = $allPosts->filter(fn ($post) => in_array($post->author_id, [$firstAuthor->id, $secondAuthor->id]));
+        $nonMatchingPosts = $allPosts->reject(fn ($post) => in_array($post->author_id, [$firstAuthor->id, $secondAuthor->id]));
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords($allPosts)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'author_multiple',
+                    'data' => [
+                        'operator' => 'isRelatedTo',
+                        'settings' => ['value' => [$firstAuthor->id, $secondAuthor->id]],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords($matchingPosts)
+            ->assertCanNotSeeTableRecords($nonMatchingPosts);
+    });
+
+    it('can filter records using a `multiple()` relationship constraint with a single value is related to operator', function (): void {
+        $matchingUser = User::factory()->create(['name' => 'John Doe']);
+        $post = Post::factory()->create(['author_id' => $matchingUser->id]);
+
+        $nonMatchingUsers = User::factory()->count(3)->create();
+
+        livewire(UsersQueryBuilderTable::class)
+            ->assertCanSeeTableRecords(collect([$matchingUser])->merge($nonMatchingUsers))
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts',
+                    'data' => [
+                        'operator' => 'isRelatedTo',
+                        'settings' => ['values' => $post->id],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$matchingUser])
+            ->assertCanNotSeeTableRecords($nonMatchingUsers);
+    });
+
     it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing` is set', function (): void {
         $inScopeAuthor = User::factory()->create(['name' => 'Alpha Author']);
         $outOfScopeAuthor = User::factory()->create(['name' => 'Beta Author']);
