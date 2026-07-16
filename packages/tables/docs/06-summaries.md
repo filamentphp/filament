@@ -36,7 +36,7 @@ TextColumn::make('rating')
 
 > The first column in a table may not use summarizers. That column is used to render the heading and subheading/s of the summary section.
 
-<AutoScreenshot name="tables/summaries" alt="Table with summaries" version="4.x" />
+<AutoScreenshot name="tables/summaries" alt="Table with summaries" version="5.x" />
 
 ## Available summarizers
 
@@ -63,7 +63,7 @@ TextColumn::make('rating')
 
 In this example, all ratings in the table will be added together and divided by the number of ratings.
 
-<AutoScreenshot name="tables/summaries/average" alt="Table with average summary" version="4.x" />
+<AutoScreenshot name="tables/summaries/average" alt="Table with average summary" version="5.x" />
 
 ## Count
 
@@ -97,7 +97,7 @@ IconColumn::make('is_published')
     ->summarize(Count::make()->icons()),
 ```
 
-<AutoScreenshot name="tables/summaries/count" alt="Table with icon count summary" version="4.x" />
+<AutoScreenshot name="tables/summaries/count" alt="Table with icon count summary" version="5.x" />
 
 ## Range
 
@@ -113,7 +113,7 @@ TextColumn::make('price')
 
 In this example, the minimum and maximum price in the table will be found.
 
-<AutoScreenshot name="tables/summaries/range" alt="Table with range summary" version="4.x" />
+<AutoScreenshot name="tables/summaries/range" alt="Table with range summary" version="5.x" />
 
 ### Date range
 
@@ -178,7 +178,7 @@ TextColumn::make('price')
 
 In this example, all prices in the table will be added together.
 
-<AutoScreenshot name="tables/summaries/sum" alt="Table with sum summary" version="4.x" />
+<AutoScreenshot name="tables/summaries/sum" alt="Table with sum summary" version="5.x" />
 
 ## Setting a label
 

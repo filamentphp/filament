@@ -1,5 +1,8 @@
 <?php
 
+namespace Filament\Tests\Forms\Components;
+
+use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\CheckboxList;

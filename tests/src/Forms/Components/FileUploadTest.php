@@ -1,5 +1,8 @@
 <?php
 
+namespace Filament\Tests\Forms\Components;
+
+use Closure;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
@@ -9,8 +12,10 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -51,7 +56,7 @@ describe('disk', function (): void {
     });
 
     it('overrides disk name using config', function (): void {
-        Config::set('filament.default_filesystem_disk', 'public');
+        config()->set('filament.default_filesystem_disk', 'public');
 
         $disk = config('filament.default_filesystem_disk');
 

@@ -38,7 +38,7 @@ class StatsOverview extends BaseWidget
 
 Now, check out your widget in the dashboard.
 
-<AutoScreenshot name="widgets/stats-overview/simple" alt="Stats overview" version="4.x" />
+<AutoScreenshot name="widgets/stats-overview/simple" alt="Stats overview" version="5.x" />
 
 ## Adding a description and icon to a stat
 
@@ -74,7 +74,7 @@ Stat::make('Unique views', '192.1k')
     ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before)
 ```
 
-<AutoScreenshot name="widgets/stats-overview/description" alt="Stats overview with descriptions" version="4.x" />
+<AutoScreenshot name="widgets/stats-overview/description" alt="Stats overview with descriptions" version="5.x" />
 
 ## Changing the color of the stat
 
@@ -102,7 +102,7 @@ protected function getStats(): array
 }
 ```
 
-<AutoScreenshot name="widgets/stats-overview/color" alt="Stats overview with colors" version="4.x" />
+<AutoScreenshot name="widgets/stats-overview/color" alt="Stats overview with colors" version="5.x" />
 
 ## Adding extra HTML attributes to a stat
 
@@ -147,7 +147,7 @@ protected function getStats(): array
 }
 ```
 
-<AutoScreenshot name="widgets/stats-overview/chart" alt="Stats overview with charts" version="4.x" />
+<AutoScreenshot name="widgets/stats-overview/chart" alt="Stats overview with charts" version="5.x" />
 
 ## Live updating stats (polling)
 
@@ -199,4 +199,4 @@ protected function getDescription(): ?string
 }
 ```
 
-<AutoScreenshot name="widgets/stats-overview/heading" alt="Stats overview with heading and description" version="4.x" />
+<AutoScreenshot name="widgets/stats-overview/heading" alt="Stats overview with heading and description" version="5.x" />

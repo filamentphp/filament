@@ -41,7 +41,7 @@ Action::make('sendEmail')
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$data`, the `action()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$data`, the `action()` function can inject various utilities as parameters.</UtilityInjection>
 
 Usually, actions get executed without redirecting the user away from the page. This is because we extensively use Livewire. However, actions can be much simpler, and don't even need a modal. You can pass a URL to an action, and when the user clicks on the button, they are redirected to that page:
 
@@ -52,7 +52,7 @@ Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `url()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `url()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="danger">
     If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks. The simplest way to guard against this is to wrap the value in Filament's [`Str::sanitizeUrl()`](../advanced/security#validating-user-input) helper, which returns `null` for any URL that does not use `http`/`https` (or a relative path).
@@ -89,7 +89,7 @@ Action::make('edit')
     ->button()
 ```
 
-<AutoScreenshot name="actions/trigger-button/button" alt="Button trigger" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/button" alt="Button trigger" version="5.x" />
 
 "Link" triggers have no background color. They must have a label and optionally an [icon](#setting-an-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
 
@@ -100,7 +100,7 @@ Action::make('edit')
     ->link()
 ```
 
-<AutoScreenshot name="actions/trigger-button/link" alt="Link trigger" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/link" alt="Link trigger" version="5.x" />
 
 "Icon button" triggers are circular buttons with an [icon](#setting-an-icon) and no label. You can switch to that style with the `iconButton()` method:
 
@@ -112,7 +112,7 @@ Action::make('edit')
     ->iconButton()
 ```
 
-<AutoScreenshot name="actions/trigger-button/icon-button" alt="Icon button trigger" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/icon-button" alt="Icon button trigger" version="5.x" />
 
 "Badge" triggers have a background color, label, and optionally an [icon](#setting-an-icon). You can use a badge as trigger using the `badge()` method:
 
@@ -123,7 +123,7 @@ Action::make('edit')
     ->badge()
 ```
 
-<AutoScreenshot name="actions/trigger-button/badge" alt="Badge trigger" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/badge" alt="Badge trigger" version="5.x" />
 
 ### Using an icon button on mobile devices only
 
@@ -150,7 +150,7 @@ Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a color
 
@@ -163,9 +163,9 @@ Action::make('delete')
     ->color('danger')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/danger" alt="Red trigger" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/danger" alt="Red trigger" version="5.x" />
 
 ## Setting a size
 
@@ -179,9 +179,9 @@ Action::make('create')
     ->size(Size::Large)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/large" alt="Large trigger" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/large" alt="Large trigger" version="5.x" />
 
 ## Setting an icon
 
@@ -195,9 +195,9 @@ Action::make('edit')
     ->icon('heroicon-m-pencil-square')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/icon" alt="Trigger with icon" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/icon" alt="Trigger with icon" version="5.x" />
 
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
@@ -211,9 +211,9 @@ Action::make('edit')
     ->iconPosition(IconPosition::After)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="5.x" />
 
 ## Authorization
 
@@ -233,7 +233,7 @@ Action::make('edit')
 
 This is useful for authorization of certain actions to only users who have permission.
 
-<UtilityInjection set="actions" version="4.x">As well as allowing static values, the `visible()` and `hidden()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing static values, the `visible()` and `hidden()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Authorization using a policy
 
@@ -264,7 +264,7 @@ Action::make('edit')
 
 If the denial does not provide a message (for example, your policy returns plain `false`, or a `Gate::before()` hook short-circuits the check), the action is hidden instead. You can supply a fallback message with `authorizationMessage()` to keep the action visible in that case.
 
-<AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="5.x" />
 
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
 
@@ -299,9 +299,9 @@ Action::make('delete')
     ->disabled(! auth()->user()->can('delete', $this->post))
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/disabled" alt="Disabled action button" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/disabled" alt="Disabled action button" version="5.x" />
 
 ## Registering keybindings
 
@@ -315,7 +315,7 @@ Action::make('save')
     ->keyBindings(['command+s', 'ctrl+s'])
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `keyBindings()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `keyBindings()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding a badge to the corner of the button
 
@@ -330,9 +330,9 @@ Action::make('filter')
     ->badge(5)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/badged" alt="Trigger with badge" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/badged" alt="Trigger with badge" version="5.x" />
 
 You can also pass a [color](../styling/colors) to be used for the badge:
 
@@ -346,9 +346,9 @@ Action::make('filter')
     ->badgeColor('success')
 ```
 
-<UtilityInjection set="actions" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/success-badged" alt="Trigger with green badge" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/success-badged" alt="Trigger with green badge" version="5.x" />
 
 ## Outlined button style
 
@@ -363,7 +363,7 @@ Action::make('edit')
     ->outlined()
 ```
 
-<AutoScreenshot name="actions/trigger-button/outlined" alt="Outlined trigger button" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/outlined" alt="Outlined trigger button" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the label should be hidden or not:
 
@@ -376,7 +376,7 @@ Action::make('edit')
     ->outlined(FeatureFlag::active())
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `outlined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `outlined()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding extra HTML attributes to an action
 
@@ -392,7 +392,7 @@ Action::make('edit')
     ])
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
@@ -413,7 +413,7 @@ If the action opens a modal, the rate limit will be applied when the modal is su
 
 If an action is opened with arguments or for a specific Eloquent record, the rate limit will apply to each unique combination of arguments or record for each action. The rate limit is also unique to the current Livewire component / page in a panel.
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `rateLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `rateLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the rate limited notification
 
@@ -429,7 +429,7 @@ DeleteAction::make()
     ->rateLimitedNotificationTitle('Slow down!')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `rateLimitedNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `rateLimitedNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `rateLimitedNotification()` method:
 
@@ -448,7 +448,7 @@ DeleteAction::make()
     )
 ```
 
-<UtilityInjection set="actions" version="4.x" extras="Exception;;DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;;$exception;;The exception encountered when the rate limit was hit.||Minutes until available;;int;;$minutes;;The number of minutes until the rate limit will pass.||Seconds until available;;int;;$seconds;;The number of seconds until the rate limit will pass.||Notification;;Filament\Notifications\Notification;;$notification;;The default notification object for the rate limit, which could be a useful starting point for customization.">As well as allowing a static value, the `rateLimitedNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x" extras="Exception;;DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;;$exception;;The exception encountered when the rate limit was hit.||Minutes until available;;int;;$minutes;;The number of minutes until the rate limit will pass.||Seconds until available;;int;;$seconds;;The number of seconds until the rate limit will pass.||Notification;;Filament\Notifications\Notification;;$notification;;The default notification object for the rate limit, which could be a useful starting point for customization.">As well as allowing a static value, the `rateLimitedNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the rate limit behavior
 
@@ -546,7 +546,7 @@ Actions::make([
 ])
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/simple" alt="Independent actions in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/simple" alt="Independent actions in a schema" version="5.x" />
 
 You can make the actions span the full width of the schema using the `fullWidth()` method:
 
@@ -563,7 +563,7 @@ Actions::make([
 ])->fullWidth()
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/full-width" alt="Full width independent actions in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/full-width" alt="Full width independent actions in a schema" version="5.x" />
 
 You can change the horizontal alignment of the actions using the `alignment()` method:
 
@@ -581,7 +581,7 @@ Actions::make([
 ])->alignment(Alignment::Center)
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/horizontally-aligned-center" alt="Center-aligned independent actions in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/horizontally-aligned-center" alt="Center-aligned independent actions in a schema" version="5.x" />
 
 If the `Actions` component is in a grid alongside other components, you can change its vertical alignment using the `verticalAlignment()` method:
 
@@ -599,7 +599,7 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::End)
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end in a schema" version="5.x" />
 
 ### Running JavaScript when an action is clicked
 
@@ -623,7 +623,7 @@ TextInput::make('slug')
 
 The JavaScript string has access to `$get()` and `$set()` utilities, which allow you to read and modify the state of form fields in the schema.
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `actionJs()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `actionJs()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     When using `actionJs()`, the action cannot open a modal or perform any server-side processing. It is intended for simple client-side interactions only. If you need to run PHP code, use the `action()` method instead.

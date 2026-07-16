@@ -14,7 +14,7 @@ use Filament\Actions\RestoreAction;
 RestoreAction::make()
 ```
 
-<AutoScreenshot name="actions/restore-action/modal" alt="Restore action modal" version="4.x" />
+<AutoScreenshot name="actions/restore-action/modal" alt="Restore action modal" version="5.x" />
 
 Or if you want to add it as a table bulk action, so that the user can choose which rows to restore, use `Filament\Actions\RestoreBulkAction`:
 
@@ -42,7 +42,7 @@ RestoreAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Customizing the restore notification
 
@@ -57,7 +57,7 @@ RestoreAction::make()
     ->successNotificationTitle('User restored')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `successNotification()` method:
 
@@ -74,7 +74,7 @@ RestoreAction::make()
     )
 ```
 
-<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 To disable the notification altogether, use the `successNotification(null)` method:
 
@@ -101,7 +101,7 @@ RestoreAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
 
 ## Improving the performance of restore bulk actions
 

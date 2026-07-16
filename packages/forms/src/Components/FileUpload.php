@@ -903,9 +903,11 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         },
                         disabledSvgEditingMessage: <?= Js::from(__('filament-forms::components.file_upload.editor.svg.messages.disabled')) ?>,
                         getUploadedFilesUsing: async () => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'getUploadedFiles',
+                            return await Livewire.fireAction(
+                                $wire.__instance,
+                                'callSchemaComponentMethod',
+                                [<?= Js::from($key) ?>, 'getUploadedFiles'],
+                                { async: true },
                             )
                         },
                         hasCircleCropper: <?= Js::from($hasCircleCropper) ?>,

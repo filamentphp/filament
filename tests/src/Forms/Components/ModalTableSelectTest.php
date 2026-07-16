@@ -1,5 +1,8 @@
 <?php
 
+namespace Filament\Tests\Forms\Components;
+
+use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\ModalTableSelect;
@@ -20,6 +23,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use LogicException;
 
 use function Filament\Tests\livewire;
 

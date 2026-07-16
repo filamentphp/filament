@@ -18,7 +18,7 @@ You can use the checkbox component to render a checkbox input that can be used t
 </label>
 ```
 
-<AutoScreenshot name="components/checkbox/simple" alt="Checkboxes with labels" version="4.x" />
+<AutoScreenshot name="components/checkbox/simple" alt="Checkboxes with labels" version="5.x" />
 
 ## Triggering the error state of the checkbox
 

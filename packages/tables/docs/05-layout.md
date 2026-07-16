@@ -49,9 +49,9 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/layout/stacked-on-mobile" alt="Table with stacked mobile layout on desktop" version="4.x" />
+<AutoScreenshot name="tables/layout/stacked-on-mobile" alt="Table with stacked mobile layout on desktop" version="5.x" />
 
-<AutoScreenshot name="tables/layout/stacked-on-mobile/mobile" alt="Table with stacked mobile layout on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/stacked-on-mobile/mobile" alt="Table with stacked mobile layout on mobile" version="5.x" />
 
 On mobile, each row displays as a card with the column label above its value. If you have sortable columns, a sort dropdown appears at the top of the table on mobile, allowing users to sort without the traditional header row. Bulk selection is also supported, with a checkbox appearing in the header area.
 
@@ -61,9 +61,9 @@ This approach works well when you want a quick responsive solution without restr
 
 Filament lets you build responsive table-like interfaces, without touching HTML or CSS. These layouts let you define exactly where content appears in a table row, at each responsive breakpoint.
 
-<AutoScreenshot name="tables/layout/demo" alt="Table with responsive layout" version="4.x" />
+<AutoScreenshot name="tables/layout/demo" alt="Table with responsive layout" version="5.x" />
 
-<AutoScreenshot name="tables/layout/demo/mobile" alt="Table with responsive layout on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/demo/mobile" alt="Table with responsive layout on mobile" version="5.x" />
 
 ### Allowing columns to stack on mobile
 
@@ -85,9 +85,9 @@ Split::make([
 ])
 ```
 
-<AutoScreenshot name="tables/layout/split" alt="Table with a split layout" version="4.x" />
+<AutoScreenshot name="tables/layout/split" alt="Table with a split layout" version="5.x" />
 
-<AutoScreenshot name="tables/layout/split/mobile" alt="Table with a split layout on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/split/mobile" alt="Table with a split layout on mobile" version="5.x" />
 
 A `Split` component is used to wrap around columns, and allow them to stack on mobile.
 
@@ -112,9 +112,9 @@ Split::make([
 
 In this example, the columns will only appear horizontally aside each other from `md` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) devices onwards:
 
-<AutoScreenshot name="tables/layout/split-desktop" alt="Table with a split layout on desktop" version="4.x" />
+<AutoScreenshot name="tables/layout/split-desktop" alt="Table with a split layout on desktop" version="5.x" />
 
-<AutoScreenshot name="tables/layout/split-desktop/mobile" alt="Table with a stacked layout on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/split-desktop/mobile" alt="Table with a stacked layout on mobile" version="5.x" />
 
 ### Preventing a column from creating whitespace
 
@@ -140,9 +140,9 @@ Split::make([
 
 The other columns which are allowed to `grow()` will adjust to consume the newly-freed space:
 
-<AutoScreenshot name="tables/layout/grow-disabled" alt="Table with a column that doesn't grow" version="4.x" />
+<AutoScreenshot name="tables/layout/grow-disabled" alt="Table with a column that doesn't grow" version="5.x" />
 
-<AutoScreenshot name="tables/layout/grow-disabled/mobile" alt="Table with a column that doesn't grow on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/grow-disabled/mobile" alt="Table with a column that doesn't grow on mobile" version="5.x" />
 
 ### Stacking within a split
 
@@ -171,9 +171,9 @@ Split::make([
 ])
 ```
 
-<AutoScreenshot name="tables/layout/stack" alt="Table with a stack" version="4.x" />
+<AutoScreenshot name="tables/layout/stack" alt="Table with a stack" version="5.x" />
 
-<AutoScreenshot name="tables/layout/stack/mobile" alt="Table with a stack on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/stack/mobile" alt="Table with a stack on mobile" version="5.x" />
 
 #### Hiding a stack on mobile
 
@@ -202,9 +202,9 @@ Split::make([
 ])
 ```
 
-<AutoScreenshot name="tables/layout/stack-hidden-on-mobile" alt="Table with a stack" version="4.x" />
+<AutoScreenshot name="tables/layout/stack-hidden-on-mobile" alt="Table with a stack" version="5.x" />
 
-<AutoScreenshot name="tables/layout/stack-hidden-on-mobile/mobile" alt="Table with no stack on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/stack-hidden-on-mobile/mobile" alt="Table with no stack on mobile" version="5.x" />
 
 #### Aligning stacked content
 
@@ -240,7 +240,7 @@ Split::make([
 
 Ensure that the columns within the stack have `grow(false)` set, otherwise they will stretch to fill the entire width of the stack and follow their own alignment configuration instead of the stack's.
 
-<AutoScreenshot name="tables/layout/stack-aligned-right" alt="Table with a stack aligned right" version="4.x" />
+<AutoScreenshot name="tables/layout/stack-aligned-right" alt="Table with a stack aligned right" version="5.x" />
 
 #### Spacing stacked content
 
@@ -258,7 +258,7 @@ Stack::make([
 ])->space(1)
 ```
 
-<AutoScreenshot name="tables/layout/stack-spaced" alt="Table with spaced stacked content" version="4.x" />
+<AutoScreenshot name="tables/layout/stack-spaced" alt="Table with spaced stacked content" version="5.x" />
 
 ### Controlling column width using a grid
 
@@ -283,7 +283,7 @@ Grid::make([
 
 These columns will always consume equal width within the grid, from the `lg` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview).
 
-<AutoScreenshot name="tables/layout/column-grid" alt="Table with a grid column layout" version="4.x" />
+<AutoScreenshot name="tables/layout/column-grid" alt="Table with a grid column layout" version="5.x" />
 
 You may choose to customize the number of columns within the grid at other breakpoints:
 
@@ -388,9 +388,9 @@ Panel::make([
 ])->collapsed(false)
 ```
 
-<AutoScreenshot name="tables/layout/collapsible" alt="Table with collapsible content" version="4.x" />
+<AutoScreenshot name="tables/layout/collapsible" alt="Table with collapsible content" version="5.x" />
 
-<AutoScreenshot name="tables/layout/collapsible/mobile" alt="Table with collapsible content on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/collapsible/mobile" alt="Table with collapsible content on mobile" version="5.x" />
 
 ### Arranging records into a grid
 
@@ -425,9 +425,9 @@ In this example, the rows will be displayed in a grid:
 
 These settings are fully customizable, any [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) from `sm` to `2xl` can contain `1` to `12` columns.
 
-<AutoScreenshot name="tables/layout/grid" alt="Table with grid layout" version="4.x" />
+<AutoScreenshot name="tables/layout/grid" alt="Table with grid layout" version="5.x" />
 
-<AutoScreenshot name="tables/layout/grid/mobile" alt="Table with grid layout on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/grid/mobile" alt="Table with grid layout on mobile" version="5.x" />
 
 ### Custom HTML
 

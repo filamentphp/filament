@@ -22,9 +22,9 @@ SelectFilter::make('status')
 
 The `options()` that are passed to the filter are the same as those that are passed to the [select field](../../forms/select).
 
-<AutoScreenshot name="tables/filters/select" alt="Table with select filter" version="4.x" />
+<AutoScreenshot name="tables/filters/select" alt="Table with select filter" version="5.x" />
 
-<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableFilters" version="5.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="danger">
     `options()` is a UI affordance, not an authorization boundary. The list constrains what the dropdown displays, but the submitted value is not checked against it before the filter runs. A user tampering with the Livewire request can submit any value to the filter's state — `apply()` will pass it straight into `whereIn`/`where` on the query.
@@ -48,7 +48,7 @@ SelectFilter::make('status')
     ->attribute('status_id')
 ```
 
-<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `attribute()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableFilters" version="5.x">As well as allowing a static value, the `attribute()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Multi-select filters
 
@@ -66,7 +66,7 @@ SelectFilter::make('status')
     ])
 ```
 
-<AutoScreenshot name="tables/filters/multi-select" alt="Table with a multi-select filter" version="4.x" />
+<AutoScreenshot name="tables/filters/multi-select" alt="Table with a multi-select filter" version="5.x" />
 
 ## Relationship select filters
 
@@ -179,5 +179,5 @@ SelectFilter::make('status')
     ->default(['draft', 'reviewing'])
 ```
 
-<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableFilters" version="5.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

@@ -97,7 +97,7 @@ trait HasStateBindingModifiers
                 return $isOptimisticallyLive ? ['live'] : [];
             }
 
-            return ['blur'];
+            return ['live', 'blur'];
         }
 
         if (filled($this->liveDebounce)) {

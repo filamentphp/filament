@@ -8,7 +8,7 @@ import Aside from "@components/Aside.astro"
 
 Global search allows you to search across all of your resource records, from anywhere in the app.
 
-<AutoScreenshot name="panels/resources/global-search" alt="Global search" version="4.x" />
+<AutoScreenshot name="panels/resources/global-search" alt="Global search" version="5.x" />
 
 ## Setting global search result titles
 
@@ -62,7 +62,7 @@ public static function getGlobalSearchResultDetails(Model $record): array
 
 In this example, the category and author of the record will be displayed below its title in the search result.
 
-<AutoScreenshot name="panels/resources/global-search-details" alt="Global search with extra details" version="4.x" />
+<AutoScreenshot name="panels/resources/global-search-details" alt="Global search with extra details" version="5.x" />
 
 However, the `category` and `author` relationships will be lazy-loaded, which will result in poor results performance. To [eager-load](https://laravel.com/docs/eloquent-relationships#eager-loading) these relationships, we must override the `getGlobalSearchEloquentQuery()` method:
 
@@ -104,7 +104,7 @@ public static function getGlobalSearchResultActions(Model $record): array
 
 You can learn more about how to style action buttons [here](../actions/overview).
 
-<AutoScreenshot name="panels/resources/global-search-actions" alt="Global search with actions" version="4.x" />
+<AutoScreenshot name="panels/resources/global-search-actions" alt="Global search with actions" version="5.x" />
 
 ### Opening URLs from global search actions
 
@@ -251,7 +251,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/resources/global-search-key-binding" alt="Global search field with key binding suffix" version="4.x" />
+<AutoScreenshot name="panels/resources/global-search-key-binding" alt="Global search field with key binding suffix" version="5.x" />
 
 To customize the suffix yourself, you can pass a string or function to the `globalSearchFieldSuffix()` method. For example, to provide a custom key binding suffix for each platform manually:
 

@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Filament allows you to display widgets inside pages, below the header and above the footer.
 
-<AutoScreenshot name="panels/resources/widgets" alt="A resource page with header widgets" version="4.x" />
+<AutoScreenshot name="panels/resources/widgets" alt="A resource page with header widgets" version="5.x" />
 
 You can use an existing [dashboard widget](../widgets), or create one specifically for the resource.
 

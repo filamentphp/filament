@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Forms\Components;
+
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Support\RawJs;
@@ -7,6 +9,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use LogicException;
 
 use function Filament\Tests\livewire;
 

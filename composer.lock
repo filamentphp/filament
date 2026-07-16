@@ -2902,11 +2902,11 @@
         },
         {
             "name": "filament/support",
-            "version": "4.x-dev",
+            "version": "5.x-dev",
             "dist": {
                 "type": "path",
                 "url": "packages/support",
-                "reference": "29d6fbba7e13027d1cb215346ef9ab06cd78e69a"
+                "reference": "3d327e9683c1900792db64dfd884084ababa2f30"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
@@ -2915,7 +2915,7 @@
                 "illuminate/contracts": "^11.28|^12.0|^13.0",
                 "kirschbaum-development/eloquent-power-joins": "^4.0",
                 "league/uri-components": "^7.0",
-                "livewire/livewire": "^3.5",
+                "livewire/livewire": "^4.1",
                 "nette/php-generator": "^4.0",
                 "php": "^8.2",
                 "ryangjchandler/blade-capture-directive": "^1.0",
@@ -5287,16 +5287,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.8.1",
+            "version": "v4.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "0a7c2ec6c5c958cab32870ce5a7836a2fca0b459"
+                "reference": "6a9dd03f45a4b200abfd0ff644745b23fa7baaaa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/0a7c2ec6c5c958cab32870ce5a7836a2fca0b459",
-                "reference": "0a7c2ec6c5c958cab32870ce5a7836a2fca0b459",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/6a9dd03f45a4b200abfd0ff644745b23fa7baaaa",
+                "reference": "6a9dd03f45a4b200abfd0ff644745b23fa7baaaa",
                 "shasum": ""
             },
             "require": {
@@ -5351,7 +5351,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.8.1"
+                "source": "https://github.com/livewire/livewire/tree/v4.3.1"
             },
             "funding": [
                 {
@@ -5359,7 +5359,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-02T08:18:44+00:00"
+            "time": "2026-06-02T08:58:52+00:00"
         },
         {
             "name": "maennchen/zipstream-php",

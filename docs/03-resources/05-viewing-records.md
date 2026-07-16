@@ -3,7 +3,7 @@ title: Viewing records
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-<AutoScreenshot name="panels/resources/viewing" alt="Resource view page" version="4.x" />
+<AutoScreenshot name="panels/resources/viewing" alt="Resource view page" version="5.x" />
 
 ## Creating a resource with a View page
 

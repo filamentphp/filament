@@ -22,7 +22,7 @@ EditAction::make()
     ])
 ```
 
-<AutoScreenshot name="actions/edit-action/modal" alt="Edit action modal" version="4.x" />
+<AutoScreenshot name="actions/edit-action/modal" alt="Edit action modal" version="5.x" />
 
 ## Customizing data before filling the form
 
@@ -39,7 +39,7 @@ EditAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     Filament fills the form using the record's array representation, which is sent to the browser as part of the Livewire request. If your model has a column containing binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column, it cannot be serialized to JSON and the modal will fail to open, often with no error in the Laravel log.
@@ -68,7 +68,7 @@ EditAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$data`, the `mutateDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$data`, the `mutateDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Customizing the saving process
 
@@ -86,7 +86,7 @@ EditAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$record` and `$data`, the `using()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$record` and `$data`, the `using()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Redirecting after saving
 
@@ -111,7 +111,7 @@ EditAction::make()
     ]))
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Customizing the save notification
 
@@ -126,7 +126,7 @@ EditAction::make()
     ->successNotificationTitle('User updated')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `successNotification()` method:
 
@@ -143,7 +143,7 @@ EditAction::make()
     )
 ```
 
-<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 To disable the notification altogether, use the `successNotification(null)` method:
 
@@ -184,7 +184,7 @@ EditAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
 
 ## Halting the saving process
 

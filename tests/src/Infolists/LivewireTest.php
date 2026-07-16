@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Infolists;
+
 use Filament\Infolists;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;

@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Livewire\Component;
+use Livewire\Finder\Finder;
 use Livewire\Livewire;
-use Livewire\Mechanisms\ComponentRegistry;
 use LogicException;
 use ReflectionClass;
 
@@ -686,7 +686,7 @@ trait HasComponents
 
     protected function queueLivewireComponentForRegistration(string $component): void
     {
-        $componentName = app(ComponentRegistry::class)->getName($component);
+        [$namespace, $componentName] = app(Finder::class)->parseNamespaceAndName($component);
 
         $this->livewireComponents[$componentName] = $component;
     }

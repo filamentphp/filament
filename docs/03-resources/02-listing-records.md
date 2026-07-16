@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
-<AutoScreenshot name="panels/resources/listing" alt="Resource listing page" version="4.x" />
+<AutoScreenshot name="panels/resources/listing" alt="Resource listing page" version="5.x" />
 
 ## Using tabs to filter the records
 
@@ -27,7 +27,7 @@ public function getTabs(): array
 }
 ```
 
-<AutoScreenshot name="panels/resources/listing-tabs" alt="Resource listing page with tabs" version="4.x" />
+<AutoScreenshot name="panels/resources/listing-tabs" alt="Resource listing page with tabs" version="5.x" />
 
 ### Customizing the filter tab labels
 
@@ -60,7 +60,7 @@ Tab::make()
     ->icon('heroicon-m-user-group')
 ```
 
-<AutoScreenshot name="panels/resources/listing-tabs-icons" alt="Resource listing page with tab icons" version="4.x" />
+<AutoScreenshot name="panels/resources/listing-tabs-icons" alt="Resource listing page with tab icons" version="5.x" />
 
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
@@ -95,9 +95,9 @@ Tab::make()
     ->badgeColor('success')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="panels/resources/listing-tabs-badge-colors" alt="Resource listing page with colored tab badges" version="4.x" />
+<AutoScreenshot name="panels/resources/listing-tabs-badge-colors" alt="Resource listing page with colored tab badges" version="5.x" />
 
 #### Deferring the loading of filter tab badges
 

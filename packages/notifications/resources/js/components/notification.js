@@ -82,11 +82,10 @@ export default (Alpine) => {
                 return
             }
 
-            this.unsubscribeLivewireHook = Livewire.hook(
-                'commit',
-                ({ component, succeed }) => {
+            this.unsubscribeLivewireHook = Livewire.interceptMessage(
+                ({ message, onSuccess }) => {
                     if (
-                        !component.snapshot.data
+                        !message.component.snapshot.data
                             .isFilamentNotificationsComponent
                     ) {
                         return
@@ -99,60 +98,54 @@ export default (Alpine) => {
                             this.$el.getBoundingClientRect().top
                         const oldTop = getTop()
 
-                        succeed(() => {
-                            // `succeed` runs before Livewire morphs the DOM, which it
-                            // defers using two nested `queueMicrotask()` calls, so the
-                            // animation is deferred in the same way to run once the DOM
-                            // has been morphed, before the browser paints, so the new
-                            // position can be measured and the animation started without
-                            // the notification flashing in its final position.
-                            queueMicrotask(() =>
-                                queueMicrotask(() => {
-                                    if (!this.isShown) {
-                                        return
-                                    }
+                        onSuccess(({ onRender }) => {
+                            // `onRender` runs once the DOM has been morphed, inside a
+                            // `requestAnimationFrame()` before the browser paints, so the
+                            // new position can be measured and the animation started
+                            // without the notification flashing in its final position.
+                            onRender(() => {
+                                if (!this.isShown) {
+                                    return
+                                }
 
-                                    // Finish any running animations so they do not distort
-                                    // the measurement of the new position.
-                                    this.$el
-                                        .getAnimations()
-                                        .forEach((animation) =>
-                                            animation.finish(),
-                                        )
+                                // Finish any running animations so they do not distort
+                                // the measurement of the new position.
+                                this.$el
+                                    .getAnimations()
+                                    .forEach((animation) => animation.finish())
 
-                                    const newTop = getTop()
+                                const newTop = getTop()
 
-                                    if (oldTop === newTop) {
-                                        return
-                                    }
+                                if (oldTop === newTop) {
+                                    return
+                                }
 
-                                    // Honor `prefers-reduced-motion`: `element.animate()`
-                                    // (the Web Animations API) is not covered by the CSS
-                                    // reduced-motion reset, so skip the FLIP reposition
-                                    // entirely — the element is already at its final
-                                    // position after the morph.
-                                    if (
-                                        window.matchMedia(
-                                            '(prefers-reduced-motion: reduce)',
-                                        ).matches
-                                    ) {
-                                        return
-                                    }
+                                // Honor `prefers-reduced-motion`: `element.animate()`
+                                // (the Web Animations API) is not covered by the CSS
+                                // reduced-motion reset, so skip the FLIP reposition
+                                // entirely — the element is already at its final
+                                // position after the morph.
+                                if (
+                                    window.matchMedia(
+                                        '(prefers-reduced-motion: reduce)',
+                                    ).matches
+                                ) {
+                                    return
+                                }
 
-                                    this.$el.animate(
-                                        [
-                                            {
-                                                transform: `translateY(${oldTop - newTop}px)`,
-                                            },
-                                            { transform: 'translateY(0px)' },
-                                        ],
+                                this.$el.animate(
+                                    [
                                         {
-                                            duration: this.transitionDuration,
-                                            easing: this.transitionEasing,
+                                            transform: `translateY(${oldTop - newTop}px)`,
                                         },
-                                    )
-                                }),
-                            )
+                                        { transform: 'translateY(0px)' },
+                                    ],
+                                    {
+                                        duration: this.transitionDuration,
+                                        easing: this.transitionEasing,
+                                    },
+                                )
+                            })
                         })
                     })
                 },

@@ -15,7 +15,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/simple" alt="Text input" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/simple" alt="Text input" version="5.x" />
 
 ## Setting the HTML input type
 
@@ -42,7 +42,7 @@ TextInput::make('backgroundColor')
     ->type('color')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/color" alt="Text input with color type" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/color" alt="Text input with color type" version="5.x" />
 
 The individual type methods also allow you to pass in a boolean value to control if the field should be that or not:
 
@@ -58,7 +58,7 @@ TextInput::make('text')
     ->url(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value these methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value these methods also accept a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting the HTML input mode
 
@@ -72,7 +72,7 @@ TextInput::make('text')
     ->inputMode('decimal')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inputMode()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `inputMode()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting the numeric step
 
@@ -86,7 +86,7 @@ TextInput::make('number')
     ->step(100)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `step()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `step()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Autocompleting text
 
@@ -110,7 +110,7 @@ TextInput::make('password')
     ->autocomplete(false)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autocomplete()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `autocomplete()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 For more complex autocomplete options, text inputs also support [datalists](#autocompleting-text-with-a-datalist).
 
@@ -132,7 +132,7 @@ TextInput::make('manufacturer')
 
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking to strictly limit users to a set of predefined options, check out the [select field](select).
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `datalist()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `datalist()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Autocapitalizing text
 
@@ -145,7 +145,7 @@ TextInput::make('name')
     ->autocapitalize('words')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autocapitalize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `autocapitalize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Adding affix text aside the field
 
@@ -159,9 +159,9 @@ TextInput::make('domain')
     ->suffix('.com')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="5.x" />
 
 ### Using icons as affixes
 
@@ -176,9 +176,9 @@ TextInput::make('domain')
     ->suffixIcon(Heroicon::GlobeAlt)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="5.x" />
 
 #### Setting the affix icon's color
 
@@ -194,9 +194,9 @@ TextInput::make('domain')
     ->suffixIconColor('success')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/text-input/suffix-icon-color" alt="Text input with suffix icon in color" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/suffix-icon-color" alt="Text input with suffix icon in color" version="5.x" />
 
 ### Using actions as affixes
 
@@ -215,7 +215,7 @@ TextInput::make('cost')
     )
 ```
 
-<AutoScreenshot name="forms/fields/actions/suffix" alt="Text input with suffix action" version="4.x" />
+<AutoScreenshot name="forms/fields/actions/suffix" alt="Text input with suffix action" version="5.x" />
 
 ## Revealable password inputs
 
@@ -229,7 +229,7 @@ TextInput::make('password')
     ->revealable()
 ```
 
-<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the input should be revealable or not:
 
@@ -241,7 +241,7 @@ TextInput::make('password')
     ->revealable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `revealable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `revealable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Allowing the text to be copied to the clipboard
 
@@ -255,7 +255,7 @@ TextInput::make('apiKey')
     ->copyable(copyMessage: 'Copied!', copyMessageDuration: 1500)
 ```
 
-<AutoScreenshot name="forms/fields/text-input/copyable" alt="Text input with copyable button" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/copyable" alt="Text input with copyable button" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
@@ -267,7 +267,7 @@ TextInput::make('apiKey')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `copyable()` method parameters also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `copyable()` method parameters also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     This feature only works when SSL is enabled for the app.
@@ -287,7 +287,7 @@ TextInput::make('birthday')
     ->placeholder('MM/DD/YYYY')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/mask" alt="Text input with mask" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/mask" alt="Text input with mask" version="5.x" />
 
 To use a [dynamic mask](https://alpinejs.dev/plugins/mask#mask-functions), wrap the JavaScript in a `RawJs` object:
 
@@ -301,7 +301,7 @@ TextInput::make('cardNumber')
     JS))
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `mask()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `mask()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Alpine.js will send the entire masked value to the server, so you may need to strip certain characters from the state before validating the field and saving it. You can do this with the `stripCharacters()` method, passing in a character or an array of characters to remove from the masked value:
 
@@ -315,7 +315,7 @@ TextInput::make('amount')
     ->numeric()
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `stripCharacters()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `stripCharacters()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Trimming whitespace
 
@@ -364,7 +364,7 @@ TextInput::make('name')
     ->readOnly(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `readOnly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `readOnly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Text input validation
 
@@ -391,7 +391,7 @@ TextInput::make('code')
     ->length(8)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minLength()`, `maxLength()` and `length()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `minLength()`, `maxLength()` and `length()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Size validation
 
@@ -406,7 +406,7 @@ TextInput::make('number')
     ->maxValue(100)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minValue()` and `maxValue()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `minValue()` and `maxValue()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Phone number validation
 
@@ -432,4 +432,4 @@ TextInput::configureUsing(function (TextInput $component): void {
 });
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `telRegex()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `telRegex()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

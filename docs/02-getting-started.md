@@ -12,7 +12,7 @@ Once you have [installed Filament](introduction/installation#installing-the-pane
 
 To start, visit `/admin` and sign in with a user account. You will be redirected to the default dashboard of the panel.
 
-<AutoScreenshot name="panels/dashboard" alt="The default Filament dashboard with widgets" version="4.x" />
+<AutoScreenshot name="panels/dashboard" alt="The default Filament dashboard with widgets" version="5.x" />
 
 ## Resources
 
@@ -29,7 +29,7 @@ Each resource usually has an item in the sidebar, which is automatically registe
 
 To start your journey by creating a resource, visit the [Resources documentation](resources).
 
-<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="4.x" />
+<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="5.x" />
 
 ## Widgets
 

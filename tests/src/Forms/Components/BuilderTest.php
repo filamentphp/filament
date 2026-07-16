@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Forms\Components;
+
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;

@@ -50,7 +50,7 @@ describe('component state binding', function (): void {
             ->live(onBlur: true);
 
         expect($component)
-            ->getStateBindingModifiers()->toBe(['blur']);
+            ->getStateBindingModifiers()->toBe(['live', 'blur']);
     });
 
     test('component state binding can be debounced via `live(debounce:)`', function (): void {

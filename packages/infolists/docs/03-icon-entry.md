@@ -20,9 +20,9 @@ IconEntry::make('status')
     })
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" version="5.x" />
 
 ## Customizing the color
 
@@ -49,9 +49,9 @@ IconEntry::make('status')
     })
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" version="5.x" />
 
 ## Customizing the size
 
@@ -65,9 +65,9 @@ IconEntry::make('status')
     ->size(IconSize::Medium)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="5.x" />
 
 ## Handling booleans
 
@@ -82,7 +82,7 @@ IconEntry::make('is_featured')
 
 > If this attribute in the model class is already cast as a `bool` or `boolean`, Filament is able to detect this, and you do not need to use `boolean()` manually.
 
-<AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the icon should be boolean or not:
 
@@ -93,7 +93,7 @@ IconEntry::make('is_featured')
     ->boolean(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the boolean icons
 
@@ -109,9 +109,9 @@ IconEntry::make('is_featured')
     ->falseIcon(Heroicon::OutlinedXMark)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" version="5.x" />
 
 ### Customizing the boolean colors
 
@@ -126,6 +126,6 @@ IconEntry::make('is_featured')
     ->falseColor('warning')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" version="4.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" version="5.x" />

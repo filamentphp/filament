@@ -9,6 +9,7 @@ use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 use function Filament\Tests\livewire;
 
@@ -70,7 +71,7 @@ it('blocks `_finishUpload` when no schema component matches', function (): void 
 
 it('allows `_finishUpload` when the property path maps to a `FileUpload` field', function (): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
-        ->call('_finishUpload', 'data.photo.fileKey', ['livewire-tmp/legitimate.jpg'], false)
+        ->call('_finishUpload', 'data.photo.fileKey', [TemporaryUploadedFile::signPath('livewire-tmp/legitimate.jpg')], false)
         ->assertDispatched('upload:finished');
 });
 
@@ -100,7 +101,7 @@ it('blocks `_startUpload` when a component supporting file attachments has them 
 
 it('allows `_finishUpload` for `componentFileAttachments.{statePath}` uploads targeting a component that supports file attachments', function (): void {
     livewire(RestrictedUploadsTestComponentWithMarkdownEditor::class)
-        ->call('_finishUpload', 'componentFileAttachments.data.content', ['livewire-tmp/legitimate.jpg'], false)
+        ->call('_finishUpload', 'componentFileAttachments.data.content', [TemporaryUploadedFile::signPath('livewire-tmp/legitimate.jpg')], false)
         ->assertDispatched('upload:finished');
 });
 
@@ -138,6 +139,30 @@ it('blocks `_startUpload` for a property name that exists on neither of the mult
     livewire(RestrictedUploadsTestComponentWithMultipleSchemas::class)
         ->call('_startUpload', 'photoForm.somethingElse.fileKey', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertForbidden();
+});
+
+it('blocks `_uploadErrored` for a property path that does not map to any schema component', function (): void {
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
+        ->call('_uploadErrored', 'data.somethingElse.fileKey', null, false)
+        ->assertForbidden();
+});
+
+it('allows `_uploadErrored` when the property path maps to a `FileUpload` field', function (): void {
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
+        ->call('_uploadErrored', 'data.photo.fileKey', null, false)
+        ->assertDispatched('upload:errored');
+});
+
+it('blocks `_removeUpload` for a property path that does not map to any schema component', function (): void {
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
+        ->call('_removeUpload', 'data.somethingElse.fileKey', 'tampered.jpg')
+        ->assertForbidden();
+});
+
+it('allows `_removeUpload` when the property path maps to a `FileUpload` field', function (): void {
+    livewire(RestrictedUploadsTestComponentWithFileUpload::class)
+        ->call('_removeUpload', 'data.photo.fileKey', 'absent.jpg')
+        ->assertOk();
 });
 
 class UnrestrictedUploadsTestComponent extends Livewire

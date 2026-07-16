@@ -14,7 +14,7 @@ use Filament\Infolists\Components\ColorEntry;
 ColorEntry::make('color')
 ```
 
-<AutoScreenshot name="infolists/entries/color/simple" alt="Color entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/color/simple" alt="Color entry" version="5.x" />
 
 ## Allowing the color to be copied to the clipboard
 
@@ -29,7 +29,7 @@ ColorEntry::make('color')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="infolists/entries/color/copyable" alt="Color entry with a button to copy it" version="4.x" />
+<AutoScreenshot name="infolists/entries/color/copyable" alt="Color entry with a button to copy it" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the color should be copyable or not:
 
@@ -40,4 +40,4 @@ ColorEntry::make('color')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>

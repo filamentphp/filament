@@ -20,8 +20,8 @@ body:
     id: package-version
     attributes:
       label: Package Version
-      description: Provide the full version number of the package you have installed (e.g., v3.0.0).
-      placeholder: v3.0.0
+      description: Provide the full version number of the package you have installed (e.g., v5.0.0).
+      placeholder: v5.0.0
     validations:
       required: true
   - type: textarea

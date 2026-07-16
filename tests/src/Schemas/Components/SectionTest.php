@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Schemas\Components;
+
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;

@@ -51,14 +51,20 @@ const LocalFilesPlugin = ({
     statePath,
     uploadingMessage,
 }) => {
-    const getFileAttachmentUrl = (fileKey) =>
-        get$WireUsing().callSchemaComponentMethod(
-            key,
-            'getUploadedFileAttachmentTemporaryUrl',
-            {
-                attachment: fileKey,
-            },
+    const getFileAttachmentUrl = (fileKey) => {
+        return Livewire.fireAction(
+            get$WireUsing().__instance,
+            'callSchemaComponentMethod',
+            [
+                key,
+                'getUploadedFileAttachmentTemporaryUrl',
+                {
+                    attachment: fileKey,
+                },
+            ],
+            { async: true },
         )
+    }
 
     return new Plugin({
         key: new PluginKey('localFiles'),

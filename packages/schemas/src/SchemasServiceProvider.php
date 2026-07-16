@@ -48,7 +48,7 @@ class SchemasServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsSchemas);
 
         on('call', function (object $component, string $method, array $params): void {
-            if (! in_array($method, ['_startUpload', '_finishUpload'], strict: true)) {
+            if (! in_array($method, ['_startUpload', '_finishUpload', '_uploadErrored', '_removeUpload'], strict: true)) {
                 return;
             }
 

@@ -30,7 +30,7 @@ class EditPost extends Component
 }
 ```
 
-<AutoScreenshot name="notifications/success" alt="Success notification" version="4.x" />
+<AutoScreenshot name="notifications/success" alt="Success notification" version="5.x" />
 
 ## Setting a title
 
@@ -82,7 +82,7 @@ new FilamentNotification()
     .send()
 ```
 
-<AutoScreenshot name="notifications/icon" alt="Notification with icon" version="4.x" />
+<AutoScreenshot name="notifications/icon" alt="Notification with icon" version="5.x" />
 
 Notifications often have a status like `success`, `warning`, `danger` or `info`. Instead of manually setting the corresponding [icons](../styling/icons) and [colors](../styling/colors), there's a `status()` method which you can pass the status. You may also use the dedicated `success()`, `warning()`, `danger()` and `info()` methods instead. So, cleaning up the above example would look like this:
 
@@ -104,7 +104,7 @@ new FilamentNotification()
     .send()
 ```
 
-<AutoScreenshot name="notifications/statuses" alt="Notifications with various statuses" version="4.x" />
+<AutoScreenshot name="notifications/statuses" alt="Notifications with various statuses" version="5.x" />
 
 ## Setting a background color
 
@@ -128,7 +128,7 @@ new FilamentNotification()
     .send()
 ```
 
-<AutoScreenshot name="notifications/color" alt="Notification with background color" version="4.x" />
+<AutoScreenshot name="notifications/color" alt="Notification with background color" version="5.x" />
 
 ## Setting a duration
 
@@ -224,7 +224,7 @@ new FilamentNotification()
     .send()
 ```
 
-<AutoScreenshot name="notifications/body" alt="Notification with body text" version="4.x" />
+<AutoScreenshot name="notifications/body" alt="Notification with body text" version="5.x" />
 
 ## Adding actions to notifications
 
@@ -263,7 +263,7 @@ new FilamentNotification()
     .send()
 ```
 
-<AutoScreenshot name="notifications/actions" alt="Notification with actions" version="4.x" />
+<AutoScreenshot name="notifications/actions" alt="Notification with actions" version="5.x" />
 
 You can learn more about how to style action buttons [here](../actions/overview).
 
@@ -498,4 +498,4 @@ Notifications::alignment(Alignment::Start);
 Notifications::verticalAlignment(VerticalAlignment::End);
 ```
 
-<AutoScreenshot name="notifications/positioning" alt="Notification positioned at the bottom start of the page" version="4.x" />
+<AutoScreenshot name="notifications/positioning" alt="Notification positioned at the bottom start of the page" version="5.x" />

@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Forms;
+
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
