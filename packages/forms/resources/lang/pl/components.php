@@ -122,9 +122,29 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Wybór koloru',
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Pobierz',
+            ],
+
+            'open' => [
+                'label' => 'Otwórz w nowej karcie',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Edytor obrazów',
 
             'actions' => [
 
@@ -268,6 +288,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akcje',
+            ],
+
+            'reorder' => [
+                'label' => 'Zmień kolejność',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +370,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akcje',
+            ],
+
+            'reorder' => [
+                'label' => 'Zmień kolejność',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -604,6 +648,10 @@ return [
             'searching_message' => 'Wyszukiwanie...',
         ],
 
+        'toolbar' => [
+            'aria_label' => 'Pasek narzędzi edytora',
+        ],
+
         'tools' => [
             'align_center' => 'Wyśrodkuj',
             'align_end' => 'Wyrównaj do prawej',
@@ -742,6 +790,10 @@ return [
         ],
 
         'placeholder' => 'Nowy tag',
+
+        'tag_added' => 'Dodano: :tag',
+
+        'tag_removed' => 'Usunięto: :tag',
 
     ],
 
