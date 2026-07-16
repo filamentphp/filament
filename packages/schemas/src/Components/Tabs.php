@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Concerns\CanPersistTab;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
+use Filament\Schemas\Schema;
 use Filament\Schemas\View\SchemaIconAlias;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -96,6 +97,23 @@ class Tabs extends Component implements HasEmbeddedView
         $this->components($tabs);
 
         return $this;
+    }
+
+    protected function configureChildSchema(Schema $schema, string $key): Schema
+    {
+        $schema = parent::configureChildSchema($schema, $key);
+
+        if (filled($this->getLivewireProperty())) {
+            foreach ($schema->getComponents(withOriginalKeys: true) as $tabKey => $tab) {
+                if (! $tab instanceof Tab) {
+                    continue;
+                }
+
+                $tab->key(strval($tabKey));
+            }
+        }
+
+        return $schema;
     }
 
     public function activeTab(int | Closure $activeTab): static

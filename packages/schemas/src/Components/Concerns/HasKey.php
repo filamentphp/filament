@@ -23,6 +23,9 @@ trait HasKey
         $this->key = $key;
         $this->isKeyInheritable = $isInheritable;
 
+        $this->flushCachedAbsoluteKey();
+        $this->flushCachedAbsoluteInheritanceKey();
+
         return $this;
     }
 

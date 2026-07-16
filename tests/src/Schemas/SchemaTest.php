@@ -246,6 +246,25 @@ describe('key', function (): void {
 
         expect($schema->getKey())->toBe('my-form');
     });
+
+    it('reflects a new key on a component after its absolute key was cached', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->components([
+                Text::make('Example')->key('original'),
+            ]);
+
+        $component = $schema->getComponents()[0];
+
+        // Cache the absolute key...
+        expect($component->getKey())->toBe('original');
+
+        // ...then re-key it; the change must take effect. Regression: the cached
+        // absolute key was returned, so re-keying (as the livewireProperty tabs
+        // renderer does) had no effect and left actions unresolvable.
+        $component->key('renamed');
+
+        expect($component->getKey())->toBe('renamed');
+    });
 });
 
 describe('extra attributes', function (): void {

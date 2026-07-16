@@ -1,7 +1,9 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -192,6 +194,32 @@ it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is se
 
     expect($html)->toContain("\$set('activeTab', 'all')");
     expect($html)->toContain("\$set('activeTab', 'active')");
+});
+
+it('can resolve an action inside a tab before rendering when `livewireProperty()` is set', function (): void {
+    $livewire = new class extends Livewire
+    {
+        public string $activeTab = 'first';
+    };
+
+    $schema = Schema::make($livewire)
+        ->components([
+            Tabs::make()
+                ->livewireProperty('activeTab')
+                ->tabs([
+                    'first' => Tab::make('Details')
+                        ->schema([
+                            Actions::make([Action::make('inTabAction')]),
+                        ]),
+                ]),
+        ]);
+
+    // Resolving before the schema is rendered is the condition during
+    // `mountAction()`. Regression: the tab kept its auto-generated key until
+    // render, so this returned `null` and the action was silently skipped.
+    expect($schema->getAction('inTabAction', 'first'))
+        ->not->toBeNull()
+        ->getName()->toBe('inTabAction');
 });
 
 it('returns fluent `$this` from `tabs()`', function (): void {
