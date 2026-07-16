@@ -211,6 +211,35 @@ class CreateUser extends CreateRecord
 
 Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#lifecycle-hooks).
 
+### Defining lifecycle hooks in traits
+
+Lifecycle hooks may also be defined in traits used by the page class, by suffixing the hook name with the trait's name. This works the same way as `boot()` methods in Eloquent model traits, and allows reusable traits to hook into the page lifecycle without colliding with hooks defined on the page itself:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+trait HandlesDrafts
+{
+    protected function afterCreateHandlesDrafts(): void
+    {
+        // Runs after the form fields are saved to the database, in addition
+        // to the page's own afterCreate() hook.
+    }
+}
+
+class CreateUser extends CreateRecord
+{
+    use HandlesDrafts;
+
+    protected function afterCreate(): void
+    {
+        // Both this hook and afterCreateHandlesDrafts() are called.
+    }
+}
+```
+
+The page's own hook is called first, followed by each trait hook.
+
 ## Halting the creation process
 
 At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
