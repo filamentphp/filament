@@ -1,7 +1,9 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Testing\TestAction;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -192,6 +194,12 @@ it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is se
 
     expect($html)->toContain("\$set('activeTab', 'all')");
     expect($html)->toContain("\$set('activeTab', 'active')");
+});
+
+it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
+    livewire(TabsWithLivewirePropertyAction::class)
+        ->callAction(TestAction::make('set_value')->schemaComponent('test-tabs.first'))
+        ->assertSet('actionCalled', true);
 });
 
 it('returns fluent `$this` from `tabs()`', function (): void {
@@ -399,6 +407,48 @@ class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
                         Tab::make('Deferred Tab')
                             ->badge(static fn (): int => 42)
                             ->deferBadge()
+                            ->schema([]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TabsWithLivewirePropertyAction extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public ?string $activeTab = 'first';
+
+    public bool $actionCalled = false;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Tabs::make('Test')
+                    ->key('test-tabs')
+                    ->livewireProperty('activeTab')
+                    ->tabs([
+                        'first' => Tab::make('First')
+                            ->schema([
+                                Action::make('set_value')
+                                    ->action(fn (TabsWithLivewirePropertyAction $livewire) => $livewire->actionCalled = true),
+                            ]),
+                        'second' => Tab::make('Second')
                             ->schema([]),
                     ]),
             ])
