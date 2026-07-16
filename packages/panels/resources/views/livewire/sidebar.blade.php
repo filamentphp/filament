@@ -9,7 +9,7 @@
     @endphp
 
     {{-- format-ignore-start --}}
-    <aside
+    <div
         x-data="{}"
         @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
             x-cloak
@@ -204,7 +204,7 @@
         @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_FOOTER) }}
-    </aside>
+    </div>
     {{-- format-ignore-end --}}
 
     <x-filament-actions::modals />
