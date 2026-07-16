@@ -14,6 +14,10 @@ return [
 
             'label' => 'Ryhmät',
 
+            'group' => [
+                'label' => 'Ryhmä',
+            ],
+
             'block' => [
                 'label' => 'Disjunktio (OR)',
                 'or' => 'OR',

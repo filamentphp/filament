@@ -12,6 +12,10 @@ return [
                 'label' => 'Aseta sarakkeet',
             ],
 
+            'reorder' => [
+                'label' => 'Uudelleenjärjestele sarake',
+            ],
+
             'reset' => [
                 'label' => 'Palauta',
             ],
@@ -236,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Ladataan...',
+
     'reorder_indicator' => 'Raahaa ja pudota tietueet järjestykseen.',
+
+    'result_count' => '{0} Ei tuloksia|{1} :count tulos|[2,*] :count tulosta',
 
     'selection_indicator' => [
 
