@@ -19,7 +19,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\RenderHook;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\EloquentUserProvider;
@@ -41,7 +40,6 @@ use SensitiveParameter;
 class Register extends SimplePage
 {
     use CanUseDatabaseTransactions;
-    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     /**
