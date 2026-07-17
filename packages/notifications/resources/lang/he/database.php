@@ -6,6 +6,8 @@ return [
 
         'heading' => 'התראות',
 
+        'unread_label' => 'התראה שלא נקראה',
+
         'actions' => [
 
             'clear' => [

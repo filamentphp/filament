@@ -136,6 +136,18 @@ trait CanFormatState
             return $state;
         }
 
+        // The empty-string check above guarantees `$state[0]` is a valid byte.
+        //
+        // A purely numeric string that begins with a sign, such as `-5` or `+42`,
+        // is interpreted by spreadsheet software as a number, not a formula, so it
+        // is safe to leave unescaped. This avoids corrupting legitimate values
+        // (e.g. negative numbers stored as strings). The leading-sign guard keeps
+        // this narrow: `is_numeric()` also accepts a leading tab or carriage return
+        // (e.g. "\t5"), which are formula triggers that must still be escaped.
+        if (in_array($state[0], ['-', '+'], strict: true) && is_numeric($state)) {
+            return $state;
+        }
+
         // Security: These are the formula-triggering characters escaped by
         // `League\Csv\EscapeFormula::FORMULA_STARTING_CHARS`, the CSV
         // library's own protection. XLSX exports use OpenSpout, which has

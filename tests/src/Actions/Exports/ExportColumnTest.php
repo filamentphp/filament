@@ -125,10 +125,27 @@ describe('formula injection protection', function (): void {
     })->with([
         ['=1+1', "'=1+1"],
         ['+44 1234 567890', "'+44 1234 567890"],
-        ['-5', "'-5"],
+        ['-2+3+cmd', "'-2+3+cmd"],
         ['@SUM(A1:A2)', "'@SUM(A1:A2)"],
         ["\tTabbed", "'\tTabbed"],
         ["\rReturn", "'\rReturn"],
+        // `is_numeric()` accepts a leading tab or carriage return, but these are
+        // formula triggers, so they must still be escaped rather than skipped.
+        ["\t5", "'\t5"],
+        ["\r5", "'\r5"],
+    ]);
+
+    it('leaves purely numeric strings untouched when enabled, even when they start with a formula trigger', function (string $value): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection()
+            ->fakeState($value);
+
+        expect($column->getFormattedState())->toBe($value);
+    })->with([
+        '-5',
+        '+42',
+        '-3.14',
+        '1.5e3',
     ]);
 
     it('leaves safe values untouched when enabled', function (): void {
