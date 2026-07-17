@@ -103,22 +103,12 @@ it('returns `null` from `getRecord()` when no exporter set', function (): void {
 });
 
 describe('formula injection protection', function (): void {
-    it('does not sanitize formula triggers by default', function (string $value): void {
-        $column = FakeStateExportColumn::make('title')
-            ->fakeState($value);
+    it('defaults `shouldPreventFormulaInjection()` to `true`', function (): void {
+        expect(ExportColumn::make('title')->shouldPreventFormulaInjection())->toBeTrue();
+    });
 
-        expect($column->shouldPreventFormulaInjection())->toBeFalse();
-        expect($column->getFormattedState())->toBe($value);
-    })->with([
-        '-5',
-        '+44 1234 567890',
-        '=1+1',
-        '@SUM(A1:A2)',
-    ]);
-
-    it('prefixes formula triggers with a single quote when `preventFormulaInjection()` is enabled', function (string $value, string $expected): void {
+    it('prefixes formula triggers with a single quote by default', function (string $value, string $expected): void {
         $column = FakeStateExportColumn::make('title')
-            ->preventFormulaInjection()
             ->fakeState($value);
 
         expect($column->getFormattedState())->toBe($expected);
@@ -135,9 +125,8 @@ describe('formula injection protection', function (): void {
         ["\r5", "'\r5"],
     ]);
 
-    it('leaves purely numeric strings untouched when enabled, even when they start with a formula trigger', function (string $value): void {
+    it('leaves purely numeric strings untouched by default, even when they start with a formula trigger', function (string $value): void {
         $column = FakeStateExportColumn::make('title')
-            ->preventFormulaInjection()
             ->fakeState($value);
 
         expect($column->getFormattedState())->toBe($value);
@@ -148,17 +137,15 @@ describe('formula injection protection', function (): void {
         '1.5e3',
     ]);
 
-    it('leaves safe values untouched when enabled', function (): void {
+    it('leaves safe values untouched by default', function (): void {
         $column = FakeStateExportColumn::make('title')
-            ->preventFormulaInjection()
             ->fakeState('Hello world');
 
         expect($column->getFormattedState())->toBe('Hello world');
     });
 
-    it('passes through empty and `null` states when enabled', function (mixed $value, ?string $expected): void {
+    it('passes through empty and `null` states', function (mixed $value, ?string $expected): void {
         $column = FakeStateExportColumn::make('title')
-            ->preventFormulaInjection()
             ->fakeState($value);
 
         expect($column->getFormattedState())->toBe($expected);
@@ -167,27 +154,29 @@ describe('formula injection protection', function (): void {
         [null, null],
     ]);
 
-    it('joins array state before sanitizing when enabled', function (): void {
+    it('joins array state before sanitizing', function (): void {
         $column = FakeStateExportColumn::make('title')
-            ->preventFormulaInjection()
             ->fakeState(['=danger', 'safe']);
 
         expect($column->getFormattedState())->toBe("'=danger, safe");
     });
 
+    it('does not sanitize formula triggers when disabled with `preventFormulaInjection(false)`', function (string $value): void {
+        $column = FakeStateExportColumn::make('title')
+            ->preventFormulaInjection(false)
+            ->fakeState($value);
+
+        expect($column->shouldPreventFormulaInjection())->toBeFalse();
+        expect($column->getFormattedState())->toBe($value);
+    })->with([
+        '=1+1',
+        '+44 1234 567890',
+        '@SUM(A1:A2)',
+    ]);
+
     it('can set `preventFormulaInjection()` with a `Closure`', function (): void {
         $column = FakeStateExportColumn::make('title')
-            ->preventFormulaInjection(static fn (): bool => true)
-            ->fakeState('=1+1');
-
-        expect($column->shouldPreventFormulaInjection())->toBeTrue();
-        expect($column->getFormattedState())->toBe("'=1+1");
-    });
-
-    it('can opt back out with `preventFormulaInjection(false)`', function (): void {
-        $column = FakeStateExportColumn::make('title')
-            ->preventFormulaInjection()
-            ->preventFormulaInjection(false)
+            ->preventFormulaInjection(static fn (): bool => false)
             ->fakeState('=1+1');
 
         expect($column->shouldPreventFormulaInjection())->toBeFalse();

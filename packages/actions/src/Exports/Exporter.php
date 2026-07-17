@@ -23,11 +23,11 @@ abstract class Exporter
     // Security: Exports do not perform per-record authorization checks.
     // All records matching the query are included without consulting
     // Laravel policies. Use `modifyQueryUsing()` on the export action
-    // to scope the query. Data is written to CSV/XLSX as-is — values
-    // starting with `=`, `+`, `-`, or `@` may be interpreted as
-    // formulas by spreadsheet software (CSV formula injection).
-    // Sanitize via `formatStateUsing()` if exporting
-    // untrusted user content.
+    // to scope the query. Values starting with `=`, `+`, `-`, or `@`
+    // may be interpreted as formulas by spreadsheet software (CSV formula
+    // injection); this is neutralized by default per column via
+    // `preventFormulaInjection()`, which can be disabled with
+    // `preventFormulaInjection(false)`.
 
     /** @var array<ExportColumn> */
     protected array $cachedColumns;

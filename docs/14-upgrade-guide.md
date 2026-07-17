@@ -109,6 +109,64 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 
 ### Medium-impact changes
 
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Exports now prevent CSV/XLSX formula injection by default</span>
+
+To protect people who open exported files in spreadsheet software, every `ExportColumn` now neutralizes CSV/XLSX formula injection by default. Previously this check was opt-in via `preventFormulaInjection()`.
+
+Any exported string value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is now prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Purely numeric strings such as `-5` are left unchanged, since spreadsheets interpret them as numbers rather than formulas.
+
+This only changes the output for string values that begin with one of those characters and are not purely numeric — for example, a phone number stored as a string like `+44 1234 567890` will now be exported as `'+44 1234 567890`. If a specific column exports trusted data where this transformation is unwanted, disable the protection for that column:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('phone')
+    ->preventFormulaInjection(false)
+```
+
+To restore the previous behavior for every export column in your application, call `configureUsing()` in a service provider's `boot()` method. This reintroduces the formula injection risk across all your exports, so prefer disabling it only on the individual columns that need it:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::configureUsing(function (ExportColumn $column): void {
+    $column->preventFormulaInjection(false);
+});
+```
+
+See the [export documentation](../actions/export#csv-formula-injection) for more details.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Import failure CSVs now prevent formula injection by default</span>
+
+When rows fail validation during an import, Filament compiles them into a downloadable failure CSV. To protect people who open that file in spreadsheet software, formula injection is now neutralized in the failure CSV by default. Previously this check was opt-in via `preventFormulaInjection()`.
+
+Any cell that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is now prefixed with a single quote (`'`). Purely numeric strings such as `-5` are left unchanged, so the failure CSV can still be corrected and re-uploaded without corrupting legitimate data.
+
+This only changes the failure CSV output for values that begin with one of those characters and are not purely numeric — for example, a phone number stored as a string like `+44 1234 567890` will now appear as `'+44 1234 567890`. If a specific importer processes trusted files where this transformation is unwanted, disable it by redeclaring the property on your importer class:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+class ProductImporter extends Importer
+{
+    protected static bool $shouldPreventFormulaInjection = false;
+}
+```
+
+To restore the previous behavior for every importer in your application, call `preventFormulaInjection(false)` in a service provider's `boot()` method:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+Importer::preventFormulaInjection(false);
+```
+
+See the [import documentation](../actions/import#csv-formula-injection) for more details.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('support')">
 <span slot="summary">Livewire file uploads are now restricted to schema components by default</span>
 

@@ -13,11 +13,11 @@ use InvalidArgumentException;
 
 class ExportColumn extends Component
 {
-    // Security: Export column values are written to CSV/XLSX without
-    // transformation. Values starting with `=`, `+`, `-`, or `@`
-    // may be interpreted as formulas by spreadsheet software.
-    // Use `formatStateUsing()` to sanitize untrusted user
-    // content, e.g. by prefixing with a single quote.
+    // Security: Export column values that begin with `=`, `+`, `-`, or `@`
+    // may be interpreted as formulas by spreadsheet software (CSV formula
+    // injection). This is neutralized by default via `preventFormulaInjection()`,
+    // which prefixes a single quote to such values. Call
+    // `preventFormulaInjection(false)` to opt out for a column.
 
     use CanAggregateRelatedModels;
     use Concerns\CanBeHidden;
