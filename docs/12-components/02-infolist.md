@@ -39,14 +39,12 @@ You must use the `InteractsWithSchemas` trait, and implement the `HasSchemas` in
 
 ```php
 use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
 class ViewProduct extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
-    use RestrictsFileUploadsToSchemaComponents;
 
     // ...
 }
