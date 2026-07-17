@@ -32,7 +32,7 @@ ImageEntry::make('header_image')
     ->alt('Article header image')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image, which is useful when the entry renders multiple images.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image, which is useful when the entry renders multiple images.</UtilityInjection>
 
 If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
 
