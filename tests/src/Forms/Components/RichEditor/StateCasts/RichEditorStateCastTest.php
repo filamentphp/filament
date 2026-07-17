@@ -15,6 +15,7 @@ function makeStateCastEditor(): RichEditor
 {
     $editor = new RichEditor('content');
     $editor->container(Schema::make(Livewire::make())->statePath('data'));
+    $editor->preventFileAttachmentPathTampering(false);
 
     return $editor;
 }

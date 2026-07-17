@@ -302,7 +302,7 @@ describe('validation', function (): void {
 });
 
 describe('preventing existing file path tampering', function (): void {
-    it('allows a tampered string value to overwrite the record when `preventFilePathTampering()` is not used', function (): void {
+    it('allows a tampered string value to overwrite the record when `preventFilePathTampering(false)` is used', function (): void {
         $user = User::factory()->create(['status' => 'uploads/original.jpg']);
 
         livewire(TestComponentWithFileUploadRecord::class, ['record' => $user])
@@ -310,6 +310,17 @@ describe('preventing existing file path tampering', function (): void {
             ->call('save');
 
         expect($user->refresh()->status)->toBe('uploads/tampered.jpg');
+    });
+
+    it('fails validation for a tampered string value by default', function (): void {
+        $user = User::factory()->create(['status' => 'uploads/original.jpg']);
+
+        livewire(TestComponentWithFileUploadRecordUsingDefaults::class, ['record' => $user])
+            ->set('data.status', ['uploads/tampered.jpg'])
+            ->call('save')
+            ->assertHasFormErrors(['status']);
+
+        expect($user->refresh()->status)->toBe('uploads/original.jpg');
     });
 
     it('fails validation for a tampered string value when using `preventFilePathTampering()`', function (): void {
@@ -410,7 +421,7 @@ describe('preventing existing file path tampering', function (): void {
         expect($uploadedFiles)->toBe([0 => null]);
     });
 
-    it('does not gate `getUploadedFiles()` when `preventFilePathTampering()` is not used', function (): void {
+    it('does not gate `getUploadedFiles()` when `preventFilePathTampering(false)` is used', function (): void {
         Storage::fake('local');
         Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
 
@@ -473,7 +484,7 @@ describe('preventing existing file path tampering', function (): void {
         expect($deletedFiles)->toBe(['uploads/original.jpg']);
     });
 
-    it('deletes any string path via `deleteUploadedFile()` when `preventFilePathTampering()` is not used', function (): void {
+    it('deletes any string path via `deleteUploadedFile()` when `preventFilePathTampering(false)` is used', function (): void {
         Storage::fake('local');
         Storage::disk('local')->put('uploads/tampered.jpg', 'evil');
 
@@ -502,6 +513,7 @@ describe('openable and downloadable URLs', function (): void {
         $field = FileUpload::make('document')
             ->container(Schema::make(Livewire::make())->statePath('data'))
             ->multiple()
+            ->preventFilePathTampering(false)
             ->getUploadedFileUsing(static fn (BaseFileUpload $component, string $file): array => [
                 'name' => $file,
                 'size' => 0,
@@ -2387,6 +2399,33 @@ class RenderFileUploadWithNoFetchFileInfo extends Livewire
 }
 
 class TestComponentWithFileUploadRecord extends Livewire
+{
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('status')
+                    ->fetchFileInformation(false)
+                    ->preventFilePathTampering(false),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithFileUploadRecordUsingDefaults extends Livewire
 {
     public User $record;
 

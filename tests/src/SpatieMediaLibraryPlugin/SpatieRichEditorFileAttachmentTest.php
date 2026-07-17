@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Forms\Components\RichEditor;
 use Filament\Tests\Fixtures\Livewire\RichEditorFileAttachmentForm;
 use Filament\Tests\Fixtures\Models\MediaPostWithRichContent;
 use Filament\Tests\TestCase;
@@ -222,9 +221,7 @@ describe('update', function (): void {
         expect($record->getMedia('content')->first()->uuid)->not->toBe($oldMedia->uuid);
     });
 
-    test('it rejects content referencing another record\'s media when `preventFileAttachmentPathTampering()` is enabled', function (): void {
-        RichEditor::configureUsing(fn (RichEditor $component): RichEditor => $component->preventFileAttachmentPathTampering());
-
+    test('it rejects content referencing another record\'s media', function (): void {
         $otherRecord = MediaPostWithRichContent::create(['title' => 'Other']);
 
         $otherMedia = $otherRecord

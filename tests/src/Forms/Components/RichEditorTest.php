@@ -1447,7 +1447,7 @@ describe('preventing file attachment tampering', function (): void {
         Storage::disk('local')->put('uploads/evil.jpg', 'evil');
     });
 
-    it('allows a tampered `data-id` to overwrite the record when `preventFileAttachmentPathTampering()` is not used', function (): void {
+    it('allows a tampered `data-id` to overwrite the record when `preventFileAttachmentPathTampering(false)` is used', function (): void {
         $post = Post::factory()->create([
             'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
         ]);
@@ -1459,6 +1459,21 @@ describe('preventing file attachment tampering', function (): void {
         expect($post->fresh()->content)
             ->toContain('data-id="uploads/evil.jpg"')
             ->and($post->fresh()->content)->not->toContain('data-id="uploads/original.jpg"');
+    });
+
+    it('fails validation for a tampered `data-id` by default', function (): void {
+        $post = Post::factory()->create([
+            'content' => '<p>Hello</p><img src="/placeholder" data-id="uploads/original.jpg" />',
+        ]);
+
+        livewire(TestComponentWithRichEditorRecordUsingDefaults::class, ['record' => $post])
+            ->set('data.content', '<p>Hello</p><img src="/placeholder" data-id="uploads/evil.jpg" />')
+            ->call('save')
+            ->assertHasFormErrors(['content']);
+
+        expect($post->fresh()->content)
+            ->toContain('data-id="uploads/original.jpg"')
+            ->and($post->fresh()->content)->not->toContain('uploads/evil.jpg');
     });
 
     it('fails validation for a tampered `data-id` when using `preventFileAttachmentPathTampering()`', function (): void {
@@ -2072,6 +2087,33 @@ class RichEditorTestBlockC extends RichContentCustomBlock
 }
 
 class TestComponentWithRichEditorRecord extends Livewire
+{
+    public Post $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('local')
+                    ->preventFileAttachmentPathTampering(false),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->record->update($this->form->getState());
+    }
+}
+
+class TestComponentWithRichEditorRecordUsingDefaults extends Livewire
 {
     public Post $record;
 

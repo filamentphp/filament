@@ -68,7 +68,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected bool | Closure $shouldFetchFileInformation = true;
 
-    protected bool | Closure $shouldPreventFilePathTampering = false;
+    protected bool | Closure $shouldPreventFilePathTampering = true;
 
     protected ?Closure $allowFilePathUsing = null;
 

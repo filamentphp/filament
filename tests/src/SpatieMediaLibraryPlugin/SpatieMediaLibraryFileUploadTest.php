@@ -2,7 +2,6 @@
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -395,9 +394,7 @@ describe('integration', function (): void {
         expect($record->getMedia('avatars')->first()->file_name)->toEndWith('.jpg');
     });
 
-    it('does not reject the record\'s own media when `preventFilePathTampering()` is enabled globally', function (): void {
-        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
-
+    it('does not treat the record\'s own media as file path tampering on save', function (): void {
         $record = MediaPost::factory()->create();
 
         $record->addMediaFromString('test-content')
@@ -526,8 +523,6 @@ describe('integration', function (): void {
     });
 
     it('does not attach another record\'s media when its UUID is submitted', function (): void {
-        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
-
         $recordA = MediaPost::factory()->create();
         $recordB = MediaPost::factory()->create();
 
@@ -547,8 +542,6 @@ describe('integration', function (): void {
     });
 
     it('does not expose another record\'s media through the field when its UUID is submitted', function (): void {
-        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
-
         $recordA = MediaPost::factory()->create();
         $recordB = MediaPost::factory()->create();
 
