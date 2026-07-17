@@ -156,13 +156,21 @@
         }
 
         &.fi-modal-has-sticky-header {
-            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-header {
+            &
+                > .fi-modal-window-ctn
+                > .fi-modal-window
+                > .fi-modal-window-scroll
+                > .fi-modal-header {
                 @apply rounded-t-xl;
             }
         }
 
         &.fi-modal-has-sticky-footer {
-            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-footer {
+            &
+                > .fi-modal-window-ctn
+                > .fi-modal-window
+                > .fi-modal-window-scroll
+                > .fi-modal-footer {
                 @apply rounded-b-xl;
             }
         }
@@ -419,13 +427,21 @@
 
     &.fi-modal-has-sticky-footer {
         & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-footer,
-        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-footer {
+        &
+            > .fi-modal-window-ctn
+            > .fi-modal-window
+            > .fi-modal-window-scroll
+            > .fi-modal-footer {
             @apply sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900;
         }
     }
 
     &.fi-modal-has-sticky-footer:not(.fi-modal-has-sticky-header) {
-        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-window-scroll > .fi-modal-header {
+        &
+            > .fi-modal-window-ctn
+            > .fi-modal-window
+            > .fi-modal-window-scroll
+            > .fi-modal-header {
             @apply relative;
         }
     }
