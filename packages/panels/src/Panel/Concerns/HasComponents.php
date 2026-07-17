@@ -352,6 +352,8 @@ trait HasComponents
             return $this;
         }
 
+        $this->modelResources = [];
+
         $this->resourceDirectories[] = $in;
         $this->resourceNamespaces[] = $for;
 
