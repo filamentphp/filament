@@ -2,6 +2,7 @@
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -394,6 +395,22 @@ describe('integration', function (): void {
         expect($record->getMedia('avatars')->first()->file_name)->toEndWith('.jpg');
     });
 
+    it('does not reject the record\'s own media when `preventFilePathTampering()` is enabled globally', function (): void {
+        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
+
+        $record = MediaPost::factory()->create();
+
+        $record->addMediaFromString('test-content')
+            ->usingFileName('avatar.jpg')
+            ->toMediaCollection('avatars');
+
+        livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($record->fresh()->getMedia('avatars'))->toHaveCount(1);
+    });
+
     it('can delete abandoned media on save', function (): void {
         $record = MediaPost::factory()->create();
 
@@ -506,6 +523,50 @@ describe('integration', function (): void {
 
         expect($doc1->fresh()->order_column)->toBe($originalDocumentsOrder[$doc1->uuid]);
         expect($doc2->fresh()->order_column)->toBe($originalDocumentsOrder[$doc2->uuid]);
+    });
+
+    it('does not attach another record\'s media when its UUID is submitted', function (): void {
+        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
+
+        $recordA = MediaPost::factory()->create();
+        $recordB = MediaPost::factory()->create();
+
+        $bMedia = $recordB->addMediaFromString('b1')
+            ->usingFileName('b1.jpg')
+            ->toMediaCollection('avatars');
+
+        livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
+            ->set('data.avatar', [$bMedia->uuid => $bMedia->uuid])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        // The submitted UUID belongs to another record, so it must not be attached
+        // here, and the other record must keep its media intact.
+        expect($recordA->fresh()->getMedia('avatars'))->toHaveCount(0);
+        expect($recordB->fresh()->getMedia('avatars')->pluck('uuid')->all())->toBe([$bMedia->uuid]);
+    });
+
+    it('does not expose another record\'s media through the field when its UUID is submitted', function (): void {
+        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
+
+        $recordA = MediaPost::factory()->create();
+        $recordB = MediaPost::factory()->create();
+
+        $bMedia = $recordB->addMediaFromString('b1')
+            ->usingFileName('b1.jpg')
+            ->toMediaCollection('avatars');
+
+        $component = livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
+            ->set('data.avatar', [$bMedia->uuid => $bMedia->uuid])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $uploadedFiles = $field->getUploadedFiles();
+
+        // Resolving the file is scoped to the current record's media, so the other
+        // record's file name and URL are never resolved.
+        expect($uploadedFiles[$bMedia->uuid]['name'] ?? null)->toBeNull();
+        expect($uploadedFiles[$bMedia->uuid]['url'] ?? null)->toBeNull();
     });
 });
 
