@@ -10,13 +10,11 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 
 class SetUpRequiredMultiFactorAuthentication extends SimplePage
 {
-    use RestrictsFileUploadsToSchemaComponents;
 
     public function mount(): void
     {

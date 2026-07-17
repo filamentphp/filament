@@ -17,7 +17,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\RenderHook;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -36,7 +35,6 @@ use SensitiveParameter;
  */
 class RequestPasswordReset extends SimplePage
 {
-    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     /**

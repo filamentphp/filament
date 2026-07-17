@@ -195,6 +195,83 @@ RichEditor::configureUsing(function (RichEditor $component): void {
 See the [rich editor documentation](../forms/rich-editor#securing-file-attachment-ids) for more details.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Exports now prevent CSV/XLSX formula injection by default</span>
+
+To protect people who open exported files in spreadsheet software, every `ExportColumn` now neutralizes CSV/XLSX formula injection by default. Previously this check was opt-in via `preventFormulaInjection()`.
+
+Any exported string value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is now prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Purely numeric strings such as `-5` are left unchanged, since spreadsheets interpret them as numbers rather than formulas.
+
+This only changes the output for string values that begin with one of those characters and are not purely numeric — for example, a phone number stored as a string like `+44 1234 567890` will now be exported as `'+44 1234 567890`. If a specific column exports trusted data where this transformation is unwanted, disable the protection for that column:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('phone')
+    ->preventFormulaInjection(false)
+```
+
+To restore the previous behavior for every export column in your application, call `configureUsing()` in a service provider's `boot()` method. This reintroduces the formula injection risk across all your exports, so prefer disabling it only on the individual columns that need it:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::configureUsing(function (ExportColumn $column): void {
+    $column->preventFormulaInjection(false);
+});
+```
+
+See the [export documentation](../actions/export#csv-formula-injection) for more details.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">Import failure CSVs now prevent formula injection by default</span>
+
+When rows fail validation during an import, Filament compiles them into a downloadable failure CSV. To protect people who open that file in spreadsheet software, formula injection is now neutralized in the failure CSV by default. Previously this check was opt-in via `preventFormulaInjection()`.
+
+Any cell that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is now prefixed with a single quote (`'`). Purely numeric strings such as `-5` are left unchanged, so the failure CSV can still be corrected and re-uploaded without corrupting legitimate data.
+
+This only changes the failure CSV output for values that begin with one of those characters and are not purely numeric — for example, a phone number stored as a string like `+44 1234 567890` will now appear as `'+44 1234 567890`. If a specific importer processes trusted files where this transformation is unwanted, disable it by redeclaring the property on your importer class:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+class ProductImporter extends Importer
+{
+    protected static bool $shouldPreventFormulaInjection = false;
+}
+```
+
+To restore the previous behavior for every importer in your application, call `preventFormulaInjection(false)` in a service provider's `boot()` method:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+Importer::preventFormulaInjection(false);
+```
+
+See the [import documentation](../actions/import#csv-formula-injection) for more details.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('support')">
+<span slot="summary">Livewire file uploads are now restricted to schema components by default</span>
+
+Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, which by default accept uploads to any property name — even ones that are not real upload fields. To close this, Filament now restricts these uploads by default: `_startUpload` and `_finishUpload` abort with a `403` unless the target property maps to a `FileUpload` field (or any field that supports file attachments) registered in one of the component's schemas. Previously this was opt-in via the `RestrictsFileUploadsToSchemaComponents` trait.
+
+Legitimate uploads from your schema's fields are unaffected. This only changes behavior for components that accept uploads to a property that is **not** a schema field — for example, a custom Livewire component that wires `wire:model` for a file upload to a property outside its Filament schema.
+
+The `RestrictsFileUploadsToSchemaComponents` trait has been removed, since its behavior is now the default. The upgrade command removes any usage of it from your components automatically. If a component legitimately needs to accept uploads to a non-schema property, opt out by overriding the method:
+
+```php
+public function shouldRestrictFileUploadsToSchemaComponents(): bool
+{
+    return false;
+}
+```
+
+See the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components) for more details.
+</Disclosure>
+
 ### Low-impact changes
 
 <Disclosure open x-show="packages.includes('support')">

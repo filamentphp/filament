@@ -5,7 +5,6 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
@@ -21,7 +20,7 @@ it('blocks `_startUpload` when the schema has no file-upload components', functi
         ->assertForbidden();
 });
 
-it('does not restrict `_startUpload` when the component does not use `RestrictsFileUploadsToSchemaComponents`', function (): void {
+it('does not restrict `_startUpload` when the component overrides `shouldRestrictFileUploadsToSchemaComponents()` to return `false`', function (): void {
     livewire(UnrestrictedUploadsTestComponent::class)
         ->call('_startUpload', 'data.text', [['name' => 'a.jpg', 'size' => 1024, 'type' => 'image/jpeg']], false)
         ->assertDispatched('upload:generatedSignedUrl');
@@ -167,6 +166,11 @@ it('allows `_removeUpload` when the property path maps to a `FileUpload` field',
 
 class UnrestrictedUploadsTestComponent extends Livewire
 {
+    public function shouldRestrictFileUploadsToSchemaComponents(): bool
+    {
+        return false;
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -179,8 +183,6 @@ class UnrestrictedUploadsTestComponent extends Livewire
 
 class RestrictedUploadsTestComponentWithoutFileUpload extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -193,8 +195,6 @@ class RestrictedUploadsTestComponentWithoutFileUpload extends Livewire
 
 class RestrictedUploadsTestComponentWithFileUpload extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -207,8 +207,6 @@ class RestrictedUploadsTestComponentWithFileUpload extends Livewire
 
 class RestrictedUploadsTestComponentWithHiddenFileUpload extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -222,8 +220,6 @@ class RestrictedUploadsTestComponentWithHiddenFileUpload extends Livewire
 
 class RestrictedUploadsTestComponentWithNestedFileUpload extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -241,8 +237,6 @@ class RestrictedUploadsTestComponentWithNestedFileUpload extends Livewire
 
 class RestrictedUploadsTestComponentWithMarkdownEditor extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -255,8 +249,6 @@ class RestrictedUploadsTestComponentWithMarkdownEditor extends Livewire
 
 class RestrictedUploadsTestComponentWithMarkdownEditorAttachmentsDisabled extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -270,8 +262,6 @@ class RestrictedUploadsTestComponentWithMarkdownEditorAttachmentsDisabled extend
 
 class RestrictedUploadsTestComponentWithRepeaterFileUpload extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function mount(): void
     {
         $this->data = ['items' => [['photo' => null]]];
@@ -294,8 +284,6 @@ class RestrictedUploadsTestComponentWithRepeaterFileUpload extends Livewire
 
 class RestrictedUploadsTestComponentWithMultipleSchemas extends Livewire
 {
-    use RestrictsFileUploadsToSchemaComponents;
-
     public function mount(): void
     {
         $this->photoForm->fill();

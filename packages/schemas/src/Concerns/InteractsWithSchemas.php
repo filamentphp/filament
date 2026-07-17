@@ -502,6 +502,16 @@ trait InteractsWithSchemas
         return array_key_first($this->getCachedSchemas());
     }
 
+    public function shouldRestrictFileUploadsToSchemaComponents(): bool
+    {
+        // Security: Livewire's `_startUpload`/`_finishUpload` RPC methods accept
+        // uploads to any property name by default. Restricting them to properties
+        // that map to a real upload field in this component's schemas prevents
+        // uploads to arbitrary property paths (CWE-434 / CWE-639). Override this
+        // to return `false` to opt out for a specific component.
+        return true;
+    }
+
     public function isFileUploadForSchemaComponent(string $name): bool
     {
         if (str_starts_with($name, 'componentFileAttachments.')) {
