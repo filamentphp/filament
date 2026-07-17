@@ -103,6 +103,20 @@ it('rejects a keyword containing non-alphabetic characters', function (): void {
         ->and(Str::sanitizeCssColor('red 0'))->toBeNull();
 });
 
+it('allows a string-backed enum, using its value', function (): void {
+    expect(Str::sanitizeCssColor(CssColorStringBackedEnum::Hex))->toBe('#ff0000')
+        ->and(Str::sanitizeCssColor(CssColorStringBackedEnum::Keyword))->toBe('red')
+        ->and(Str::sanitizeCssColor(CssColorStringBackedEnum::Untrimmed))->toBe('#00ff00');
+});
+
+it('rejects a string-backed enum with an unsafe value', function (): void {
+    expect(Str::sanitizeCssColor(CssColorStringBackedEnum::Unsafe))->toBeNull();
+});
+
+it('rejects an int-backed enum, since its value is not a valid color', function (): void {
+    expect(Str::sanitizeCssColor(CssColorIntBackedEnum::Red))->toBeNull();
+});
+
 it('exposes a `Stringable` macro', function (): void {
     expect(Str::of('#ff0000')->sanitizeCssColor())
         ->toBeInstanceOf(Stringable::class)
@@ -111,3 +125,16 @@ it('exposes a `Stringable` macro', function (): void {
         ->and((string) Str::of('red;position:fixed')->sanitizeCssColor())
         ->toBe('');
 });
+
+enum CssColorStringBackedEnum: string
+{
+    case Hex = '#ff0000';
+    case Keyword = 'red';
+    case Untrimmed = '  #00ff00  ';
+    case Unsafe = 'red;position:fixed';
+}
+
+enum CssColorIntBackedEnum: int
+{
+    case Red = 0xFF0000;
+}

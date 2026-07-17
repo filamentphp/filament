@@ -110,6 +110,8 @@ trait HasColumnManager
     {
         $this->tableColumns = $tableColumns;
         $this->tableColumnsToggleStateByName = null;
+
+        $this->getTable()->flushCachedVisibleColumns();
     }
 
     /**
