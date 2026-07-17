@@ -37,6 +37,7 @@ use Filament\Tests\Fixtures\Providers\TenantMenuRegisterPlacementPanelProvider;
 use Filament\Tests\Fixtures\Providers\UserMenuFlatPanelProvider;
 use Filament\Tests\Fixtures\Providers\UserMenuGroupingPanelProvider;
 use Filament\Tests\Fixtures\Providers\UserMenuLogoutPlacementPanelProvider;
+use Filament\Tests\Fixtures\Providers\ViewComponentsServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
@@ -94,6 +95,7 @@ abstract class TestCase extends BaseTestCase
             UserMenuFlatPanelProvider::class,
             UserMenuGroupingPanelProvider::class,
             UserMenuLogoutPlacementPanelProvider::class,
+            ViewComponentsServiceProvider::class,
             PowerJoinsServiceProvider::class,
         ];
 

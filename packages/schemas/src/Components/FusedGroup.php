@@ -310,14 +310,28 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                     ? str($fieldWrapperView)->replaceFirst('::', '::components.')
                     : str("components.{$fieldWrapperView}"));
 
-            return view($absoluteView, [
-                'field' => $this,
-                'slot' => new ComponentSlot($innerHtml),
-                'errorMessage' => $errorMessage,
-                'errorMessages' => $errorMessages,
-                'areHtmlErrorMessagesAllowed' => $areHtmlErrorMessagesAllowed,
-                'shouldShowAllValidationMessages' => filled($errorMessages),
-            ])->toHtml();
+            if (view()->exists($absoluteView)) {
+                return view($absoluteView, [
+                    'field' => $this,
+                    'slot' => new ComponentSlot($innerHtml),
+                    'errorMessage' => $errorMessage,
+                    'errorMessages' => $errorMessages,
+                    'areHtmlErrorMessagesAllowed' => $areHtmlErrorMessagesAllowed,
+                    'shouldShowAllValidationMessages' => filled($errorMessages),
+                ])->toHtml();
+            }
+
+            return $this->renderWrapperBladeComponent(
+                $fieldWrapperView,
+                new ComponentSlot($innerHtml),
+                new FilamentComponentAttributeBag([
+                    'field' => $this,
+                    'error-message' => $errorMessage,
+                    'error-messages' => $errorMessages,
+                    'are-html-error-messages-allowed' => $areHtmlErrorMessagesAllowed,
+                    'should-show-all-validation-messages' => filled($errorMessages),
+                ]),
+            );
         }
 
         // Field wrapper rendering (inline, same as `Field::wrapEmbeddedHtml()` but with custom errors)
