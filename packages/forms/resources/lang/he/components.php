@@ -16,7 +16,7 @@ return [
 
                 'modal' => [
 
-                    'label' => 'הוספת :label',
+                    'heading' => 'הוספה ל:label',
 
                     'actions' => [
 
@@ -31,11 +31,47 @@ return [
             ],
 
             'add_between' => [
+
                 'label' => 'הכנס בין הבלוקים',
+
+                'modal' => [
+
+                    'heading' => 'הוספה ל:label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'הוספה',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'מחק',
+            ],
+
+            'edit' => [
+
+                'label' => 'עריכה',
+
+                'modal' => [
+
+                    'heading' => 'עריכת בלוק',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'שמירת שינויים',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -86,9 +122,29 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'בורר צבעים',
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'הורדה',
+            ],
+
+            'open' => [
+                'label' => 'פתיחה בכרטיסיה חדשה',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'עורך תמונות',
 
             'actions' => [
 
@@ -188,7 +244,9 @@ return [
                     'label' => 'Y',
                     'unit' => 'פיקסלים',
                 ],
+
             ],
+
             'aspect_ratios' => [
 
                 'label' => 'יחסי ציר',
@@ -199,7 +257,17 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'עריכת קובצי SVG אינה מומלצת מכיוון שהיא עלולה לפגוע באיכות בעת שינוי הגודל.\\n  האם להמשיך?',
+                    'disabled' => 'עריכת קובצי SVG מושבתת מכיוון שהיא עלולה לפגוע באיכות בעת שינוי הגודל.',
+                ],
+
+            ],
+
         ],
+
     ],
 
     'key_value' => [
@@ -220,6 +288,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'פעולות',
+            ],
+
+            'reorder' => [
+                'label' => 'שינוי סדר',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -236,6 +316,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'קבצים שהועלו חייבים להיות מסוג: :values.',
+
+        'file_attachments_max_size_message' => 'קבצים שהועלו לא יכולים לחרוג מ-:max קילובייט.',
+
         'tools' => [
             'attach_files' => 'הוסף קבצים',
             'blockquote' => 'בלוק ציטוט',
@@ -246,20 +330,67 @@ return [
             'italic' => 'נטוי',
             'link' => 'קישור',
             'ordered_list' => 'רשימה ממוספרת',
-            'strike' => 'כתיב מחדל',
             'redo' => 'שחזור',
+            'strike' => 'כתיב מחדל',
             'table' => 'טבלה',
             'undo' => 'ביטול שחזור',
         ],
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'בחירה',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'בחירה',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'כן',
+            'false' => 'לא',
+        ],
+
+    ],
+
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'פעולות',
+            ],
+
+            'reorder' => [
+                'label' => 'שינוי סדר',
+            ],
+
+        ],
 
         'actions' => [
 
             'add' => [
                 'label' => 'הוסף :label',
+            ],
+
+            'add_between' => [
+                'label' => 'להכניס בין הפריטים',
             ],
 
             'delete' => [
@@ -360,6 +491,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'רשת',
+
+                'modal' => [
+
+                    'heading' => 'רשת',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'תבנית מוכנה',
+
+                            'placeholder' => 'ללא',
+
+                            'options' => [
+                                'two' => 'שתיים',
+                                'three' => 'שלוש',
+                                'four' => 'ארבע',
+                                'five' => 'חמש',
+                                'two_start_third' => 'שניים (להתחיל שלישי)',
+                                'two_end_third' => 'שניים (לסיים שלישי)',
+                                'two_start_fourth' => 'שניים (להתחיל רביעי)',
+                                'two_end_fourth' => 'שניים (לסיים רביעי)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'עמודות',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'מנקודת שבירה',
+
+                            'options' => [
+                                'default' => 'הכל',
+                                'sm' => 'קטן',
+                                'md' => 'בינוני',
+                                'lg' => 'גדול',
+                                'xl' => 'גדול מאוד',
+                                '2xl' => 'גדול במיוחד',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'שתי עמודות א-סימטריות',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'טווח התחלה',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'טווח סיום',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'עריכה',
@@ -383,13 +579,77 @@ return [
                 ],
 
             ],
+
+            'text_color' => [
+
+                'label' => 'צבע טקסט',
+
+                'modal' => [
+
+                    'heading' => 'צבע טקסט',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'צבע',
+
+                            'options' => [
+                                'slate' => 'צפחה',
+                                'gray' => 'אפור',
+                                'zinc' => 'אבץ',
+                                'neutral' => 'ניטרלי',
+                                'stone' => 'אבן',
+                                'mauve' => 'סגול בהיר',
+                                'olive' => 'זית',
+                                'mist' => 'ערפל',
+                                'taupe' => 'חום אפרפר',
+                                'red' => 'אדום',
+                                'orange' => 'כתום',
+                                'amber' => 'ענבר',
+                                'yellow' => 'צהוב',
+                                'lime' => 'ירוק ליים',
+                                'green' => 'ירוק',
+                                'emerald' => 'ירוק אזמרגד',
+                                'teal' => 'טורקיז כהה',
+                                'cyan' => 'ציאן',
+                                'sky' => 'תכלת',
+                                'blue' => 'כחול',
+                                'indigo' => 'אינדיגו',
+                                'violet' => 'סגול כחלחל',
+                                'purple' => 'סגול',
+                                'fuchsia' => 'פוקסיה',
+                                'pink' => 'ורוד',
+                                'rose' => 'ורוד עז',
+                            ],
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'צבע מותאם אישית',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'קבצים שהועלו חייבים להיות מסוג: :values.',
+
+        'file_attachments_max_size_message' => 'קבצים שהועלו לא יכולים לחרוג מ-:max קילובייט.',
+
+        'no_merge_tag_search_results_message' => 'אין תוצאות לתגי מיזוג.',
 
         'mentions' => [
             'no_options_message' => 'אין אפשרויות זמינות.',
             'no_search_results_message' => 'לא נמצאו תוצאות.',
             'search_prompt' => 'התחל להקליד על מנת לחפש...',
             'searching_message' => 'מחפש...',
+        ],
+
+        'toolbar' => [
+            'aria_label' => 'סרגל הכלים של העורך',
         ],
 
         'tools' => [
@@ -409,6 +669,11 @@ return [
             'h1' => 'כותרת 1',
             'h2' => 'כותרת 2',
             'h3' => 'כותרת 3',
+            'h4' => 'כותרת 4',
+            'h5' => 'כותרת 5',
+            'h6' => 'כותרת 6',
+            'grid' => 'רשת',
+            'grid_delete' => 'מחיקת רשת',
             'highlight' => 'הדגשה',
             'horizontal_rule' => 'קו אופקי',
             'italic' => 'נטוי',
@@ -416,6 +681,7 @@ return [
             'link' => 'קישור',
             'merge_tags' => 'מזג תוויות',
             'ordered_list' => 'רשימה ממוספרת',
+            'paragraph' => 'פסקה',
             'redo' => 'בצע שוב',
             'small' => 'טקסט קטן',
             'strike' => 'קו חוצה',
@@ -432,9 +698,13 @@ return [
             'table_merge_cells' => 'מזג תאים',
             'table_split_cell' => 'פצל תאים',
             'table_toggle_header_row' => 'הפעל/הסתר שורת כותרת',
+            'table_toggle_header_cell' => 'החלפת תא כותרת',
+            'text_color' => 'צבע טקסט',
             'underline' => 'קו תחתון',
             'undo' => 'בטל',
         ],
+
+        'uploading_file_message' => 'מעלה קובץ...',
 
     ],
 
@@ -510,7 +780,42 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'מחק',
+            ],
+
+        ],
+
         'placeholder' => 'תגית חדשה',
+
+        'tag_added' => 'נוסף: :tag',
+
+        'tag_removed' => 'הוסר: :tag',
+
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'copy' => [
+                'label' => 'העתק',
+                'message' => 'הועתק',
+            ],
+
+            'hide_password' => [
+                'label' => 'הסתרת סיסמה',
+            ],
+
+            'show_password' => [
+                'label' => 'הצגת סיסמה',
+            ],
+
+        ],
+
     ],
 
     'toggle_buttons' => [
