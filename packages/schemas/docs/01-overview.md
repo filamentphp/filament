@@ -275,4 +275,4 @@ Section::make()
 
 ## Restricting Livewire file uploads to schema components
 
-If you build a custom Livewire component on top of `InteractsWithSchemas`, Livewire's file upload RPC methods accept uploads to any property path by default. See [Restricting Livewire file uploads to schema components](../../advanced/security#restricting-livewire-file-uploads-to-schema-components) in the security documentation for the `RestrictsFileUploadsToSchemaComponents` trait that locks them down.
+If you build a custom Livewire component on top of `InteractsWithSchemas`, Livewire's file upload RPC methods accept uploads to any property path by default. Filament restricts these uploads to properties that map to real upload fields in your schemas. See [Restricting Livewire file uploads to schema components](../../advanced/security#restricting-livewire-file-uploads-to-schema-components) in the security documentation for more details, including how to opt out.

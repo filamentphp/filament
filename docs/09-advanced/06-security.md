@@ -261,30 +261,33 @@ Filament's `FileUpload` and `RichEditor` components both have their own security
 
 ### Restricting Livewire file uploads to schema components
 
-Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, because the trait composes Livewire's `WithFileUploads` so that schema components like `FileUpload` and `MarkdownEditor` can use Livewire's standard file upload mechanism. By default, those RPC methods accept uploads to any Livewire property name — they do not check whether the property corresponds to a real upload field in the component's schemas. This means an attacker who can reach the page can tamper with a Livewire request to upload files to arbitrary property paths on any page that uses `InteractsWithSchemas`, even pages that do not display an upload field at all.
+Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, because the trait composes Livewire's `WithFileUploads` so that schema components like `FileUpload` and `MarkdownEditor` can use Livewire's standard file upload mechanism. Livewire's own RPC methods accept uploads to any property name — they do not check whether the property corresponds to a real upload field in the component's schemas. This means an attacker who can reach the page could otherwise tamper with a Livewire request to upload files to arbitrary property paths on any page that uses `InteractsWithSchemas`, even pages that do not display an upload field at all.
 
-If your Livewire component is reachable to users you do not want uploading arbitrary files (for example, an unauthenticated page, or any page whose schema does not contain an upload field), add the `RestrictsFileUploadsToSchemaComponents` trait. This causes `_startUpload` and `_finishUpload` to abort with a `403` response unless the upload's target property maps to a `FileUpload` field (or any field that supports file attachments) registered in one of the component's schemas:
+To prevent this, Filament restricts these uploads. On every component using `InteractsWithSchemas`, `_startUpload` and `_finishUpload` abort with a `403` response unless the upload's target property maps to a `FileUpload` field (or any field that supports file attachments) registered in one of the component's schemas. Legitimate uploads from your schema's `FileUpload` fields continue to work because their target property matches a registered component. Uploads from components that support file attachments — such as the [`MarkdownEditor`](../forms/markdown-editor) and [`RichEditor`](../forms/rich-editor) — are also allowed when they target a registered component.
+
+<Aside variant="tip">
+    Hidden fields are not considered matchable targets. If a `FileUpload` field is conditionally hidden (`->visible(false)` or equivalent), uploads to its state path are rejected — only fields the user can actually see are valid upload targets.
+</Aside>
+
+If a component legitimately needs to accept uploads to a property that is not a schema field, opt out by overriding `shouldRestrictFileUploadsToSchemaComponents()` to return `false`:
 
 ```php
 use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
 use Livewire\Component;
 
 class ViewProduct extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
-    use RestrictsFileUploadsToSchemaComponents;
+
+    public function shouldRestrictFileUploadsToSchemaComponents(): bool
+    {
+        return false;
+    }
 
     // ...
 }
 ```
-
-With the trait in place, an attacker tampering with a Livewire request to upload to an arbitrary property name is rejected; legitimate uploads from your schema's `FileUpload` fields continue to work because their target property matches a registered component. Uploads from components that support file attachments — such as the [`MarkdownEditor`](../forms/markdown-editor) and [`RichEditor`](../forms/rich-editor) — are also allowed when they target a registered component.
-
-<Aside variant="tip">
-    Hidden fields are not considered matchable targets. If a `FileUpload` field is conditionally hidden (`->visible(false)` or equivalent), uploads to its state path are rejected — only fields the user can actually see are valid upload targets.
-</Aside>
 
 ## Scoping queries
 
