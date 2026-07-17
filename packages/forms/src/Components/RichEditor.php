@@ -115,7 +115,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
-    protected bool | Closure $shouldPreventFileAttachmentPathTampering = false;
+    protected bool | Closure $shouldPreventFileAttachmentPathTampering = true;
 
     protected ?Closure $allowFileAttachmentPathUsing = null;
 

@@ -21,8 +21,8 @@ FileUpload::make('attachment')
     Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library) for more information.
 </Aside>
 
-<Aside variant="danger">
-    By default, `FileUpload` accepts any string path within the configured disk — the field value is a client-controlled string and a tampered request can submit any other file on the same disk. If your disk holds files for more than one user, tenant, or record, either call [`->preventFilePathTampering()`](#authorizing-existing-file-paths) on the field (or apply it globally with `FileUpload::configureUsing()`), or isolate uploads at the disk or directory level so the field can only ever address files belonging to the current owner.
+<Aside variant="info">
+    By default, `FileUpload` [prevents file path tampering](#authorizing-existing-file-paths): a submitted string path is rejected unless it matches a path already stored on the record. This protects disks that hold files for more than one user, tenant, or record. If a field legitimately needs to reference a path that is not on the record — for example, a pre-uploaded template file, or a "copy from another record" button — [approve those paths with a callback](#allowing-additional-file-paths-with-a-callback) or [disable the protection](#disabling-file-path-tampering-protection) for that field.
 </Aside>
 
 ## Configuring the storage disk and directory
@@ -195,32 +195,36 @@ FileUpload::make('attachments')
 
 The value of a `FileUpload` field is a string, or an array of strings, containing the path to the file on the configured disk. Like any other Livewire form field value, it is controlled by the client: a request can be intercepted to change the submitted path to any other file on the same disk. If the field points at a resource that must not be accessible to other users — a private document on a shared disk, or a per-user directory — an attacker could otherwise cause the record to reference (and serve a signed URL for) someone else's file.
 
-Filament allows this by default because legitimate features depend on it — for example, an action that sets the field to a pre-uploaded template file, or a "copy from another record" button. If none of your fields rely on such a flow, call `preventFilePathTampering()` on the field to enable a built-in check:
+To prevent this, Filament validates submitted file paths by default. Every submitted string path is compared against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
+
+<Aside variant="warning">
+    This protection needs a record on the form. Without one — for example, on a create page — every submitted string path fails validation unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+### Disabling file path tampering protection
+
+Some legitimate features submit a string path that is not stored on the record — for example, an action that sets the field to a pre-uploaded template file, or a "copy from another record" button. If a field relies on such a flow, and you cannot [enumerate the allowed paths with a callback](#allowing-additional-file-paths-with-a-callback), disable the protection for that field by passing `false`:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('avatar')
-    ->preventFilePathTampering()
+    ->preventFilePathTampering(false)
 ```
 
-Filament compares every submitted string path against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files always pass through, the field can still be cleared, and for `multiple()` fields each entry is checked individually.
-
-<Aside variant="warning">
-    `preventFilePathTampering()` needs a record on the form. Without one — for example, on a create page — every submitted string path fails validation unless the [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) callback approves it. New uploads are unaffected.
-</Aside>
-
-To apply this check to every `FileUpload` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
+To disable it for every `FileUpload` in your application, call `configureUsing()` in a service provider's `boot()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::configureUsing(function (FileUpload $component): void {
-    $component->preventFilePathTampering();
+    $component->preventFilePathTampering(false);
 });
 ```
 
-Individual fields can still opt out by calling `preventFilePathTampering(false)`.
+<Aside variant="danger">
+    Disabling this protection reintroduces the tampering risk described above. Prefer disabling it only on the individual fields that need it, or use [`allowFilePathUsing`](#allowing-additional-file-paths-with-a-callback) to approve specific paths instead of turning the check off entirely.
+</Aside>
 
 ### Allowing additional file paths with a callback
 
@@ -243,7 +247,6 @@ The validation error message can be customized via [`validationMessages()`](vali
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('avatar')
-    ->preventFilePathTampering()
     ->validationMessages([
         'tampered' => 'The selected attachment is not permitted.',
     ])

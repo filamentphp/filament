@@ -403,34 +403,38 @@ RichContentRenderer::make($record->content)
 
 The `data-id` attribute on an image node is an identifier for a file on the configured disk. When the content is rendered, Filament generates a URL for it — a signed temporary URL if the visibility is `private`. Like any other Livewire form field value, the content and its `data-id` attributes are controlled by the client: a request can be intercepted to change a `data-id` to any other identifier on the same disk. If the disk also stores files belonging to other users or records, an attacker could otherwise cause the rendered content to reference (and serve a signed URL for) someone else's file.
 
-Filament allows this by default because legitimate features depend on it — for example, an action that inserts an image from a pre-existing library, or a "copy from another record" button. If none of your editors rely on such a flow, call `preventFileAttachmentPathTampering()` on the field to enable a built-in check:
+To prevent this, Filament validates `data-id` values by default. It parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through.
+
+If instead you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is also implicit — it looks up each `data-id` against the record's own media collection via `$media->has($file)`, so a `data-id` for another record's media is rejected automatically.
+
+<Aside variant="warning">
+    This protection needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
+</Aside>
+
+#### Disabling file attachment tampering protection
+
+Some legitimate features insert a `data-id` that is not stored on the record — for example, an action that inserts an image from a pre-existing library, or a "copy from another record" button. If an editor relies on such a flow, and you cannot [enumerate the allowed identifiers with a callback](#allowing-additional-data-id-values-with-a-callback), disable the protection for that field by passing `false`:
 
 ```php
 use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
-    ->preventFileAttachmentPathTampering()
+    ->preventFileAttachmentPathTampering(false)
 ```
 
-Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through.
-
-The default file attachment provider performs no per-record scoping — any `data-id` that resolves to a file on the configured disk is accepted unless you enable `preventFileAttachmentPathTampering()` (or isolate uploads at the disk/directory level). If instead you are using the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection is already implicit — it looks up each `data-id` against the record's own media collection via `$media->has($file)`, so a `data-id` for another record's media is rejected automatically.
-
-<Aside variant="warning">
-    `preventFileAttachmentPathTampering()` needs a record on the form. Without one — for example, on a create page — every existing `data-id` fails validation unless the [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) callback approves it. New uploads are unaffected.
-</Aside>
-
-To apply this check to every `RichEditor` in your application without repeating it on each field, call `configureUsing()` in a service provider's `boot()` method:
+To disable it for every `RichEditor` in your application, call `configureUsing()` in a service provider's `boot()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor;
 
 RichEditor::configureUsing(function (RichEditor $component): void {
-    $component->preventFileAttachmentPathTampering();
+    $component->preventFileAttachmentPathTampering(false);
 });
 ```
 
-Individual fields can still opt out by calling `preventFileAttachmentPathTampering(false)`.
+<Aside variant="danger">
+    Disabling this protection reintroduces the tampering risk described above. Prefer disabling it only on the individual fields that need it, or use [`allowFilePathUsing`](#allowing-additional-data-id-values-with-a-callback) to approve specific identifiers instead of turning the check off entirely.
+</Aside>
 
 #### Allowing additional `data-id` values with a callback
 
@@ -453,7 +457,6 @@ The validation error message can be customized via [`validationMessages()`](vali
 use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
-    ->preventFileAttachmentPathTampering()
     ->validationMessages([
         'tampered' => 'The content references an image that is not permitted.',
     ])

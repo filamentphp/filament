@@ -256,8 +256,8 @@ Filament exposes all non-`$hidden` model attributes to JavaScript via Livewire's
 
 Filament's `FileUpload` and `RichEditor` components both have their own security considerations — uploaded file names, storage visibility, accepted file types, and client-controlled file paths can each be abused if misconfigured. The relevant guidance lives alongside each component:
 
-- [File upload security](../forms/file-upload#security-implications-of-controlling-file-names) — file name preservation risks and the [authorizing existing file paths](../forms/file-upload#authorizing-existing-file-paths) flow.
-- [Rich editor file attachment IDs](../forms/rich-editor#securing-file-attachment-ids) — `data-id` tampering and how the default vs. `spatie/laravel-medialibrary` providers differ in scoping.
+- [File upload security](../forms/file-upload#security-implications-of-controlling-file-names) — file name preservation risks and [file path tampering protection](../forms/file-upload#authorizing-existing-file-paths).
+- [Rich editor file attachment IDs](../forms/rich-editor#securing-file-attachment-ids) — `data-id` tampering protection, also enforced when using the `spatie/laravel-medialibrary` provider.
 
 ### Restricting Livewire file uploads to schema components
 

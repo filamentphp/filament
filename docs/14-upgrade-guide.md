@@ -107,6 +107,94 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
     </Checkbox>
 </Checkboxes>
 
+### Medium-impact changes
+
+<Disclosure open x-show="packages.includes('forms')">
+<span slot="summary">`FileUpload` now prevents file path tampering by default</span>
+
+To protect applications whose storage disks hold files belonging to more than one user, tenant, or record, the `FileUpload` field now validates submitted file paths by default. Previously this check was opt-in via `preventFilePathTampering()`.
+
+Every submitted string path is now compared against the value originally loaded from the record (via `$record->getOriginal()` for the attribute matching the field name). Paths that do not match cause the field to fail validation, so the record is never saved with a tampered value. Newly uploaded files, cleared values, and — for `multiple()` fields — each individual entry are all handled as before.
+
+This only affects fields that submit a string path that was **not** already stored on the record. Most applications never do this, so no changes are required. However, if you rely on a flow that sets the field to a path outside the record — for example, an action that selects a pre-uploaded template file, a "copy from another record" button, or a field seeded with a preset path via `->default('path/to/file.png')` on a create form — those submissions will now fail validation.
+
+You have three options, in order of preference:
+
+- Approve the specific paths using the `allowFilePathUsing` argument, so only known-safe paths are permitted:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+- Disable the protection on the individual fields that need it:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->preventFilePathTampering(false)
+```
+
+- Restore the previous behavior for every `FileUpload` in your application by calling `configureUsing()` in a service provider's `boot()` method. This reintroduces the tampering risk across your whole app, so prefer one of the options above:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::configureUsing(function (FileUpload $component): void {
+    $component->preventFilePathTampering(false);
+});
+```
+
+See the [file upload documentation](../forms/file-upload#authorizing-existing-file-paths) for more details.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('forms')">
+<span slot="summary">`RichEditor` now prevents file attachment path tampering by default</span>
+
+For the same reason as the `FileUpload` change above, the `RichEditor` field now validates the `data-id` attributes of image nodes in submitted content by default. Previously this check was opt-in via `preventFileAttachmentPathTampering()`.
+
+Filament parses the record's original content (via `$record->getOriginal()` for the attribute matching the field name) and allows only the `data-id` values already present. Any other existing `data-id` causes the field to fail validation, so the record is never saved with a tampered value. Newly uploaded images always pass through. If you use the [`spatie/laravel-medialibrary` plugin](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) as the file attachment provider, this protection was already implicit and its behavior is unchanged.
+
+This only affects editors that insert a `data-id` that was **not** already stored on the record — for example, an action that inserts an image from a shared library, or a "copy from another record" button. If you rely on such a flow, you have the same three options as for `FileUpload`:
+
+- Approve the specific identifiers using the `allowFilePathUsing` argument:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentPathTampering(
+        allowFilePathUsing: fn (string $file): bool => str_starts_with($file, 'templates/'),
+    )
+```
+
+- Disable the protection on the individual fields that need it:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->preventFileAttachmentPathTampering(false)
+```
+
+- Restore the previous behavior for every `RichEditor` in your application by calling `configureUsing()` in a service provider's `boot()` method. This reintroduces the tampering risk across your whole app, so prefer one of the options above:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::configureUsing(function (RichEditor $component): void {
+    $component->preventFileAttachmentPathTampering(false);
+});
+```
+
+See the [rich editor documentation](../forms/rich-editor#securing-file-attachment-ids) for more details.
+</Disclosure>
+
 ### Low-impact changes
 
 <Disclosure open x-show="packages.includes('support')">
