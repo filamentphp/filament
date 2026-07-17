@@ -7,6 +7,7 @@ This repository is regenerated automatically from each stable Filament release. 
 - [`3.x`](https://github.com/filamentphp/issue-reproduction-template/tree/3.x) — latest Filament v3 release (maintenance mode)
 - [`4.x`](https://github.com/filamentphp/issue-reproduction-template/tree/4.x) — latest Filament v4 release
 - [`5.x`](https://github.com/filamentphp/issue-reproduction-template/tree/5.x) — latest Filament v5 release
+- [`6.x`](https://github.com/filamentphp/issue-reproduction-template/tree/6.x) — latest Filament v6 release
 
 ## Setup
 

@@ -35,6 +35,18 @@ updates:
 
   - package-ecosystem: github-actions
     directory: /
+    target-branch: 6.x
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    labels:
+      - dependencies
+    milestone: 11
+
+  - package-ecosystem: github-actions
+    directory: /
     target-branch: 5.x
     schedule:
       interval: weekly

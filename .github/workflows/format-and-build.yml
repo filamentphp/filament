@@ -3,7 +3,7 @@ name: format-and-build
 on:
   push:
     branches:
-      - 5.x
+      - 6.x
 
 permissions:
   contents: read

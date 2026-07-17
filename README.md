@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/filamentphp/filament/blob/5.x/art/banner.webp?raw=true" alt="Banner" style="width: 100%; max-width: 800px;" />
+    <img src="https://github.com/filamentphp/filament/blob/6.x/art/banner.webp?raw=true" alt="Banner" style="width: 100%; max-width: 800px;" />
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@ With a solid Laravel foundation and a polished UI, you can focus on what makes y
 
 ## Contributing
 
-Please see our [contributing guide](https://filamentphp.com/docs/5.x/introduction/contributing).
+Please see our [contributing guide](https://filamentphp.com/docs/6.x/introduction/contributing).
 
 ## Need Help?
 
@@ -38,4 +38,4 @@ Please see our [contributing guide](https://filamentphp.com/docs/5.x/introductio
 
 🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new/choose). We also have a [Discord community](https://filamentphp.com/discord). For quick help, ask questions in the appropriate channel.
 
-🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/5.x/SECURITY.md).
+🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/6.x/SECURITY.md).

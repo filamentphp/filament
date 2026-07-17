@@ -44,7 +44,7 @@ jobs:
           package_directory: 'packages/${{ matrix.package }}'
           repository_organization: 'filamentphp'
           repository_name: '${{ matrix.package }}'
-          branch: 5.x
+          branch: 6.x
           tag: ${{ steps.previous-tag.outputs.tag }}
           user_name: 'Dan Harrin'
           user_email: 'git@danharrin.com'
