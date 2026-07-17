@@ -15,7 +15,6 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class SetUpRequiredMultiFactorAuthentication extends SimplePage
 {
-
     public function mount(): void
     {
         if ((! Filament::hasMultiFactorAuthentication()) || $this->isEnabled()) {
