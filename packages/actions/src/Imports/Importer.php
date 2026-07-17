@@ -19,9 +19,9 @@ abstract class Importer
     // Each CSV row is processed by `resolveRecord()`, `fillRecord()`,
     // and `saveRecord()` without consulting Laravel policies. Add
     // manual checks in lifecycle hooks (`beforeCreate()`, etc.)
-    // if needed. Failure CSVs contain original data unchanged, so
-    // formula injection risk applies to those files too — override
-    // `shouldPreventFormulaInjection()` to neutralize it.
+    // if needed. Failure CSVs contain original uploaded data, so
+    // formula injection is neutralized by default when they are
+    // generated — call `preventFormulaInjection(false)` to opt out.
 
     /** @var array<ImportColumn> */
     protected array $cachedColumns;
@@ -43,7 +43,7 @@ abstract class Importer
      */
     protected static ?string $model = null;
 
-    protected static bool $shouldPreventFormulaInjection = false;
+    protected static bool $shouldPreventFormulaInjection = true;
 
     /**
      * @param  array<string, string>  $columnMap
@@ -317,14 +317,17 @@ abstract class Importer
 
     public static function shouldPreventFormulaInjection(): bool
     {
-        // Security: Off by default because the failure CSV is designed to be
-        // corrected and re-uploaded — prefixing a `'` to neutralize formula
-        // injection (CWE-1236) would corrupt legitimate data such as `-5` on
-        // that round trip. The failure CSV includes every uploaded column,
-        // even those not mapped to an `ImportColumn`, so this is a whole-file
-        // toggle rather than a per-column one. Enable it for a single importer
-        // by redeclaring `$shouldPreventFormulaInjection`, or globally by
-        // calling `Importer::preventFormulaInjection()` in a service provider.
+        // Security: On by default to neutralize CSV formula injection (CWE-1236)
+        // in the downloadable failure CSV, which admins open in spreadsheet
+        // software. Values that begin with a formula-triggering character are
+        // prefixed with a `'`; purely numeric strings such as `-5` are left
+        // unchanged so the failure CSV can be corrected and re-uploaded without
+        // corrupting legitimate data. The failure CSV includes every uploaded
+        // column, even those not mapped to an `ImportColumn`, so this is a
+        // whole-file toggle rather than a per-column one. Disable it for a
+        // single importer by redeclaring `$shouldPreventFormulaInjection`, or
+        // globally by calling `Importer::preventFormulaInjection(false)` in a
+        // service provider.
         return static::$shouldPreventFormulaInjection;
     }
 

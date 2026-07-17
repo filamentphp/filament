@@ -65,9 +65,9 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
-        // Security: Export values are written to CSV/XLSX as-is after
-        // formatting. Use `formatStateUsing()` to sanitize values that
-        // may trigger formula injection (`=`, `+`, `-`, `@`).
+        // Security: Formula injection (`=`, `+`, `-`, `@`) is neutralized by
+        // default in `getFormattedState()` after this formatting runs. See
+        // `shouldPreventFormulaInjection()` and `preventFormulaInjection()`.
 
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
@@ -162,7 +162,10 @@ trait CanFormatState
 
     public function shouldPreventFormulaInjection(): bool
     {
-        return (bool) $this->evaluate($this->shouldPreventFormulaInjection);
+        // Protection against CSV/spreadsheet formula injection (CWE-1236) is
+        // enabled by default. When the property is `null` (unset), it resolves
+        // to `true`; passing `preventFormulaInjection(false)` opts out.
+        return (bool) ($this->evaluate($this->shouldPreventFormulaInjection) ?? true);
     }
 
     public function getCharacterLimit(): ?int

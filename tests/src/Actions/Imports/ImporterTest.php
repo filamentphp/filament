@@ -21,9 +21,9 @@ class PlainTestImporter extends Importer
     }
 }
 
-class FormulaSafeTestImporter extends Importer
+class FormulaUnsafeTestImporter extends Importer
 {
-    protected static bool $shouldPreventFormulaInjection = true;
+    protected static bool $shouldPreventFormulaInjection = false;
 
     public static function getColumns(): array
     {
@@ -37,24 +37,24 @@ class FormulaSafeTestImporter extends Importer
 }
 
 // Reset the base default after every test so the global toggle cannot leak.
-afterEach(fn () => Importer::preventFormulaInjection(false));
+afterEach(fn () => Importer::preventFormulaInjection(true));
 
 describe('`shouldPreventFormulaInjection()`', function (): void {
-    it('defaults to `false`', function (): void {
-        expect(PlainTestImporter::shouldPreventFormulaInjection())->toBeFalse();
-    });
-
-    it('can be enabled for a single importer via the `$shouldPreventFormulaInjection` property', function (): void {
-        expect(FormulaSafeTestImporter::shouldPreventFormulaInjection())->toBeTrue();
-        expect(PlainTestImporter::shouldPreventFormulaInjection())->toBeFalse();
-    });
-
-    it('can be enabled globally with `Importer::preventFormulaInjection()`', function (): void {
-        expect(PlainTestImporter::shouldPreventFormulaInjection())->toBeFalse();
-
-        Importer::preventFormulaInjection();
-
+    it('defaults to `true`', function (): void {
         expect(PlainTestImporter::shouldPreventFormulaInjection())->toBeTrue();
+    });
+
+    it('can be disabled for a single importer via the `$shouldPreventFormulaInjection` property', function (): void {
+        expect(FormulaUnsafeTestImporter::shouldPreventFormulaInjection())->toBeFalse();
+        expect(PlainTestImporter::shouldPreventFormulaInjection())->toBeTrue();
+    });
+
+    it('can be disabled globally with `Importer::preventFormulaInjection(false)`', function (): void {
+        expect(PlainTestImporter::shouldPreventFormulaInjection())->toBeTrue();
+
+        Importer::preventFormulaInjection(false);
+
+        expect(PlainTestImporter::shouldPreventFormulaInjection())->toBeFalse();
     });
 });
 
@@ -87,24 +87,24 @@ describe('failure CSV formula injection', function (): void {
         return $response->streamedContent();
     };
 
-    it('leaves formula triggers unescaped by default', function () use ($downloadFailureCsv): void {
+    it('escapes formula triggers by default', function () use ($downloadFailureCsv): void {
         $content = $downloadFailureCsv->call($this, PlainTestImporter::class);
-
-        expect($content)->toContain('=1+1');
-        expect($content)->not->toContain("'=1+1");
-        expect($content)->not->toContain("'-5");
-    });
-
-    it('escapes formula triggers when `shouldPreventFormulaInjection()` is enabled', function () use ($downloadFailureCsv): void {
-        $content = $downloadFailureCsv->call($this, FormulaSafeTestImporter::class);
 
         expect($content)->toContain("'=1+1");
         expect($content)->toContain("'+44 1234 567890");
     });
 
-    it('leaves purely numeric strings unescaped when `shouldPreventFormulaInjection()` is enabled', function () use ($downloadFailureCsv): void {
-        $content = $downloadFailureCsv->call($this, FormulaSafeTestImporter::class);
+    it('leaves purely numeric strings unescaped by default', function () use ($downloadFailureCsv): void {
+        $content = $downloadFailureCsv->call($this, PlainTestImporter::class);
 
         expect($content)->not->toContain("'-5");
+    });
+
+    it('does not escape formula triggers when disabled with `preventFormulaInjection(false)`', function () use ($downloadFailureCsv): void {
+        $content = $downloadFailureCsv->call($this, FormulaUnsafeTestImporter::class);
+
+        expect($content)->toContain('=1+1');
+        expect($content)->not->toContain("'=1+1");
+        expect($content)->not->toContain("'+44 1234 567890");
     });
 });

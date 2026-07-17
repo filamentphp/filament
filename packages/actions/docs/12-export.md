@@ -1014,31 +1014,29 @@ You could also apply [global scopes](https://laravel.com/docs/eloquent#global-sc
 
 ### CSV formula injection
 
-Filament's export system writes data to CSV and XLSX files exactly as it is stored in the database, without any transformation. This means that if your database contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the exported file. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if your data includes untrusted or user-submitted content. You should ensure that your users are aware of this risk, or sanitize the data before export using the [`formatStateUsing()` method](export#formatting-the-value-of-an-export-column) on each column, for example by prefixing values with a single quote (`'`) to prevent formula interpretation.
+When data is written to CSV and XLSX files, values beginning with characters like `=`, `+`, `-`, or `@` may be interpreted as formulas when opened in spreadsheet software such as Microsoft Excel or Google Sheets. If your data includes untrusted or user-submitted content, this could pose a security risk (CSV formula injection).
 
-Alternatively, you may opt in to Filament's built-in protection. When enabled on a column, any value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is automatically prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Enable it using the `preventFormulaInjection()` method on the column:
+To protect against this, Filament neutralizes formula injection by default. Any value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is automatically prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Purely numeric strings such as `-5` are left unchanged, since spreadsheets interpret them as numbers rather than formulas.
+
+Prefixing a single quote can still alter some legitimate data — for example, a phone number stored as a string like `+44 1234 567890` would be rewritten to `'+44 1234 567890` (numeric strings like `-5` are unaffected). If a specific column exports trusted data where this transformation is unwanted, disable the protection for that column by passing `false`:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
 
-ExportColumn::make('description')
-    ->preventFormulaInjection()
+ExportColumn::make('phone')
+    ->preventFormulaInjection(false)
 ```
 
-If you would like to enable this protection for every export column across your application, you can use the `configureUsing()` method inside the `boot()` method of a service provider. Since this is applied to all columns, you can opt an individual column back out by passing `false` to `preventFormulaInjection()`:
+To disable it for every export column across your application, use the `configureUsing()` method inside the `boot()` method of a service provider:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
 
 ExportColumn::configureUsing(function (ExportColumn $column): void {
-    $column->preventFormulaInjection();
+    $column->preventFormulaInjection(false);
 });
-
-// Opt a specific column back out:
-ExportColumn::make('temperature')
-    ->preventFormulaInjection(false)
 ```
 
-<Aside variant="warning">
-    This protection is **opt in** and disabled by default, because prefixing a single quote alters legitimate data. For example, values such as `-5` or a phone number like `+44 1234 567890` are valid formula triggers and would be rewritten to `'-5` and `'+44 1234 567890`. Only enable it when you are exporting untrusted or user-submitted content, and make sure the transformation is acceptable for the columns you enable it on.
+<Aside variant="danger">
+    Disabling this protection reintroduces the formula injection risk described above. Prefer disabling it only on the individual columns where the transformation is a problem, rather than turning it off globally.
 </Aside>
