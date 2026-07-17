@@ -246,10 +246,20 @@ class Entry extends Component
         $view = $this->getEntryWrapperAbsoluteView();
 
         if ($view !== 'filament-infolists::components.entry-wrapper') {
-            return view($this->getEntryWrapperAbsoluteView(), [
-                'entry' => $this,
-                'slot' => new ComponentSlot($html),
-            ])->toHtml();
+            if (view()->exists($view)) {
+                return view($view, [
+                    'entry' => $this,
+                    'slot' => new ComponentSlot($html),
+                ])->toHtml();
+            }
+
+            return $this->renderWrapperBladeComponent(
+                $this->getEntryWrapperView(),
+                new ComponentSlot($html),
+                new FilamentComponentAttributeBag([
+                    'entry' => $this,
+                ]),
+            );
         }
 
         $hasInlineLabel = $this->hasInlineLabel();

@@ -52,6 +52,37 @@ describe('hint icon tooltip', function (): void {
     });
 });
 
+it('can use a custom view via `entryWrapperView()`', function (): void {
+    $html = Schema::make(Livewire::make())
+        ->components([
+            TextEntry::make('name')
+                ->state('Dan')
+                ->entryWrapperView('custom-entry-wrapper'),
+        ])
+        ->toHtml();
+
+    expect($html)
+        ->toContain('custom-entry-wrapper-view')
+        ->toContain('data-label="Name"')
+        ->toContain('Dan');
+});
+
+it('can use a Blade component alias via `entryWrapperView()`', function (): void {
+    $html = Schema::make(Livewire::make())
+        ->components([
+            TextEntry::make('name')
+                ->state('Dan')
+                ->entryWrapperView('test-plugin-entry-wrapper'),
+        ])
+        ->toHtml();
+
+    expect($html)
+        ->toContain('entry-wrapper-blade-component')
+        ->toContain('fi-in-entry')
+        ->toContain('Name')
+        ->toContain('Dan');
+});
+
 class IdEntry extends TextEntry
 {
     public static function getDefaultName(): ?string
