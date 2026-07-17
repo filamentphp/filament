@@ -167,6 +167,25 @@ Importer::preventFormulaInjection(false);
 See the [import documentation](../actions/import#csv-formula-injection) for more details.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('support')">
+<span slot="summary">Livewire file uploads are now restricted to schema components by default</span>
+
+Every Livewire component that uses the `InteractsWithSchemas` trait exposes Livewire's `_startUpload` and `_finishUpload` RPC methods, which by default accept uploads to any property name — even ones that are not real upload fields. To close this, Filament now restricts these uploads by default: `_startUpload` and `_finishUpload` abort with a `403` unless the target property maps to a `FileUpload` field (or any field that supports file attachments) registered in one of the component's schemas. Previously this was opt-in via the `RestrictsFileUploadsToSchemaComponents` trait.
+
+Legitimate uploads from your schema's fields are unaffected. This only changes behavior for components that accept uploads to a property that is **not** a schema field — for example, a custom Livewire component that wires `wire:model` for a file upload to a property outside its Filament schema.
+
+The `RestrictsFileUploadsToSchemaComponents` trait has been removed, since its behavior is now the default. The upgrade command removes any usage of it from your components automatically. If a component legitimately needs to accept uploads to a non-schema property, opt out by overriding the method:
+
+```php
+public function shouldRestrictFileUploadsToSchemaComponents(): bool
+{
+    return false;
+}
+```
+
+See the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components) for more details.
+</Disclosure>
+
 ### Low-impact changes
 
 <Disclosure open x-show="packages.includes('support')">

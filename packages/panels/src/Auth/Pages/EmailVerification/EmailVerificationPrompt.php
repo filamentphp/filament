@@ -10,7 +10,6 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Text;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
@@ -23,7 +22,6 @@ use LogicException;
  */
 class EmailVerificationPrompt extends SimplePage
 {
-    use RestrictsFileUploadsToSchemaComponents;
     use WithRateLimiting;
 
     public function mount(): void
