@@ -14,6 +14,10 @@ return [
 
             'label' => 'Grupos',
 
+            'group' => [
+                'label' => 'Grupo',
+            ],
+
             'block' => [
                 'label' => 'Disyunción (O)',
                 'or' => 'O',
