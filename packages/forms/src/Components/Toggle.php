@@ -98,6 +98,7 @@ class Toggle extends Field implements HasEmbeddedView
             <div
                 x-cloak="inline-flex"
                 wire:ignore
+                wire:key="<?= e($this->getId()) ?>.on-fallback"
                 <?= (new FilamentComponentAttributeBag)->class([
                     'fi-toggle fi-toggle-on fi-hidden',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),
