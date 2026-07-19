@@ -45,6 +45,7 @@ class Toggle extends Field implements HasEmbeddedView
         $onColor = $this->getOnColor() ?? 'primary';
         $onIcon = $this->getOnIcon();
         $isOn = (bool) $this->getState();
+        $livewireKey = $this->getLivewireKey();
 
         $stateExpression = '$wire.' . $this->applyStateBindingModifiers("\$entangle('{$statePath}')");
 
@@ -98,7 +99,7 @@ class Toggle extends Field implements HasEmbeddedView
             <div
                 x-cloak="inline-flex"
                 wire:ignore
-                wire:key="<?= e($this->getId()) ?>.on-fallback"
+                wire:key="<?= e($livewireKey) ?>.on-state-fallback"
                 <?= (new FilamentComponentAttributeBag)->class([
                     'fi-toggle fi-toggle-on fi-hidden',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),
