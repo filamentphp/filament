@@ -31,6 +31,8 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     protected ?array $cachedItems = null;
 
+    protected mixed $cachedItemsState = null;
+
     /**
      * Configure table columns for display
      *
@@ -66,13 +68,15 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     public function getItems(): array
     {
-        if ($this->cachedItems !== null) {
+        $state = $this->getState() ?? [];
+
+        if (($this->cachedItems !== null) && ($this->cachedItemsState === $state)) {
             return $this->cachedItems;
         }
 
         $containers = [];
 
-        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
+        foreach ($state as $itemKey => $itemData) {
             $container = $this
                 ->getChildSchema()
                 ->getClone()
@@ -87,6 +91,8 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
 
             $containers[$itemKey] = $container;
         }
+
+        $this->cachedItemsState = $state;
 
         return $this->cachedItems = $containers;
     }
@@ -104,6 +110,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
         parent::clearCachedChildSchemas();
 
         $this->cachedItems = null;
+        $this->cachedItemsState = null;
     }
 
     public function toEmbeddedHtml(): string
