@@ -25,6 +25,8 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
     protected ?string $id = null;
 
+    protected bool | Closure $isInGroupHeader = false;
+
     /**
      * @var array<string, mixed>
      */
@@ -50,6 +52,18 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
         $this->id = $id;
 
         return $this;
+    }
+
+    public function inGroupHeader(bool | Closure $condition = true): static
+    {
+        $this->isInGroupHeader = $condition;
+
+        return $this;
+    }
+
+    public function isInGroupHeader(): bool
+    {
+        return (bool) $this->evaluate($this->isInGroupHeader);
     }
 
     public function using(?Closure $using): static
