@@ -65,7 +65,7 @@ class OptionStateCast implements StateCast
 
         // Security: mirror `get()` and fail closed on a tampered non-scalar value so a
         // malformed array cannot reach `strval()` and crash the request.
-        if (! is_scalar($state) && (! $state instanceof BackedEnum)) {
+        if (! is_scalar($state) && (! $state instanceof BackedEnum) && (! $state instanceof Stringable)) {
             return null;
         }
 
