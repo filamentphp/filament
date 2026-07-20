@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\StateCasts;
 
 use BackedEnum;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Stringable;
 
 class OptionStateCast implements StateCast
 {
@@ -21,12 +22,16 @@ class OptionStateCast implements StateCast
         // always a scalar or `null`. A tampered request payload can deliver an array (or
         // other non-scalar), which would throw a `TypeError` at the `strval()` below and
         // crash the request. Fail closed by treating it as no selection instead.
-        if (! is_scalar($state) && (! $state instanceof BackedEnum)) {
+        if (! is_scalar($state) && (! $state instanceof BackedEnum) && (! $state instanceof Stringable)) {
             return null;
         }
 
         if ($state instanceof BackedEnum) {
             $state = $state->value;
+        }
+
+        if ($state instanceof Stringable) {
+            $state = (string) $state;
         }
 
         if (
