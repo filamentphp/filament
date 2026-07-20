@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Tables\Enums\SummarizerPosition;
 use Illuminate\Database\Eloquent\Builder;
 
 trait CanSummarizeRecords
@@ -29,10 +30,10 @@ trait CanSummarizeRecords
         return (bool) $this->evaluate($this->hasAllTableSummary);
     }
 
-    public function hasSummary(Builder | Closure | null $query): bool
+    public function hasSummary(Builder | Closure | null $query, ?SummarizerPosition $position = null): bool
     {
         foreach ($this->getColumns() as $column) {
-            if ($column->hasSummary($query)) {
+            if ($column->hasSummary($query, $position)) {
                 return true;
             }
         }

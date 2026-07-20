@@ -7,6 +7,7 @@
     'groupsOnly' => false,
     'heading',
     'placeholderColumns' => true,
+    'position' => null,
     'query',
     'selectionEnabled' => false,
     'selectedState',
@@ -32,7 +33,7 @@
     $columnsWithSummary = [];
 
     foreach ($columns as $summaryColumnKey => $summaryColumn) {
-        $summaryColumnSummarizers = $summaryColumn->getSummarizers($query);
+        $summaryColumnSummarizers = $summaryColumn->getSummarizers($query, $position);
 
         $columnsWithSummary[$summaryColumnKey] = [
             'summarizers' => $summaryColumnSummarizers,

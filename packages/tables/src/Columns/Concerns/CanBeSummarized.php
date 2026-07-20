@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 use Filament\Tables\Columns\Summarizers\Summarizer;
+use Filament\Tables\Enums\SummarizerPosition;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -40,20 +41,29 @@ trait CanBeSummarized
     /**
      * @return array<string | int, Summarizer>
      */
-    public function getSummarizers(Builder | Closure | null $query = null): array
+    public function getSummarizers(Builder | Closure | null $query = null, ?SummarizerPosition $position = null): array
     {
+        $summarizers = $this->summarizers;
+
+        if ($position) {
+            $summarizers = array_filter(
+                $summarizers,
+                fn (Summarizer $summarizer): bool => $summarizer->getPosition() === $position,
+            );
+        }
+
         if ($query) {
             return array_filter(
-                $this->summarizers,
+                $summarizers,
                 fn (Summarizer $summarizer): bool => $summarizer->query($query)->isVisible(),
             );
         }
 
-        return $this->summarizers;
+        return $summarizers;
     }
 
-    public function hasSummary(Builder | Closure | null $query = null): bool
+    public function hasSummary(Builder | Closure | null $query = null, ?SummarizerPosition $position = null): bool
     {
-        return (bool) count($this->getSummarizers($query));
+        return (bool) count($this->getSummarizers($query, $position));
     }
 }

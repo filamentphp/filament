@@ -9,6 +9,7 @@
     'pageSummary' => true,
     'placeholderColumns' => true,
     'pluralModelLabel',
+    'position' => null,
     'recordCheckboxPosition' => null,
     'records',
     'selectionEnabled' => false,
@@ -53,7 +54,7 @@
 
         @foreach ($columns as $column)
             @php
-                $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+                $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery, $position)) || $column->hasSummary($allTableSummaryQuery, $position);
             @endphp
 
             @if ($placeholderColumns || $columnHasSummary)
@@ -116,6 +117,7 @@
         :extra-heading-column="$extraHeadingColumn"
         :heading="__('filament-tables::table.summary.subheadings.page', ['label' => $pluralModelLabel])"
         :placeholder-columns="$placeholderColumns"
+        :position="$position"
         :query="$pageTableSummaryQuery"
         :record-checkbox-position="$recordCheckboxPosition"
         :selected-state="$selectedState"
@@ -136,6 +138,7 @@
         :groups-only="$groupsOnly"
         :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
         :placeholder-columns="$placeholderColumns"
+        :position="$position"
         :query="$allTableSummaryQuery"
         :record-checkbox-position="$recordCheckboxPosition"
         :selected-state="$selectedState"

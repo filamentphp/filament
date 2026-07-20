@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Tables\Enums\SummarizerPosition;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
@@ -24,6 +25,8 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
     protected string $viewIdentifier = 'summarizer';
 
     protected ?string $id = null;
+
+    protected SummarizerPosition | Closure | null $position = null;
 
     /**
      * @var array<string, mixed>
@@ -50,6 +53,18 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
         $this->id = $id;
 
         return $this;
+    }
+
+    public function position(SummarizerPosition | Closure | null $position): static
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function getPosition(): SummarizerPosition
+    {
+        return $this->evaluate($this->position) ?? SummarizerPosition::Bottom;
     }
 
     public function using(?Closure $using): static

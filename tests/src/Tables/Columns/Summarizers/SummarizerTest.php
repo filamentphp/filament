@@ -6,6 +6,7 @@ use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\Summarizers\Values;
+use Filament\Tables\Enums\SummarizerPosition;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
 
@@ -35,6 +36,22 @@ describe('`Summarizer` base class', function (): void {
         $summarizer->id('post-hoc');
 
         expect($summarizer->getId())->toBe('post-hoc');
+    });
+
+    it('defaults `getPosition()` to `SummarizerPosition::Bottom`', function (): void {
+        expect(Summarizer::make()->getPosition())->toBe(SummarizerPosition::Bottom);
+    });
+
+    it('can use `position()` to render the summary at the top of the table', function (): void {
+        expect(Summarizer::make()->position(SummarizerPosition::Top)->getPosition())->toBe(SummarizerPosition::Top);
+    });
+
+    it('can use `position()` with a `Closure`', function (): void {
+        expect(Summarizer::make()->position(static fn (): SummarizerPosition => SummarizerPosition::Top)->getPosition())->toBe(SummarizerPosition::Top);
+    });
+
+    it('can use `position(null)` to reset the position to the default', function (): void {
+        expect(Summarizer::make()->position(SummarizerPosition::Top)->position(null)->getPosition())->toBe(SummarizerPosition::Bottom);
     });
 
     it('can set `using()` callback', function (): void {

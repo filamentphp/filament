@@ -5,6 +5,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
+use Filament\Tables\Enums\SummarizerPosition;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCursorPagination;
@@ -209,6 +210,13 @@ it('does not render the trailing group summary with cursor pagination when the n
         ->assertDontSee('A summary');
 });
 
+it('can use `position()` to render a summary at the top of the table', function (): void {
+    Post::factory()->count(3)->create(['title' => 'Zeta unique title', 'rating' => 2]);
+
+    livewire(TestTableWithPositionedSummaries::class)
+        ->assertSeeInOrder(['Top total', 'Zeta unique title', 'Bottom total']);
+});
+
 class TestTableWithGroupSummariesOnly extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -230,6 +238,35 @@ class TestTableWithGroupSummariesOnly extends Component implements HasActions, H
                 Tables\Grouping\Group::make('is_published'),
             )
             ->summaries(pageCondition: false, allTableCondition: false);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithPositionedSummaries extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('rating')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make('topSum')
+                            ->label('Top total')
+                            ->position(SummarizerPosition::Top),
+                        Tables\Columns\Summarizers\Sum::make('bottomSum')
+                            ->label('Bottom total'),
+                    ]),
+            ]);
     }
 
     public function render(): View

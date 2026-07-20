@@ -13,6 +13,7 @@
     use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Filament\Tables\Enums\SummarizerPosition;
     use Filament\Tables\View\TablesRenderHook;
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
@@ -46,8 +47,12 @@
     $hasColumnsLayout = $hasColumnsLayout();
     $hasPageSummary = $hasPageSummary();
     $hasAllTableSummary = $hasAllTableSummary();
+    $hasTopPositionedSummarizers = $hasSummary($this->getAllTableSummaryQuery(), SummarizerPosition::Top);
+    $hasBottomPositionedSummarizers = $hasSummary($this->getAllTableSummaryQuery(), SummarizerPosition::Bottom);
     $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
     $hasTopLevelSummary = $hasSummary && ($hasPageSummary || $hasAllTableSummary);
+    $hasTopLevelTopPositionedSummary = $hasTopPositionedSummarizers && ($hasPageSummary || $hasAllTableSummary);
+    $hasTopLevelBottomPositionedSummary = $hasBottomPositionedSummarizers && ($hasPageSummary || $hasAllTableSummary);
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
@@ -1048,6 +1053,23 @@
                         @if ($content)
                             {{ $content->with(['records' => $records]) }}
                         @else
+                            @if ($hasTopLevelTopPositionedSummary && (! $isReordering))
+                                <table class="fi-ta-table">
+                                    <tbody>
+                                        <x-filament-tables::summary
+                                            :all-table-summary="$hasAllTableSummary"
+                                            :columns="$columns"
+                                            extra-heading-column
+                                            :page-summary="$hasPageSummary"
+                                            :placeholder-columns="false"
+                                            :plural-model-label="$pluralModelLabel"
+                                            :position="\Filament\Tables\Enums\SummarizerPosition::Top"
+                                            :records="$records"
+                                        />
+                                    </tbody>
+                                </table>
+                            @endif
+
                             <div
                                 @if ($isReorderable)
                                     x-on:end.stop="
@@ -1406,7 +1428,7 @@
                             }}
                         @endif
 
-                        @if ($hasTopLevelSummary && (! $isReordering))
+                        @if ($hasTopLevelBottomPositionedSummary && (! $isReordering))
                             <table class="fi-ta-table">
                                 <tbody>
                                     <x-filament-tables::summary
@@ -1416,6 +1438,7 @@
                                         :page-summary="$hasPageSummary"
                                         :placeholder-columns="false"
                                         :plural-model-label="$pluralModelLabel"
+                                        :position="\Filament\Tables\Enums\SummarizerPosition::Bottom"
                                         :records="$records"
                                     />
                                 </tbody>
@@ -1994,6 +2017,27 @@
                                         </tr>
                                     @endif
 
+                                    @if ($hasTopPositionedSummarizers && (! $isReordering) && count($records))
+                                        @php
+                                            $groupColumn = $group?->getColumn();
+                                        @endphp
+
+                                        <x-filament-tables::summary
+                                            :actions="$hasRecordActionsForAnyRecord"
+                                            :actions-position="$recordActionsPosition"
+                                            :all-table-summary="$hasAllTableSummary"
+                                            :columns="$columns"
+                                            :group-column="$groupColumn"
+                                            :groups-only="$isGroupsOnly"
+                                            :page-summary="$hasPageSummary"
+                                            :plural-model-label="$pluralModelLabel"
+                                            :position="\Filament\Tables\Enums\SummarizerPosition::Top"
+                                            :record-checkbox-position="$recordCheckboxPosition"
+                                            :records="$records"
+                                            :selection-enabled="$isSelectionEnabled"
+                                        />
+                                    @endif
+
                                     @if (count($records))
                                         @php
                                             $isRecordRowStriped = false;
@@ -2460,7 +2504,7 @@
                                             />
                                         @endif
 
-                                        @if ($hasSummary && (! $isReordering))
+                                        @if ($hasBottomPositionedSummarizers && (! $isReordering))
                                             @php
                                                 $groupColumn = $group?->getColumn();
                                             @endphp
@@ -2474,6 +2518,7 @@
                                                 :groups-only="$isGroupsOnly"
                                                 :page-summary="$hasPageSummary"
                                                 :plural-model-label="$pluralModelLabel"
+                                                :position="\Filament\Tables\Enums\SummarizerPosition::Bottom"
                                                 :record-checkbox-position="$recordCheckboxPosition"
                                                 :records="$records"
                                                 :selection-enabled="$isSelectionEnabled"
