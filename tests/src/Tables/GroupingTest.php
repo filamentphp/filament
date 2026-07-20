@@ -24,6 +24,7 @@ use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
@@ -639,6 +640,27 @@ it('renders the group color on the group header', function (): void {
 
     livewire(TestTableWithColoredGroups::class)
         ->assertSeeHtml('fi-color-info');
+});
+
+it('renders colored group headers accessibly in the browser', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::factory()->count(2)->create(['title' => 'Alpha']);
+        Post::factory()->count(2)->create(['title' => 'Beta']);
+
+        visit('/group-color-browser-test')
+            ->assertPresent('.fi-ta-group-header-row.fi-color-success')
+            ->assertPresent('.fi-ta-group-header-row.fi-color-info')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/group-color-browser-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
 });
 
 it('can set `column()` and get with `getColumn()`', function (): void {

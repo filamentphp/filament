@@ -150,6 +150,46 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/grouping-descriptions" alt="Table with group descriptions" version="4.x" />
 
+## Setting a group color
+
+You may set a color for a group, which is used as the background color of the group header. To do this, use the `color()` method on a `Group` object, passing any [color](../styling/colors) registered in your app:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('status')
+                ->color('info'),
+        ]);
+}
+```
+
+The `color()` method also accepts a function, which receives the first `$record` of the group, so each group can get its own color:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('status')
+                ->color(fn (Post $record): ?string => match ($record->status) {
+                    'published' => 'success',
+                    'draft' => 'gray',
+                    default => null,
+                }),
+        ]);
+}
+```
+
+Returning `null` keeps the default group header styling.
+
 ## Setting a group key
 
 By default, the key of a group will be the value of the attribute. It is used internally as a raw identifier of that group, instead of the [title](#setting-a-group-title). You may customize it by returning a new key from the `getKeyFromRecordUsing()` method of a `Group` object:
