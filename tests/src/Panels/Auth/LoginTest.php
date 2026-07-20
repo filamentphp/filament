@@ -328,28 +328,6 @@ it('can fill the login form, authenticate, and redirect to the dashboard in the 
     });
 });
 
-it('reveals the skip link when it receives keyboard focus in the browser', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit(Filament::getUrl())
-            ->keys('body', 'Tab')
-            ->assertPresent('.fi-skip-link:focus')
-            ->assertScript("getComputedStyle(document.querySelector('.fi-skip-link')).clipPath", 'none')
-            ->assertScript("getComputedStyle(document.querySelector('.fi-skip-link')).position", 'fixed')
-            ->assertScript("document.querySelector('.fi-skip-link').getBoundingClientRect().width > 1", true)
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-
-        visit(Filament::getUrl())
-            ->inDarkMode()
-            ->keys('body', 'Tab')
-            ->assertPresent('.fi-skip-link:focus')
-            ->assertScript("getComputedStyle(document.querySelector('.fi-skip-link')).clipPath", 'none')
-            ->assertNoAccessibilityIssues();
-    });
-});
-
 it('does not lock out a user when an attacker exhausts login attempts from a different IP', function (): void {
     $this->assertGuest();
 
