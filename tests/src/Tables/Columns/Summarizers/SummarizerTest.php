@@ -37,6 +37,22 @@ describe('`Summarizer` base class', function (): void {
         expect($summarizer->getId())->toBe('post-hoc');
     });
 
+    it('defaults `isInGroupHeader()` to `false`', function (): void {
+        expect(Summarizer::make()->isInGroupHeader())->toBeFalse();
+    });
+
+    it('can use `inGroupHeader()` to render the summary in the group header', function (): void {
+        expect(Summarizer::make()->inGroupHeader()->isInGroupHeader())->toBeTrue();
+    });
+
+    it('can use `inGroupHeader(false)` to undo `inGroupHeader()`', function (): void {
+        expect(Summarizer::make()->inGroupHeader()->inGroupHeader(false)->isInGroupHeader())->toBeFalse();
+    });
+
+    it('can use `inGroupHeader()` with a `Closure`', function (): void {
+        expect(Summarizer::make()->inGroupHeader(static fn (): bool => true)->isInGroupHeader())->toBeTrue();
+    });
+
     it('can set `using()` callback', function (): void {
         $summarizer = Summarizer::make()
             ->using(static fn () => 42);
