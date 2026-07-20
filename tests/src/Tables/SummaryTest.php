@@ -9,8 +9,10 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCursorPagination;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -226,6 +228,26 @@ it('keeps summarizers without `inGroupHeader()` in the trailing group summary ro
         ->assertSee('Header sum')
         ->assertSeeHtml('fi-ta-summary-row')
         ->assertSee('Trailing count');
+});
+
+it('renders `inGroupHeader()` summaries accessibly in the browser', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::factory()->count(3)->create(['rating' => 2]);
+
+        visit('/group-header-summary-browser-test')
+            ->assertPresent('.fi-ta-group-header-summary-cell')
+            ->assertSee('Rating sum')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/group-header-summary-browser-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
 });
 
 class TestTableWithGroupSummariesOnly extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
