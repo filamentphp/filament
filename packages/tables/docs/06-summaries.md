@@ -424,6 +424,24 @@ public function table(Table $table): Table
 }
 ```
 
+## Positioning summaries
+
+By default, summaries are displayed at the bottom of the table. You may render a summarizer above the records instead, using the `position()` method with the `SummarizerPosition` enum:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\SummarizerPosition;
+
+TextColumn::make('views_count')
+    ->summarize(
+        Sum::make()
+            ->position(SummarizerPosition::Top),
+    )
+```
+
+Each summarizer decides individually where it is rendered, so you can display some summaries at the top of the table and others at the bottom of it. Summaries of [groups of rows](#summarising-groups-of-rows) are not affected by the `position()` method.
+
 ## Hiding summary rows
 
 By default, both the page summary and total summary rows are displayed when columns have summarizers. You can control which summary rows appear using the `summaries()` method on the table:

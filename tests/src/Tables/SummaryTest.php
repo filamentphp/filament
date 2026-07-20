@@ -10,8 +10,10 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCursorPagination;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -215,6 +217,26 @@ it('can use `position()` to render a summary at the top of the table', function 
 
     livewire(TestTableWithPositionedSummaries::class)
         ->assertSeeInOrder(['Top total', 'Zeta unique title', 'Bottom total']);
+});
+
+it('renders positioned summaries accessibly in the browser', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Post::factory()->count(3)->create(['title' => 'Zeta unique title', 'rating' => 2]);
+
+        visit('/summarizer-position-browser-test')
+            ->assertSeeIn('.fi-ta-content-ctn', 'Top total')
+            ->assertSeeIn('.fi-ta-content-ctn', 'Bottom total')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/summarizer-position-browser-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
 });
 
 class TestTableWithGroupSummariesOnly extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
