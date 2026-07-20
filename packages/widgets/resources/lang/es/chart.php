@@ -10,6 +10,10 @@ return [
 
     ],
 
+    'filter' => [
+        'label' => 'Filtrar los datos del gráfico',
+    ],
+
     'filters' => [
 
         'actions' => [

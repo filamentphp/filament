@@ -12,6 +12,10 @@ return [
                 'label' => 'Aplicar columnas',
             ],
 
+            'reorder' => [
+                'label' => 'Reordenar columna',
+            ],
+
             'reset' => [
                 'label' => 'Resetear las columnas',
             ],
@@ -236,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Cargando...',
+
     'reorder_indicator' => 'Arrastrar los registros en el orden.',
+
+    'result_count' => '{0} No hay resultados|{1} :count resultado|[2,*] :count resultados',
 
     'selection_indicator' => [
 

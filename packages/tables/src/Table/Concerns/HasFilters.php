@@ -250,10 +250,6 @@ trait HasFilters
 
         $action->extraAttributes(['class' => 'fi-force-enabled'], merge: true);
 
-        if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize(Size::Small);
-        }
-
         return $action;
     }
 
