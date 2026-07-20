@@ -45,7 +45,7 @@
         @apply flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 px-4 py-3 sm:px-6 dark:border-white/10;
 
         & > * {
-            @apply flex items-center gap-x-4;
+            @apply flex min-h-9 items-center gap-x-4;
         }
 
         & > :nth-child(1) {
