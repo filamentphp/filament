@@ -34,7 +34,7 @@ class GroupHeaderSummaryBrowserTest extends Page implements HasTable
                     ]),
             ])
             ->defaultGroup(
-                Tables\Grouping\Group::make('is_published')
+                Tables\Grouping\Group::make('title')
                     ->collapsible(),
             );
     }

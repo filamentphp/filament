@@ -236,7 +236,7 @@ it('renders `inGroupHeader()` summaries accessibly in the browser', function ():
 
         $this->actingAs(User::factory()->create());
 
-        Post::factory()->count(3)->create(['rating' => 2]);
+        Post::factory()->count(3)->create(['title' => 'Alpha', 'rating' => 2]);
 
         visit('/group-header-summary-browser-test')
             ->assertPresent('.fi-ta-group-header-summary-cell')
