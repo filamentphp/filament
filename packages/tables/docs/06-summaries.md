@@ -401,6 +401,20 @@ TextColumn::make('sku')
 
 You can use summaries with [groups](grouping) to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.
 
+### Displaying a summary in the group header
+
+By default, group summaries are displayed in a separate row at the end of each group. You may render a summarizer inside the group header row instead, using the `inGroupHeader()` method on the summarizer:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('views_count')
+    ->summarize(Sum::make()->inGroupHeader())
+```
+
+You can [learn more about group header summaries](grouping#displaying-a-summary-in-the-group-header) in the grouping documentation.
+
 ### Hiding the grouped rows and showing the summary only
 
 You may hide the rows inside groups and just show the summary of each group using the `groupsOnly()` method. This is beneficial in many reporting scenarios.
