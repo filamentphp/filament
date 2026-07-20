@@ -164,6 +164,10 @@
                 @apply text-sm text-gray-500 dark:text-gray-400;
             }
 
+            & .fi-ta-group-header-summary {
+                @apply flex flex-wrap gap-x-6 gap-y-1 pt-1;
+            }
+
             & .fi-ta-group-checkbox {
                 @apply mx-3;
             }

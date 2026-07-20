@@ -6,6 +6,7 @@
     'groupColumn' => null,
     'groupsOnly' => false,
     'heading',
+    'inGroupHeader' => null,
     'placeholderColumns' => true,
     'query',
     'selectionEnabled' => false,
@@ -33,6 +34,16 @@
 
     foreach ($columns as $summaryColumnKey => $summaryColumn) {
         $summaryColumnSummarizers = $summaryColumn->getSummarizers($query);
+
+        // `null` renders all summarizers; `true` / `false` renders only summarizers that are
+        // / are not rendered in the group header, so grouped tables can split them between
+        // the group header row and the trailing group summary row.
+        if ($inGroupHeader !== null) {
+            $summaryColumnSummarizers = array_filter(
+                $summaryColumnSummarizers,
+                fn (\Filament\Tables\Columns\Summarizers\Summarizer $summarizer): bool => $summarizer->isInGroupHeader() === $inGroupHeader,
+            );
+        }
 
         $columnsWithSummary[$summaryColumnKey] = [
             'summarizers' => $summaryColumnSummarizers,

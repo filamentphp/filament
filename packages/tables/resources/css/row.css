@@ -14,13 +14,18 @@
     }
 
     &.fi-ta-group-header-row {
-        & > td {
+        & > td,
+        & > th {
             @apply bg-gray-50 dark:bg-white/5;
         }
     }
 
     & .fi-ta-group-header-cell {
-        @apply px-3 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+        @apply px-3 text-start sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    & .fi-ta-group-header-summary-cell {
+        @apply px-3 py-2 sm:last-of-type:pe-6;
     }
 
     & .fi-ta-group-header {

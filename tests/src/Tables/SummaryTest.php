@@ -209,6 +209,25 @@ it('does not render the trailing group summary with cursor pagination when the n
         ->assertDontSee('A summary');
 });
 
+it('can use `inGroupHeader()` to render a summary in the group header row instead of the trailing group summary row', function (): void {
+    Post::factory()->count(3)->create(['title' => 'A', 'rating' => 2]);
+
+    livewire(TestTableWithInGroupHeaderSummaries::class)
+        ->assertSeeHtml('fi-ta-group-header-summary-cell')
+        ->assertSee('Header sum')
+        ->assertDontSeeHtml('fi-ta-summary-row');
+});
+
+it('keeps summarizers without `inGroupHeader()` in the trailing group summary row', function (): void {
+    Post::factory()->count(3)->create(['title' => 'A', 'rating' => 2]);
+
+    livewire(TestTableWithMixedGroupHeaderSummaries::class)
+        ->assertSeeHtml('fi-ta-group-header-summary-cell')
+        ->assertSee('Header sum')
+        ->assertSeeHtml('fi-ta-summary-row')
+        ->assertSee('Trailing count');
+});
+
 class TestTableWithGroupSummariesOnly extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -228,6 +247,70 @@ class TestTableWithGroupSummariesOnly extends Component implements HasActions, H
             ])
             ->defaultGroup(
                 Tables\Grouping\Group::make('is_published'),
+            )
+            ->summaries(pageCondition: false, allTableCondition: false);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithInGroupHeaderSummaries extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('rating')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make('sum')
+                            ->label('Header sum')
+                            ->inGroupHeader(),
+                    ]),
+            ])
+            ->defaultGroup(
+                Tables\Grouping\Group::make('title'),
+            )
+            ->summaries(pageCondition: false, allTableCondition: false);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithMixedGroupHeaderSummaries extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('rating')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make('sum')
+                            ->label('Header sum')
+                            ->inGroupHeader(),
+                        Tables\Columns\Summarizers\Count::make('count')
+                            ->label('Trailing count'),
+                    ]),
+            ])
+            ->defaultGroup(
+                Tables\Grouping\Group::make('title'),
             )
             ->summaries(pageCondition: false, allTableCondition: false);
     }

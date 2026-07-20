@@ -198,6 +198,25 @@
         $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (\Illuminate\Database\Query\Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
     }
 
+    $groupHasInGroupHeaderSummarizers = false;
+    $groupHasTrailingSummarizers = false;
+
+    if ($group && $hasSummary) {
+        foreach ($columns as $column) {
+            foreach ($column->getSummarizers($this->getAllTableSummaryQuery()) as $columnSummarizer) {
+                if ($columnSummarizer->isInGroupHeader()) {
+                    $groupHasInGroupHeaderSummarizers = true;
+                } else {
+                    $groupHasTrailingSummarizers = true;
+                }
+
+                if ($groupHasInGroupHeaderSummarizers && $groupHasTrailingSummarizers) {
+                    break 2;
+                }
+            }
+        }
+    }
+
     if (is_string($filtersFormWidth)) {
         $filtersFormWidth = Width::tryFrom($filtersFormWidth) ?? $filtersFormWidth;
     }
@@ -1096,7 +1115,7 @@
                                     @endphp
 
                                     @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
-                                        @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
+                                        @if ($hasSummary && $groupHasTrailingSummarizers && (! $isReordering) && filled($previousRecordGroupTitle))
                                             <table
                                                 @class([
                                                     'fi-ta-table',
@@ -1117,6 +1136,7 @@
                                                                 'label' => $pluralModelLabel,
                                                             ])
                                                         "
+                                                        :in-group-header="false"
                                                         :placeholder-columns="false"
                                                         :query="$groupScopedAllTableSummaryQuery"
                                                         :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
@@ -1194,6 +1214,22 @@
                                                     >
                                                         {{ $recordGroupDescription }}
                                                     </p>
+                                                @endif
+
+                                                @if ($groupHasInGroupHeaderSummarizers && (! $isReordering))
+                                                    @php
+                                                        $groupScopedInHeaderSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $record);
+                                                    @endphp
+
+                                                    <div class="fi-ta-group-header-summary">
+                                                        @foreach ($columns as $groupHeaderColumn)
+                                                            @foreach ($groupHeaderColumn->getSummarizers($groupScopedInHeaderSummaryQuery) as $groupHeaderSummarizer)
+                                                                @if ($groupHeaderSummarizer->isInGroupHeader())
+                                                                    {{ $groupHeaderSummarizer->query($groupScopedInHeaderSummaryQuery)->selectedState($groupedSummarySelectedState[$recordGroupKey] ?? []) }}
+                                                                @endif
+                                                            @endforeach
+                                                        @endforeach
+                                                    </div>
                                                 @endif
                                             </div>
 
@@ -1376,7 +1412,7 @@
                                     @endphp
                                 @endforeach
 
-                                @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
+                                @if ($hasSummary && $groupHasTrailingSummarizers && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
                                     <table class="fi-ta-table">
                                         <tbody>
                                             @php
@@ -1387,6 +1423,7 @@
                                                 :columns="$columns"
                                                 extra-heading-column
                                                 :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                                :in-group-header="false"
                                                 :placeholder-columns="false"
                                                 :query="$groupScopedAllTableSummaryQuery"
                                                 :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
@@ -2017,7 +2054,7 @@
                                             @endphp
 
                                             @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
-                                                @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
+                                                @if ($hasSummary && $groupHasTrailingSummarizers && (! $isReordering) && filled($previousRecordGroupTitle))
                                                     @php
                                                         $groupColumn = $group->getColumn();
                                                         $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
@@ -2030,6 +2067,7 @@
                                                         :group-column="$groupColumn"
                                                         :groups-only="$isGroupsOnly"
                                                         :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                                        :in-group-header="false"
                                                         :query="$groupScopedAllTableSummaryQuery"
                                                         :record-checkbox-position="$recordCheckboxPosition"
                                                         :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
@@ -2054,6 +2092,40 @@
                                                                     ($recordActionsPosition === RecordActionsPosition::BeforeCells)
                                                                 ) {
                                                                     $groupHeaderColspan--;
+                                                                }
+                                                            }
+
+                                                            $isGroupHeaderSummarized = $groupHasInGroupHeaderSummarizers && (! $isReordering);
+
+                                                            if ($isGroupHeaderSummarized) {
+                                                                $groupScopedInHeaderSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $record);
+
+                                                                $groupHeaderColumnsWithSummary = [];
+
+                                                                foreach ($columns as $groupHeaderColumnKey => $groupHeaderColumn) {
+                                                                    $groupHeaderColumnSummarizers = array_filter(
+                                                                        $groupHeaderColumn->getSummarizers($groupScopedInHeaderSummaryQuery),
+                                                                        fn (\Filament\Tables\Columns\Summarizers\Summarizer $summarizer): bool => $summarizer->isInGroupHeader(),
+                                                                    );
+
+                                                                    $groupHeaderColumnsWithSummary[$groupHeaderColumnKey] = [
+                                                                        'summarizers' => $groupHeaderColumnSummarizers,
+                                                                        'hasSummary' => (bool) count($groupHeaderColumnSummarizers),
+                                                                    ];
+                                                                }
+
+                                                                $groupHeaderHeadingColumnSpan = 1;
+
+                                                                foreach ($columns as $groupHeaderColumnKey => $groupHeaderColumn) {
+                                                                    if ($groupHeaderColumnKey === array_key_first($columns)) {
+                                                                        continue;
+                                                                    }
+
+                                                                    if ($groupHeaderColumnsWithSummary[$groupHeaderColumnKey]['hasSummary']) {
+                                                                        break;
+                                                                    }
+
+                                                                    $groupHeaderHeadingColumnSpan++;
                                                                 }
                                                             }
                                                         @endphp
@@ -2108,8 +2180,17 @@
                                                             </td>
                                                         @endif
 
-                                                        <td
-                                                            colspan="{{ $groupHeaderColspan }}"
+                                                        @if ($isGroupHeaderSummarized && $hasRecordActionsForAnyRecord && ($recordActionsPosition === RecordActionsPosition::BeforeCells) && (! ($isSelectionEnabled && ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells))))
+                                                            <td></td>
+                                                        @endif
+
+                                                        @if ($isGroupHeaderSummarized && $hasRecordActionsForAnyRecord && ($recordActionsPosition === RecordActionsPosition::BeforeColumns))
+                                                            <td></td>
+                                                        @endif
+
+                                                        <{{ $isGroupHeaderSummarized ? 'th' : 'td' }}
+                                                            @if ($isGroupHeaderSummarized) scope="row" @endif
+                                                            colspan="{{ $isGroupHeaderSummarized ? $groupHeaderHeadingColumnSpan : $groupHeaderColspan }}"
                                                             class="fi-ta-group-header-cell"
                                                         >
                                                             <div
@@ -2153,7 +2234,36 @@
                                                                     </button>
                                                                 @endif
                                                             </div>
-                                                        </td>
+                                                        </{{ $isGroupHeaderSummarized ? 'th' : 'td' }}>
+
+                                                        @if ($isGroupHeaderSummarized)
+                                                            @foreach ($columns as $groupHeaderColumnKey => $groupHeaderColumn)
+                                                                @if ($loop->iteration > $groupHeaderHeadingColumnSpan)
+                                                                    @php
+                                                                        $groupHeaderColumnAlignment = $groupHeaderColumn->getAlignment() ?? Alignment::Start;
+
+                                                                        if (! $groupHeaderColumnAlignment instanceof Alignment) {
+                                                                            $groupHeaderColumnAlignment = filled($groupHeaderColumnAlignment) ? (Alignment::tryFrom($groupHeaderColumnAlignment) ?? $groupHeaderColumnAlignment) : null;
+                                                                        }
+                                                                    @endphp
+
+                                                                    <td
+                                                                        @class([
+                                                                            'fi-ta-cell fi-ta-group-header-summary-cell',
+                                                                            ($groupHeaderColumnAlignment instanceof Alignment) ? "fi-align-{$groupHeaderColumnAlignment->value}" : (is_string($groupHeaderColumnAlignment) ? $groupHeaderColumnAlignment : ''),
+                                                                        ])
+                                                                    >
+                                                                        @foreach ($groupHeaderColumnsWithSummary[$groupHeaderColumnKey]['summarizers'] as $groupHeaderSummarizer)
+                                                                            {{ $groupHeaderSummarizer->query($groupScopedInHeaderSummaryQuery)->selectedState($groupedSummarySelectedState[$recordGroupKey] ?? []) }}
+                                                                        @endforeach
+                                                                    </td>
+                                                                @endif
+                                                            @endforeach
+
+                                                            @if ($hasRecordActionsForAnyRecord && in_array($recordActionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
+                                                                <td></td>
+                                                            @endif
+                                                        @endif
 
                                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                                             <td
@@ -2440,7 +2550,7 @@
                                             @endphp
                                         @endforeach
 
-                                        @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
+                                        @if ($hasSummary && $groupHasTrailingSummarizers && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
                                             @php
                                                 $groupColumn = $group->getColumn();
                                                 $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
@@ -2453,6 +2563,7 @@
                                                 :group-column="$groupColumn"
                                                 :groups-only="$isGroupsOnly"
                                                 :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                                :in-group-header="false"
                                                 :query="$groupScopedAllTableSummaryQuery"
                                                 :record-checkbox-position="$recordCheckboxPosition"
                                                 :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
