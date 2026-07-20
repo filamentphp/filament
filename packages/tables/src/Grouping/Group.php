@@ -38,6 +38,8 @@ class Group extends Component
 
     protected string | Htmlable | Closure | null $label = null;
 
+    protected string | Closure | null $color = null;
+
     protected string $id;
 
     protected bool $isCollapsible = false;
@@ -97,6 +99,13 @@ class Group extends Component
     public function label(string | Htmlable | Closure | null $label): static
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function color(string | Closure | null $color): static
+    {
+        $this->color = $color;
 
         return $this;
     }
@@ -195,6 +204,23 @@ class Group extends Component
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getColor(Model | array $record): ?string
+    {
+        return $this->evaluate(
+            $this->color,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: ($record instanceof Model) ? [
+                Model::class => $record,
+                $record::class => $record,
+            ] : [],
+        );
     }
 
     /**

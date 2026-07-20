@@ -1,6 +1,12 @@
 <?php
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Tables;
 use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\GroupedCustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithoutSummarizers;
@@ -17,6 +23,8 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 use function Filament\Tests\livewire;
@@ -610,6 +618,29 @@ it('defaults `isCollapsible()` to `false`', function (): void {
     expect(Group::make('status')->isCollapsible())->toBeFalse();
 });
 
+it('can set `color()` and get with `getColor()`', function (): void {
+    expect(Group::make('status')->color('info')->getColor(['status' => 'active']))->toBe('info');
+});
+
+it('returns `null` for `getColor()` by default', function (): void {
+    expect(Group::make('status')->getColor(['status' => 'active']))->toBeNull();
+});
+
+it('can set `color()` with a `Closure` that receives the `$record`', function (): void {
+    $group = Group::make('status')
+        ->color(static fn (array $record): ?string => ($record['status'] === 'active') ? 'success' : null);
+
+    expect($group->getColor(['status' => 'active']))->toBe('success')
+        ->and($group->getColor(['status' => 'inactive']))->toBeNull();
+});
+
+it('renders the group color on the group header', function (): void {
+    Post::factory()->count(3)->create(['title' => 'A']);
+
+    livewire(TestTableWithColoredGroups::class)
+        ->assertSeeHtml('fi-color-info');
+});
+
 it('can set `column()` and get with `getColumn()`', function (): void {
     expect(Group::make('status')->column('custom_column')->getColumn())->toBe('custom_column');
 });
@@ -961,3 +992,28 @@ it('can group records by `HasOneThrough` -> `BelongsTo` relationship that uses `
         ->set('tableGrouping', 'setting.languageWithTrashed.name')
         ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
 });
+
+class TestTableWithColoredGroups extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+            ])
+            ->defaultGroup(
+                Group::make('title')
+                    ->color('info'),
+            );
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}

@@ -17,6 +17,16 @@
         & > td {
             @apply bg-gray-50 dark:bg-white/5;
         }
+
+        &.fi-color {
+            & > td {
+                @apply bg-color-50 dark:bg-color-400/10;
+            }
+
+            & .fi-ta-group-heading {
+                @apply text-(--text) dark:text-(--dark-text);
+            }
+        }
     }
 
     & .fi-ta-group-header-cell {

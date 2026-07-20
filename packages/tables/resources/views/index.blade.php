@@ -1135,6 +1135,7 @@
                                             @class([
                                                 'fi-ta-group-header',
                                                 'fi-collapsible' => $isRecordGroupCollapsible,
+                                                ...\Filament\Support\get_component_color_classes(\Filament\Tables\View\Components\GroupHeaderComponent::class, $group->getColor($record)),
                                             ])
                                         >
                                             @if ($isSelectionEnabled && ($maxSelectableRecords !== 1))
@@ -2039,7 +2040,10 @@
 
                                                 @if (! $isGroupsOnly)
                                                     <tr
-                                                        class="fi-ta-row fi-ta-group-header-row"
+                                                        @class([
+                                                            'fi-ta-row fi-ta-group-header-row',
+                                                            ...\Filament\Support\get_component_color_classes(\Filament\Tables\View\Components\GroupHeaderComponent::class, $group->getColor($record)),
+                                                        ])
                                                     >
                                                         @php
                                                             $isRecordGroupCollapsible = $group?->isCollapsible();
