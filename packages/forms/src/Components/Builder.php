@@ -1317,7 +1317,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             ->class([
                 'fi-dropdown',
                 'fi-fo-builder-block-picker',
-                $alignmentClass => filled($alignmentClass),
+                $alignmentClass,
             ]);
 
         $panelAttributes = (new FilamentComponentAttributeBag)
@@ -1330,7 +1330,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             ], escape: false)
             ->class([
                 'fi-dropdown-panel',
-                $widthClass => filled($widthClass),
+                $widthClass,
             ]);
 
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
