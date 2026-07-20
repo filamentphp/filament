@@ -36,11 +36,25 @@ it('drops a tampered non-scalar array element in `get()` instead of throwing', f
         ->toBe([1, 2]);
 });
 
+it('casts `Stringable` options to strings in `get()`', function (): void {
+    $cast = app(OptionsArrayStateCast::class);
+
+    expect($cast->get([str('active'), str('1')]))
+        ->toBe(['active', 1]);
+});
+
 it('casts every option to a string in `set()`', function (): void {
     $cast = app(OptionsArrayStateCast::class);
 
     expect($cast->set([1, 'active']))
         ->toBe(['1', 'active']);
+});
+
+it('casts `Stringable` options to strings in `set()`', function (): void {
+    $cast = app(OptionsArrayStateCast::class);
+
+    expect($cast->set([str('active'), str('1')]))
+        ->toBe(['active', '1']);
 });
 
 it('drops a tampered non-scalar array element in `set()` instead of throwing', function (): void {
