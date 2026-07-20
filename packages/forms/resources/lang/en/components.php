@@ -128,6 +128,18 @@ return [
 
     ],
 
+    'date_time_picker' => [
+
+        'aria_labels' => [
+            'month' => 'Month',
+            'year' => 'Year',
+            'hour' => 'Hour',
+            'minute' => 'Minute',
+            'second' => 'Second',
+        ],
+
+    ],
+
     'file_upload' => [
 
         'actions' => [
