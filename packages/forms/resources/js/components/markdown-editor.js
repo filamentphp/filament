@@ -102,6 +102,10 @@ export default function markdownEditorFormComponent({
 
         state,
 
+        visibilityObserver: null,
+
+        intersectionObserver: null,
+
         async init() {
             // If the editor is inside a modal, wait for the modal transition to finish before initializing the editor.
             // This is necessary to prevent the editor from being initialized before the modal is fully visible,
@@ -196,32 +200,20 @@ export default function markdownEditorFormComponent({
                 }
             })
 
-            const debouncedCommit = Alpine.debounce(() => {
-                if (!this.editor) {
-                    return
-                }
+            this.editor.codemirror.on(
+                'change',
+                Alpine.debounce(() => {
+                    if (!this.editor) {
+                        return
+                    }
 
-                this.$wire.commit()
-            }, liveDebounce ?? 300)
+                    this.state = this.editor.value()
 
-            this.editor.codemirror.on('change', (instance, changeObject) => {
-                if (!this.editor) {
-                    return
-                }
-
-                // `setValue` changes originate from the `state` watcher applying
-                // an external state change to the editor, not from user input, so
-                // they should not be echoed back into the state.
-                if (changeObject.origin === 'setValue') {
-                    return
-                }
-
-                this.state = this.editor.value()
-
-                if (isLiveDebounced) {
-                    debouncedCommit()
-                }
-            })
+                    if (isLiveDebounced) {
+                        this.$wire.commit()
+                    }
+                }, liveDebounce ?? 300),
+            )
 
             if (isLiveOnBlur) {
                 this.editor.codemirror.on('blur', () => this.$wire.commit())
@@ -232,10 +224,7 @@ export default function markdownEditorFormComponent({
                     return
                 }
 
-                // Skip the echo of the editor's own input to avoid resetting the
-                // cursor position, but still apply genuine external state changes,
-                // even while the editor is focused.
-                if ((this.state ?? '') === this.editor.value()) {
+                if (this.editor.codemirror.hasFocus()) {
                     return
                 }
 
@@ -245,9 +234,33 @@ export default function markdownEditorFormComponent({
             if (setUpUsing) {
                 setUpUsing(this)
             }
+
+            if (window.ResizeObserver) {
+                this.visibilityObserver = new ResizeObserver(() => {
+                    if (this.$el.offsetParent !== null && getComputedStyle(this.$el).visibility !== 'hidden') {
+                        this.editor?.codemirror?.refresh()
+                    }
+                })
+                this.visibilityObserver.observe(this.$el)
+            }
+
+            if (window.IntersectionObserver) {
+                this.intersectionObserver = new IntersectionObserver(
+                    (entries) => {
+                        if (entries[0]?.isIntersecting) {
+                            this.editor?.codemirror?.refresh()
+                        }
+                    },
+                    { threshold: 0 },
+                )
+                this.intersectionObserver.observe(this.$el)
+            }
         },
 
         destroy() {
+            this.visibilityObserver?.disconnect()
+            this.intersectionObserver?.disconnect()
+
             this.editor.cleanup()
             this.editor = null
         },
