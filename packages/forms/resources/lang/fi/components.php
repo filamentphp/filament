@@ -649,7 +649,7 @@ return [
         ],
 
         'toolbar' => [
-            'aria_label' => 'Muokkauspalkki',
+            'label' => 'Muokkauspalkki',
         ],
 
         'tools' => [

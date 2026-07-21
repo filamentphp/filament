@@ -2784,3 +2784,139 @@ describe('`saveUploadedFile()` branches', function (): void {
         expect(Storage::disk('public')->exists($path))->toBeTrue();
     });
 });
+
+describe('`saveUploadedFiles()` reordering', function (): void {
+    $makeTemporaryUploadedFile = function (string $filename = 'hello.txt', string $content = 'data'): TemporaryUploadedFile {
+        Storage::fake('tmp-for-tests');
+
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->create($filename),
+        );
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $content);
+
+        return TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+    };
+
+    $makeField = function (): FileUpload {
+        Storage::fake('public');
+
+        return FileUpload::make('attachments')
+            ->container(Schema::make(Livewire::make())->statePath('data'))
+            ->disk('public')
+            ->directory('uploads')
+            ->multiple()
+            ->reorderable();
+    };
+
+    it('passes the saved files to a `reorderUploadedFilesUsing()` callback `$state` parameter', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        $temporaryFile = $makeTemporaryUploadedFile();
+
+        $capturedState = null;
+
+        $field = $makeField()
+            ->reorderUploadedFilesUsing(static function (array $state) use (&$capturedState): array {
+                $capturedState = $state;
+
+                return $state;
+            });
+
+        $field->rawState([
+            'existing-file-key' => 'uploads/existing.txt',
+            'new-file-key' => $temporaryFile,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        expect($capturedState)->toBeArray();
+        expect(array_keys($capturedState))->toBe(['existing-file-key', 'new-file-key']);
+        expect($capturedState['existing-file-key'])->toBe('uploads/existing.txt');
+        expect($capturedState['new-file-key'])->toBeString()->toStartWith('uploads/');
+    });
+
+    it('passes the saved files to a `reorderUploadedFilesUsing()` callback `$rawState` parameter', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        $temporaryFile = $makeTemporaryUploadedFile();
+
+        $capturedState = null;
+
+        $field = $makeField()
+            ->reorderUploadedFilesUsing(static function (array $rawState) use (&$capturedState): array {
+                $capturedState = $rawState;
+
+                return $rawState;
+            });
+
+        $field->rawState([
+            'existing-file-key' => 'uploads/existing.txt',
+            'new-file-key' => $temporaryFile,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        expect($capturedState)->toBeArray();
+        expect(array_keys($capturedState))->toBe(['existing-file-key', 'new-file-key']);
+        expect($capturedState['existing-file-key'])->toBe('uploads/existing.txt');
+        expect($capturedState['new-file-key'])->toBeString()->toStartWith('uploads/');
+    });
+
+    it('does not leave a consumed `TemporaryUploadedFile` in the state when the `reorderUploadedFilesUsing()` callback returns its `$rawState` parameter', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        $temporaryFile = $makeTemporaryUploadedFile();
+
+        $field = $makeField()
+            ->reorderUploadedFilesUsing(static fn (array $rawState): array => $rawState);
+
+        $field->rawState([
+            'new-file-key' => $temporaryFile,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        $rawState = $field->getRawState();
+
+        expect($rawState)->toBeArray();
+        expect($rawState['new-file-key'])->toBeString()->toStartWith('uploads/');
+        expect(Storage::disk('public')->exists($rawState['new-file-key']))->toBeTrue();
+    });
+
+    it('uses the `reorderUploadedFilesUsing()` callback return value as the new state', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        $temporaryFile = $makeTemporaryUploadedFile();
+
+        $field = $makeField()
+            ->reorderUploadedFilesUsing(static fn (array $state): array => array_reverse($state, preserve_keys: true));
+
+        $field->rawState([
+            'existing-file-key' => 'uploads/existing.txt',
+            'new-file-key' => $temporaryFile,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        $rawState = $field->getRawState();
+
+        expect(array_keys($rawState))->toBe(['new-file-key', 'existing-file-key']);
+        expect($rawState['existing-file-key'])->toBe('uploads/existing.txt');
+        expect($rawState['new-file-key'])->toBeString()->toStartWith('uploads/');
+    });
+
+    it('does not call the `reorderUploadedFilesUsing()` callback when the field is not `reorderable()`', function () use ($makeField, $makeTemporaryUploadedFile): void {
+        $temporaryFile = $makeTemporaryUploadedFile();
+
+        $isCallbackCalled = false;
+
+        $field = $makeField()
+            ->reorderable(false)
+            ->reorderUploadedFilesUsing(static function (array $state) use (&$isCallbackCalled): array {
+                $isCallbackCalled = true;
+
+                return $state;
+            });
+
+        $field->rawState([
+            'new-file-key' => $temporaryFile,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        expect($isCallbackCalled)->toBeFalse();
+        expect($field->getRawState()['new-file-key'])->toBeString()->toStartWith('uploads/');
+    });
+});

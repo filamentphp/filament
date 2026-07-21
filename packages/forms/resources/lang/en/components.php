@@ -128,6 +128,30 @@ return [
 
     ],
 
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Month',
+        ],
+
+        'year_input' => [
+            'label' => 'Year',
+        ],
+
+        'hour_input' => [
+            'label' => 'Hour',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minute',
+        ],
+
+        'second_input' => [
+            'label' => 'Second',
+        ],
+
+    ],
+
     'file_upload' => [
 
         'actions' => [
@@ -649,7 +673,7 @@ return [
         ],
 
         'toolbar' => [
-            'aria_label' => 'Editor toolbar',
+            'label' => 'Editor toolbar',
         ],
 
         'tools' => [
