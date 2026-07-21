@@ -2,6 +2,7 @@
 
 namespace Filament\Schemas\Components;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -785,7 +786,7 @@ class Tabs extends Component implements HasEmbeddedView
     protected function generateTabBadgeHtml(
         string | int | float $badge,
         string | array | null $color = null,
-        string | Htmlable | null $icon = null,
+        string | BackedEnum | Htmlable | null $icon = null,
         IconPosition | string | null $iconPosition = null,
         string | Htmlable | null $tooltip = null,
     ): string {
