@@ -63,6 +63,19 @@ it('can generate a relation manager', function (): void {
         ->toMatchSnapshot();
 });
 
+it('can run `make:filament-relation-manager` non-interactively before the relationship exists', function (): void {
+    $this->artisan('make:filament-relation-manager', [
+        'resource' => 'Users',
+        'relationship' => 'members',
+        'recordTitleAttribute' => 'name',
+        '--related-model' => 'Filament\\Tests\\Fixtures\\Models\\Team',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists(app_path('Filament/Resources/Users/RelationManagers/MembersRelationManager.php'));
+});
+
 it('can generate a relation manager with a related resource', function (): void {
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
