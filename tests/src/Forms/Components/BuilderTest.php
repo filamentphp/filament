@@ -5,6 +5,8 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -1853,6 +1855,68 @@ class TestComponentWithBuilderFilledFromMount extends Livewire
                                 TextInput::make('foo'),
                             ]),
                     ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+it('rebuilds blocks after an `afterStateUpdated` hook uses `$set()` on an ancestor\'s state path', function (): void {
+    livewire(BuilderInStatePathAncestorSetByHook::class)
+        ->assertSeeText('First block type')
+        ->assertDontSeeText('Second block type')
+        ->set('data.trigger', 'anything')
+        ->assertSeeText('Second block type');
+});
+
+class BuilderInStatePathAncestorSetByHook extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill([
+            'trigger' => null,
+            'group' => [
+                'blocks' => [
+                    ['type' => 'one', 'data' => ['foo' => 'A']],
+                ],
+            ],
+        ]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                // The `Section` is deliberately registered before the `trigger` field, so that
+                // the `afterStateUpdated` walk traverses it, and the `Builder` caches its
+                // items, before the `trigger` field's hook runs `$set()`.
+                Section::make('Blocks')
+                    ->statePath('group')
+                    ->schema([
+                        Builder::make('blocks')
+                            ->addable(false) // Without the add action, its block picker does not render every block type's label, so the assertions below can rely on the rendered block headers alone.
+                            ->blocks([
+                                Builder\Block::make('one')
+                                    ->label('First block type')
+                                    ->schema([
+                                        TextInput::make('foo'),
+                                    ]),
+                                Builder\Block::make('two')
+                                    ->label('Second block type')
+                                    ->schema([
+                                        TextInput::make('bar'),
+                                    ]),
+                            ]),
+                    ]),
+                TextInput::make('trigger')
+                    ->live()
+                    ->afterStateUpdated(function (Set $set): void {
+                        $set('group', [
+                            'blocks' => [
+                                ['type' => 'one', 'data' => ['foo' => 'A']],
+                                ['type' => 'two', 'data' => ['bar' => 'B']],
+                            ],
+                        ]);
+                    }),
             ])
             ->statePath('data');
     }

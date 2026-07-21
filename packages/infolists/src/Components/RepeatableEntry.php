@@ -26,10 +26,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     protected array | Closure | null $tableColumns = null;
 
-    /**
-     * @var array<Schema> | null
-     */
-    protected ?array $cachedItems = null;
+    protected mixed $cachedItemsState = null;
 
     /**
      * Configure table columns for display
@@ -66,13 +63,19 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     public function getItems(): array
     {
-        if ($this->cachedItems !== null) {
-            return $this->cachedItems;
-        }
+        return $this->getCachedDefaultChildSchemas();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $this->cachedItemsState = $state = ($this->getState() ?? []);
 
         $containers = [];
 
-        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
+        foreach ($state as $itemKey => $itemData) {
             $container = $this
                 ->getChildSchema()
                 ->getClone()
@@ -88,22 +91,12 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
             $containers[$itemKey] = $container;
         }
 
-        return $this->cachedItems = $containers;
+        return $containers;
     }
 
-    /**
-     * @return array<Schema>
-     */
-    public function getDefaultChildSchemas(): array
+    protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->getItems();
-    }
-
-    public function clearCachedChildSchemas(): void
-    {
-        parent::clearCachedChildSchemas();
-
-        $this->cachedItems = null;
+        return $this->cachedItemsState === ($this->getState() ?? []);
     }
 
     public function toEmbeddedHtml(): string
