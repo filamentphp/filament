@@ -61,9 +61,9 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
     protected ?Collection $cachedExistingRecords = null;
 
     /**
-     * @var array<Schema> | null
+     * @var array<bool> | null
      */
-    protected ?array $cachedItems = null;
+    protected ?array $cachedItemsRawStateStructure = null;
 
     protected string | Closure | null $orderColumn = null;
 
@@ -848,9 +848,17 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
      */
     public function getItems(): array
     {
-        if ($this->cachedItems !== null) {
-            return $this->cachedItems;
-        }
+        return $this->getCachedDefaultChildSchemas();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $rawState = ($this->getRawState() ?? []);
+
+        $this->cachedItemsRawStateStructure = array_map(is_array(...), $rawState);
 
         $relationship = $this->getRelationship();
 
@@ -858,7 +866,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
         $items = [];
 
-        foreach ($this->getRawState() ?? [] as $itemKey => $itemData) {
+        foreach ($rawState as $itemKey => $itemData) {
             $items[$itemKey] = $this
                 ->getChildSchema()
                 ->statePath($itemKey)
@@ -868,15 +876,21 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                 ->getClone();
         }
 
-        return $this->cachedItems = $items;
+        return $items;
     }
 
     /**
-     * @return array<Schema>
+     * Item schemas only depend on the raw state's structure - the item keys, their
+     * order, and whether each item holds an array - since fields inside the items
+     * read their values from the live raw state. Comparing a structural fingerprint
+     * instead of the item values keeps this check cheap when it runs often, and
+     * avoids rebuilding the item schemas every time a value inside an item changes.
+     * The existing records that relationship items embed are not observable through
+     * the raw state, so `clearCachedExistingRecords()` clears the items explicitly.
      */
-    public function getDefaultChildSchemas(): array
+    protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->getItems();
+        return $this->cachedItemsRawStateStructure === array_map(is_array(...), $this->getRawState() ?? []);
     }
 
     public function getAddActionLabel(): string
@@ -978,11 +992,6 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
     public function saveToRelationship(): void
     {
-        // The raw state may have been mutated through an ancestor schema (e.g. `Schema::rawState()`),
-        // which clears that ancestor's cached child schemas but not this component's. Rebuild the
-        // memoized items so the save reflects the current state rather than a stale set.
-        $this->cachedItems = null;
-
         $state = $this->getState();
 
         if (! is_array($state)) {
@@ -1326,14 +1335,10 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
     public function clearCachedExistingRecords(): void
     {
         $this->cachedExistingRecords = null;
-        $this->cachedItems = null;
-    }
 
-    public function clearCachedChildSchemas(): void
-    {
-        parent::clearCachedChildSchemas();
-
-        $this->cachedItems = null;
+        // Items embed the existing records, which the raw state snapshot cannot
+        // observe, so they must be cleared explicitly alongside the records.
+        $this->clearCachedChildSchemas();
     }
 
     /**

@@ -79,11 +79,11 @@ trait HasChildComponents
     public function getChildSchema($key = null): ?Schema
     {
         if (filled($key) && ! array_key_exists($key, $this->childComponents)) {
-            return ($this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())[$key] ?? null;
+            return $this->getCachedDefaultChildSchemas()[$key] ?? null;
         }
 
-        if (filled($key) && array_key_exists($key, $this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())) {
-            return $this->cachedDefaultChildSchemas[$key];
+        if (filled($key) && array_key_exists($key, $cachedDefaultChildSchemas = $this->getCachedDefaultChildSchemas())) {
+            return $cachedDefaultChildSchemas[$key];
         }
 
         $key ??= 'default';
@@ -162,7 +162,7 @@ trait HasChildComponents
         }
 
         return [
-            ...(array_key_exists('default', $this->childComponents) ? ($this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas()) : []),
+            ...(array_key_exists('default', $this->childComponents) ? $this->getCachedDefaultChildSchemas() : []),
             ...array_reduce(
                 array_keys($this->childComponents),
                 function (array $carry, string $key): array {
@@ -197,6 +197,29 @@ trait HasChildComponents
     public function getDefaultChildSchemas(): array
     {
         return ['default' => $this->getChildSchema()];
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    protected function getCachedDefaultChildSchemas(): array
+    {
+        if (($this->cachedDefaultChildSchemas !== null) && $this->areCachedDefaultChildSchemasFresh()) {
+            return $this->cachedDefaultChildSchemas;
+        }
+
+        return $this->cachedDefaultChildSchemas = $this->getDefaultChildSchemas();
+    }
+
+    /**
+     * Components whose child schemas are derived from state, such as repeaters,
+     * can override this method to compare the current state against a snapshot
+     * taken when the cache was built, so that the cache invalidates itself when
+     * the state changes, without an explicit `clearCachedChildSchemas()` call.
+     */
+    protected function areCachedDefaultChildSchemasFresh(): bool
+    {
+        return true;
     }
 
     public function clearCachedChildSchemas(): void

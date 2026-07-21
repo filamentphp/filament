@@ -3085,6 +3085,67 @@ class RepeaterWithMutateBeforeCreateReturnsNull extends Component implements Has
     }
 }
 
+it('rebuilds items after an `afterStateUpdated` hook uses `$set()` on an ancestor\'s state path', function (): void {
+    livewire(RepeaterInStatePathAncestorSetByHook::class)
+        ->assertSeeText('Original item')
+        ->set('data.trigger', 'anything')
+        ->assertSeeText('Added item');
+});
+
+class RepeaterInStatePathAncestorSetByHook extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public ?array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'trigger' => null,
+            'group' => [
+                'items' => [
+                    ['name' => 'Original item'],
+                ],
+            ],
+        ]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                // The `Section` is deliberately registered before the `trigger` field, so that
+                // the `afterStateUpdated` walk traverses it, and the `Repeater` caches its
+                // items, before the `trigger` field's hook runs `$set()`.
+                Section::make('Items')
+                    ->statePath('group')
+                    ->schema([
+                        Repeater::make('items')
+                            ->itemLabel(static fn (?array $state): string => $state['name'] ?? '')
+                            ->schema([
+                                TextInput::make('name'),
+                            ]),
+                    ]),
+                TextInput::make('trigger')
+                    ->live()
+                    ->afterStateUpdated(function (Set $set): void {
+                        $set('group', [
+                            'items' => [
+                                ['name' => 'Original item'],
+                                ['name' => 'Added item'],
+                            ],
+                        ]);
+                    }),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
 class RepeaterWithTranslatableContentDriver extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
