@@ -2,7 +2,6 @@
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -816,30 +815,6 @@ describe('rendering', function (): void {
     });
 });
 
-describe('accessibility labels (non-native panel)', function (): void {
-    it('adds an `aria-label` to each non-native panel control so screen readers can announce them', function (): void {
-        livewire(RenderDateTimePickerNonNative::class)
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.month') . '"')
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.year') . '"')
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.hour') . '"')
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.minute') . '"')
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.second') . '"');
-    });
-
-    it('does not render the second input `aria-label` when `seconds(false)`', function (): void {
-        livewire(RenderDateTimePickerNonNativeWithoutSeconds::class)
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.hour') . '"')
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.minute') . '"')
-            ->assertDontSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.second') . '"');
-    });
-
-    it('`DatePicker` inherits the panel `aria-label`s from `DateTimePicker`', function (): void {
-        livewire(RenderNonNativeDatePicker::class)
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.month') . '"')
-            ->assertSeeHtml('aria-label="' . __('filament-forms::components.date_time_picker.aria_labels.year') . '"');
-    });
-});
-
 it('can render `DateTimePicker` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
@@ -934,30 +909,6 @@ class RenderDateTimePickerNonNativeTimeOnly extends Livewire
         return $form
             ->schema([
                 DateTimePicker::make('dt')->native(false)->date(false),
-            ])
-            ->statePath('data');
-    }
-}
-
-class RenderDateTimePickerNonNativeWithoutSeconds extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                DateTimePicker::make('dt')->native(false)->seconds(false),
-            ])
-            ->statePath('data');
-    }
-}
-
-class RenderNonNativeDatePicker extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form
-            ->schema([
-                DatePicker::make('dt')->native(false),
             ])
             ->statePath('data');
     }

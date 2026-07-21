@@ -245,12 +245,12 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                         >
                             <?php if ($hasDate) { ?>
                                 <div class="fi-fo-date-time-picker-panel-header">
-                                    <select x-model="focusedMonth" aria-label="<?= e(__('filament-forms::components.date_time_picker.aria_labels.month')) ?>" class="fi-fo-date-time-picker-month-select">
+                                    <select aria-label="<?= e(__('filament-forms::components.date_time_picker.month_select.label')) ?>" x-model="focusedMonth" class="fi-fo-date-time-picker-month-select">
                                         <template x-for="(month, index) in months">
                                             <option x-bind:value="index" x-text="month"></option>
                                         </template>
                                     </select>
-                                    <input type="number" inputmode="numeric" x-model.debounce="focusedYear" aria-label="<?= e(__('filament-forms::components.date_time_picker.aria_labels.year')) ?>" class="fi-fo-date-time-picker-year-input" />
+                                    <input type="number" inputmode="numeric" aria-label="<?= e(__('filament-forms::components.date_time_picker.year_input.label')) ?>" x-model.debounce="focusedYear" class="fi-fo-date-time-picker-year-input" />
                                 </div>
 
                                 <div class="fi-fo-date-time-picker-calendar-header">
@@ -284,12 +284,12 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
 
                             <?php if ($hasTime) { ?>
                                 <div class="fi-fo-date-time-picker-time-inputs">
-                                    <input max="23" min="0" step="<?= $this->getHoursStep() ?>" type="number" inputmode="numeric" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="hour" aria-label="<?= e(__('filament-forms::components.date_time_picker.aria_labels.hour')) ?>" />
+                                    <input max="23" min="0" step="<?= $this->getHoursStep() ?>" type="number" inputmode="numeric" aria-label="<?= e(__('filament-forms::components.date_time_picker.hour_input.label')) ?>" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="hour" />
                                     <span class="fi-fo-date-time-picker-time-input-separator">:</span>
-                                    <input max="59" min="0" step="<?= $this->getMinutesStep() ?>" type="number" inputmode="numeric" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="minute" aria-label="<?= e(__('filament-forms::components.date_time_picker.aria_labels.minute')) ?>" />
+                                    <input max="59" min="0" step="<?= $this->getMinutesStep() ?>" type="number" inputmode="numeric" aria-label="<?= e(__('filament-forms::components.date_time_picker.minute_input.label')) ?>" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="minute" />
                                     <?php if ($hasSeconds) { ?>
                                         <span class="fi-fo-date-time-picker-time-input-separator">:</span>
-                                        <input max="59" min="0" step="<?= $this->getSecondsStep() ?>" type="number" inputmode="numeric" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="second" aria-label="<?= e(__('filament-forms::components.date_time_picker.aria_labels.second')) ?>" />
+                                        <input max="59" min="0" step="<?= $this->getSecondsStep() ?>" type="number" inputmode="numeric" aria-label="<?= e(__('filament-forms::components.date_time_picker.second_input.label')) ?>" x-on:blur="checkTimeInputValidity" x-on:invalid="timeInputInvalid" x-model.debounce="second" />
                                     <?php } ?>
                                 </div>
                             <?php } ?>

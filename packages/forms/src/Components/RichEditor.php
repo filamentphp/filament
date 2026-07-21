@@ -1604,7 +1604,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                       // still names the group.?>
                 <div
                     class="fi-fo-rich-editor-toolbar"
-                    aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.aria_label')) ?>"
+                    aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.label')) ?>"
                 >
                     <?php foreach ($toolbarButtons as $buttonGroup) { ?>
                         <div class="fi-fo-rich-editor-toolbar-group">

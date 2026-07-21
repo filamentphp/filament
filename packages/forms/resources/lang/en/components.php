@@ -130,12 +130,24 @@ return [
 
     'date_time_picker' => [
 
-        'aria_labels' => [
-            'month' => 'Month',
-            'year' => 'Year',
-            'hour' => 'Hour',
-            'minute' => 'Minute',
-            'second' => 'Second',
+        'month_select' => [
+            'label' => 'Month',
+        ],
+
+        'year_input' => [
+            'label' => 'Year',
+        ],
+
+        'hour_input' => [
+            'label' => 'Hour',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minute',
+        ],
+
+        'second_input' => [
+            'label' => 'Second',
         ],
 
     ],
@@ -661,7 +673,7 @@ return [
         ],
 
         'toolbar' => [
-            'aria_label' => 'Editor toolbar',
+            'label' => 'Editor toolbar',
         ],
 
         'tools' => [

@@ -649,7 +649,7 @@ return [
         ],
 
         'toolbar' => [
-            'aria_label' => 'Pasek narzędzi edytora',
+            'label' => 'Pasek narzędzi edytora',
         ],
 
         'tools' => [
