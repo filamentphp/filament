@@ -201,6 +201,10 @@
         @apply h-auto;
     }
 
+    & .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen) .CodeMirror-scroll {
+        @apply max-h-[25rem];
+    }
+
     & .EasyMDEContainer .editor-toolbar {
         @apply flex flex-wrap gap-1 rounded-none border-0 border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
     }
