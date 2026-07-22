@@ -3,8 +3,6 @@
 namespace Filament\Support;
 
 use BackedEnum;
-use Composer\InstalledVersions;
-use ReflectionClass;
 use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
@@ -351,18 +349,27 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
      */
     function discover_app_classes(?string $parentClass = null): array
     {
-        $composer = Factory::create(new NullIO());
-        $vendorDir = $composer->getConfig()->get('vendor-dir');
+        $vendorDir = class_exists(\Composer\InstalledVersions::class)
+            ? dirname((new \ReflectionClass(\Composer\InstalledVersions::class))->getFileName(), 2)
+            : base_path('vendor');
 
-        $classLoader = require $vendorDir . '/autoload.php';
+        $autoloadPath = $vendorDir . '/autoload.php';
 
-        $vendorPath = realpath($vendorDir) ?: $vendorDir;
+        if (! is_file($autoloadPath)) {
+            return [];
+        }
+
+        /** @var \Composer\Autoload\ClassLoader $classLoader */
+        $classLoader = require $autoloadPath;
+
+        $realVendorDir = realpath($vendorDir) ?: $vendorDir;
+        $vendorPathPrefix = rtrim($realVendorDir, '/\\') . DIRECTORY_SEPARATOR;
 
         return collect($classLoader->getClassMap())
-            ->filter(function (string $file, string $class) use ($parentClass, $vendorPath): bool {
+            ->filter(function (string $file, string $class) use ($parentClass, $vendorPathPrefix): bool {
                 $filePath = realpath($file) ?: $file;
 
-                if (str_starts_with($filePath, $vendorPath)) {
+                if (str_starts_with($filePath, $vendorPathPrefix)) {
                     return false;
                 }
 
