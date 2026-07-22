@@ -140,7 +140,9 @@
     @endif
 
     @if (! $labelSrOnly)
-        {{ $slot }}
+        <span class="fi-link-label">
+            {{ $slot }}
+        </span>
     @endif
 
     @if ($iconPosition === IconPosition::After)
