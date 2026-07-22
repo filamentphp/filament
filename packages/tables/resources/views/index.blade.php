@@ -272,11 +272,11 @@
 
                 @if ($header)
                     {{ $header }}
-                @elseif (($heading || $description || $headerActions) && ! $isReordering)
+                @elseif ($heading || $description || ($headerActions && (! $isReordering)))
                     <div
                         @class([
                             'fi-ta-header',
-                            'fi-ta-header-adaptive-actions-position' => $headerActions && ($headerActionsPosition === HeaderActionsPosition::Adaptive),
+                            'fi-ta-header-adaptive-actions-position' => $headerActions && (! $isReordering) && ($headerActionsPosition === HeaderActionsPosition::Adaptive),
                         ])
                     >
                         @if ($heading || $description)
