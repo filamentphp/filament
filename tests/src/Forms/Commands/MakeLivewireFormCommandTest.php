@@ -1,6 +1,8 @@
 <?php
 
+use Filament\Support\Facades\FilamentCli;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\View;
 
 use function PHPUnit\Framework\assertFileExists;
 
@@ -23,6 +25,24 @@ it('can generate a Livewire form component', function (): void {
     assertFileExists($viewPath = resource_path('views/livewire/create-blog-post.blade.php'));
     expect(file_get_contents($viewPath))
         ->toMatchSnapshot();
+});
+
+it('can run `make:filament-livewire-form` non-interactively when a Livewire component location and an extra view namespace are registered', function (): void {
+    FilamentCli::registerLivewireComponentLocation(
+        path: base_path('src/Livewire'),
+        namespace: 'CustomNamespace\\Livewire',
+        viewNamespace: null,
+    );
+
+    View::addNamespace('custom', base_path('custom-views'));
+
+    $this->artisan('make:filament-livewire-form', [
+        'name' => 'NonInteractiveForm',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists(app_path('Livewire/NonInteractiveForm.php'));
+    assertFileExists(resource_path('views/livewire/non-interactive-form.blade.php'));
 });
 
 it('can generate a Livewire form component for creating a model', function (): void {

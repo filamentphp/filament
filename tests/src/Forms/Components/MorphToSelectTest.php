@@ -4,7 +4,9 @@ namespace Filament\Tests\Forms\Components;
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -182,6 +184,16 @@ describe('modifier callback clearing', function (): void {
     });
 });
 
+it('can add an item to a live `Repeater` that contains a `MorphToSelect`', function (): void {
+    livewire(TestComponentWithMorphToSelectInLiveRepeater::class)
+        ->callAction(TestAction::make('add')->schemaComponent('items'))
+        ->assertSchemaStateSet(function (array $state): array {
+            expect($state['items'])->toHaveCount(2);
+
+            return [];
+        });
+});
+
 class TestComponentWithMorphToSelectAndJoinQuery extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
@@ -253,6 +265,42 @@ class TestComponentWithMorphToSelectAndModifyQuery extends Component implements 
     public function save(): void
     {
         $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithMorphToSelectInLiveRepeater extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('items')
+                    ->live()
+                    ->schema([
+                        MorphToSelect::make('imageable')
+                            ->model(Image::class)
+                            ->types([
+                                MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
+                                MorphToSelect\Type::make(User::class)->titleAttribute('name'),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
     }
 
     public function render(): View
