@@ -29,21 +29,21 @@
     </x-filament::modal>
 
     <x-filament::modal
-        id="standalone-browser-test-no-focus-return-modal"
-        :focus-trap-returns-focus="false"
-        :extra-modal-window-attribute-bag="new \Illuminate\View\ComponentAttributeBag(['data-testid' => 'no-focus-return-modal'])"
+        id="standalone-browser-test-no-focus-restore-modal"
+        :restores-focus="false"
+        :extra-modal-window-attribute-bag="new \Illuminate\View\ComponentAttributeBag(['data-testid' => 'no-focus-restore-modal'])"
     >
         <x-slot name="trigger">
-            <x-filament::button data-testid="no-focus-return-trigger">
-                No focus return modal
+            <x-filament::button data-testid="no-focus-restore-trigger">
+                No focus restore modal
             </x-filament::button>
         </x-slot>
 
         <p>Standalone modal content.</p>
 
         <x-filament::button
-            data-testid="no-focus-return-close"
-            x-on:click="$dispatch('close-modal', { id: 'standalone-browser-test-no-focus-return-modal' })"
+            data-testid="no-focus-restore-close"
+            x-on:click="$dispatch('close-modal', { id: 'standalone-browser-test-no-focus-restore-modal' })"
         >
             Close
         </x-filament::button>

@@ -19,7 +19,7 @@
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
-    'focusTrapReturnsFocus' => true,
+    'restoresFocus' => true,
     'extraModalWindowAttributeBag' => null,
     'extraModalOverlayAttributeBag' => null,
     'footer' => null,
@@ -123,7 +123,7 @@
     x-data="filamentModal({
                 id: @js($id),
                 isScrollLocked: @js(! $isClickThrough),
-                shouldRestoreFocus: @js($focusTrapReturnsFocus && (! $isClickThrough)),
+                shouldRestoreFocus: @js($restoresFocus && (! $isClickThrough)),
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
