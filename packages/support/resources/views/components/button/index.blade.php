@@ -183,9 +183,7 @@
                 {{ $slot }}
             </span>
         @else
-            <span>
-                {{ $slot }}
-            </span>
+            {{ $slot }}
         @endif
     @endif
 
