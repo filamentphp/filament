@@ -3,6 +3,8 @@
 namespace Filament\Support;
 
 use BackedEnum;
+use Composer\Factory;
+use Composer\IO\NullIO;
 use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
@@ -349,11 +351,18 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
      */
     function discover_app_classes(?string $parentClass = null): array
     {
-        $classLoader = require 'vendor/autoload.php';
+        $composer = Factory::create(new NullIO());
+        $vendorDir = $composer->getConfig()->get('vendor-dir');
+
+        $classLoader = require $vendorDir . '/autoload.php';
+
+        $vendorPath = realpath($vendorDir) ?: $vendorDir;
 
         return collect($classLoader->getClassMap())
-            ->filter(function (string $file, string $class) use ($parentClass): bool {
-                if (! str($file)->startsWith(base_path('vendor' . DIRECTORY_SEPARATOR . 'composer/../../'))) {
+            ->filter(function (string $file, string $class) use ($parentClass, $vendorPath): bool {
+                $filePath = realpath($file) ?: $file;
+
+                if (str_starts_with($filePath, $vendorPath)) {
                     return false;
                 }
 
