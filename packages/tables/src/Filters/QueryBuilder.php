@@ -27,9 +27,9 @@ class QueryBuilder extends BaseFilter
     /** @var array<Constraint> */
     protected array $constraints = [];
 
-    protected int | Closure | null $maxRules = null;
+    protected int | Closure | null $maxRules = 100;
 
-    protected int | Closure | null $maxNestingDepth = null;
+    protected int | Closure | null $maxNestingDepth = 5;
 
     protected ?RuleBuilder $cachedRuleBuilder = null;
 

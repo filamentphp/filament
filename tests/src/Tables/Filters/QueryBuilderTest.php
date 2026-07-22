@@ -4631,14 +4631,14 @@ describe('properties', function (): void {
 });
 
 describe('rule limits', function (): void {
-    it('has no rule limits by default', function (): void {
+    it('has default rule limits', function (): void {
         $queryBuilder = QueryBuilder::make();
 
-        expect($queryBuilder->getMaxRules())->toBeNull()
-            ->and($queryBuilder->getMaxNestingDepth())->toBeNull();
+        expect($queryBuilder->getMaxRules())->toBe(100)
+            ->and($queryBuilder->getMaxNestingDepth())->toBe(5);
     });
 
-    it('reports no rule tree as exceeding via `exceedsRuleLimits()` when no limits are set', function (): void {
+    it('reports no rule tree as exceeding via `exceedsRuleLimits()` when limits are disabled', function (): void {
         $rule = [
             'type' => 'title',
             'data' => [
@@ -4647,7 +4647,9 @@ describe('rule limits', function (): void {
             ],
         ];
 
-        $queryBuilder = QueryBuilder::make();
+        $queryBuilder = QueryBuilder::make()
+            ->maxRules(null)
+            ->maxNestingDepth(null);
 
         expect($queryBuilder->exceedsRuleLimits(array_fill(0, 500, $rule)))->toBeFalse();
     });
