@@ -43,6 +43,7 @@ trait CanAskForComponentLocation
         $namespace = select(
             label: $question,
             options: $options,
+            default: $this->input->isInteractive() ? null : '',
         );
 
         if (blank($namespace)) {
