@@ -169,7 +169,9 @@ trait CanGenerateLinkHtml
             <?php } ?>
 
             <?php if (! $isLabelSrOnly) { ?>
-                <?= e($label) ?>
+                <span class="fi-link-label">
+                    <?= e($label) ?>
+                </span>
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>
