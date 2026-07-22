@@ -273,6 +273,17 @@ describe('reordering', function (): void {
         expect($measure(20))->toBe($measure(3));
     });
 
+    it('keeps the table heading visible while reordering, but hides the header actions', function (): void {
+        Post::factory()->count(3)->create();
+
+        livewire(PostsReorderableTable::class)
+            ->assertSeeText('Reorderable posts')
+            ->assertSeeText('Test header action')
+            ->call('toggleTableReordering')
+            ->assertSeeText('Reorderable posts')
+            ->assertDontSeeText('Test header action');
+    });
+
     it('does not reorder records when the table is not reorderable', function (): void {
         $posts = Post::factory()->count(3)->create();
 
