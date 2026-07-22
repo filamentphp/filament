@@ -17,6 +17,22 @@ RichEditor::make('content')
 
 <AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="4.x" />
 
+## Setting the height
+
+By default, the editor grows to fit its content. You may control its height by defining the `minRows()` and `maxRows()` methods, which set the minimum and maximum number of visible rows of text:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->minRows(3)
+    ->maxRows(10)
+```
+
+Once the content exceeds `maxRows()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minRows()` sets a starting height while still allowing the editor to grow, and `maxRows()` caps how tall it may become.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minRows()` and `maxRows()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ## Storing content as JSON
 
 By default, the rich editor stores content as HTML. If you would like to store the content as JSON instead, you can use the `json()` method:
