@@ -367,6 +367,10 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
 
         return collect($classLoader->getClassMap())
             ->filter(function (string $file, string $class) use ($parentClass, $vendorPathPrefix): bool {
+                if (str_starts_with($file, $vendorPathPrefix)) {
+                    return false;
+                }
+
                 $filePath = realpath($file) ?: $file;
 
                 if (str_starts_with($filePath, $vendorPathPrefix)) {
