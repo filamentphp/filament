@@ -63,6 +63,7 @@ trait CanAskForViewLocation
                 ? select(
                     label: $question,
                     options: $options,
+                    default: $this->input->isInteractive() ? null : array_key_first($options),
                 )
                 : array_key_first($options));
 
