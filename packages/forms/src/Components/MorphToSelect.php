@@ -135,7 +135,7 @@ class MorphToSelect extends Component
                 ->preload($component->isPreloaded())
                 ->when(
                     $component->isLive(),
-                    fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
+                    fn (Select $select) => $select->live(onBlur: $component->isLiveOnBlur()),
                 )
                 ->afterStateUpdated(function () use ($component): void {
                     $component->callAfterStateUpdatedForChildComponent();
