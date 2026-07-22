@@ -123,6 +123,7 @@
     x-data="filamentModal({
                 id: @js($id),
                 isScrollLocked: @js(! $isClickThrough),
+                shouldRestoreFocus: @js($focusTrapReturnsFocus && (! $isClickThrough)),
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
@@ -140,7 +141,7 @@
     x-cloak
     x-show="isOpen"
     @if (! $isClickThrough)
-        x-trap{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+        x-trap.noreturn{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
     @endif
     {{
         $attributes->class([

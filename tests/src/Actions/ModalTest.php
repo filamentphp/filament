@@ -26,6 +26,38 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('restores focus without changing the page scroll position after closing a standalone modal', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="standalone-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+                ->assertVisible('[data-testid="standalone-modal"]')
+                ->click('[data-testid="standalone-close"]')
+                ->assertMissing('[data-testid="standalone-modal"]')
+                ->assertPresent('[data-testid="standalone-trigger"]:focus')
+                ->assertScript('window.scrollY === window.modalTestScrollY', true)
+                ->assertNoSmoke();
+        });
+    });
+
+    it('restores focus without changing the page scroll position after closing a top-level action modal', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="basic-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+                ->assertVisible('[data-testid="basic-modal"]')
+                ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Cancel')
+                ->assertMissing('[data-testid="basic-modal"]')
+                ->assertPresent('[data-testid="basic-trigger"]:focus')
+                ->assertScript('window.scrollY === window.modalTestScrollY', true)
+                ->assertNoSmoke();
+        });
+    });
+
     it('restores focus to the trigger after closing a top-level action modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
