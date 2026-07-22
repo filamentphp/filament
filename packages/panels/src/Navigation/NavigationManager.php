@@ -183,31 +183,42 @@ class NavigationManager
 
     public function mountNavigation(): void
     {
-        foreach ($this->panel->getPages() as $page) {
-            $page::registerNavigationItems();
-        }
+        $previousPageConfigurationKey = Filament::getCurrentPageConfigurationKey();
+        $previousResourceConfigurationKey = Filament::getCurrentResourceConfigurationKey();
 
-        foreach ($this->panel->getPageConfigurations() as $configuration) {
-            Filament::setCurrentPageConfigurationKey($configuration->getKey());
-
-            $configuration->page::registerNavigationItems();
-
+        try {
             Filament::setCurrentPageConfigurationKey(null);
-        }
-
-        foreach ($this->panel->getResources() as $resource) {
-            $resource::registerNavigationItems();
-        }
-
-        foreach ($this->panel->getResourceConfigurations() as $configuration) {
-            Filament::setCurrentResourceConfigurationKey($configuration->getKey());
-
-            $configuration->resource::registerNavigationItems();
-
             Filament::setCurrentResourceConfigurationKey(null);
-        }
 
-        $this->isNavigationMounted = true;
+            foreach ($this->panel->getPages() as $page) {
+                $page::registerNavigationItems();
+            }
+
+            foreach ($this->panel->getPageConfigurations() as $configuration) {
+                Filament::setCurrentPageConfigurationKey($configuration->getKey());
+
+                $configuration->page::registerNavigationItems();
+
+                Filament::setCurrentPageConfigurationKey(null);
+            }
+
+            foreach ($this->panel->getResources() as $resource) {
+                $resource::registerNavigationItems();
+            }
+
+            foreach ($this->panel->getResourceConfigurations() as $configuration) {
+                Filament::setCurrentResourceConfigurationKey($configuration->getKey());
+
+                $configuration->resource::registerNavigationItems();
+
+                Filament::setCurrentResourceConfigurationKey(null);
+            }
+
+            $this->isNavigationMounted = true;
+        } finally {
+            Filament::setCurrentPageConfigurationKey($previousPageConfigurationKey);
+            Filament::setCurrentResourceConfigurationKey($previousResourceConfigurationKey);
+        }
     }
 
     /**

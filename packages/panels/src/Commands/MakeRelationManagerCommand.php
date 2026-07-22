@@ -555,6 +555,7 @@ class MakeRelationManagerCommand extends Command
                 MorphToMany::class => 'MorphToMany',
                 'other' => 'Other',
             ],
+            default: $this->input->isInteractive() ? null : 'other',
         );
 
         if ($this->relationshipType === 'other') {
