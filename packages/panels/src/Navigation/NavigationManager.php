@@ -186,9 +186,10 @@ class NavigationManager
         $previousPageConfigurationKey = Filament::getCurrentPageConfigurationKey();
         $previousResourceConfigurationKey = Filament::getCurrentResourceConfigurationKey();
 
-        Filament::setCurrentPageConfigurationKey(null);
-
         try {
+            Filament::setCurrentPageConfigurationKey(null);
+            Filament::setCurrentResourceConfigurationKey(null);
+
             foreach ($this->panel->getPages() as $page) {
                 $page::registerNavigationItems();
             }
@@ -200,8 +201,6 @@ class NavigationManager
 
                 Filament::setCurrentPageConfigurationKey(null);
             }
-
-            Filament::setCurrentResourceConfigurationKey(null);
 
             foreach ($this->panel->getResources() as $resource) {
                 $resource::registerNavigationItems();

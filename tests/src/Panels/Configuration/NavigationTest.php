@@ -47,6 +47,14 @@ describe('resource configuration navigation', function (): void {
         expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'archived'));
     });
 
+    it('preserves the active resource configuration key when mounting navigation', function (): void {
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+
+        Filament::getNavigation();
+
+        expect(Filament::getCurrentResourceConfigurationKey())->toBe('featured');
+    });
+
     it('shows correct navigation labels for resource configurations', function (): void {
         $navigation = Filament::getNavigation();
 
@@ -101,6 +109,33 @@ describe('page configuration navigation', function (): void {
         expect($urls)->toContain(ConfigurableSettings::getUrl());
         expect($urls)->toContain(ConfigurableSettings::withConfiguration('general', fn () => ConfigurableSettings::getUrl()));
         expect($urls)->toContain(ConfigurableSettings::withConfiguration('advanced', fn () => ConfigurableSettings::getUrl()));
+    });
+
+    it('registers separate navigation items for each page configuration when one is active', function (): void {
+        $defaultUrl = ConfigurableSettings::getUrl();
+
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+
+        $items = collect(Filament::getNavigation())
+            ->flatMap(fn ($group) => $group->getItems())
+            ->filter(fn (NavigationItem $item) => str_contains($item->getUrl(), 'settings'))
+            ->values();
+
+        expect($items)->toHaveCount(3);
+
+        $urls = $items->map(fn (NavigationItem $item) => $item->getUrl())->all();
+
+        expect($urls)->toContain($defaultUrl);
+        expect($urls)->toContain(ConfigurableSettings::withConfiguration('general', fn () => ConfigurableSettings::getUrl()));
+        expect($urls)->toContain(ConfigurableSettings::withConfiguration('advanced', fn () => ConfigurableSettings::getUrl()));
+    });
+
+    it('preserves the active page configuration key when mounting navigation', function (): void {
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+
+        Filament::getNavigation();
+
+        expect(Filament::getCurrentPageConfigurationKey())->toBe('general');
     });
 
     it('shows correct navigation labels for page configurations', function (): void {
