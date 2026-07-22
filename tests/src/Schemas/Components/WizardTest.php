@@ -1,10 +1,12 @@
 <?php
 
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire as LivewireFixture;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
@@ -586,5 +588,95 @@ class RenderWizardWithSubmitAction extends Component implements HasSchemas
     public function render(): string
     {
         return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+it('can inject `$activeWizardStepIndex` into component configuration closures', function (): void {
+    livewire(TestComponentWithActiveWizardStepIndex::class)
+        ->assertFormComponentExists('first', function (TextInput $field): bool {
+            // The wizard starts on step 2 (index `1`), so even a component living in
+            // the first step resolves the wizard's *current* step index, not its own.
+            expect($field->getLabel())->toBe('Active wizard step index: 1');
+
+            return true;
+        })
+        ->assertFormComponentExists('outside', function (TextInput $field): bool {
+            // Outside of any wizard, `$activeWizardStepIndex` resolves to `null`.
+            expect($field->getLabel())->toBe('Active wizard step index: none');
+
+            return true;
+        });
+});
+
+it('resolves `$activeWizardStepIndex` reactively as the wizard advances', function (): void {
+    livewire(TestComponentWithReactiveActiveWizardStepIndex::class)
+        ->assertFormComponentExists('indicator', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Active wizard step index: 0');
+
+            return true;
+        })
+        ->goToNextWizardStep()
+        ->assertWizardCurrentStep(2)
+        ->assertFormComponentExists('indicator', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Active wizard step index: 1');
+
+            return true;
+        });
+});
+
+class TestComponentWithActiveWizardStepIndex extends LivewireFixture
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Wizard::make([
+                    Step::make('one')
+                        ->schema([
+                            TextInput::make('first')
+                                ->label(fn (?int $activeWizardStepIndex): string => "Active wizard step index: {$activeWizardStepIndex}"),
+                        ]),
+                    Step::make('two')
+                        ->schema([
+                            TextInput::make('second'),
+                        ]),
+                ])
+                    ->startOnStep(2),
+                TextInput::make('outside')
+                    ->label(fn (?int $activeWizardStepIndex): string => 'Active wizard step index: ' . ($activeWizardStepIndex ?? 'none')),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithReactiveActiveWizardStepIndex extends LivewireFixture
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Wizard::make([
+                    Step::make('one')
+                        ->schema([
+                            TextInput::make('indicator')
+                                ->label(fn (?int $activeWizardStepIndex): string => "Active wizard step index: {$activeWizardStepIndex}"),
+                        ]),
+                    Step::make('two')
+                        ->schema([
+                            TextInput::make('second'),
+                        ]),
+                ]),
+            ])
+            ->statePath('data');
     }
 }

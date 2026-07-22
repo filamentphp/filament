@@ -193,6 +193,23 @@ Wizard::make([
 
 <UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `persistStepInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Accessing the current step index inside a step's schema
+
+Any component inside a wizard can inject the `$activeWizardStepIndex` utility into its configuration functions. It resolves to the zero-based index of the wizard's currently active step, or `null` when the component is not contained by a wizard. This is useful to defer expensive work until the step that needs it is actually active:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('authorId')
+    ->options(fn (?int $activeWizardStepIndex): array => ($activeWizardStepIndex === 1)
+        ? Author::query()->pluck('name', 'id')->all()
+        : [])
+```
+
+The index reflects the current step as it is known on the server. It updates as the user navigates between steps, and combines well with [persisting the current step in the query string](#persisting-the-current-step-in-the-urls-query-string) when you need it to survive a full page load.
+
+If you need the wizard instance itself, every component also exposes `getParentWizard()`, which returns the closest ancestor `Wizard`, or `null`.
+
 ## Step lifecycle hooks
 
 You may use the `afterValidation()` and `beforeValidation()` methods to run code before and after validation occurs on the step:
