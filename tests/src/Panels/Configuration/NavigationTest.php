@@ -28,6 +28,25 @@ describe('resource configuration navigation', function (): void {
         expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'archived'));
     });
 
+    it('registers separate navigation items for each resource configuration when one is active', function (): void {
+        $defaultUrl = ConfigurablePostResource::getUrl();
+
+        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+
+        $items = collect(Filament::getNavigation())
+            ->flatMap(fn ($group) => $group->getItems())
+            ->filter(fn (NavigationItem $item) => str_contains($item->getUrl(), 'posts'))
+            ->values();
+
+        expect($items)->toHaveCount(3);
+
+        $urls = $items->map(fn (NavigationItem $item) => $item->getUrl())->all();
+
+        expect($urls)->toContain($defaultUrl);
+        expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'featured'));
+        expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'archived'));
+    });
+
     it('shows correct navigation labels for resource configurations', function (): void {
         $navigation = Filament::getNavigation();
 
