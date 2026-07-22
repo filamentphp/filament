@@ -140,6 +140,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     protected bool | Closure | null $hasResizableImages = null;
 
+    protected int | Closure | null $minRows = null;
+
+    protected int | Closure | null $maxRows = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -1207,6 +1211,30 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         return $this->evaluate($this->noMergeTagSearchResultsMessage) ?? __('filament-forms::components.rich_editor.no_merge_tag_search_results_message');
     }
 
+    public function minRows(int | Closure | null $rows): static
+    {
+        $this->minRows = $rows;
+
+        return $this;
+    }
+
+    public function maxRows(int | Closure | null $rows): static
+    {
+        $this->maxRows = $rows;
+
+        return $this;
+    }
+
+    public function getMinRows(): ?int
+    {
+        return $this->evaluate($this->minRows);
+    }
+
+    public function getMaxRows(): ?int
+    {
+        return $this->evaluate($this->maxRows);
+    }
+
     public function activePanel(string | Closure | null $panel): static
     {
         $this->activePanel = $panel;
@@ -1533,8 +1561,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
+        $minRows = $this->getMinRows();
+        $maxRows = $this->getMaxRows();
+
         $wrapperAttributes = $this->getExtraAttributeBag()
             ->merge(['x-cloak' => true], escape: false)
+            ->style(array_filter([
+                filled($minRows) ? "--min-rows: {$minRows}" : null,
+                filled($maxRows) ? "--max-rows: {$maxRows}" : null,
+            ]))
             ->class(['fi-fo-rich-editor']);
 
         $deleteIconHtml = generate_icon_html(Heroicon::Trash, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON);

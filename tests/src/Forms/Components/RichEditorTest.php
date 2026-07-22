@@ -798,6 +798,46 @@ it('can set `resizableImages()`', function (): void {
     expect($editor->hasResizableImages())->toBeTrue();
 });
 
+it('returns `null` for `getMinRows()` and `getMaxRows()` by default', function (): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->getMinRows())->toBeNull()
+        ->and($editor->getMaxRows())->toBeNull();
+});
+
+it('can set `minRows()` and `maxRows()`', function (): void {
+    $editor = RichEditor::make('content')
+        ->minRows(3)
+        ->maxRows(6);
+
+    expect($editor->getMinRows())->toBe(3)
+        ->and($editor->getMaxRows())->toBe(6);
+});
+
+it('can set `minRows()` and `maxRows()` with a `Closure`', function (): void {
+    $editor = RichEditor::make('content')
+        ->minRows(static fn (): int => 3)
+        ->maxRows(static fn (): int => 5);
+
+    expect($editor->getMinRows())->toBe(3)
+        ->and($editor->getMaxRows())->toBe(5);
+});
+
+it('renders the `--min-rows` and `--max-rows` custom properties when set', function (): void {
+    $html = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->minRows(3)
+                ->maxRows(6),
+        ])
+        ->getComponents()[0]
+        ->toHtml();
+
+    expect($html)->toContain('--min-rows: 3')
+        ->and($html)->toContain('--max-rows: 6');
+});
+
 it('can set `activePanel()`', function (): void {
     $editor = RichEditor::make('content');
 

@@ -89,6 +89,22 @@
         @apply relative min-h-12 w-full flex-1 px-5 py-3;
     }
 
+    &[style*='--min-rows'] .fi-fo-rich-editor-content {
+        --block-padding: calc(var(--spacing) * 2 * 3);
+
+        min-height: calc(var(--min-rows) * 1.5em + var(--block-padding));
+        min-height: calc(var(--min-rows) * 1lh + var(--block-padding));
+    }
+
+    &[style*='--max-rows'] .fi-fo-rich-editor-content {
+        --block-padding: calc(var(--spacing) * 2 * 3);
+
+        max-height: calc(var(--max-rows) * 1.5em + var(--block-padding));
+        max-height: calc(var(--max-rows) * 1lh + var(--block-padding));
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+    }
+
     & span[data-type='mergeTag'] {
         @apply my-0 inline-block whitespace-nowrap;
 
