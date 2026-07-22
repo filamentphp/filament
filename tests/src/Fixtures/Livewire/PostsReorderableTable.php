@@ -2,7 +2,6 @@
 
 namespace Filament\Tests\Fixtures\Livewire;
 
-use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -37,11 +36,6 @@ class PostsReorderableTable extends Component implements HasActions, HasSchemas,
     {
         return $table
             ->query(Post::query())
-            ->heading('Reorderable posts')
-            ->headerActions([
-                Action::make('testHeaderAction')
-                    ->label('Test header action'),
-            ])
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
             ])
