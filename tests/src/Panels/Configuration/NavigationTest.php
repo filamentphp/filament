@@ -31,20 +31,22 @@ describe('resource configuration navigation', function (): void {
     it('registers separate navigation items for each resource configuration when one is active', function (): void {
         $defaultUrl = ConfigurablePostResource::getUrl();
 
-        Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+        ConfigurablePostResource::withConfiguration('featured', static function () use ($defaultUrl): void {
+            $items = collect(Filament::getNavigation())
+                ->flatMap(static fn ($group) => $group->getItems())
+                ->filter(static fn (NavigationItem $item) => str_contains($item->getUrl(), 'posts'))
+                ->values();
 
-        $items = collect(Filament::getNavigation())
-            ->flatMap(fn ($group) => $group->getItems())
-            ->filter(fn (NavigationItem $item) => str_contains($item->getUrl(), 'posts'))
-            ->values();
+            expect($items)->toHaveCount(3);
 
-        expect($items)->toHaveCount(3);
+            $urls = $items->map(static fn (NavigationItem $item) => $item->getUrl())->all();
 
-        $urls = $items->map(fn (NavigationItem $item) => $item->getUrl())->all();
+            expect($urls)->toContain($defaultUrl);
+            expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'featured'));
+            expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'archived'));
 
-        expect($urls)->toContain($defaultUrl);
-        expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'featured'));
-        expect($urls)->toContain(ConfigurablePostResource::getUrl(configuration: 'archived'));
+            expect(ConfigurablePostResource::getConfiguration()?->getKey())->toBe('featured');
+        });
     });
 
     it('preserves the active resource configuration key when mounting navigation', function (): void {
@@ -114,20 +116,22 @@ describe('page configuration navigation', function (): void {
     it('registers separate navigation items for each page configuration when one is active', function (): void {
         $defaultUrl = ConfigurableSettings::getUrl();
 
-        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+        ConfigurableSettings::withConfiguration('general', static function () use ($defaultUrl): void {
+            $items = collect(Filament::getNavigation())
+                ->flatMap(static fn ($group) => $group->getItems())
+                ->filter(static fn (NavigationItem $item) => str_contains($item->getUrl(), 'settings'))
+                ->values();
 
-        $items = collect(Filament::getNavigation())
-            ->flatMap(fn ($group) => $group->getItems())
-            ->filter(fn (NavigationItem $item) => str_contains($item->getUrl(), 'settings'))
-            ->values();
+            expect($items)->toHaveCount(3);
 
-        expect($items)->toHaveCount(3);
+            $urls = $items->map(static fn (NavigationItem $item) => $item->getUrl())->all();
 
-        $urls = $items->map(fn (NavigationItem $item) => $item->getUrl())->all();
+            expect($urls)->toContain($defaultUrl);
+            expect($urls)->toContain(ConfigurableSettings::getUrl(configuration: 'general'));
+            expect($urls)->toContain(ConfigurableSettings::getUrl(configuration: 'advanced'));
 
-        expect($urls)->toContain($defaultUrl);
-        expect($urls)->toContain(ConfigurableSettings::withConfiguration('general', fn () => ConfigurableSettings::getUrl()));
-        expect($urls)->toContain(ConfigurableSettings::withConfiguration('advanced', fn () => ConfigurableSettings::getUrl()));
+            expect(ConfigurableSettings::getConfiguration()?->getKey())->toBe('general');
+        });
     });
 
     it('preserves the active page configuration key when mounting navigation', function (): void {
