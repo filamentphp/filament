@@ -3,8 +3,8 @@
 namespace Filament\Support;
 
 use BackedEnum;
-use Composer\Factory;
-use Composer\IO\NullIO;
+use Composer\InstalledVersions;
+use ReflectionClass;
 use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
