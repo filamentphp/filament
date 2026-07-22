@@ -18,6 +18,8 @@ trait HasSidebar
 
     protected bool | Closure $hasCollapsibleNavigationGroups = true;
 
+    protected bool | Closure $hasStickyScrollSidebar = false;
+
     protected string | Closure | null $sidebarLivewireComponent = null;
 
     public function sidebarCollapsibleOnDesktop(bool | Closure $condition = true): static
@@ -37,6 +39,13 @@ trait HasSidebar
     public function collapsibleNavigationGroups(bool | Closure $condition = true): static
     {
         $this->hasCollapsibleNavigationGroups = $condition;
+
+        return $this;
+    }
+
+    public function stickyScrollSidebar(bool | Closure $condition = true): static
+    {
+        $this->hasStickyScrollSidebar = $condition;
 
         return $this;
     }
@@ -88,6 +97,11 @@ trait HasSidebar
     public function hasCollapsibleNavigationGroups(): bool
     {
         return (bool) $this->evaluate($this->hasCollapsibleNavigationGroups);
+    }
+
+    public function hasStickyScrollSidebar(): bool
+    {
+        return (bool) $this->evaluate($this->hasStickyScrollSidebar);
     }
 
     /**

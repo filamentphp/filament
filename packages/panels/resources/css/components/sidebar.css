@@ -75,6 +75,29 @@
     @apply lg:top-[4rem] lg:h-[calc(100dvh-4rem)];
 }
 
+.fi-sidebar-sticky-scroll {
+    @apply lg:max-h-none lg:self-start;
+
+    & .fi-sidebar-nav {
+        @apply lg:overflow-visible;
+    }
+}
+
+/* The `top` offset is refined at runtime from the measured topbar height (see
+   sticky-scroll-sidebar.js), which also publishes `--fi-sidebar-sticky-scroll-offset`;
+   `4rem` here is only the pre-script fallback, matching the default topbar height. */
+.fi-body-has-topbar {
+    --fi-sidebar-sticky-scroll-offset: 4rem;
+}
+
+.fi-body-has-topbar .fi-sidebar-sticky-scroll {
+    @apply lg:h-auto lg:min-h-[calc(100dvh-var(--fi-sidebar-sticky-scroll-offset))];
+}
+
+.fi-body:not(.fi-body-has-topbar) .fi-sidebar-sticky-scroll {
+    @apply lg:h-auto lg:min-h-dvh;
+}
+
 .fi-sidebar-close-overlay {
     @apply fixed inset-0 z-30 bg-gray-950/50 transition duration-500 lg:hidden dark:bg-gray-950/75;
 }

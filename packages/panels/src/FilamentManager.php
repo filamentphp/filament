@@ -854,6 +854,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->isSidebarCollapsibleOnDesktop();
     }
 
+    public function hasStickyScrollSidebar(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasStickyScrollSidebar();
+    }
+
     public function isSidebarFullyCollapsibleOnDesktop(): bool
     {
         return $this->getCurrentOrDefaultPanel()->isSidebarFullyCollapsibleOnDesktop();

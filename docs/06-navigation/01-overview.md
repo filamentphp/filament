@@ -493,6 +493,23 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Making the sidebar scroll with the page
+
+By default, the desktop sidebar has a fixed height and its navigation scrolls independently inside it. If you prefer the sidebar to scroll together with the page — so a long menu is revealed by scrolling the page rather than a nested scrollbar — enable `stickyScrollSidebar()` in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->stickyScrollSidebar();
+}
+```
+
+When the sidebar is taller than the viewport, its bottom pins to the bottom of the viewport as you scroll down, so every navigation item stays reachable.
+
 ## Advanced navigation customization
 
 The `navigation()` method can be called from the [configuration](../panel-configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.

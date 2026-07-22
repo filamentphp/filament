@@ -6,6 +6,7 @@
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
         $hasNavigation = filament()->hasNavigation();
         $hasTopbar = filament()->hasTopbar();
+        $hasStickyScrollSidebar = filament()->hasStickyScrollSidebar();
     @endphp
 
     {{-- format-ignore-start --}}
@@ -18,7 +19,10 @@
         @endif
         x-bind:class="{ 'fi-sidebar-open': $store.sidebar.isOpen }"
         id="fi-main-sidebar"
-        class="fi-sidebar fi-main-sidebar"
+        @class([
+            'fi-sidebar fi-main-sidebar',
+            'fi-sidebar-sticky-scroll' => $hasStickyScrollSidebar,
+        ])
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_START) }}
 

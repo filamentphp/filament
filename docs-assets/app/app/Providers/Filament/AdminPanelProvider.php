@@ -177,6 +177,10 @@ class AdminPanelProvider extends PanelProvider
             $panel->sidebarFullyCollapsibleOnDesktop();
         }
 
+        if (request()->query('stickyScrollSidebar')) {
+            $panel->stickyScrollSidebar();
+        }
+
         if (request()->query('brandLogo')) {
             $panel->brandLogo(fn () => view('filament.logo'))
                 ->brandLogoHeight('2rem');

@@ -147,6 +147,7 @@ use Livewire\Component;
  * @method static bool hasPlugin(string $id)
  * @method static bool hasProfile()
  * @method static bool hasRegistration()
+ * @method static bool hasStickyScrollSidebar()
  * @method static bool hasTenancy()
  * @method static bool hasTenantBilling()
  * @method static bool hasTenantMenu()
