@@ -9,10 +9,6 @@
         @apply animate-pulse;
     }
 
-    & .fi-ta-header-ctn {
-        @apply -mt-px;
-    }
-
     & .fi-ta-header {
         @apply flex flex-col gap-3 border-b border-gray-200 p-4 sm:px-6 dark:border-white/10;
 
