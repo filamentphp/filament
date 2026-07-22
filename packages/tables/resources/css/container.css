@@ -32,6 +32,30 @@
             }
         }
 
+        & .fi-ta-actions {
+            & .fi-btn:not(.fi-dropdown-panel *) {
+                &.fi-size-xs {
+                    @apply -my-0.5;
+                }
+
+                &.fi-size-sm {
+                    @apply -my-1;
+                }
+
+                &.fi-size-md {
+                    @apply -my-1.5;
+                }
+
+                &.fi-size-lg {
+                    @apply -my-2;
+                }
+
+                &.fi-size-xl {
+                    @apply -my-2.5;
+                }
+            }
+        }
+
         & .fi-ta-header-heading {
             @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
         }
