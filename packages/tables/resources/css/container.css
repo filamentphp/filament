@@ -33,27 +33,25 @@
         }
 
         & .fi-ta-actions {
-            /* The negative margins only apply from `sm`, since the header stacks vertically below it and they would collapse the gap between wrapped rows of actions. */
-            & .fi-btn:not(.fi-dropdown-panel *) {
-                &.fi-size-xs {
-                    @apply sm:-my-0.5;
-                }
+            /* The negative margins let the buttons overhang the header's vertical padding, so a header with actions matches the height of one without them. They are applied to the container instead of the buttons so wrapped rows of actions keep their gap, laddered so the largest button size present wins, and scoped to `sm` since the header stacks vertically below it. */
+            &:has(.fi-btn.fi-size-xs:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-0.5;
+            }
 
-                &.fi-size-sm {
-                    @apply sm:-my-1;
-                }
+            &:has(.fi-btn.fi-size-sm:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-1;
+            }
 
-                &.fi-size-md {
-                    @apply sm:-my-1.5;
-                }
+            &:has(.fi-btn.fi-size-md:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-1.5;
+            }
 
-                &.fi-size-lg {
-                    @apply sm:-my-2;
-                }
+            &:has(.fi-btn.fi-size-lg:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-2;
+            }
 
-                &.fi-size-xl {
-                    @apply sm:-my-2.5;
-                }
+            &:has(.fi-btn.fi-size-xl:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-2.5;
             }
         }
 
