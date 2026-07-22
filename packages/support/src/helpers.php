@@ -349,11 +349,28 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
      */
     function discover_app_classes(?string $parentClass = null): array
     {
-        $classLoader = require 'vendor/autoload.php';
+        $vendorDir = class_exists(\Composer\InstalledVersions::class)
+            ? dirname((new \ReflectionClass(\Composer\InstalledVersions::class))->getFileName(), 2)
+            : 'vendor';
+
+        $autoloadPath = $vendorDir . '/autoload.php';
+
+        if (! is_file($autoloadPath)) {
+            return [];
+        }
+
+        /** @var \Composer\Autoload\ClassLoader $classLoader */
+        $classLoader = require $autoloadPath;
+
+        $realVendorDir = realpath($vendorDir) ?: $vendorDir;
+        $vendorPathPrefix = rtrim($realVendorDir, '/\\') . DIRECTORY_SEPARATOR;
 
         return collect($classLoader->getClassMap())
-            ->filter(function (string $file, string $class) use ($parentClass): bool {
-                if (! str($file)->startsWith(base_path('vendor' . DIRECTORY_SEPARATOR . 'composer/../../'))) {
+            ->filter(function (string $file, string $class) use ($parentClass, $vendorPathPrefix): bool {
+
+                $filePath = realpath($file) ?: $file;
+
+                if (str_starts_with($filePath, $vendorPathPrefix)) {
                     return false;
                 }
 
