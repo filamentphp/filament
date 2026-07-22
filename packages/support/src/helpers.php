@@ -351,7 +351,7 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
     {
         $vendorDir = class_exists(\Composer\InstalledVersions::class)
             ? dirname((new \ReflectionClass(\Composer\InstalledVersions::class))->getFileName(), 2)
-            : base_path('vendor');
+            : 'vendor';
 
         $autoloadPath = $vendorDir . '/autoload.php';
 
