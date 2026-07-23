@@ -19,19 +19,19 @@ RichEditor::make('content')
 
 ## Setting the height
 
-By default, the editor grows to fit its content. You may control its height by defining the `minRows()` and `maxRows()` methods, which set the minimum and maximum number of visible rows of text:
+You may control the editor's height by defining the `minHeight()` and `maxHeight()` methods, which accept any CSS length value:
 
 ```php
 use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
-    ->minRows(3)
-    ->maxRows(10)
+    ->minHeight('12rem')
+    ->maxHeight('24rem')
 ```
 
-Once the content exceeds `maxRows()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minRows()` sets a starting height while still allowing the editor to grow, and `maxRows()` caps how tall it may become.
+Once the content exceeds `maxHeight()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minHeight()` sets a starting height while still allowing the editor to grow, and `maxHeight()` caps how tall it may become. Pass `null` to `minHeight()` to let the editor grow from its content with no minimum.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minRows()` and `maxRows()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minHeight()` and `maxHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Storing content as JSON
 

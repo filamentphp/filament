@@ -798,44 +798,51 @@ it('can set `resizableImages()`', function (): void {
     expect($editor->hasResizableImages())->toBeTrue();
 });
 
-it('returns `null` for `getMinRows()` and `getMaxRows()` by default', function (): void {
+it('returns `null` for `getMinHeight()` and `getMaxHeight()` by default', function (): void {
     $editor = RichEditor::make('content');
 
-    expect($editor->getMinRows())->toBeNull()
-        ->and($editor->getMaxRows())->toBeNull();
+    expect($editor->getMinHeight())->toBeNull()
+        ->and($editor->getMaxHeight())->toBeNull();
 });
 
-it('can set `minRows()` and `maxRows()`', function (): void {
+it('can set `minHeight()` and `maxHeight()`', function (): void {
     $editor = RichEditor::make('content')
-        ->minRows(3)
-        ->maxRows(6);
+        ->minHeight('20rem')
+        ->maxHeight('40rem');
 
-    expect($editor->getMinRows())->toBe(3)
-        ->and($editor->getMaxRows())->toBe(6);
+    expect($editor->getMinHeight())->toBe('20rem')
+        ->and($editor->getMaxHeight())->toBe('40rem');
 });
 
-it('can set `minRows()` and `maxRows()` with a `Closure`', function (): void {
+it('can set `minHeight()` and `maxHeight()` with a `Closure`', function (): void {
     $editor = RichEditor::make('content')
-        ->minRows(static fn (): int => 3)
-        ->maxRows(static fn (): int => 5);
+        ->minHeight(static fn (): string => '15rem')
+        ->maxHeight(static fn (): string => '50rem');
 
-    expect($editor->getMinRows())->toBe(3)
-        ->and($editor->getMaxRows())->toBe(5);
+    expect($editor->getMinHeight())->toBe('15rem')
+        ->and($editor->getMaxHeight())->toBe('50rem');
 });
 
-it('renders the `--min-rows` and `--max-rows` custom properties when set', function (): void {
+it('can clear `minHeight()` with `null`', function (): void {
+    $editor = RichEditor::make('content')
+        ->minHeight(null);
+
+    expect($editor->getMinHeight())->toBeNull();
+});
+
+it('renders the `--min-height` and `--max-height` custom properties when set', function (): void {
     $html = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             RichEditor::make('content')
-                ->minRows(3)
-                ->maxRows(6),
+                ->minHeight('20rem')
+                ->maxHeight('40rem'),
         ])
         ->getComponents()[0]
         ->toHtml();
 
-    expect($html)->toContain('--min-rows: 3')
-        ->and($html)->toContain('--max-rows: 6');
+    expect($html)->toContain('--min-height: 20rem')
+        ->and($html)->toContain('--max-height: 40rem');
 });
 
 it('can set `activePanel()`', function (): void {

@@ -57,6 +57,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
+    use Concerns\HasMaxHeight;
+    use Concerns\HasMinHeight;
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons {
         Concerns\InteractsWithToolbarButtons::getToolbarButtons as getBaseToolbarButtons;
@@ -140,13 +142,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     protected bool | Closure | null $hasResizableImages = null;
 
-    protected int | Closure | null $minRows = null;
-
-    protected int | Closure | null $maxRows = null;
-
     protected function setUp(): void
     {
         parent::setUp();
+
+        // The rich editor grows to fit its content by default, unlike the
+        // markdown editor whose `HasMinHeight` trait defaults to `11.25rem`.
+        $this->minHeight(null);
 
         $this->tools([
             RichEditorTool::make('bold')
@@ -1211,30 +1213,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         return $this->evaluate($this->noMergeTagSearchResultsMessage) ?? __('filament-forms::components.rich_editor.no_merge_tag_search_results_message');
     }
 
-    public function minRows(int | Closure | null $rows): static
-    {
-        $this->minRows = $rows;
-
-        return $this;
-    }
-
-    public function maxRows(int | Closure | null $rows): static
-    {
-        $this->maxRows = $rows;
-
-        return $this;
-    }
-
-    public function getMinRows(): ?int
-    {
-        return $this->evaluate($this->minRows);
-    }
-
-    public function getMaxRows(): ?int
-    {
-        return $this->evaluate($this->maxRows);
-    }
-
     public function activePanel(string | Closure | null $panel): static
     {
         $this->activePanel = $panel;
@@ -1561,14 +1539,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
 
-        $minRows = $this->getMinRows();
-        $maxRows = $this->getMaxRows();
+        $minHeight = $this->getMinHeight();
+        $maxHeight = $this->getMaxHeight();
 
         $wrapperAttributes = $this->getExtraAttributeBag()
             ->merge(['x-cloak' => true], escape: false)
             ->style(array_filter([
-                filled($minRows) ? "--min-rows: {$minRows}" : null,
-                filled($maxRows) ? "--max-rows: {$maxRows}" : null,
+                filled($minHeight) ? "--min-height: {$minHeight}" : null,
+                filled($maxHeight) ? "--max-height: {$maxHeight}" : null,
             ]))
             ->class(['fi-fo-rich-editor']);
 
