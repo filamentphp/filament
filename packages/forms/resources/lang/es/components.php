@@ -128,6 +128,30 @@ return [
 
     ],
 
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Mes',
+        ],
+
+        'year_input' => [
+            'label' => 'Año',
+        ],
+
+        'hour_input' => [
+            'label' => 'Hora',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minuto',
+        ],
+
+        'second_input' => [
+            'label' => 'Segundo',
+        ],
+
+    ],
+
     'file_upload' => [
 
         'actions' => [
