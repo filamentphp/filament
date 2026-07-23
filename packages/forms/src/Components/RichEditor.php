@@ -146,8 +146,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     {
         parent::setUp();
 
-        // The rich editor grows to fit its content by default, unlike the
-        // markdown editor whose `HasMinHeight` trait defaults to `11.25rem`.
         $this->minHeight(null);
 
         $this->tools([

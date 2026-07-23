@@ -94,9 +94,8 @@
     }
 
     &[style*='--max-height'] .fi-fo-rich-editor-content {
+        @apply overflow-y-auto scrollbar-gutter-stable;
         max-height: var(--max-height);
-        overflow-y: auto;
-        scrollbar-gutter: stable;
     }
 
     & span[data-type='mergeTag'] {
