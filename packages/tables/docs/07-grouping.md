@@ -25,6 +25,20 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/grouping" alt="Table with grouping" version="4.x" />
 
+You may also pass a sort direction to the `defaultGroup()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->defaultGroup('status', direction: 'desc');
+}
+```
+
+The second parameter is optional and defaults to `'asc'`.
+
 ## Allowing users to choose between groupings
 
 You may also allow users to pick between different groupings, by passing them in an array to the `groups()` method:

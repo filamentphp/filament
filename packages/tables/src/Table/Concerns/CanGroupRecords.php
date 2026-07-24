@@ -8,10 +8,13 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\View\TablesIconAlias;
+use Illuminate\Support\Str;
 
 trait CanGroupRecords
 {
     protected string | Group | Closure | null $defaultGroup = null;
+
+    protected string | Closure | null $defaultGroupDirection = null;
 
     /**
      * @var array<string, Group>
@@ -82,9 +85,10 @@ trait CanGroupRecords
         return $this;
     }
 
-    public function defaultGroup(string | Group | Closure | null $group): static
+    public function defaultGroup(string | Group | Closure | null $group, string | Closure | null $direction = 'asc'): static
     {
         $this->defaultGroup = $group;
+        $this->defaultGroupDirection = $direction;
 
         return $this;
     }
@@ -186,6 +190,11 @@ trait CanGroupRecords
 
         return Group::make($defaultGroup)
             ->table($this);
+    }
+
+    public function getDefaultGroupDirection(): string
+    {
+        return Str::lower($this->evaluate($this->defaultGroupDirection) ?? 'asc');
     }
 
     /**

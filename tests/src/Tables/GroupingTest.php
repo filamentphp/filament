@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Tables\Grouping\Group;
+use Filament\Tests\Fixtures\Livewire\DefaultGroupedPostsTable;
 use Filament\Tests\Fixtures\Livewire\GroupedCustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithGroupPersistedInSession;
@@ -55,6 +56,32 @@ it('can group a table', function (): void {
                 ->and($table->getGrouping())
                 ->getLabel()->toBe('Dynamic label');
         });
+});
+
+it('can group records by a default group in descending order', function (): void {
+    Post::factory()->create(['title' => 'Apple Post']);
+    Post::factory()->create(['title' => 'Cherry Post']);
+    Post::factory()->create(['title' => 'Banana Post']);
+
+    $sortedPosts = Post::query()->orderByDesc('title')->orderBy('id')->get();
+
+    livewire(DefaultGroupedPostsTable::class)
+        ->assertSet('tableGrouping', 'title:desc')
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
+});
+
+it('can set a `defaultGroup()` direction and get with `getDefaultGroupDirection()`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $table = $livewire->getTable();
+
+    expect($table->defaultGroup('title', 'DESC')->getDefaultGroupDirection())->toBe('desc');
+});
+
+it('defaults the `defaultGroup()` direction to ascending', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $table = $livewire->getTable();
+
+    expect($table->defaultGroup('title')->getDefaultGroupDirection())->toBe('asc');
 });
 
 it('can group records by column', function (): void {
