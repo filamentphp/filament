@@ -541,6 +541,13 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveUrl('url', 'https://google.com');
     });
 
+    it('returns null for `getLivewireClickHandler()` when action has a URL and does not post to URL', function (): void {
+        $action = Action::make('test')
+            ->url('https://filamentphp.com');
+
+        expect($action->getLivewireClickHandler())->toBeNull();
+    });
+
     it('can open a URL in a new tab', function (): void {
         livewire(Actions::class)
             ->assertActionShouldOpenUrlInNewTab('urlInNewTab')

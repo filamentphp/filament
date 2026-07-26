@@ -163,6 +163,8 @@ class CreateRecord extends Page
 
         $redirectUrl = $this->getRedirectUrl();
 
+        $this->isCreating = false;
+
         $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
     }
 
