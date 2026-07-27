@@ -8,6 +8,7 @@ use Filament\Livewire\Sidebar;
 use Filament\Livewire\Topbar;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\actingAs;
@@ -85,32 +86,58 @@ it('does not add the `fi-body-has-topbar-on-mobile` class when the topbar is ena
 
 it('renders the topbar on mobile and the sidebar items on desktop in the browser', function (): void {
     retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
         Filament::setCurrentPanel('topbar-on-mobile');
 
-        visit(Filament::getUrl())
+        $url = Filament::getUrl();
+
+        visit($url)
             ->on()->mobile()
             ->assertVisible('.fi-topbar-ctn .fi-global-search-ctn')
             ->assertVisible('.fi-topbar-ctn .fi-user-menu')
-            ->assertDontSee('.fi-sidebar-footer')
+            ->assertMissing('.fi-sidebar-footer')
+            ->assertMissing('.fi-sidebar-global-search-ctn')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit(Filament::getUrl())
+        visit($url)
             ->on()->desktop()
-            ->assertDontSee('.fi-topbar-ctn')
+            ->assertMissing('.fi-topbar-ctn')
             ->assertVisible('.fi-sidebar-footer .fi-user-menu')
             ->assertVisible('.fi-sidebar-global-search-ctn')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit(Filament::getUrl())
+        visit($url)
             ->on()->mobile()
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
 
-        visit(Filament::getUrl())
+        visit($url)
             ->on()->desktop()
             ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('does not duplicate the global search field and user menu in the sidebar drawer on mobile in the browser', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        Filament::setCurrentPanel('topbar-on-mobile');
+
+        visit(Filament::getUrl())
+            ->on()->mobile()
+            ->click('.fi-topbar-open-sidebar-btn')
+            ->assertVisible('.fi-sidebar-nav')
+            ->assertMissing('.fi-sidebar-footer')
+            ->assertMissing('.fi-sidebar-global-search-ctn')
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

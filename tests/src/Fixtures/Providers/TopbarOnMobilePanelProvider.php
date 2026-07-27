@@ -9,6 +9,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -27,6 +28,9 @@ class TopbarOnMobilePanelProvider extends PanelProvider
             ->login()
             ->pages([
                 Pages\Dashboard::class,
+            ])
+            ->resources([
+                PostResource::class,
             ])
             ->topbar(false)
             ->topbarOnMobile()
