@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Girmiş olduğunuz kod geçersiz.',
 
+                    'rate_limited' => 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Girmiş olduğunuz kurtarma kodu geçersiz.',
+
+                    'rate_limited' => 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.',
 
                 ],
 
