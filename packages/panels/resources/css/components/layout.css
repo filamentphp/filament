@@ -12,6 +12,10 @@ html.fi {
         }
     }
 
+    &.fi-body-has-topbar-on-mobile > .fi-layout-sidebar-toggle-btn-ctn {
+        @apply max-lg:hidden;
+    }
+
     & > .fi-layout-sidebar-toggle-btn-ctn {
         @apply ps-5 pt-5;
 
@@ -37,9 +41,15 @@ html.fi {
         }
     }
 
-    &:not(.fi-body-has-topbar) {
+    &:not(.fi-body-has-topbar):not(.fi-body-has-topbar-on-mobile) {
         & .fi-main-ctn {
             @apply flex min-h-dvh;
+        }
+    }
+
+    &.fi-body-has-topbar-on-mobile {
+        & .fi-main-ctn {
+            @apply flex min-h-[calc(100dvh-4rem)] lg:min-h-dvh;
         }
     }
 }

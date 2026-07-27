@@ -8,6 +8,9 @@
     $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
     $hasTopNavigation = filament()->hasTopNavigation();
     $hasNavigation = filament()->hasNavigation();
+    $isTopbarMobileOnly = filament()->hasTopbarOnMobile() && (! $hasTopbar);
+    $hasTopbarRendered = $hasTopbar || $isTopbarMobileOnly;
+    $hasFloatingSidebarToggleButton = $hasNavigation && ((! $hasTopbarRendered) || ($isTopbarMobileOnly && $isSidebarFullyCollapsibleOnDesktop));
     $renderHookScopes = $livewire?->getRenderHookScopes();
     $maxContentWidth ??= (filament()->getMaxContentWidth() ?? Width::SevenExtraLarge);
 
@@ -23,6 +26,7 @@
         'fi-body-has-sidebar-collapsible-on-desktop' => $isSidebarCollapsibleOnDesktop,
         'fi-body-has-sidebar-fully-collapsible-on-desktop' => $isSidebarFullyCollapsibleOnDesktop,
         'fi-body-has-topbar' => $hasTopbar,
+        'fi-body-has-topbar-on-mobile' => $isTopbarMobileOnly,
         'fi-body-has-top-navigation' => $hasTopNavigation,
     ])
 >
@@ -30,13 +34,15 @@
         {{ __('filament-panels::layout.skip_to_content.label') }}
     </a>
 
-    @if ($hasTopbar)
+    @if ($hasTopbarRendered)
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_BEFORE, scopes: $renderHookScopes) }}
 
         @livewire(filament()->getTopbarLivewireComponent())
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
-    @elseif ($hasNavigation)
+    @endif
+
+    @if ($hasFloatingSidebarToggleButton)
         <div
             @if ($isSidebarFullyCollapsibleOnDesktop)
                 x-data="{}"

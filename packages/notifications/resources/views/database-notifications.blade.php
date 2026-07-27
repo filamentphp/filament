@@ -8,13 +8,14 @@
     $hasNotifications = $notifications->count();
     $isPaginated = $notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages();
     $pollingInterval = $this->getPollingInterval();
+    $modalId = $this->getModalId();
 @endphp
 
 <div class="fi-no-database">
     {{-- The focus trap autofocuses the modal window itself when the slide-over opens, since the first tabbable element is the `Mark all as read` header action, which `Enter` would otherwise immediately (and irreversibly) trigger. The window must carry the `autofocus` attribute because the focus trap resolves it once, when the modal first initializes, and the window is always rendered. --}}
     <x-filament::modal
         :alignment="$hasNotifications ? null : Alignment::Center"
-        aria-labelledby="database-notifications.heading"
+        aria-labelledby="{{ $modalId }}.heading"
         close-button
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
         :extra-modal-window-attribute-bag="
@@ -31,7 +32,7 @@
             : \Filament\Notifications\View\NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE
         "
         :icon-color="$hasNotifications ? null : 'gray'"
-        id="database-notifications"
+        :id="$modalId"
         slide-over
         :sticky-header="$hasNotifications"
         teleport="body"
@@ -53,7 +54,7 @@
             <x-slot name="header">
                 <div>
                     <h2
-                        id="database-notifications.heading"
+                        id="{{ $modalId }}.heading"
                         class="fi-modal-heading"
                     >
                         {{ __('filament-notifications::database.modal.heading') }}

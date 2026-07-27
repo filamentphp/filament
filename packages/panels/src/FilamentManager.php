@@ -791,6 +791,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasTopbar();
     }
 
+    public function hasTopbarOnMobile(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasTopbarOnMobile();
+    }
+
     public function hasUserMenu(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasUserMenu();

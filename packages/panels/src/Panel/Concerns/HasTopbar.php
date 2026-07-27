@@ -10,11 +10,20 @@ trait HasTopbar
 {
     protected bool | Closure $hasTopbar = true;
 
+    protected bool | Closure $hasTopbarOnMobile = false;
+
     protected string | Closure | null $topbarLivewireComponent = null;
 
     public function topbar(bool | Closure $condition = true): static
     {
         $this->hasTopbar = $condition;
+
+        return $this;
+    }
+
+    public function topbarOnMobile(bool | Closure $condition = true): static
+    {
+        $this->hasTopbarOnMobile = $condition;
 
         return $this;
     }
@@ -32,6 +41,11 @@ trait HasTopbar
     public function hasTopbar(): bool
     {
         return (bool) $this->evaluate($this->hasTopbar);
+    }
+
+    public function hasTopbarOnMobile(): bool
+    {
+        return $this->hasTopbar() || ((bool) $this->evaluate($this->hasTopbarOnMobile));
     }
 
     /**

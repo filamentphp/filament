@@ -106,6 +106,7 @@
                 @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
                     x-show="$store.sidebar.isOpen"
                 @endif
+                class="fi-sidebar-global-search-ctn"
             >
                 @livewire(Filament\Livewire\GlobalSearch::class)
             </div>

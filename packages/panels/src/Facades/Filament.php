@@ -154,6 +154,7 @@ use Livewire\Component;
  * @method static bool hasTenantRegistration()
  * @method static bool hasThemeSwitcher()
  * @method static bool hasTopbar()
+ * @method static bool hasTopbarOnMobile()
  * @method static bool hasUserMenu()
  * @method static bool hasTopNavigation()
  * @method static bool hasUnsavedChangesAlerts()

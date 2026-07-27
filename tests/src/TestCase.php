@@ -27,6 +27,7 @@ use Filament\Tests\Fixtures\Providers\DomainTenancyPanelProvider;
 use Filament\Tests\Fixtures\Providers\EmailAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\Fixtures\Providers\SingleDomainPanel;
 use Filament\Tests\Fixtures\Providers\MultiDomainPanel;
+use Filament\Tests\Fixtures\Providers\NoTopbarPanelProvider;
 use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugTenancyPanelProvider;
@@ -34,6 +35,7 @@ use Filament\Tests\Fixtures\Providers\TenancyPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenantMenuFlatPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenantMenuGroupingPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenantMenuRegisterPlacementPanelProvider;
+use Filament\Tests\Fixtures\Providers\TopbarOnMobilePanelProvider;
 use Filament\Tests\Fixtures\Providers\UserMenuFlatPanelProvider;
 use Filament\Tests\Fixtures\Providers\UserMenuGroupingPanelProvider;
 use Filament\Tests\Fixtures\Providers\UserMenuLogoutPlacementPanelProvider;
@@ -92,6 +94,8 @@ abstract class TestCase extends BaseTestCase
             TenantMenuFlatPanelProvider::class,
             TenantMenuGroupingPanelProvider::class,
             TenantMenuRegisterPlacementPanelProvider::class,
+            NoTopbarPanelProvider::class,
+            TopbarOnMobilePanelProvider::class,
             UserMenuFlatPanelProvider::class,
             UserMenuGroupingPanelProvider::class,
             UserMenuLogoutPlacementPanelProvider::class,

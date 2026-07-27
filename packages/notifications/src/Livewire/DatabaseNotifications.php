@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -35,6 +36,9 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     public static ?string $pollingInterval = '30s';
 
     public static ?string $authGuard = null;
+
+    #[Locked]
+    public ?string $modalId = null;
 
     #[On('databaseNotificationsSent')]
     public function refresh(): void {}
@@ -126,6 +130,11 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     public function getPollingInterval(): ?string
     {
         return static::$pollingInterval;
+    }
+
+    public function getModalId(): string
+    {
+        return $this->modalId ?? 'database-notifications';
     }
 
     public function getTrigger(): ?View

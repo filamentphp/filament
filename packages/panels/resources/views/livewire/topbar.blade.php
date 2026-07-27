@@ -6,6 +6,7 @@
         $hasTopNavigation = filament()->hasTopNavigation();
         $hasNavigation = filament()->hasNavigation();
         $hasTenancy = filament()->hasTenancy();
+        $isTopbarMobileOnly = filament()->hasTopbarOnMobile() && (! filament()->hasTopbar());
     @endphp
 
     <nav
@@ -46,78 +47,80 @@
             />
         @endif
 
-        <div class="fi-topbar-start">
-            @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
-                <div
-                    x-show="$store.sidebar.isOpen || @js($isSidebarCollapsibleOnDesktop)"
-                    class="fi-topbar-collapse-sidebar-btn-ctn"
-                >
-                    @if ($isSidebarCollapsibleOnDesktop)
-                        <x-filament::icon-button
-                            color="gray"
-                            :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"
-                            {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` for RTL. --}}
-                            :icon-alias="
-                                $isRtl
-                                ? [
-                                    \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
-                                    \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
-                                ]
-                                : \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
-                            "
-                            icon-size="lg"
-                            :label="__('filament-panels::layout.actions.sidebar.expand.label')"
-                            x-cloak
-                            x-data="{}"
-                            aria-controls="fi-main-sidebar"
-                            x-bind:aria-expanded="$store.sidebar.isOpen"
-                            x-on:click="$store.sidebar.open()"
-                            x-show="! $store.sidebar.isOpen"
-                            class="fi-topbar-open-collapse-sidebar-btn"
-                        />
-                    @endif
+        @if (! $isTopbarMobileOnly)
+            <div class="fi-topbar-start">
+                @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                    <div
+                        x-show="$store.sidebar.isOpen || @js($isSidebarCollapsibleOnDesktop)"
+                        class="fi-topbar-collapse-sidebar-btn-ctn"
+                    >
+                        @if ($isSidebarCollapsibleOnDesktop)
+                            <x-filament::icon-button
+                                color="gray"
+                                :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"
+                                {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` for RTL. --}}
+                                :icon-alias="
+                                    $isRtl
+                                    ? [
+                                        \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
+                                        \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
+                                    ]
+                                    : \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
+                                "
+                                icon-size="lg"
+                                :label="__('filament-panels::layout.actions.sidebar.expand.label')"
+                                x-cloak
+                                x-data="{}"
+                                aria-controls="fi-main-sidebar"
+                                x-bind:aria-expanded="$store.sidebar.isOpen"
+                                x-on:click="$store.sidebar.open()"
+                                x-show="! $store.sidebar.isOpen"
+                                class="fi-topbar-open-collapse-sidebar-btn"
+                            />
+                        @endif
 
-                    @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
-                        <x-filament::icon-button
-                            color="gray"
-                            :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronRight : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft"
-                            {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` for RTL. --}}
-                            :icon-alias="
-                                $isRtl
-                                ? [
-                                    \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
-                                    \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
-                                ]
-                                : \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
-                            "
-                            icon-size="lg"
-                            :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
-                            x-cloak
-                            x-data="{}"
-                            aria-controls="fi-main-sidebar"
-                            x-bind:aria-expanded="$store.sidebar.isOpen"
-                            x-on:click="$store.sidebar.close()"
-                            x-show="$store.sidebar.isOpen"
-                            class="fi-topbar-close-collapse-sidebar-btn"
-                        />
-                    @endif
-                </div>
-            @endif
+                        @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                            <x-filament::icon-button
+                                color="gray"
+                                :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronRight : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft"
+                                {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` for RTL. --}}
+                                :icon-alias="
+                                    $isRtl
+                                    ? [
+                                        \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
+                                        \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
+                                    ]
+                                    : \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
+                                "
+                                icon-size="lg"
+                                :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
+                                x-cloak
+                                x-data="{}"
+                                aria-controls="fi-main-sidebar"
+                                x-bind:aria-expanded="$store.sidebar.isOpen"
+                                x-on:click="$store.sidebar.close()"
+                                x-show="$store.sidebar.isOpen"
+                                class="fi-topbar-close-collapse-sidebar-btn"
+                            />
+                        @endif
+                    </div>
+                @endif
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_BEFORE) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_BEFORE) }}
 
-            @if ($homeUrl = filament()->getHomeUrl())
-                <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
+                @if ($homeUrl = filament()->getHomeUrl())
+                    <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
+                        <x-filament-panels::logo />
+                    </a>
+                @else
                     <x-filament-panels::logo />
-                </a>
-            @else
-                <x-filament-panels::logo />
-            @endif
+                @endif
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_AFTER) }}
-        </div>
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_AFTER) }}
+            </div>
+        @endif
 
-        @if ($hasTopNavigation || (! $hasNavigation))
+        @if ((! $isTopbarMobileOnly) && ($hasTopNavigation || (! $hasNavigation)))
             @if ($hasTenancy && filament()->hasTenantMenu())
                 <x-filament-panels::tenant-menu teleport />
             @endif
@@ -255,21 +258,29 @@
         >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
 
-            @if (filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Enums\GlobalSearchPosition::Topbar)
+            @if (filament()->isGlobalSearchEnabled() && ($isTopbarMobileOnly || filament()->getGlobalSearchPosition() === \Filament\Enums\GlobalSearchPosition::Topbar))
                 @livewire(Filament\Livewire\GlobalSearch::class)
             @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
 
             @if (filament()->auth()->check())
-                @if (filament()->hasDatabaseNotifications() && filament()->getDatabaseNotificationsPosition() === \Filament\Enums\DatabaseNotificationsPosition::Topbar)
+                @if (filament()->hasDatabaseNotifications() && ($isTopbarMobileOnly || filament()->getDatabaseNotificationsPosition() === \Filament\Enums\DatabaseNotificationsPosition::Topbar))
                     @livewire(filament()->getDatabaseNotificationsLivewireComponent(), [
+                        ...($isTopbarMobileOnly
+                            ? [
+                                'position' => \Filament\Enums\DatabaseNotificationsPosition::Topbar,
+                                'modalId' => 'database-notifications-topbar',
+                            ]
+                            : []),
                         'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
                     ])
                 @endif
 
-                @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Enums\UserMenuPosition::Topbar)
-                    <x-filament-panels::user-menu />
+                @if (filament()->hasUserMenu() && ($isTopbarMobileOnly || filament()->getUserMenuPosition() === \Filament\Enums\UserMenuPosition::Topbar))
+                    <x-filament-panels::user-menu
+                        :position="$isTopbarMobileOnly ? \Filament\Enums\UserMenuPosition::Topbar : null"
+                    />
                 @endif
             @endif
         </div>

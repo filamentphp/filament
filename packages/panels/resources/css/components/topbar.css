@@ -45,6 +45,12 @@
             @apply lg:hidden;
         }
     }
+
+    &.fi-body-has-topbar-on-mobile {
+        & .fi-topbar-ctn {
+            @apply lg:hidden;
+        }
+    }
 }
 
 .fi-topbar-nav-groups {

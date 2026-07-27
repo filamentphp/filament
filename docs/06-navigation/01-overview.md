@@ -604,6 +604,26 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+When the topbar is disabled, the global search field, database notifications and user menu are rendered in the sidebar instead, at every screen size.
+
+### Rendering the topbar on mobile only
+
+Since the sidebar is hidden behind a drawer on small screens, you may prefer to keep a topbar on mobile devices even though the topbar is disabled. You can do this using the `topbarOnMobile()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->topbar(false)
+        ->topbarOnMobile();
+}
+```
+
+`topbarOnMobile()` has no effect if the topbar is enabled, since a topbar is already rendered at every screen size. It is intended for sidebar layouts, and not for panels that use [top navigation](#using-top-navigation).
+
 ### Replacing the sidebar and topbar Livewire components
 
 You may completely replace the Livewire components that are used to render the sidebar and topbar, passing your own Livewire component class name into the `sidebarLivewireComponent()` or `topbarLivewireComponent()` method:

@@ -288,3 +288,12 @@
 .fi-sidebar-close-sidebar-btn {
     @apply mx-0! lg:hidden;
 }
+
+.fi-body {
+    &.fi-body-has-topbar-on-mobile {
+        & .fi-sidebar-global-search-ctn,
+        & .fi-sidebar-footer {
+            @apply max-lg:hidden;
+        }
+    }
+}
