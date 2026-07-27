@@ -1,5 +1,9 @@
 <?php
 
+use Filament\Actions\Exports\Downloaders\Contracts\Downloader;
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -8,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 uses(TestCase::class, RefreshDatabase::class);
 
@@ -29,12 +34,57 @@ class DenyExportViewPolicy
     }
 }
 
-function createExportForOwner(User $owner): Export
+class TestDownloadExportExporter extends Exporter
+{
+    public static function getColumns(): array
+    {
+        return [
+            ExportColumn::make('name'),
+        ];
+    }
+
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        return 'Export completed';
+    }
+}
+
+class TestCustomDownloader implements Downloader
+{
+    public function __invoke(Export $export): StreamedResponse
+    {
+        return response()->streamDownload(function (): void {
+            echo 'custom downloader content';
+        }, 'custom.csv');
+    }
+}
+
+class TestCustomDownloaderExporter extends Exporter
+{
+    public static function getColumns(): array
+    {
+        return [
+            ExportColumn::make('name'),
+        ];
+    }
+
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        return 'Export completed';
+    }
+
+    public static function getDownloader(ExportFormatInterface $format): Downloader
+    {
+        return app(TestCustomDownloader::class);
+    }
+}
+
+function createExportForOwner(User $owner, string $exporter = TestDownloadExportExporter::class): Export
 {
     return Export::create([
         'file_disk' => 'local',
         'file_name' => 'export',
-        'exporter' => 'App\\Filament\\Exports\\TestExporter',
+        'exporter' => $exporter,
         'total_rows' => 1,
         'successful_rows' => 1,
         'user_id' => $owner->getKey(),
@@ -130,4 +180,18 @@ it('aborts with `404` when the requested format is unknown', function (): void {
     $this->actingAs($owner)
         ->get(signedExportDownloadUrl($export, format: 'unknown'))
         ->assertStatus(404);
+});
+
+it('uses the exporter\'s `getDownloader()` override instead of the format\'s default downloader', function (): void {
+    $owner = User::factory()->create();
+
+    $export = createExportForOwner($owner, exporter: TestCustomDownloaderExporter::class);
+
+    fakeExportFile($export);
+
+    $response = $this->actingAs($owner)
+        ->get(signedExportDownloadUrl($export))
+        ->assertStatus(200);
+
+    expect($response->streamedContent())->toBe('custom downloader content');
 });

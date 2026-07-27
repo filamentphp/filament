@@ -38,7 +38,7 @@ class DownloadExport
 
         abort_unless($format !== null, 404);
 
-        return $format->getDownloader()($export);
+        return $export->exporter::getDownloader($format)($export);
     }
 
     protected function resolveFormatFromRequest(Request $request): ?ExportFormatInterface

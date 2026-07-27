@@ -4,9 +4,6 @@ namespace Filament\Actions\Exports\Downloaders;
 
 use Filament\Actions\Exports\Downloaders\Contracts\Downloader;
 use Filament\Actions\Exports\Models\Export;
-use League\Csv\Reader as CsvReader;
-use League\Csv\Statement;
-use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\XLSX\Writer;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -37,34 +34,10 @@ class XlsxDownloader implements Downloader
 
         $writer = app(Writer::class);
 
-        $csvDelimiter = $export->exporter::getCsvDelimiter();
-
-        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer): void {
-            $csvReader = CsvReader::from($disk->readStream($file));
-            $csvReader->setDelimiter($csvDelimiter);
-            $csvResults = (new Statement)->process($csvReader);
-
-            foreach ($csvResults->getRecords() as $row) {
-                $writer->addRow(Row::fromValues($row));
-            }
-        };
-
-        return response()->streamDownload(function () use ($disk, $directory, $fileName, $writer, $writeRowsFromFile): void {
+        return response()->streamDownload(function () use ($export, $fileName, $writer): void {
             $writer->openToBrowser($fileName);
 
-            $writeRowsFromFile($directory . DIRECTORY_SEPARATOR . 'headers.csv');
-
-            foreach ($disk->files($directory) as $file) {
-                if (str($file)->endsWith('headers.csv')) {
-                    continue;
-                }
-
-                if (! str($file)->endsWith('.csv')) {
-                    continue;
-                }
-
-                $writeRowsFromFile($file);
-            }
+            app(XlsxExportContent::class)($export, $writer);
 
             $writer->close();
         }, $fileName, [

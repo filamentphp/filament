@@ -17,21 +17,9 @@ class CsvDownloader implements Downloader
             abort(404);
         }
 
-        return response()->streamDownload(function () use ($disk, $directory): void {
-            echo $disk->get($directory . DIRECTORY_SEPARATOR . 'headers.csv');
-
-            flush();
-
-            foreach ($disk->files($directory) as $file) {
-                if (str($file)->endsWith('headers.csv')) {
-                    continue;
-                }
-
-                if (! str($file)->endsWith('.csv')) {
-                    continue;
-                }
-
-                echo $disk->get($file);
+        return response()->streamDownload(function () use ($export): void {
+            foreach (app(CsvExportContent::class)($export) as $chunk) {
+                echo $chunk;
 
                 flush();
             }
