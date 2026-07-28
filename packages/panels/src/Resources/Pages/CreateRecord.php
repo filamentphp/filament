@@ -72,6 +72,8 @@ class CreateRecord extends Page
     public function hydrate(): void
     {
         $this->authorizeAccess();
+
+        $this->isCreating = false;
     }
 
     protected function fillForm(): void
@@ -162,8 +164,6 @@ class CreateRecord extends Page
         }
 
         $redirectUrl = $this->getRedirectUrl();
-
-        $this->isCreating = false;
 
         $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
     }

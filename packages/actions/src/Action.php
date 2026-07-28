@@ -370,7 +370,7 @@ class Action extends ViewComponent implements Arrayable
             return null;
         }
 
-        if (filled($this->getUrl()) && (! $this->shouldPostToUrl())) {
+        if (filled($this->getUrl()) && (! $this->shouldPostToUrl()) && (! $this->hasAction())) {
             return null;
         }
 
