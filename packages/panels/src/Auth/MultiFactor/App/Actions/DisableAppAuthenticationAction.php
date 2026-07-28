@@ -68,6 +68,7 @@ class DisableAppAuthenticationAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.recovery_code.validation_attribute'))
                     ->password()
                     ->revealable(Filament::arePasswordsRevealable())
+                    ->autocomplete('one-time-code')
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             if (blank($value)) {
