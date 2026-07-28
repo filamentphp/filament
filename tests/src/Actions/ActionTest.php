@@ -541,19 +541,11 @@ describe('properties', function (): void {
             ->assertActionDoesNotHaveUrl('url', 'https://google.com');
     });
 
-    it('returns null for `getLivewireClickHandler()` when action has a URL, does not post to URL, and has no action closure', function (): void {
+    it('returns null for `getLivewireClickHandler()` when action has a URL and does not post to URL', function (): void {
         $action = Action::make('test')
             ->url('https://filamentphp.com');
 
         expect($action->getLivewireClickHandler())->toBeNull();
-    });
-
-    it('returns click handler for `getLivewireClickHandler()` when action has a URL but also has an action closure', function (): void {
-        $action = Action::make('test')
-            ->url('https://filamentphp.com')
-            ->action(fn () => null);
-
-        expect($action->getLivewireClickHandler())->not()->toBeNull();
     });
 
     it('can open a URL in a new tab', function (): void {

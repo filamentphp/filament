@@ -72,8 +72,6 @@ class CreateRecord extends Page
     public function hydrate(): void
     {
         $this->authorizeAccess();
-
-        $this->isCreating = false;
     }
 
     protected function fillForm(): void
@@ -88,7 +86,13 @@ class CreateRecord extends Page
     public function create(bool $another = false): void
     {
         if ($this->isCreating) {
-            return;
+            $lastCreatedAt = session()->get('last_created_at_' . $this->getId());
+
+            if ($lastCreatedAt && (time() - $lastCreatedAt > 15)) {
+                $this->isCreating = false;
+            } else {
+                return;
+            }
         }
 
         $this->isCreating = true;
@@ -164,6 +168,8 @@ class CreateRecord extends Page
         }
 
         $redirectUrl = $this->getRedirectUrl();
+
+        session()->put('last_created_at_' . $this->getId(), time());
 
         $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
     }
