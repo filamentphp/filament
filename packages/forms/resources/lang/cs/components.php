@@ -122,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Výběr barvy',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Měsíc',
+        ],
+
+        'year_input' => [
+            'label' => 'Rok',
+        ],
+
+        'hour_input' => [
+            'label' => 'Hodina',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minuta',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekunda',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Stáhnout',
+            ],
+
+            'open' => [
+                'label' => 'Otevřít v nové záložce',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Editor obrázků',
 
             'actions' => [
 
@@ -268,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akce',
+            ],
+
+            'reorder' => [
+                'label' => 'Přesunout',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akce',
+            ],
+
+            'reorder' => [
+                'label' => 'Přesunout',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -604,6 +672,10 @@ return [
             'searching_message' => 'Hledám...',
         ],
 
+        'toolbar' => [
+            'label' => 'Panel nástrojů',
+        ],
+
         'tools' => [
             'align_center' => 'Zarovnat na střed',
             'align_end' => 'Zarovnat vpravo',
@@ -742,6 +814,10 @@ return [
         ],
 
         'placeholder' => 'Nový štítek',
+
+        'tag_added' => 'Přidáno: :tag',
+
+        'tag_removed' => 'Odstraněno: :tag',
 
     ],
 
