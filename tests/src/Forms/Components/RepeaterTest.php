@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -256,6 +257,26 @@ it('can remove items from a repeater', function (): void {
         });
 
     $undoRepeaterFake();
+});
+
+it('can evaluate a `setUp()` closure bound to the original component with a `$get` injection inside a repeater item', function (): void {
+    $repeater = Repeater::make('items')
+        ->schema([
+            TextInput::make('name'),
+            SelectWithOptionsEvaluatedInSetUp::make('option'),
+        ])
+        ->default([
+            ['name' => 'First', 'option' => null],
+        ]);
+
+    Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([$repeater])
+        ->fill();
+
+    $select = Arr::first($repeater->getItems())->getComponents()[1];
+
+    expect($select->getOptions())->toBe(['First' => 'First']);
 });
 
 describe('`getItems()` memoization', function (): void {
@@ -3187,5 +3208,19 @@ class RepeaterWithTranslatableContentDriver extends Component implements HasActi
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class SelectWithOptionsEvaluatedInSetUp extends Select
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->options(function (): array {
+            $name = $this->evaluate(fn (Get $get): ?string => $get('name'));
+
+            return [$name => $name];
+        });
     }
 }
