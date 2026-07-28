@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Renderless;
 use Throwable;
 
 /**
@@ -204,6 +205,19 @@ class CreateRecord extends Page
     public function createAnother(): void
     {
         $this->create(another: true);
+    }
+
+    /**
+     * After a successful creation, `$isCreating` stays `true` while the user is redirected, to prevent
+     * duplicate records from additional clicks of the submit button. In SPA mode, if the user then
+     * navigates back, the page is restored from Livewire's history cache with `$isCreating` still
+     * `true`, which would block the form from ever being submitted again. JavaScript detects the
+     * restoration and calls this method to release the guard, since `$isCreating` is `#[Locked]`.
+     */
+    #[Renderless]
+    public function resetCreation(): void
+    {
+        $this->isCreating = false;
     }
 
     /**
