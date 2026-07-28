@@ -54,6 +54,11 @@ return [
             'title' => 'Gespeichert',
         ],
 
+        'throttled' => [
+            'title' => 'Zu viele Anfragen. Bitte versuchen Sie es in :seconds Sekunden erneut.',
+            'body' => 'Bitte versuchen Sie es in :seconds Sekunden erneut.',
+        ],
+
     ],
 
     'actions' => [
