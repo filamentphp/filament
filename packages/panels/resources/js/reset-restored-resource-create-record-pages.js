@@ -6,7 +6,9 @@ document.addEventListener('livewire:init', () => {
     // page component can only initialize with `isCreating` as `true` if it was
     // restored from the cache. Outside of SPA mode, this cannot happen, since
     // Livewire's `DisableBackButtonCacheMiddleware` sends a `no-store` header
-    // that excludes its pages from the browser's back/forward cache.
+    // that excludes its pages from the browser's back/forward cache. Assigning
+    // to `$wire` only mutates the client-side state, which is synced with the
+    // server during the next request, such as the next creation attempt.
     window.Livewire.hook('component.init', ({ component }) => {
         if (
             !component.el?.classList?.contains('fi-resource-create-record-page')
@@ -18,6 +20,6 @@ document.addEventListener('livewire:init', () => {
             return
         }
 
-        queueMicrotask(() => component.$wire.call('resetCreation'))
+        component.$wire.isCreating = false
     })
 })

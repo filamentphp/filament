@@ -424,7 +424,7 @@ it('blocks duplicate creation attempts while `$isCreating` after a successful cr
     expect(Ticket::count())->toBe(1);
 });
 
-it('can use `resetCreation()` to release the duplicate creation guard when the page is restored from the browser history cache', function (): void {
+it('can reset `$isCreating` from the client to release the duplicate creation guard when the page is restored from the browser history cache', function (): void {
     $component = livewire(CreateTicket::class)
         ->call('create')
         ->assertRedirect();
@@ -432,7 +432,7 @@ it('can use `resetCreation()` to release the duplicate creation guard when the p
     expect(Ticket::count())->toBe(1);
 
     $component
-        ->call('resetCreation')
+        ->set('isCreating', false)
         ->call('create')
         ->assertRedirect();
 
