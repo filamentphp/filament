@@ -31,6 +31,7 @@ use Filament\Tests\Fixtures\Providers\NoTopbarPanelProvider;
 use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugTenancyPanelProvider;
+use Filament\Tests\Fixtures\Providers\SpaPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenancyPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenantMenuFlatPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenantMenuGroupingPanelProvider;
@@ -90,6 +91,7 @@ abstract class TestCase extends BaseTestCase
             SingleDomainPanel::class,
             SlugsPanelProvider::class,
             SlugTenancyPanelProvider::class,
+            SpaPanelProvider::class,
             TenancyPanelProvider::class,
             TenantMenuFlatPanelProvider::class,
             TenantMenuGroupingPanelProvider::class,

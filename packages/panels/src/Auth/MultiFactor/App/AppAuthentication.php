@@ -363,6 +363,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))
                 ->password()
                 ->revealable(Filament::arePasswordsRevealable())
+                ->autocomplete('one-time-code')
                 ->rule(function () use ($user): Closure {
                     return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
                         if (blank($value)) {
