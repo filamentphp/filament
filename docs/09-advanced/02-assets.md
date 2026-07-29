@@ -415,3 +415,17 @@ This approach also works for TypeScript files or any other JavaScript that needs
 <Aside variant="info">
     If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
 </Aside>
+
+## Content Security Policy nonces
+
+If your application sends a [Content Security Policy](security#content-security-policy-csp) header, Filament can add a `nonce` attribute to every `<script>` element it renders, including the ones registered through `FilamentAsset`:
+
+```php
+use Filament\Support\Facades\FilamentCsp;
+
+FilamentCsp::useNonce(static fn (): string => csp_nonce());
+```
+
+<Aside variant="info">
+    Scripts registered with `Js::make()->html()`, where the HTML already contains a `<script>` element, are rendered exactly as you provide them. Filament does not modify that markup, so you should add the nonce yourself using `\Filament\Support\csp_nonce()`.
+</Aside>

@@ -1,5 +1,5 @@
 @if (isset($data))
-    <script>
+    <script{{ \Filament\Support\csp_nonce_html() }}>
         window.filamentData = @js($data)
     </script>
 @endif

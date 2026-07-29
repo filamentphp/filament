@@ -291,3 +291,68 @@ With the trait in place, an attacker tampering with a Livewire request to upload
 When building tables, resources, or custom Livewire components, ensure that database queries are properly scoped to the current user's permissions. Filament's resource system uses Eloquent queries that return all records by default — it is up to you to apply appropriate query scopes using the `modifyQueryUsing()` method on your table or by overriding the `getEloquentQuery()` method on your resource to ensure users can only access records they are authorized to see.
 
 For example, in a multi-tenant application, forgetting to scope queries to the current tenant would allow users to see other tenants' data. If you are using Filament's built-in [tenancy](../users/tenancy) features, queries are scoped automatically for resources. However, any custom queries, actions, or pages you build must be scoped manually.
+
+## Content Security Policy (CSP)
+
+A Content Security Policy lets the browser reject scripts that you did not put on the page yourself, which is one of the strongest defences against cross-site scripting. Filament can add a [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) to the `<script>` elements it renders, so that you do not need `'unsafe-inline'` in your `script-src` directive.
+
+### Configuring the nonce
+
+You may tell Filament how to resolve the nonce for the current request using the `FilamentCsp::useNonce()` method. This is best done in the `boot()` method of a service provider:
+
+```php
+use Filament\Support\Facades\FilamentCsp;
+
+public function boot(): void
+{
+    FilamentCsp::useNonce(static fn (): string => csp_nonce());
+}
+```
+
+The closure is resolved once per request, so every element on the page receives the same nonce. The `csp_nonce()` function in this example comes from [spatie/laravel-csp](https://github.com/spatie/laravel-csp). You may use any package, or generate the value yourself, as long as it matches the nonce in the `Content-Security-Policy` header you send.
+
+Until you configure a nonce, Filament renders exactly the same HTML as it always has.
+
+### Sending the policy header
+
+Whichever package or middleware you use to send the `Content-Security-Policy` header, register it in your panel's `middleware()` method rather than in your application's `web` middleware group:
+
+```php
+use Spatie\Csp\AddCspHeaders;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->middleware([
+            // ...
+            AddCspHeaders::class,
+        ]);
+}
+```
+
+<Aside variant="warning">
+    Panels build their own middleware stack and do not resolve Laravel's `web` group, so middleware appended to `web` never runs on panel routes and no header is sent. This is a common cause of a policy that appears to be configured but has no effect.
+</Aside>
+
+Registering it on the panel also scopes the policy to that panel, leaving the rest of your application untouched.
+
+### Rendering the nonce in your own views
+
+If you write your own `<script>` elements, in a custom page, a [render hook](render-hooks), or a plugin, you are responsible for adding the nonce to them. Two helpers are available:
+
+```blade
+<script{{ \Filament\Support\csp_nonce_html() }}>
+    // ...
+</script>
+```
+
+`csp_nonce_html()` renders the complete `nonce` attribute, including the leading space, and renders nothing when no nonce is configured. If you need the raw value instead, use `\Filament\Support\csp_nonce()`, which returns `null` when no nonce is configured.
+
+<Aside variant="info">
+    Filament can only add nonces to elements that it renders itself. Content that you inject through [render hooks](render-hooks), the `scripts` Blade stack, or `RawJs` is not modified, so you must add the nonce to those elements yourself.
+</Aside>
+
+<Aside variant="warning">
+    Filament does not currently support a strict `style-src` directive. Livewire, Alpine.js and TipTap all rely on inline styles, so `'unsafe-inline'` is still required for styles. Only `script-src` can be locked down.
+</Aside>
