@@ -9,6 +9,7 @@ use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -174,7 +175,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
 
         $size ??= IconSize::Medium;
 
-        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
+        $attributes = ($attributes ?? new FilamentComponentAttributeBag)->class([
             'fi-icon',
             "fi-size-{$size->value}",
         ]);
@@ -188,6 +189,17 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
         }
 
         if (is_string($icon) && str_contains($icon, '/')) {
+            // A custom image-path icon carries no intrinsic accessible name, so it would be announced by
+            // its filename. Default it to decorative (`alt=""`) unless the caller named it, matching the
+            // baked-in `aria-hidden` that the shipped SVG icon sets already carry.
+            if (
+                blank($attributes->get('alt')) &&
+                blank($attributes->get('aria-label')) &&
+                blank($attributes->get('aria-labelledby'))
+            ) {
+                $attributes = $attributes->merge(['alt' => ''], escape: false);
+            }
+
             $icon = e($icon);
 
             return new HtmlString(<<<HTML
@@ -210,7 +222,7 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
     {
         $size ??= IconSize::Medium;
 
-        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
+        $attributes = ($attributes ?? new FilamentComponentAttributeBag)->class([
             'fi-icon fi-loading-indicator',
             "fi-size-{$size->value}",
         ]);

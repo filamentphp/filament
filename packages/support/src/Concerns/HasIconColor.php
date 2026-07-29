@@ -28,4 +28,9 @@ trait HasIconColor
     {
         return $this->evaluate($this->iconColor);
     }
+
+    public function hasIconColor(): bool
+    {
+        return $this->iconColor !== null;
+    }
 }

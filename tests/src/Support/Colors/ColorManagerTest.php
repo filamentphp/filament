@@ -2,6 +2,8 @@
 
 use Filament\Support\Colors\Color;
 use Filament\Support\Colors\ColorManager;
+use Filament\Support\View\Components\BadgeComponent;
+use Filament\Support\View\Components\ButtonComponent;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
@@ -137,5 +139,78 @@ describe('caching', function (): void {
         $second = $this->manager->getColors();
 
         expect($first)->toBe($second);
+    });
+});
+
+describe('`getComponentClasses()`', function (): void {
+    it('returns the same result for a class-string and an equivalent instance', function (): void {
+        $fromString = $this->manager->getComponentClasses(BadgeComponent::class, 'danger');
+        $fromInstance = $this->manager->getComponentClasses(new BadgeComponent, 'danger');
+
+        expect($fromString)->toBe($fromInstance);
+        expect($fromString)->toContain('fi-color', 'fi-color-danger');
+    });
+
+    it('returns `[]` for a blank color', function (): void {
+        expect($this->manager->getComponentClasses(BadgeComponent::class, null))->toBe([]);
+        expect($this->manager->getComponentClasses(BadgeComponent::class, ''))->toBe([]);
+    });
+
+    it('returns and caches `[]` for the default `gray` of a `HasDefaultGrayColor` component', function (): void {
+        // The `gray` short-circuit is now cached, where previously it re-resolved the
+        // component on every call. Both calls must return the same empty result.
+        expect($this->manager->getComponentClasses(BadgeComponent::class, 'gray'))->toBe([]);
+        expect($this->manager->getComponentClasses(BadgeComponent::class, 'gray'))->toBe([]);
+    });
+
+    it('returns only the base classes for an unregistered color', function (): void {
+        expect($this->manager->getComponentClasses(BadgeComponent::class, 'nonexistent'))
+            ->toBe(['fi-color', 'fi-color-nonexistent']);
+    });
+
+    it('returns an identical cached result on repeated calls', function (): void {
+        $first = $this->manager->getComponentClasses(BadgeComponent::class, 'success');
+        $second = $this->manager->getComponentClasses(BadgeComponent::class, 'success');
+
+        expect($second)->toBe($first);
+        expect($first)->not->toBe([]);
+    });
+
+    it('differentiates stateful components by instance state', function (): void {
+        // `ButtonComponent` branches on `$isOutlined` in `getColorMap()`, so outlined and
+        // solid buttons must remain distinct cache entries (object path keeps using `serialize()`).
+        $outlined = $this->manager->getComponentClasses(new ButtonComponent(isOutlined: true), 'primary');
+        $solid = $this->manager->getComponentClasses(new ButtonComponent(isOutlined: false), 'primary');
+
+        expect($outlined)->not->toBe($solid);
+    });
+});
+
+describe('`getComponentCustomStyles()`', function (): void {
+    $palette = [
+        50 => 'oklch(0.97 0.02 250)',
+        500 => 'oklch(0.62 0.2 250)',
+        950 => 'oklch(0.28 0.09 250)',
+    ];
+
+    it('returns the same result for a class-string and an equivalent instance', function () use ($palette): void {
+        $fromString = $this->manager->getComponentCustomStyles(BadgeComponent::class, $palette);
+        $fromInstance = $this->manager->getComponentCustomStyles(new BadgeComponent, $palette);
+
+        expect($fromString)->toBe($fromInstance);
+    });
+
+    it('returns an identical cached result on repeated calls', function () use ($palette): void {
+        $first = $this->manager->getComponentCustomStyles(BadgeComponent::class, $palette);
+        $second = $this->manager->getComponentCustomStyles(BadgeComponent::class, $palette);
+
+        expect($second)->toBe($first);
+    });
+
+    it('differentiates stateful components by instance state', function () use ($palette): void {
+        $outlined = $this->manager->getComponentCustomStyles(new ButtonComponent(isOutlined: true), $palette);
+        $solid = $this->manager->getComponentCustomStyles(new ButtonComponent(isOutlined: false), $palette);
+
+        expect($outlined)->not->toBe($solid);
     });
 });

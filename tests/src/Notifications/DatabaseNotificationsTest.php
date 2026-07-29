@@ -4,6 +4,7 @@ use Filament\Notifications\Livewire\DatabaseNotifications;
 use Filament\Notifications\Notification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
@@ -78,5 +79,42 @@ describe('acts on matching database notification IDs', function (): void {
             ->dispatch('markedNotificationAsUnread', id: $notification->getKey());
 
         expect($this->user->notifications()->first()->read_at)->toBeNull();
+    });
+});
+
+describe('browser interactions', function (): void {
+    beforeEach(function (): void {
+        Artisan::call('filament:assets');
+    });
+
+    it('focuses the slide-over window instead of the `Mark all as read` header action when opened', function (): void {
+        retry(10, function (): void {
+            $user = User::factory()->create();
+            $this->actingAs($user);
+
+            Notification::make()->title('First')->sendToDatabase($user);
+            Notification::make()->title('Second')->sendToDatabase($user);
+
+            visit('/database-notifications-browser-test')
+                ->assertSee('Notifications (2)')
+                ->click('[data-testid="database-notifications-trigger"]')
+                ->assertVisible('[id="database-notifications"] .fi-modal-window')
+                ->wait(0.5)
+                // The focus trap focuses the modal window itself, not the `Mark all as read` action, which `Enter` would immediately trigger.
+                ->assertScript('document.activeElement === document.querySelector(\'[id="database-notifications"] .fi-modal-window\')', true)
+                // The header actions remain in the tab order.
+                ->assertScript('document.querySelector(\'[id="database-notifications"] .fi-modal-header .fi-ac button\').tabIndex', 0)
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            // No notification has been marked as read by simply opening the slide-over.
+            expect($user->unreadNotifications()->count())->toBe(2);
+
+            visit('/database-notifications-browser-test')
+                ->inDarkMode()
+                ->click('[data-testid="database-notifications-trigger"]')
+                ->assertVisible('[id="database-notifications"] .fi-modal-window')
+                ->assertNoAccessibilityIssues();
+        });
     });
 });

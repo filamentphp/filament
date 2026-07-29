@@ -1,6 +1,7 @@
 ---
 title: Image entry
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -19,6 +20,25 @@ In this case, the `header_image` state could contain `posts/header-images/428124
 Alternatively, the state could contain an absolute URL to an image, such as `https://example.com/images/header.jpg`.
 
 <AutoScreenshot name="infolists/entries/image/simple" alt="Image entry" version="4.x" />
+
+## Setting the alt text
+
+You should set descriptive alt text on your images so that screen reader users understand what each image shows. Use the `alt()` method:
+
+```php
+use Filament\Infolists\Components\ImageEntry;
+
+ImageEntry::make('header_image')
+    ->alt('Article header image')
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters, including the `$state` of the current image, which is useful when the entry renders multiple images.</UtilityInjection>
+
+If you do not set any alt text, the image is rendered with an empty `alt` attribute, which marks it as decorative for assistive technology.
+
+<Aside variant="warning">
+    When an image [links to a URL](overview#opening-a-url-when-an-entry-is-clicked), its alt text becomes the accessible name of the link. Always set meaningful `alt()` text on linked images, otherwise screen reader users will encounter a link with no name.
+</Aside>
 
 ## Managing the image disk
 

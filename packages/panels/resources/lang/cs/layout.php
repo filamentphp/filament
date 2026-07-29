@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Přeskočit na obsah',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Zobrazit notifikace',
+            'label_with_unread_count' => '{1} Oznámení, :count nepřečtené oznámení|[2,*] Oznámení, :count nepřečtená oznámení',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Téma',
+
             'dark' => [
                 'label' => 'Zapnout tmavý režim',
             ],
@@ -50,6 +57,14 @@ return [
 
         ],
 
+    ],
+
+    'navigation' => [
+        'label' => 'Boční navigace',
+    ],
+
+    'topbar' => [
+        'label' => 'Horní panel',
     ],
 
     'avatar' => [

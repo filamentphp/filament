@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Colunas',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Selecionar todas',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Desmarcar todas',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'A exportação é muito grande',
             'body' => 'Não é possível exportar mais de 1 linha de uma vez.|Não é possível exportar mais de :count linhas de uma vez.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Nenhuma coluna selecionada',
+            'body' => 'Selecione pelo menos uma coluna para exportar.',
         ],
 
         'started' => [

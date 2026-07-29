@@ -15,6 +15,11 @@ return [
 
         ],
 
+        'icon' => [
+            'true' => 'כן',
+            'false' => 'לא',
+        ],
+
         'key_value' => [
 
             'columns' => [

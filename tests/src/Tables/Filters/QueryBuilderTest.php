@@ -1,7 +1,24 @@
 <?php
 
+use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsAfterOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsBeforeOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsDateOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsMonthOperator;
+use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsYearOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator as NumberEqualsOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
+use Filament\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperator as RelationshipEqualsOperator;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperator as RelationshipHasMaxOperator;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperator as RelationshipHasMinOperator;
 use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator as SelectIsOperator;
+use Filament\QueryBuilder\Forms\Components\RuleBuilder;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
@@ -217,6 +234,114 @@ describe('text constraints', function (): void {
             ]))
             ->assertCanSeeTableRecords($otherPosts)
             ->assertCanNotSeeTableRecords($posts);
+    });
+});
+
+describe('settings type safety', function (): void {
+    it('does not error when a tampered text setting is a non-scalar array', function (): void {
+        $posts = Post::factory()->count(5)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        // Security: a tampered Livewire request can set `settings.text` to an array, which
+        // would reach `trim()` / `mb_substr()` and throw a `TypeError` (HTTP 500). The
+        // operator must fail closed by skipping the constraint, so the table still loads.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => 'contains',
+                        'settings' => ['text' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered text setting is a non-scalar array across all text operators', function (string $operator): void {
+        $posts = Post::factory()->count(5)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => $operator,
+                        'settings' => ['text' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    })->with([
+        'contains',
+        'startsWith',
+        'endsWith',
+        'equals',
+    ]);
+
+    it('does not error when a tampered multiple select setting contains a non-scalar array element', function (): void {
+        $posts = Post::factory()->count(5)->create([
+            'rating' => 3,
+        ]);
+
+        // Security: a tampered request can nest an array inside the `values` of a multiple
+        // select, which would reach `strval()` in `OptionsArrayStateCast` and throw an
+        // `Array to string conversion` error (HTTP 500). The cast must skip the bad element.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'rating_select_multiple',
+                    'data' => [
+                        'operator' => 'is',
+                        'settings' => ['values' => [['tampered']]],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered multiple relationship setting contains a non-scalar array element', function (): void {
+        $author = User::factory()->create(['name' => 'John Doe']);
+        Post::factory()->count(3)->create(['author_id' => $author->id]);
+
+        // Security: a tampered request can nest an array inside the `values` of a multiple
+        // relationship select, which would reach `whereKey()` binding and crash the request.
+        // The operator must discard the bad element instead of throwing.
+        $constraint = RelationshipConstraint::make('author')->multiple();
+
+        $operator = IsRelatedToOperator::make()
+            ->constraint($constraint)
+            ->settings(['values' => [['tampered'], $author->id]])
+            ->titleAttribute('name');
+
+        $filtered = $operator->apply(Post::query(), 'author_id');
+
+        expect($filtered->count())->toBe(3);
+    });
+
+    it('skips the constraint and renders the summary when a single select receives a tampered non-scalar setting', function (): void {
+        // Defense-in-depth: `OptionStateCast` is the primary defense for single selects, but
+        // this invokes `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `Arr::only()` or `where()`.
+        $posts = Post::factory()->count(3)->create(['rating' => 3]);
+
+        $constraint = SelectConstraint::make('rating_select')
+            ->options([3 => 'Three', 5 => 'Five']);
+
+        $operator = SelectIsOperator::make()
+            ->constraint($constraint)
+            ->settings(['value' => ['tampered']]);
+
+        $filtered = $operator->apply(Post::query(), 'rating_select');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
     });
 });
 
@@ -639,6 +764,53 @@ describe('relationship constraints', function (): void {
             ]))
             ->assertCanSeeTableRecords($matchingPosts)
             ->assertCanNotSeeTableRecords($nonMatchingPosts);
+    });
+
+    it('can filter records using relationship constraint with a `multiple()` is related to operator', function (): void {
+        $firstAuthor = User::factory()->create(['name' => 'John Doe']);
+        $secondAuthor = User::factory()->create(['name' => 'Jane Doe']);
+        Post::factory()->count(5)->create(['author_id' => $firstAuthor->id]);
+        Post::factory()->count(5)->create(['author_id' => $secondAuthor->id]);
+        Post::factory()->count(5)->create();
+
+        $allPosts = Post::all();
+        $matchingPosts = $allPosts->filter(fn ($post) => in_array($post->author_id, [$firstAuthor->id, $secondAuthor->id]));
+        $nonMatchingPosts = $allPosts->reject(fn ($post) => in_array($post->author_id, [$firstAuthor->id, $secondAuthor->id]));
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords($allPosts)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'author_multiple',
+                    'data' => [
+                        'operator' => 'isRelatedTo',
+                        'settings' => ['value' => [$firstAuthor->id, $secondAuthor->id]],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords($matchingPosts)
+            ->assertCanNotSeeTableRecords($nonMatchingPosts);
+    });
+
+    it('can filter records using a `multiple()` relationship constraint with a single value is related to operator', function (): void {
+        $matchingUser = User::factory()->create(['name' => 'John Doe']);
+        $post = Post::factory()->create(['author_id' => $matchingUser->id]);
+
+        $nonMatchingUsers = User::factory()->count(3)->create();
+
+        livewire(UsersQueryBuilderTable::class)
+            ->assertCanSeeTableRecords(collect([$matchingUser])->merge($nonMatchingUsers))
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'posts',
+                    'data' => [
+                        'operator' => 'isRelatedTo',
+                        'settings' => ['values' => $post->id],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$matchingUser])
+            ->assertCanNotSeeTableRecords($nonMatchingUsers);
     });
 
     it('still matches in-scope `isRelatedTo` values when `modifyRelationshipQueryUsing` is set', function (): void {
@@ -3655,6 +3827,146 @@ describe('absolute and relative date filtering', function (): void {
 
     // Time-Based Date Filtering Tests
 
+    it('can filter records using datetime constraint with is after operator in `absolute` mode', function (): void {
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 09:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$afterThresholdPost])
+            ->assertCanNotSeeTableRecords([$beforeThresholdPost]);
+    });
+
+    it('can filter records using datetime constraint with is after operator when the Filament timezone differs from the app timezone', function (): void {
+        config(['app.timezone' => 'UTC']);
+        FilamentTimezone::set('America/New_York');
+
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 17:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$afterThresholdPost])
+            ->assertCanNotSeeTableRecords([$beforeThresholdPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 12:00:00');
+    });
+
+    it('can filter records using datetime constraint with is before operator when the Filament timezone differs from the app timezone', function (): void {
+        config(['app.timezone' => 'UTC']);
+        FilamentTimezone::set('America/New_York');
+
+        // The cutoff of `12:00:00` is entered in the Filament timezone (`America/New_York`), so it
+        // must be dehydrated to `16:00:00` in the app timezone (`UTC`) before querying, while the
+        // summary continues to display the raw `12:00:00` the user entered.
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 17:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isBefore',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$beforeThresholdPost])
+            ->assertCanNotSeeTableRecords([$afterThresholdPost])
+            ->assertSee('Published at is before Mon, Jul 13, 2026 12:00:00');
+    });
+
+    it('applies datetime constraints and summaries from the applied state, not unapplied deferred edits', function (): void {
+        $earlyPost = Post::factory()->create([
+            'published_at' => '2026-07-13 10:00:00',
+        ]);
+
+        $latePost = Post::factory()->create([
+            'published_at' => '2026-07-13 20:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$earlyPost, $latePost])
+            // Apply a rule that only matches the late post.
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 15:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$latePost])
+            ->assertCanNotSeeTableRecords([$earlyPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            // Edit the deferred form to a looser threshold that would match both posts, *without* applying it.
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 05:00:00',
+                        ],
+                    ],
+                ],
+            ])
+            // The query and the summary must still reflect the applied threshold (`15:00:00`),
+            // not the unapplied deferred edit (`05:00:00`).
+            ->assertCanSeeTableRecords([$latePost])
+            ->assertCanNotSeeTableRecords([$earlyPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            ->assertDontSee('Published at is after Mon, Jul 13, 2026 05:00:00');
+    });
+
     it('can filter records using datetime constraint with is after operator with `this_minute` preset', function (): void {
         $currentMinutePosts = Post::factory()->count(3)->create([
             'published_at' => now()->startOfMinute()->addSeconds(30),
@@ -4007,6 +4319,33 @@ describe('absolute and relative date filtering', function (): void {
 
     // IsBeforeOperator Time-Based Tests
 
+    it('can filter records using datetime constraint with is before operator in `absolute` mode', function (): void {
+        $beforeThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 09:00:00',
+        ]);
+
+        $afterThresholdPost = Post::factory()->create([
+            'published_at' => '2026-07-13 15:00:00',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$beforeThresholdPost, $afterThresholdPost])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isBefore',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 12:00:00',
+                        ],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$beforeThresholdPost])
+            ->assertCanNotSeeTableRecords([$afterThresholdPost]);
+    });
+
     it('can filter records using datetime constraint with is before operator with `this_minute` preset', function (): void {
         $oldPosts = Post::factory()->count(5)->create([
             'published_at' => now()->subMinutes(5),
@@ -4289,4 +4628,478 @@ describe('properties', function (): void {
         // getConstraints/getConstraint need a table model, tested via integration
         expect($qb)->toBeInstanceOf(QueryBuilder::class);
     });
+});
+
+describe('rule limits', function (): void {
+    it('has no rule limits by default', function (): void {
+        $queryBuilder = QueryBuilder::make();
+
+        expect($queryBuilder->getMaxRules())->toBeNull()
+            ->and($queryBuilder->getMaxNestingDepth())->toBeNull();
+    });
+
+    it('reports no rule tree as exceeding via `exceedsRuleLimits()` when no limits are set', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        $queryBuilder = QueryBuilder::make();
+
+        expect($queryBuilder->exceedsRuleLimits(array_fill(0, 500, $rule)))->toBeFalse();
+    });
+
+    it('can set `maxRules()` and `maxNestingDepth()`, including with a `Closure`', function (): void {
+        $queryBuilder = QueryBuilder::make()
+            ->maxRules(5)
+            ->maxNestingDepth(fn (): int => 3);
+
+        expect($queryBuilder->getMaxRules())->toBe(5)
+            ->and($queryBuilder->getMaxNestingDepth())->toBe(3);
+    });
+
+    it('does not report a rule tree within limits as exceeding via `exceedsRuleLimits()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        $queryBuilder = QueryBuilder::make()
+            ->maxRules(3)
+            ->maxNestingDepth(2);
+
+        expect($queryBuilder->exceedsRuleLimits([$rule, $rule, $rule]))->toBeFalse();
+    });
+
+    it('reports a rule tree exceeding `maxRules()` as exceeding via `exceedsRuleLimits()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        $queryBuilder = QueryBuilder::make()->maxRules(2);
+
+        expect($queryBuilder->exceedsRuleLimits([$rule, $rule, $rule]))->toBeTrue();
+    });
+
+    it('does not count "or" blocks or their groups towards `maxRules()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // This tree has 5 structural nodes (an "or" block + 2 groups + 2 conditions) but only 2 leaf conditions, so a `maxRules(2)` limit is not exceeded.
+        $tree = [
+            [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule]],
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ],
+        ];
+
+        expect(QueryBuilder::make()->maxRules(2)->exceedsRuleLimits($tree))->toBeFalse();
+
+        // Adding a 3rd leaf condition tips it over.
+        $tree[0]['data']['groups'][0]['rules'][] = $rule;
+
+        expect(QueryBuilder::make()->maxRules(2)->exceedsRuleLimits($tree))->toBeTrue();
+    });
+
+    it('reports a rule tree exceeding `maxNestingDepth()` as exceeding via `exceedsRuleLimits()`', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // Wrap the rule in three levels of "or" blocks, nesting the inner rule at a depth of 4.
+        for ($iteration = 0; $iteration < 3; $iteration++) {
+            $rule = [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ];
+        }
+
+        $queryBuilder = QueryBuilder::make()->maxNestingDepth(2);
+
+        expect($queryBuilder->exceedsRuleLimits([$rule]))->toBeTrue();
+    });
+
+    it('applies a rule tree that is within the default limits normally', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords($posts->merge($otherPosts))
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'title',
+                    'data' => [
+                        'operator' => 'contains',
+                        'settings' => ['text' => 'Test Post'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords($posts)
+            ->assertCanNotSeeTableRecords($otherPosts);
+    });
+
+    it('safely ignores a rule tree that exceeds `maxRules()`, applying no constraints', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        // Build a tree of 4 rules, one over the configured `maxRules()` of 3. Applied individually,
+        // these would hide `$otherPosts`, so seeing every record proves the constraints were ignored.
+        $rules = array_fill(0, 4, [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ]);
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxRules(3),
+            during: fn () => livewire(PostsQueryBuilderTable::class)
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->tap(applyQueryBuilderFilter($rules))
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->assertHasNoErrors(),
+        );
+    });
+
+    it('safely ignores a rule tree that exceeds `maxNestingDepth()`, applying no constraints', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // Nest the filtering rule inside three "or" blocks, one level deeper than the configured
+        // `maxNestingDepth()` of 2. Seeing every record proves the constraints were ignored.
+        for ($iteration = 0; $iteration < 3; $iteration++) {
+            $rule = [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ];
+        }
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxNestingDepth(2),
+            during: fn () => livewire(PostsQueryBuilderTable::class)
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->tap(applyQueryBuilderFilter([$rule]))
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->assertHasNoErrors(),
+        );
+    });
+
+    it('counts only leaf conditions via `RuleBuilder::countTreeRules()`, not "or" containers', function (): void {
+        $ruleBuilder = RuleBuilder::make('rules');
+
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        // A flat tree counts each condition.
+        expect($ruleBuilder->countTreeRules([$rule, $rule]))->toBe(2);
+
+        // The "or" block and its groups are structural containers, so only the 3 nested conditions count (plus the 1 top-level one), not the "or" block or its 2 groups.
+        $tree = [
+            $rule,
+            [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule, $rule]],
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ],
+        ];
+
+        expect($ruleBuilder->countTreeRules($tree))->toBe(4);
+    });
+
+    it('only offers the "or" block via `canAddOrBlock()` while within `maxNestingDepth()`', function (): void {
+        expect(RuleBuilder::make('rules')->canAddOrBlock())->toBeTrue();
+
+        expect(RuleBuilder::make('rules')->maxNestingDepth(2)->nestingDepth(1)->canAddOrBlock())->toBeTrue();
+
+        expect(RuleBuilder::make('rules')->maxNestingDepth(2)->nestingDepth(2)->canAddOrBlock())->toBeFalse();
+    });
+
+    it('offers no pickable blocks in the rule builder once at the `maxRules()` limit', function (): void {
+        // The picker dropdown opens regardless of the disabled add button, so an empty block list is what actually prevents adding.
+        $rules = array_fill(0, 4, [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ]);
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxRules(3),
+            during: function () use ($rules): void {
+                $livewire = livewire(PostsQueryBuilderTable::class)
+                    ->set('tableDeferredFilters.query_builder.rules', $rules);
+
+                $ruleBuilder = $livewire->instance()
+                    ->getTableFiltersForm()
+                    ->getComponent(fn ($component): bool => $component instanceof RuleBuilder, withHidden: true);
+
+                expect($ruleBuilder)->toBeInstanceOf(RuleBuilder::class)
+                    ->and($ruleBuilder->isAtRuleLimit())->toBeTrue()
+                    ->and($ruleBuilder->getBlockPickerBlocks())->toBe([]);
+            },
+        );
+    });
+
+    it('applies a rule tree normally when a limit is configured but not exceeded', function (): void {
+        $posts = Post::factory()->count(10)->create([
+            'title' => 'Test Post Title',
+        ]);
+
+        $otherPosts = Post::factory()->count(5)->create([
+            'title' => 'Different Title',
+        ]);
+
+        QueryBuilder::configureUsing(
+            fn (QueryBuilder $queryBuilder) => $queryBuilder->maxRules(3)->maxNestingDepth(2),
+            during: fn () => livewire(PostsQueryBuilderTable::class)
+                ->assertCanSeeTableRecords($posts->merge($otherPosts))
+                ->tap(applyQueryBuilderFilter([
+                    [
+                        'type' => 'title',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => ['text' => 'Test Post'],
+                        ],
+                    ],
+                ]))
+                ->assertCanSeeTableRecords($posts)
+                ->assertCanNotSeeTableRecords($otherPosts),
+        );
+    });
+});
+
+describe('date operator setting tampering', function (): void {
+    it('does not error when a tampered `isMonth` setting is a non-scalar array', function (): void {
+        $posts = Post::factory()->count(5)->create();
+
+        // Security: a tampered Livewire request can set `settings.month` to an array. The
+        // `month` field is a `Select`, so building its `in:` validation rule reads the state
+        // through `OptionStateCast`, which would `strval()` the array and throw (HTTP 500)
+        // before validation could reject it. The request must stay healthy and the constraint
+        // must be skipped, so the table still loads.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'created_at',
+                    'data' => [
+                        'operator' => 'isMonth',
+                        'settings' => ['month' => ['1']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('does not error when a tampered `isYear` setting is a non-scalar array', function (): void {
+        $posts = Post::factory()->count(5)->create();
+
+        // Security: a tampered Livewire request can set `settings.year` to an array. The
+        // `year` field is a `TextInput` with the `integer` rule, which rejects the array
+        // before it reaches `whereYear()`, so the request must stay healthy and the table
+        // must still load.
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'created_at',
+                    'data' => [
+                        'operator' => 'isYear',
+                        'settings' => ['year' => ['2024']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+
+    it('skips the constraint when `IsMonthOperator::apply()` receives a tampered non-scalar setting', function (): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` directly to confirm the operator fails closed rather than passing
+        // an array to `whereMonth()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = DateConstraint::make('created_at');
+
+        $operator = IsMonthOperator::make()
+            ->constraint($constraint)
+            ->settings(['month' => ['1']]);
+
+        $filtered = $operator->apply(Post::query(), 'created_at');
+
+        expect($filtered->count())->toBe($posts->count());
+    });
+
+    it('skips the constraint when `IsYearOperator::apply()` receives a tampered non-scalar setting', function (): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` directly to confirm the operator fails closed rather than passing
+        // an array to `whereYear()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = DateConstraint::make('created_at');
+
+        $operator = IsYearOperator::make()
+            ->constraint($constraint)
+            ->settings(['year' => ['2024']]);
+
+        $filtered = $operator->apply(Post::query(), 'created_at');
+
+        expect($filtered->count())->toBe($posts->count());
+    });
+
+    it('skips the constraint and renders the summary when a date operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `whereDate()` or `Carbon::parse()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = DateConstraint::make('created_at');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['date' => ['2024-01-01']]);
+
+        $filtered = $operator->apply(Post::query(), 'created_at');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        IsDateOperator::class,
+        IsAfterOperator::class,
+        IsBeforeOperator::class,
+    ]);
+});
+
+describe('number operator setting tampering', function (): void {
+    it('skips the constraint and renders the summary when a number operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to `floatval()` or `Number::format()`.
+        $posts = Post::factory()->count(3)->create();
+
+        $constraint = NumberConstraint::make('rating');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['number' => ['5']]);
+
+        $filtered = $operator->apply(Post::query(), 'rating');
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        NumberEqualsOperator::class,
+        IsMinOperator::class,
+        IsMaxOperator::class,
+    ]);
+
+    it('does not error when a tampered `aggregate` setting is a non-scalar array', function (): void {
+        // Unlike the other number settings, the `aggregate` select is not rejected by
+        // validation, so a tampered array would reach `array_key_exists()` in `getAggregate()`
+        // and throw a `TypeError` (HTTP 500). The operator must treat it as no aggregate.
+        $posts = Post::factory()->count(5)->create(['rating' => 5]);
+
+        livewire(PostsQueryBuilderTable::class)
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 1, 'aggregate' => ['tampered']],
+                    ],
+                ],
+            ]))
+            ->assertOk()
+            ->assertCanSeeTableRecords($posts);
+    });
+});
+
+describe('relationship count operator setting tampering', function (): void {
+    it('skips the constraint and renders the summary when a count operator receives a tampered non-scalar setting', function (string $operatorClass): void {
+        // Defense-in-depth: form validation is the primary defense, but this bypasses it by
+        // invoking `apply()` / `getSummary()` directly to confirm the operator fails closed
+        // rather than passing an array to the translator (summary) or `has()` (apply).
+        $author = User::factory()->create();
+        $posts = Post::factory()->count(3)->create(['author_id' => $author->id]);
+
+        $constraint = RelationshipConstraint::make('author');
+
+        $operator = $operatorClass::make()
+            ->constraint($constraint)
+            ->settings(['count' => ['tampered']]);
+
+        $filtered = $operator->applyToBaseQuery(Post::query());
+
+        expect($filtered->count())->toBe($posts->count())
+            ->and($operator->getSummary())->toBeString();
+    })->with([
+        RelationshipHasMinOperator::class,
+        RelationshipHasMaxOperator::class,
+        RelationshipEqualsOperator::class,
+    ]);
 });

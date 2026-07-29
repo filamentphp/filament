@@ -12,6 +12,10 @@ return [
                 'label' => 'החל עמודות',
             ],
 
+            'reorder' => [
+                'label' => 'שינוי סדר העמודה',
+            ],
+
             'reset' => [
                 'label' => 'איפוס',
             ],
@@ -26,9 +30,20 @@ return [
             'label' => 'פעולה|פעולות',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'כן',
+                'false' => 'לא',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'טוען...',
+
+            'no_options_message' => 'אין אפשרויות זמינות.',
 
             'no_search_results_message' => 'לא נמצאו תוצאות.',
 
@@ -113,6 +128,10 @@ return [
             'label' => 'סדר רשומות מחדש',
         ],
 
+        'reorder_record' => [
+            'label' => 'שינוי סדר הפריט :key',
+        ],
+
         'filter' => [
             'label' => 'מסננים',
         ],
@@ -127,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'הצג עמודות',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'הרחבה/צמצום של הפריט :key',
         ],
 
     ],
@@ -217,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'טוען...',
+
     'reorder_indicator' => 'גרור ושחרר רשומות כדי לסדר מחדש.',
+
+    'result_count' => '{0} אין תוצאות|{1} תוצאה אחת|[2,*] :count תוצאות',
 
     'selection_indicator' => [
 

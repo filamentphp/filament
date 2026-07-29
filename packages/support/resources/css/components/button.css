@@ -1,5 +1,6 @@
 .fi-btn {
-    @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition duration-75 outline-none;
+    /* `align-middle` keeps the button's placement in inline flow independent of its internal baseline, which shifts when the loading indicator is the first grid item. */
+    @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 align-middle text-sm font-medium transition duration-75 outline-none;
 
     &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {

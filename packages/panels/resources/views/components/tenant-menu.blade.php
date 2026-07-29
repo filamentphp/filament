@@ -11,10 +11,8 @@
 
     $items = $this->getTenantMenuItems();
 
-    $canSwitchTenants = filament()->hasTenantSwitcher() && filled($tenants = array_filter(
-        filament()->getUserTenants(filament()->auth()->user()),
-        fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
-    ));
+    $tenants = $this->getSwitchableTenants();
+    $canSwitchTenants = filled($tenants);
 
     $isSearchable = $canSwitchTenants && (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10));
 
@@ -23,6 +21,9 @@
         ->all();
     $itemsBeforeTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[true] ?? collect();
     $itemsAfterTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[false] ?? collect();
+
+    $multiGroupAfterSwitcher = $this->hasMultipleTenantMenuItemGroups();
+    $afterSwitcherItemGroups = $multiGroupAfterSwitcher ? $this->getTenantMenuItemGroupsAfterSwitcher() : [];
 
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
@@ -79,7 +80,7 @@
             </span>
 
             {{
-                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\View\PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\View\PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new \Filament\Support\View\ComponentAttributeBag([
                     'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
                 ]))
             }}
@@ -106,7 +107,7 @@
                         <x-filament::input
                             x-bind:id="$id('input')"
                             x-model="search"
-                            placeholder="{{ __('filament-panels::layout.tenant_menu.search_field.placeholder') }}"
+                            :placeholder="__('filament-panels::layout.tenant_menu.search_field.placeholder')"
                             type="search"
                         />
                     </div>
@@ -140,7 +141,15 @@
         </div>
     @endif
 
-    @if ($itemsAfterTenantSwitcher->isNotEmpty())
+    @if ($multiGroupAfterSwitcher && $afterSwitcherItemGroups !== [])
+        @foreach ($afterSwitcherItemGroups as $afterSwitcherGroup)
+            <x-filament::dropdown.list>
+                @foreach ($afterSwitcherGroup as $item)
+                    {{ $item }}
+                @endforeach
+            </x-filament::dropdown.list>
+        @endforeach
+    @elseif ($itemsAfterTenantSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
             @foreach ($itemsAfterTenantSwitcher as $item)
                 {{ $item }}

@@ -4,21 +4,31 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\Size;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use LogicException;
 
-class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules
+use function Filament\Support\generate_icon_html;
+
+class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBeSearchable;
@@ -34,10 +44,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     use Concerns\HasPivotData;
     use HasExtraAlpineAttributes;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.checkbox-list';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.checkbox-list';
 
     protected string | Closure | null $relationshipTitleAttribute = null;
 
@@ -472,5 +479,164 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     public function hasInValidationOnMultipleValues(): bool
     {
         return true;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+        $id = $this->getId();
+        $isHtmlAllowed = $this->isHtmlAllowed();
+        $gridDirection = $this->getGridDirection() ?? GridDirection::Column;
+        $isBulkToggleable = $this->isBulkToggleable();
+        $isDisabled = $this->isDisabled();
+        $isSearchable = $this->isSearchable();
+        $statePath = $this->getStatePath();
+        $options = $this->getOptions();
+        $livewireKey = $this->getLivewireKey();
+        $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
+        $hasError = $this->hasErrorForPath($statePath);
+
+        $optionsAttributes = $this->getExtraAttributeBag()
+            ->grid($this->getColumns(), $gridDirection)
+            ->merge([
+                'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
+            ], escape: false)
+            ->class(['fi-fo-checkbox-list-options']);
+
+        ob_start(); ?>
+
+        <div
+            aria-labelledby="<?= e($id) ?>-label"
+            role="group"
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('checkbox-list', 'filament/forms')) ?>"
+            x-data="checkboxListFormComponent({
+                        livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
+                    })"
+            <?= $this->getExtraAlpineAttributeBag()->class(['fi-fo-checkbox-list'])->toHtml() ?>
+        >
+            <?php if (! $isDisabled) { ?>
+                <?php if ($isSearchable) { ?>
+                    <div <?= (new FilamentComponentAttributeBag)->class(['fi-input-wrp', 'fi-fo-checkbox-list-search-input-wrp'])->toHtml() ?>>
+                        <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-inline">
+                            <?= generate_icon_html(
+                                Heroicon::MagnifyingGlass,
+                                FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD,
+                                (new FilamentComponentAttributeBag)->color(IconComponent::class, 'gray'),
+                            )?->toHtml() ?>
+                        </div>
+
+                        <div class="fi-input-wrp-content-ctn">
+                            <input
+                                aria-label="<?= e($this->getSearchPrompt()) ?>"
+                                placeholder="<?= e($this->getSearchPrompt()) ?>"
+                                type="search"
+                                x-model.debounce.<?= $this->getSearchDebounce() ?>="search"
+                                class="fi-input fi-input-has-inline-prefix"
+                            />
+                        </div>
+                    </div>
+                <?php } ?>
+
+                <?php if ($isBulkToggleable && count($options)) { ?>
+                    <div
+                        x-cloak
+                        class="fi-fo-checkbox-list-actions"
+                        wire:key="<?= e($livewireKey) ?>.actions"
+                    >
+                        <span
+                            x-show="! areAllCheckboxesChecked"
+                            x-on:click="toggleAllCheckboxes()"
+                            wire:key="<?= e($livewireKey) ?>.actions.select-all"
+                        >
+                            <?= $this->getAction('selectAll')->toHtml() ?>
+                        </span>
+
+                        <span
+                            x-show="areAllCheckboxesChecked"
+                            x-on:click="toggleAllCheckboxes()"
+                            wire:key="<?= e($livewireKey) ?>.actions.deselect-all"
+                        >
+                            <?= $this->getAction('deselectAll')->toHtml() ?>
+                        </span>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+
+            <div <?= $optionsAttributes->toHtml() ?>>
+                <?php if (count($options)) { ?>
+                    <?php foreach ($options as $value => $label) { ?>
+                        <div
+                            wire:key="<?= e($livewireKey) ?>.options.<?= e($value) ?>"
+                            <?php if ($isSearchable) { ?>
+                                x-show="
+                                    $el
+                                        .querySelector('.fi-fo-checkbox-list-option-label')
+                                        ?.innerText.toLowerCase()
+                                        .includes(search.toLowerCase()) ||
+                                        $el
+                                            .querySelector('.fi-fo-checkbox-list-option-description')
+                                            ?.innerText.toLowerCase()
+                                            .includes(search.toLowerCase())
+                                "
+                            <?php } ?>
+                            class="fi-fo-checkbox-list-option-ctn"
+                        >
+                            <label class="fi-fo-checkbox-list-option">
+                                <input
+                                    type="checkbox"
+                                    <?= $extraInputAttributeBag
+                                        ->merge([
+                                            'disabled' => $isDisabled || $this->isOptionDisabled($value, $label),
+                                            'value' => e($value),
+                                            'wire:loading.attr' => 'disabled',
+                                            $wireModelAttribute => $statePath,
+                                            'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
+                                        ], escape: false)
+                                        ->class([
+                                            'fi-checkbox-input',
+                                            'fi-valid' => ! $hasError,
+                                            'fi-invalid' => $hasError,
+                                        ])
+                                        ->toHtml() ?>
+                                />
+
+                                <div class="fi-fo-checkbox-list-option-text">
+                                    <span class="fi-fo-checkbox-list-option-label">
+                                        <?php if ($isHtmlAllowed) { ?>
+                                            <?= $label ?>
+                                        <?php } else { ?>
+                                            <?= e($label) ?>
+                                        <?php } ?>
+                                    </span>
+
+                                    <?php if ($this->hasDescription($value)) { ?>
+                                        <p class="fi-fo-checkbox-list-option-description">
+                                            <?= e($this->getDescription($value)) ?>
+                                        </p>
+                                    <?php } ?>
+                                </div>
+                            </label>
+                        </div>
+                    <?php } ?>
+                <?php } else { ?>
+                    <div wire:key="<?= e($livewireKey) ?>.empty"></div>
+                <?php } ?>
+            </div>
+
+            <?php if ($isSearchable) { ?>
+                <div
+                    x-cloak
+                    x-show="search && ! visibleCheckboxListOptions.length"
+                    role="status"
+                    aria-live="polite"
+                    class="fi-fo-checkbox-list-no-search-results-message"
+                >
+                    <?= e($this->getNoSearchResultsMessage()) ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 }

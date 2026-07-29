@@ -22,21 +22,30 @@ use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use LogicException;
 use Tiptap\Editor;
 
-class RichEditor extends Field implements Contracts\CanBeLengthConstrained
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\generate_loading_indicator_html;
+
+class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
     // Security: The rich editor outputs raw HTML. Attackers can intercept
     // the value and send arbitrary HTML to the backend. When rendering
@@ -54,10 +63,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
     use HasExtraAlpineAttributes;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.rich-editor';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.rich-editor';
 
     protected string | Closure | null $uploadingFileMessage = null;
 
@@ -74,9 +80,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected array $plugins = [];
 
     /**
+     * @var array<RichContentPlugin> | null
+     */
+    protected ?array $cachedPlugins = null;
+
+    /**
      * @var array<RichEditorTool | Closure>
      */
     protected array $tools = [];
+
+    /**
+     * @var array<string, RichEditorTool> | null
+     */
+    protected ?array $cachedTools = null;
 
     /**
      * @var array<string> | Closure | null
@@ -132,46 +148,55 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('bold')
                 ->label(__('filament-forms::components.rich_editor.tools.bold'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleBold().run()')
+                ->toggle()
                 ->icon(Heroicon::Bold)
                 ->iconAlias('forms:components.rich-editor.toolbar.bold'),
             RichEditorTool::make('italic')
                 ->label(__('filament-forms::components.rich_editor.tools.italic'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleItalic().run()')
+                ->toggle()
                 ->icon(Heroicon::Italic)
                 ->iconAlias('forms:components.rich-editor.toolbar.italic'),
             RichEditorTool::make('underline')
                 ->label(__('filament-forms::components.rich_editor.tools.underline'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleUnderline().run()')
+                ->toggle()
                 ->icon(Heroicon::Underline)
                 ->iconAlias('forms:components.rich-editor.toolbar.underline'),
             RichEditorTool::make('strike')
                 ->label(__('filament-forms::components.rich_editor.tools.strike'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleStrike().run()')
+                ->toggle()
                 ->icon(Heroicon::Strikethrough)
                 ->iconAlias('forms:components.rich-editor.toolbar.strike'),
             RichEditorTool::make('subscript')
                 ->label(__('filament-forms::components.rich_editor.tools.subscript'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleSubscript().run()')
+                ->toggle()
                 ->icon('fi-o-subscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.subscript'),
             RichEditorTool::make('superscript')
                 ->label(__('filament-forms::components.rich_editor.tools.superscript'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleSuperscript().run()')
+                ->toggle()
                 ->icon('fi-o-superscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.superscript'),
             RichEditorTool::make('link')
                 ->label(__('filament-forms::components.rich_editor.tools.link'))
                 ->action(arguments: '{ url: $getEditor().getAttributes(\'link\')?.href, shouldOpenInNewTab: $getEditor().getAttributes(\'link\')?.target === \'_blank\' }')
+                ->toggle()
                 ->icon(Heroicon::Link)
                 ->iconAlias('forms:components.rich-editor.toolbar.link'),
             RichEditorTool::make('textColor')
                 ->label(__('filament-forms::components.rich_editor.tools.text_color'))
                 ->action(arguments: '{ color: $getEditor().getAttributes(\'textColor\')[\'data-color\'] ?? null }')
+                ->toggle()
                 ->icon(Heroicon::Swatch)
                 ->iconAlias('forms:components.rich-editor.toolbar.text-color'),
             RichEditorTool::make('h1')
                 ->label(__('filament-forms::components.rich_editor.tools.h1'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
+                ->toggle()
                 ->activeKey('heading')
                 ->activeOptions(['level' => 1])
                 ->icon('fi-o-h1')
@@ -179,6 +204,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.tools.h2'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
+                ->toggle()
                 ->activeKey('heading')
                 ->activeOptions(['level' => 2])
                 ->icon('fi-o-h2')
@@ -186,6 +212,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.tools.h3'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
+                ->toggle()
                 ->activeKey('heading')
                 ->activeOptions(['level' => 3])
                 ->icon('fi-o-h3')
@@ -193,11 +220,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('paragraph')
                 ->label(__('filament-forms::components.rich_editor.tools.paragraph'))
                 ->jsHandler('$getEditor()?.chain().focus().setParagraph().run()')
+                ->toggle()
                 ->icon('fi-o-paragraph')
                 ->iconAlias('forms:components.rich-editor.toolbar.paragraph'),
             RichEditorTool::make('h4')
                 ->label(__('filament-forms::components.rich_editor.tools.h4'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 4 }).run()')
+                ->toggle()
                 ->activeKey('heading')
                 ->activeOptions(['level' => 4])
                 ->icon('fi-o-h4')
@@ -205,6 +234,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('h5')
                 ->label(__('filament-forms::components.rich_editor.tools.h5'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 5 }).run()')
+                ->toggle()
                 ->activeKey('heading')
                 ->activeOptions(['level' => 5])
                 ->icon('fi-o-h5')
@@ -212,6 +242,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('h6')
                 ->label(__('filament-forms::components.rich_editor.tools.h6'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 6 }).run()')
+                ->toggle()
                 ->activeKey('heading')
                 ->activeOptions(['level' => 6])
                 ->icon('fi-o-h6')
@@ -219,26 +250,31 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('blockquote')
                 ->label(__('filament-forms::components.rich_editor.tools.blockquote'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
+                ->toggle()
                 ->icon(Heroicon::ChatBubbleBottomCenterText)
                 ->iconAlias('forms:components.rich-editor.toolbar.blockquote'),
             RichEditorTool::make('code')
                 ->label(__('filament-forms::components.rich_editor.tools.code'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleCode().run()')
+                ->toggle()
                 ->icon('fi-o-code')
                 ->iconAlias('forms:components.rich-editor.toolbar.code'),
             RichEditorTool::make('codeBlock')
                 ->label(__('filament-forms::components.rich_editor.tools.code_block'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
+                ->toggle()
                 ->icon('fi-o-code-block')
                 ->iconAlias('forms:components.rich-editor.toolbar.code-block'),
             RichEditorTool::make('bulletList')
                 ->label(__('filament-forms::components.rich_editor.tools.bullet_list'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleBulletList().run()')
+                ->toggle()
                 ->icon(Heroicon::ListBullet)
                 ->iconAlias('forms:components.rich-editor.toolbar.bullet-list'),
             RichEditorTool::make('orderedList')
                 ->label(__('filament-forms::components.rich_editor.tools.ordered_list'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
+                ->toggle()
                 ->icon(Heroicon::NumberedList)
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered-list'),
             RichEditorTool::make('table')
@@ -327,16 +363,19 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('highlight')
                 ->label(__('filament-forms::components.rich_editor.tools.highlight'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
+                ->toggle()
                 ->icon('fi-o-highlight')
                 ->iconAlias('forms:components.rich-editor.toolbar.highlight'),
             RichEditorTool::make('small')
                 ->label(__('filament-forms::components.rich_editor.tools.small'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleSmall().run()')
+                ->toggle()
                 ->icon('fi-o-small')
                 ->iconAlias('forms:components.rich-editor.toolbar.small'),
             RichEditorTool::make('lead')
                 ->label(__('filament-forms::components.rich_editor.tools.lead'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleLead().run()')
+                ->toggle()
                 ->icon('fi-o-lead')
                 ->iconAlias('forms:components.rich-editor.toolbar.lead'),
             RichEditorTool::make('undo')
@@ -353,24 +392,28 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->label(__('filament-forms::components.rich_editor.tools.align_start'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'start\').run()')
                 ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'start\' })')
+                ->toggle()
                 ->icon('fi-o-align-start')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-start'),
             RichEditorTool::make('alignCenter')
                 ->label(__('filament-forms::components.rich_editor.tools.align_center'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'center\').run()')
                 ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'center\' })')
+                ->toggle()
                 ->icon('fi-o-align-center')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-center'),
             RichEditorTool::make('alignEnd')
                 ->label(__('filament-forms::components.rich_editor.tools.align_end'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'end\').run()')
                 ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'end\' })')
+                ->toggle()
                 ->icon('fi-o-align-end')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-end'),
             RichEditorTool::make('alignJustify')
                 ->label(__('filament-forms::components.rich_editor.tools.align_justify'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'justify\' })')
+                ->toggle()
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
             RichEditorTool::make('grid')
@@ -632,6 +675,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ...is_array($extensions) ? $extensions : [$extensions],
         ];
 
+        $this->cachedPlugins = null;
+        $this->cachedTools = null;
+
         return $this;
     }
 
@@ -644,6 +690,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ...$this->tools,
             ...is_array($tools) ? $tools : [$tools],
         ];
+
+        $this->cachedTools = null;
 
         return $this;
     }
@@ -733,7 +781,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getPlugins(): array
     {
-        return [
+        return $this->cachedPlugins ??= [
             ...$this->getContentAttribute()?->getPlugins() ?? [],
             ...array_reduce(
                 $this->plugins,
@@ -772,7 +820,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTools(): array
     {
-        return array_reduce(
+        return $this->cachedTools ??= array_reduce(
             [
                 ...array_reduce(
                     $this->tools,
@@ -1465,5 +1513,258 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function hasFileAttachmentsByDefault(): bool
     {
         return $this->hasToolbarButton('attachFiles');
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $groupedCustomBlocks = $this->getGroupedCustomBlocks();
+        $id = $this->getId();
+        $isDisabled = $this->isDisabled();
+        $label = $this->getLabel();
+        $livewireKey = $this->getLivewireKey();
+        $key = $this->getKey();
+        $mergeTags = $this->getMergeTags();
+        $statePath = $this->getStatePath();
+        $mentions = $this->getMentionsForJs();
+        $toolbarButtons = $this->getToolbarButtons();
+        $tools = $this->getTools();
+        $floatingToolbars = $this->getFloatingToolbars();
+        $linkProtocols = $this->getLinkProtocols();
+        $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
+        $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
+
+        $wrapperAttributes = $this->getExtraAttributeBag()
+            ->merge(['x-cloak' => true], escape: false)
+            ->class(['fi-fo-rich-editor']);
+
+        $deleteIconHtml = generate_icon_html(Heroicon::Trash, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON);
+        $editIconHtml = generate_icon_html(Heroicon::PencilSquare, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON);
+
+        ob_start(); ?>
+
+        <div
+            aria-labelledby="<?= e($id) ?>-label"
+            id="<?= e($id) ?>"
+            role="group"
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
+            x-data="richEditorFormComponent({
+                            acceptedFileTypes: <?= Js::from($fileAttachmentsAcceptedFileTypes) ?>,
+                            acceptedFileTypesValidationMessage: <?= Js::from($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.rich_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null) ?>,
+                            activePanel: <?= Js::from($this->getActivePanel()) ?>,
+                            canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
+                            deleteCustomBlockButtonIconHtml: <?= Js::from($deleteIconHtml?->toHtml()) ?>,
+                            editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
+                            extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
+                            floatingToolbars: <?= Js::from($floatingToolbars) ?>,
+                            getMentionLabelsUsing: async (mentions) => {
+                                return await $wire.callSchemaComponentMethod(
+                                    <?= Js::from($key) ?>,
+                                    'getMentionLabelsForJs',
+                                    { mentions },
+                                )
+                            },
+                            getMentionSearchResultsUsing: async (query, char) => {
+                                return await $wire.callSchemaComponentMethod(
+                                    <?= Js::from($key) ?>,
+                                    'getMentionSearchResultsForJs',
+                                    { search: query, char },
+                                )
+                            },
+                            hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            isDisabled: <?= Js::from($isDisabled) ?>,
+                            label: <?= Js::from($label) ?>,
+                            isLiveDebounced: <?= Js::from($this->isLiveDebounced()) ?>,
+                            isLiveOnBlur: <?= Js::from($this->isLiveOnBlur()) ?>,
+                            key: <?= Js::from($key) ?>,
+                            linkProtocols: <?= Js::from($linkProtocols) ?>,
+                            liveDebounce: <?= Js::from($this->getNormalizedLiveDebounce()) ?>,
+                            livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
+                            maxFileSize: <?= Js::from($fileAttachmentsMaxSize) ?>,
+                            maxFileSizeValidationMessage: <?= Js::from($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.rich_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null) ?>,
+                            mentions: <?= Js::from($mentions) ?>,
+                            mergeTags: <?= Js::from($mergeTags) ?>,
+                            noMergeTagSearchResultsMessage: <?= Js::from($this->getNoMergeTagSearchResultsMessage()) ?>,
+                            placeholder: <?= Js::from($this->getPlaceholder()) ?>,
+                            state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) ?>,
+                            statePath: <?= Js::from($statePath) ?>,
+                            textColors: <?= Js::from($this->getTextColorsForJs()) ?>,
+                            uploadingFileMessage: <?= Js::from($this->getUploadingFileMessage()) ?>,
+                        })"
+            x-bind:class="{
+                'fi-fo-rich-editor-uploading-file': isUploadingFile,
+            }"
+            wire:ignore
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
+        >
+            <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
+                <?php // `role="toolbar"` is withheld until the APG roving-tabindex/arrow-key pattern is
+                      // implemented: the tools are `tabindex="-1"` with no arrow-key navigation, so announcing
+                      // a toolbar would promise keyboard behaviour that does not exist. The `aria-label`
+                      // still names the group.?>
+                <div
+                    class="fi-fo-rich-editor-toolbar"
+                    aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.label')) ?>"
+                >
+                    <?php foreach ($toolbarButtons as $buttonGroup) { ?>
+                        <div class="fi-fo-rich-editor-toolbar-group">
+                            <?php foreach ($buttonGroup as $button) { ?>
+                                <?php if (is_string($button)) { ?>
+                                    <?= ($tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found."))->toHtml() ?>
+                                <?php } else { ?>
+                                    <?= $button->toHtml() ?>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <div
+                x-show="isUploadingFile"
+                x-cloak
+                class="fi-fo-rich-editor-uploading-file-message"
+            >
+                <?= generate_loading_indicator_html()->toHtml() ?>
+
+                <span><?= e($this->getUploadingFileMessage()) ?></span>
+            </div>
+
+            <div
+                x-show="! isUploadingFile && fileValidationMessage"
+                x-cloak
+                class="fi-fo-rich-editor-file-validation-message"
+            >
+                <span
+                    x-text="fileValidationMessage"
+                    x-show="! isUploadingFile && fileValidationMessage"
+                ></span>
+            </div>
+
+            <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
+                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                    <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
+                        <div
+                            x-ref="floatingToolbar::<?= e($nodeName) ?>"
+                            class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
+                        >
+                            <?php foreach ($buttons as $button) { ?>
+                                <?php if (is_string($button)) { ?>
+                                    <?= $tools[$button]->toHtml() ?>
+                                <?php } else { ?>
+                                    <?= $button->toHtml() ?>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <?php if (! $isDisabled) { ?>
+                    <div
+                        x-show="isPanelActive()"
+                        x-cloak
+                        class="fi-fo-rich-editor-panels"
+                    >
+                        <div
+                            x-show="isPanelActive('customBlocks')"
+                            x-cloak
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    <?= e(__('filament-forms::components.rich_editor.tools.custom_blocks')) ?>
+                                </p>
+
+                                <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                        <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON)?->toHtml() ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-custom-blocks-ctn">
+                                <?php foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks) { ?>
+                                    <?php if (filled($customBlockGroupLabel)) { ?>
+                                        <h4 class="fi-fo-rich-editor-custom-blocks-group-header">
+                                            <?= e($customBlockGroupLabel) ?>
+                                        </h4>
+                                    <?php } ?>
+
+                                    <div class="fi-fo-rich-editor-custom-blocks-list">
+                                        <?php foreach ($groupBlocks as $block) { ?>
+                                            <?php $blockId = $block::getId(); ?>
+                                            <button
+                                                draggable="true"
+                                                type="button"
+                                                x-data="{ isLoading: false }"
+                                                x-on:click="
+                                                    isLoading = true
+                                                    $wire.mountAction(
+                                                        'customBlock',
+                                                        { editorSelection, id: <?= Js::from($blockId) ?>, mode: 'insert' },
+                                                        { schemaComponent: <?= Js::from($key) ?> },
+                                                    )
+                                                "
+                                                x-on:dragstart="$event.dataTransfer.setData('customBlock', <?= Js::from($blockId) ?>)"
+                                                x-on:open-modal.window="isLoading = false"
+                                                x-on:run-rich-editor-commands.window="isLoading = false"
+                                                class="fi-fo-rich-editor-custom-block-btn"
+                                            >
+                                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
+                                                <?= e($block::getLabel()) ?>
+                                            </button>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+
+                        <div
+                            x-show="isPanelActive('mergeTags')"
+                            x-cloak
+                            class="fi-fo-rich-editor-panel"
+                        >
+                            <div class="fi-fo-rich-editor-panel-header">
+                                <p class="fi-fo-rich-editor-panel-heading">
+                                    <?= e(__('filament-forms::components.rich_editor.tools.merge_tags')) ?>
+                                </p>
+
+                                <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                        <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON)?->toHtml() ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="fi-fo-rich-editor-merge-tags-list">
+                                <?php foreach ($mergeTags as $tagId => $tagLabel) { ?>
+                                    <button
+                                        draggable="true"
+                                        type="button"
+                                        x-on:click="insertMergeTag(<?= Js::from($tagId) ?>)"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', <?= Js::from($tagId) ?>)"
+                                        class="fi-fo-rich-editor-merge-tag-btn"
+                                    >
+                                        <span data-type="mergeTag" data-id="<?= e($tagId) ?>">
+                                            <?= e($tagLabel) ?>
+                                        </span>
+                                    </button>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->wrapInputHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+            ),
+            labelTag: 'div',
+        );
     }
 }

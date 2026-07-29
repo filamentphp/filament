@@ -4,15 +4,14 @@ namespace Filament\Schemas\Components;
 
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
-class Grid extends Component implements CanEntangleWithSingularRelationships
+class Grid extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
     use EntanglesStateWithSingularRelationship;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.grid';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.grid';
 
     /**
      * @param  array<string, ?int> | int | null  $columns
@@ -31,5 +30,22 @@ class Grid extends Component implements CanEntangleWithSingularRelationships
         $static->configure();
 
         return $static;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $attributes = (new FilamentComponentAttributeBag)
+            ->merge(['id' => $this->getId()], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false);
+
+        $childSchema = $this->getChildSchema();
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?= $childSchema->toHtml() ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

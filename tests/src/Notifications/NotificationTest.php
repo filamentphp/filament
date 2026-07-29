@@ -174,6 +174,44 @@ it('can close notifications', function (): void {
         ->toHaveCount(0);
 });
 
+it('matches the correct notification with `assertNotified()` when multiple notifications are sent', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    // The matching notification is NOT the first one sent.
+    Notification::assertNotified(
+        Notification::make()->title('Second')->body('Second body'),
+    );
+});
+
+it('fails `assertNotified()` when no sent notification matches the given instance', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    expect(fn () => Notification::assertNotified(
+        Notification::make()->title('Third')->body('Third body'),
+    ))->toThrow(PHPUnit\Framework\AssertionFailedError::class);
+});
+
+it('fails `assertNotNotified()` when a matching notification was sent but was not first', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    // `Second` WAS sent (just not first), so asserting it was not notified must fail.
+    expect(fn () => Notification::assertNotNotified(
+        Notification::make()->title('Second')->body('Second body'),
+    ))->toThrow(PHPUnit\Framework\AssertionFailedError::class);
+});
+
+it('passes `assertNotNotified()` when the given instance was genuinely not sent', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    Notification::assertNotNotified(
+        Notification::make()->title('Third')->body('Third body'),
+    );
+});
+
 function getLastNotificationAction()
 {
     $notificationsLivewireComponent = new Notifications;

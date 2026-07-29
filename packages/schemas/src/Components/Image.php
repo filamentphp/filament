@@ -3,15 +3,19 @@
 namespace Filament\Schemas\Components;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasTooltip;
+use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Js;
 
-class Image extends Component
+class Image extends Component implements HasEmbeddedView
 {
     use HasAlignment;
     use HasTooltip;
 
-    protected string $view = 'filament-schemas::components.image';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.image';
 
     protected string | Closure $url;
 
@@ -113,5 +117,40 @@ class Image extends Component
         }
 
         return $width;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $alignment = $this->getAlignment();
+        $height = $this->getImageHeight() ?? '8rem';
+        $width = $this->getImageWidth();
+        $tooltip = $this->getTooltip();
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-sc-image',
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
+            ])
+            ->style([
+                ('height: ' . e($height)) => $height,
+                ('width: ' . e($width)) => $width,
+            ]);
+
+        ob_start(); ?>
+
+        <img
+            alt="<?= e($this->getAlt()) ?>"
+            src="<?= e($this->getUrl()) ?>"
+            <?php if (filled($tooltip)) { ?>
+                x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?> }"
+            <?php } ?>
+            <?= $attributes->toHtml() ?>
+        />
+
+        <?php return ob_get_clean();
     }
 }

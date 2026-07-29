@@ -17,11 +17,21 @@ trait HasIcons
     protected array | Arrayable | Closure | null $icons = null;
 
     /**
+     * @var array<string | BackedEnum | Htmlable | null> | null
+     */
+    protected ?array $cachedIcons = null;
+
+    protected bool $hasCachedIcons = false;
+
+    /**
      * @param  array<string | BackedEnum | Htmlable | null> | Arrayable | Closure | null  $icons
      */
     public function icons(array | Arrayable | Closure | null $icons): static
     {
         $this->icons = $icons;
+
+        $this->cachedIcons = null;
+        $this->hasCachedIcons = false;
 
         return $this;
     }
@@ -36,6 +46,10 @@ trait HasIcons
      */
     public function getIcons(): array
     {
+        if ($this->hasCachedIcons) {
+            return $this->cachedIcons;
+        }
+
         $icons = $this->evaluate($this->icons);
 
         if ($icons instanceof Arrayable) {
@@ -47,13 +61,15 @@ trait HasIcons
             filled($enum = $this->getEnum()) &&
             is_a($enum, IconInterface::class, allow_string: true)
         ) {
-            return array_reduce($enum::cases(), function (array $carry, IconInterface & UnitEnum $case): array {
+            $icons = array_reduce($enum::cases(), function (array $carry, IconInterface & UnitEnum $case): array {
                 $carry[$case->value ?? $case->name] = $case->getIcon();
 
                 return $carry;
             }, []);
         }
 
-        return $icons ?? [];
+        $this->hasCachedIcons = true;
+
+        return $this->cachedIcons = $icons ?? [];
     }
 }

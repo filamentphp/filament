@@ -122,9 +122,51 @@ return [
 
     ],
 
+    'color_picker' => [
+        'panel_label' => 'Wybór koloru',
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Miesiąc',
+        ],
+
+        'year_input' => [
+            'label' => 'Rok',
+        ],
+
+        'hour_input' => [
+            'label' => 'Godzina',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minuta',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekunda',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Pobierz',
+            ],
+
+            'open' => [
+                'label' => 'Otwórz w nowej karcie',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Edytor obrazów',
 
             'actions' => [
 
@@ -268,6 +310,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akcje',
+            ],
+
+            'reorder' => [
+                'label' => 'Zmień kolejność',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +392,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akcje',
+            ],
+
+            'reorder' => [
+                'label' => 'Zmień kolejność',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -604,6 +670,10 @@ return [
             'searching_message' => 'Wyszukiwanie...',
         ],
 
+        'toolbar' => [
+            'label' => 'Pasek narzędzi edytora',
+        ],
+
         'tools' => [
             'align_center' => 'Wyśrodkuj',
             'align_end' => 'Wyrównaj do prawej',
@@ -742,6 +812,10 @@ return [
         ],
 
         'placeholder' => 'Nowy tag',
+
+        'tag_added' => 'Dodano: :tag',
+
+        'tag_removed' => 'Usunięto: :tag',
 
     ],
 

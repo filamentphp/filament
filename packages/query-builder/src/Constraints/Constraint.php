@@ -4,10 +4,10 @@ namespace Filament\QueryBuilder\Constraints;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Select;
 use Filament\Forms\View\FormsIconAlias;
+use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
@@ -88,7 +88,7 @@ class Constraint extends Component
 
                 return [
                     Flex::make(function (Flex $component) use ($operatorSelectOptions): array {
-                        /** @var Builder $builder */
+                        /** @var RuleBuilder $builder */
                         $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
                         return [
@@ -142,6 +142,9 @@ class Constraint extends Component
                                     ->color('gray')
                                     ->iconButton()
                                     ->size(Size::Small)
+                                    // Security: Cloning a rule duplicates a node in the tree, so it is blocked once the tree is at the `maxRules()` limit. Unlike the add button, this is a plain button whose disabled state is respected.
+                                    ->disabled(fn (): bool => $builder->isAtRuleLimit())
+                                    ->tooltip(fn (): ?string => $builder->getRuleLimitReachedTooltip())
                                     ->action($builder->getAction($cloneActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                                 Action::make($deleteActionName = $builder->getDeleteActionName())
                                     ->label(__('filament-forms::components.builder.actions.delete.label'))
@@ -152,7 +155,16 @@ class Constraint extends Component
                                     ->action($builder->getAction($deleteActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                             ])->grow(false),
                         ];
-                    })->gridContainer(),
+                    })
+                        ->gridContainer()
+                        // Name each constraint row as a group so screen readers convey where a rule begins/ends and
+                        // which attribute it filters (the per-block header is deliberately hidden, WCAG 1.3.1).
+                        // `e()` is required: extra attributes are rendered without escaping, so the label would
+                        // otherwise break out of the attribute.
+                        ->extraAttributes([
+                            'role' => 'group',
+                            'aria-label' => e(trim(strip_tags($this->getLabel()))),
+                        ]),
                 ];
             });
     }

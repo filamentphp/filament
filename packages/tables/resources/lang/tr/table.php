@@ -16,6 +16,10 @@ return [
                 'label' => 'Sıfırla',
             ],
 
+            'reorder' => [
+                'label' => 'Sütunu yeniden sırala',
+            ],
+
         ],
 
     ],
@@ -26,9 +30,20 @@ return [
             'label' => 'İşlem|İşlemler',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Evet',
+                'false' => 'Hayır',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Yükleniyor...',
+
+            'no_options_message' => 'Kullanılabilir seçenek yok.',
 
             'no_search_results_message' => 'Arama kriterlerinize uyan seçenek yok.',
 
@@ -127,6 +142,14 @@ return [
 
         'column_manager' => [
             'label' => 'Sütunları göster/gizle',
+        ],
+
+        'reorder_record' => [
+            'label' => ':key öğesini yeniden sırala',
+        ],
+
+        'toggle_record_content' => [
+            'label' => ':key öğesini genişlet/daralt',
         ],
 
     ],
@@ -259,6 +282,10 @@ return [
         ],
 
     ],
+
+    'loading' => 'Yükleniyor...',
+
+    'result_count' => '{0} Sonuç yok|{1} :count sonuç|[2,*] :count sonuç',
 
     'default_model_label' => 'kayıt',
 

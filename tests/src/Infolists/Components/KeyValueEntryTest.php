@@ -22,6 +22,13 @@ it('can render', function (): void {
         ->assertSeeText('john@example.com');
 });
 
+it('renders nested array values as JSON instead of crashing', function (): void {
+    livewire(TestComponentWithNestedKeyValueEntry::class)
+        ->assertSuccessful()
+        ->assertSeeText('theme')
+        ->assertSeeText('{"mode":"dark"}');
+});
+
 it('can render with custom key and value labels', function (): void {
     livewire(TestComponentWithLabeledKeyValueEntry::class)
         ->assertSuccessful()
@@ -195,5 +202,32 @@ class RenderKeyValueEntryWithEmptyMessage extends Component implements HasSchema
     public function render(): string
     {
         return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class TestComponentWithNestedKeyValueEntry extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([
+                'metadata' => [
+                    'theme' => ['mode' => 'dark'],
+                ],
+            ])
+            ->components([
+                KeyValueEntry::make('metadata'),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
     }
 }

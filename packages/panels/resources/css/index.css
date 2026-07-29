@@ -22,6 +22,8 @@
 @import './widgets/account-widget.css' layer(components);
 @import './widgets/filament-info-widget.css' layer(components);
 
+@import './utilities.css' layer(utilities);
+
 @variant dark (&:where(.dark, .dark *));
 
 @theme inline {

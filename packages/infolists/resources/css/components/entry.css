@@ -19,10 +19,6 @@
 
     & .fi-in-entry-label {
         @apply text-sm font-medium text-gray-950 dark:text-white;
-
-        &.fi-hidden {
-            @apply hidden;
-        }
     }
 
     & .fi-in-entry-label-col {

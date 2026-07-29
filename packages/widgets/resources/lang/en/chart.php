@@ -10,6 +10,10 @@ return [
 
     ],
 
+    'filter' => [
+        'label' => 'Filter chart data',
+    ],
+
     'filters' => [
 
         'actions' => [
@@ -24,6 +28,10 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => 'No data to display',
     ],
 
 ];

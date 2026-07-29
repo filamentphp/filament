@@ -1,4 +1,6 @@
 .fi-modal {
+    @apply outline-none;
+
     &.fi-modal-slide-over,
     &.fi-width-screen {
         & > .fi-modal-window-ctn > .fi-modal-window {
@@ -136,11 +138,15 @@
         }
     }
 
+    &.fi-modal-click-through {
+        @apply pointer-events-none;
+    }
+
     &:not(.fi-modal-slide-over):not(.fi-width-screen) {
         & > .fi-modal-window-ctn {
             @apply p-4;
 
-            & .fi-modal-window {
+            & > .fi-modal-window {
                 @apply mx-auto rounded-xl;
             }
         }
@@ -158,8 +164,9 @@
         }
     }
 
+    /* Like the modal itself, the window does not show a focus outline when it receives focus from the focus trap, such as when it carries the `autofocus` attribute. */
     & > .fi-modal-window-ctn > .fi-modal-window {
-        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 outline-none dark:bg-gray-900 dark:ring-white/10;
 
         & .fi-modal-header {
             @apply flex px-6 pt-6;

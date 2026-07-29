@@ -11,7 +11,7 @@ return [
         'form' => [
 
             'file' => [
-                'label' => 'File',
+                'label' => 'ファイル',
                 'placeholder' => 'CSVファイルをアップロード',
 
                 'rules' => [

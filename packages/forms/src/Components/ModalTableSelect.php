@@ -7,9 +7,12 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,16 +29,13 @@ use Illuminate\Support\Str;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
-class ModalTableSelect extends Field
+class ModalTableSelect extends Field implements HasEmbeddedView
 {
     use Concerns\CanLimitItemsLength;
     use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.modal-table-select';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.modal-table-select';
 
     protected ?Model $cachedSelectedRecord = null;
 
@@ -897,5 +897,95 @@ class ModalTableSelect extends Field
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true])];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAttributes = $this->getExtraAttributes();
+        $id = $this->getId();
+        $isDisabled = $this->isDisabled();
+        $isMultiple = $this->isMultiple();
+        $hasBadges = $this->hasBadges();
+        $badgeColor = $this->getBadgeColor();
+
+        $optionLabel = $isMultiple ? null : $this->getOptionLabel();
+        $optionLabels = $isMultiple ? $this->getOptionLabels() : [];
+        $placeholder = $this->getPlaceholder();
+
+        $attributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
+            ->merge($extraAttributes, escape: false)
+            ->class([
+                'fi-fo-modal-table-select',
+                'fi-fo-modal-table-select-disabled' => $isDisabled,
+                'fi-fo-modal-table-select-multiple' => $isMultiple,
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php if (((! $isMultiple) && filled($optionLabel)) || ($isMultiple && filled($optionLabels))) { ?>
+                <?php if ($isMultiple && $hasBadges) { ?>
+                    <div class="fi-fo-modal-table-select-badges-ctn">
+                        <?php foreach ($optionLabels as $loopOptionLabel) { ?>
+                            <?= $this->generateBadgeHtml($loopOptionLabel, $badgeColor) ?>
+                        <?php } ?>
+                    </div>
+                <?php } else { ?>
+                    <div>
+                        <?php if ($hasBadges) { ?>
+                            <?= $this->generateBadgeHtml($optionLabel, $badgeColor) ?>
+                        <?php } elseif ($isMultiple) { ?>
+                            <?php $isLastOption = false; ?>
+                            <?php $optionLabelKeys = array_keys($optionLabels); ?>
+                            <?php $optionLabelLastKey = end($optionLabelKeys); ?>
+                            <?php foreach ($optionLabels as $optionLabelKey => $loopOptionLabel) { ?>
+                                <?= e($loopOptionLabel) . (($optionLabelKey === $optionLabelLastKey) ? '' : ', ') ?>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <?= e($optionLabel) ?>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+            <?php } elseif (filled($placeholder)) { ?>
+                <div class="fi-fo-modal-table-select-placeholder">
+                    <?= e($placeholder) ?>
+                </div>
+            <?php } ?>
+
+            <?php if (! $isDisabled) { ?>
+                <div>
+                    <?= $this->getAction('select')->toHtml() ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
+    }
+
+    protected function generateBadgeHtml(string | Htmlable $label, ?string $color): string
+    {
+        $attributes = (new FilamentComponentAttributeBag)
+            ->class([
+                'fi-badge',
+                'fi-size-md',
+            ])
+            ->color(BadgeComponent::class, $color ?? 'primary');
+
+        ob_start(); ?>
+
+        <span <?= $attributes->toHtml() ?>>
+            <span class="fi-badge-label-ctn">
+                <span class="fi-badge-label">
+                    <?= e($label) ?>
+                </span>
+            </span>
+        </span>
+
+        <?php return ob_get_clean();
     }
 }

@@ -1,0 +1,9 @@
+<x-filament-panels::page>
+    <button
+        type="button"
+        wire:click="mountAction('openModal')"
+        data-testid="open-modal-trigger"
+    >
+        Open
+    </button>
+</x-filament-panels::page>

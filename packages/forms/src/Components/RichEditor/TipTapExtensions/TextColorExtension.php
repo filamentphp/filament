@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 
 use Filament\Forms\Components\RichEditor\TextColor;
+use Illuminate\Support\Str;
 use Tiptap\Core\Mark;
 
 class TextColorExtension extends Mark
@@ -76,8 +77,11 @@ class TextColorExtension extends Mark
 
         if ($config instanceof TextColor) {
             $cssVars = "--color: {$config->getColor()}; --dark-color: {$config->getDarkColor()}";
-        } elseif (filled($colorName) && preg_match('/^[\sA-Za-z0-9.,%\/+\-#_()]+$/', (string) $colorName)) {
-            $cssVars = "--color: {$colorName}; --dark-color: {$colorName}";
+        } elseif (filled($sanitizedColor = Str::sanitizeCssColor(is_string($colorName) ? $colorName : null))) {
+            // Security: `data-color` originates from stored rich content, so an unregistered color
+            // name is routed through the shared color sanitizer before being emitted as raw CSS,
+            // keeping it consistent with the `ColorEntry` and `ColorColumn` hardening.
+            $cssVars = "--color: {$sanitizedColor}; --dark-color: {$sanitizedColor}";
         } else {
             $cssVars = null;
         }

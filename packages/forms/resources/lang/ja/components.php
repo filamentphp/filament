@@ -548,6 +548,35 @@ return [
 
                         'color' => [
                             'label' => '色',
+
+                            'options' => [
+                                'slate' => 'スレート',
+                                'gray' => 'グレー',
+                                'zinc' => 'ジンク',
+                                'neutral' => 'ニュートラル',
+                                'stone' => 'ストーン',
+                                'mauve' => 'モーブ',
+                                'olive' => 'オリーブ',
+                                'mist' => 'ミスト',
+                                'taupe' => 'トープ',
+                                'red' => 'レッド',
+                                'orange' => 'オレンジ',
+                                'amber' => 'アンバー',
+                                'yellow' => 'イエロー',
+                                'lime' => 'ライム',
+                                'green' => 'グリーン',
+                                'emerald' => 'エメラルド',
+                                'teal' => 'ティール',
+                                'cyan' => 'シアン',
+                                'sky' => 'スカイ',
+                                'blue' => 'ブルー',
+                                'indigo' => 'インディゴ',
+                                'violet' => 'バイオレット',
+                                'purple' => 'パープル',
+                                'fuchsia' => 'フクシア',
+                                'pink' => 'ピンク',
+                                'rose' => 'ローズ',
+                            ],
                         ],
 
                         'custom_color' => [

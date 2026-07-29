@@ -5,7 +5,7 @@ use Filament\Tests\TestCase;
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class)->group('commands');
+uses(TestCase::class)->group('serial');
 
 it('can generate a column class', function (): void {
     $this->withoutMockingConsoleOutput();

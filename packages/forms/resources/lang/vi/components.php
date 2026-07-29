@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Tệp tải lên phải có định dạng: :values.',
+
+        'file_attachments_max_size_message' => 'Tệp tải lên không được lớn hơn :max kilobyte.',
+
         'tools' => [
             'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
@@ -474,6 +478,34 @@ return [
                     'form' => [
                         'color' => [
                             'label' => 'Màu chữ',
+                            'options' => [
+                                'slate' => 'Xám xanh',
+                                'gray' => 'Xám',
+                                'zinc' => 'Xám kẽm',
+                                'neutral' => 'Trung tính',
+                                'stone' => 'Đá',
+                                'mauve' => 'Tím nhạt',
+                                'olive' => 'Ô liu',
+                                'mist' => 'Sương mù',
+                                'taupe' => 'Nâu xám',
+                                'red' => 'Đỏ',
+                                'orange' => 'Cam',
+                                'amber' => 'Hổ phách',
+                                'yellow' => 'Vàng',
+                                'lime' => 'Vàng chanh',
+                                'green' => 'Xanh lá cây',
+                                'emerald' => 'Lục bảo',
+                                'teal' => 'Xanh mòng két',
+                                'cyan' => 'Lục lam',
+                                'sky' => 'Xanh da trời',
+                                'blue' => 'Xanh dương',
+                                'indigo' => 'Chàm',
+                                'violet' => 'Tím ánh sáng',
+                                'purple' => 'Tím',
+                                'fuchsia' => 'Hồng tía',
+                                'pink' => 'Hồng',
+                                'rose' => 'Hồng đào',
+                            ],
                         ],
                         'custom_color' => [
                             'label' => 'Màu chữ tùy chỉnh',
@@ -550,6 +582,17 @@ return [
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Tệp tải lên phải có định dạng: :values.',
+
+        'file_attachments_max_size_message' => 'Tệp tải lên không được lớn hơn :max kilobyte.',
+
+        'mentions' => [
+            'no_options_message' => 'Không có tùy chọn nào.',
+            'no_search_results_message' => 'Không có kết quả phù hợp với tìm kiếm.',
+            'search_prompt' => 'Bắt đầu gõ để tìm kiếm...',
+            'searching_message' => 'Đang tìm...',
+        ],
+
         'no_merge_tag_search_results_message' => 'Không tìm thấy thẻ nội dung động nào.',
 
         'tools' => [
@@ -569,6 +612,9 @@ return [
             'h1' => 'Tựa đề',
             'h2' => 'Tiêu đề',
             'h3' => 'Tiêu đề phụ',
+            'h4' => 'Tiêu đề cấp 4',
+            'h5' => 'Tiêu đề cấp 5',
+            'h6' => 'Tiêu đề cấp 6',
             'highlight' => 'Nổi bật',
             'horizontal_rule' => 'Thước ngang',
             'italic' => 'In nghiêng',
@@ -576,6 +622,7 @@ return [
             'link' => 'Liên kết',
             'merge_tags' => 'Thẻ nội dung động',
             'ordered_list' => 'Danh sách đánh số',
+            'paragraph' => 'Đoạn văn',
             'redo' => 'Làm lại',
             'small' => 'Chữ nhỏ',
             'strike' => 'Gạch ngang',
@@ -592,12 +639,15 @@ return [
             'table_merge_cells' => 'Gộp ô',
             'table_split_cell' => 'Chia ô',
             'table_toggle_header_row' => 'Bật/tắt dòng tiêu đề',
+            'table_toggle_header_cell' => 'Bật/tắt ô tiêu đề',
             'underline' => 'Gạch chân',
             'undo' => 'Hoàn tác',
             'text_color' => 'Màu chữ',
             'grid' => 'Mẫu lưới',
             'grid_delete' => 'Xóa mẫu lưới',
         ],
+
+        'uploading_file_message' => 'Đang tải tệp lên...',
 
     ],
 
@@ -660,6 +710,8 @@ return [
 
         'max_items_message' => 'Chỉ có thể chọn :count mục.',
 
+        'no_options_message' => 'Không có tùy chọn nào.',
+
         'no_search_results_message' => 'Không có kết quả tìm kiếm phù hợp.',
 
         'placeholder' => 'Chọn một tùy chọn',
@@ -671,12 +723,26 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Xóa',
+            ],
+
+        ],
+
         'placeholder' => 'Thêm thẻ mới',
     ],
 
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Sao chép',
+                'message' => 'Đã sao chép',
+            ],
 
             'hide_password' => [
                 'label' => 'Ẩn mật khẩu',

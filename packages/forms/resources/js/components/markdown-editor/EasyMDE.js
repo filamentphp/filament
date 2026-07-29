@@ -4,6 +4,7 @@
  * - Removal of line 1 to 15, awaiting https://github.com/Ionaru/easy-markdown-editor/pull/263
  * - Added `moveToNextField()` and `moveToPreviousField()` functions, and changed `Tab` and `Shift-Tab` key bindings to only indent the content when there is a selection in the editor. See https://github.com/filamentphp/filament/pull/16144.
  * - Wrapped the indent/outdent operations in `toggleCodeBlock()` in `cm.operation()` so they group into a single CodeMirror undo step. See https://github.com/filamentphp/filament/pull/19890.
+ * - Changed `minHeight` and `maxHeight` to apply independently when both options are set. See https://github.com/Ionaru/easy-markdown-editor/issues/413.
  */
 
 // Some variables
@@ -441,11 +442,18 @@ function toggleFullScreen(editor) {
 
     // Remove or set maxHeight
     if (typeof editor.options.maxHeight !== 'undefined') {
+        var heightProperty = editor.hasExplicitMinHeight
+            ? 'max-height'
+            : 'height'
+
         if (cm.getOption('fullScreen')) {
-            cm.getScrollerElement().style.removeProperty('height')
-            sidebyside.style.removeProperty('height')
+            cm.getScrollerElement().style.removeProperty(heightProperty)
+            sidebyside.style.removeProperty(heightProperty)
         } else {
-            cm.getScrollerElement().style.height = editor.options.maxHeight
+            cm.getScrollerElement().style.setProperty(
+                heightProperty,
+                editor.options.maxHeight,
+            )
             editor.setPreviewMaxHeight()
         }
     }
@@ -1924,6 +1932,8 @@ function EasyMDE(options) {
     // Handle options parameter
     options = options || {}
 
+    this.hasExplicitMinHeight = Boolean(options.minHeight)
+
     // Used later to refer to it"s parent
     options.parent = this
 
@@ -2049,8 +2059,12 @@ function EasyMDE(options) {
 
     options.direction = options.direction || 'ltr'
 
-    if (typeof options.maxHeight !== 'undefined') {
-        // Min and max height are equal if maxHeight is set
+    if (
+        typeof options.maxHeight !== 'undefined' &&
+        !this.hasExplicitMinHeight
+    ) {
+        // Preserve the fixed-height behavior introduced in
+        // https://github.com/Ionaru/easy-markdown-editor/pull/222
         options.minHeight = options.maxHeight
     } else {
         options.minHeight = options.minHeight || '300px'
@@ -2521,7 +2535,12 @@ EasyMDE.prototype.render = function (el) {
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight
 
     if (typeof options.maxHeight !== 'undefined') {
-        this.codemirror.getScrollerElement().style.height = options.maxHeight
+        this.codemirror
+            .getScrollerElement()
+            .style.setProperty(
+                this.hasExplicitMinHeight ? 'max-height' : 'height',
+                options.maxHeight,
+            )
     }
 
     if (options.forceSync === true) {
@@ -3004,18 +3023,22 @@ EasyMDE.prototype.setPreviewMaxHeight = function () {
     var cm = this.codemirror
     var wrapper = cm.getWrapperElement()
     var preview = wrapper.nextSibling
+    var wrapperStyle = window.getComputedStyle(wrapper)
 
-    // Calc preview max height
-    var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop)
-    var borderTopWidth = parseInt(
-        window.getComputedStyle(wrapper).borderTopWidth,
+    preview.style.setProperty(
+        this.hasExplicitMinHeight ? 'max-height' : 'height',
+        'calc(' +
+            this.options.maxHeight +
+            ' + ' +
+            wrapperStyle.paddingTop +
+            ' + ' +
+            wrapperStyle.paddingBottom +
+            ' + ' +
+            wrapperStyle.borderTopWidth +
+            ' + ' +
+            wrapperStyle.borderBottomWidth +
+            ')',
     )
-    var optionsMaxHeight = parseInt(this.options.maxHeight)
-    var wrapperMaxHeight =
-        optionsMaxHeight + paddingTop * 2 + borderTopWidth * 2
-    var previewMaxHeight = wrapperMaxHeight.toString() + 'px'
-
-    preview.style.height = previewMaxHeight
 }
 
 EasyMDE.prototype.createSideBySide = function () {

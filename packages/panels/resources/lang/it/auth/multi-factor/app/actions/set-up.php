@@ -54,6 +54,8 @@ return [
 
                     'invalid' => 'Il codice inserito non è valido.',
 
+                    'rate_limited' => 'Hai effettuato troppi tentativi. Riprova più tardi.',
+
                 ],
 
             ],

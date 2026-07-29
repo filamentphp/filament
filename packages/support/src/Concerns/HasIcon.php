@@ -38,4 +38,9 @@ trait HasIcon
 
         return $icon ?? $default;
     }
+
+    public function hasIcon(): bool
+    {
+        return $this->icon !== null && $this->icon !== false;
+    }
 }

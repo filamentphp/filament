@@ -31,7 +31,6 @@ class IsOperator extends Operator
     public function getSummary(): string
     {
         $constraint = $this->getConstraint();
-        $settings = $this->getSettings();
 
         if ($constraint->isMultiple()) {
             $getLabels = $constraint->getOptionLabelsUsingCallback();
@@ -41,9 +40,11 @@ class IsOperator extends Operator
             $valuesKey = 'value';
         }
 
+        $values = $this->getValueSetting();
+
         $labels = $getLabels ?
-            Arr::wrap($this->evaluate($getLabels, [$valuesKey => $settings[$valuesKey]])) :
-            Arr::only($constraint->getOptions(), $settings[$valuesKey]);
+            Arr::wrap($this->evaluate($getLabels, [$valuesKey => $values])) :
+            Arr::only($constraint->getOptions(), Arr::wrap($values));
 
         $joinedValues = Arr::join(
             $labels,
@@ -100,13 +101,42 @@ class IsOperator extends Operator
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
-        $value = $this->getSettings()[$this->getConstraint()->isMultiple() ? 'values' : 'value'];
+        $value = $this->getValueSetting();
 
         if (is_array($value)) {
+            // Security: nothing valid remains to filter by after discarding tampered values.
+            if ($value === []) {
+                return $query;
+            }
+
             return $query->{$this->isInverse() ? 'whereNotIn' : 'whereIn'}($qualifiedColumn, $value);
         }
 
+        // Security: skip applying the constraint when the tampered single value is not a scalar.
+        if ($value === null) {
+            return $query;
+        }
+
         return $query->{$this->isInverse() ? 'whereNot' : 'where'}($qualifiedColumn, $value);
+    }
+
+    protected function getValueSetting(): mixed
+    {
+        $isMultiple = $this->getConstraint()->isMultiple();
+
+        $value = $this->getSettings()[$isMultiple ? 'values' : 'value'] ?? null;
+
+        // Security: settings arrive from the request payload and can be tampered with. A single
+        // select value must be a scalar, and a multiple select value must be a list of scalars;
+        // any other shape (e.g. a nested array) would reach `strval()` / `Arr::only()` and throw.
+        // Fail closed by discarding non-scalar values.
+        if ($isMultiple) {
+            return is_array($value)
+                ? array_values(array_filter($value, is_scalar(...)))
+                : [];
+        }
+
+        return is_scalar($value) ? $value : null;
     }
 
     public function getConstraint(): ?SelectConstraint

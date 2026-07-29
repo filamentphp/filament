@@ -696,6 +696,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasDarkModeForced();
     }
 
+    public function hasThemeSwitcher(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasThemeSwitcher();
+    }
+
     public function hasDatabaseNotifications(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasDatabaseNotifications();

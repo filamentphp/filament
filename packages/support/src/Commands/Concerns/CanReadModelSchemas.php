@@ -143,6 +143,8 @@ trait CanReadModelSchemas
             'timestamp', 'timestamptz' => 'timestamp',
             'text', 'tinytext', 'longtext', 'mediumtext', 'ntext' => 'text',
             'json', 'jsonb' => 'json',
+            'binary', 'varbinary', 'blob', 'tinyblob', 'mediumblob', 'longblob', 'bytea' => 'binary',
+            'geometry', 'geography', 'point', 'linestring', 'polygon', 'multipoint', 'multilinestring', 'multipolygon', 'geometrycollection', 'geomcollection' => 'binary',
             default => $column['type_name'],
         };
 
@@ -157,6 +159,45 @@ trait CanReadModelSchemas
         };
 
         return array_merge(['name' => $type], array_filter($values));
+    }
+
+    /**
+     * Columns skipped while reading the model schema, keyed by column name with their database type as the value.
+     *
+     * @var array<string, string>
+     */
+    protected array $skippedColumns = [];
+
+    /**
+     * @param  array<string, mixed>  $type
+     */
+    protected function canGenerateSchemaComponentForColumnType(array $type): bool
+    {
+        // Binary and spatial columns (`blob`, `geometry`, `point`, etc.) hold data that
+        // is not valid UTF-8, so it cannot be serialized to JavaScript for a schema component.
+        return $type['name'] !== 'binary';
+    }
+
+    /**
+     * @param  class-string<Model>  $model
+     * @param  array<string, mixed>  $column
+     */
+    protected function recordSkippedColumn(string $model, array $column): void
+    {
+        // A column that is already `$hidden` is excluded from the model's array representation, so it cannot cause errors and does not need a warning.
+        if (in_array($column['name'], app($model)->getHidden(), strict: true)) {
+            return;
+        }
+
+        $this->skippedColumns[$column['name']] = $column['type_name'];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getSkippedColumns(): array
+    {
+        return $this->skippedColumns;
     }
 
     /**

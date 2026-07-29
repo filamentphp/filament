@@ -222,9 +222,13 @@ npm run build
 
 You can [learn more about the `@source` directive](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) in the Tailwind CSS documentation.
 
-## Disabling dark mode
+## Dark mode
 
-To disable dark mode switching, you can use the [configuration](../panel-configuration) file:
+By default, Filament allows users to switch between light and dark mode. The following sections cover how to customize this behavior.
+
+### Disabling dark mode
+
+To disable dark mode entirely, you can use the [configuration](../panel-configuration) file:
 
 ```php
 use Filament\Panel;
@@ -237,7 +241,41 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Changing the default theme mode
+### Hiding the theme switcher
+
+By default, users can switch between light and dark mode using the theme switcher in the user menu. If you want to keep dark mode enabled but prevent users from manually switching (so that Filament follows the [default theme mode](#changing-the-default-theme-mode) or the user's system preference), you can hide the theme switcher using the `themeSwitcher(false)` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->themeSwitcher(false);
+}
+```
+
+<Aside variant="info">
+    This is different from `darkMode(false)`, which disables dark mode altogether. `themeSwitcher(false)` keeps dark mode active but hides the switcher.
+</Aside>
+
+### Forcing dark mode
+
+If you want to force the panel to always use dark mode, regardless of the user's preference, you can pass `isForced: true` to the `darkMode()` method. This also hides the theme switcher:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->darkMode(isForced: true);
+}
+```
+
+### Changing the default theme mode
 
 By default, Filament uses the user's system theme as the default mode. For example, if the user's computer is in dark mode, Filament will use dark mode by default. The system mode in Filament is reactive if the user changes their computer's mode. If you want to change the default mode to force light or dark mode, you can use the `defaultThemeMode()` method, passing `ThemeMode::Light` or `ThemeMode::Dark`:
 

@@ -19,8 +19,9 @@ abstract class Importer
     // Each CSV row is processed by `resolveRecord()`, `fillRecord()`,
     // and `saveRecord()` without consulting Laravel policies. Add
     // manual checks in lifecycle hooks (`beforeCreate()`, etc.)
-    // if needed. Failure CSVs contain original data unchanged —
-    // formula injection risk applies to those files too.
+    // if needed. Failure CSVs contain original data unchanged, so
+    // formula injection risk applies to those files too — override
+    // `shouldPreventFormulaInjection()` to neutralize it.
 
     /** @var array<ImportColumn> */
     protected array $cachedColumns;
@@ -41,6 +42,8 @@ abstract class Importer
      * @var class-string<Model>|null
      */
     protected static ?string $model = null;
+
+    protected static bool $shouldPreventFormulaInjection = false;
 
     /**
      * @param  array<string, string>  $columnMap
@@ -305,6 +308,24 @@ abstract class Importer
         return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Importer')
             ->prepend(app()->getNamespace() . 'Models\\');
+    }
+
+    public static function preventFormulaInjection(bool $condition = true): void
+    {
+        static::$shouldPreventFormulaInjection = $condition;
+    }
+
+    public static function shouldPreventFormulaInjection(): bool
+    {
+        // Security: Off by default because the failure CSV is designed to be
+        // corrected and re-uploaded — prefixing a `'` to neutralize formula
+        // injection (CWE-1236) would corrupt legitimate data such as `-5` on
+        // that round trip. The failure CSV includes every uploaded column,
+        // even those not mapped to an `ImportColumn`, so this is a whole-file
+        // toggle rather than a per-column one. Enable it for a single importer
+        // by redeclaring `$shouldPreventFormulaInjection`, or globally by
+        // calling `Importer::preventFormulaInjection()` in a service provider.
+        return static::$shouldPreventFormulaInjection;
     }
 
     abstract public static function getCompletedNotificationBody(Import $import): string;

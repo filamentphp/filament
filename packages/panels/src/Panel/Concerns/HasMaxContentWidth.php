@@ -2,15 +2,16 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
 use Filament\Support\Enums\Width;
 
 trait HasMaxContentWidth
 {
-    protected Width | string | null $maxContentWidth = null;
+    protected Width | string | Closure | null $maxContentWidth = null;
 
-    protected Width | string | null $simplePageMaxContentWidth = null;
+    protected Width | string | Closure | null $simplePageMaxContentWidth = null;
 
-    public function maxContentWidth(Width | string | null $maxContentWidth): static
+    public function maxContentWidth(Width | string | Closure | null $maxContentWidth): static
     {
         $this->maxContentWidth = $maxContentWidth;
 
@@ -19,10 +20,10 @@ trait HasMaxContentWidth
 
     public function getMaxContentWidth(): Width | string | null
     {
-        return $this->maxContentWidth;
+        return $this->evaluate($this->maxContentWidth);
     }
 
-    public function simplePageMaxContentWidth(Width | string | null $width): static
+    public function simplePageMaxContentWidth(Width | string | Closure | null $width): static
     {
         $this->simplePageMaxContentWidth = $width;
 
@@ -31,6 +32,6 @@ trait HasMaxContentWidth
 
     public function getSimplePageMaxContentWidth(): Width | string | null
     {
-        return $this->simplePageMaxContentWidth;
+        return $this->evaluate($this->simplePageMaxContentWidth);
     }
 }

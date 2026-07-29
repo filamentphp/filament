@@ -10,6 +10,10 @@ return [
 
     ],
 
+    'filter' => [
+        'label' => 'Filtrovať dáta grafu',
+    ],
+
     'filters' => [
 
         'actions' => [
@@ -24,6 +28,10 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => 'Žiadne dáta na zobrazenie',
     ],
 
 ];

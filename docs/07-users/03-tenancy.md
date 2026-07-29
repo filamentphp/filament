@@ -374,6 +374,53 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Grouping tenant menu items
+
+By default, all tenant menu items are rendered in a single list. If you want to separate them into distinct groups, you can pass an array of arrays to the `tenantMenuItems()` method. Each array is rendered as its own group, separated by a divider:
+
+```php
+use App\Filament\Pages\Members;
+use App\Filament\Pages\Settings;
+use Filament\Actions\Action;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenuItems([
+            [
+                Action::make('settings')
+                    ->url(fn (): string => Settings::getUrl())
+                    ->icon('heroicon-m-cog-8-tooth'),
+                Action::make('members')
+                    ->url(fn (): string => Members::getUrl())
+                    ->icon('heroicon-m-user-group'),
+            ],
+            [
+                Action::make('documentation')
+                    ->url('https://filamentphp.com/docs')
+                    ->icon('heroicon-m-book-open'),
+            ],
+        ]);
+}
+```
+
+<AutoScreenshot name="tenancy/tenant-menu-grouping" alt="Tenant menu items split into separate groups" version="4.x" />
+
+<Aside variant="info">
+    The `register` item is added to the last group by default. To place it yourself, register it explicitly in any group using the `register` array key. Since its default `sort()` puts it at the end of its group, adjust the sort if you want it elsewhere within the group:
+
+    ```php
+    ->tenantMenuItems([
+        // ...
+        [
+            'register' => fn (Action $action): Action => $action->sort(2),
+        ],
+    ])
+    ```
+</Aside>
+
 ### Allowing the tenants to be searched
 
 You can use the `searchableTenantMenu()` method in the [configuration](../panel-configuration) to allow the tenants to be searched:

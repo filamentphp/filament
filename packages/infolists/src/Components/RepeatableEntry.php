@@ -26,6 +26,8 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     protected array | Closure | null $tableColumns = null;
 
+    protected mixed $cachedItemsState = null;
+
     /**
      * Configure table columns for display
      *
@@ -61,9 +63,19 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     public function getItems(): array
     {
+        return $this->getCachedDefaultChildSchemas();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $this->cachedItemsState = $state = ($this->getState() ?? []);
+
         $containers = [];
 
-        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
+        foreach ($state as $itemKey => $itemData) {
             $container = $this
                 ->getChildSchema()
                 ->getClone()
@@ -82,12 +94,9 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
         return $containers;
     }
 
-    /**
-     * @return array<Schema>
-     */
-    public function getDefaultChildSchemas(): array
+    protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->getItems();
+        return $this->cachedItemsState === ($this->getState() ?? []);
     }
 
     public function toEmbeddedHtml(): string
@@ -191,9 +200,10 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                     <tr>
                         <?php foreach ($tableColumns as $column) { ?>
                             <th
+                                scope="col"
                                 class="<?= Arr::toCssClasses([
                                     'fi-wrapped' => $column->canHeaderWrap(),
-                                    (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
+                                    (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : e($columnAlignment),
                                 ]) ?>"
                                 <?php if (filled($columnWidth = $column->getWidth())) { ?>
                                     style="width: <?= e($columnWidth) ?>"

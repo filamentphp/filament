@@ -55,15 +55,15 @@ return [
             ],
 
             'deleted_partial' => [
-                'title' => 'تم حذف :count من :total',
-                'missing_authorization_failure_message' => 'ليس لديك إذن لحذف :count.',
-                'missing_processing_failure_message' => ':count لم يتم حذفه.',
+                'title' => '{1} تم حذف سجل واحد من :total|{2} تم حذف سجلين من :total|[3,10] تم حذف :count سجلات من :total|[11,*] تم حذف :count سجل من :total',
+                'missing_authorization_failure_message' => '{1} ليس لديك إذن لحذف سجل واحد.|{2} ليس لديك إذن لحذف سجلين.|[3,10] ليس لديك إذن لحذف :count سجلات.|[11,*] ليس لديك إذن لحذف :count سجل.',
+                'missing_processing_failure_message' => '{1} تعذر حذف سجل واحد.|{2} تعذر حذف سجلين.|[3,10] تعذر حذف :count سجلات.|[11,*] تعذر حذف :count سجل.',
             ],
 
             'deleted_none' => [
                 'title' => 'لم يتم حذف أي شيء',
-                'missing_authorization_failure_message' => 'ليس لديك إذن لحذف :count.',
-                'missing_processing_failure_message' => 'لم يتم حذف :count.',
+                'missing_authorization_failure_message' => '{1} ليس لديك إذن لحذف سجل واحد.|{2} ليس لديك إذن لحذف سجلين.|[3,10] ليس لديك إذن لحذف :count سجلات.|[11,*] ليس لديك إذن لحذف :count سجل.',
+                'missing_processing_failure_message' => '{1} لم يتم حذف سجل واحد.|{2} لم يتم حذف سجلين.|[3,10] لم يتم حذف :count سجلات.|[11,*] لم يتم حذف :count سجل.',
             ],
 
         ],

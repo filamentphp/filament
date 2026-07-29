@@ -61,4 +61,9 @@ trait HasAlignment
 
         return Alignment::tryFrom($alignment) ?? $alignment;
     }
+
+    public function hasDynamicAlignment(): bool
+    {
+        return $this->alignment instanceof Closure;
+    }
 }

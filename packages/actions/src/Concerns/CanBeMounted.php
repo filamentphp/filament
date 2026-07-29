@@ -15,7 +15,11 @@ trait CanBeMounted
      */
     public function mount(array $parameters): mixed
     {
-        return $this->evaluate($this->getMountUsing(), $parameters);
+        try {
+            return $this->evaluate($this->getMountUsing(), $parameters);
+        } finally {
+            $this->clearVisibilityCache();
+        }
     }
 
     public function mountUsing(?Closure $callback): static

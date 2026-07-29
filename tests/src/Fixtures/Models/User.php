@@ -55,7 +55,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($panel->getId(), ['admin', 'slugs', 'app-authentication', 'email-authentication', 'required-multi-factor-authentication']);
+        return in_array($panel->getId(), ['admin', 'slugs', 'spa', 'app-authentication', 'email-authentication', 'required-multi-factor-authentication']);
     }
 
     public function posts(): HasMany

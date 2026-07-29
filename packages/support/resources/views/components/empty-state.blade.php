@@ -25,7 +25,7 @@
     $hasIcon = filled($icon);
 @endphp
 
-<section
+<div
     {{
         $attributes->class([
             'fi-empty-state',
@@ -43,7 +43,7 @@
                 ])
             >
                 {{
-                    \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag)
+                    \Filament\Support\generate_icon_html($icon, attributes: (new \Filament\Support\View\ComponentAttributeBag)
                         ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
                 }}
             </div>
@@ -67,4 +67,4 @@
             @endif
         </div>
     </div>
-</section>
+</div>

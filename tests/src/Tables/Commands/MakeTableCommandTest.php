@@ -4,7 +4,7 @@ use Filament\Tests\TestCase;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class)->group('commands');
+uses(TestCase::class)->group('serial');
 
 it('can generate a table class', function (): void {
     $this->withoutMockingConsoleOutput();

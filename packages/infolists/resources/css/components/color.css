@@ -25,10 +25,10 @@
     }
 
     & > .fi-in-color-item {
-        @apply size-6 rounded-md;
+        @apply size-6 rounded-md ring-1 ring-gray-950/10 dark:ring-white/20;
 
         &.fi-copyable {
-            @apply cursor-pointer;
+            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 cursor-pointer outline-none focus-visible:ring-2;
         }
     }
 }

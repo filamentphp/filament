@@ -42,7 +42,7 @@ const findClosestLivewireComponent = (el) => {
 }
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.data('filamentSchema', ({ livewireId }) => ({
+    window.Alpine.data('filamentSchema', ({ livewireId, schemaKey }) => ({
         handleFormValidationError(event) {
             if (event.detail.livewireId !== livewireId) {
                 return
@@ -72,6 +72,35 @@ document.addEventListener('alpine:init', () => {
                         }),
                     200,
                 )
+            })
+        },
+
+        handleClientSideStateReset(event) {
+            if (
+                event.detail.livewireId !== livewireId ||
+                event.detail.schemaKey !== schemaKey
+            ) {
+                return
+            }
+
+            this.$nextTick(() => {
+                const fields = this.$el.querySelectorAll('[autofocus]')
+
+                for (const field of fields) {
+                    // Skip fields hidden by an ancestor (e.g. an inactive
+                    // wizard step or tab) — the wizard/tab Alpine scope owns
+                    // its own `$watch` that refocuses once the active step
+                    // or tab is restored.
+                    if (field.offsetParent === null) {
+                        continue
+                    }
+
+                    field.focus()
+
+                    if (document.activeElement === field) {
+                        break
+                    }
+                }
             })
         },
 

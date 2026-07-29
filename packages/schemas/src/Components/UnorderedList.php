@@ -5,12 +5,14 @@ namespace Filament\Schemas\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Contracts\Support\Htmlable;
 
-class UnorderedList extends Component
+class UnorderedList extends Component implements HasEmbeddedView
 {
-    protected string $view = 'filament-schemas::components.unordered-list';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-schemas::components.unordered-list';
 
     protected TextSize | string | Closure | null $size = null;
 
@@ -60,5 +62,27 @@ class UnorderedList extends Component
         }
 
         return $size;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $size = $this->getSize();
+
+        $attributes = $this->getExtraAttributeBag()
+            ->grid($this->getColumns(), GridDirection::Column)
+            ->class([
+                'fi-sc-unordered-list',
+                ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
+            ]);
+
+        ob_start(); ?>
+
+        <ul <?= $attributes->toHtml() ?>>
+            <?php foreach ($this->getChildSchema()->getComponents() as $schemaComponent) { ?>
+                <li><?= $schemaComponent->toHtml() ?></li>
+            <?php } ?>
+        </ul>
+
+        <?php return ob_get_clean();
     }
 }

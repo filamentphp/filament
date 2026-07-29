@@ -2,6 +2,33 @@
 
 return [
 
+    'callout' => [
+
+        'statuses' => [
+            'danger' => 'Error:',
+            'info' => 'Nota:',
+            'success' => 'Éxito:',
+            'warning' => 'Advertencia:',
+        ],
+
+    ],
+
+    'section' => [
+
+        'actions' => [
+
+            'collapse' => [
+                'label' => 'Contraer sección',
+            ],
+
+            'expand' => [
+                'label' => 'Expandir sección',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [
@@ -12,6 +39,19 @@ return [
 
             'next_step' => [
                 'label' => 'Siguiente',
+            ],
+
+        ],
+
+        'header' => [
+
+            'step' => [
+
+                'statuses' => [
+                    'completed' => 'Completado',
+                    'upcoming' => 'No completado',
+                ],
+
             ],
 
         ],

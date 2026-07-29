@@ -20,4 +20,9 @@ trait HasIconSize
     {
         return $this->evaluate($this->iconSize);
     }
+
+    public function hasIconSize(): bool
+    {
+        return $this->iconSize !== null;
+    }
 }

@@ -160,6 +160,65 @@ describe('`configure()`', function (): void {
 
         expect($parentConfigured)->toBeTrue();
     });
+
+    it('configures correctly on repeated calls for the same class', function (): void {
+        $callCount = 0;
+
+        $this->manager->configureUsing(
+            TestConfigurableComponent::class,
+            static function () use (&$callCount): void {
+                $callCount++;
+            },
+        );
+
+        $setUpCalls = 0;
+        $setUp = static function () use (&$setUpCalls): void {
+            $setUpCalls++;
+        };
+
+        $this->manager->configure(new TestConfigurableComponent, $setUp);
+        $this->manager->configure(new TestConfigurableComponent, $setUp);
+
+        // The per-class reflection is cached, but the configuration callbacks and
+        // `setUp` must still run on every `configure()` call.
+        expect($callCount)->toBe(2);
+        expect($setUpCalls)->toBe(2);
+    });
+
+    it('still runs `configureUsing()` callbacks on every `configure()` after the reflection is cached', function (): void {
+        $runCount = 0;
+
+        $this->manager->configureUsing(
+            TestConfigurableComponent::class,
+            static function () use (&$runCount): void {
+                $runCount++;
+            },
+        );
+
+        $this->manager->configure(new TestConfigurableComponent, static fn () => null);
+        $this->manager->configure(new TestConfigurableComponent, static fn () => null);
+
+        // Once per `configure()`, NOT frozen by the cache.
+        expect($runCount)->toBe(2);
+    });
+
+    it('does not reuse a parent class hierarchy for a child class', function (): void {
+        $configured = [];
+
+        $this->manager->configureUsing(
+            TestChildConfigurableComponent::class,
+            static function ($component) use (&$configured): void {
+                $configured[] = $component::class;
+            },
+        );
+
+        // Configure the parent first to populate the cache, then the child.
+        $this->manager->configure(new TestConfigurableComponent, static function (): void {});
+        $this->manager->configure(new TestChildConfigurableComponent, static function (): void {});
+
+        // The child-only configuration must run for the child instance.
+        expect($configured)->toBe([TestChildConfigurableComponent::class]);
+    });
 });
 
 describe('`extractPublicMethods()`', function (): void {

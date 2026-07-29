@@ -21,4 +21,9 @@ trait HasGroupedIcon
     {
         return $this->evaluate($this->groupedIcon);
     }
+
+    public function hasGroupedIcon(): bool
+    {
+        return $this->groupedIcon !== null;
+    }
 }

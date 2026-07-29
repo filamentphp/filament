@@ -35,12 +35,18 @@ trait HasComponents
     protected array $cachedComponentsByStatePath = [];
 
     /**
+     * @var array<int, array<int, array<array-key, Component | Action | ActionGroup>>>
+     */
+    protected array $cachedComponentsWithHidden = [];
+
+    /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
     public function components(array | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
     {
         $this->components = $components;
         $this->cachedComponents = null;
+        $this->cachedComponentsWithHidden = [];
         $this->cachedFlatComponents = [];
         $this->cachedComponentsByStatePath = [];
 
@@ -281,11 +287,14 @@ trait HasComponents
                     $carry[$componentKey] = $component;
                 }
 
+                $childComponents = [];
+
                 foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                    $carry = [
-                        ...$carry,
-                        ...$childSchema->getFlatComponents($withActions, $withHidden, $withAbsoluteKeys, $containerKey),
-                    ];
+                    $childComponents[] = $childSchema->getFlatComponents($withActions, $withHidden, $withAbsoluteKeys, $containerKey);
+                }
+
+                if ($childComponents !== []) {
+                    $carry = array_merge($carry, ...$childComponents);
                 }
 
                 return $carry;
@@ -333,6 +342,19 @@ trait HasComponents
             return $components;
         });
 
+        if ($withHidden) {
+            return $this->cachedComponentsWithHidden[(int) $withActions][(int) $withOriginalKeys] ??= $this->filterComponents($allComponents, $withActions, true, $withOriginalKeys);
+        }
+
+        return $this->filterComponents($allComponents, $withActions, false, $withOriginalKeys);
+    }
+
+    /**
+     * @param  array<array-key, Component | Action | ActionGroup>  $allComponents
+     * @return array<array-key, Component | Action | ActionGroup>
+     */
+    protected function filterComponents(array $allComponents, bool $withActions, bool $withHidden, bool $withOriginalKeys): array
+    {
         $components = array_filter(
             $allComponents,
             function (Component | Action | ActionGroup $component) use ($withActions, $withHidden): bool {
@@ -367,6 +389,7 @@ trait HasComponents
             );
 
             $this->cachedComponents = null;
+            $this->cachedComponentsWithHidden = [];
             $this->cachedFlatComponents = [];
             $this->cachedComponentsByStatePath = [];
         }
@@ -374,14 +397,22 @@ trait HasComponents
         return $this;
     }
 
-    public function clearCachedDefaultChildSchemas(): void
+    public function clearCachedChildSchemas(): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            $component->clearCachedDefaultChildSchemas();
+            $component->clearCachedChildSchemas();
 
             foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                $childSchema->clearCachedDefaultChildSchemas();
+                $childSchema->clearCachedChildSchemas();
             }
         }
+    }
+
+    /**
+     * @deprecated Use `clearCachedChildSchemas()` instead.
+     */
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        $this->clearCachedChildSchemas();
     }
 }

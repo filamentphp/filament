@@ -156,6 +156,77 @@ describe('rendering', function (): void {
     });
 });
 
+it('distributes a pasted or autofilled code across the inputs', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/one-time-code-input-browser-test')
+            ->assertSee('Test OTP Code')
+            ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', '123456')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(3)', '3')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(4)', '4')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '5')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
+            ->assertNoSmoke();
+    });
+});
+
+it('commits the entered code to the Livewire state', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/one-time-code-input-browser-test')
+            ->assertSee('Test OTP Code')
+            ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', '123456')
+            ->press('Save')
+            ->wait(1)
+            ->assertSee('Submitted code: 123456')
+            ->assertNoSmoke();
+    });
+});
+
+it('accepts a digit typed into an input', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/one-time-code-input-browser-test')
+            ->assertSee('Test OTP Code')
+            ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '7')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '7')
+            ->assertNoSmoke();
+    });
+});
+
+it('does not clobber earlier inputs when typing past the final input', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/one-time-code-input-browser-test')
+            ->assertSee('Test OTP Code')
+            ->type('.fi-one-time-code-input-ctn input:nth-child(1)', '1234567')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(5)', '5')
+            ->assertNoSmoke();
+    });
+});
+
+it('strips non-numeric characters from a pasted code', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/one-time-code-input-browser-test')
+            ->assertSee('Test OTP Code')
+            ->fill('.fi-one-time-code-input-ctn input:nth-child(1)', 'a1b2c3d4e5f6')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(1)', '1')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(2)', '2')
+            ->assertValue('.fi-one-time-code-input-ctn input:nth-child(6)', '6')
+            ->assertNoSmoke();
+    });
+});
+
 it('has no accessibility issues in light mode', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());

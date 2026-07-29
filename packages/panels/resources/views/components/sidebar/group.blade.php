@@ -11,6 +11,11 @@
 @php
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
     $hasDropdown = filled($label) && filled($icon) && $sidebarCollapsible;
+    // A slug alone is not unique: non-Latin labels slug to an empty string and distinct labels can
+    // share a slug, producing duplicate ids that break each disclosure button's `aria-controls`.
+    // A short hash of the raw label keeps the id unique per label and stable across renders.
+    $groupLabel = $subNavigation ? "sub_navigation_{$label}" : (string) $label;
+    $groupItemsId = 'fi-sidebar-group-items-' . \Illuminate\Support\Str::slug($groupLabel) . '-' . substr(md5($groupLabel), 0, 8);
 @endphp
 
 <li
@@ -52,6 +57,7 @@
                     :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
                     :icon-alias="\Filament\View\PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON"
                     :label="$label"
+                    :aria-controls="$groupItemsId"
                     x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
                     class="fi-sidebar-group-collapse-btn"
@@ -67,6 +73,7 @@
         >
             <x-slot name="trigger">
                 <button
+                    aria-label="{{ $label }}"
                     x-data="{ tooltip: false }"
                     x-effect="
                         tooltip = $store.sidebar.isOpen
@@ -141,6 +148,7 @@
                             :icon="$itemIcon"
                             tag="a"
                             :target="$shouldItemOpenUrlInNewTab ? '_blank' : null"
+                            :aria-current="$itemIsActive ? 'page' : null"
                             :attributes="\Filament\Support\prepare_inherited_attributes($itemExtraAttributes)"
                         >
                             {{ $item->getLabel() }}
@@ -153,6 +161,8 @@
 
     <ul
         @if (filled($label))
+            id="{{ $groupItemsId }}"
+
             @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen ? ! $store.sidebar.groupIsCollapsed(label) : ! @js($hasDropdown)"
             @else

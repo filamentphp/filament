@@ -85,6 +85,12 @@ trait CanGenerateModelForms
 
             $type = $this->parseColumnType($column);
 
+            if (! $this->canGenerateSchemaComponentForColumnType($type)) {
+                $this->recordSkippedColumn($model, $column);
+
+                continue;
+            }
+
             $componentData = [];
 
             $componentData['type'] = match (true) {

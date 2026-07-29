@@ -14,6 +14,10 @@ return [
 
             'label' => 'Skupiny',
 
+            'group' => [
+                'label' => 'Skupina',
+            ],
+
             'block' => [
                 'label' => 'Disjunkce (NEBO)',
                 'or' => 'NEBO',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(Žádná pravidla)',
+
+    'max_rules_reached_tooltip' => 'Dosáhli jste maxima :count pravidel.',
 
     'item_separators' => [
         'and' => 'A',

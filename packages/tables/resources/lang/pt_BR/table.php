@@ -12,6 +12,10 @@ return [
                 'label' => 'Aplicar colunas',
             ],
 
+            'reorder' => [
+                'label' => 'Reordenar coluna',
+            ],
+
             'reset' => [
                 'label' => 'Redefinir',
             ],
@@ -26,9 +30,20 @@ return [
             'label' => 'Ação|Ações',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Sim',
+                'false' => 'Não',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Carregando...',
+
+            'no_options_message' => 'Nenhuma opção disponível.',
 
             'no_search_results_message' => 'Nenhuma opção corresponde à sua busca.',
 
@@ -113,6 +128,10 @@ return [
             'label' => 'Reordenar registros',
         ],
 
+        'reorder_record' => [
+            'label' => 'Reordenar item :key',
+        ],
+
         'filter' => [
             'label' => 'Filtrar',
         ],
@@ -127,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Alternar colunas',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Expandir/recolher item :key',
         ],
 
     ],
@@ -217,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Carregando...',
+
     'reorder_indicator' => 'Arraste e solte os registros na ordem.',
+
+    'result_count' => '{0} Nenhum resultado|{1} :count resultado|[2,*] :count resultados',
 
     'selection_indicator' => [
 

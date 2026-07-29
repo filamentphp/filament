@@ -13,7 +13,7 @@
 
 <button
     x-data="{ state: {{ $state }} }"
-    x-bind:aria-checked="state?.toString()"
+    x-bind:aria-checked="state ? 'true' : 'false'"
     x-on:click="state = ! state"
     x-bind:class="
         state ? @js(Arr::toCssClasses([
@@ -30,6 +30,7 @@
     {{
         $attributes
             ->merge([
+                'aria-checked' => $state ? 'true' : 'false',
                 'role' => 'switch',
                 'type' => 'button',
             ], escape: false)

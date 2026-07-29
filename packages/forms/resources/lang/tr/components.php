@@ -106,6 +106,34 @@ return [
 
     ],
 
+    'color_picker' => [
+        'panel_label' => 'Renk seçici',
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Ay',
+        ],
+
+        'year_input' => [
+            'label' => 'Yıl',
+        ],
+
+        'hour_input' => [
+            'label' => 'Saat',
+        ],
+
+        'minute_input' => [
+            'label' => 'Dakika',
+        ],
+
+        'second_input' => [
+            'label' => 'Saniye',
+        ],
+
+    ],
+
     'checkbox_list' => [
 
         'actions' => [
@@ -124,7 +152,21 @@ return [
 
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'İndir',
+            ],
+
+            'open' => [
+                'label' => 'Yeni sekmede aç',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Görsel düzenleyici',
 
             'actions' => [
 
@@ -268,6 +310,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'İşlemler',
+            ],
+
+            'reorder' => [
+                'label' => 'Yeniden sırala',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -383,6 +437,18 @@ return [
 
             'expand_all' => [
                 'label' => 'Tümünü genişlet',
+            ],
+
+        ],
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'İşlemler',
+            ],
+
+            'reorder' => [
+                'label' => 'Yeniden sırala',
             ],
 
         ],
@@ -548,6 +614,35 @@ return [
 
                         'color' => [
                             'label' => 'Renk',
+
+                            'options' => [
+                                'slate' => 'Kayrak grisi',
+                                'gray' => 'Gri',
+                                'zinc' => 'Çinko',
+                                'neutral' => 'Nötr',
+                                'stone' => 'Taş',
+                                'mauve' => 'Eflatun',
+                                'olive' => 'Zeytin yeşili',
+                                'mist' => 'Sis',
+                                'taupe' => 'Bozkahve',
+                                'red' => 'Kırmızı',
+                                'orange' => 'Turuncu',
+                                'amber' => 'Kehribar',
+                                'yellow' => 'Sarı',
+                                'lime' => 'Misket limonu',
+                                'green' => 'Yeşil',
+                                'emerald' => 'Zümrüt',
+                                'teal' => 'Camgöbeği',
+                                'cyan' => 'Siyan',
+                                'sky' => 'Gök mavisi',
+                                'blue' => 'Mavi',
+                                'indigo' => 'İndigo',
+                                'violet' => 'Menekşe',
+                                'purple' => 'Mor',
+                                'fuchsia' => 'Fuşya',
+                                'pink' => 'Pembe',
+                                'rose' => 'Gül',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -575,6 +670,10 @@ return [
             'searching_message' => 'Aranıyor...',
         ],
 
+        'toolbar' => [
+            'label' => 'Editör araç çubuğu',
+        ],
+
         'tools' => [
             'align_center' => 'Ortaya hizala',
             'align_end' => 'Sona hizala',
@@ -592,6 +691,9 @@ return [
             'h1' => 'Başlık',
             'h2' => 'Başlık 2',
             'h3' => 'Alt başlık',
+            'h4' => 'Başlık 4',
+            'h5' => 'Başlık 5',
+            'h6' => 'Başlık 6',
             'grid' => 'Grid',
             'grid_delete' => 'Grid\'i sil',
             'highlight' => 'Vurgula',
@@ -601,6 +703,7 @@ return [
             'link' => 'Bağlantı',
             'merge_tags' => 'Birleşme etiketleri',
             'ordered_list' => 'Sıralı liste',
+            'paragraph' => 'Paragraf',
             'redo' => 'Yinele',
             'small' => 'Küçük metin',
             'strike' => 'Üstü çizili',
@@ -709,6 +812,10 @@ return [
         ],
 
         'placeholder' => 'Yeni etiket',
+
+        'tag_added' => 'Eklendi: :tag',
+
+        'tag_removed' => 'Kaldırıldı: :tag',
 
     ],
 

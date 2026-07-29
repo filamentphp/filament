@@ -24,6 +24,7 @@ export default function codeEditorFormComponent({
     isLive,
     isLiveDebounced,
     isLiveOnBlur,
+    label,
     liveDebounce,
     language,
     state,
@@ -49,6 +50,13 @@ export default function codeEditorFormComponent({
                     extensions: [
                         basicSetup,
                         keymap.of([indentWithTab]),
+                        ...(label
+                            ? [
+                                  EditorView.contentAttributes.of({
+                                      'aria-label': label,
+                                  }),
+                              ]
+                            : []),
                         ...(canWrap ? [EditorView.lineWrapping] : []),
                         EditorState.readOnly.of(isDisabled),
                         EditorView.editable.of(!isDisabled),

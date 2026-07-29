@@ -30,6 +30,10 @@ return [
                                 'title' => 'Wir haben Ihnen einen neuen Code per E-Mail gesendet',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Zu viele Sendeversuche. Bitte warten Sie, bevor Sie einen neuen Code anfordern.',
+                            ],
+
                         ],
 
                     ],
@@ -39,6 +43,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Der eingegebene Code ist ungültig.',
+
+                    'rate_limited' => 'Zu viele Versuche. Bitte versuchen Sie es später erneut.',
 
                 ],
 

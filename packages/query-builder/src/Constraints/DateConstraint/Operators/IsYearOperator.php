@@ -33,7 +33,7 @@ class IsYearOperator extends Operator
                 'filament-query-builder::query-builder.operators.date.is_year.summary.direct',
             [
                 'attribute' => $this->getConstraint()->getAttributeLabel(),
-                'year' => $this->getSettings()['year'],
+                'year' => $this->getYearSetting(),
             ],
         );
     }
@@ -53,6 +53,27 @@ class IsYearOperator extends Operator
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
-        return $query->whereYear($qualifiedColumn, $this->isInverse() ? '!=' : '=', $this->getSettings()['year']);
+        $year = $this->getYearSetting();
+
+        // Security: skip applying the constraint when the tampered setting is not a valid year.
+        if ($year === null) {
+            return $query;
+        }
+
+        return $query->whereYear($qualifiedColumn, $this->isInverse() ? '!=' : '=', $year);
+    }
+
+    protected function getYearSetting(): ?int
+    {
+        $year = $this->getSettings()['year'] ?? null;
+
+        // Security: settings arrive from the request payload and can be tampered with, so a
+        // non-numeric value (e.g. an array) must not reach `whereYear()` where it would throw.
+        // Fail closed by returning `null` instead.
+        if (! is_numeric($year)) {
+            return null;
+        }
+
+        return (int) $year;
     }
 }

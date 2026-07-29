@@ -73,21 +73,21 @@
             @apply block px-4 sm:table-cell sm:px-0;
 
             @variant sm {
-                &:first-of-type {
+                &:first-child {
                     @apply ps-3;
                 }
 
-                &:last-of-type {
+                &:last-child {
                     @apply pe-3;
                 }
             }
 
             &.fi-ta-summary-row-heading-cell {
-                @apply sm:px-3 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+                @apply sm:px-3 sm:first:ps-6 sm:last:pe-6;
             }
 
             &.fi-ta-summary-header-cell {
-                @apply sm:px-3 sm:first-of-type:ps-6;
+                @apply sm:px-3 sm:first:ps-6;
             }
 
             &.sm\:fi-hidden {

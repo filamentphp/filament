@@ -5,12 +5,15 @@ namespace Filament\Widgets;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\RawJs;
+use Filament\Widgets\ChartWidget\Concerns\HasEmptyState;
+use Filament\Widgets\Concerns\CanPoll;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Attributes\Locked;
 
 abstract class ChartWidget extends Widget implements HasSchemas
 {
-    use Concerns\CanPoll;
+    use CanPoll;
+    use HasEmptyState;
     use InteractsWithSchemas;
 
     /**
@@ -126,5 +129,10 @@ abstract class ChartWidget extends Widget implements HasSchemas
     public function isCollapsible(): bool
     {
         return $this->isCollapsible;
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->getCachedData());
     }
 }

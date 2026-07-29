@@ -123,7 +123,7 @@
     }
 
     & .fi-ta-header-cell-sort-btn {
-        @apply flex w-full cursor-pointer items-center justify-start gap-x-1;
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 flex w-full cursor-pointer appearance-none items-center justify-start gap-x-1 rounded-md border-0 bg-transparent p-0 text-start outline-none focus-visible:ring-2;
     }
 
     & .fi-icon {

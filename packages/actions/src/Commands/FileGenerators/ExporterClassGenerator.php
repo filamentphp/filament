@@ -8,6 +8,7 @@ use Filament\Actions\Exports\Models\Export;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Nette\PhpGenerator\ClassType;
@@ -44,7 +45,7 @@ class ExporterClassGenerator extends ClassGenerator
             $this->getExtends(),
             Export::class,
             ExportColumn::class,
-            Number::class,
+            version_compare(Application::VERSION, '13.19.0', '>=') ? Str::class : Number::class, /** @phpstan-ignore ternary.alwaysFalse, ternary.alwaysTrue */
             $this->getModelFqn(),
         ];
     }
@@ -188,15 +189,27 @@ class ExporterClassGenerator extends ClassGenerator
 
     protected function addGetCompletedNotificationBodyMethodToClass(ClassType $class): void
     {
+        if (version_compare(Application::VERSION, '13.19.0', '>=')) { /** @phpstan-ignore if.alwaysFalse, if.alwaysTrue */
+            $str = $this->simplifyFqn(Str::class);
+
+            $completedSegment = "{$str}::of('row')->counted(\$export->successful_rows)";
+            $failedSegment = "{$str}::of('row')->counted(\$failedRowsCount)";
+        } else {
+            $number = $this->simplifyFqn(Number::class);
+
+            $completedSegment = "{$number}::format(\$export->successful_rows) . ' ' . str('row')->plural(\$export->successful_rows)";
+            $failedSegment = "{$number}::format(\$failedRowsCount) . ' ' . str('row')->plural(\$failedRowsCount)";
+        }
+
         $method = $class->addMethod('getCompletedNotificationBody')
             ->setPublic()
             ->setStatic()
             ->setReturnType('string')
             ->setBody(<<<PHP
-                \$body = 'Your {$this->getModelLabel()} export has completed and ' . {$this->simplifyFqn(Number::class)}::format(\$export->successful_rows) . ' ' . str('row')->plural(\$export->successful_rows) . ' exported.';
+                \$body = 'Your {$this->getModelLabel()} export has completed and ' . {$completedSegment} . ' exported.';
 
                 if (\$failedRowsCount = \$export->getFailedRowsCount()) {
-                    \$body .= ' ' . {$this->simplifyFqn(Number::class)}::format(\$failedRowsCount) . ' ' . str('row')->plural(\$failedRowsCount) . ' failed to export.';
+                    \$body .= ' ' . {$failedSegment} . ' failed to export.';
                 }
 
                 return \$body;

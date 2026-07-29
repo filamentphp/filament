@@ -1,5 +1,5 @@
 @php
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 @endphp
 
 @props([
@@ -29,7 +29,7 @@
     >
         <x-filament::input
             :attributes="
-                (new ComponentAttributeBag)->merge([
+                (new FilamentComponentAttributeBag)->merge([
                     'autocomplete' => 'off',
                     'inlinePrefix' => true,
                     'maxlength' => 1000,

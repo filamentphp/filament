@@ -6,6 +6,7 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+use Illuminate\Support\ViewErrorBag;
 
 uses(TestCase::class);
 
@@ -43,6 +44,38 @@ it('can ignore the default name if another is specified', function (): void {
 
     expect($field->getName())
         ->toBe('identifier');
+});
+
+it('can use a custom view via `fieldWrapperView()`', function (): void {
+    $html = Schema::make(Livewire::make())
+        ->components([
+            TextInput::make('name')
+                ->fieldWrapperView('custom-field-wrapper'),
+        ])
+        ->toHtml();
+
+    expect($html)
+        ->toContain('custom-field-wrapper-view')
+        ->toContain('data-label="Name"')
+        ->toContain('<input');
+});
+
+it('can use a Blade component alias via `fieldWrapperView()`', function (): void {
+    // The `$errors` view error bag is usually shared by the `ShareErrorsFromSession` middleware.
+    view()->share('errors', new ViewErrorBag);
+
+    $html = Schema::make(Livewire::make())
+        ->components([
+            TextInput::make('name')
+                ->fieldWrapperView('test-plugin-wrapper'),
+        ])
+        ->toHtml();
+
+    expect($html)
+        ->toContain('field-wrapper-blade-component')
+        ->toContain('fi-fo-field')
+        ->toContain('Name')
+        ->toContain('<input');
 });
 
 class IdField extends TextInput

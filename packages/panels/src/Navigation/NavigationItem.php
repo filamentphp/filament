@@ -17,6 +17,8 @@ class NavigationItem extends Component
     use HasBadgeTooltip;
     use HasExtraAttributes;
 
+    protected string | Closure | null $key = null;
+
     protected string | UnitEnum | Closure | null $group = null;
 
     protected string | Closure | null $parentItem = null;
@@ -64,6 +66,13 @@ class NavigationItem extends Component
         $static->configure();
 
         return $static;
+    }
+
+    public function key(string | Closure | null $key): static
+    {
+        $this->key = $key;
+
+        return $this;
     }
 
     /**
@@ -160,6 +169,11 @@ class NavigationItem extends Component
         }
 
         return $this;
+    }
+
+    public function getKey(): string
+    {
+        return $this->evaluate($this->key) ?? $this->getLabel();
     }
 
     public function getBadge(): ?string

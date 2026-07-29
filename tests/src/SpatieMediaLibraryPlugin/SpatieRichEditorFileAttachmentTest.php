@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Tests\Fixtures\Livewire\RichEditorFileAttachmentForm;
 use Filament\Tests\Fixtures\Models\MediaPostWithRichContent;
 use Filament\Tests\TestCase;
@@ -219,5 +220,42 @@ describe('update', function (): void {
 
         expect($record->getMedia('content'))->toHaveCount(1);
         expect($record->getMedia('content')->first()->uuid)->not->toBe($oldMedia->uuid);
+    });
+
+    test('it rejects content referencing another record\'s media when `preventFileAttachmentPathTampering()` is enabled', function (): void {
+        RichEditor::configureUsing(fn (RichEditor $component): RichEditor => $component->preventFileAttachmentPathTampering());
+
+        $otherRecord = MediaPostWithRichContent::create(['title' => 'Other']);
+
+        $otherMedia = $otherRecord
+            ->addMediaFromString('other record image')
+            ->usingFileName('other.jpg')
+            ->toMediaCollection('content');
+
+        $otherRecord->update([
+            'content' => json_encode(makeTipTapDoc([
+                makeImage($otherMedia->uuid, $otherMedia->getUrl()),
+            ])),
+        ]);
+
+        $record = MediaPostWithRichContent::create([
+            'title' => 'Original',
+            'content' => json_encode(makeTipTapDoc([
+                makeParagraph('No images here'),
+            ])),
+        ]);
+
+        livewire(RichEditorFileAttachmentForm::class, ['recordId' => $record->id])
+            ->call('saveWithAttachments', [], [
+                'title' => 'Updated',
+                'content' => makeTipTapDoc([
+                    makeImage($otherMedia->uuid, $otherMedia->getUrl()),
+                ]),
+            ])
+            ->assertHasFormErrors(['content']);
+
+        // The other record keeps its media, and this record is not given any.
+        expect($otherRecord->fresh()->getMedia('content'))->toHaveCount(1);
+        expect($record->fresh()->getMedia('content'))->toHaveCount(0);
     });
 });

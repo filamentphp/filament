@@ -160,6 +160,16 @@ public function mount(Post $post): void
 
 It's important that you use the `$this->form->fill()` method instead of assigning the data directly to the `$this->data` property. This is because the post's data needs to be internally transformed into a useful format before being stored.
 
+<Aside variant="warning">
+    The data you pass to `fill()` is exposed to JavaScript as part of the Livewire request. If your model has a column containing binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column, it cannot be serialized to JSON and the page will fail to load, often with a blank screen and no error in the Laravel log.
+
+    To resolve this, add the column to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model, which excludes it from `attributesToArray()`:
+
+    ```php
+    protected $hidden = ['location'];
+    ```
+</Aside>
+
 ## Setting a form model
 
 Giving the `$form` access to a model is useful for a few reasons:

@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Il codice inserito non è valido.',
 
+                    'rate_limited' => 'Hai effettuato troppi tentativi. Riprova più tardi.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Il codice di recupero inserito non è valido.',
+
+                    'rate_limited' => 'Hai effettuato troppi tentativi. Riprova più tardi.',
 
                 ],
 

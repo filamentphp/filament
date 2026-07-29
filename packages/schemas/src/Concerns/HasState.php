@@ -175,11 +175,14 @@ trait HasState
                 $cache[$component->getStatePath()] = true;
             }
 
+            $childCaches = [];
+
             foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                $cache = [
-                    ...$cache,
-                    ...$childSchema->buildDehydratedComponentsCache(),
-                ];
+                $childCaches[] = $childSchema->buildDehydratedComponentsCache();
+            }
+
+            if ($childCaches !== []) {
+                $cache = array_merge($cache, ...$childCaches);
             }
         }
 
@@ -559,7 +562,8 @@ trait HasState
     public function getStatePath(bool $isAbsolute = true): ?string
     {
         if (! $isAbsolute) {
-            return $this->statePath;
+            // Security: Strip characters that could break out of a quoted HTML attribute or a JS string, so every downstream sink that embeds the state path raw is safe without per-sink escaping. Client-influenced repeater item keys flow in here, and legitimate state paths never contain these characters.
+            return ($this->statePath === null) ? null : preg_replace('/[<>"\'`\x00-\x1F\x7F]/', '', $this->statePath);
         }
 
         if (isset($this->cachedAbsoluteStatePath)) {
@@ -572,8 +576,8 @@ trait HasState
             $pathComponents[] = $parentComponentStatePath;
         }
 
-        if (filled($statePath = $this->statePath)) {
-            $pathComponents[] = $statePath;
+        if (filled($this->statePath)) {
+            $pathComponents[] = $this->getStatePath(isAbsolute: false);
         }
 
         return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);

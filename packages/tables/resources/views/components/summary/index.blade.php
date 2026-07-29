@@ -43,9 +43,12 @@
         @endif
 
         @if ($extraHeadingColumn)
-            <td class="fi-ta-cell fi-ta-summary-header-cell">
+            <th
+                scope="col"
+                class="fi-ta-cell fi-ta-summary-header-cell fi-align-start"
+            >
                 {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
-            </td>
+            </th>
         @endif
 
         @foreach ($columns as $column)
@@ -62,23 +65,34 @@
                     }
 
                     $hasColumnHeaderLabel = (! $placeholderColumns) || $columnHasSummary;
+
+                    // Only labelled cells become column headers; empty placeholder cells stay `<td>` so screen
+                    // readers do not announce blank column headers.
+                    $isFirstSummaryHeading = $loop->first && (! $extraHeadingColumn);
+                    $isLabelledHeaderCell = $isFirstSummaryHeading || $hasColumnHeaderLabel;
+                    $headerCellTag = $isLabelledHeaderCell ? 'th' : 'td';
+
+                    $alignmentClass = $isFirstSummaryHeading
+                        ? 'fi-align-start'
+                        : (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''));
                 @endphp
 
-                <td
+                <{{ $headerCellTag }}
+                    @if ($isLabelledHeaderCell) scope="col" @endif
                     {{
                         $column->getExtraHeaderAttributeBag()->class([
                             'fi-ta-cell fi-ta-summary-header-cell',
                             'fi-wrapped' => $column->canHeaderWrap(),
-                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
+                            $alignmentClass => $isFirstSummaryHeading || $hasColumnHeaderLabel,
                         ])
                     }}
                 >
-                    @if ($loop->first && (! $extraHeadingColumn))
+                    @if ($isFirstSummaryHeading)
                         {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
                     @elseif ($hasColumnHeaderLabel)
                         {{ $column->getLabel() }}
                     @endif
-                </td>
+                </{{ $headerCellTag }}>
             @endif
         @endforeach
 

@@ -14,8 +14,8 @@ use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 use LogicException;
 
@@ -238,15 +238,28 @@ class Entry extends Component
         return $schema;
     }
 
+    /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     */
     public function wrapEmbeddedHtml(string $html): string
     {
         $view = $this->getEntryWrapperAbsoluteView();
 
         if ($view !== 'filament-infolists::components.entry-wrapper') {
-            return view($this->getEntryWrapperAbsoluteView(), [
-                'entry' => $this,
-                'slot' => new ComponentSlot($html),
-            ])->toHtml();
+            if (view()->exists($view)) {
+                return view($view, [
+                    'entry' => $this,
+                    'slot' => new ComponentSlot($html),
+                ])->toHtml();
+            }
+
+            return $this->renderWrapperBladeComponent(
+                $this->getEntryWrapperView(),
+                new ComponentSlot($html),
+                new FilamentComponentAttributeBag([
+                    'entry' => $this,
+                ]),
+            );
         }
 
         $hasInlineLabel = $this->hasInlineLabel();
@@ -279,7 +292,7 @@ class Entry extends Component
                 'fi-in-entry-has-inline-label' => $hasInlineLabel,
             ]);
 
-        $contentAttributes = (new ComponentAttributeBag)
+        $contentAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'type' => ($wrapperTag === 'button') ? 'button' : null,
                 'wire:click' => $wireClickAction = $action?->getLivewireClickHandler(),
@@ -295,7 +308,7 @@ class Entry extends Component
 
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label) && $labelSrOnly) { ?>
-                <div class="fi-in-entry-label fi-hidden" role="term">
+                <div class="fi-in-entry-label fi-sr-only" role="term">
                     <?= e($label) ?>
                 </div>
             <?php } ?>

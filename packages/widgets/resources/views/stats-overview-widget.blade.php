@@ -10,7 +10,7 @@
 
 <x-filament-widgets::widget
     :attributes="
-        (new \Illuminate\View\ComponentAttributeBag)
+        (new \Filament\Support\View\ComponentAttributeBag)
             ->merge([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? true : null,
             ], escape: false)

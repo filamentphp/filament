@@ -7,6 +7,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithAssociateActionRelationManager;
+use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithDisabledAssociateAnotherRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithModifiedAssociateQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithMultipleModifiedAssociateQueryRelationManager;
 use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithPreloadedAssociateRelationManager;
@@ -475,4 +476,24 @@ it('returns `Select` component from `getRecordSelect()`', function (): void {
     $select = $action->getRecordSelect();
 
     expect($select)->toBeInstanceOf(Select::class);
+});
+
+it('shows the `associateAnother` footer action by default', function (): void {
+    $user = User::factory()->create();
+
+    $component = livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+        ->mountAction(TestAction::make(AssociateAction::class)->table());
+
+    expect($component->instance()->getMountedAction()->getExtraModalFooterActions())
+        ->toHaveKey('associateAnother');
+});
+
+it('hides the `associateAnother` footer action when `associateAnother()` resolves to `false` via a `Closure`', function (): void {
+    $user = User::factory()->create();
+
+    $component = livewire(PostsWithDisabledAssociateAnotherRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+        ->mountAction(TestAction::make(AssociateAction::class)->table());
+
+    expect($component->instance()->getMountedAction()->getExtraModalFooterActions())
+        ->not->toHaveKey('associateAnother');
 });

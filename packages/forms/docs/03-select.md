@@ -1103,6 +1103,26 @@ class ProductsTable
 }
 ```
 
+<Aside variant="danger">
+    Filtering the table's query using `modifyQueryUsing()` or `tableArguments()` is **presentational** — it only affects which records are displayed in the table for selection. It is **not** a security boundary: a user who tampers with the submitted form state can select a record that was excluded from the visible table, and it will still pass validation and be saved.
+
+    To restrict which records may actually be selected and saved, scope the field's relationship query instead, using the `modifyQueryUsing` argument of the [`relationship()` method](#customizing-the-relationship-query). Filament validates submitted values against that query, so records outside it are rejected:
+
+    ```php
+    use Filament\Forms\Components\ModalTableSelect;
+    use Illuminate\Database\Eloquent\Builder;
+
+    ModalTableSelect::make('products')
+        ->relationship(
+            name: 'products',
+            titleAttribute: 'name',
+            modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
+        )
+        ->multiple()
+        ->tableConfiguration(ProductsTable::class)
+    ```
+</Aside>
+
 ## Select validation
 
 As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to selects.

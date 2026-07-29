@@ -73,6 +73,17 @@ abstract class Exporter
     abstract public static function getColumns(): array;
 
     /**
+     * @return array<ExportColumn>
+     */
+    public static function getVisibleColumns(): array
+    {
+        return array_filter(
+            static::getColumns(),
+            fn (ExportColumn $column): bool => $column->isVisible(),
+        );
+    }
+
+    /**
      * @return array<Component | Action | ActionGroup>
      */
     public static function getOptionsFormComponents(): array
@@ -240,6 +251,11 @@ abstract class Exporter
     public function makeXlsxRow(array $values, ?Style $style = null): Row
     {
         return Row::fromValues($values, $style);
+    }
+
+    public function configureXlsxWriterAfterOpen(Writer $writer): Writer
+    {
+        return $writer;
     }
 
     public function configureXlsxWriterBeforeClose(Writer $writer): Writer

@@ -6,6 +6,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithToggleableRecordActions;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
@@ -491,5 +492,46 @@ describe('extra modal footer actions', function (): void {
             ->callMountedTableAction()
             ->assertHasNoTableActionErrors()
             ->assertDispatched('grouped-extra-actions-called', content: $content, recordKey: $post->getKey());
+    });
+});
+
+describe('record actions column visibility', function (): void {
+    it('renders the record actions column when a record has a visible record action', function (): void {
+        $posts = Post::factory()->count(3)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => true])
+            ->assertActionVisible(TestAction::make('test')->table($posts->first()))
+            ->assertSeeHtml('fi-ta-actions-header-cell');
+    });
+
+    it('does not render the record actions column when no record has a visible record action', function (): void {
+        $posts = Post::factory()->count(3)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => false])
+            ->assertActionHidden(TestAction::make('test')->table($posts->first()))
+            ->assertDontSeeHtml('fi-ta-actions-header-cell');
+    });
+
+    it('does not render the record actions column when every record in a large result set has no visible record action', function (): void {
+        // Guards the full-scan branch: the column visibility check must walk every
+        // record without accumulating their cloned actions in memory.
+        Post::factory()->count(100)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, ['hasVisibleRecordActions' => false])
+            ->assertDontSeeHtml('fi-ta-actions-header-cell');
+    });
+
+    it('renders the record actions column when only a later record has a visible record action', function (): void {
+        // Guards the prefix-scan branch: the check must walk past the leading records
+        // whose actions are hidden until it finds the one visible action.
+        $posts = Post::factory()->count(5)->create();
+
+        livewire(PostsTableWithToggleableRecordActions::class, [
+            'hasVisibleRecordActions' => true,
+            'visibleRecordActionForKey' => $posts->last()->getKey(),
+        ])
+            ->assertActionHidden(TestAction::make('test')->table($posts->first()))
+            ->assertActionVisible(TestAction::make('test')->table($posts->last()))
+            ->assertSeeHtml('fi-ta-actions-header-cell');
     });
 });

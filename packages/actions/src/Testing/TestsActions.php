@@ -50,8 +50,8 @@ class TestsActions
 
     public function unmountAction(): Closure
     {
-        return function (): static {
-            $this->call('unmountAction');
+        return function (bool | string | null $cancelParentActions = null): static {
+            $this->call('unmountAction', $cancelParentActions);
 
             return $this;
         };

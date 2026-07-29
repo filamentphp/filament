@@ -12,7 +12,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait HasTenancy
@@ -47,9 +46,9 @@ trait HasTenancy
     protected ?Closure $resolveTenantUsing = null;
 
     /**
-     * @var array<Action | Closure | MenuItem>
+     * @var array<int, array<int | string, Action | Closure | MenuItem>>
      */
-    protected array $tenantMenuItems = [];
+    protected array $tenantMenuItemGroups = [];
 
     protected bool $isTenantSubscriptionRequired = false;
 
@@ -61,16 +60,66 @@ trait HasTenancy
     }
 
     /**
-     * @param  array<Action | Closure | MenuItem>  $items
+     * @param  array<int | string, Action | Closure | MenuItem> | array<int, array<int | string, Action | Closure | MenuItem>>  $items
      */
     public function tenantMenuItems(array $items): static
     {
-        $this->tenantMenuItems = [
-            ...$this->tenantMenuItems,
+        if ($items === []) {
+            return $this;
+        }
+
+        $registrationGroups = $this->splitTenantMenuRegistrationGroups($items);
+
+        if ($registrationGroups !== null) {
+            foreach ($registrationGroups as $group) {
+                $this->tenantMenuItemGroups[] = $group;
+            }
+
+            return $this;
+        }
+
+        if ($this->tenantMenuItemGroups === []) {
+            $this->tenantMenuItemGroups[] = $items;
+
+            return $this;
+        }
+
+        $lastIndex = array_key_last($this->tenantMenuItemGroups);
+
+        $this->tenantMenuItemGroups[$lastIndex] = [
+            ...$this->tenantMenuItemGroups[$lastIndex],
             ...$items,
         ];
 
         return $this;
+    }
+
+    /**
+     * @param  array<mixed>  $items
+     * @return list<array<int | string, Action | Closure | MenuItem>> | null
+     */
+    protected function splitTenantMenuRegistrationGroups(array $items): ?array
+    {
+        if (! array_is_list($items) || $items === []) {
+            return null;
+        }
+
+        $groups = [];
+
+        foreach ($items as $entry) {
+            if (! is_array($entry)) {
+                return null;
+            }
+
+            $groups[] = $entry;
+        }
+
+        return $groups;
+    }
+
+    public function hasMultipleTenantMenuItemGroups(): bool
+    {
+        return count($this->tenantMenuItemGroups) > 1;
     }
 
     public function tenantSwitcher(bool | Closure $condition = true): static
@@ -369,48 +418,81 @@ trait HasTenancy
     }
 
     /**
+     * @return array<int, array<string, Action>>
+     */
+    public function getTenantMenuItemGroups(): array
+    {
+        $groups = array_values(array_map(
+            fn (array $group): array => collect($group)
+                ->mapWithKeys(function (Action | Closure | MenuItem $item, int | string $key): array {
+                    if ($item instanceof Action) {
+                        return [$item->getName() => $item];
+                    }
+
+                    if ($key === 'profile') {
+                        return ['profile' => $this->getTenantProfileMenuItem($item)];
+                    }
+
+                    if ($key === 'billing') {
+                        return ['billing' => $this->getTenantBillingMenuItem($item)];
+                    }
+
+                    if ($key === 'register') {
+                        return ['register' => $this->getTenantRegistrationMenuItem($item)];
+                    }
+
+                    $action = $this->evaluate($item);
+
+                    if ($action instanceof MenuItem) {
+                        $action = $action->toAction();
+                    }
+
+                    return [$action->getName() => $action];
+                })
+                ->all(),
+            $this->tenantMenuItemGroups,
+        ));
+
+        $isRegistered = fn (string $name): bool => collect($groups)
+            ->contains(fn (array $group): bool => array_key_exists($name, $group));
+
+        if (! $isRegistered('billing')) {
+            if ($groups === []) {
+                $groups[] = [];
+            }
+
+            $firstGroupKey = array_key_first($groups);
+            $groups[$firstGroupKey] = ['billing' => $this->getTenantBillingMenuItem()] + $groups[$firstGroupKey];
+        }
+
+        if (! $isRegistered('profile')) {
+            if ($groups === []) {
+                $groups[] = [];
+            }
+
+            $firstGroupKey = array_key_first($groups);
+            $groups[$firstGroupKey] = ['profile' => $this->getTenantProfileMenuItem()] + $groups[$firstGroupKey];
+        }
+
+        if (! $isRegistered('register')) {
+            if ($groups === []) {
+                $groups[] = [];
+            }
+
+            $lastGroupKey = array_key_last($groups);
+            $groups[$lastGroupKey] += ['register' => $this->getTenantRegistrationMenuItem()];
+        }
+
+        return $groups;
+    }
+
+    /**
      * @return array<Action>
      */
     public function getTenantMenuItems(): array
     {
-        return collect($this->tenantMenuItems)
-            ->mapWithKeys(function (Action | Closure | MenuItem $item, int | string $key): array {
-                if ($item instanceof Action) {
-                    return [$item->getName() => $item];
-                }
-
-                if ($key === 'profile') {
-                    return ['profile' => $this->getTenantProfileMenuItem($item)];
-                }
-
-                if ($key === 'billing') {
-                    return ['billing' => $this->getTenantBillingMenuItem($item)];
-                }
-
-                if ($key === 'register') {
-                    return ['register' => $this->getTenantRegistrationMenuItem($item)];
-                }
-
-                $action = $this->evaluate($item);
-
-                if ($action instanceof MenuItem) {
-                    $action = $action->toAction();
-                }
-
-                return [$action->getName() => $action];
-            })
-            ->when(
-                fn (Collection $items): bool => ! $items->has('profile'),
-                fn (Collection $items): Collection => $items->put('profile', $this->getTenantProfileMenuItem()),
-            )
-            ->when(
-                fn (Collection $items): bool => ! $items->has('billing'),
-                fn (Collection $items): Collection => $items->put('billing', $this->getTenantBillingMenuItem()),
-            )
-            ->when(
-                fn (Collection $items): bool => ! $items->has('register'),
-                fn (Collection $items): Collection => $items->put('register', $this->getTenantRegistrationMenuItem()),
-            )
+        return collect($this->getTenantMenuItemGroups())
+            ->collapse()
             ->filter(fn (Action $item): bool => $item->isVisible())
             ->sortBy(fn (Action $item): int => $item->getSort())
             ->all();

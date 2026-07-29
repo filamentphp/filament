@@ -284,7 +284,7 @@ Fieldset::make('Label')
 
 In addition to traditional breakpoints based on the size of the viewport, you can also use [container queries](https://tailwindcss.com/docs/responsive-design#container-queries) to create responsive layouts based on the size of a parent container. This is particularly useful when the size of the parent container is not directly tied to the size of the viewport. For example, when using a collapsible sidebar alongside the content, the content area dynamically adjusts its size depending on the collapse state of the sidebar.
 
-The foundation of a container query is the container itself. The container is the element whose width determines the layout. To designate an element as a container, use the `gridContainer()` method on it. For instance, if you want to define the number of grid columns in a [`Grid` component] based on its width:
+The foundation of a container query is the container itself. The container is the element whose width determines the layout. To designate an element as a container, use the `gridContainer()` method on it. For instance, if you want to define the number of grid columns in a [`Grid` component](#grid-component) based on its width:
 
 ```php
 use Filament\Schemas\Components\Grid;

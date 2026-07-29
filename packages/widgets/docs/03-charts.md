@@ -184,6 +184,10 @@ protected function getData(): array
 
 <AutoScreenshot name="widgets/chart/filter" alt="Chart with filter" version="4.x" />
 
+<Aside variant="danger">
+    The `$filter` property is user-controllable. Although the `<select>` element only offers the keys returned from `getFilters()`, a crafted request can set `$this->filter` to any string, so it is not limited to those keys. You must ensure the value is valid before using it in a query — for example, by checking it against the keys of `getFilters()`, or by using a `match` expression with a safe default. Never interpolate `$this->filter` directly into a raw query.
+</Aside>
+
 ### Custom filters
 
 You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
@@ -290,6 +294,113 @@ public function filtersResetAction(Action $action): Action
     return $action
         ->label('Clear Filters')
         ->color('danger');
+}
+```
+
+## Empty state
+
+When the `getData()` method returns an empty array, the chart widget renders an "empty state" instead of the chart.
+
+To customize when the empty state is rendered, override the `isEmpty()` method:
+
+```php
+public function isEmpty(): bool
+{
+    $data = $this->getCachedData();
+
+    return empty($data['datasets'][0]['data'] ?? []);
+}
+```
+
+### Setting the empty state heading
+
+To customize the heading of the empty state, set the `$emptyStateHeading` property:
+
+```php
+protected ?string $emptyStateHeading = 'No data available';
+```
+
+Alternatively, you can override the `getEmptyStateHeading()` method to return a dynamic heading:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+
+public function getEmptyStateHeading(): string | Htmlable
+{
+    return "No sales yet for {$this->filter}";
+}
+```
+
+### Setting the empty state description
+
+To customize the description of the empty state, set the `$emptyStateDescription` property:
+
+```php
+protected ?string $emptyStateDescription = 'Check back later once data has been collected.';
+```
+
+Alternatively, you can override the `getEmptyStateDescription()` method to return a dynamic description:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+
+public function getEmptyStateDescription(): string | Htmlable | null
+{
+    return 'Sales data will appear here once orders are placed.';
+}
+```
+
+### Setting the empty state icon
+
+To customize the [icon](../styling/icons) of the empty state, set the `$emptyStateIcon` property:
+
+```php
+use Filament\Support\Icons\Heroicon;
+
+protected string | BackedEnum | null $emptyStateIcon = Heroicon::OutlinedChartBar;
+```
+
+Alternatively, you can override the `getEmptyStateIcon()` method to return a dynamic icon:
+
+```php
+use BackedEnum;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
+
+public function getEmptyStateIcon(): string | BackedEnum | Htmlable
+{
+    return Heroicon::OutlinedShoppingCart;
+}
+```
+
+### Adding empty state actions
+
+You can add [actions](../actions/overview) to the empty state to prompt users to take action by overriding the `getEmptyStateActions()` method:
+
+```php
+use Filament\Actions\Action;
+
+public function getEmptyStateActions(): array
+{
+    return [
+        Action::make('refresh')
+            ->label('Refresh')
+            ->action('refresh'),
+    ];
+}
+```
+
+### Using a custom empty state view
+
+You may use a completely custom empty state view by overriding the `getEmptyState()` method:
+
+```php
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
+
+public function getEmptyState(): View | Htmlable | null
+{
+    return view('widgets.charts.custom-empty-state');
 }
 ```
 

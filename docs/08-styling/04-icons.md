@@ -287,3 +287,4 @@ Using class `Filament\Support\View\SupportIconAlias`
 Using class `Filament\Widgets\View\WidgetsIconAlias`
 
 - `WidgetsIconAlias::CHART_WIDGET_FILTER` - Button of the filter action
+- `WidgetsIconAlias::CHART_WIDGET_EMPTY_STATE` - Empty state icon for chart widgets

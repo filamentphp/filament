@@ -7,4 +7,6 @@ return [
         'only_one_must_be_selected' => 'יש לבחור שדה :attribute אחד בלבד.',
     ],
 
+    'tampered_file_path' => 'השדה :attribute מכיל נתיב קובץ שאינו מורשה.',
+
 ];

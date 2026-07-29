@@ -141,8 +141,8 @@ class NavigationGroup extends Component
         }
 
         if ($case instanceof Collapsible) {
-            $group->collapsible($case->isCollapsible());
             $group->collapsed($case->isCollapsed());
+            $group->collapsible($case->isCollapsible());
         }
 
         return $group;

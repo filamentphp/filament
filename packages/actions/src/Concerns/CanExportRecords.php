@@ -112,7 +112,7 @@ trait CanExportRecords
                     $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
                     $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
-                    $columns = $action->getExporter()::getColumns();
+                    $columns = $action->getExporter()::getVisibleColumns();
                     $hasMultipleToggleableColumns = count($columns) > 1;
 
                     return [
@@ -237,7 +237,7 @@ trait CanExportRecords
             $user = auth($authGuard)->user();
 
             if ($action->hasColumnMapping()) {
-                $columnMap = collect($exporter::getColumns())
+                $columnMap = collect($exporter::getVisibleColumns())
                     ->filter(fn (ExportColumn $column): bool => (bool) data_get($data['columnMap'], "{$column->getName()}.isEnabled", false))
                     ->mapWithKeys(fn (ExportColumn $column): array => [
                         $column->getName() => data_get($data['columnMap'], "{$column->getName()}.label", $column->getLabel()),
@@ -247,7 +247,7 @@ trait CanExportRecords
                 $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
                 $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
-                $columnMap = collect($exporter::getColumns())
+                $columnMap = collect($exporter::getVisibleColumns())
                     ->when(
                         $isEnablingVisibleTableColumnsByDefault,
                         fn ($columns): Collection => $columns->filter(

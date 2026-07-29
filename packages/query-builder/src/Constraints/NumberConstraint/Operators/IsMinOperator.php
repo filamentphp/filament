@@ -36,7 +36,7 @@ class IsMinOperator extends Operator
                 'filament-query-builder::query-builder.operators.number.is_min.summary.direct',
             [
                 'attribute' => $this->getAttributeLabel(),
-                'number' => Number::format($this->getSettings()['number']),
+                'number' => ($number = $this->getNumericSetting('number')) === null ? null : Number::format($number),
             ],
         );
     }
@@ -58,13 +58,17 @@ class IsMinOperator extends Operator
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
-        if (filled($this->getAggregate())) {
-            $operator = $this->isInverse() ? '<' : '>=';
-            $value = floatval($this->getSettings()['number']);
+        $number = $this->getNumericSetting('number');
 
-            return $this->applyAggregateComparison($query, $operator, $value);
+        // Security: skip applying the constraint when the tampered setting is not numeric.
+        if ($number === null) {
+            return $query;
         }
 
-        return $query->where($qualifiedColumn, $this->isInverse() ? '<' : '>=', floatval($this->getSettings()['number']));
+        if (filled($this->getAggregate())) {
+            return $this->applyAggregateComparison($query, $this->isInverse() ? '<' : '>=', $number);
+        }
+
+        return $query->where($qualifiedColumn, $this->isInverse() ? '<' : '>=', $number);
     }
 }

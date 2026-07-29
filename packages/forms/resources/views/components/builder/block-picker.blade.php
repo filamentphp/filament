@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 @endphp
 
 @props([
@@ -40,7 +40,7 @@
 
     <x-filament::dropdown.list>
         <div
-            {{ (new ComponentAttributeBag)->grid($columns, GridDirection::Column) }}
+            {{ (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column) }}
         >
             @foreach ($blocks as $block)
                 @php

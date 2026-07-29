@@ -1542,6 +1542,32 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('can create an option using `createOptionForm()` in the browser', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/select-test')
+                ->assertSee('Creatable Select')
+                ->assertDontSee('New status')
+                ->click('[data-testid="create-option-action-trigger"]')
+                ->assertVisible('[data-testid="create-option-action-modal"]')
+                ->assertPresent('[data-testid="create-option-name-input"]:focus')
+                ->click('Cancel')
+                // Focus should be restored after canceling the create option modal.
+                ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
+                ->click('[data-testid="create-option-action-trigger"]')
+                ->assertVisible('[data-testid="create-option-action-modal"]')
+                ->assertPresent('[data-testid="create-option-name-input"]:focus')
+                ->type('[data-testid="create-option-name-input"]', 'New status')
+                ->click('[data-testid="create-option-action-modal"] button[type="submit"]')
+                ->assertMissing('[data-testid="create-option-action-modal"]')
+                ->assertSee('New status')
+                // Focus should also be restored after submitting the create option modal.
+                ->assertPresent('[data-testid="create-option-action-trigger"]:focus')
+                ->assertNoSmoke();
+        });
+    });
+
     it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

@@ -7,7 +7,7 @@ use Filament\Tests\TestCase;
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class)->group('commands');
+uses(TestCase::class)->group('serial');
 
 beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
@@ -284,6 +284,25 @@ it('can generate the form, infolist, and table content embedded in a resource cl
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
+});
+
+it('does not add binary columns to generated resource schemas', function (): void {
+    $this->artisan('make:filament-resource', [
+        'model' => 'Post',
+        '--generate' => true,
+        '--view' => true,
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    // The `location` column is `binary`, which cannot be serialized to the browser, so it should be skipped.
+    expect(file_get_contents(app_path('Filament/Resources/Posts/Schemas/PostForm.php')))
+        ->not->toContain("'location'");
+    expect(file_get_contents(app_path('Filament/Resources/Posts/Schemas/PostInfolist.php')))
+        ->not->toContain("'location'");
+    expect(file_get_contents(app_path('Filament/Resources/Posts/Tables/PostsTable.php')))
+        ->not->toContain("'location'");
 });
 
 it('can generate a resource class with soft-deletes', function (): void {

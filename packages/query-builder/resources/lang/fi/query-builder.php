@@ -14,6 +14,10 @@ return [
 
             'label' => 'Ryhmät',
 
+            'group' => [
+                'label' => 'Ryhmä',
+            ],
+
             'block' => [
                 'label' => 'Disjunktio (OR)',
                 'or' => 'OR',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(Ei sääntöjä)',
+
+    'max_rules_reached_tooltip' => 'Olet saavuttanut enimmäismäärän :count sääntöä.',
 
     'item_separators' => [
         'and' => 'AND',

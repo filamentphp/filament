@@ -260,7 +260,7 @@ trait EntanglesStateWithSingularRelationship
     {
         $this->cachedExistingRecord = $record;
 
-        $this->clearCachedDefaultChildSchemas();
+        $this->clearCachedChildSchemas();
 
         return $this;
     }

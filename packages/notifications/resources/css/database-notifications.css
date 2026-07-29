@@ -17,7 +17,15 @@
         }
 
         & .fi-modal-content {
-            @apply -mx-6 -mt-6 gap-y-0 divide-y divide-gray-200 dark:divide-white/10;
+            @apply -mx-6 -mt-6 gap-y-0;
+
+            & .fi-no-notifications {
+                @apply -mb-px divide-y divide-gray-200 dark:divide-white/10;
+
+                & > :last-child {
+                    @apply border-b border-gray-200 dark:border-white/10;
+                }
+            }
         }
 
         &:not(.fi-modal-window-has-footer) .fi-modal-content {
@@ -25,7 +33,11 @@
         }
 
         &.fi-modal-window-has-footer .fi-modal-content {
-            @apply border-b border-gray-200 dark:border-white/10;
+            @apply border-b border-gray-200 pb-0 dark:border-white/10;
+        }
+
+        & .fi-modal-footer {
+            @apply pt-6;
         }
     }
 

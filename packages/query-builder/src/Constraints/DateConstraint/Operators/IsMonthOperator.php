@@ -33,7 +33,7 @@ class IsMonthOperator extends Operator
                 'filament-query-builder::query-builder.operators.date.is_month.summary.direct',
             [
                 'attribute' => $this->getConstraint()->getAttributeLabel(),
-                'month' => $this->getMonths()[$this->getSettings()['month']] ?? null,
+                'month' => $this->getMonths()[$this->getMonthSetting()] ?? null,
             ],
         );
     }
@@ -65,6 +65,34 @@ class IsMonthOperator extends Operator
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
-        return $query->whereMonth($qualifiedColumn, $this->isInverse() ? '!=' : '=', $this->getSettings()['month']);
+        $month = $this->getMonthSetting();
+
+        // Security: skip applying the constraint when the tampered setting is not a valid month.
+        if ($month === null) {
+            return $query;
+        }
+
+        return $query->whereMonth($qualifiedColumn, $this->isInverse() ? '!=' : '=', $month);
+    }
+
+    protected function getMonthSetting(): ?int
+    {
+        $month = $this->getSettings()['month'] ?? null;
+
+        // Security: settings arrive from the request payload and can be tampered with, so a
+        // non-scalar value (e.g. an array) must not reach `whereMonth()` or the `getMonths()`
+        // offset lookup where it would throw. Fail closed by returning `null` for any value
+        // that is not a real calendar month.
+        if (! is_scalar($month)) {
+            return null;
+        }
+
+        $month = (int) $month;
+
+        if (($month < 1) || ($month > 12)) {
+            return null;
+        }
+
+        return $month;
     }
 }

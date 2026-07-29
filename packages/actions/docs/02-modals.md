@@ -28,6 +28,10 @@ Action::make('delete')
     The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
 </Aside>
 
+<Aside variant="info">
+    Confirmation modals use the `alertdialog` ARIA role instead of `dialog`, so screen readers announce them as alerts and automatically read the modal's description when they open.
+</Aside>
+
 ## Controlling modal content
 
 ### Customizing the modal's heading, description, and submit action label
@@ -772,6 +776,31 @@ ModalComponent::closeButton(false);
 
 <AutoScreenshot name="actions/modal/no-close-button" alt="Modal without a close button" version="4.x" />
 
+## Making the modal click-through
+
+By default, a modal blocks interaction with the rest of the page while it is open. If you want the user to be able to keep interacting with the page behind the modal, you can make it "click-through" using the `modalClickThrough()` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('updateAuthor')
+    ->schema([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->modalClickThrough()
+```
+
+When a modal is click-through, its backdrop is removed, clicks outside the modal window pass through to the page beneath, and the page remains scrollable. The modal can still be closed using its close button or by pressing the escape key.
+
+<Aside variant="info">
+    A click-through modal cannot be closed by clicking away, as that would be incompatible with interacting with the page behind it. Enabling `modalClickThrough()` therefore disables closing by clicking away automatically.
+</Aside>
+
+<UtilityInjection set="actions" version="4.x">The `modalClickThrough()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Preventing the modal from autofocusing
 
 By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior, you can use the `modalAutofocus(false)` method:
@@ -828,6 +857,49 @@ Action::make('editItems')
 In this example, when the user clicks the delete button on a repeater item, the confirmation dialog appears on top of the slide-over instead of the slide-over closing first. This creates a smoother experience, especially for actions inside slide-overs or complex forms where closing and reopening the parent would be disorienting.
 
 <AutoScreenshot name="actions/modal/overlaying-child" alt="Child confirmation modal overlaying a parent slide-over" version="4.x" />
+
+## Canceling parent actions when a modal is closed
+
+The `cancelParentActions()` method above only cancels parent actions when the child action is run. If the user closes the child's modal instead — by pressing Escape, clicking the backdrop, or using the close button — by default only that modal is closed, leaving any parent actions still mounted. To also cancel parent actions when the modal is closed, allowing the user to abandon a multi-step flow entirely rather than closing one modal at a time, use the `cancelParentActionsOnClose()` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('createPost')
+    ->schema([
+        // ...
+    ])
+    ->extraModalFooterActions([
+        Action::make('saveAsDraft')
+            ->schema([
+                // ...
+            ])
+            ->cancelParentActionsOnClose()
+            ->action(function (): void {
+                // ...
+            }),
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+```
+
+Now, closing the `saveAsDraft` modal will also cancel the `createPost` action and close its modal.
+
+Like `cancelParentActions()`, you can pass the name of a parent action to cancel back to a specific parent, including its children, rather than all of them:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('editPostMetadata')
+    ->schema([
+        // ...
+    ])
+    ->cancelParentActionsOnClose('createPost')
+    ->action(function (): void {
+        // ...
+    })
+```
 
 ## Optimizing modal configuration methods
 

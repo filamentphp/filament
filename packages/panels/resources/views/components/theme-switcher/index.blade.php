@@ -7,6 +7,8 @@
 
         theme = localStorage.getItem('theme') || @js(filament()->getDefaultThemeMode()->value)
     "
+    role="group"
+    aria-label="{{ __('filament-panels::layout.actions.theme_switcher.label') }}"
     class="fi-theme-switcher"
 >
     <x-filament-panels::theme-switcher.button

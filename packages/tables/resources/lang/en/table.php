@@ -12,6 +12,10 @@ return [
                 'label' => 'Apply columns',
             ],
 
+            'reorder' => [
+                'label' => 'Reorder column',
+            ],
+
             'reset' => [
                 'label' => 'Reset',
             ],
@@ -24,6 +28,15 @@ return [
 
         'actions' => [
             'label' => 'Action|Actions',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Yes',
+                'false' => 'No',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +128,10 @@ return [
             'label' => 'Reorder records',
         ],
 
+        'reorder_record' => [
+            'label' => 'Reorder item :key',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -129,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Column manager',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Expand/collapse item :key',
         ],
 
     ],
@@ -219,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Loading...',
+
     'reorder_indicator' => 'Drag and drop the records into order.',
+
+    'result_count' => '{0} No results|{1} :count result|[2,*] :count results',
 
     'selection_indicator' => [
 

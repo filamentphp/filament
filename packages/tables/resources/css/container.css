@@ -9,10 +9,6 @@
         @apply animate-pulse;
     }
 
-    & .fi-ta-header-ctn {
-        @apply -mt-px;
-    }
-
     & .fi-ta-header {
         @apply flex flex-col gap-3 border-b border-gray-200 p-4 sm:px-6 dark:border-white/10;
 
@@ -32,6 +28,29 @@
             }
         }
 
+        & .fi-ta-actions {
+            /* The negative margins let the buttons overhang the header's vertical padding, so a header with actions matches the height of one without them. They are applied to the container instead of the buttons so wrapped rows of actions keep their gap, laddered so the largest button size present wins, and scoped to `sm` since the header stacks vertically below it. */
+            &:has(.fi-btn.fi-size-xs:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-0.5;
+            }
+
+            &:has(.fi-btn.fi-size-sm:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-1;
+            }
+
+            &:has(.fi-btn.fi-size-md:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-1.5;
+            }
+
+            &:has(.fi-btn.fi-size-lg:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-2;
+            }
+
+            &:has(.fi-btn.fi-size-xl:not(.fi-dropdown-panel *)) {
+                @apply sm:-my-2.5;
+            }
+        }
+
         & .fi-ta-header-heading {
             @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
         }
@@ -45,7 +64,7 @@
         @apply flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 px-4 py-3 sm:px-6 dark:border-white/10;
 
         & > * {
-            @apply flex items-center gap-x-4;
+            @apply flex min-h-9 items-center gap-x-4;
         }
 
         & > :nth-child(1) {

@@ -60,6 +60,8 @@ class PostResource extends Resource
                     ->columnSpanFull(),
                 Select::make('string_backed_enum')
                     ->options(StringBackedEnum::class),
+                TextInput::make('sort')
+                    ->numeric(),
                 DateTimePicker::make('published_at'),
             ]);
     }
@@ -96,6 +98,9 @@ class PostResource extends Resource
                 TextEntry::make('string_backed_enum')
                     ->badge()
                     ->placeholder('-'),
+                TextEntry::make('sort')
+                    ->numeric()
+                    ->placeholder('-'),
                 TextEntry::make('published_at')
                     ->dateTime()
                     ->placeholder('-'),
@@ -129,6 +134,9 @@ class PostResource extends Resource
                 TextColumn::make('string_backed_enum')
                     ->badge()
                     ->searchable(),
+                TextColumn::make('sort')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),

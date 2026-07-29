@@ -36,6 +36,11 @@ trait HasKey
             ? ($this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false))
             : $this->getStatePath(isAbsolute: false);
 
+        // Security: Strip characters that could break out of a quoted HTML attribute or a JS string, so every downstream sink that embeds this key raw (including `getLivewireKey()` and `getId()`) is safe without per-sink escaping. Legitimate keys never contain these characters.
+        if ($key !== null) {
+            $key = preg_replace('/[<>"\'`\x00-\x1F\x7F]/', '', $key);
+        }
+
         if (! $isAbsolute) {
             return $key;
         }

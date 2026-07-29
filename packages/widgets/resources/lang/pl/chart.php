@@ -10,6 +10,10 @@ return [
 
     ],
 
+    'filter' => [
+        'label' => 'Filtruj dane wykresu',
+    ],
+
     'filters' => [
 
         'actions' => [
@@ -24,6 +28,10 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => 'Brak danych do wyświetlenia',
     ],
 
 ];

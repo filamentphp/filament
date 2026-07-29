@@ -225,7 +225,7 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => 'Обрати все :count',
+                'label' => 'Обрати всі :count',
             ],
 
             'deselect_all' => [

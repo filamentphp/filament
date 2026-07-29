@@ -47,6 +47,11 @@ abstract class Page extends BasePage
     protected static bool $isDiscovered = false;
 
     /**
+     * @var array<class-string, string>
+     */
+    protected static array $cachedResourcePageNames = [];
+
+    /**
      * @param  array<string, mixed>  $parameters
      */
     public function getResourceUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = true): string
@@ -74,6 +79,7 @@ abstract class Page extends BasePage
     {
         return [
             NavigationItem::make(static::getNavigationLabel())
+                ->key(static::class)
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
@@ -110,6 +116,11 @@ abstract class Page extends BasePage
     }
 
     public static function getResourcePageName(): string
+    {
+        return static::$cachedResourcePageNames[static::class] ??= static::resolveResourcePageName();
+    }
+
+    protected static function resolveResourcePageName(): string
     {
         foreach (static::getResource()::getPages() as $pageName => $pageRegistration) {
             if ($pageRegistration->getPage() !== static::class) {

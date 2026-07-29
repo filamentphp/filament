@@ -39,7 +39,7 @@ class PostResource extends Resource
     {
         return $form
             ->components([
-                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\TextInput::make('title')->autofocus()->required(),
                 Forms\Components\MarkdownEditor::make('content'),
                 Forms\Components\Select::make('author_id')
                     ->relationship('author', 'name')

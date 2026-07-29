@@ -28,6 +28,7 @@ trait HasQuery
     public function query(Builder | Closure | null $query): static
     {
         $this->query = $query;
+        $this->hasCachedModel = false;
 
         return $this;
     }
@@ -42,6 +43,8 @@ trait HasQuery
     public function relationship(?Closure $relationship): static
     {
         $this->getRelationshipUsing = $relationship;
+        $this->hasCachedModel = false;
+        $this->cachedHasPivotRecordKeys = null;
 
         return $this;
     }

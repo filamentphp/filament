@@ -26,6 +26,7 @@ use App\Livewire\Panels\Navigation\SidebarFullyCollapsibleOnDesktop;
 use App\Livewire\Panels\Navigation\SortItems;
 use App\Livewire\Panels\Navigation\TopNavigation;
 use App\Livewire\Panels\Navigation\UserMenuCustomization;
+use App\Livewire\Panels\Navigation\UserMenuGrouping;
 use App\Livewire\Panels\Navigation\UserMenuSidebar;
 use App\Livewire\PrimesDemo;
 use App\Livewire\Schemas\LayoutDemo;
@@ -66,6 +67,7 @@ Route::get('/notifications', NotificationsDemo::class);
 Route::prefix('panels')->middleware(['panel:nav'])->group(function (): void {
     Route::prefix('navigation')->group(function (): void {
         Route::get('user-menu-customization', UserMenuCustomization::class);
+        Route::get('user-menu-grouping', UserMenuGrouping::class);
         Route::get('disabled-navigation', DisabledNavigation::class);
         Route::get('active-icon', ActiveIcon::class);
         Route::get('change-icon', ChangeIcon::class);

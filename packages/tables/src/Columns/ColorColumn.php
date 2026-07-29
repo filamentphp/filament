@@ -6,11 +6,12 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Support\Str;
 
 class ColorColumn extends Column implements HasEmbeddedView
 {
@@ -84,10 +85,18 @@ class ColorColumn extends Column implements HasEmbeddedView
                 $copyMessageDurationJs = $isCopyable
                     ? Js::from($this->getCopyMessageDuration($stateItem))
                     : null;
+
+                $sanitizedColor = Str::sanitizeCssColor($stateItem);
                 ?>
 
-                <div <?= (new ComponentAttributeBag)
+                <div <?= (new FilamentComponentAttributeBag)
                     ->merge([
+                        // The swatch conveys its value purely through `background-color`, so expose the color as a
+                        // named `role="img"` for screen readers. Only the sanitized colour is used, so an invalid
+                        // value is never announced. The copyable swatch is an interactive control that needs
+                        // separate treatment (an accessible name and keyboard operability), so it is not named here.
+                        'aria-label' => ($isCopyable || blank($sanitizedColor)) ? null : e($sanitizedColor),
+                        'role' => ($isCopyable || blank($sanitizedColor)) ? null : 'img',
                         'x-on:click.prevent.stop' => $isCopyable
                             ? <<<JS
                             window.navigator.clipboard.writeText({$copyableStateJs})
@@ -110,7 +119,7 @@ class ColorColumn extends Column implements HasEmbeddedView
                         'fi-copyable' => $isCopyable,
                     ])
                     ->style([
-                        'background-color: ' . e($stateItem) => $stateItem,
+                        'background-color: ' . e($sanitizedColor) => filled($sanitizedColor),
                     ])
                     ->toHtml() ?>></div>
             <?php } ?>

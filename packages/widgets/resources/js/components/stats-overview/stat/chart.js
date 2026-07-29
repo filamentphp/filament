@@ -1,14 +1,33 @@
-import Chart from 'chart.js/auto'
+import {
+    CategoryScale,
+    Chart,
+    Filler,
+    LineController,
+    LineElement,
+    LinearScale,
+    PointElement,
+} from 'chart.js'
 
-export default function statsOverviewStatChart({
-    dataChecksum,
-    labels,
-    values,
-}) {
+Chart.register(
+    CategoryScale,
+    Filler,
+    LineController,
+    LineElement,
+    LinearScale,
+    PointElement,
+)
+
+export default function statsOverviewStatChart({ key, labels, values }) {
     return {
-        dataChecksum,
+        key,
 
         init() {
+            this.$wire.$on('updateStatsOverviewChartData', (event) => {
+                if (event.key === this.key) {
+                    this.updateChartData(event.data)
+                }
+            })
+
             Alpine.effect(() => {
                 Alpine.store('theme')
 
@@ -45,9 +64,8 @@ export default function statsOverviewStatChart({
                 return
             }
 
-            // Alpine re-initializes this component when `dataChecksum` changes (on data
-            // updates from Livewire polling). The canvas is reused, so any prior Chart.js
-            // instance must be torn down before constructing a new one.
+            // Defensively tear down any pre-existing chart bound to this canvas before
+            // constructing a new one (the canvas is reused if the component re-initializes).
             this.getChart()?.destroy()
 
             const { backgroundColor, borderColor } = this.getChartColors()
@@ -95,6 +113,18 @@ export default function statsOverviewStatChart({
                     },
                 },
             })
+        },
+
+        updateChartData(newValues) {
+            const chart = this.getChart()
+
+            if (!chart) {
+                return
+            }
+
+            chart.data.labels = newValues.map((value, index) => index)
+            chart.data.datasets[0].data = newValues
+            chart.update('none')
         },
 
         updateChartTheme() {

@@ -32,7 +32,7 @@ return [
 
     'multiple' => [
 
-        'label' => 'حذف المحدد نهائيا',
+        'label' => 'حذف المحدد نهائياً',
 
         'modal' => [
 
@@ -55,15 +55,15 @@ return [
             ],
 
             'deleted_partial' => [
-                'title' => 'تم حذف :count من أصل :total',
-                'missing_authorization_failure_message' => 'ليس لديك صلاحية لحذف :count.',
-                'missing_processing_failure_message' => 'تعذر حذف :count.',
+                'title' => '{1} تم حذف سجل واحد نهائياً من أصل :total|{2} تم حذف سجلين نهائياً من أصل :total|[3,10] تم حذف :count سجلات نهائياً من أصل :total|[11,*] تم حذف :count سجل نهائياً من أصل :total',
+                'missing_authorization_failure_message' => '{1} ليس لديك صلاحية لحذف سجل واحد نهائياً.|{2} ليس لديك صلاحية لحذف سجلين نهائياً.|[3,10] ليس لديك صلاحية لحذف :count سجلات نهائياً.|[11,*] ليس لديك صلاحية لحذف :count سجل نهائياً.',
+                'missing_processing_failure_message' => '{1} تعذر حذف سجل واحد نهائياً.|{2} تعذر حذف سجلين نهائياً.|[3,10] تعذر حذف :count سجلات نهائياً.|[11,*] تعذر حذف :count سجل نهائياً.',
             ],
 
             'deleted_none' => [
-                'title' => 'فشل في الحذف',
-                'missing_authorization_failure_message' => 'ليس لديك صلاحية لحذف :count.',
-                'missing_processing_failure_message' => 'تعذر حذف :count.',
+                'title' => 'فشل في الحذف نهائياً',
+                'missing_authorization_failure_message' => '{1} ليس لديك صلاحية لحذف سجل واحد نهائياً.|{2} ليس لديك صلاحية لحذف سجلين نهائياً.|[3,10] ليس لديك صلاحية لحذف :count سجلات نهائياً.|[11,*] ليس لديك صلاحية لحذف :count سجل نهائياً.',
+                'missing_processing_failure_message' => '{1} تعذر حذف سجل واحد نهائياً.|{2} تعذر حذف سجلين نهائياً.|[3,10] تعذر حذف :count سجلات نهائياً.|[11,*] تعذر حذف :count سجل نهائياً.',
             ],
 
         ],

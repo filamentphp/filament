@@ -14,7 +14,6 @@
 
 <nav
     aria-label="{{ __('filament::components/pagination.label') }}"
-    role="navigation"
     {{
         $attributes->class([
             'fi-pagination',

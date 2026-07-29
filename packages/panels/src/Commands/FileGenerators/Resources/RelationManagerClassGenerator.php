@@ -10,6 +10,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,7 +24,7 @@ use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Property;
 
-class RelationManagerClassGenerator extends ClassGenerator
+class RelationManagerClassGenerator extends ClassGenerator implements HasSkippedColumns
 {
     use CanGenerateResourceForms;
     use CanGenerateResourceInfolists;

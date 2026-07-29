@@ -15,11 +15,21 @@ trait HasColors
     protected array | Arrayable | Closure | null $colors = null;
 
     /**
+     * @var array<string | array<int | string, string | int> | null> | null
+     */
+    protected ?array $cachedColors = null;
+
+    protected bool $hasCachedColors = false;
+
+    /**
      * @param  array<string | array<int | string, string | int> | null> | Arrayable | Closure | null  $colors
      */
     public function colors(array | Arrayable | Closure | null $colors): static
     {
         $this->colors = $colors;
+
+        $this->cachedColors = null;
+        $this->hasCachedColors = false;
 
         return $this;
     }
@@ -37,6 +47,10 @@ trait HasColors
      */
     public function getColors(): array
     {
+        if ($this->hasCachedColors) {
+            return $this->cachedColors;
+        }
+
         $colors = $this->evaluate($this->colors);
 
         if ($colors instanceof Arrayable) {
@@ -48,13 +62,15 @@ trait HasColors
             filled($enum = $this->getEnum()) &&
             is_a($enum, ColorInterface::class, allow_string: true)
         ) {
-            return array_reduce($enum::cases(), function (array $carry, ColorInterface & UnitEnum $case): array {
+            $colors = array_reduce($enum::cases(), function (array $carry, ColorInterface & UnitEnum $case): array {
                 $carry[$case->value ?? $case->name] = $case->getColor();
 
                 return $carry;
             }, []);
         }
 
-        return $colors ?? [];
+        $this->hasCachedColors = true;
+
+        return $this->cachedColors = $colors ?? [];
     }
 }

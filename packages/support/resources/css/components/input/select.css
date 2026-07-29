@@ -104,6 +104,10 @@ select.fi-select-input {
         @apply px-3 py-2 text-sm text-gray-500 dark:text-gray-400;
     }
 
+    & .fi-select-input-max-items-message {
+        @apply text-danger-600 dark:text-danger-400 px-3 py-2 text-sm;
+    }
+
     & .fi-select-input-ctn.fi-select-input-ctn-option-labels-not-wrapped {
         & .fi-select-input-value-ctn > span {
             @apply truncate text-nowrap break-normal;

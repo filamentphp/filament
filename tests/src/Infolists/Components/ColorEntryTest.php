@@ -23,6 +23,18 @@ it('can render with hex color', function (): void {
         ->assertSuccessful();
 });
 
+it('does not inject CSS from a malicious color value', function (): void {
+    livewire(TestComponentWithMaliciousColorEntry::class)
+        ->assertSuccessful()
+        ->assertDontSee('position:fixed', escape: false);
+});
+
+it('renders a legitimate hex color into the `background-color` style', function (): void {
+    livewire(TestComponentWithColorEntry::class)
+        ->assertSuccessful()
+        ->assertSee('background-color: #ff0000', escape: false);
+});
+
 it('can set `copyable()`', function (): void {
     $entry = ColorEntry::make('color');
     expect($entry->isCopyable(null))->toBeFalse();
@@ -203,6 +215,31 @@ class TestComponentWithHexColorEntry extends Component implements HasSchemas
             ])
             ->components([
                 ColorEntry::make('primary_color'),
+            ]);
+    }
+
+    public function render(): string
+    {
+        return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
+    }
+}
+
+class TestComponentWithMaliciousColorEntry extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([
+                'color' => 'red;position:fixed;inset:0;background-image:url(//attacker)',
+            ])
+            ->components([
+                ColorEntry::make('color'),
             ]);
     }
 

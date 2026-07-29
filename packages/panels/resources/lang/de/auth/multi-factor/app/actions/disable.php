@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Der eingegebene Code ist ungültig.',
 
+                    'rate_limited' => 'Zu viele Versuche. Bitte versuchen Sie es später erneut.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Der eingegebene Wiederherstellungscode ist ungültig.',
+
+                    'rate_limited' => 'Zu viele Versuche. Bitte versuchen Sie es später erneut.',
 
                 ],
 

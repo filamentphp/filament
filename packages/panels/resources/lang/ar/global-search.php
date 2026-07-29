@@ -7,6 +7,6 @@ return [
         'placeholder' => 'بحث',
     ],
 
-    'no_results_message' => 'لم يتم العثور على نتائج عن البحث.',
+    'no_results_message' => 'لم يتم العثور على نتائج للبحث.',
 
 ];

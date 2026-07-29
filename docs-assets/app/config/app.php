@@ -5,6 +5,7 @@ use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\Filament\NavDemoPanelProvider;
 use App\Providers\Filament\TenancyDemoPanelProvider;
+use App\Providers\Filament\TenantMenuGroupingDemoPanelProvider;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
@@ -224,6 +225,7 @@ return [
         AdminPanelProvider::class,
         NavDemoPanelProvider::class,
         TenancyDemoPanelProvider::class,
+        TenantMenuGroupingDemoPanelProvider::class,
         RouteServiceProvider::class,
 
     ],

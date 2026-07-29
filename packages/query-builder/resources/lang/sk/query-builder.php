@@ -14,6 +14,10 @@ return [
 
             'label' => 'Skupiny',
 
+            'group' => [
+                'label' => 'Skupina',
+            ],
+
             'block' => [
                 'label' => 'Disjunkcia (ALEBO)',
                 'or' => 'ALEBO',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(Žiadne pravidlá)',
+
+    'max_rules_reached_tooltip' => 'Dosiahli ste maximum :count pravidiel.',
 
     'item_separators' => [
         'and' => 'A',

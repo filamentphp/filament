@@ -4,7 +4,9 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
+use Stringable;
 
 class KeyValueEntry extends Entry implements HasEmbeddedView
 {
@@ -84,12 +86,12 @@ class KeyValueEntry extends Entry implements HasEmbeddedView
             <tbody>
                 <?php foreach (($state ?? []) as $key => $value) { ?>
                     <tr>
-                        <td>
+                        <th scope="row">
                             <?= e($key) ?>
-                        </td>
+                        </th>
 
                         <td>
-                            <?= e($value) ?>
+                            <?= e($value === null || is_scalar($value) || ($value instanceof Stringable) || ($value instanceof Htmlable) ? $value : json_encode($value)) ?>
                         </td>
                     </tr>
                 <?php } ?>

@@ -14,8 +14,9 @@
         }
     }
 
+    /* Pinning the badge's baseline to the label keeps it aligned with surrounding text, even when the loading indicator is the first flex item. */
     & .fi-badge-label-ctn {
-        @apply grid;
+        @apply grid self-baseline;
     }
 
     & .fi-badge-label {

@@ -41,6 +41,8 @@ trait InteractsWithRecord
     {
         $this->record = $record;
 
+        $this->clearVisibilityCache();
+
         return $this;
     }
 

@@ -252,6 +252,12 @@ trait HasBulkActions
                 ]) :
                 ($this->isTrackingDeselectedTableRecords ? $this->getTableRecords()->except($this->deselectedTableRecords) : $this->getTableRecords()->only($this->selectedTableRecords));
 
+            if ($table->checksIfRecordIsSelectable()) {
+                $resolvedSelectedRecords = $resolvedSelectedRecords->filter(
+                    fn (Model | array $record): bool => $table->isRecordSelectable($record)
+                );
+            }
+
             $maxSelectableRecords = $table->getMaxSelectableRecords();
 
             if ($maxSelectableRecords && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
@@ -270,15 +276,21 @@ trait HasBulkActions
         if ($chunkSize && $table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
             $invadedRelationship = invade($table->getRelationship());
 
-            return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize)
+            $resolvedSelectedRecords = $query->lazyById($chunkSize)
                 ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
+        } elseif ($chunkSize) {
+            $resolvedSelectedRecords = $query->lazyById($chunkSize);
+        } else {
+            $resolvedSelectedRecords = $this->hydratePivotRelationForTableRecords($query->get());
         }
 
-        if ($chunkSize) {
-            return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize);
+        if ($table->checksIfRecordIsSelectable()) {
+            $resolvedSelectedRecords = $resolvedSelectedRecords->filter(
+                fn (Model | array $record): bool => $table->isRecordSelectable($record)
+            );
         }
 
-        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords($query->get());
+        return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
     }
 
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
@@ -310,6 +322,10 @@ trait HasBulkActions
 
             if ($table->shouldDeselectAllRecordsWhenFiltered()) {
                 $this->filterTableQuery($query);
+            }
+
+            if (! $shouldFetchSelectedRecords) {
+                $this->constrainQueryToSelectableTableRecords($query);
             }
 
             return $query;
@@ -346,7 +362,30 @@ trait HasBulkActions
             $this->applySortingToTableQuery($query);
         }
 
+        if (! $shouldFetchSelectedRecords) {
+            $this->constrainQueryToSelectableTableRecords($query);
+        }
+
         return $query;
+    }
+
+    protected function constrainQueryToSelectableTableRecords(Builder $query): void
+    {
+        $table = $this->getTable();
+
+        if (! $table->checksIfRecordIsSelectable()) {
+            return;
+        }
+
+        $selectableKeys = [];
+
+        (clone $query)->lazyById()->each(function (Model $record) use (&$selectableKeys, $table): void {
+            if ($table->isRecordSelectable($record)) {
+                $selectableKeys[] = $record->getKey();
+            }
+        });
+
+        $query->whereKey($selectableKeys);
     }
 
     /**

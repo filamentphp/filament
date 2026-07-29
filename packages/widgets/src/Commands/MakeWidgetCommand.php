@@ -227,6 +227,7 @@ class MakeWidgetCommand extends Command
                 StatsOverviewWidget::class => 'Stats overview',
                 TableWidget::class => 'Table',
             ],
+            default: $this->input->isInteractive() ? null : Widget::class,
         );
     }
 

@@ -39,4 +39,14 @@ trait CanSubmitForm
     {
         return $this->formId;
     }
+
+    public function hasCanSubmitForm(): bool
+    {
+        return $this->canSubmitForm;
+    }
+
+    public function hasFormId(): bool
+    {
+        return $this->formId !== null;
+    }
 }

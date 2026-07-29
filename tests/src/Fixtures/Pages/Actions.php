@@ -22,6 +22,11 @@ class Actions extends Page
                 ->action(function (): void {
                     $this->dispatch('simple-called');
                 }),
+            Action::make('cancelWithDatabaseTransaction')
+                ->databaseTransaction()
+                ->action(function (Action $action): void {
+                    $action->cancel();
+                }),
             Action::make('data')
                 ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                 ->schema([
@@ -116,6 +121,33 @@ class Actions extends Page
                         ])
                         ->action(fn () => null),
                 ]),
+            Action::make('grandparentWithModalCloseCancellation')
+                ->schema([
+                    TextInput::make('grandparentValue')
+                        ->required()
+                        ->registerActions([
+                            Action::make('parentWithModalCloseCancellation')
+                                ->schema([
+                                    TextInput::make('parentValue')
+                                        ->required()
+                                        ->registerActions([
+                                            Action::make('modalClosePreservesParentActions')
+                                                ->requiresConfirmation()
+                                                ->action(fn () => null),
+                                            Action::make('modalCloseCancelsAllParentActions')
+                                                ->requiresConfirmation()
+                                                ->cancelParentActionsOnClose()
+                                                ->action(fn () => null),
+                                            Action::make('modalCloseCancelsToNamedParentAction')
+                                                ->requiresConfirmation()
+                                                ->cancelParentActionsOnClose('parentWithModalCloseCancellation')
+                                                ->action(fn () => null),
+                                        ]),
+                                ])
+                                ->action(fn () => null),
+                        ]),
+                ])
+                ->action(fn () => null),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action): void {
@@ -222,6 +254,31 @@ class Actions extends Page
                         ])
                 )
                 ->record(fn (array $arguments) => Post::findOrFail($arguments['post_id'])),
+            Action::make('enforcementHidden')
+                ->hidden()
+                ->action(function (): void {
+                    $this->dispatch('enforcement-hidden-called');
+                }),
+            Action::make('enforcementInvisible')
+                ->visible(false)
+                ->action(function (): void {
+                    $this->dispatch('enforcement-invisible-called');
+                }),
+            Action::make('enforcementDisabled')
+                ->disabled()
+                ->action(function (): void {
+                    $this->dispatch('enforcement-disabled-called');
+                }),
+            Action::make('enforcementUnauthorized')
+                ->authorize(false)
+                ->action(function (): void {
+                    $this->dispatch('enforcement-unauthorized-called');
+                }),
+            Action::make('enforcementAuthorized')
+                ->authorize(true)
+                ->action(function (): void {
+                    $this->dispatch('enforcement-authorized-called');
+                }),
         ];
     }
 }

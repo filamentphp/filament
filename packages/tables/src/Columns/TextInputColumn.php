@@ -11,12 +11,12 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
 
@@ -244,6 +244,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
         $inputAttributes = $this->getExtraInputAttributeBag()
             ->merge([
+                'aria-label' => e(trim(strip_tags(($ariaLabel = $this->getLabel()) instanceof Htmlable ? $ariaLabel->toHtml() : $ariaLabel)), doubleEncode: false),
                 'disabled' => $isDisabled,
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
@@ -294,7 +295,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                     <div
                         class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content <?= $isPrefixInline ? 'fi-inline' : '' ?> <?= filled($prefixLabel) ? 'fi-input-wrp-prefix-has-label' : '' ?>"
                     >
-                        <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
+                        <?= generate_icon_html($prefixIcon, null, (new FilamentComponentAttributeBag)
                             ->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
 
                         <?php if (filled($prefixLabel)) { ?>
@@ -325,7 +326,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                             </span>
                         <?php } ?>
 
-                        <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
+                        <?= generate_icon_html($suffixIcon, null, (new FilamentComponentAttributeBag)
                             ->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
                     </div>
                 <?php } ?>

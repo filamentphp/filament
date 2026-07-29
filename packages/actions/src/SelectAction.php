@@ -6,8 +6,8 @@ use Closure;
 use Filament\Actions\Concerns\HasId;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\View\ComponentAttributeBag;
 use UnitEnum;
 
 class SelectAction extends Action implements HasEmbeddedView
@@ -85,13 +85,13 @@ class SelectAction extends Action implements HasEmbeddedView
         $id = $this->getId();
         $isDisabled = $this->isDisabled();
 
-        $inputWrapperAttributes = (new ComponentAttributeBag)
+        $inputWrapperAttributes = (new FilamentComponentAttributeBag)
             ->class([
                 'fi-input-wrp',
                 'fi-disabled' => $isDisabled,
             ]);
 
-        $inputAttributes = (new ComponentAttributeBag)
+        $inputAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'disabled' => $isDisabled,
                 'id' => $id,

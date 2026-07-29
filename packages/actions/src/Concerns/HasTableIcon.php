@@ -21,4 +21,9 @@ trait HasTableIcon
     {
         return $this->evaluate($this->tableIcon);
     }
+
+    public function hasTableIcon(): bool
+    {
+        return $this->tableIcon !== null;
+    }
 }

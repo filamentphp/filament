@@ -6,21 +6,20 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Size;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 
-class KeyValue extends Field
+class KeyValue extends Field implements HasEmbeddedView
 {
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.key-value';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.key-value';
 
     protected string | Closure | null $addActionLabel = null;
 
@@ -371,6 +370,157 @@ class KeyValue extends Field
     public function isReorderable(): bool
     {
         return (bool) $this->evaluate($this->isReorderable);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $canEditKeys = $this->canEditKeys();
+        $canEditValues = $this->canEditValues();
+        $debounce = $this->getLiveDebounce();
+        $id = $this->getId();
+        $isAddable = $this->isAddable();
+        $isDeletable = $this->isDeletable();
+        $isDisabled = $this->isDisabled();
+        $isReorderable = $this->isReorderable();
+        $keyPlaceholder = $this->getKeyPlaceholder();
+        $livewireKey = $this->getLivewireKey();
+        $statePath = $this->getStatePath();
+        $valuePlaceholder = $this->getValuePlaceholder();
+
+        $wrapperAttributes = $this->getExtraAttributeBag()
+            ->class(['fi-fo-key-value']);
+
+        $alpineDivAttributes = $this->getExtraAlpineAttributeBag()
+            ->class(['fi-fo-key-value-table-ctn']);
+
+        ob_start(); ?>
+
+        <div
+            x-load
+            x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms')) ?>"
+            x-data="keyValueFormComponent({
+                        state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                    })"
+            wire:ignore
+            wire:key="<?= e($livewireKey) ?>.<?= e(substr(md5(serialize([$isDisabled])), 0, 64)) ?>"
+            <?= $alpineDivAttributes->toHtml() ?>
+        >
+                <table aria-labelledby="<?= e($id) ?>-label" id="<?= e($id) ?>" class="fi-fo-key-value-table">
+                    <thead>
+                        <tr>
+                            <?php if ($isReorderable && (! $isDisabled)) { ?>
+                                <th
+                                    scope="col"
+                                    x-show="rows.length"
+                                    class="fi-has-action"
+                                >
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.key_value.columns.reorder.label')) ?></span>
+                                </th>
+                            <?php } ?>
+
+                            <th scope="col">
+                                <?= e($this->getKeyLabel()) ?>
+                            </th>
+
+                            <th scope="col">
+                                <?= e($this->getValueLabel()) ?>
+                            </th>
+
+                            <?php if ($isDeletable && (! $isDisabled)) { ?>
+                                <th
+                                    scope="col"
+                                    x-show="rows.length"
+                                    class="fi-has-action"
+                                >
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.key_value.columns.actions.label')) ?></span>
+                                </th>
+                            <?php } ?>
+                        </tr>
+                    </thead>
+
+                    <tbody
+                        <?php if ($isReorderable) { ?>
+                            x-on:end.stop="reorderRows($event)"
+                            x-sortable
+                            data-sortable-animation-duration="<?= e($this->getReorderAnimationDuration()) ?>"
+                        <?php } ?>
+                    >
+                        <template
+                            x-bind:key="index"
+                            x-for="(row, index) in rows"
+                        >
+                            <tr
+                                <?php if ($isReorderable) { ?>
+                                    x-bind:x-sortable-item="row.key"
+                                <?php } ?>
+                            >
+                                <?php if ($isReorderable && (! $isDisabled)) { ?>
+                                    <td class="fi-has-action">
+                                        <div
+                                            x-sortable-handle
+                                            class="fi-fo-key-value-table-row-sortable-handle"
+                                        >
+                                            <?= $this->getAction('reorder')->toHtml() ?>
+                                        </div>
+                                    </td>
+                                <?php } ?>
+
+                                <td>
+                                    <input
+                                        aria-label="<?= e($this->getKeyLabel()) ?>"
+                                        <?= ((! $canEditKeys) || $isDisabled) ? 'disabled' : '' ?>
+                                        placeholder="<?= e($keyPlaceholder) ?>"
+                                        type="text"
+                                        x-model="row.key"
+                                        x-on:input.debounce.<?= e($debounce ?? '500ms') ?>="updateState"
+                                        class="fi-input"
+                                    />
+                                </td>
+
+                                <td>
+                                    <input
+                                        aria-label="<?= e($this->getValueLabel()) ?>"
+                                        <?= ((! $canEditValues) || $isDisabled) ? 'disabled' : '' ?>
+                                        placeholder="<?= e($valuePlaceholder) ?>"
+                                        type="text"
+                                        x-model="row.value"
+                                        x-on:input.debounce.<?= e($debounce ?? '500ms') ?>="updateState"
+                                        class="fi-input"
+                                    />
+                                </td>
+
+                                <?php if ($isDeletable && (! $isDisabled)) { ?>
+                                    <td class="fi-has-action">
+                                        <div x-on:click="deleteRow(index)">
+                                            <?= $this->getAction('delete')->toHtml() ?>
+                                        </div>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+
+            <?php if ($isAddable && (! $isDisabled)) { ?>
+                <div
+                    x-on:click="addRow"
+                    class="fi-fo-key-value-add-action-ctn"
+                >
+                    <?= $this->getAction('add')->toHtml() ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->wrapInputHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+            ),
+            extraWrapperAttributes: ['class' => 'fi-fo-key-value-wrp'],
+            labelTag: 'div',
+        );
     }
 
     public function getDefaultStateCasts(): array

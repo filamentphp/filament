@@ -19,6 +19,7 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
@@ -42,7 +43,9 @@ class SetUpAppAuthenticationAction
             ->color('primary')
             ->icon(Heroicon::LockClosed)
             ->link()
-            ->mountUsing(function (HasActions $livewire) use ($appAuthentication): void {
+            ->mountUsing(function (HasActions $livewire, Schema $schema) use ($appAuthentication): void {
+                $schema->fill();
+
                 $livewire->mergeMountedActionArguments([
                     'encrypted' => encrypt([
                         'secret' => $appAuthentication->generateSecret(),

@@ -1,8 +1,8 @@
 .fi-wi-chart {
-    & .fi-wi-chart-canvas-ctn {
-        @apply mx-auto flex w-full justify-center;
+    & .fi-wi-chart-frame {
+        @apply mx-auto flex w-full items-center justify-center;
 
-        &:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
+        &:not(.fi-wi-chart-frame-no-aspect-ratio) {
             @apply aspect-square;
         }
     }
@@ -12,13 +12,13 @@
             @apply @container;
         }
 
-        & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
+        & .fi-wi-chart-frame:not(.fi-wi-chart-frame-no-aspect-ratio) {
             @apply @sm:aspect-[1.5];
         }
     }
 
     @supports not (container-type: inline-size) {
-        & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
+        & .fi-wi-chart-frame:not(.fi-wi-chart-frame-no-aspect-ratio) {
             @apply sm:aspect-[1.5];
         }
     }
@@ -63,5 +63,9 @@
 
     & .fi-wi-chart-text-color {
         @apply text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-empty-state {
+        @apply p-0;
     }
 }

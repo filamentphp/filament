@@ -14,6 +14,10 @@ return [
 
             'label' => 'Groups',
 
+            'group' => [
+                'label' => 'Group',
+            ],
+
             'block' => [
                 'label' => 'OR condition',
                 'or' => 'OR',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(No rules)',
+
+    'max_rules_reached_tooltip' => 'You have reached the maximum of :count rules.',
 
     'item_separators' => [
         'and' => 'AND',

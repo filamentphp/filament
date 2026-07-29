@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('ticket_id');
             $table->unsignedInteger('quantity')->default(1);
             $table->unsignedInteger('price')->default(0);
+            $table->unsignedInteger('sort')->nullable();
             $table->timestamps();
         });
     }

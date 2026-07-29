@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Powiadomienia',
 
+        'unread_label' => 'Nieprzeczytane powiadomienie',
+
         'actions' => [
 
             'clear' => [

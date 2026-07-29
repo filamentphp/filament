@@ -3,13 +3,13 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Livewire\Livewire;
 
-class LivewireField extends Field
+class LivewireField extends Field implements HasEmbeddedView
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.livewire-field';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.livewire-field';
 
     protected bool | Closure $isLazy = false;
 
@@ -80,5 +80,28 @@ class LivewireField extends Field
             ...$properties,
             ...$this->getData(),
         ];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAttributes = $this->getExtraAttributes();
+        $id = $this->getId();
+        $hasWrapper = filled($id) || filled($extraAttributes);
+
+        $livewireHtml = Livewire::mount($this->getComponent(), $this->getComponentProperties(), $this->getLivewireKey());
+
+        if ($hasWrapper) {
+            $attributes = (new FilamentComponentAttributeBag)
+                ->merge([
+                    'aria-labelledby' => filled($id) ? "{$id}-label" : null,
+                    'id' => $id,
+                    'role' => filled($id) ? 'group' : null,
+                ], escape: false)
+                ->merge($extraAttributes, escape: false);
+
+            $livewireHtml = '<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>';
+        }
+
+        return $this->wrapEmbeddedHtml($livewireHtml, labelTag: filled($id) ? 'div' : 'label');
     }
 }
