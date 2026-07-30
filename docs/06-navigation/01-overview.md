@@ -85,7 +85,7 @@ If a badge value is returned by `getNavigationBadge()`, it will display using th
 ```php
 public static function getNavigationBadgeColor(): ?string
 {
-    return static::getModel()::count() > 10 ? 'warning' : 'primary';
+    return static::getModel()::count() < 10 ? 'warning' : 'primary';
 }
 ```
 
