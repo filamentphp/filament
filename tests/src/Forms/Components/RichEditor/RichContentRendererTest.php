@@ -1655,8 +1655,28 @@ describe('CSS injection', function (): void {
         )->toHtml();
 
         expect($html)
-            ->toContain('width: 200')
-            ->toContain('height: 150');
+            ->toContain('width: 200px')
+            ->toContain('height: 150px');
+    });
+
+    it('appends `px` to a unitless image `width` in the `style` but keeps the attribute unitless', function (): void {
+        $html = RichContentRenderer::make(
+            '<img src="https://example.com/a.jpg" width="200">',
+        )->toHtml();
+
+        expect($html)
+            ->toContain('width="200"')
+            ->toContain('width: 200px');
+    });
+
+    it('does not append `px` to an image `width` that carries a CSS unit', function (): void {
+        $html = RichContentRenderer::make(
+            '<img src="https://example.com/a.jpg" style="width: 50%">',
+        )->toHtml();
+
+        expect($html)
+            ->toContain('width: 50%')
+            ->not->toContain('width: 50%px');
     });
 
     it('preserves a legitimate image `width` that carries a CSS unit', function (): void {
