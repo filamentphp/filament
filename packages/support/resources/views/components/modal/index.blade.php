@@ -19,7 +19,7 @@
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
-    'focusTrapReturnsFocus' => true,
+    'restoresFocus' => true,
     'extraModalWindowAttributeBag' => null,
     'extraModalOverlayAttributeBag' => null,
     'footer' => null,
@@ -123,6 +123,7 @@
     x-data="filamentModal({
                 id: @js($id),
                 isScrollLocked: @js(! $isClickThrough),
+                shouldRestoreFocus: @js($restoresFocus && (! $isClickThrough)),
             })"
     @if ($id)
         data-fi-modal-id="{{ $id }}"
@@ -140,7 +141,7 @@
     x-cloak
     x-show="isOpen"
     @if (! $isClickThrough)
-        x-trap{{ $focusTrapReturnsFocus ? '' : '.noreturn' }}{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
+        x-trap.noreturn{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
     @endif
     {{
         $attributes->class([
@@ -198,7 +199,11 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
+                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->merge([
+                    // When `Escape` does not close the modal, the close button stays in the tab order as the only keyboard way to dismiss it, so the window takes the focus trap's `[autofocus]` to stop the button from being autofocused when the modal opens.
+                    'autofocus' => $closeButton && (! $closeByEscaping) && ($heading || $header),
+                    'tabindex' => ($closeButton && (! $closeByEscaping) && ($heading || $header)) ? '-1' : null,
+                ])->class([
                     'fi-modal-window',
                     'fi-modal-window-has-close-btn' => $closeButton,
                     'fi-modal-window-has-content' => $hasContent,
@@ -221,13 +226,14 @@
                     ])
                 >
                     @if ($closeButton)
+                        {{-- The close button is removed from the tab order when `Escape` also closes the modal, so it can sit first in the focus trap without being autofocused when the modal opens. When `Escape` does not close the modal, the button is the only keyboard way to dismiss it, so it stays in the tab order and the modal window is autofocused instead. --}}
                         <x-filament::icon-button
                             color="gray"
                             :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
                             :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
-                            tabindex="-1"
+                            :tabindex="$closeByEscaping ? '-1' : null"
                             :x-on:click="$closeEventHandler"
                             class="fi-modal-close-btn"
                         />

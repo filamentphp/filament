@@ -5,6 +5,8 @@ namespace Filament\Tests\Fixtures\Livewire;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\QueryBuilder\Constraints\NumberConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
@@ -41,6 +43,13 @@ class UsersQueryBuilderTable extends Component implements HasActions, HasSchemas
                             ->label('Posts Rating Aggregate (Dot Syntax)'),
                         NumberConstraint::make('teams.budget')
                             ->label('Teams Budget Aggregate (Dot Syntax)'),
+                        RelationshipConstraint::make('posts')
+                            ->multiple()
+                            ->selectable(
+                                IsRelatedToOperator::make()
+                                    ->titleAttribute('title')
+                                    ->searchable()
+                            ),
                     ]),
             ])
             ->paginated(false);

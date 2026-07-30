@@ -187,26 +187,25 @@
                 @apply leading-6;
             }
 
-            & .fi-btn:not(.fi-section-header-after-ctn .fi-dropdown-panel *) {
-                &.fi-size-xs {
-                    @apply -my-0.5;
-                }
+            /* The negative margins let the buttons overhang the header's vertical padding, so a header with actions matches the height of one without them. They are applied to the container instead of the buttons so wrapped rows of actions keep their gap, laddered so the largest button size present wins. */
+            &:has(.fi-btn.fi-size-xs:not(.fi-dropdown-panel *)) {
+                @apply -my-0.5;
+            }
 
-                &.fi-size-sm {
-                    @apply -my-1;
-                }
+            &:has(.fi-btn.fi-size-sm:not(.fi-dropdown-panel *)) {
+                @apply -my-1;
+            }
 
-                &.fi-size-md {
-                    @apply -my-1.5;
-                }
+            &:has(.fi-btn.fi-size-md:not(.fi-dropdown-panel *)) {
+                @apply -my-1.5;
+            }
 
-                &.fi-size-lg {
-                    @apply -my-2;
-                }
+            &:has(.fi-btn.fi-size-lg:not(.fi-dropdown-panel *)) {
+                @apply -my-2;
+            }
 
-                &.fi-size-xl {
-                    @apply -my-2.5;
-                }
+            &:has(.fi-btn.fi-size-xl:not(.fi-dropdown-panel *)) {
+                @apply -my-2.5;
             }
         }
 

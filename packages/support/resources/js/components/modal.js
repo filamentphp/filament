@@ -46,7 +46,7 @@ const releaseScrollLock = () => {
     }
 }
 
-export default ({ id, isScrollLocked = true }) => ({
+export default ({ id, isScrollLocked = true, shouldRestoreFocus = true }) => ({
     isOpen: false,
 
     isWindowVisible: false,
@@ -56,6 +56,8 @@ export default ({ id, isScrollLocked = true }) => ({
     isHoldingScrollLock: false,
 
     livewire: null,
+
+    previouslyFocusedElement: null,
 
     textSelectionClosePreventionMouseDownHandler: null,
 
@@ -175,12 +177,25 @@ export default ({ id, isScrollLocked = true }) => ({
         releaseScrollLock()
     },
 
+    restorePreviouslyFocusedElement() {
+        if (!shouldRestoreFocus || !this.previouslyFocusedElement) {
+            return
+        }
+
+        this.$nextTick(() => {
+            this.previouslyFocusedElement.focus({ preventScroll: true })
+            this.previouslyFocusedElement = null
+        })
+    },
+
     close() {
         this.closeQuietly()
 
         this.isTrapActive = false
 
         this.releaseScrollLock()
+
+        this.restorePreviouslyFocusedElement()
 
         this.$dispatch('modal-closed', { id })
     },
@@ -191,6 +206,10 @@ export default ({ id, isScrollLocked = true }) => ({
 
     open() {
         this.$nextTick(() => {
+            if (shouldRestoreFocus) {
+                this.previouslyFocusedElement = document.activeElement
+            }
+
             this.isOpen = true
             this.isTrapActive = true
 

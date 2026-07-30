@@ -153,6 +153,55 @@ describe('authorization enforcement', function (): void {
     });
 });
 
+describe('actions mounted from a URL query parameter', function (): void {
+    // The `?action=` / `?tableAction=` query string parameters open an action on page
+    // load via a `wire:init="mountAction(...)"` call carrying a `mountedFromUrl` context
+    // flag. An action mounted this way may only open its modal — it must never run its
+    // `action()` closure with no interaction, or a crafted link could trigger it.
+
+    it('opens the modal for an action mounted from the URL when it has a modal', function (): void {
+        livewire(Actions::class)
+            ->call('mountAction', 'arguments', [], ['mountedFromUrl' => true])
+            ->assertSet('mountedActions.0.name', 'arguments') // Still mounted, so the modal opened rather than the action running.
+            ->assertNotDispatched('arguments-called');
+    });
+
+    it('does not run an action mounted from the URL when it has no modal', function (): void {
+        livewire(Actions::class)
+            ->call('mountAction', 'simple', [], ['mountedFromUrl' => true])
+            ->assertNotDispatched('simple-called');
+    });
+
+    it('still runs a modal-less action when it is triggered by a user click', function (): void {
+        // A real click carries no `mountedFromUrl` flag, so it must keep running immediately.
+        livewire(Actions::class)
+            ->mountAction('simple')
+            ->assertDispatched('simple-called');
+    });
+
+    it('forces `mountedFromUrl` on even when the `actionContext` query string tries to unset it', function (): void {
+        // `$defaultActionContext` is populated from the `?actionContext=` query string, so
+        // an attacker controls it. The context builder must always win, keeping any other
+        // keys but forcing `mountedFromUrl` to `true`.
+        $context = livewire(Actions::class)
+            ->set('defaultActionContext', ['mountedFromUrl' => false, 'schemaComponent' => 'foo'])
+            ->instance()
+            ->getDefaultActionUrlContext();
+
+        expect($context['mountedFromUrl'])->toBeTrue()
+            ->and($context['schemaComponent'])->toBe('foo');
+    });
+
+    it('does not run a modal-less action even when the `actionContext` query string tries to unset `mountedFromUrl`', function (): void {
+        $component = livewire(Actions::class)
+            ->set('defaultActionContext', ['mountedFromUrl' => false]);
+
+        $component
+            ->call('mountAction', 'simple', [], $component->instance()->getDefaultActionUrlContext())
+            ->assertNotDispatched('simple-called');
+    });
+});
+
 describe('validation', function (): void {
     it('can validate an action\'s data', function (): void {
         livewire(Actions::class)

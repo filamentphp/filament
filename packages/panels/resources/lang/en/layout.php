@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Skip to content',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Notifications',
+            'label_with_unread_count' => '{1} Notifications, :count unread notification|[2,*] Notifications, :count unread notifications',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Theme',
+
             'dark' => [
                 'label' => 'Enable dark theme',
             ],
@@ -50,6 +57,14 @@ return [
 
         ],
 
+    ],
+
+    'navigation' => [
+        'label' => 'Sidebar navigation',
+    ],
+
+    'topbar' => [
+        'label' => 'Topbar',
     ],
 
     'avatar' => [

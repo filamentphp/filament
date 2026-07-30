@@ -25,7 +25,7 @@
     $hasIcon = filled($icon);
 @endphp
 
-<section
+<div
     {{
         $attributes->class([
             'fi-empty-state',
@@ -67,4 +67,4 @@
             @endif
         </div>
     </div>
-</section>
+</div>

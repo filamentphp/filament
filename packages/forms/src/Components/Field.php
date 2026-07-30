@@ -338,18 +338,35 @@ class Field extends Component implements Contracts\HasValidationRules
                     ? str($fieldWrapperView)->replaceFirst('::', '::components.')
                     : str("components.{$fieldWrapperView}"));
 
-            return view($absoluteView, [
-                'field' => $this,
-                'slot' => new ComponentSlot($html),
-                'labelPrefix' => $labelPrefix,
-                'labelSuffix' => $labelSuffix,
-                'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
-                'labelTag' => $labelTag,
-                'attributes' => (new FilamentComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
-                'hasErrors' => $hasError,
-                'errorMessage' => $errorMessage,
-                'errorMessages' => $errorMessages,
-            ])->toHtml();
+            if (view()->exists($absoluteView)) {
+                return view($absoluteView, [
+                    'field' => $this,
+                    'slot' => new ComponentSlot($html),
+                    'labelPrefix' => $labelPrefix,
+                    'labelSuffix' => $labelSuffix,
+                    'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
+                    'labelTag' => $labelTag,
+                    'attributes' => (new FilamentComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
+                    'hasErrors' => $hasError,
+                    'errorMessage' => $errorMessage,
+                    'errorMessages' => $errorMessages,
+                ])->toHtml();
+            }
+
+            return $this->renderWrapperBladeComponent(
+                $fieldWrapperView,
+                new ComponentSlot($html),
+                (new FilamentComponentAttributeBag([
+                    'field' => $this,
+                    'label-prefix' => $labelPrefix,
+                    'label-suffix' => $labelSuffix,
+                    'inline-label-vertical-alignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
+                    'label-tag' => $labelTag,
+                    'has-errors' => $hasError,
+                    'error-message' => $errorMessage,
+                    'error-messages' => $errorMessages,
+                ]))->merge($extraWrapperAttributes, escape: false),
+            );
         }
 
         $hasInlineLabel = $this->hasInlineLabel();

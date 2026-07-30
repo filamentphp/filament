@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use BackedEnum;
 use BladeUI\Icons\Factory as BladeIconsFactory;
 use Composer\InstalledVersions;
 use Filament\Commands\CacheComponentsCommand;
@@ -378,12 +379,16 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeUrl($this->value, $allowedSchemes));
         });
 
-        Str::macro('sanitizeCssColor', function (?string $color): ?string {
+        Str::macro('sanitizeCssColor', function (string | BackedEnum | null $color): ?string {
+            if ($color instanceof BackedEnum) {
+                $color = $color->value;
+            }
+
             if (blank($color)) {
                 return null;
             }
 
-            $color = trim($color);
+            $color = trim((string) $color);
 
             // Accept hex colors: `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`.
             if (preg_match('/^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $color)) {

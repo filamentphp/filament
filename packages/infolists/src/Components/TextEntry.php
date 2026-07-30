@@ -486,9 +486,18 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 
                 <?php if ($stateOverListLimitCount) { ?>
                     <div class="fi-in-text-list-limited-message">
+                        <?php
+                            // These stay `<div role="button">` — not a real `<button>`, and deliberately without
+                            // `tabindex`. When the entry has a URL or action, `entry-wrapper.blade.php` wraps the whole
+                            // entry content in an `<a>` / `<button>`, and a `<button>` — or any element with `tabindex`
+                            // — is interactive content that is invalid nested inside a link/button. `role="button"` +
+                            // `aria-expanded` expose the control's purpose and state to assistive tech without
+                            // introducing that invalid nesting.
+                    ?>
                         <?php if ($isLimitedListExpandable) { ?>
                             <div
                                 role="button"
+                                x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = false"
                                 x-show="isLimited"
                                 class="fi-link fi-size-xs"
@@ -498,6 +507,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 
                             <div
                                 role="button"
+                                x-bind:aria-expanded="(! isLimited).toString()"
                                 x-on:click.prevent.stop="isLimited = true"
                                 x-cloak
                                 x-show="! isLimited"

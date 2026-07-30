@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Support\View\Components\Contracts\HasColor;
 use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
+use Illuminate\Support\Str;
 use LogicException;
 
 class ColorManager
@@ -127,7 +128,7 @@ class ColorManager
             return $this->componentClasses[$componentKey][$color] = [];
         }
 
-        $classes = ['fi-color', "fi-color-{$color}"];
+        $classes = ['fi-color', 'fi-color-' . (string) preg_replace('/[^a-zA-Z0-9_-]/', '', $color)];
 
         $resolvedColor = $this->getColor($color);
 
@@ -177,12 +178,12 @@ class ColorManager
 
         return $this->componentCustomStyles[$componentKey][$colorKey] = [
             ...array_map(
-                fn (string $color, string $shade): string => "--color-{$shade}: {$color}",
+                fn (string $color, string $shade): string => '--color-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $shade) . ': ' . (Str::sanitizeCssColor($color) ?? ''),
                 array_values($color),
                 array_keys($color),
             ),
             ...array_map(
-                fn (string $shade, string $key): string => '--' . str_replace(':', '-', $key) . ': ' . ($shade ? "var(--color-{$shade})" : 'oklch(1 0 0)'),
+                fn (string $shade, string $key): string => '--' . str_replace(':', '-', $key) . ': ' . ($shade ? 'var(--color-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $shade) . ')' : 'oklch(1 0 0)'),
                 array_values($map),
                 array_keys($map),
             ),

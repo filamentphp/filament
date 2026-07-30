@@ -280,8 +280,18 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
         $hasError = filled($errorMessage) || filled($errorMessages);
 
         // Inner content
+        $groupId = $this->getId();
+        $groupLabelId = (filled($groupId) && filled($this->getLabel())) ? "{$groupId}-label" : null;
+        $groupErrorId = (filled($groupId) && $hasError) ? "{$groupId}-error" : null;
+
         $innerAttributes = (new FilamentComponentAttributeBag)
-            ->merge(['id' => $this->getId()], escape: false)
+            ->merge([
+                'id' => $groupId,
+                'role' => 'group',
+                'aria-labelledby' => $groupLabelId,
+                'aria-describedby' => $groupErrorId,
+                'aria-invalid' => $hasError ? 'true' : null,
+            ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-fused-group']);
 
@@ -300,14 +310,28 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                     ? str($fieldWrapperView)->replaceFirst('::', '::components.')
                     : str("components.{$fieldWrapperView}"));
 
-            return view($absoluteView, [
-                'field' => $this,
-                'slot' => new ComponentSlot($innerHtml),
-                'errorMessage' => $errorMessage,
-                'errorMessages' => $errorMessages,
-                'areHtmlErrorMessagesAllowed' => $areHtmlErrorMessagesAllowed,
-                'shouldShowAllValidationMessages' => filled($errorMessages),
-            ])->toHtml();
+            if (view()->exists($absoluteView)) {
+                return view($absoluteView, [
+                    'field' => $this,
+                    'slot' => new ComponentSlot($innerHtml),
+                    'errorMessage' => $errorMessage,
+                    'errorMessages' => $errorMessages,
+                    'areHtmlErrorMessagesAllowed' => $areHtmlErrorMessagesAllowed,
+                    'shouldShowAllValidationMessages' => filled($errorMessages),
+                ])->toHtml();
+            }
+
+            return $this->renderWrapperBladeComponent(
+                $fieldWrapperView,
+                new ComponentSlot($innerHtml),
+                new FilamentComponentAttributeBag([
+                    'field' => $this,
+                    'error-message' => $errorMessage,
+                    'error-messages' => $errorMessages,
+                    'are-html-error-messages-allowed' => $areHtmlErrorMessagesAllowed,
+                    'should-show-all-validation-messages' => filled($errorMessages),
+                ]),
+            );
         }
 
         // Field wrapper rendering (inline, same as `Field::wrapEmbeddedHtml()` but with custom errors)
@@ -342,7 +366,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
 
         <div data-field-wrapper <?= $wrapperAttributes->toHtml() ?>>
             <?php if (filled($label) && $labelSrOnly) { ?>
-                <label for="<?= e($id) ?>" class="fi-fo-field-label fi-sr-only"><?= e($label) ?></label>
+                <label <?php if (filled($id)) { ?>id="<?= e($id) ?>-label" <?php } ?>class="fi-fo-field-label fi-sr-only"><?= e($label) ?></label>
             <?php } ?>
 
             <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema) { ?>
@@ -361,7 +385,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                     >
                         <?= $beforeLabelSchema?->toHtml() ?>
                         <?php if (filled($label) && (! $labelSrOnly)) { ?>
-                            <label for="<?= e($id) ?>" class="fi-fo-field-label">
+                            <label <?php if (filled($id)) { ?>id="<?= e($id) ?>-label" <?php } ?>class="fi-fo-field-label">
                                 <span class="fi-fo-field-label-content">
                                     <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup class="fi-fo-field-label-required-mark">*</sup><?php } ?>
                                 </span>
@@ -392,7 +416,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                     <?= $aboveErrorMessageSchema?->toHtml() ?>
 
                     <?php if (filled($errorMessages)) { ?>
-                        <ul data-validation-error class="fi-fo-field-wrp-error-list">
+                        <ul data-validation-error <?php if (filled($id)) { ?>id="<?= e($id) ?>-error" <?php } ?>class="fi-fo-field-wrp-error-list">
                             <?php foreach ($errorMessages as $errorMsg) { ?>
                                 <li class="fi-fo-field-wrp-error-message">
                                     <?php if ($areHtmlErrorMessagesAllowed) { ?>
@@ -404,9 +428,9 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
                             <?php } ?>
                         </ul>
                     <?php } elseif ($areHtmlErrorMessagesAllowed) { ?>
-                        <div data-validation-error class="fi-fo-field-wrp-error-message"><?= $errorMessage ?></div>
+                        <div data-validation-error <?php if (filled($id)) { ?>id="<?= e($id) ?>-error" <?php } ?>class="fi-fo-field-wrp-error-message"><?= $errorMessage ?></div>
                     <?php } else { ?>
-                        <p data-validation-error class="fi-fo-field-wrp-error-message"><?= e($errorMessage) ?></p>
+                        <p data-validation-error <?php if (filled($id)) { ?>id="<?= e($id) ?>-error" <?php } ?>class="fi-fo-field-wrp-error-message"><?= e($errorMessage) ?></p>
                     <?php } ?>
 
                     <?= $belowErrorMessageSchema?->toHtml() ?>

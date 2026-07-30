@@ -317,12 +317,24 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $hasContent = ! is_slot_empty(filled($contentHtml) ? new HtmlString($contentHtml) : null);
         $hasFooter = ! is_slot_empty($footer);
 
+        // The disclosure button uses this to reference the collapsible region via `aria-controls`. Only set
+        // when there is both an `$id` and a content region to point at, so the reference never dangles.
+        $contentId = (filled($id) && ($hasContent || $hasFooter)) ? "{$id}-content" : null;
+
         // Label schemas
         $label = $this->getLabel();
         $beforeLabelSchema = $this->getChildSchema(static::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
         $afterLabelSchema = $this->getChildSchema(static::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
         $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
         $belowContentSchema = $this->getChildSchema(static::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+        // Name the `<section>` as a landmark region by referencing its heading (or, failing that, its `label()`),
+        // and associate its description. An unnamed `<section>` is not exposed as a `region` by assistive tech, so
+        // this promotes it to a navigable landmark. Every id is guarded so a reference is never left dangling. The
+        // `-heading`/`-description`/`-label` suffixes are disjoint from the disclosure `-content` id above.
+        $headingId = (filled($id) && $hasHeading) ? "{$id}-heading" : null;
+        $descriptionId = (filled($id) && $hasDescription) ? "{$id}-description" : null;
+        $labelId = (filled($id) && filled($label) && (! $hasHeading)) ? "{$id}-label" : null;
 
         ob_start(); ?>
 
@@ -331,7 +343,10 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                 <div class="fi-sc-section-label-ctn">
                     <?= $beforeLabelSchema?->toHtml() ?>
 
-                    <div class="fi-sc-section-label">
+                    <div
+                        <?php if (filled($labelId)) { ?>id="<?= e($labelId) ?>"<?php } ?>
+                        class="fi-sc-section-label"
+                    >
                         <?= e($label) ?>
                     </div>
 
@@ -356,6 +371,12 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                     <?php } ?>
                     x-bind:class="isCollapsed && 'fi-collapsed'"
                 <?php } ?>
+                <?php if (filled($labelledById = $headingId ?? $labelId)) { ?>
+                    aria-labelledby="<?= e($labelledById) ?>"
+                <?php } ?>
+                <?php if (filled($descriptionId)) { ?>
+                    aria-describedby="<?= e($descriptionId) ?>"
+                <?php } ?>
                 <?= $sectionAttributes->toHtml() ?>
             >
                 <?php if ($hasHeader) { ?>
@@ -371,13 +392,19 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                         <?php if ($hasHeading || $hasDescription) { ?>
                             <div class="fi-section-header-text-ctn">
                                 <?php if ($hasHeading) { ?>
-                                    <<?= $headingTag ?> class="fi-section-header-heading">
+                                    <<?= $headingTag ?>
+                                        <?php if (filled($headingId)) { ?>id="<?= e($headingId) ?>"<?php } ?>
+                                        class="fi-section-header-heading"
+                                    >
                                         <?= e($heading) ?>
                                     </<?= $headingTag ?>>
                                 <?php } ?>
 
                                 <?php if ($hasDescription) { ?>
-                                    <p class="fi-section-header-description">
+                                    <p
+                                        <?php if (filled($descriptionId)) { ?>id="<?= e($descriptionId) ?>"<?php } ?>
+                                        class="fi-section-header-description"
+                                    >
                                         <?= e($description) ?>
                                     </p>
                                 <?php } ?>
@@ -397,6 +424,15 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
                                         'x-on:click.stop' => 'isCollapsed = ! isCollapsed',
+                                        // The button only contains a decorative chevron, so give it an accessible
+                                        // name. Static values cover the pre-Alpine/no-JS render; `x-bind` keeps the
+                                        // name and expanded state correct as the section is toggled. `aria-expanded`
+                                        // belongs on the control, not the region, and `aria-controls` points at it.
+                                        'aria-label' => __($isCollapsed ? 'filament-schemas::components.section.actions.expand.label' : 'filament-schemas::components.section.actions.collapse.label'),
+                                        'x-bind:aria-label' => 'isCollapsed ? ' . Js::from(__('filament-schemas::components.section.actions.expand.label')) . ' : ' . Js::from(__('filament-schemas::components.section.actions.collapse.label')),
+                                        'aria-expanded' => $isCollapsed ? 'false' : 'true',
+                                        'x-bind:aria-expanded' => '(! isCollapsed).toString()',
+                                        'aria-controls' => $contentId,
                                     ], escape: false)
                                     ->class([
                                         'fi-icon-btn',
@@ -415,11 +451,11 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
 
                 <?php if ($hasContent || $hasFooter) { ?>
                     <div
-                        <?php if ($collapsible) { ?>
-                            x-bind:aria-expanded="(! isCollapsed).toString()"
-                            <?php if ($isCollapsed || $shouldPersistCollapsed) { ?>
-                                x-cloak
-                            <?php } ?>
+                        <?php if (filled($contentId)) { ?>
+                            id="<?= e($contentId) ?>"
+                        <?php } ?>
+                        <?php if ($collapsible && ($isCollapsed || $shouldPersistCollapsed)) { ?>
+                            x-cloak
                         <?php } ?>
                         class="fi-section-content-ctn"
                     >

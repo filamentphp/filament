@@ -1,12 +1,15 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Testing\TestAction;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -192,6 +195,12 @@ it('renders `wire:click="$set(...)"` on each tab when `livewireProperty()` is se
 
     expect($html)->toContain("\$set('activeTab', 'all')");
     expect($html)->toContain("\$set('activeTab', 'active')");
+});
+
+it('can call an `Action` nested inside a tab that uses `livewireProperty()`', function (): void {
+    livewire(TabsWithLivewirePropertyAction::class)
+        ->callAction(TestAction::make('set_value')->schemaComponent('test-tabs.first'))
+        ->assertSet('actionCalled', true);
 });
 
 it('returns fluent `$this` from `tabs()`', function (): void {
@@ -411,9 +420,57 @@ class TabsWithDeferredBadges extends Component implements HasActions, HasSchemas
     }
 }
 
+class TabsWithLivewirePropertyAction extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public ?string $activeTab = 'first';
+
+    public bool $actionCalled = false;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Tabs::make('Test')
+                    ->key('test-tabs')
+                    ->livewireProperty('activeTab')
+                    ->tabs([
+                        'first' => Tab::make('First')
+                            ->schema([
+                                Action::make('set_value')
+                                    ->action(fn (TabsWithLivewirePropertyAction $livewire) => $livewire->actionCalled = true),
+                            ]),
+                        'second' => Tab::make('Second')
+                            ->schema([]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
 describe('rendering', function (): void {
     it('can render basic `Tabs`', function (): void {
         livewire(RenderTabs::class)->assertSuccessful();
+    });
+
+    it('can render a tab badge icon with a `BackedEnum`', function (): void {
+        livewire(RenderTabsWithBackedEnumBadgeIcon::class)
+            ->assertSuccessful()
+            ->assertSee('Available');
     });
 
     it('can render with `scrollable(false)`', function (): void {
@@ -460,6 +517,7 @@ it('can render `Tabs` in the browser', function (): void {
         visit('/tabs-browser-test')
             ->assertSee('Account')
             ->assertSee('Contact')
+            ->assertSee('Available')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
@@ -476,6 +534,30 @@ class RenderTabs extends Component implements HasSchemas
     public function infolist(Schema $schema): Schema
     {
         return $schema->state([])->components([Tabs::make('Test')->tabs([Tab::make('Tab 1'), Tab::make('Tab 2')])]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderTabsWithBackedEnumBadgeIcon extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([])
+            ->components([
+                Tabs::make('Status')
+                    ->tabs([
+                        Tab::make('Products')
+                            ->badge('Available')
+                            ->badgeIcon(Heroicon::OutlinedCheckCircle),
+                    ]),
+            ]);
     }
 
     public function render(): string

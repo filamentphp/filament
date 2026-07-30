@@ -44,6 +44,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
      */
     protected array | Closure $extraImgAttributes = [];
 
+    protected string | Closure | null $alt = null;
+
     protected string | Closure | null $defaultImageUrl = null;
 
     protected bool | Closure $isStacked = false;
@@ -195,6 +197,18 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $this->defaultImageUrl = $url;
 
         return $this;
+    }
+
+    public function alt(string | Closure | null $alt): static
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
+    public function getAlt(mixed $state = null): ?string
+    {
+        return $this->evaluate($this->alt, ['state' => $state]);
     }
 
     public function getImageUrl(?string $state = null): ?string
@@ -502,6 +516,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
+                    'alt' => e($this->getAlt($stateItem) ?? ''),
                     'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{

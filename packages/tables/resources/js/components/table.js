@@ -254,6 +254,18 @@ export default ({
         return keys.every((key) => this.isRecordSelected(key))
     },
 
+    areRecordsPartiallySelected(keys) {
+        if (keys.length === 0) {
+            return false
+        }
+
+        const selectedCount = keys.filter((key) =>
+            this.isRecordSelected(key),
+        ).length
+
+        return selectedCount > 0 && selectedCount < keys.length
+    },
+
     areRecordsToggleable(keys) {
         if (maxSelectableRecords === null) {
             return true

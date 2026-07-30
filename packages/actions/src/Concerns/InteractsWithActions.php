@@ -88,6 +88,33 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
     protected bool $hasActionsModalRendered = false;
 
+    /**
+     * Context for the `mountAction()` call that opens the `?action=` default action on
+     * page load. `mountedFromUrl` is forced on last, so a crafted `?actionContext=` value
+     * cannot unset it to run a modal-less action.
+     *
+     * @return array<string, mixed>
+     */
+    public function getDefaultActionUrlContext(): array
+    {
+        return array_merge(
+            is_array($this->defaultActionContext) ? $this->defaultActionContext : [],
+            ['mountedFromUrl' => true],
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDefaultTableActionUrlContext(): array
+    {
+        return [
+            'table' => true,
+            'recordKey' => $this->defaultTableActionRecord,
+            'mountedFromUrl' => true,
+        ];
+    }
+
     public function bootedInteractsWithActions(): void
     {
         if (filled($originallyMountedActionIndex = array_key_last($this->mountedActions))) {
@@ -181,6 +208,14 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         }
 
         if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
+            if ($context['mountedFromUrl'] ?? false) {
+                // A modal-less action mounted from the URL has nothing to show the user, so
+                // running it here would let a crafted link trigger it with no interaction.
+                $this->unmountAction(cancelParentActions: false);
+
+                return null;
+            }
+
             return $this->callMountedAction();
         }
 

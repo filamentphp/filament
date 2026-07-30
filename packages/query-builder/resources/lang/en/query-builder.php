@@ -14,6 +14,10 @@ return [
 
             'label' => 'Groups',
 
+            'group' => [
+                'label' => 'Group',
+            ],
+
             'block' => [
                 'label' => 'OR condition',
                 'or' => 'OR',

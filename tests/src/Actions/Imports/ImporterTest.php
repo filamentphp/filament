@@ -72,7 +72,7 @@ describe('failure CSV formula injection', function (): void {
         ]);
 
         $import->failedRows()->create([
-            'data' => ['name' => '=1+1', 'price' => '-5'],
+            'data' => ['name' => '=1+1', 'price' => '-5', 'phone' => '+44 1234 567890'],
             'validation_error' => 'Invalid',
         ]);
 
@@ -99,6 +99,12 @@ describe('failure CSV formula injection', function (): void {
         $content = $downloadFailureCsv->call($this, FormulaSafeTestImporter::class);
 
         expect($content)->toContain("'=1+1");
-        expect($content)->toContain("'-5");
+        expect($content)->toContain("'+44 1234 567890");
+    });
+
+    it('leaves purely numeric strings unescaped when `shouldPreventFormulaInjection()` is enabled', function () use ($downloadFailureCsv): void {
+        $content = $downloadFailureCsv->call($this, FormulaSafeTestImporter::class);
+
+        expect($content)->not->toContain("'-5");
     });
 });

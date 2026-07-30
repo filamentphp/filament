@@ -61,9 +61,9 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
     protected ?Collection $cachedExistingRecords = null;
 
     /**
-     * @var array<Schema> | null
+     * @var array<bool> | null
      */
-    protected ?array $cachedItems = null;
+    protected ?array $cachedItemsRawStateStructure = null;
 
     protected string | Closure | null $orderColumn = null;
 
@@ -848,9 +848,17 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
      */
     public function getItems(): array
     {
-        if ($this->cachedItems !== null) {
-            return $this->cachedItems;
-        }
+        return $this->getCachedDefaultChildSchemas();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $rawState = ($this->getRawState() ?? []);
+
+        $this->cachedItemsRawStateStructure = array_map(is_array(...), $rawState);
 
         $relationship = $this->getRelationship();
 
@@ -858,7 +866,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
         $items = [];
 
-        foreach ($this->getRawState() ?? [] as $itemKey => $itemData) {
+        foreach ($rawState as $itemKey => $itemData) {
             $items[$itemKey] = $this
                 ->getChildSchema()
                 ->statePath($itemKey)
@@ -868,15 +876,21 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                 ->getClone();
         }
 
-        return $this->cachedItems = $items;
+        return $items;
     }
 
     /**
-     * @return array<Schema>
+     * Item schemas only depend on the raw state's structure - the item keys, their
+     * order, and whether each item holds an array - since fields inside the items
+     * read their values from the live raw state. Comparing a structural fingerprint
+     * instead of the item values keeps this check cheap when it runs often, and
+     * avoids rebuilding the item schemas every time a value inside an item changes.
+     * The existing records that relationship items embed are not observable through
+     * the raw state, so `clearCachedExistingRecords()` clears the items explicitly.
      */
-    public function getDefaultChildSchemas(): array
+    protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->getItems();
+        return $this->cachedItemsRawStateStructure === array_map(is_array(...), $this->getRawState() ?? []);
     }
 
     public function getAddActionLabel(): string
@@ -978,11 +992,6 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
     public function saveToRelationship(): void
     {
-        // The raw state may have been mutated through an ancestor schema (e.g. `Schema::rawState()`),
-        // which clears that ancestor's cached child schemas but not this component's. Rebuild the
-        // memoized items so the save reflects the current state rather than a stale set.
-        $this->cachedItems = null;
-
         $state = $this->getState();
 
         if (! is_array($state)) {
@@ -1224,11 +1233,16 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
 
         $relationshipQuery = $relationship->getQuery();
 
+        // Explicitly select the related table's columns so the query is not ambiguous if it is
+        // later modified to include a join (for example, through `modifyRelationshipQueryUsing()`).
+        // Without this, `select *` across a join can hydrate the key from the wrong table.
         if ($relationship instanceof BelongsToMany) {
             $relationshipQuery->select([
                 $relationship->getTable() . '.*',
                 $relationshipQuery->getModel()->getTable() . '.*',
             ]);
+        } else {
+            $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
         }
 
         if ($this->modifyRelationshipQueryUsing) {
@@ -1238,7 +1252,8 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
         }
 
         if (filled($orderColumn)) {
-            $relationshipQuery->orderBy($orderColumn);
+            // Qualify the order column so it is not ambiguous when the query includes a join.
+            $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($orderColumn));
         }
 
         return $this->cachedExistingRecords = $this->modifyRelationshipRecords($relationshipQuery->get()->mapWithKeys(
@@ -1320,14 +1335,10 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
     public function clearCachedExistingRecords(): void
     {
         $this->cachedExistingRecords = null;
-        $this->cachedItems = null;
-    }
 
-    public function clearCachedChildSchemas(): void
-    {
-        parent::clearCachedChildSchemas();
-
-        $this->cachedItems = null;
+        // Items embed the existing records, which the raw state snapshot cannot
+        // observe, so they must be cleared explicitly alongside the records.
+        $this->clearCachedChildSchemas();
     }
 
     /**
@@ -1945,7 +1956,9 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                     <thead>
                         <tr>
                             <?php if ($hasReorderColumn) { ?>
-                                <th class="fi-fo-table-repeater-empty-header-cell"></th>
+                                <th scope="col" class="fi-fo-table-repeater-empty-header-cell">
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.repeater.columns.reorder.label')) ?></span>
+                                </th>
                             <?php } ?>
 
                             <?php foreach ($tableColumns as $column) { ?>
@@ -1962,7 +1975,7 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                                     $thAttributes = $thAttributes->style(['width: ' . e($columnWidth)]);
                                 }
                                 ?>
-                                <th <?= $thAttributes->toHtml() ?>>
+                                <th scope="col" <?= $thAttributes->toHtml() ?>>
                                     <?php if (! $column->isHeaderLabelHidden()) { ?>
                                         <?= e($column->getLabel()) ?><?php if ($column->isMarkedAsRequired()) { ?><sup class="fi-fo-table-repeater-header-required-mark">*</sup><?php } ?>
                                     <?php } else { ?>
@@ -1974,7 +1987,9 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                             <?php } ?>
 
                             <?php if ($hasActionsColumn) { ?>
-                                <th class="fi-fo-table-repeater-empty-header-cell"></th>
+                                <th scope="col" class="fi-fo-table-repeater-empty-header-cell">
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.repeater.columns.actions.label')) ?></span>
+                                </th>
                             <?php } ?>
                         </tr>
                     </thead>

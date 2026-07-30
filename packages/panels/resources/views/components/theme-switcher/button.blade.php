@@ -15,6 +15,7 @@
         content: @js($label),
         theme: $store.theme,
     }"
+    x-bind:aria-pressed="theme === @js($theme) ? 'true' : 'false'"
     x-bind:class="{ 'fi-active': theme === @js($theme) }"
     class="fi-theme-switcher-btn"
 >

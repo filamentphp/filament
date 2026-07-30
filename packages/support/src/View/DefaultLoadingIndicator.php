@@ -9,6 +9,11 @@ class DefaultLoadingIndicator implements LoadingIndicator
 {
     public function toHtml(ComponentAttributeBag $attributes): string
     {
+        // The spinner is decorative — the surrounding control (button `aria-label`, loading section
+        // `role="status"`) conveys the loading state — so hide it from assistive tech by default. A
+        // caller can still override by passing its own `aria-hidden`.
+        $attributes = $attributes->merge(['aria-hidden' => 'true'], escape: false);
+
         return <<<HTML
             <svg
                 fill="none"

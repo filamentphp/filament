@@ -24,6 +24,9 @@
     <{{ $tag }}
         @if ($url)
             {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
+            @if ($active)
+                aria-current="page"
+            @endif
         @else
             type="button"
         @endif

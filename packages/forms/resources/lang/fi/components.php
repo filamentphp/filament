@@ -122,9 +122,29 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Värinpoimija',
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Lataa',
+            ],
+
+            'open' => [
+                'label' => 'Avaa uudessa välilehdessä',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Kuvan muokkaus',
 
             'actions' => [
 
@@ -268,6 +288,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Toiminnot',
+            ],
+
+            'reorder' => [
+                'label' => 'Uudelleenjärjestä',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +370,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Toiminnot',
+            ],
+
+            'reorder' => [
+                'label' => 'Uudelleenjärjestä',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -604,6 +648,10 @@ return [
             'searching_message' => 'Haetaan...',
         ],
 
+        'toolbar' => [
+            'label' => 'Muokkauspalkki',
+        ],
+
         'tools' => [
             'align_center' => 'Keskitä',
             'align_end' => 'Tasaa oikealle',
@@ -742,6 +790,10 @@ return [
         ],
 
         'placeholder' => 'Uusi tunniste',
+
+        'tag_added' => 'Lisätty: :tag',
+
+        'tag_removed' => 'Poistettu: :tag',
 
     ],
 

@@ -3,6 +3,7 @@
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\CustomDataTable;
+use Filament\Tests\Fixtures\Livewire\ImagesTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingDisabled;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingEnabled;
@@ -495,6 +496,41 @@ describe('searching', function (): void {
                 ->assertNoAccessibilityIssues();
         });
     });
+
+    it('scopes column manager checkbox ids to each table in the browser', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            $this->actingAs(User::factory()->create());
+
+            Post::factory()->count(3)->create();
+
+            visit('/column-manager-browser-test')
+                ->assertPresent('#first-table .fi-ta-header-cell-title')
+                ->assertPresent('#second-table .fi-ta-header-cell-title')
+                // Open the first table's column manager too, so its checkboxes are also rendered when the second manager's labels are clicked.
+                ->click('#first-table button[aria-label="Column manager"]')
+                ->click('#second-table button[aria-label="Column manager"]')
+                // Every rendered column manager checkbox id must be unique, otherwise a label's `for` can activate a checkbox in another table's manager.
+                ->assertScript('new Set(Array.from(document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\')).map((checkbox) => checkbox.id)).size === document.querySelectorAll(\'.fi-ta-col-manager-label input[type="checkbox"]\').length', true)
+                // Clicking the `Title` label must toggle the checkbox in this table's column manager, not the checkbox of the other table's manager that shares the column name.
+                ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
+                ->wait(1)
+                ->assertMissing('#second-table .fi-ta-header-cell-title')
+                ->assertPresent('#first-table .fi-ta-header-cell-title')
+                // Restore the toggled column, since the column manager persists in the session and a retried attempt must start from the default state.
+                ->click('#second-table .fi-ta-col-manager-label[for$="-title"]')
+                ->wait(1)
+                ->assertPresent('#second-table .fi-ta-header-cell-title')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/column-manager-browser-test')
+                ->inDarkMode()
+                ->click('#second-table button[aria-label="Column manager"]')
+                ->assertNoAccessibilityIssues();
+        });
+    });
 });
 
 describe('column properties and assertions', function (): void {
@@ -721,6 +757,57 @@ describe('column properties and assertions', function (): void {
 });
 
 describe('relationship columns', function (): void {
+    it('can output the state of a nested relationship through a `MorphTo` relationship', function (): void {
+        $team = Team::factory()->create(['name' => 'Team Alpha']);
+        $user = User::factory()->create([
+            'name' => 'Alice',
+            'team_id' => $team->id,
+        ]);
+        $image = Image::factory()->for($user, 'imageable')->create();
+
+        livewire(ImagesTable::class)
+            ->assertTableColumnStateSet('imageable.team.name', 'Team Alpha', $image)
+            ->assertTableColumnStateNotSet('imageable.team.name', 'Alice', $image);
+    });
+
+    it('can output the state of multiple nested relationships through the same `MorphTo` relationship', function (): void {
+        $company = Company::factory()->create(['name' => 'Acme Corporation']);
+        $team = Team::factory()->create([
+            'name' => 'Team Alpha',
+            'company_id' => $company->id,
+        ]);
+        $user = User::factory()->create([
+            'name' => 'Alice',
+            'team_id' => $team->id,
+        ]);
+        $image = Image::factory()->for($user, 'imageable')->create();
+
+        livewire(ImagesTable::class)
+            ->assertTableColumnStateSet('imageable.team.name', 'Team Alpha', $image)
+            ->assertTableColumnStateSet('imageable.company.name', 'Acme Corporation', $image);
+    });
+
+    it('can output the state of nested relationships through a `MorphTo` relationship with mixed related model types', function (): void {
+        $userCompany = Company::factory()->create(['name' => 'Acme Corporation']);
+        $team = Team::factory()->create(['company_id' => $userCompany->id]);
+        $user = User::factory()->create([
+            'name' => 'Alice',
+            'team_id' => $team->id,
+        ]);
+        $userImage = Image::factory()->for($user, 'imageable')->create();
+
+        $profileCompany = Company::factory()->create(['name' => 'Globex Corporation']);
+        $profile = Profile::factory()->create([
+            'user_id' => $user->id,
+            'company_id' => $profileCompany->id,
+        ]);
+        $profileImage = Image::factory()->for($profile, 'imageable')->create();
+
+        livewire(ImagesTable::class)
+            ->assertTableColumnStateSet('imageable.company.name', 'Acme Corporation', $userImage)
+            ->assertTableColumnStateSet('imageable.company.name', 'Globex Corporation', $profileImage);
+    });
+
     it('can search and sort by relationship column when both tables have the same column name', function (): void {
         $teamAlpha = Team::factory()->create(['name' => 'Team Alpha']);
         $teamBeta = Team::factory()->create(['name' => 'Team Beta']);

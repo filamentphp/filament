@@ -84,10 +84,28 @@ class ColorEntry extends Entry implements HasEmbeddedView
                 $copyMessageDurationJs = $isCopyable
                     ? Js::from($this->getCopyMessageDuration($stateItem))
                     : null;
+
+                $tooltip = $this->getTooltip($stateItem);
+
+                $sanitizedColor = Str::sanitizeCssColor($stateItem);
+
+                // The colour value is the swatch's only information, so expose it (or the
+                // developer's tooltip text) as an accessible name on the `role="img"` swatch.
+                // Only the sanitized colour is used, so an invalid value is never announced.
+                // The copyable swatch is an interactive control that needs separate treatment (an
+                // accessible name and keyboard operability), so it is not named here — matching
+                // `ColorColumn`.
+                $accessibleLabel = $isCopyable
+                    ? null
+                    : (filled($tooltip)
+                        ? ($tooltip instanceof Htmlable ? strip_tags($tooltip->toHtml()) : $tooltip)
+                        : $sanitizedColor);
                 ?>
 
                 <div <?= (new FilamentComponentAttributeBag)
                     ->merge([
+                        'role' => filled($accessibleLabel) ? 'img' : null,
+                        'aria-label' => filled($accessibleLabel) ? e($accessibleLabel) : null,
                         'x-on:click' => $isCopyable
                             ? <<<JS
                             window.navigator.clipboard.writeText({$copyableStateJs})
@@ -97,7 +115,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
                             })
                             JS
                             : null,
-                        'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                        'x-tooltip' => filled($tooltip)
                             ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
@@ -110,7 +128,7 @@ class ColorEntry extends Entry implements HasEmbeddedView
                         'fi-copyable' => $isCopyable,
                     ])
                     ->style([
-                        'background-color: ' . e($sanitizedColor = Str::sanitizeCssColor($stateItem)) => filled($sanitizedColor),
+                        'background-color: ' . e($sanitizedColor) => filled($sanitizedColor),
                     ])
                     ->toHtml() ?>></div>
             <?php } ?>

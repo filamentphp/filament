@@ -122,7 +122,49 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Color picker',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Month',
+        ],
+
+        'year_input' => [
+            'label' => 'Year',
+        ],
+
+        'hour_input' => [
+            'label' => 'Hour',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minute',
+        ],
+
+        'second_input' => [
+            'label' => 'Second',
+        ],
+
+    ],
+
     'file_upload' => [
+
+        'actions' => [
+
+            'download' => [
+                'label' => 'Download',
+            ],
+
+            'open' => [
+                'label' => 'Open in new tab',
+            ],
+
+        ],
 
         'editor' => [
 
@@ -270,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Actions',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -340,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Actions',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -606,6 +672,10 @@ return [
             'searching_message' => 'Searching...',
         ],
 
+        'toolbar' => [
+            'label' => 'Editor toolbar',
+        ],
+
         'tools' => [
             'align_center' => 'Align center',
             'align_end' => 'Align end',
@@ -744,6 +814,10 @@ return [
         ],
 
         'placeholder' => 'New tag',
+
+        'tag_added' => 'Added: :tag',
+
+        'tag_removed' => 'Removed: :tag',
 
     ],
 

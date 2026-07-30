@@ -890,13 +890,13 @@ class Action extends ViewComponent implements Arrayable
             $iconHtml = $icon ? generate_icon_html($icon, size: IconSize::Small)?->toHtml() : '';
             $hrefHtml = generate_href_html($url)->toHtml();
 
-            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$label}</a>";
+            return "<a {$hrefHtml}{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}<span class=\"fi-link-label\">{$label}</span></a>";
         }
 
         $handler = $this->getLivewireClickHandler();
 
         if (blank($handler)) {
-            return "<span{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$label}</span>";
+            return "<span{$wireKeyAttribute} class=\"{$classString}\"{$styleString}><span class=\"fi-link-label\">{$label}</span></span>";
         }
 
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
@@ -921,7 +921,7 @@ class Action extends ViewComponent implements Arrayable
         // Match `ComponentAttributeBag::__toString()` attribute escaping (only `"` → `\"`).
         $handler = str_replace('"', '\\"', $handler);
 
-        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}{$label}</button>";
+        return "<button type=\"button\" wire:loading.attr=\"disabled\" wire:click=\"{$handler}\"{$wireKeyAttribute} class=\"{$classString}\"{$styleString}>{$iconHtml}{$loadingHtml}<span class=\"fi-link-label\">{$label}</span></button>";
     }
 
     protected function canRenderOptimizedGrouped(): bool
