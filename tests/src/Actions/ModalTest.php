@@ -235,8 +235,8 @@ describe('browser interactions', function (): void {
                 ->assertVisible('[data-testid="scroll-modal"]')
                 // Let the modal's fields lay out so the window is scrollable.
                 ->wait(1)
-                // Scroll the parent modal window to the bottom (~1264px).
-                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); el.scrollTop = el.scrollHeight; return el.scrollTop > 600 })()', true)
+                // Scroll the parent modal's `.fi-modal-window-scroll` container to the bottom (~1264px), since a sticky footer moves scrolling from the window to it.
+                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"] .fi-modal-window-scroll\'); el.scrollTop = el.scrollHeight; return el.scrollTop > 600 })()', true)
                 ->click('[data-testid="scroll-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
                 ->assertVisible('[data-testid="scroll-nested-modal"]')
                 // The parent is now hidden behind the child, but its trap must
@@ -248,7 +248,7 @@ describe('browser interactions', function (): void {
                 ->assertVisible('[data-testid="scroll-modal"]')
                 // The parent modal's scroll position is preserved, not reset to top.
                 ->wait(1)
-                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); return el.scrollTop > 600 })()', true)
+                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"] .fi-modal-window-scroll\'); return el.scrollTop > 600 })()', true)
                 ->assertNoSmoke();
         });
     });
