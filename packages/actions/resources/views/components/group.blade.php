@@ -58,6 +58,28 @@
 
     {{ $group }}
 @elseif (! $group->hasDropdown())
+    @php
+        /**
+         * Reset each child action's own bound record to match the group's current
+         * record before checking visibility. See the longer explanation below (in the
+         * dropdown branch) for why this is necessary.
+         *
+         * $group only has getRecord() when it's a table ActionGroup (via the
+         * InteractsWithRecord trait) - this same view also renders page/form/infolist
+         * action groups, which don't implement HasRecord at all, so this must be
+         * guarded rather than called unconditionally.
+         */
+        if ($group instanceof \Filament\Actions\Contracts\HasRecord) {
+            $currentRecord = $group->getRecord();
+
+            foreach ($group->getActions() as $action) {
+                if ($action instanceof \Filament\Actions\Contracts\HasRecord) {
+                    $action->record($currentRecord);
+                }
+            }
+        }
+    @endphp
+
     @foreach ($group->getActions() as $action)
         @if ($action->isVisible())
             {{ $action }}
@@ -65,6 +87,49 @@
     @endforeach
 @else
     @php
+        /**
+         * When a table row action is clicked, Table::getAction() (see
+         * Filament\Tables\Table\Concerns\HasActions::getAction()) does
+         * `$action->record($mountedRecord)` directly on the SPECIFIC child action
+         * being mounted - not only on the parent ActionGroup. Because that action's
+         * record lookup (InteractsWithRecord::getRecord()) checks its OWN $record
+         * property first and only falls back to the parent group's record if its own
+         * is null, that action keeps using the clicked row's record for the REST of
+         * the request - including when Livewire re-renders the whole table to show
+         * the resulting confirmation modal. So for every other row rendered
+         * afterwards, that one action evaluates its ->visible()/->hidden() closures
+         * against the WRONG (originally-clicked) record, and can wrongly appear - or
+         * wrongly make the whole group non-empty and therefore visible - on rows that
+         * should show no actions at all.
+         *
+         * Fix: before evaluating any child action's visibility for this row, force its
+         * record back to the group's current (correct, per-row) record. This runs on
+         * every render, so it always overwrites whatever Table::getAction() may have
+         * stuck onto an individual action earlier in the same request.
+         *
+         * $group only has getRecord() when it's a table ActionGroup (via the
+         * InteractsWithRecord trait) - this same view also renders page/form/infolist
+         * action groups, which don't implement HasRecord at all, so this must be
+         * guarded rather than called unconditionally.
+         */
+        if ($group instanceof \Filament\Actions\Contracts\HasRecord) {
+            $currentRecord = $group->getRecord();
+
+            foreach ($group->getActions() as $action) {
+                if ($action instanceof \Filament\Actions\Contracts\HasRecord) {
+                    $action->record($currentRecord);
+                }
+
+                if ($action instanceof \Filament\Actions\ActionGroup) {
+                    foreach ($action->getActions() as $nestedAction) {
+                        if ($nestedAction instanceof \Filament\Actions\Contracts\HasRecord) {
+                            $nestedAction->record($currentRecord);
+                        }
+                    }
+                }
+            }
+        }
+
         $actionLists = [];
         $singleActions = [];
 

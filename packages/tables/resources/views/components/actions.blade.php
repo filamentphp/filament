@@ -10,11 +10,44 @@
 ])
 
 @php
+    /**
+     * Reset every child action inside an ActionGroup's own bound record to the
+     * current row's record, recursively, before the group's visibility is checked
+     * below. Companion fix to resources/views/components/group.blade.php in the
+     * filament/actions package - see that file for the full explanation of the
+     * underlying bug.
+     *
+     * Short version: Table::getAction() sets a record directly on whichever specific
+     * child action was just clicked, and that action keeps using that stale record
+     * for the rest of the request. group.blade.php resets it before deciding what to
+     * put INSIDE the dropdown, but that runs too late to affect whether the trigger
+     * button is shown at all - that decision happens right here, via
+     * $actionGroup->isVisible() (which checks each child's isHiddenInGroup(), which
+     * reads each child's own possibly-stale record). Without this reset, a row can
+     * end up with a visible trigger button whose dropdown is empty: the stale record
+     * made the group look non-empty here, but the corrected record inside
+     * group.blade.php correctly finds nothing to show.
+     */
+    $resetActionGroupChildRecords = function ($action) use (&$resetActionGroupChildRecords, $record): void {
+        if (! ($action instanceof \Filament\Actions\ActionGroup)) {
+            return;
+        }
+
+        foreach ($action->getActions() as $childAction) {
+            if ($childAction instanceof \Filament\Actions\Contracts\HasRecord) {
+                $childAction->record($record);
+            }
+
+            $resetActionGroupChildRecords($childAction);
+        }
+    };
+
     $actions = array_filter(
         $actions,
-        function ($action) use ($record): bool {
+        function ($action) use ($record, $resetActionGroupChildRecords): bool {
             if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
                 $action->record($record);
+                $resetActionGroupChildRecords($action);
             }
 
             return $action->isVisible();

@@ -181,6 +181,10 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     Tables\Actions\DeleteAction::make('groupedDelete'),
                     Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),
                     Tables\Actions\RestoreAction::make('groupedRestore'),
+                    Tables\Actions\Action::make('groupedConditional')
+                        ->requiresConfirmation()
+                        ->visible(fn (Post $record): bool => $record->is_published)
+                        ->action(fn () => null),
                 ]),
             ])
             ->bulkActions([
