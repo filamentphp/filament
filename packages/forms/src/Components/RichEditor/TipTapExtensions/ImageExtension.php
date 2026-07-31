@@ -40,7 +40,7 @@ class ImageExtension extends BaseImage
 
                     return [
                         'width' => $width,
-                        'style' => filled($width) ? "width: {$width}" : null,
+                        'style' => filled($width) ? "width: {$this->normalizeStyleLength($width)}" : null,
                     ];
                 },
             ],
@@ -51,7 +51,7 @@ class ImageExtension extends BaseImage
 
                     return [
                         'height' => $height,
-                        'style' => filled($height) ? "height: {$height}" : null,
+                        'style' => filled($height) ? "height: {$this->normalizeStyleLength($height)}" : null,
                     ];
                 },
             ],
@@ -88,5 +88,12 @@ class ImageExtension extends BaseImage
         return preg_match('/^\d+(?:\.\d+)?(?:%|px|em|rem|vw|vh|vmin|vmax|pt|pc|cm|mm|in|ch|ex)?$/i', $value)
             ? $value
             : null;
+    }
+
+    protected function normalizeStyleLength(string $value): string
+    {
+        return preg_match('/^\d+(?:\.\d+)?$/', $value)
+            ? "{$value}px"
+            : $value;
     }
 }
