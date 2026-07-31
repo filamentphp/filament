@@ -65,7 +65,7 @@ it('cannot validate from a client-side call alongside another method', function 
     // Both calls are made in one request, so that an implementation which only
     // guarded the first call would be caught.
     $this->withHeaders(['X-Livewire' => true])
-        ->post(app('livewire')->getUpdateUri(), [
+        ->postJson(app('livewire')->getUpdateUri(), [
             'components' => [
                 [
                     'snapshot' => json_encode($lastState->getSnapshot()),
