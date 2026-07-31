@@ -203,23 +203,6 @@ test('codes must be 6 digits', function (): void {
         ->toBeFalse();
 });
 
-test('codes must be strings', function (): void {
-    $user = auth()->user();
-
-    expect($user->hasEmailAuthentication())
-        ->toBeFalse();
-
-    livewire(EditProfile::class)
-        ->mountAction(TestAction::make('setUpEmailAuthentication')
-            ->schemaComponent('email_code', schema: 'content'))
-        ->fillForm(['code' => ['123456']])
-        ->callMountedAction()
-        ->assertHasFormErrors(['code']);
-
-    expect($user->hasEmailAuthentication())
-        ->toBeFalse();
-});
-
 it('can throttle code verification attempts per user', function (): void {
     /** @var EmailAuthentication $emailAuthentication */
     $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());

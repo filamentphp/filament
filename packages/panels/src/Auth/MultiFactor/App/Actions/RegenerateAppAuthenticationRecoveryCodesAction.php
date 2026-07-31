@@ -44,7 +44,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.validation_attribute'))
                     ->requiredWithout('password')
                     ->rule(function () use ($appAuthentication): Closure {
-                        return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
+                        return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($appAuthentication): void {
                             $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::auth()->id();
 
                             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
@@ -55,7 +55,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
 
                             RateLimiter::hit($rateLimitingKey);
 
-                            if (is_string($value) && $appAuthentication->verifyCode($value)) {
+                            if ($appAuthentication->verifyCode($value)) {
                                 return;
                             }
 

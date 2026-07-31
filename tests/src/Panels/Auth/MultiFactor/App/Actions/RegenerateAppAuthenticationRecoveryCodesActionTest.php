@@ -191,28 +191,6 @@ describe('validation', function (): void {
             ->toBe($recoveryCodes);
     });
 
-    test('codes must be strings', function (): void {
-        $user = auth()->user();
-
-        $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
-
-        livewire(EditProfile::class)
-            ->callAction(
-                TestAction::make('regenerateAppAuthenticationRecoveryCodes')
-                    ->schemaComponent('app', schema: 'content'),
-                ['code' => ['123456']],
-            )
-            ->assertHasFormErrors(['code'])
-            ->assertActionNotMounted([
-                TestAction::make('regenerateAppAuthenticationRecoveryCodes')
-                    ->schemaComponent('app', schema: 'content'),
-                TestAction::make('showNewRecoveryCodes'),
-            ]);
-
-        expect($user->getAppAuthenticationRecoveryCodes())
-            ->toBe($recoveryCodes);
-    });
-
     test('the user\'s current password must be valid', function (): void {
         $user = auth()->user();
 

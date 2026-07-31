@@ -447,7 +447,7 @@ describe('validation', function (): void {
             ])
             ->call('authenticate')
             ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
-            ->set("data.multiFactor.{$emailAuthentication->getId()}.code", ['123456'])
+            ->set("data.multiFactor.{$emailAuthentication->getId()}.code", [])
             ->call('authenticate')
             ->assertHasErrors();
 

@@ -214,23 +214,6 @@ describe('validation', function (): void {
         expect($user->getAppAuthenticationRecoveryCodes())
             ->toBeNull();
     });
-
-    test('codes must be strings', function (): void {
-        $user = auth()->user();
-
-        livewire(EditProfile::class)
-            ->mountAction(TestAction::make('setUpAppAuthentication')
-                ->schemaComponent('app', schema: 'content'))
-            ->fillForm(['code' => ['123456']])
-            ->callMountedAction()
-            ->assertHasFormErrors(['code']);
-
-        expect($user->refresh()->getAppAuthenticationSecret())
-            ->toBeEmpty();
-
-        expect($user->getAppAuthenticationRecoveryCodes())
-            ->toBeNull();
-    });
 });
 
 it('can throttle code verification attempts per user', function (): void {

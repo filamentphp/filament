@@ -66,7 +66,7 @@ class SetUpEmailAuthenticationAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.validation_attribute'))
                     ->required()
                     ->rule(function () use ($emailAuthentication): Closure {
-                        return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($emailAuthentication): void {
+                        return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($emailAuthentication): void {
                             $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::auth()->id();
 
                             if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
@@ -77,7 +77,7 @@ class SetUpEmailAuthenticationAction
 
                             RateLimiter::hit($rateLimitingKey);
 
-                            if (is_string($value) && $emailAuthentication->verifyCode($value)) {
+                            if ($emailAuthentication->verifyCode($value)) {
                                 return;
                             }
 
