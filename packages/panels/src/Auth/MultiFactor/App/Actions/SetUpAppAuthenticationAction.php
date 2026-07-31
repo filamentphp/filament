@@ -95,7 +95,7 @@ class SetUpAppAuthenticationAction
                             ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.validation_attribute'))
                             ->required()
                             ->rule(function () use ($action, $appAuthentication): Closure {
-                                return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($action, $appAuthentication): void {
+                                return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($action, $appAuthentication): void {
                                     $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::auth()->id();
 
                                     if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
@@ -106,7 +106,7 @@ class SetUpAppAuthenticationAction
 
                                     RateLimiter::hit($rateLimitingKey);
 
-                                    if ($appAuthentication->verifyCode($value, decrypt($action->getArguments()['encrypted'])['secret'])) {
+                                    if (is_string($value) && $appAuthentication->verifyCode($value, decrypt($action->getArguments()['encrypted'])['secret'])) {
                                         return;
                                     }
 

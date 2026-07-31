@@ -350,8 +350,8 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
                 ->required(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
                 ->rule(function () use ($user): Closure {
-                    return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($user): void {
-                        if ($this->verifyCode($value, $this->getSecret($user), shouldPreventCodeReuse: true)) {
+                    return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
+                        if (is_string($value) && $this->verifyCode($value, $this->getSecret($user), shouldPreventCodeReuse: true)) {
                             return;
                         }
 
