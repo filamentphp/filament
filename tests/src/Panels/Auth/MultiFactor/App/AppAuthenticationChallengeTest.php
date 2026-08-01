@@ -771,7 +771,7 @@ describe('security', function (): void {
 
         $secret = $appAuthentication->getSecret($userToAuthenticate);
 
-        $this->travelTo(now()->addMinutes(2));
+        $this->travelTo(now()->addMinutes(1));
         $futureCode = $appAuthentication->getCurrentCode($userToAuthenticate);
         $this->travelBack();
 

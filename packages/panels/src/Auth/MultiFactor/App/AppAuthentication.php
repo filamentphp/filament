@@ -42,9 +42,9 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     protected ?string $brandName = null;
 
     /**
-     * 8 keys (respectively 4 minutes) past and future
+     * 2 keys (respectively 1 minute) past and future
      */
-    protected int $codeWindow = 8;
+    protected int $codeWindow = 2;
 
     public function __construct(
         protected Google2FA $google2FA,
