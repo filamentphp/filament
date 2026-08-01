@@ -39,6 +39,30 @@ require('codemirror/mode/yaml/yaml')
 
 require('./markdown-editor/EasyMDE')
 
+// CodeMirror 5 eagerly measures character positions during initialization.
+// When the editor is inside a hidden container (collapsed section, inactive
+// tab), measurements return null rects and throw TypeError. This init hook
+// safely wraps prepareSelection to return an empty selection fragment on error
+// until the container becomes visible and refresh() is called.
+CodeMirror.defineInitHook((cm) => {
+    const input = cm.display?.input
+
+    if (input?.prepareSelection) {
+        const originalPrepareSelection = input.prepareSelection.bind(input)
+
+        input.prepareSelection = function () {
+            try {
+                return originalPrepareSelection()
+            } catch {
+                return {
+                    cursors: document.createDocumentFragment(),
+                    selection: document.createDocumentFragment(),
+                }
+            }
+        }
+    }
+})
+
 CodeMirror.commands.tabAndIndentMarkdownList = function (codemirror) {
     var ranges = codemirror.listSelections()
     var pos = ranges[0].head
@@ -102,11 +126,7 @@ export default function markdownEditorFormComponent({
 
         state,
 
-        wasEditorVisible: false,
-
-        resizeObserver: null,
-
-        intersectionObserver: null,
+        visibilityObserver: null,
 
         async init() {
             // If the editor is inside a modal, wait for the modal transition to finish before initializing the editor.
@@ -114,6 +134,43 @@ export default function markdownEditorFormComponent({
             // which can cause it to render without any content.
             if (this.$root.closest('.fi-modal')) {
                 await new Promise((resolve) => setTimeout(resolve, 300))
+            }
+
+            await new Promise((resolve) => requestAnimationFrame(resolve))
+
+            if (!this.isEditorVisible()) {
+                this.waitForVisibilityThenInit()
+                return
+            }
+
+            this.createEditor()
+        },
+
+        waitForVisibilityThenInit() {
+            if (this.editor) {
+                return
+            }
+
+            const checkAndInit = () => {
+                if (this.isEditorVisible()) {
+                    if (this.visibilityObserver) {
+                        this.visibilityObserver.disconnect()
+                        this.visibilityObserver = null
+                    }
+
+                    requestAnimationFrame(() => {
+                        this.createEditor()
+                    })
+                }
+            }
+
+            this.visibilityObserver = new ResizeObserver(() => checkAndInit())
+            this.visibilityObserver.observe(this.$el)
+        },
+
+        createEditor() {
+            if (this.editor) {
+                return
             }
 
             if (this.$root._editor) {
@@ -275,13 +332,36 @@ export default function markdownEditorFormComponent({
         },
 
         isEditorVisible() {
-            // `offsetParent` is `null` when the editor or an ancestor uses
-            // `display: none`, such as in an inactive tab. A collapsed section
-            // hides its content with `visibility: hidden` instead, which only
-            // a computed style check detects.
+            if (this.$root.closest('[x-cloak]')) {
+                return false
+            }
+
+            if (this.$root.closest('.fi-collapsed')) {
+                return false
+            }
+
+            const parentSection = this.$root.closest('.fi-section')
+
+            if (parentSection) {
+                if (parentSection.classList.contains('fi-collapsed')) {
+                    return false
+                }
+
+                if (window.Alpine && Alpine.$data(parentSection)?.isCollapsed) {
+                    return false
+                }
+            }
+
+            const rect = this.$el.getBoundingClientRect()
+
+            if (rect.width === 0 || rect.height === 0) {
+                return false
+            }
+
             return (
                 this.$el.offsetParent !== null &&
-                getComputedStyle(this.$el).visibility !== 'hidden'
+                getComputedStyle(this.$el).visibility !== 'hidden' &&
+                getComputedStyle(this.$el).display !== 'none'
             )
         },
 
@@ -296,13 +376,16 @@ export default function markdownEditorFormComponent({
         },
 
         destroy() {
+            this.visibilityObserver?.disconnect()
+            this.visibilityObserver = null
+
             this.resizeObserver?.disconnect()
             this.resizeObserver = null
 
             this.intersectionObserver?.disconnect()
             this.intersectionObserver = null
 
-            this.editor.cleanup()
+            this.editor?.cleanup()
             this.editor = null
         },
 
