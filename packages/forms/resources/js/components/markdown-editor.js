@@ -54,6 +54,10 @@ CodeMirror.defineInitHook((cm) => {
             try {
                 return originalPrepareSelection()
             } catch {
+                try {
+                    cm.refresh()
+                } catch {}
+
                 return {
                     cursors: document.createDocumentFragment(),
                     selection: document.createDocumentFragment(),
@@ -215,6 +219,34 @@ export default function markdownEditorFormComponent({
                 document.documentElement?.dir ?? 'ltr',
             )
 
+            // Refresh when focused or clicked if line measurements are missing
+            this.editor.codemirror.on('focus', () => {
+                if (
+                    !this.wasEditorVisible ||
+                    !this.editor?.codemirror?.display?.cachedTextHeight
+                ) {
+                    this.wasEditorVisible = true
+                    this.editor?.codemirror?.refresh()
+                }
+            })
+
+            const wrapperEl = this.editor.codemirror.getWrapperElement()
+            if (wrapperEl) {
+                wrapperEl.addEventListener(
+                    'mousedown',
+                    () => {
+                        if (
+                            !this.wasEditorVisible ||
+                            !this.editor?.codemirror?.display?.cachedTextHeight
+                        ) {
+                            this.wasEditorVisible = true
+                            this.editor?.codemirror?.refresh()
+                        }
+                    },
+                    { capture: true },
+                )
+            }
+
             // When creating a link, highlight the URL instead of the label:
             this.editor.codemirror.on('changes', (instance, changes) => {
                 try {
@@ -309,16 +341,15 @@ export default function markdownEditorFormComponent({
                 setUpUsing(this)
             }
 
-            // If the editor initializes while hidden, such as in a collapsed
-            // section or an inactive tab, CodeMirror renders no lines, and no
-            // update pass runs when the editor is revealed, so inline image
-            // previews stay unapplied until the first keystroke. A `refresh()`
-            // once the editor becomes visible renders it correctly. The
-            // observers stay connected for the whole lifecycle of the editor
-            // since it may be hidden and revealed again, potentially receiving
-            // state changes while hidden, but `refresh()` only runs on the
-            // hidden-to-visible transition, not on every resize or scroll.
             this.wasEditorVisible = this.isEditorVisible()
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (this.isEditorVisible()) {
+                        this.editor?.codemirror?.refresh()
+                    }
+                })
+            })
 
             this.resizeObserver = new ResizeObserver(() =>
                 this.handleEditorVisibilityChange(),
@@ -332,24 +363,29 @@ export default function markdownEditorFormComponent({
         },
 
         isEditorVisible() {
-            if (this.$root.closest('[x-cloak]')) {
+            if (this.$root.closest('[x-cloak], [hidden], .fi-collapsed')) {
                 return false
             }
 
-            if (this.$root.closest('.fi-collapsed')) {
-                return false
-            }
-
-            const parentSection = this.$root.closest('.fi-section')
-
-            if (parentSection) {
-                if (parentSection.classList.contains('fi-collapsed')) {
+            let curr = this.$root.parentElement
+            while (curr && curr !== document.body) {
+                if (curr.matches('[x-cloak], [hidden], .fi-collapsed')) {
                     return false
                 }
 
-                if (window.Alpine && Alpine.$data(parentSection)?.isCollapsed) {
-                    return false
+                if (window.Alpine) {
+                    const data = Alpine.$data(curr)
+                    if (
+                        data?.isCollapsed === true ||
+                        data?.collapsed === true ||
+                        data?.isOpen === false ||
+                        data?.open === false
+                    ) {
+                        return false
+                    }
                 }
+
+                curr = curr.parentElement
             }
 
             const rect = this.$el.getBoundingClientRect()
@@ -358,10 +394,13 @@ export default function markdownEditorFormComponent({
                 return false
             }
 
+            const style = getComputedStyle(this.$el)
+
             return (
                 this.$el.offsetParent !== null &&
-                getComputedStyle(this.$el).visibility !== 'hidden' &&
-                getComputedStyle(this.$el).display !== 'none'
+                style.visibility !== 'hidden' &&
+                style.visibility !== 'collapse' &&
+                style.display !== 'none'
             )
         },
 
@@ -370,6 +409,12 @@ export default function markdownEditorFormComponent({
 
             if (isEditorVisible && !this.wasEditorVisible) {
                 this.editor?.codemirror?.refresh()
+
+                setTimeout(() => {
+                    if (this.isEditorVisible()) {
+                        this.editor?.codemirror?.refresh()
+                    }
+                }, 150)
             }
 
             this.wasEditorVisible = isEditorVisible
