@@ -5,6 +5,7 @@ namespace Filament\Schemas\Components\StateCasts;
 use BackedEnum;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Illuminate\Support\Arr;
+use Stringable;
 
 class OptionsArrayStateCast implements StateCast
 {
@@ -31,8 +32,19 @@ class OptionsArrayStateCast implements StateCast
                     return $carry;
                 }
 
+                // Security: each option must be a scalar or `BackedEnum`, but a tampered
+                // request payload can deliver a nested array, which would throw a `TypeError`
+                // at the `strval()` below and crash the request. Fail closed by skipping it.
+                if ((! is_scalar($stateItem)) && (! $stateItem instanceof BackedEnum) && (! $stateItem instanceof Stringable)) {
+                    return $carry;
+                }
+
                 if ($stateItem instanceof BackedEnum) {
                     $stateItem = $stateItem->value;
+                }
+
+                if ($stateItem instanceof Stringable) {
+                    $stateItem = (string) $stateItem;
                 }
 
                 if (
@@ -83,6 +95,13 @@ class OptionsArrayStateCast implements StateCast
             $state,
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
+                    return $carry;
+                }
+
+                // Security: each option must be a scalar or `BackedEnum`, but a tampered
+                // request payload can deliver a nested array, which would throw a `TypeError`
+                // at the `strval()` below and crash the request. Fail closed by skipping it.
+                if ((! is_scalar($stateItem)) && (! $stateItem instanceof BackedEnum) && (! $stateItem instanceof Stringable)) {
                     return $carry;
                 }
 

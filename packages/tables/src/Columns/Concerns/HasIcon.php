@@ -89,4 +89,9 @@ trait HasIcon
 
         return IconPosition::tryFrom($position) ?? IconPosition::Before;
     }
+
+    public function hasIcon(): bool
+    {
+        return $this->icon !== null && $this->icon !== false;
+    }
 }

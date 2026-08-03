@@ -102,6 +102,12 @@ export default function markdownEditorFormComponent({
 
         state,
 
+        wasEditorVisible: false,
+
+        resizeObserver: null,
+
+        intersectionObserver: null,
+
         async init() {
             // If the editor is inside a modal, wait for the modal transition to finish before initializing the editor.
             // This is necessary to prevent the editor from being initialized before the modal is fully visible,
@@ -196,20 +202,32 @@ export default function markdownEditorFormComponent({
                 }
             })
 
-            this.editor.codemirror.on(
-                'change',
-                Alpine.debounce(() => {
-                    if (!this.editor) {
-                        return
-                    }
+            const debouncedCommit = Alpine.debounce(() => {
+                if (!this.editor) {
+                    return
+                }
 
-                    this.state = this.editor.value()
+                this.$wire.commit()
+            }, liveDebounce ?? 300)
 
-                    if (isLiveDebounced) {
-                        this.$wire.commit()
-                    }
-                }, liveDebounce ?? 300),
-            )
+            this.editor.codemirror.on('change', (instance, changeObject) => {
+                if (!this.editor) {
+                    return
+                }
+
+                // `setValue` changes originate from the `state` watcher applying
+                // an external state change to the editor, not from user input, so
+                // they should not be echoed back into the state.
+                if (changeObject.origin === 'setValue') {
+                    return
+                }
+
+                this.state = this.editor.value()
+
+                if (isLiveDebounced) {
+                    debouncedCommit()
+                }
+            })
 
             if (isLiveOnBlur) {
                 this.editor.codemirror.on('blur', () => this.$wire.commit())
@@ -220,7 +238,10 @@ export default function markdownEditorFormComponent({
                     return
                 }
 
-                if (this.editor.codemirror.hasFocus()) {
+                // Skip the echo of the editor's own input to avoid resetting the
+                // cursor position, but still apply genuine external state changes,
+                // even while the editor is focused.
+                if ((this.state ?? '') === this.editor.value()) {
                     return
                 }
 
@@ -230,9 +251,57 @@ export default function markdownEditorFormComponent({
             if (setUpUsing) {
                 setUpUsing(this)
             }
+
+            // If the editor initializes while hidden, such as in a collapsed
+            // section or an inactive tab, CodeMirror renders no lines, and no
+            // update pass runs when the editor is revealed, so inline image
+            // previews stay unapplied until the first keystroke. A `refresh()`
+            // once the editor becomes visible renders it correctly. The
+            // observers stay connected for the whole lifecycle of the editor
+            // since it may be hidden and revealed again, potentially receiving
+            // state changes while hidden, but `refresh()` only runs on the
+            // hidden-to-visible transition, not on every resize or scroll.
+            this.wasEditorVisible = this.isEditorVisible()
+
+            this.resizeObserver = new ResizeObserver(() =>
+                this.handleEditorVisibilityChange(),
+            )
+            this.resizeObserver.observe(this.$el)
+
+            this.intersectionObserver = new IntersectionObserver(() =>
+                this.handleEditorVisibilityChange(),
+            )
+            this.intersectionObserver.observe(this.$el)
+        },
+
+        isEditorVisible() {
+            // `offsetParent` is `null` when the editor or an ancestor uses
+            // `display: none`, such as in an inactive tab. A collapsed section
+            // hides its content with `visibility: hidden` instead, which only
+            // a computed style check detects.
+            return (
+                this.$el.offsetParent !== null &&
+                getComputedStyle(this.$el).visibility !== 'hidden'
+            )
+        },
+
+        handleEditorVisibilityChange() {
+            const isEditorVisible = this.isEditorVisible()
+
+            if (isEditorVisible && !this.wasEditorVisible) {
+                this.editor?.codemirror?.refresh()
+            }
+
+            this.wasEditorVisible = isEditorVisible
         },
 
         destroy() {
+            this.resizeObserver?.disconnect()
+            this.resizeObserver = null
+
+            this.intersectionObserver?.disconnect()
+            this.intersectionObserver = null
+
             this.editor.cleanup()
             this.editor = null
         },

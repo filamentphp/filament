@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Moje aktualizace',
 
+        'unread_label' => 'Nepřečtené oznámení',
+
         'actions' => [
 
             'clear' => [
@@ -19,7 +21,7 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Nemáme pro vás žádné aktulizace',
+            'heading' => 'Nemáme pro vás žádné aktualizace',
             'description' => 'Zkuste to prosím později',
         ],
 

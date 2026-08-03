@@ -1,8 +1,8 @@
 @php
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
-    use Illuminate\View\ComponentAttributeBag;
 
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
@@ -10,7 +10,6 @@
     $descriptionIconPosition = $getDescriptionIconPosition();
     $url = $getUrl();
     $tag = $url ? 'a' : 'div';
-    $chartDataChecksum = $generateChartDataChecksum();
 @endphp
 
 <{!! $tag !!}
@@ -39,10 +38,10 @@
 
         @if ($description = $getDescription())
             <div
-                {{ (new ComponentAttributeBag)->color(DescriptionComponent::class, $descriptionColor)->class(['fi-wi-stats-overview-stat-description']) }}
+                {{ (new FilamentComponentAttributeBag)->color(DescriptionComponent::class, $descriptionColor)->class(['fi-wi-stats-overview-stat-description']) }}
             >
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
                 @endif
 
                 <span>
@@ -50,26 +49,28 @@
                 </span>
 
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
                 @endif
             </div>
         @endif
     </div>
 
     @if ($chart = $getChart())
-        {{-- An empty function to initialize the Alpine component with until it's loaded with `x-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
+        {{-- An empty function to initialize the Alpine component with until it's loaded with `x-load`. --}}
         <div x-data="{ statsOverviewStatChart() {} }">
             <div
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
+                wire:ignore
                 x-data="statsOverviewStatChart({
-                            dataChecksum: @js($chartDataChecksum),
+                            key: @js($getKey(false)),
                             labels: @js(array_keys($chart)),
                             values: @js(array_values($chart)),
                         })"
-                {{ (new ComponentAttributeBag)->color(StatsOverviewWidgetStatChartComponent::class, $chartColor)->class(['fi-wi-stats-overview-stat-chart']) }}
+                {{ (new FilamentComponentAttributeBag)->color(StatsOverviewWidgetStatChartComponent::class, $chartColor)->class(['fi-wi-stats-overview-stat-chart']) }}
             >
-                <canvas x-ref="canvas"></canvas>
+                {{-- The label and value are already exposed as text, so the trend sparkline is decorative. --}}
+                <canvas x-ref="canvas" aria-hidden="true"></canvas>
 
                 <span
                     x-ref="backgroundColorElement"

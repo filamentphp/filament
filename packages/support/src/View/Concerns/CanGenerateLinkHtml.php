@@ -7,6 +7,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\LinkComponent;
 use Illuminate\Contracts\Support\Htmlable;
@@ -52,6 +53,7 @@ trait CanGenerateLinkHtml
         ?string $type = 'button',
         string | FontWeight | null $weight = null,
     ): string {
+        $badgeColor ??= 'primary';
         $color ??= 'primary';
 
         if (! $iconPosition instanceof IconPosition) {
@@ -98,6 +100,10 @@ trait CanGenerateLinkHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
+                // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
+                'aria-label' => $isLabelSrOnly
+                    ? e(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))), doubleEncode: false)
+                    : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
                 'type' => match ($tag) {
@@ -122,13 +128,17 @@ trait CanGenerateLinkHtml
             ])
             ->color(LinkComponent::class, $color);
 
-        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
-            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-        ])), size: $iconSize)->toHtml() : '';
+        $loadingDelay = ($icon || $iconAlias || $hasLoadingIndicator)
+            ? config('filament.livewire_loading_delay', 'default')
+            : null;
 
-        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
-            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+        $iconHtml = ($icon || $iconAlias) ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
+            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+        ])), size: $iconSize)?->toHtml() ?? '' : '';
+
+        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
+            'wire:loading.delay.' . $loadingDelay => '',
             'wire:target' => $loadingIndicatorTarget,
         ])), size: $iconSize)->toHtml() : '';
 
@@ -159,7 +169,9 @@ trait CanGenerateLinkHtml
             <?php } ?>
 
             <?php if (! $isLabelSrOnly) { ?>
-                <?= e($label) ?>
+                <span class="fi-link-label">
+                    <?= e($label) ?>
+                </span>
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>
@@ -169,7 +181,7 @@ trait CanGenerateLinkHtml
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-link-badge-ctn">
-                    <span <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                    <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>

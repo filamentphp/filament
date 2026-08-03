@@ -421,6 +421,22 @@ public static function configure(Table $table): Table
 }
 ```
 
+<Aside variant="danger">
+    Filtering the table's query (via `modifyQueryUsing()`, filters, or table arguments) is **presentational** — it only affects which records are displayed for selection. It is **not** a security boundary: a user who tampers with the submitted modal state can attach a record that was excluded from the visible table.
+
+    To restrict which records may actually be attached, scope the options using the [`recordSelectOptionsQuery()` method](#scoping-the-options-to-attach). Filament resolves the submitted record against that query, so records outside it are rejected:
+
+    ```php
+    use App\Filament\Resources\Products\Tables\ProductsTable;
+    use Filament\Actions\AttachAction;
+    use Illuminate\Database\Eloquent\Builder;
+
+    AttachAction::make()
+        ->tableSelect(ProductsTable::class)
+        ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
+    ```
+</Aside>
+
 ### Handling duplicates
 
 By default, you will not be allowed to attach a record more than once. This is because you must also set up a primary `id` column on the pivot table for this feature to work.
@@ -1006,6 +1022,22 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+<Aside variant="danger">
+    `modifyQueryUsing()` scopes the query for records that already belong to the relationship — the table listing, and actions that operate on its rows, such as `DetachAction`, `DissociateAction`, and bulk actions. It is **not** applied to the records available to `AttachAction` or `AssociateAction`, since those records are outside the relationship by definition.
+
+    To restrict which records may be attached or associated, scope the options using the `recordSelectOptionsQuery()` method on the action. Filament resolves the submitted record against that query, so records outside it are rejected, even if a user tampers with the submitted modal state:
+
+    ```php
+    use Filament\Actions\AttachAction;
+    use Illuminate\Database\Eloquent\Builder;
+
+    AttachAction::make()
+        ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('is_active', true))
+    ```
+
+    Learn more about scoping the options to [attach](#scoping-the-options-to-attach) or [associate](#scoping-the-options-to-associate).
+</Aside>
 
 ## Customizing the relation manager title
 

@@ -3,6 +3,7 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraEntryWrapperAttributes
@@ -34,7 +35,7 @@ trait HasExtraEntryWrapperAttributes
      */
     public function getExtraEntryWrapperAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag;
+        $temporaryAttributeBag = new FilamentComponentAttributeBag;
 
         foreach ($this->extraEntryWrapperAttributes as $extraEntryWrapperAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraEntryWrapperAttributes), escape: false);
@@ -45,6 +46,6 @@ trait HasExtraEntryWrapperAttributes
 
     public function getExtraEntryWrapperAttributesBag(): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($this->getExtraEntryWrapperAttributes());
+        return new FilamentComponentAttributeBag($this->getExtraEntryWrapperAttributes());
     }
 }

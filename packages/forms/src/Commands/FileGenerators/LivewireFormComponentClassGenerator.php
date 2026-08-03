@@ -10,6 +10,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
@@ -19,7 +20,7 @@ use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\Property;
 use Nette\PhpGenerator\TraitUse;
 
-class LivewireFormComponentClassGenerator extends ClassGenerator
+class LivewireFormComponentClassGenerator extends ClassGenerator implements HasSkippedColumns
 {
     use CanGenerateModelForms;
     use CanReadModelSchemas;

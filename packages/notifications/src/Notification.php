@@ -17,6 +17,7 @@ use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +27,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 use PHPUnit\Framework\Assert;
 
 use function Filament\Support\generate_icon_html;
@@ -261,7 +261,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if ($notification instanceof Notification) {
-            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+            $expectedNotificationArray = collect($notification->toArray())->except(['id'])->toArray();
+
+            $expectedNotification = $notifications->first(
+                fn (Notification $mountedNotification): bool => collect($mountedNotification->toArray())->except(['id'])->toArray() === $expectedNotificationArray,
+            );
         }
 
         if (blank($notification)) {
@@ -302,7 +306,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         if ($notification instanceof Notification) {
-            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+            $expectedNotificationArray = collect($notification->toArray())->except(['id'])->toArray();
+
+            $expectedNotification = $notifications->first(
+                fn (Notification $mountedNotification): bool => collect($mountedNotification->toArray())->except(['id'])->toArray() === $expectedNotificationArray,
+            );
         }
 
         if (blank($notification)) {
@@ -342,9 +350,16 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $hasDate = filled($date);
         $body = $this->getBody();
         $hasBody = filled($body);
+        $closeButtonLabel = __('filament-notifications::notification.actions.close.label');
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
+                // `danger` toasts convey errors, so they get an assertive live region
+                // (`role="alert"`) to interrupt; other statuses inherit the polite
+                // `role="status"` container. Inline notifications (e.g. rendered into the
+                // database-notifications modal) are excluded, otherwise opening the panel
+                // would replay every stored danger notification as an assertive burst.
+                'role' => ($status === 'danger' && ! $this->isInline) ? 'alert' : null,
                 'wire:key' => "{$this->getId()}.notifications.{$this->getId()}",
                 'x-on:close-notification.window' => "if (\$event.detail.id == '{$this->getId()}') close()",
             ], escape: false)
@@ -358,7 +373,10 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-data="notificationComponent({ notification: <?= Js::from($this->toArray()) ?> })"
+            x-data="notificationComponent({ notification: <?= Js::from([
+                'id' => $this->getId(),
+                'duration' => $this->getDuration(),
+            ]) ?> })"
             x-transition:enter-start="fi-transition-enter-start"
             x-transition:enter-end="fi-transition-enter-end"
             x-transition:leave-start="fi-transition-leave-start"
@@ -367,7 +385,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         >
             <?= generate_icon_html(
                 $this->getIcon(),
-                attributes: (new ComponentAttributeBag)->color(IconComponent::class, $this->getIconColor())->class(['fi-no-notification-icon']),
+                attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $this->getIconColor())->class(['fi-no-notification-icon']),
                 size: $this->getIconSize(),
             )?->toHtml() ?>
 
@@ -406,6 +424,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
             <button
                 type="button"
                 x-on:click="close"
+                aria-label="<?= e($closeButtonLabel) ?>"
+                title="<?= e($closeButtonLabel) ?>"
                 class="fi-icon-btn fi-no-notification-close-btn"
             >
                 <?= generate_icon_html(Heroicon::XMark, alias: NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON)->toHtml() ?>

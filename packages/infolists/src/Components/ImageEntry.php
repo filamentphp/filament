@@ -7,6 +7,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -42,6 +43,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
      * @var array<mixed> | Closure
      */
     protected array | Closure $extraImgAttributes = [];
+
+    protected string | Closure | null $alt = null;
 
     protected string | Closure | null $defaultImageUrl = null;
 
@@ -196,6 +199,18 @@ class ImageEntry extends Entry implements HasEmbeddedView
         return $this;
     }
 
+    public function alt(string | Closure | null $alt): static
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
+    public function getAlt(mixed $state = null): ?string
+    {
+        return $this->evaluate($this->alt, ['state' => $state]);
+    }
+
     public function getImageUrl(?string $state = null): ?string
     {
         if ((filter_var($state, FILTER_VALIDATE_URL) !== false) || str($state)->startsWith('data:')) {
@@ -306,7 +321,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function getExtraImgAttributeBag(): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($this->getExtraImgAttributes());
+        return new FilamentComponentAttributeBag($this->getExtraImgAttributes());
     }
 
     public function stacked(bool | Closure $condition = true): static
@@ -501,6 +516,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
             $item = '<img ' . $this->getExtraImgAttributeBag()
                 ->merge([
+                    'alt' => e($this->getAlt($stateItem) ?? ''),
                     'src' => e(filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl),
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{
@@ -532,7 +548,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
             <?php } ?>
 
             <?php if ($hasLimitedRemainingText) { ?>
-                <div <?= (new ComponentAttributeBag)
+                <div <?= (new FilamentComponentAttributeBag)
                 ->class([
                     'fi-in-image-limited-remaining-text',
                     (($limitedRemainingTextSize instanceof TextSize) ? "fi-size-{$limitedRemainingTextSize->value}" : $limitedRemainingTextSize) => $limitedRemainingTextSize,

@@ -33,4 +33,14 @@ trait CanBeHiddenResponsively
     {
         return $this->evaluate($this->visibleFrom);
     }
+
+    public function hasDynamicHiddenFrom(): bool
+    {
+        return $this->hiddenFrom instanceof Closure;
+    }
+
+    public function hasDynamicVisibleFrom(): bool
+    {
+        return $this->visibleFrom instanceof Closure;
+    }
 }

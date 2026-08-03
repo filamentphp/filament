@@ -26,4 +26,9 @@ trait HasFontFamily
 
         return $family;
     }
+
+    public function hasFontFamily(): bool
+    {
+        return $this->fontFamily !== null;
+    }
 }

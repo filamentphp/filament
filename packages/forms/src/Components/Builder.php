@@ -10,19 +10,29 @@ use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Filament\Support\View\Components\DropdownComponent\ItemComponent;
+use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
 use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\generate_loading_indicator_html;
 
-class Builder extends Field implements CanConcealComponents, HasExtraItemActions
+class Builder extends Field implements CanConcealComponents, HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
@@ -31,10 +41,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.builder';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.builder';
 
     protected string | Closure | null $addBetweenActionLabel = null;
 
@@ -100,6 +107,11 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     protected Width | string | Closure | null $blockPickerWidth = null;
 
     protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
+
+    /**
+     * @var array<?string> | null
+     */
+    protected ?array $cachedItemsRawStateStructure = null;
 
     protected function setUp(): void
     {
@@ -915,11 +927,28 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
      */
     public function getItems(): array
     {
-        return collect($this->getRawState())
-            ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
+        return $this->getCachedDefaultChildSchemas();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $rawState = $this->getRawState();
+
+        $this->cachedItemsRawStateStructure = $this->getRawStateStructure($rawState);
+
+        $blocks = [];
+
+        foreach ($this->getBlocks() as $block) {
+            $blocks[$block->getName()] = $block;
+        }
+
+        return collect($rawState)
+            ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && array_key_exists($itemData['type'], $blocks))
             ->map(
-                fn (array $itemData, $itemIndex): Schema => $this
-                    ->getBlock($itemData['type'])
+                fn (array $itemData, $itemIndex): Schema => $blocks[$itemData['type']]
                     ->getChildSchema()
                     ->statePath("{$itemIndex}.data")
                     ->constantState($itemData['data'] ?? [])
@@ -930,11 +959,26 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     }
 
     /**
-     * @return array<Schema>
+     * Item schemas only depend on the raw state's structure - the item keys, their
+     * order, and each item's block type - since fields inside the items read their
+     * values from the live raw state. Comparing a structural fingerprint instead of
+     * the item values keeps this check cheap when it runs often, and avoids
+     * rebuilding the item schemas every time a value inside an item changes.
      */
-    public function getDefaultChildSchemas(): array
+    protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->getItems();
+        return $this->cachedItemsRawStateStructure === $this->getRawStateStructure($this->getRawState());
+    }
+
+    /**
+     * @return array<?string>
+     */
+    protected function getRawStateStructure(mixed $rawState): array
+    {
+        return array_map(
+            static fn (mixed $itemData): ?string => is_array($itemData) ? ($itemData['type'] ?? null) : null,
+            is_array($rawState) ? $rawState : [],
+        );
     }
 
     public function getAddBetweenActionLabel(): string
@@ -1232,5 +1276,440 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     public function hasBlockHeaders(): bool
     {
         return (bool) $this->evaluate($this->hasBlockHeaders);
+    }
+
+    /**
+     * @param  array<Block>  $blocks
+     * @param  array<string, ?int> | int | null  $columns
+     */
+    protected function generateBlockPickerHtml(
+        Action $action,
+        array $blocks,
+        string $key,
+        string $triggerHtml,
+        Alignment | string | null $actionAlignment = null,
+        ?string $afterItem = null,
+        array | int | null $columns = null,
+        Width | string | null $width = null,
+    ): string {
+        /** @var view-string $publishedView */
+        $publishedView = 'filament-forms::components.builder.block-picker';
+
+        if (ViewComponent::hasPublishedEmbeddedViewOverride($publishedView)) {
+            return view($publishedView, [
+                'action' => $action,
+                'actionAlignment' => $actionAlignment,
+                'afterItem' => $afterItem,
+                'blocks' => $blocks,
+                'columns' => $columns,
+                'key' => $key,
+                'trigger' => new HtmlString($triggerHtml),
+                'width' => $width,
+            ])->render();
+        }
+
+        $placement = match ($actionAlignment) {
+            Alignment::Start, Alignment::Left => 'bottom-start',
+            Alignment::End, Alignment::Right => 'bottom-end',
+            default => null,
+        };
+
+        $alignmentClass = ($actionAlignment instanceof Alignment)
+            ? ('fi-align-' . $actionAlignment->value)
+            : (is_string($actionAlignment) ? $actionAlignment : null);
+
+        if (is_string($width)) {
+            $width = Width::tryFrom($width) ?? $width;
+        }
+
+        $widthClass = ($width instanceof Width)
+            ? "fi-width-{$width->value}"
+            : (is_string($width) ? $width : null);
+
+        $xFloatDirective = 'x-float' . ($placement ? ".placement.{$placement}" : '') . '.flip.shift.offset';
+
+        $dropdownAttributes = (new FilamentComponentAttributeBag)
+            ->merge(['x-data' => 'filamentDropdown'], escape: false)
+            ->class([
+                'fi-dropdown',
+                'fi-fo-builder-block-picker',
+                $alignmentClass,
+            ]);
+
+        $panelAttributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'x-cloak' => true,
+                'x-ref' => 'panel',
+                'x-transition:enter-start' => 'fi-opacity-0',
+                'x-transition:leave-end' => 'fi-opacity-0',
+                $xFloatDirective => '{ offset: 8 }',
+            ], escape: false)
+            ->class([
+                'fi-dropdown-panel',
+                $widthClass,
+            ]);
+
+        $loadingDelay = config('filament.livewire_loading_delay', 'default');
+
+        ob_start(); ?>
+
+        <div <?= $dropdownAttributes->toHtml() ?>>
+            <div
+                x-on:keyup.enter="toggle($event)"
+                x-on:keyup.space="toggle($event)"
+                x-on:mousedown="if ($event.button === 0) toggle($event)"
+                class="fi-dropdown-trigger"
+            >
+                <?= $triggerHtml ?>
+            </div>
+
+            <?php if (filled($blocks)) { ?>
+                <div <?= $panelAttributes->toHtml() ?>>
+                    <div class="fi-dropdown-list">
+                        <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
+                            <?php foreach ($blocks as $block) {
+                                $blockIcon = $block->getIcon();
+
+                                $wireClickArguments = ['block' => $block->getName()];
+
+                                if (filled($afterItem)) {
+                                    $wireClickArguments['afterItem'] = $afterItem;
+                                }
+
+                                $wireClick = "mountAction('{$action->getName()}', " . Js::from($wireClickArguments) . ", { schemaComponent: '{$key}' })";
+
+                                $itemAttributes = (new FilamentComponentAttributeBag)
+                                    ->merge([
+                                        'x-on:click' => 'close',
+                                        'wire:click' => $wireClick,
+                                        'type' => 'button',
+                                        'wire:loading.attr' => 'disabled',
+                                        'wire:target' => $wireClick,
+                                    ], escape: false)
+                                    ->class(['fi-dropdown-list-item'])
+                                    ->color(ItemComponent::class, 'gray');
+                                ?>
+
+                            <button <?= $itemAttributes->toHtml() ?>>
+                                <?php if (filled($blockIcon)) { ?>
+                                    <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag([
+                                        'wire:loading.remove.delay.' . $loadingDelay => true,
+                                        'wire:target' => $wireClick,
+                                    ]))->color(IconComponent::class, 'gray'))?->toHtml() ?>
+                                <?php } ?>
+
+                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag([
+                                    'wire:loading.delay.' . $loadingDelay => '',
+                                    'wire:target' => $wireClick,
+                                ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
+
+                                <span class="fi-dropdown-list-item-label">
+                                    <?= e($block->getLabel()) ?>
+                                </span>
+                            </button>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $items = $this->getItems();
+
+        // Filter before counting so `$itemCount` agrees with the loop's
+        // `$isFirst` / `$isLast` calculations.
+        $items = array_filter(
+            $items,
+            static fn ($item): bool => $item->getParentComponent() instanceof Block,
+        );
+
+        $blockPickerBlocks = $this->getBlockPickerBlocks();
+        $blockPickerColumns = $this->getBlockPickerColumns();
+        $blockPickerWidth = $this->getBlockPickerWidth();
+        $hasBlockPreviews = $this->hasBlockPreviews();
+        $hasInteractiveBlockPreviews = $this->hasInteractiveBlockPreviews();
+
+        $addAction = $this->getAction($this->getAddActionName());
+        $addActionAlignment = $this->getAddActionAlignment();
+        $addBetweenAction = $this->getAction($this->getAddBetweenActionName());
+        $cloneAction = $this->getAction($this->getCloneActionName());
+        $collapseAllAction = $this->getAction($this->getCollapseAllActionName());
+        $editAction = $this->getAction($this->getEditActionName());
+        $expandAllAction = $this->getAction($this->getExpandAllActionName());
+        $deleteAction = $this->getAction($this->getDeleteActionName());
+        $moveDownAction = $this->getAction($this->getMoveDownActionName());
+        $moveUpAction = $this->getAction($this->getMoveUpActionName());
+        $reorderAction = $this->getAction($this->getReorderActionName());
+        $extraItemActions = $this->getExtraItemActions();
+
+        $isAddable = $this->isAddable();
+        $isCloneable = $this->isCloneable();
+        $isCollapsible = $this->isCollapsible();
+        $isDeletable = $this->isDeletable();
+        $isReorderableWithButtons = $this->isReorderableWithButtons();
+        $isReorderableWithDragAndDrop = $this->isReorderableWithDragAndDrop();
+
+        $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
+        $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+        $persistCollapsed = $this->shouldPersistCollapsed();
+
+        $key = $this->getKey();
+        $statePath = $this->getStatePath();
+
+        $blockLabelHeadingTag = $this->getHeadingTag();
+        $isBlockLabelTruncated = $this->isBlockLabelTruncated();
+        $labelBetweenItems = $this->getLabelBetweenItems();
+
+        $id = $this->getId();
+
+        $outerAttributes = (new FilamentComponentAttributeBag)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
+            ->class([
+                'fi-fo-builder',
+                'fi-collapsible' => $isCollapsible,
+            ]);
+
+        $itemCount = count($items);
+        $itemIndex = 0;
+
+        $hasBlockLabels = $this->hasBlockLabels();
+        $hasBlockIcons = $this->hasBlockIcons();
+        $hasBlockNumbers = $this->hasBlockNumbers();
+        $hasBlockHeaders = $this->hasBlockHeaders();
+
+        ob_start(); ?>
+
+        <div <?= $outerAttributes->toHtml() ?>>
+            <?php if ($collapseAllActionIsVisible || $expandAllActionIsVisible) { ?>
+                <div
+                    <?= (new FilamentComponentAttributeBag)->class([
+                        'fi-fo-builder-actions',
+                        'fi-hidden' => $itemCount < 2,
+                    ])->toHtml() ?>
+                >
+                    <?php if ($collapseAllActionIsVisible) { ?>
+                        <span x-on:click="$dispatch('builder-collapse', '<?= e($statePath) ?>')">
+                            <?= $collapseAllAction->toHtml() ?>
+                        </span>
+                    <?php } ?>
+
+                    <?php if ($expandAllActionIsVisible) { ?>
+                        <span x-on:click="$dispatch('builder-expand', '<?= e($statePath) ?>')">
+                            <?= $expandAllAction->toHtml() ?>
+                        </span>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <?php if ($itemCount) { ?>
+                <ul
+                    x-sortable
+                    data-sortable-animation-duration="<?= e($this->getReorderAnimationDuration()) ?>"
+                    x-on:end.stop="$wire.mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '<?= e($key) ?>' })"
+                    class="fi-fo-builder-items"
+                >
+                    <?php foreach ($items as $itemKey => $item) {
+                        /** @var Block $block */
+                        $block = $item->getParentComponent();
+
+                        $itemIndex++;
+                        $isFirst = $itemIndex === 1;
+                        $isLast = $itemIndex === $itemCount;
+
+                        $visibleExtraItemActions = array_filter(
+                            $extraItemActions,
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                        );
+                        $itemCloneAction = $cloneAction(['item' => $itemKey]);
+                        $cloneActionIsVisible = $isCloneable && $itemCloneAction->isVisible();
+                        $itemDeleteAction = $deleteAction(['item' => $itemKey]);
+                        $deleteActionIsVisible = $isDeletable && $itemDeleteAction->isVisible();
+                        $itemEditAction = $editAction(['item' => $itemKey]);
+                        $editActionIsVisible = $hasBlockPreviews && $itemEditAction->isVisible();
+                        $itemMoveDownAction = $moveDownAction(['item' => $itemKey])->disabled($isLast);
+                        $moveDownActionIsVisible = $isReorderableWithButtons && $itemMoveDownAction->isVisible();
+                        $itemMoveUpAction = $moveUpAction(['item' => $itemKey])->disabled($isFirst);
+                        $moveUpActionIsVisible = $isReorderableWithButtons && $itemMoveUpAction->isVisible();
+                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
+                        ?>
+
+                        <li
+                            wire:ignore.self
+                            wire:key="<?= e($item->getLivewireKey()) ?>.item"
+                            x-data="{
+                                isCollapsed: <?php if ($persistCollapsed) { ?>$persist(<?= Js::from($this->isCollapsed($item)) ?>).as(`builder-${<?= Js::from($key) ?>}-${<?= Js::from($itemKey) ?>}-isCollapsed`)<?php } else { ?><?= Js::from($this->isCollapsed($item)) ?><?php } ?>,
+                            }"
+                            x-on:builder-expand.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = false)"
+                            x-on:builder-collapse.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = true)"
+                            x-on:expand="isCollapsed = false"
+                            x-sortable-item="<?= e($itemKey) ?>"
+                            <?= $block->getExtraAttributeBag()
+                                ->class([
+                                    'fi-fo-builder-item',
+                                    'fi-fo-builder-item-has-header' => $hasItemHeader,
+                                ])->toHtml() ?>
+                            x-bind:class="{ 'fi-collapsed': isCollapsed }"
+                        >
+                            <?php if ($hasItemHeader) { ?>
+                                <div
+                                    <?php if ($isCollapsible) { ?>
+                                        x-on:click.stop="isCollapsed = !isCollapsed"
+                                    <?php } ?>
+                                    class="fi-fo-builder-item-header"
+                                >
+                                    <?php if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible) { ?>
+                                        <ul class="fi-fo-builder-item-header-start-actions">
+                                            <?php if ($reorderActionIsVisible) { ?>
+                                                <li x-on:click.stop>
+                                                    <?= $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true)->toHtml() ?>
+                                                </li>
+                                            <?php } ?>
+
+                                            <?php if ($moveUpActionIsVisible || $moveDownActionIsVisible) { ?>
+                                                <li x-on:click.stop><?= $itemMoveUpAction->toHtml() ?></li>
+                                                <li x-on:click.stop><?= $itemMoveDownAction->toHtml() ?></li>
+                                            <?php } ?>
+                                        </ul>
+                                    <?php } ?>
+
+                                    <?php
+                                        $blockIcon = $block->getIcon();
+                                ?>
+
+                                    <?php if ($hasBlockIcons && filled($blockIcon)) { ?>
+                                        <?= generate_icon_html($blockIcon, attributes: (new FilamentComponentAttributeBag)->class(['fi-fo-builder-item-header-icon']))?->toHtml() ?>
+                                    <?php } ?>
+
+                                    <?php if ($hasBlockLabels) { ?>
+                                        <<?= e($blockLabelHeadingTag) ?>
+                                            <?= (new FilamentComponentAttributeBag)->class([
+                                                'fi-fo-builder-item-header-label',
+                                                'fi-truncated' => $isBlockLabelTruncated,
+                                            ])->toHtml() ?>
+                                        >
+                                            <?= e($block->getLabel($item->getRawState(), $itemKey, $itemIndex - 1)) ?>
+                                            <?php if ($hasBlockNumbers) { ?>
+                                                <?= e($itemIndex) ?>
+                                            <?php } ?>
+                                        </<?= e($blockLabelHeadingTag) ?>>
+                                    <?php } ?>
+
+                                    <?php if ($editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions) { ?>
+                                        <ul class="fi-fo-builder-item-header-end-actions">
+                                            <?php foreach ($visibleExtraItemActions as $extraItemAction) { ?>
+                                                <li x-on:click.stop><?= $extraItemAction(['item' => $itemKey])->toHtml() ?></li>
+                                            <?php } ?>
+
+                                            <?php if ($editActionIsVisible) { ?>
+                                                <li x-on:click.stop><?= $itemEditAction->toHtml() ?></li>
+                                            <?php } ?>
+
+                                            <?php if ($cloneActionIsVisible) { ?>
+                                                <li x-on:click.stop><?= $itemCloneAction->toHtml() ?></li>
+                                            <?php } ?>
+
+                                            <?php if ($deleteActionIsVisible) { ?>
+                                                <li x-on:click.stop><?= $itemDeleteAction->toHtml() ?></li>
+                                            <?php } ?>
+
+                                            <?php if ($isCollapsible) { ?>
+                                                <li class="fi-fo-builder-item-header-collapsible-actions" x-on:click.stop="isCollapsed = !isCollapsed">
+                                                    <div class="fi-fo-builder-item-header-collapse-action">
+                                                        <?= $this->getAction('collapse')->toHtml() ?>
+                                                    </div>
+                                                    <div class="fi-fo-builder-item-header-expand-action">
+                                                        <?= $this->getAction('expand')->toHtml() ?>
+                                                    </div>
+                                                </li>
+                                            <?php } ?>
+                                        </ul>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+
+                            <div
+                                x-show="! isCollapsed"
+                                <?= (new FilamentComponentAttributeBag)->class([
+                                    'fi-fo-builder-item-content',
+                                    'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $block->hasPreview(),
+                                ])->toHtml() ?>
+                            >
+                                <?php if ($hasBlockPreviews && $block->hasPreview()) { ?>
+                                    <div
+                                        <?= (new FilamentComponentAttributeBag)->class([
+                                            'fi-fo-builder-item-preview',
+                                            'fi-interactive' => $hasInteractiveBlockPreviews,
+                                        ])->toHtml() ?>
+                                    >
+                                        <?= $block->renderPreview($item->getRawState())->render() ?>
+                                    </div>
+
+                                    <?php if ($editActionIsVisible && (! $hasInteractiveBlockPreviews)) { ?>
+                                        <div
+                                            class="fi-fo-builder-item-preview-edit-overlay"
+                                            role="button"
+                                            x-on:click.stop="<?= e('$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })') ?>"
+                                        ></div>
+                                    <?php } ?>
+                                <?php } else { ?>
+                                    <?= $item->toHtml() ?>
+                                <?php } ?>
+                            </div>
+                        </li>
+
+                        <?php if (! $isLast) { ?>
+                            <?php if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible()) { ?>
+                                <li class="fi-fo-builder-add-between-items-ctn">
+                                    <div class="fi-fo-builder-add-between-items">
+                                        <div class="fi-fo-builder-block-picker-ctn">
+                                            <?= $this->generateBlockPickerHtml(
+                                                action: $addBetweenAction,
+                                                blocks: $blockPickerBlocks,
+                                                key: $key,
+                                                triggerHtml: $addBetweenAction(['afterItem' => $itemKey])->toHtml(),
+                                                afterItem: $itemKey,
+                                                columns: $blockPickerColumns,
+                                                width: $blockPickerWidth,
+                                            ) ?>
+                                        </div>
+                                    </div>
+                                </li>
+                            <?php } elseif (filled($labelBetweenItems)) { ?>
+                                <li class="fi-fo-builder-label-between-items-ctn">
+                                    <div class="fi-fo-builder-label-between-items-divider-before"></div>
+                                    <span class="fi-fo-builder-label-between-items"><?= e($labelBetweenItems) ?></span>
+                                    <div class="fi-fo-builder-label-between-items-divider-after"></div>
+                                </li>
+                            <?php } ?>
+                        <?php } ?>
+                    <?php } ?>
+                </ul>
+            <?php } ?>
+
+            <?php if ($isAddable && $addAction->isVisible()) { ?>
+                <?= $this->generateBlockPickerHtml(
+                    action: $addAction,
+                    blocks: $blockPickerBlocks,
+                    key: $key,
+                    triggerHtml: $addAction->toHtml(),
+                    actionAlignment: $addActionAlignment,
+                    columns: $blockPickerColumns,
+                    width: $blockPickerWidth,
+                ) ?>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 }

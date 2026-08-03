@@ -19,6 +19,12 @@
     ])
 
     <div class="fi-simple-layout">
+        @if (($hasTopbar ?? true) && filament()->auth()->check())
+            <a href="#fi-main-content" class="fi-skip-link fi-sr-only">
+                {{ __('filament-panels::layout.skip_to_content.label') }}
+            </a>
+        @endif
+
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_START, scopes: $renderHookScopes) }}
 
         @if (($hasTopbar ?? true) && filament()->auth()->check())
@@ -38,6 +44,8 @@
 
         <div class="fi-simple-main-ctn">
             <main
+                id="fi-main-content"
+                tabindex="-1"
                 @class([
                     'fi-simple-main',
                     ($maxContentWidth instanceof Width) ? "fi-width-{$maxContentWidth->value}" : $maxContentWidth,

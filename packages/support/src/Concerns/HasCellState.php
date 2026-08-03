@@ -9,6 +9,7 @@ use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -46,6 +47,16 @@ trait HasCellState
     protected ?bool $hasMultipleRelationshipCache = null;
 
     protected ?Relation $relationshipCache = null;
+
+    protected ?bool $hasRelationshipCache = null;
+
+    protected ?string $relationshipNameCache = null;
+
+    protected ?string $fullAttributeNameCache = null;
+
+    protected ?string $attributeNameCache = null;
+
+    protected ?bool $hasNestedMorphToRelationshipCache = null;
 
     public function inverseRelationship(?string $name): static
     {
@@ -250,17 +261,21 @@ trait HasCellState
 
     public function hasRelationship(Model $record): bool
     {
+        if (isset($this->hasRelationshipCache)) {
+            return $this->hasRelationshipCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
-            return false;
+            return $this->hasRelationshipCache = false;
         }
 
         if ($record->hasAttribute((string) str($name)->before('.'))) {
-            return false;
+            return $this->hasRelationshipCache = false;
         }
 
-        return $record->isRelation((string) str($name)->before('.'));
+        return $this->hasRelationshipCache = $record->isRelation((string) str($name)->before('.'));
     }
 
     /**
@@ -273,7 +288,9 @@ trait HasCellState
 
     public function getRelationship(Model $record, ?string $relationshipName = null): ?Relation
     {
-        if ($this->relationshipCache) {
+        $hasNestedMorphToRelationship = $this->hasNestedMorphToRelationship($record);
+
+        if ($this->relationshipCache && (! $hasNestedMorphToRelationship)) {
             return $this->relationshipCache;
         }
 
@@ -305,14 +322,22 @@ trait HasCellState
             $record = $relationship->getRelated();
         }
 
+        if ($hasNestedMorphToRelationship) {
+            return $relationship;
+        }
+
         return $this->relationshipCache = $relationship;
     }
 
     public function hasMultipleRelationship(Model $record): bool
     {
-        if (isset($this->hasMultipleRelationshipCache)) {
+        $hasNestedMorphToRelationship = $this->hasNestedMorphToRelationship($record);
+
+        if (isset($this->hasMultipleRelationshipCache) && (! $hasNestedMorphToRelationship)) {
             return $this->hasMultipleRelationshipCache;
         }
+
+        $hasMultipleRelationship = false;
 
         $relationships = explode('.', $this->getRelationshipName($record));
 
@@ -322,7 +347,9 @@ trait HasCellState
             $currentRelationshipValue = $record->getRelationValue($currentRelationshipName);
 
             if ($currentRelationshipValue instanceof Collection) {
-                return $this->hasMultipleRelationshipCache = true;
+                $hasMultipleRelationship = true;
+
+                break;
             }
 
             if (! $currentRelationshipValue instanceof Model) {
@@ -336,7 +363,11 @@ trait HasCellState
             $record = $currentRelationshipValue;
         }
 
-        return $this->hasMultipleRelationshipCache = false;
+        if ($hasNestedMorphToRelationship) {
+            return $hasMultipleRelationship;
+        }
+
+        return $this->hasMultipleRelationshipCache = $hasMultipleRelationship;
     }
 
     /**
@@ -395,10 +426,16 @@ trait HasCellState
 
     public function getAttributeName(Model $record): string
     {
+        $hasNestedMorphToRelationship = $this->hasNestedMorphToRelationship($record);
+
+        if (($this->attributeNameCache !== null) && (! $hasNestedMorphToRelationship)) {
+            return $this->attributeNameCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
-            return $name;
+            return $this->attributeNameCache = $name;
         }
 
         $nameParts = explode('.', $name);
@@ -417,15 +454,27 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return Arr::first([...$nameParts, $lastPart]);
+        $attributeName = Arr::first([...$nameParts, $lastPart]);
+
+        if ($hasNestedMorphToRelationship) {
+            return $attributeName;
+        }
+
+        return $this->attributeNameCache = $attributeName;
     }
 
     public function getFullAttributeName(Model $record): string
     {
+        $hasNestedMorphToRelationship = $this->hasNestedMorphToRelationship($record);
+
+        if (($this->fullAttributeNameCache !== null) && (! $hasNestedMorphToRelationship)) {
+            return $this->fullAttributeNameCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
-            return $name;
+            return $this->fullAttributeNameCache = $name;
         }
 
         $nameParts = explode('.', $name);
@@ -444,7 +493,13 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return implode('.', [...$nameParts, $lastPart]);
+        $fullAttributeName = implode('.', [...$nameParts, $lastPart]);
+
+        if ($hasNestedMorphToRelationship) {
+            return $fullAttributeName;
+        }
+
+        return $this->fullAttributeNameCache = $fullAttributeName;
     }
 
     public function getInverseRelationshipName(Model $record): string
@@ -495,11 +550,17 @@ trait HasCellState
             array_unshift($inverseRelationshipParts, $inverseNestedRelationshipName);
         }
 
-        return implode('.', $inverseRelationshipParts);
+        return $this->inverseRelationshipName = implode('.', $inverseRelationshipParts);
     }
 
     public function getRelationshipName(Model $record): ?string
     {
+        $hasNestedMorphToRelationship = $this->hasNestedMorphToRelationship($record);
+
+        if (($this->relationshipNameCache !== null) && (! $hasNestedMorphToRelationship)) {
+            return $this->relationshipNameCache;
+        }
+
         $name = $this->getName();
 
         if (! str($name)->contains('.')) {
@@ -524,7 +585,58 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return implode('.', $relationshipParts);
+        $relationshipName = implode('.', $relationshipParts);
+
+        if ($hasNestedMorphToRelationship) {
+            return $relationshipName;
+        }
+
+        return $this->relationshipNameCache = $relationshipName;
+    }
+
+    /**
+     * When the name of a cell traverses a `MorphTo` relationship and then continues deeper,
+     * the remainder of the path resolves against the concrete related model of each record,
+     * which may differ between records and is unknown while the query is being built. In
+     * that case, the relationship and attribute names cannot be cached across records and
+     * must be resolved fresh for each one.
+     */
+    public function hasNestedMorphToRelationship(Model $record): bool
+    {
+        if (isset($this->hasNestedMorphToRelationshipCache)) {
+            return $this->hasNestedMorphToRelationshipCache;
+        }
+
+        $name = $this->getName();
+
+        if (! str($name)->contains('.')) {
+            return $this->hasNestedMorphToRelationshipCache = false;
+        }
+
+        $nameParts = explode('.', $name);
+        array_pop($nameParts);
+
+        $lastNamePartIndex = count($nameParts) - 1;
+
+        foreach ($nameParts as $namePartIndex => $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
+            if (! $record->isRelation($namePart)) {
+                break;
+            }
+
+            $relationship = $record->{$namePart}();
+
+            if ($relationship instanceof MorphTo) {
+                return $this->hasNestedMorphToRelationshipCache = ($namePartIndex < $lastNamePartIndex);
+            }
+
+            $record = $relationship->getRelated();
+        }
+
+        return $this->hasNestedMorphToRelationshipCache = false;
     }
 
     protected function cacheState(Closure $state): mixed

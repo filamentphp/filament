@@ -6,7 +6,7 @@
 ])
 
 @php
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
     if ($field) {
         $id ??= $field->getId();
@@ -17,7 +17,7 @@
 <div
     data-field-wrapper
     {{
-        (new ComponentAttributeBag)
+        (new FilamentComponentAttributeBag)
             ->merge($field?->getExtraFieldWrapperAttributes() ?? [], escape: false)
             ->class([
                 'fi-fo-field',

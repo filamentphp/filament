@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
@@ -8,7 +9,9 @@ use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -241,6 +244,135 @@ describe('authentication failures', function (): void {
 
             return true;
         });
+    });
+
+    it('cannot reach the multi-factor challenge on a panel that `canAccessPanel()` denies', function (): void {
+        Event::fake([Failed::class]);
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        Filament::setCurrentPanel('inaccessible-multi-factor-authentication');
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertSet('userUndertakingMultiFactorAuthentication', null)
+            ->assertHasFormErrors(['email']);
+
+        $this->assertGuest();
+
+        Event::assertDispatched(function (Failed $event) use ($userToAuthenticate): bool {
+            if ($event->guard !== 'web') {
+                return false;
+            }
+
+            return $event->user->is($userToAuthenticate);
+        });
+    });
+
+    it('returns the same failure for a correct and an incorrect password on a panel that `canAccessPanel()` denies', function (): void {
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        Filament::setCurrentPanel('inaccessible-multi-factor-authentication');
+
+        $getFailure = function (string $password) use ($userToAuthenticate): array {
+            $livewire = livewire(Login::class)
+                ->fillForm([
+                    'email' => $userToAuthenticate->email,
+                    'password' => $password,
+                ])
+                ->call('authenticate');
+
+            return [
+                'userUndertakingMultiFactorAuthentication' => $livewire->get('userUndertakingMultiFactorAuthentication'),
+                'errors' => $livewire->errors()->toArray(),
+            ];
+        };
+
+        expect($getFailure('password'))->toEqual($getFailure('incorrect-password'));
+    });
+
+    it('does not send an email authentication code to a user that `canAccessPanel()` denies', function (): void {
+        Notification::fake();
+
+        $userToAuthenticate = User::factory()
+            ->hasEmailAuthentication()
+            ->create();
+
+        Filament::setCurrentPanel('inaccessible-multi-factor-authentication');
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        Notification::assertNotSentTo($userToAuthenticate, VerifyEmailAuthentication::class);
+
+        $this->assertGuest();
+    });
+
+    it('applies the same timebox padding to an incorrect password and to an account denied by `canAccessPanel()`', function (string $panel): void {
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        Filament::setCurrentPanel($panel);
+
+        // The number of `Timebox` delays is compared between the two paths rather than
+        // asserted against a literal, because no padding happens at all when the
+        // password hash costs more than `auth.timebox_duration` to verify.
+        $getPadding = function (string $password) use ($userToAuthenticate): array {
+            $padding = [];
+
+            Sleep::fake();
+            Sleep::whenFakingSleep(function ($duration) use (&$padding): void {
+                $padding[] = $duration->totalMilliseconds;
+            });
+
+            livewire(Login::class)
+                ->fillForm([
+                    'email' => $userToAuthenticate->email,
+                    'password' => $password,
+                ])
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+
+            return $padding;
+        };
+
+        $correctPasswordPadding = $getPadding('password');
+        $incorrectPasswordPadding = $getPadding('incorrect-password');
+
+        expect($correctPasswordPadding)->toHaveCount(count($incorrectPasswordPadding));
+    })->with(['custom', 'inaccessible-multi-factor-authentication']);
+
+    it('still presents the multi-factor challenge on a panel that `canAccessPanel()` allows (control)', function (): void {
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        Filament::setCurrentPanel('app-authentication');
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->assertHasNoFormErrors();
+
+        $this->assertGuest();
     });
 
 });

@@ -61,4 +61,9 @@ trait CanBeCopied
     {
         return $this->evaluate($this->copyMessageDuration, $this->getEvaluationsForStateItem($state)) ?? 2000;
     }
+
+    public function hasCopyable(): bool
+    {
+        return $this->isCopyable !== false;
+    }
 }

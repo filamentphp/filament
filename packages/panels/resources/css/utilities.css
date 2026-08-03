@@ -1,0 +1,3 @@
+.fi-skip-link:focus {
+    @apply ring-primary-600 not-sr-only fixed start-4 top-4 z-50 rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-950 shadow-lg ring-2 outline-none dark:bg-gray-900 dark:text-white;
+}

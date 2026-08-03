@@ -2,6 +2,10 @@
 
 namespace Filament\Tests\Infolists\Components;
 
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
@@ -10,6 +14,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -528,6 +533,69 @@ describe('relationships', function (): void {
         }
     }
 
+    it('does not render a related record\'s row after an `Action` deletes it, without a page refresh', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2)->sequence(
+                ['title' => 'Delete me without a refresh'],
+                ['title' => 'Keep me rendered'],
+            ), 'posts')
+            ->create();
+
+        $component = livewire(TestRelationshipRepeatableEntryWithDeleteAction::class, ['user' => $user])
+            ->assertSeeText('Delete me without a refresh')
+            ->assertSeeText('Keep me rendered')
+            ->callAction(TestAction::make('deletePost')->schemaComponent('posts.0.title'));
+
+        expect(Post::query()->where('title', 'Delete me without a refresh')->exists())->toBeFalse();
+        expect($user->posts()->count())->toBe(1);
+
+        $component
+            ->assertSeeText('Keep me rendered')
+            ->assertDontSeeText('Delete me without a refresh');
+    });
+
+    class TestRelationshipRepeatableEntryWithDeleteAction extends Component implements HasActions, HasSchemas
+    {
+        use InteractsWithActions;
+        use InteractsWithSchemas;
+
+        public User $user;
+
+        public function mount(User $user): void
+        {
+            $this->user = $user;
+        }
+
+        public function infolist(Schema $schema): Schema
+        {
+            return $schema
+                ->record($this->user)
+                ->components([
+                    RepeatableEntry::make('posts')
+                        ->schema([
+                            TextEntry::make('title')
+                                ->registerActions([
+                                    Action::make('deletePost')
+                                        ->action(function (Post $record): void {
+                                            $record->delete();
+
+                                            $this->user->setRelation('posts', $this->user->posts()->get());
+                                        }),
+                                ]),
+                        ]),
+                ]);
+        }
+
+        public function render(): string
+        {
+            return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
+        }
+    }
+
 });
 
 it('correctly asserts entry state within `RepeatableEntry` using `assertSchemaComponentStateSet()`', function (): void {
@@ -795,3 +863,87 @@ class RenderRepeatableEntryWithClosureTable extends Component implements HasSche
         return '<div>{{ $this->infolist }}</div>';
     }
 }
+
+describe('`getItems()` memoization', function (): void {
+    it('builds one schema per item keyed by the item key', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                    ['name' => 'Third'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        $items = $entry->getItems();
+
+        expect($items)->toHaveCount(3)
+            ->and(array_keys($items))->toBe(array_keys($entry->getState()))
+            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        expect($entry->getItems())->toBe($entry->getItems());
+    });
+
+    it('rebuilds `getItems()` to reflect the new item count after the cache is cleared', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->state([
+                'items' => [
+                    ['name' => 'First'],
+                    ['name' => 'Second'],
+                ],
+            ])
+            ->components([
+                RepeatableEntry::make('items')
+                    ->schema([
+                        TextEntry::make('name'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        $firstItems = $entry->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        $schema->state([
+            'items' => [
+                ['name' => 'First'],
+                ['name' => 'Second'],
+                ['name' => 'Third'],
+            ],
+        ]);
+
+        // Mirrors the state-update lifecycle's `clearCachedChildSchemas()` call.
+        $entry->clearCachedChildSchemas();
+
+        expect($entry->getItems())
+            ->toHaveCount(3)
+            ->not->toBe($firstItems);
+    });
+});

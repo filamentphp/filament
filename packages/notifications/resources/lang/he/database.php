@@ -6,6 +6,8 @@ return [
 
         'heading' => 'התראות',
 
+        'unread_label' => 'התראה שלא נקראה',
+
         'actions' => [
 
             'clear' => [
@@ -13,7 +15,7 @@ return [
             ],
 
             'mark_all_as_read' => [
-                'label' => 'סמך הכל כנקרא',
+                'label' => 'סמן הכל כנקרא',
             ],
 
         ],

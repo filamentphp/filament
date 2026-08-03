@@ -8,6 +8,7 @@ import dropdown from './components/dropdown.js'
 import formButton from './components/form-button.js'
 import modal from './components/modal.js'
 import oneTimeCodeInput from './components/one-time-code.js'
+import './components/tooltip.js'
 import './partials.js'
 import pluralize from './utilities/pluralize.js'
 

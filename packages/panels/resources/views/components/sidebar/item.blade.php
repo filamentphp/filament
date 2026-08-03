@@ -33,8 +33,12 @@
 >
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
+        @if ($active)
+            aria-current="page"
+        @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if ($sidebarCollapsible && (! $subNavigation))
+            x-bind:aria-label="$store.sidebar.isOpen ? null : @js(trim(strip_tags($slot->toHtml())))"
             x-data="{ tooltip: false }"
             x-effect="
                 tooltip = $store.sidebar.isOpen
@@ -51,7 +55,7 @@
     >
         @if (filled($icon) && ((! $subGrouped) || ($sidebarCollapsible && (! $subNavigation))))
             {{
-                \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Illuminate\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Filament\Support\View\ComponentAttributeBag([
                     'x-show' => ($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false,
                 ]))->class(['fi-sidebar-item-icon']), size: \Filament\Support\Enums\IconSize::Large)
             }}

@@ -35,6 +35,7 @@ export default function fileUploadFormComponent({
     confirmSvgEditingMessage,
     deleteUploadedFileUsing,
     disabledSvgEditingMessage,
+    downloadActionLabel,
     getUploadedFilesUsing,
     hasCircleCropper,
     hasImageEditor,
@@ -63,6 +64,7 @@ export default function fileUploadFormComponent({
     maxSize,
     mimeTypeMap,
     minSize,
+    openActionLabel,
     panelAspectRatio,
     panelLayout,
     placeholder,
@@ -85,6 +87,8 @@ export default function fileUploadFormComponent({
         pond: null,
 
         shouldUpdateState: true,
+
+        activeUploads: 0,
 
         state,
 
@@ -238,6 +242,7 @@ export default function fileUploadFormComponent({
                         progress,
                         abort,
                     ) => {
+                        this.activeUploads++
                         this.shouldUpdateState = false
 
                         let fileKey = (
@@ -254,20 +259,34 @@ export default function fileUploadFormComponent({
                             ).toString(16),
                         )
 
+                        const finishUpload = () => {
+                            this.activeUploads--
+
+                            if (this.activeUploads <= 0) {
+                                this.shouldUpdateState = true
+                            }
+                        }
+
                         uploadUsing(
                             fileKey,
                             file,
                             (fileKey) => {
-                                this.shouldUpdateState = true
+                                finishUpload()
 
                                 load(fileKey)
                             },
-                            error,
+                            (...args) => {
+                                finishUpload()
+
+                                error(...args)
+                            },
                             progress,
                         )
 
                         return {
                             abort: () => {
+                                finishUpload()
+
                                 cancelUploadUsing(fileKey)
                                 abort()
                             },
@@ -388,12 +407,20 @@ export default function fileUploadFormComponent({
                 this.insertOpenLink(fileItem)
             })
 
+            let isProcessingFiles = false
+
             this.pond.on('addfilestart', async (file) => {
                 this.error = null
 
                 if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
                     return
                 }
+
+                if (isProcessingFiles) {
+                    return
+                }
+
+                isProcessingFiles = true
 
                 this.dispatchFormEvent('form-processing-started', {
                     message: uploadingMessage,
@@ -414,6 +441,12 @@ export default function fileUploadFormComponent({
                 ) {
                     return
                 }
+
+                if (!isProcessingFiles) {
+                    return
+                }
+
+                isProcessingFiles = false
 
                 this.dispatchFormEvent('form-processing-finished')
             }
@@ -574,6 +607,13 @@ export default function fileUploadFormComponent({
             anchor.href = downloadableUrl
             anchor.download = file.file.name
 
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (downloadActionLabel) {
+                anchor.setAttribute('aria-label', downloadActionLabel)
+                anchor.setAttribute('title', downloadActionLabel)
+            }
+
             return anchor
         },
 
@@ -588,6 +628,13 @@ export default function fileUploadFormComponent({
             anchor.className = 'filepond--open-icon'
             anchor.href = openableUrl
             anchor.target = '_blank'
+
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (openActionLabel) {
+                anchor.setAttribute('aria-label', openActionLabel)
+                anchor.setAttribute('title', openActionLabel)
+            }
 
             return anchor
         },

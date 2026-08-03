@@ -35,10 +35,13 @@ use Filament\Support\Concerns\CanOrderColumns;
 use Filament\Support\Concerns\CanSpanColumns;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Enums\Width;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 
 class Component extends ViewComponent
 {
@@ -166,7 +169,7 @@ class Component extends ViewComponent
 
         $key = $this->getKey();
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->when(
                 ! $container->isInline(),
                 fn (ComponentAttributeBag $attributes) => $attributes->gridColumn($this->getColumnSpan(), $this->getColumnStart(), $this->getColumnOrder(), ! $isVisible),
@@ -223,5 +226,23 @@ class Component extends ViewComponent
         </div>
 
         <?php return ob_get_clean();
+    }
+
+    /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     */
+    protected function renderWrapperBladeComponent(string $component, ComponentSlot $slot, ComponentAttributeBag $attributes): string
+    {
+        // Wrappers were originally rendered using the `<x-dynamic-component>` Blade component,
+        // so `fieldWrapperView()` and `entryWrapperView()` accepted any Blade component name,
+        // which is still supported for backwards compatibility.
+        return Blade::render(
+            '<x-dynamic-component :component="$component" {{ $attributes }}>{{ $slot }}</x-dynamic-component>',
+            [
+                'component' => $component,
+                'attributes' => $attributes,
+                'slot' => $slot,
+            ],
+        );
     }
 }
