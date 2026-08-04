@@ -89,40 +89,33 @@ it('can validate from the component itself', function (): void {
         ->assertHasFormErrors(['title' => ['required']]);
 });
 
-describe('filling list fields in tests', function (): void {
-    it('can shrink a list field on a mounted action to fewer items', function (): void {
-        // Shrinking is the only direction that needs stale numeric keys unset:
-        // growing and clearing to [] are both handled by data_set() alone. A
-        // mounted action's state path is nested, so a bug in deriving that path
-        // fails silently — the removed item survives and the next assertion
-        // passes against state that was never changed.
-        livewire(TestComponentWithListFields::class)
-            ->mountAction('roles')
-            ->assertSchemaStateSet(['roles' => ['viewer', 'creator']])
-            ->fillForm(['roles' => ['viewer']])
-            ->assertSchemaStateSet(['roles' => ['viewer']]);
-    });
+it('can remove items from a list field in a mounted action form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->mountAction('roles')
+        ->assertSchemaStateSet(['roles' => ['viewer', 'creator']])
+        ->fillForm(['roles' => ['viewer']])
+        ->assertSchemaStateSet(['roles' => ['viewer']]);
+});
 
-    it('can shrink a list field on a page-level form to fewer items', function (): void {
-        // A one-segment state path is the case that already worked, so this pins
-        // it against a fix that only corrects the nested path.
-        livewire(TestComponentWithListFields::class)
-            ->assertFormSet(['roles' => ['viewer', 'creator']])
-            ->fillForm(['roles' => ['viewer']])
-            ->assertFormSet(['roles' => ['viewer']]);
-    });
+it('can remove items from a list field in a page form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->assertFormSet(['roles' => ['viewer', 'creator']])
+        ->fillForm(['roles' => ['viewer']])
+        ->assertFormSet(['roles' => ['viewer']]);
+});
 
-    it('can grow and clear a list field on a mounted action', function (): void {
-        livewire(TestComponentWithListFields::class)
-            ->mountAction('roles')
-            ->fillForm(['roles' => []])
-            ->assertSchemaStateSet(['roles' => []]);
+it('can clear a list field in a mounted action form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->mountAction('roles')
+        ->fillForm(['roles' => []])
+        ->assertSchemaStateSet(['roles' => []]);
+});
 
-        livewire(TestComponentWithListFields::class)
-            ->mountAction('roles')
-            ->fillForm(['roles' => ['viewer', 'creator', 'editor']])
-            ->assertSchemaStateSet(['roles' => ['viewer', 'creator', 'editor']]);
-    });
+it('can add items to a list field in a mounted action form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->mountAction('roles')
+        ->fillForm(['roles' => ['viewer', 'creator', 'editor']])
+        ->assertSchemaStateSet(['roles' => ['viewer', 'creator', 'editor']]);
 });
 
 class TestComponentWithListFields extends Livewire
@@ -135,7 +128,14 @@ class TestComponentWithListFields extends Livewire
     public function form(Schema $form): Schema
     {
         return $form
-            ->components([$this->rolesField()])
+            ->components([
+                CheckboxList::make('roles')
+                    ->options([
+                        'viewer' => 'Viewer',
+                        'creator' => 'Creator',
+                        'editor' => 'Editor',
+                    ]),
+            ])
             ->statePath('data');
     }
 
@@ -143,18 +143,15 @@ class TestComponentWithListFields extends Livewire
     {
         return Action::make('roles')
             ->fillForm(['roles' => ['viewer', 'creator']])
-            ->schema([$this->rolesField()])
-            ->action(function (): void {});
-    }
-
-    protected function rolesField(): CheckboxList
-    {
-        return CheckboxList::make('roles')
-            ->options([
-                'viewer' => 'Viewer',
-                'creator' => 'Creator',
-                'editor' => 'Editor',
-            ]);
+            ->schema([
+                CheckboxList::make('roles')
+                    ->options([
+                        'viewer' => 'Viewer',
+                        'creator' => 'Creator',
+                        'editor' => 'Editor',
+                    ]),
+            ])
+            ->action(static function (): void {});
     }
 }
 
