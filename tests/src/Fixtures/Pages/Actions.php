@@ -363,6 +363,22 @@ class Actions extends Page
                 ->action(function (): void {
                     $this->dispatch('enforcement-authorized-called');
                 }),
+            Action::make('disabledSchema')
+                ->schema([
+                    TextInput::make('payload'),
+                ])
+                ->disabledSchema()
+                ->action(function (): void {
+                    $this->dispatch('disabled-schema-called');
+                }),
+            Action::make('withoutUnsavedChangesAlert')
+                ->schema([
+                    TextInput::make('payload'),
+                ])
+                ->unsavedChangesAlert(false)
+                ->action(function (): void {
+                    $this->dispatch('without-unsaved-changes-alert-called');
+                }),
         ];
     }
 

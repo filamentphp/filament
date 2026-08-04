@@ -234,6 +234,36 @@ describe('validation', function (): void {
     });
 });
 
+describe('unsaved changes alerts', function (): void {
+    it('flags a mounted action with an editable schema for the unsaved changes alert', function (): void {
+        livewire(Actions::class)
+            ->mountAction('data')
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', true);
+    });
+
+    it('does not flag a mounted action with a disabled schema for the unsaved changes alert', function (): void {
+        livewire(Actions::class)
+            ->mountAction('disabledSchema')
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false);
+    });
+
+    it('does not flag a mounted action that opts out of the unsaved changes alert', function (): void {
+        livewire(Actions::class)
+            ->mountAction('withoutUnsavedChangesAlert')
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false);
+    });
+
+    it('has an unsaved changes alert by default', function (): void {
+        expect(Action::make('test')->hasUnsavedChangesAlert())
+            ->toBeTrue();
+    });
+
+    it('can opt an action with a disabled schema back in to the unsaved changes alert', function (): void {
+        expect(Action::make('test')->disabledSchema()->unsavedChangesAlert()->hasUnsavedChangesAlert())
+            ->toBeTrue();
+    });
+});
+
 describe('arguments', function (): void {
     it('can mount an action with arguments', function (): void {
         livewire(Actions::class)

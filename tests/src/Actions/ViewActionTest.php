@@ -64,6 +64,15 @@ it('can view multiple records sequentially', function (): void {
         ->assertSchemaStateSet(['name' => 'Department 2']);
 });
 
+it('does not flag a mounted `ViewAction` for the unsaved changes alert', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->hasAttached($ticket)->create();
+
+    livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+        ->mountAction(TestAction::make(ViewAction::class)->table($department))
+        ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false);
+});
+
 it('returns `view` from `getDefaultName()`', function (): void {
     expect(ViewAction::getDefaultName())->toBe('view');
 });

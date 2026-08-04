@@ -747,6 +747,27 @@ use Filament\Support\View\Components\ModalComponent;
 ModalComponent::closedByEscaping(false);
 ```
 
+### Disabling the unsaved changes alert
+
+When [unsaved changes alerts](../panel-configuration#unsaved-changes-alerts) are enabled for a panel, users are warned before leaving the page while an action modal is open. If a specific action's modal cannot contain unsaved changes, you can disable the warning for it using the `unsavedChangesAlert(false)` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('updateAuthor')
+    ->schema([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->unsavedChangesAlert(false)
+```
+
+<UtilityInjection set="actions" version="5.x">The `unsavedChangesAlert()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+By default, actions with a [disabled schema](#disabling-all-form-fields), such as `ViewAction`, do not trigger the alert, since their modals do not accept user input.
+
 ### Hiding the modal close button
 
 By default, modals have a close button in the top right corner. If you wish to hide the close button, you can use the `modalCloseButton(false)` method:

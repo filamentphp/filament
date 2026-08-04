@@ -212,6 +212,8 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 throw $exception;
             }
 
+            $this->mountedActions[array_key_last($this->mountedActions)]['hasUnsavedChangesAlert'] = $action->hasUnsavedChangesAlert();
+
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 if ($context['mountedFromUrl'] ?? false) {
                     // A modal-less action mounted from the URL has nothing to show the user, so
