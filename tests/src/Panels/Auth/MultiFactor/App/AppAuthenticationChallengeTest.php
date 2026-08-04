@@ -366,6 +366,27 @@ describe('validation', function (): void {
 
         $this->assertGuest();
     });
+
+    it('can validate `code` is a string', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->set("data.multiFactor.{$appAuthentication->getId()}.code", [])
+            ->call('authenticate')
+            ->assertHasErrors();
+
+        $this->assertGuest();
+    });
 });
 
 describe('recovery codes', function (): void {
@@ -739,5 +760,22 @@ describe('security', function (): void {
             ->assertNoRedirect();
 
         $this->assertGuest();
+    });
+
+    it('will not allow a TOTP code from a future time window to be reused', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+
+        $this->travelTo(now()->addMinutes(2));
+        $futureCode = $appAuthentication->getCurrentCode($userToAuthenticate);
+        $this->travelBack();
+
+        expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
+        expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
 });

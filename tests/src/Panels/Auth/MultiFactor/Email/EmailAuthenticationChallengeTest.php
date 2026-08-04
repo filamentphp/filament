@@ -248,6 +248,102 @@ describe('failure cases', function (): void {
 
         $this->assertGuest();
     });
+
+    it('will not authenticate the user with a challenge code that was issued to a different user', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $victim = User::factory()->hasEmailAuthentication()->create();
+        $attacker = User::factory()->hasEmailAuthentication()->create();
+
+        $issuedCodes = [];
+
+        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+            $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
+
+            $issuedCodes[] = $code;
+
+            return $code;
+        });
+
+        $victimLogin = livewire(Login::class)
+            ->fillForm([
+                'email' => $victim->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        // A second login, in the same session, issues a code to a mailbox that the
+        // first user does not control.
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $attacker->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        expect($issuedCodes)->toHaveCount(2);
+
+        $victimLogin
+            ->fillForm([
+                $emailAuthentication->getId() => [
+                    'code' => $issuedCodes[1],
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate');
+
+        $this->assertGuest();
+    });
+
+    it('will not authenticate the user with a challenge code issued to a different user when no code could be sent', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $victim = User::factory()->hasEmailAuthentication()->create();
+        $attacker = User::factory()->hasEmailAuthentication()->create();
+
+        $issuedCodes = [];
+
+        $emailAuthentication->generateCodesUsing(function () use (&$issuedCodes): string {
+            $code = str_pad((string) (count($issuedCodes) + 1), 6, '0', STR_PAD_LEFT);
+
+            $issuedCodes[] = $code;
+
+            return $code;
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $attacker->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null);
+
+        // Sending is exhausted for the second user, so reaching their challenge
+        // issues no code of its own.
+        RateLimiter::hit("filament-email-authentication:{$victim->getKey()}");
+        RateLimiter::hit("filament-email-authentication:{$victim->getKey()}");
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $victim->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->fillForm([
+                $emailAuthentication->getId() => [
+                    'code' => $issuedCodes[0],
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate');
+
+        expect($issuedCodes)->toHaveCount(1);
+
+        $this->assertGuest();
+    });
 });
 
 describe('validation', function (): void {
@@ -338,6 +434,25 @@ describe('validation', function (): void {
         $this->assertGuest();
     });
 
+    it('can validate `code` is a string', function (): void {
+        /** @var EmailAuthentication $emailAuthentication */
+        $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()->hasEmailAuthentication()->create();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->set("data.multiFactor.{$emailAuthentication->getId()}.code", [])
+            ->call('authenticate')
+            ->assertHasErrors();
+
+        $this->assertGuest();
+    });
 });
 
 it('can throttle multi-factor challenge attempts per user', function (): void {
