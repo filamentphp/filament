@@ -9,6 +9,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use PragmaRX\Google2FAQRCode\Google2FA;
 
 use function Filament\Tests\livewire;
 
@@ -760,6 +761,25 @@ describe('security', function (): void {
             ->assertNoRedirect();
 
         $this->assertGuest();
+    });
+
+    it('will not allow a TOTP code from an earlier time window to be used after a newer code', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+
+        $google2FA = app(Google2FA::class);
+
+        $timestamp = $google2FA->getTimestamp();
+        $earlierCode = $google2FA->oathTotp($secret, $timestamp - 4);
+        $currentCode = $google2FA->oathTotp($secret, $timestamp);
+
+        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
+        expect($appAuthentication->verifyCode($earlierCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
 
     it('will not allow a TOTP code from a future time window to be reused', function (): void {

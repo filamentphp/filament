@@ -178,21 +178,23 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
             return $this->google2FA->verifyKey($secret, $code, $this->getCodeWindow());
         }
 
-        $cacheKey = 'filament.app_authentication_codes.' . md5($secret . $code);
+        $cacheKey = 'filament.app_authentication_codes.' . md5($secret);
 
-        $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, cache()->get($cacheKey), $this->getCodeWindow());
+        return Cache::lock("{$cacheKey}.lock", 10)->block(10, function () use ($cacheKey, $code, $secret): bool {
+            $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, Cache::get($cacheKey), $this->getCodeWindow());
 
-        if ($timestamp !== false) {
+            if ($timestamp === false) {
+                return false;
+            }
+
             if ($timestamp === true) {
                 $timestamp = $this->google2FA->getTimestamp();
             }
 
-            cache()->put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 60);
+            Cache::put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 60);
 
             return true;
-        }
-
-        return false;
+        });
     }
 
     public function verifyRecoveryCode(#[SensitiveParameter] string $recoveryCode, ?HasAppAuthenticationRecovery $user = null): bool
