@@ -55,7 +55,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
 
                             RateLimiter::hit($rateLimitingKey);
 
-                            if ($appAuthentication->verifyCode($value)) {
+                            if ($appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
                                 return;
                             }
 
