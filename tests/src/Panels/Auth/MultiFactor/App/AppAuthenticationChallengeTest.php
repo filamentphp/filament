@@ -6,7 +6,10 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Cache\Repository;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FAQRCode\Google2FA;
@@ -798,4 +801,108 @@ describe('security', function (): void {
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
+
+    it('can still verify TOTP codes when the cache store does not support locks', function (): void {
+        Cache::swap(new Repository(new NonLockingCacheStore));
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+
+        $google2FA = app(Google2FA::class);
+
+        $timestamp = $google2FA->getTimestamp();
+        $earlierCode = $google2FA->oathTotp($secret, $timestamp - 4);
+        $currentCode = $google2FA->oathTotp($secret, $timestamp);
+
+        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
+        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+        expect($appAuthentication->verifyCode($earlierCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+    });
 });
+
+/**
+ * A cache store that implements `Store` but not `LockProvider`, like `ApcStore`,
+ * `StorageStore`, `SessionStore` and many third-party cache drivers.
+ */
+class NonLockingCacheStore implements Store
+{
+    /** @var array<string, mixed> */
+    protected array $data = [];
+
+    public function get($key): mixed
+    {
+        return $this->data[$key] ?? null;
+    }
+
+    /**
+     * @param  array<string>  $keys
+     * @return array<string, mixed>
+     */
+    public function many(array $keys): array
+    {
+        return array_map(fn (string $key): mixed => $this->get($key), array_combine($keys, $keys));
+    }
+
+    public function put($key, $value, $seconds): bool
+    {
+        $this->data[$key] = $value;
+
+        return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     */
+    public function putMany(array $values, $seconds): bool
+    {
+        foreach ($values as $key => $value) {
+            $this->put($key, $value, $seconds);
+        }
+
+        return true;
+    }
+
+    public function increment($key, $value = 1): int
+    {
+        return $this->data[$key] = ((int) ($this->data[$key] ?? 0)) + $value;
+    }
+
+    public function decrement($key, $value = 1): int
+    {
+        return $this->increment($key, -$value);
+    }
+
+    public function forever($key, $value): bool
+    {
+        return $this->put($key, $value, 0);
+    }
+
+    public function forget($key): bool
+    {
+        unset($this->data[$key]);
+
+        return true;
+    }
+
+    public function flush(): bool
+    {
+        $this->data = [];
+
+        return true;
+    }
+
+    public function touch($key, $ttl): bool
+    {
+        return true;
+    }
+
+    public function getPrefix(): string
+    {
+        return '';
+    }
+}
