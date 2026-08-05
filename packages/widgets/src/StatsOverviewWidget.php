@@ -68,7 +68,9 @@ class StatsOverviewWidget extends Widget implements HasSchemas
         $count = count($this->getCachedStats());
 
         if ($count < 3) {
-            return ['@xl' => 3, '!@lg' => 3];
+            $columns = max($count, 1);
+
+            return ['@xl' => $columns, '!@lg' => $columns];
         }
 
         if (($count % 3) !== 1) {

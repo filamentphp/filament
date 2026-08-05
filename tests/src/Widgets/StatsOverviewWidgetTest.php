@@ -38,11 +38,25 @@ it('returns description from `getSectionContentComponent()` when `$description` 
     expect($widget->instance()->getSectionContentComponent()->getDescription())->toBe('Key metrics');
 });
 
-it('returns a 3-column layout for fewer than 3 stats via `getColumns()`', function (): void {
+it('returns a 1-column layout for 1 stat via `getColumns()`', function (): void {
+    $widget = Livewire::test(TestStatsOverviewWidgetOneStat::class);
+
+    expect($widget->instance()->getSectionContentComponent()->getColumns())
+        ->toBe(['@xl' => 1, '!@lg' => 1]);
+});
+
+it('returns a 2-column layout for 2 stats via `getColumns()`', function (): void {
     $widget = Livewire::test(TestStatsOverviewWidgetTwoStats::class);
 
     expect($widget->instance()->getSectionContentComponent()->getColumns())
-        ->toBe(['@xl' => 3, '!@lg' => 3]);
+        ->toBe(['@xl' => 2, '!@lg' => 2]);
+});
+
+it('returns a 1-column layout for no stats via `getColumns()`', function (): void {
+    $widget = Livewire::test(TestStatsOverviewWidgetDefault::class);
+
+    expect($widget->instance()->getSectionContentComponent()->getColumns())
+        ->toBe(['@xl' => 1, '!@lg' => 1]);
 });
 
 it('returns a 4-column layout when stat count mod 3 is 1 via `getColumns()`', function (): void {
@@ -134,6 +148,16 @@ class TestStatsOverviewWidgetWithChart extends StatsOverviewWidget
         return [
             Stat::make('Users', 100)
                 ->chart(static::$chartData),
+        ];
+    }
+}
+
+class TestStatsOverviewWidgetOneStat extends StatsOverviewWidget
+{
+    protected function getStats(): array
+    {
+        return [
+            Stat::make('Users', 100),
         ];
     }
 }
