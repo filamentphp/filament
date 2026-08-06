@@ -129,6 +129,11 @@ class NotificationsDemo extends Component
             ->info()
             ->sendToDatabase($user);
 
+        // Backdate the notifications so their relative timestamps always
+        // render as `2 minutes ago` in screenshots, instead of flip-flopping
+        // between `0 seconds ago` and `1 second ago` depending on timing.
+        DatabaseNotification::query()->update(['created_at' => now()->subMinutes(2)]);
+
         $this->dispatch(
             'open-modal',
             id: 'database-notifications',

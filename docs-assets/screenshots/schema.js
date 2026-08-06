@@ -1725,6 +1725,10 @@ export default {
 
             // Click the custom blocks toolbar button to open the side panel.
             await page.click('#richEditorCustomBlocks button[aria-label="Blocks"]')
+
+            // Move the mouse away so the button's "Blocks" tooltip cannot
+            // appear in the screenshot depending on hover timing.
+            await page.mouse.move(0, 0)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -3766,6 +3770,12 @@ export default {
             width: 860,
             height: 640,
             deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            // Wait for the slide-over to be fully open, so it is not captured
+            // mid-position.
+            await page.waitForSelector('.fi-modal-window', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 1000))
         },
     },
     'notifications/positioning': {
@@ -7243,7 +7253,23 @@ export default {
             const el = await page.$('#chartCustomFilters .fi-wi-chart-filter .fi-dropdown-trigger button')
             if (el) {
                 await el.scrollIntoView()
-                await el.click()
+
+                // A click can be swallowed while the page's many chart widgets
+                // are still initializing, so retry until the dropdown panel is
+                // actually open instead of assuming the first click worked.
+                for (let attempt = 0; attempt < 5; attempt++) {
+                    await el.click()
+
+                    try {
+                        await page.waitForSelector('#chartCustomFilters .fi-dropdown-panel', { visible: true, timeout: 2000 })
+
+                        break
+                    } catch {
+                        //
+                    }
+                }
+
+                await page.mouse.move(0, 0)
                 await new Promise((resolve) => setTimeout(resolve, 500))
             }
         },

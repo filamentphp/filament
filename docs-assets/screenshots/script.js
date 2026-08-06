@@ -306,19 +306,20 @@ const processJob = async (job, baseUrl = 'http://127.0.0.1:8000') => {
 
         await new Promise((resolve) => setTimeout(resolve, 500))
 
-        for (const { file, options: entryOptions } of entries) {
+        for (const entry of entries) {
             try {
-                await captureEntry(page, browser, file, entryOptions, theme)
+                await captureEntry(page, browser, entry.file, entry.options, theme)
             } catch (error) {
-                console.error(`❌  Failed to generate ${theme}/${file} - ${error}`)
-                failures.push(`${theme}/${file}`)
+                console.error(`❌  Failed to generate ${theme}/${entry.file} - ${error}`)
+                failedJobs.push({ theme, entries: [entry] })
             }
         }
     } catch (error) {
         for (const { file } of entries) {
             console.error(`❌  Failed to generate ${theme}/${file} - ${error}`)
-            failures.push(`${theme}/${file}`)
         }
+
+        failedJobs.push({ theme, entries })
     } finally {
         await context?.close()
 
@@ -328,7 +329,24 @@ const processJob = async (job, baseUrl = 'http://127.0.0.1:8000') => {
     }
 }
 
-const failures = []
+// Jobs that failed are retried once at the end of the run, because rare
+// transient errors (a navigation timeout, a DevTools protocol stall) would
+// otherwise fail screenshots that generate fine moments later.
+const failedJobs = []
+
+const retryFailedJobs = async (run) => {
+    if (! failedJobs.length) {
+        return
+    }
+
+    const retryJobs = failedJobs.splice(0)
+
+    console.log(`🔁  Retrying ${retryJobs.length} failed job(s)...`)
+
+    for (const job of retryJobs) {
+        await run(job)
+    }
+}
 
 const stringMatchesRule = (string, rule) => {
     const escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
@@ -380,6 +398,8 @@ if (workerCount <= 1) {
     for (const job of jobs) {
         await processJob(job)
     }
+
+    await retryFailedJobs((job) => processJob(job))
 } else {
     const appDirectory = path.resolve('../app')
     const sourceDatabasePath = path.join(appDirectory, 'database', 'database.sqlite')
@@ -496,12 +516,23 @@ if (workerCount <= 1) {
         await processJob(job, workers[0].baseUrl)
     }
 
+    await retryFailedJobs(async (job) => {
+        resetWorkerDatabase(workers[0])
+        await processJob(job, workers[0].baseUrl)
+    })
+
     stopServers()
 }
 
 if (sharedBrowser) {
     await sharedBrowser.close()
 }
+
+const failures = [
+    ...new Set(
+        failedJobs.flatMap(({ theme, entries }) => entries.map(({ file }) => `${theme}/${file}`)),
+    ),
+]
 
 if (failures.length) {
     console.error(`❌  Failed to generate ${failures.length} screenshots:`)
