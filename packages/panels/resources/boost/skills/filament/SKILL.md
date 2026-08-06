@@ -1,3 +1,8 @@
+---
+name: filament
+description: Use this skill when you need to edit an app or admin panel UI built using Filament Resources, RelationManagers, Pages, Forms, or Widgets.
+---
+
 ## Filament
 
 - Filament is a Laravel UI framework built on Livewire, Alpine.js, and Tailwind CSS. UIs are defined in PHP via fluent, chainable components. Follow existing conventions in this app.
@@ -14,8 +19,8 @@ Always use static `make()` methods to initialize components. Most configuration 
 
 Use `Get $get` to read other form field values for conditional logic:
 
-@verbatim
-<code-snippet name="Conditional form field visibility" lang="php">
+#### Conditional form field visibility
+```php
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
@@ -28,14 +33,12 @@ Select::make('type')
 TextInput::make('company_name')
     ->required()
     ->visible(fn (Get $get): bool => $get('type') === 'business'),
-
-</code-snippet>
-@endverbatim
+```
 
 Use `Set $set` inside `->afterStateUpdated()` on a `->live()` field to mutate another field reactively. Prefer `->live(onBlur: true)` on text inputs to avoid per-keystroke updates:
 
-@verbatim
-<code-snippet name="Reactive field update" lang="php">
+#### Reactive field update
+```php
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 
@@ -49,14 +52,12 @@ TextInput::make('title')
 
 TextInput::make('slug')
     ->required(),
-
-</code-snippet>
-@endverbatim
+```
 
 Compose layout by nesting `Section` and `Grid`. Children need explicit `->columnSpan()` or `->columnSpanFull()`:
 
-@verbatim
-<code-snippet name="Section and Grid layout" lang="php">
+#### Section and Grid layout
+```php
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
@@ -71,14 +72,12 @@ Section::make('Details')
                 ->columnSpanFull(),
         ]),
     ]),
-
-</code-snippet>
-@endverbatim
+```
 
 Use `Repeater` for inline `HasMany` management. `->relationship()` with no args binds to the relationship matching the field name:
 
-@verbatim
-<code-snippet name="Repeater for HasMany" lang="php">
+#### Repeater for HasMany
+```php
 use Filament\Forms\Components\Repeater;
 
 Repeater::make('qualifications')
@@ -90,26 +89,22 @@ Repeater::make('qualifications')
             ->required(),
     ])
     ->columns(2),
-
-</code-snippet>
-@endverbatim
+```
 
 Use `state()` with a `Closure` to compute derived column values:
 
-@verbatim
-<code-snippet name="Computed table column value" lang="php">
+#### Computed table column value
+```php
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('full_name')
     ->state(fn (User $record): string => "{$record->first_name} {$record->last_name}"),
-
-</code-snippet>
-@endverbatim
+```
 
 Use `SelectFilter` for enum or relationship filters, and `Filter` with a `->query()` closure for custom logic:
 
-@verbatim
-<code-snippet name="Table filters" lang="php">
+#### Table filters
+```php
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -122,14 +117,12 @@ SelectFilter::make('author')
 
 Filter::make('verified')
     ->query(fn (Builder $query) => $query->whereNotNull('email_verified_at')),
-
-</code-snippet>
-@endverbatim
+```
 
 Actions are buttons that encapsulate optional modal forms and behavior:
 
-@verbatim
-<code-snippet name="Action with modal form" lang="php">
+#### Action with modal form
+```php
 use Filament\Actions\Action;
 
 Action::make('updateEmail')
@@ -139,9 +132,7 @@ Action::make('updateEmail')
             ->required(),
     ])
     ->action(fn (array $data, User $record) => $record->update($data)),
-
-</code-snippet>
-@endverbatim
+```
 
 ### Testing
 
@@ -150,8 +141,8 @@ Testing setup (requires `pestphp/pest-plugin-livewire` in `composer.json`):
 - Always call `$this->actingAs(User::factory()->create())` before testing panel functionality.
 - For edit pages, pass `['record' => $user->id]`, use `->call('save')` (not `->call('create')`), and do not assert `->assertRedirect()` (edit pages do not redirect after save).
 
-@verbatim
-<code-snippet name="Table test" lang="php">
+#### Table test
+```php
 use function Pest\Livewire\livewire;
 
 livewire(ListUsers::class)
@@ -159,10 +150,10 @@ livewire(ListUsers::class)
     ->searchTable($users->first()->name)
     ->assertCanSeeTableRecords($users->take(1))
     ->assertCanNotSeeTableRecords($users->skip(1));
+```
 
-</code-snippet>
-
-<code-snippet name="Create resource test" lang="php">
+#### Create resource test
+```php
 use function Pest\Laravel\assertDatabaseHas;
 
 livewire(CreateUser::class)
@@ -179,10 +170,10 @@ assertDatabaseHas(User::class, [
     'name' => 'Test',
     'email' => 'test@example.com',
 ]);
+```
 
-</code-snippet>
-
-<code-snippet name="Edit resource test" lang="php">
+#### Edit resource test
+```php
 livewire(EditUser::class, ['record' => $user->id])
     ->fillForm(['name' => 'Updated'])
     ->call('save')
@@ -193,10 +184,10 @@ assertDatabaseHas(User::class, [
     'id' => $user->id,
     'name' => 'Updated',
 ]);
+```
 
-</code-snippet>
-
-<code-snippet name="Testing validation" lang="php">
+#### Testing validation
+```php
 livewire(CreateUser::class)
     ->fillForm([
         'name' => null,
@@ -208,14 +199,12 @@ livewire(CreateUser::class)
         'email' => 'email',
     ])
     ->assertNotNotified();
-
-</code-snippet>
-@endverbatim
+```
 
 Use `->callAction(DeleteAction::class)` for page actions, or `->callAction(TestAction::make('name')->table($record))` for table actions:
 
-@verbatim
-<code-snippet name="Calling actions" lang="php">
+#### Calling actions
+```php
 use Filament\Actions\Testing\TestAction;
 
 livewire(ListUsers::class)
@@ -223,9 +212,7 @@ livewire(ListUsers::class)
         'role' => 'admin',
     ])
     ->assertNotified();
-
-</code-snippet>
-@endverbatim
+```
 
 ### Correct Namespaces
 
@@ -242,10 +229,10 @@ livewire(ListUsers::class)
 
 - **Never assume public file visibility.** File visibility is `private` by default. Always use `->visibility('public')` when public access is needed.
 - **Never assume full-width layout.** `Grid`, `Section`, `Fieldset`, and `Repeater` do not span all columns by default.
-- **Use `Select::make('author_id')->relationship('author', 'name')` for BelongsTo fields.** `BelongsToSelect` does not exist in v4.
+- **Use `Select::make('author_id')->relationship('author', 'name')` for BelongsTo fields.** `BelongsToSelect` does not exist in v2.
 - **`Repeater` uses `->schema()`, not `->fields()`.**
 - **Never add `->dehydrated(false)` to fields that need to be saved.** It strips the value from form state before `->action()` or the save handler runs. Only use it for helper/UI-only fields.
-- **Use correct property types when overriding `Page`, `Resource`, and `Widget` properties.** These properties have union types or changed modifiers that must be preserved:
+- **Use correct property types when overriding `Page`, `Resource`, and `Widget` properties.** These properties have union types or modifiers that must be preserved:
   - `$navigationIcon`: `protected static string | BackedEnum | null` (not `?string`)
   - `$navigationGroup`: `protected static string | UnitEnum | null` (not `?string`)
   - `$view`: `protected string` (not `protected static string`) on `Page` and `Widget` classes
