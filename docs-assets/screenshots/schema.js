@@ -1749,6 +1749,10 @@ export default {
 
             // Click the custom blocks toolbar button to open the side panel.
             await page.click('#richEditorGroupedCustomBlocks button[aria-label="Blocks"]')
+
+            // Move the mouse away so the button's "Blocks" tooltip cannot
+            // appear in the screenshot depending on hover timing.
+            await page.mouse.move(0, 0)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
