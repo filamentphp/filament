@@ -26,7 +26,7 @@ import emitter from 'events'
 import process from 'process'
 import sharp from 'sharp'
 import pixelmatch from 'pixelmatch'
-import { spawn } from 'child_process'
+import { execFileSync, spawn } from 'child_process'
 
 emitter.setMaxListeners(1024)
 
@@ -222,7 +222,7 @@ const captureEntry = async (page, browser, file, options, theme) => {
     if (previousImage && (! isForced)) {
         const differenceRatio = await visualDifferenceRatio(previousImage, fs.readFileSync(filePath))
 
-        if (differenceRatio <= visualDifferenceRatioThreshold) {
+        if (differenceRatio <= (options.visualDifferenceRatioThreshold ?? visualDifferenceRatioThreshold)) {
             fs.writeFileSync(filePath, previousImage)
             console.log(`💤  ${theme}/${file} is visually unchanged (${(differenceRatio * 100).toFixed(4)}% of pixels), kept the existing file`)
 
@@ -250,6 +250,11 @@ const processJob = async (job, baseUrl = 'http://127.0.0.1:8000') => {
     try {
         const browser = await getBrowser()
         context = await browser.createBrowserContext()
+
+        // Allow clipboard writes, so that clicking `copyable()` text shows its
+        // copy message. Without this, the clipboard write is rejected and the
+        // message never appears.
+        await context.overridePermissions(baseUrl, ['clipboard-read', 'clipboard-write', 'clipboard-sanitized-write'])
 
         const page = await context.newPage()
         await page.setViewport(
@@ -302,6 +307,36 @@ const processJob = async (job, baseUrl = 'http://127.0.0.1:8000') => {
             await page.goto(`${baseUrl}/${options.url}`, {
                 waitUntil: 'networkidle2',
             })
+        }
+
+        // If webfonts finish loading after a canvas-based chart has already
+        // drawn itself, fallback-font labels stay baked into the canvas, so
+        // wait for the fonts and have any charts re-render with them. The
+        // font must be requested explicitly: painting a canvas does not
+        // trigger a CSS font load, so `document.fonts.ready` can resolve
+        // while the font was never loaded at all.
+        const hasCanvas = await page.evaluate(async () => {
+            const fontFamily = getComputedStyle(document.body).fontFamily
+
+            await Promise.all(
+                ['12px', 'bold 12px', '16px', 'bold 16px'].map((size) =>
+                    document.fonts.load(`${size} ${fontFamily}`).catch(() => {}),
+                ),
+            )
+
+            await document.fonts.ready
+
+            if (! document.querySelector('canvas')) {
+                return false
+            }
+
+            window.dispatchEvent(new Event('resize'))
+
+            return true
+        })
+
+        if (hasCanvas) {
+            await new Promise((resolve) => setTimeout(resolve, 1000))
         }
 
         await new Promise((resolve) => setTimeout(resolve, 500))
@@ -405,9 +440,17 @@ if (workerCount <= 1) {
     const sourceDatabasePath = path.join(appDirectory, 'database', 'database.sqlite')
 
     if (! fs.existsSync(sourceDatabasePath)) {
-        console.error('❌  database/database.sqlite does not exist. Run `php artisan migrate:fresh --seed` in docs-assets/app first.')
-        process.exit(1)
+        fs.closeSync(fs.openSync(sourceDatabasePath, 'w'))
     }
+
+    // Reseed the database, so that every worker's copy starts from pristine
+    // seed data even if a previous run or a manual browsing session mutated
+    // it (many demos truncate and rebuild tables when they render).
+    console.log('🌱  Seeding the database...')
+    execFileSync('php', ['artisan', 'migrate:fresh', '--seed', '--force'], {
+        cwd: appDirectory,
+        stdio: 'ignore',
+    })
 
     // Screenshots that write `configure.php` mutate state shared by every
     // server, so they run serially after the parallel pool has finished.

@@ -728,7 +728,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('email')
                     ->copyable()
                     ->copyMessage('Email address copied')
-                    ->copyMessageDuration(1500),
+                    ->copyMessageDuration(30000),
             ]);
     }
 
@@ -1157,7 +1157,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     })
                     ->copyable()
                     ->copyMessage('Color code copied')
-                    ->copyMessageDuration(1500),
+                    // Long enough that the message cannot expire before the
+                    // screenshot is captured on a busy machine.
+                    ->copyMessageDuration(30000),
             ]);
     }
 

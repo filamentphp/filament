@@ -1,3 +1,16 @@
+// Blur whichever element is focused, repeatedly, for a while: a modal can
+// autofocus its first field some time after opening, and whether the focus
+// ring renders depends on Chromium's timing-sensitive `:focus-visible`
+// heuristic, which varies between runs.
+const blurActiveElement = async (page, duration = 2000) => {
+    const endTime = Date.now() + duration
+
+    while (Date.now() < endTime) {
+        await page.evaluate(() => document.activeElement?.blur())
+        await new Promise((resolve) => setTimeout(resolve, 150))
+    }
+}
+
 export default {
     'actions/create-action/modal': {
         url: 'actions-crud',
@@ -51,6 +64,8 @@ export default {
             const buttons = await page.$$('[wire\\:click*="mountAction(\'view\'"]')
             if (buttons.length > 0) await buttons[0].click()
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -66,6 +81,8 @@ export default {
             const buttons = await page.$$('[wire\\:click*="mountAction(\'delete\'"]')
             if (buttons.length > 0) await buttons[0].click()
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -97,6 +114,8 @@ export default {
             const buttons = await page.$$('[wire\\:click*="mountAction(\'forceDelete\'"]')
             if (buttons.length > 0) await buttons[0].click()
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -112,6 +131,8 @@ export default {
             const buttons = await page.$$('[wire\\:click*="mountAction(\'restore\'"]')
             if (buttons.length > 0) await buttons[0].click()
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -258,6 +279,8 @@ export default {
             await page.click('#confirmationModalAction button')
             await page.waitForSelector('#modal h2')
 
+            await blurActiveElement(page)
+
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
         selector: '.fi-modal-window-ctn',
@@ -272,6 +295,8 @@ export default {
         before: async (page) => {
             await page.click('#confirmationModalCustomTextAction button')
             await page.waitForSelector('#modal h2')
+
+            await blurActiveElement(page)
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
@@ -288,6 +313,8 @@ export default {
             await page.click('#modalIconAction button')
             await page.waitForSelector('#modal h2')
 
+            await blurActiveElement(page)
+
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
         selector: '.fi-modal-window-ctn',
@@ -303,7 +330,7 @@ export default {
             await page.click('#modalFormAction button')
             await page.waitForSelector('#modal h2')
 
-            await new Promise((resolve) => setTimeout(resolve, 300))
+            await blurActiveElement(page)
         },
         selector: '.fi-modal-window-ctn',
     },
@@ -317,6 +344,8 @@ export default {
         before: async (page) => {
             await page.click('#modalSchemaAction button')
             await page.waitForSelector('#modal h2')
+
+            await blurActiveElement(page)
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
@@ -333,6 +362,8 @@ export default {
             await page.click('#wizardAction button')
             await page.waitForSelector('#modal h2')
 
+            await blurActiveElement(page)
+
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
         selector: '.fi-modal-window-ctn',
@@ -347,6 +378,8 @@ export default {
         before: async (page) => {
             await page.click('#slideOverAction button')
             await page.waitForSelector('#modal h2')
+
+            await blurActiveElement(page)
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -363,6 +396,8 @@ export default {
             await page.click('#slideOverStartAction button')
             await page.waitForSelector('#modal h2')
 
+            await blurActiveElement(page)
+
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
         selector: '.fi-modal-window-ctn',
@@ -377,6 +412,8 @@ export default {
         before: async (page) => {
             await page.click('#modalNoCloseButtonAction button')
             await page.waitForSelector('#modal h2')
+
+            await blurActiveElement(page)
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
@@ -393,6 +430,8 @@ export default {
             await page.click('#disabledFormAction button')
             await page.waitForSelector('#modal h2')
 
+            await blurActiveElement(page)
+
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
         selector: '.fi-modal-window-ctn',
@@ -407,6 +446,8 @@ export default {
         before: async (page) => {
             await page.click('#modalIconColorAction button')
             await page.waitForSelector('#modal h2')
+
+            await blurActiveElement(page)
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
@@ -442,6 +483,8 @@ export default {
         before: async (page) => {
             await page.click('#modalAlignmentAction button')
             await page.waitForSelector('#modal h2')
+
+            await blurActiveElement(page)
 
             await new Promise((resolve) => setTimeout(resolve, 300))
         },
@@ -621,8 +664,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('#authorizationTooltipAction button')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'forms/fields/simple': {
@@ -1665,6 +1710,8 @@ export default {
             // Click the text color toolbar button to open the action modal.
             await page.click('#richEditorTextColors button[aria-label="Text color"]')
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
 
             // Click the select input to open the dropdown showing color options.
@@ -2274,8 +2321,10 @@ export default {
             // Hover over the "Published" button (label tag) to show its tooltip
             const labels = await page.$$('#toggleButtonsTooltips .fi-fo-toggle-buttons-btn-ctn label')
             if (labels.length > 2) await labels[2].hover()
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'forms/fields/toggle-buttons/disabled-option': {
@@ -3100,8 +3149,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('#tooltips [x-tooltip]')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'infolists/entries/alignment': {
@@ -3392,9 +3443,15 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#textCopyable .fi-in-text-item')
+            // The click handler is on the `.fi-copyable` span, which only
+            // spans the text itself, so clicking the center of the whole item
+            // would miss it.
+            await page.click('#textCopyable .fi-copyable')
 
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the copy message tooltip to be shown and let its
+            // position fully settle, so it is not captured mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         }
     },
     'infolists/entries/text/numeric': {
@@ -3443,8 +3500,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('#textDateTooltip [x-tooltip]')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'infolists/entries/text/markdown': {
@@ -3620,7 +3679,10 @@ export default {
         before: async (page) => {
             await page.click('#colorCopyable .fi-in-color-item')
 
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the copy message tooltip to be shown and let its
+            // position fully settle, so it is not captured mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'infolists/entries/code/simple': {
@@ -3779,6 +3841,8 @@ export default {
             // Wait for the slide-over to be fully open, so it is not captured
             // mid-position.
             await page.waitForSelector('.fi-modal-window', { visible: true })
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 1000))
         },
     },
@@ -3987,8 +4051,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('.fi-badge')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'panels/navigation/group': {
@@ -4156,8 +4222,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('#textTooltip .fi-sc-text')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'primes/icon/simple': {
@@ -4197,8 +4265,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('#iconTooltip .fi-sc-icon')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'primes/image/simple': {
@@ -4238,8 +4308,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('#imageTooltip .fi-sc-image')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'primes/unordered-list/simple': {
@@ -4447,7 +4519,10 @@ export default {
         before: async (page) => {
             await page.hover('[wire\\:key$="4.column.email_verified_at"] .fi-icon')
 
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'tables/columns/header-tooltips': {
@@ -4460,8 +4535,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('.fi-ta-header-cell-tooltip')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'tables/columns/alignment': {
@@ -4690,9 +4767,15 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('[wire\\:key$="4.column.email"] .fi-ta-text-item')
+            // The click handler is on the `.fi-copyable` span, which only
+            // spans the text itself, so clicking the center of the whole item
+            // would miss it.
+            await page.click('[wire\\:key$="4.column.email"] .fi-copyable')
 
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the copy message tooltip to be shown and let its
+            // position fully settle, so it is not captured mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'tables/columns/text/numeric': {
@@ -4741,8 +4824,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('.fi-ta-text [x-tooltip]')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'tables/columns/text/limit': {
@@ -5390,8 +5475,10 @@ export default {
         },
         before: async (page) => {
             await page.hover('.fi-dropdown-trigger')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the tooltip to be shown and let its position fully
+            // settle, so it is not captured missing or mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'tables/layout/demo': {
@@ -5915,6 +6002,9 @@ export default {
         },
     },
     'widgets/chart/radar': {
+        // The canvas-drawn point labels rasterize with sub-pixel differences
+        // between runs, slightly above the default threshold.
+        visualDifferenceRatioThreshold: 0.002,
         url: 'widgets',
         selector: '#chartRadar',
         viewport: {
@@ -6454,6 +6544,8 @@ export default {
         before: async (page) => {
             await page.click('[wire\\:click*="mountAction(\'import\'"]')
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -6468,6 +6560,8 @@ export default {
         before: async (page) => {
             await page.click('[wire\\:click*="mountAction(\'export\'"]')
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
         crop: (image) => {
@@ -6552,6 +6646,8 @@ export default {
                 }
             }
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -7259,21 +7355,70 @@ export default {
         before: async (page) => {
             const el = await page.$('#chartCustomFilters .fi-wi-chart-filter .fi-dropdown-trigger button')
             if (el) {
-                await el.scrollIntoView()
+                // Scroll the widget to a fixed position in the viewport. With
+                // a scroll-into-view-if-needed, the trigger can end up near
+                // the bottom edge of the viewport, and the dropdown panel
+                // flips above/below the trigger between runs.
+                await page.evaluate(() => {
+                    document.querySelector('#chartCustomFilters').scrollIntoView({ block: 'center', behavior: 'instant' })
+                })
+
+                // Wait for the chart canvas to render and the page's layout to
+                // stop changing before opening the dropdown. The widgets page
+                // loads its charts progressively, and a dropdown opened while
+                // the layout is still shifting is positioned differently
+                // between runs.
+                await page.waitForSelector('#chartCustomFilters canvas')
+
+                let previousPageHeight = 0
+
+                for (let attempt = 0; attempt < 20; attempt++) {
+                    const pageHeight = await page.evaluate(() => document.body.scrollHeight)
+
+                    if (pageHeight === previousPageHeight) {
+                        break
+                    }
+
+                    previousPageHeight = pageHeight
+                    await new Promise((resolve) => setTimeout(resolve, 500))
+                }
+
+                await new Promise((resolve) => setTimeout(resolve, 500))
 
                 // A click can be swallowed while the page's many chart widgets
-                // are still initializing, so retry until the dropdown panel is
-                // actually open instead of assuming the first click worked.
+                // are still initializing, and if late-loading widgets have
+                // shifted the trigger near the bottom of the viewport, the
+                // dropdown panel flips above the trigger instead of below it.
+                // Position the trigger deterministically immediately before
+                // each click, and retry until the panel is open below it.
                 for (let attempt = 0; attempt < 5; attempt++) {
+                    await page.evaluate(() => {
+                        const trigger = document.querySelector('#chartCustomFilters .fi-wi-chart-filter .fi-dropdown-trigger')
+                        window.scrollTo(0, trigger.getBoundingClientRect().top + window.scrollY - 100)
+                    })
+
                     await el.click()
 
                     try {
                         await page.waitForSelector('#chartCustomFilters .fi-dropdown-panel', { visible: true, timeout: 2000 })
-
-                        break
                     } catch {
-                        //
+                        continue
                     }
+
+                    const isPanelBelowTrigger = await page.evaluate(() => {
+                        const trigger = document.querySelector('#chartCustomFilters .fi-wi-chart-filter .fi-dropdown-trigger')
+                        const panel = document.querySelector('#chartCustomFilters .fi-dropdown-panel')
+
+                        return panel.getBoundingClientRect().top > trigger.getBoundingClientRect().top
+                    })
+
+                    if (isPanelBelowTrigger) {
+                        break
+                    }
+
+                    // Close the mispositioned panel and try again.
+                    await el.click()
+                    await new Promise((resolve) => setTimeout(resolve, 300))
                 }
 
                 await page.mouse.move(0, 0)
@@ -7308,9 +7453,31 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
+            // Scroll through the page to force lazy widgets to load, and wait
+            // for the layout to stop changing, so the dashboard behind the
+            // modal is always captured fully loaded.
+            let previousPageHeight = 0
+
+            for (let attempt = 0; attempt < 20; attempt++) {
+                await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+
+                const pageHeight = await page.evaluate(() => document.body.scrollHeight)
+
+                if (pageHeight === previousPageHeight) {
+                    break
+                }
+
+                previousPageHeight = pageHeight
+                await new Promise((resolve) => setTimeout(resolve, 500))
+            }
+
+            await page.evaluate(() => window.scrollTo(0, 0))
+            await new Promise((resolve) => setTimeout(resolve, 500))
+
             await page.click('[wire\\:click*="mountAction(\'filter\'"]')
             await page.waitForSelector('.fi-modal-window-ctn')
-            await new Promise((resolve) => setTimeout(resolve, 500))
+
+            await blurActiveElement(page)
         },
     },
     'panels/dashboard-column-spans': {
@@ -7355,6 +7522,8 @@ export default {
                 }
             }
             await page.waitForSelector('.fi-modal-window-ctn')
+
+            await blurActiveElement(page)
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
