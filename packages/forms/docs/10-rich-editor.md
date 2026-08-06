@@ -17,6 +17,31 @@ RichEditor::make('content')
 
 <AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="5.x" />
 
+## Wrapping the editor in a custom Blade view
+
+The RichEditor uses an embedded default renderer. Do not include the internal `filament-forms::components.rich-editor` view from your own Blade view, as it is not part of the extension API and may change between versions.
+
+If you need to add an outer wrapper, create a custom RichEditor class with your own view:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+class CustomRichEditor extends RichEditor
+{
+    protected string $view = 'components.custom-rich-editor';
+}
+```
+
+Then, render the component's embedded markup from that view:
+
+```blade
+<div class="my-class">
+    {!! $field->toEmbeddedHtml() !!}
+</div>
+```
+
+The `$field` variable is available automatically in a custom field view. This delegates the editor markup back to Filament, so your wrapper remains independent of the internal implementation. For styling-only changes, prefer the documented CSS hook classes instead.
+
 ## Storing content as JSON
 
 By default, the rich editor stores content as HTML. If you would like to store the content as JSON instead, you can use the `json()` method:

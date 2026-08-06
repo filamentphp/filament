@@ -29,6 +29,21 @@ beforeEach(function (): void {
     Artisan::call('filament:assets');
 });
 
+test('can render its embedded markup inside a custom view', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            CustomViewRichEditor::make('content'),
+        ])
+        ->getComponents()[0];
+
+    $html = $richEditor->toHtml();
+
+    expect($html)
+        ->toContain('custom-rich-editor')
+        ->toContain('fi-fo-rich-editor');
+});
+
 test('fields can be required', function (): void {
     $errors = [];
 
@@ -2200,4 +2215,9 @@ class TestComponentWithRichEditorRecordPreventingTamperingAndCustomMessage exten
     {
         $this->record->update($this->form->getState());
     }
+}
+
+class CustomViewRichEditor extends RichEditor
+{
+    protected string $view = 'components.custom-rich-editor';
 }
