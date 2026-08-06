@@ -1761,15 +1761,30 @@ export default {
             await page.evaluate(() => {
                 document.querySelector('#richEditorFloatingToolbar').scrollIntoView()
             })
-            await new Promise((resolve) => setTimeout(resolve, 2000))
 
-            // Click inside the editor to place cursor in the paragraph.
-            const editor = await page.$('#richEditorFloatingToolbar .tiptap.ProseMirror')
-            await editor.click()
+            // Wait for TipTap to initialize; the `.tiptap` element only exists
+            // once it has. A fixed sleep is not enough on a cold server.
+            const paragraph = await page.waitForSelector('#richEditorFloatingToolbar .tiptap.ProseMirror p')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+
+            // Click to focus the editor, then select the paragraph text with a
+            // native DOM range, which ProseMirror syncs via `selectionchange`.
+            // A triple-click is unreliable here: it can select nothing
+            // depending on where it lands within the editor.
+            await paragraph.click()
             await new Promise((resolve) => setTimeout(resolve, 300))
 
-            // Triple-click to select the paragraph text, triggering the floating bubble menu.
-            await editor.click({ clickCount: 3 })
+            await page.evaluate(() => {
+                const paragraphElement = document.querySelector('#richEditorFloatingToolbar .tiptap.ProseMirror p')
+                const range = document.createRange()
+                range.selectNodeContents(paragraphElement)
+                const selection = window.getSelection()
+                selection.removeAllRanges()
+                selection.addRange(range)
+            })
+            await paragraph.dispose()
+
+            await page.waitForSelector('#richEditorFloatingToolbar .fi-fo-rich-editor-floating-toolbar', { visible: true })
             await new Promise((resolve) => setTimeout(resolve, 800))
 
             // Remove the focus outline ring from the editor wrapper and add bottom padding
