@@ -4945,7 +4945,10 @@ export default {
         before: async (page) => {
             await page.click('[wire\\:key$="4.column.color"] .fi-ta-color-item')
 
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            // Wait for the `Color code copied` tooltip to be shown and let its
+            // position fully settle, so it is not captured mid-positioning.
+            await page.waitForSelector('[data-tippy-root]', { visible: true })
+            await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
     'tables/columns/color/wrap': {

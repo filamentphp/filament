@@ -18,6 +18,15 @@ class NotificationsDemo extends Component
         if (! auth()->check()) {
             auth()->login(User::first());
         }
+
+        // Send the notifications during mount, so the `database-notifications`
+        // modal already contains them when it first renders. Sending them from
+        // `openDatabaseNotifications()` instead would make the modal first
+        // render empty and rely on a Livewire refresh to morph them in, which
+        // races the screenshot capture.
+        if (request()->query('method') === 'openDatabaseNotifications') {
+            $this->sendDatabaseNotifications();
+        }
     }
 
     public function success(): void
@@ -103,6 +112,14 @@ class NotificationsDemo extends Component
 
     public function openDatabaseNotifications()
     {
+        $this->dispatch(
+            'open-modal',
+            id: 'database-notifications',
+        );
+    }
+
+    protected function sendDatabaseNotifications(): void
+    {
         $user = auth()->user();
 
         Notification::make()
@@ -133,13 +150,6 @@ class NotificationsDemo extends Component
         // render as `2 minutes ago` in screenshots, instead of flip-flopping
         // between `0 seconds ago` and `1 second ago` depending on timing.
         DatabaseNotification::query()->update(['created_at' => now()->subMinutes(2)]);
-
-        $this->dispatch(
-            'open-modal',
-            id: 'database-notifications',
-        );
-
-        $this->dispatch('databaseNotificationsSent');
     }
 
     public function call(string $method): void
