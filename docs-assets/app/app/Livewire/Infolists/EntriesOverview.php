@@ -61,7 +61,7 @@ class EntriesOverview extends Component implements HasSchemas
                                             ->size(TextSize::Large)
                                             ->copyable()
                                             ->copyMessage('SKU copied to clipboard!')
-                                            ->copyMessageDuration(1500)
+                                            ->copyMessageDuration(30000)
                                             ->badge()
                                             ->color('gray'),
 

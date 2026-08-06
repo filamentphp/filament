@@ -262,9 +262,18 @@ Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
    export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
    node script.js "schemas/layout/my-component/*"  # Filter pattern
+   node script.js --parallel "tables/*"            # Process in parallel (add =N for a specific worker count)
    ```
 
    **Important:** The script expects `http://127.0.0.1:8000`. Don't use a custom port.
+
+   **Important:** Set up the app first with `php artisan migrate:fresh --seed && php artisan storage:link` — seeding also copies the file upload demos' sample images from `database/seed-images/` to the `public` disk.
+
+   `--parallel` starts its own servers on ports 8001+ (no `php artisan serve` needed), each with its own copy of the seeded database, because many demos mutate the database on mount and would corrupt each other's screenshots if they shared one. The pristine database is restored before every page load, so each screenshot always sees freshly seeded data — this makes parallel mode the most reliable way to run large batches (in serial mode, a demo that truncates tables can 404 later entries, e.g. tenancy or resource pages, until you reseed). Screenshots using the `configure` option run serially after the parallel pool because they mutate a PHP file shared by every server.
+
+   Schema entries without a `before` callback that share the same URL, viewport, and theme are captured from a single page load, and one browser process is shared across the whole run. If an entry needs an isolated page load (e.g. its demo mutates state when rendered), give it a `before` callback.
+
+   Pages are captured with `prefers-reduced-motion: reduce` and with CSS animations, transitions, and the input caret disabled, so screenshots never depend on which animation frame they caught (e.g. spinning loading indicators, modal fade-ins, caret blinking).
 
 5. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="5.x" />`
 
