@@ -9,7 +9,6 @@ use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,7 +18,6 @@ use Illuminate\Support\Collection;
 
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasEmailAuthentication, HasTenants
 {
-    use HasFactory;
     use InteractsWithAppAuthentication;
     use InteractsWithEmailAuthentication;
     use Notifiable;

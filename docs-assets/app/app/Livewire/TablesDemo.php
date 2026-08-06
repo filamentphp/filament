@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Support\DemoData;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
@@ -2330,6 +2331,22 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     {
         User::truncate();
         Post::truncate();
+
+        $authorIds = collect([
+            'Dan Harrin' => 'dan@filamentphp.com',
+            'Ryan Chandler' => 'ryan@filamentphp.com',
+            'Zep Fietje' => 'zep@filamentphp.com',
+            'Dennis Koch' => 'dennis@filamentphp.com',
+            'Adam Weston' => 'adam@filamentphp.com',
+        ])->map(fn (string $email, string $name): int => User::query()->insertGetId([
+            'name' => $name,
+            'email' => $email,
+            'email_verified_at' => '2023-08-01 11:30:00',
+            'password' => 'password',
+            'created_at' => '2023-08-01 11:30:00',
+            'updated_at' => '2023-08-01 11:30:00',
+        ]))->values()->all();
+
         Post::insert([
             [
                 'title' => 'What is Filament?',
@@ -2337,7 +2354,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 'description' => 'Find out what Filament is and how it can help you build your next project.',
                 'is_featured' => true,
                 'status' => 'published',
-                'author_id' => User::factory()->create(['name' => 'Dan Harrin'])->id,
+                'author_id' => $authorIds[0],
                 'rating' => 8.1,
                 'created_at' => '2025-02-10 09:15:00',
                 'updated_at' => '2025-02-10 09:15:00',
@@ -2348,7 +2365,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 'description' => 'Discover the top 5 best features of Filament and how they can help you build your next project.',
                 'is_featured' => false,
                 'status' => 'reviewing',
-                'author_id' => User::factory()->create(['name' => 'Ryan Chandler'])->id,
+                'author_id' => $authorIds[1],
                 'rating' => 9.3,
                 'created_at' => '2025-02-14 14:30:00',
                 'updated_at' => '2025-02-14 14:30:00',
@@ -2359,7 +2376,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 'description' => 'Learn how to build a great Filament plugin and get it featured in the official plugin directory.',
                 'is_featured' => true,
                 'status' => 'draft',
-                'author_id' => User::factory()->create(['name' => 'Zep Fietje'])->id,
+                'author_id' => $authorIds[2],
                 'rating' => 9.7,
                 'created_at' => '2025-02-18 11:00:00',
                 'updated_at' => '2025-02-18 11:00:00',
@@ -2370,7 +2387,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 'description' => 'Learn how to customize Filament\'s UI with a theme and make it your own.',
                 'is_featured' => false,
                 'status' => 'reviewing',
-                'author_id' => User::factory()->create(['name' => 'Dennis Koch'])->id,
+                'author_id' => $authorIds[3],
                 'rating' => 9.5,
                 'created_at' => '2025-02-22 16:45:00',
                 'updated_at' => '2025-02-22 16:45:00',
@@ -2381,7 +2398,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 'description' => 'Discover the latest Filament plugins that were released in August.',
                 'is_featured' => false,
                 'status' => 'published',
-                'author_id' => User::factory()->create(['name' => 'Adam Weston'])->id,
+                'author_id' => $authorIds[4],
                 'rating' => 8.4,
                 'created_at' => '2025-02-28 10:20:00',
                 'updated_at' => '2025-02-28 10:20:00',
@@ -2389,7 +2406,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
         ]);
 
         if ($hasSeededPosts) {
-            Post::factory()->count(45)->create();
+            Post::insert(DemoData::posts($authorIds));
         }
 
         return $table
@@ -2492,7 +2509,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 ]),
             ],
         ]);
-        User::factory()->count(45)->create();
+        User::insert(DemoData::users());
 
         return $table
             ->query(User::query())

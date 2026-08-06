@@ -13,11 +13,11 @@ class NotificationsDemo extends Component
 {
     public function mount(): void
     {
-        User::truncate();
         DatabaseNotification::truncate();
 
-        $user = User::factory()->create();
-        auth()->login($user);
+        if (! auth()->check()) {
+            auth()->login(User::first());
+        }
     }
 
     public function success(): void
