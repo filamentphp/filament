@@ -1,3 +1,4 @@
+@scoped(['app/Filament/**'])
 ## Filament
 
 - Filament is a Laravel UI framework built on Livewire, Alpine.js, and Tailwind CSS. UIs are defined in PHP via fluent, chainable components. Follow existing conventions in this app.
@@ -249,3 +250,4 @@ livewire(ListUsers::class)
   - `$navigationIcon`: `protected static string | BackedEnum | null` (not `?string`)
   - `$navigationGroup`: `protected static string | UnitEnum | null` (not `?string`)
   - `$view`: `protected string` (not `protected static string`) on `Page` and `Widget` classes
+@endscoped
