@@ -30,6 +30,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
@@ -118,6 +119,8 @@ class Login extends SimplePage
             return $user;
         }, $timeboxDuration);
 
+        event(new Validated($authGuard->name, $user));
+
         $needsMultiFactorChallenge = app(Timebox::class)->call(function (Timebox $timebox) use ($user): bool {
             if (
                 filled($this->userUndertakingMultiFactorAuthentication) &&
@@ -163,10 +166,11 @@ class Login extends SimplePage
             return null;
         }
 
-        if (! $authGuard->attemptWhen($credentials, fn (Authenticatable $user): bool => $this->isUserAllowedToAccessPanel($user), $remember)) {
-            $this->fireFailedEvent($authGuard, $user, $credentials);
-            $this->throwFailureValidationException();
+        if (config('hashing.rehash_on_login', true)) {
+            $authProvider->rehashPasswordIfRequired($user, $credentials);
         }
+
+        $authGuard->login($user, $remember);
 
         session()->regenerate();
 

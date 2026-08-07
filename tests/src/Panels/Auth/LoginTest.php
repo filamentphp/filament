@@ -7,8 +7,10 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Sleep;
@@ -167,6 +169,64 @@ describe('authentication', function (): void {
             ->assertHasNoFormErrors();
 
         expect($padding)->not->toBe([]);
+    });
+
+    it('retrieves and verifies the credentials only once', function (): void {
+        Event::fake([Attempting::class, Validated::class]);
+
+        $userToAuthenticate = User::factory()->create();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertRedirect(Filament::getUrl());
+
+        Event::assertDispatchedTimes(Attempting::class, 1);
+        Event::assertDispatchedTimes(Validated::class, 1);
+    });
+
+    it('rehashes a password that was stored at a lower cost', function (): void {
+        $userToAuthenticate = User::factory()->create([
+            'password' => Hash::make('password', ['rounds' => 4]),
+        ]);
+
+        config()->set('hashing.bcrypt.rounds', 5);
+        Hash::forgetDrivers();
+
+        expect(Hash::needsRehash($userToAuthenticate->password))->toBeTrue();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertRedirect(Filament::getUrl());
+
+        expect(Hash::needsRehash($userToAuthenticate->refresh()->password))->toBeFalse();
+    });
+
+    it('does not rehash the password when `hashing.rehash_on_login` is disabled', function (): void {
+        $userToAuthenticate = User::factory()->create([
+            'password' => Hash::make('password', ['rounds' => 4]),
+        ]);
+
+        config()->set('hashing.rehash_on_login', false);
+        config()->set('hashing.bcrypt.rounds', 5);
+        Hash::forgetDrivers();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertRedirect(Filament::getUrl());
+
+        expect(Hash::needsRehash($userToAuthenticate->refresh()->password))->toBeTrue();
     });
 
 });
