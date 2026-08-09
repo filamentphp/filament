@@ -311,6 +311,55 @@ public function panel(Panel $panel): Panel
 
 When this is enabled, users will be prompted to set up multi-factor authentication after they sign in, if they have not already done so.
 
+## Challenging a user outside of the login page
+
+The multi-factor challenge that the login page presents is also available on its own, so that you can re-authenticate a user who is already signed in - for example, before they perform a sensitive action.
+
+The `MultiFactorChallenge` class builds the challenge for a user. Its schema components carry the validation rules that verify the code that the user enters, so validating the schema that contains them is enough to verify the challenge:
+
+```php
+use Filament\Auth\MultiFactor\MultiFactorChallenge;
+use Filament\Facades\Filament;
+use Filament\Schemas\Schema;
+
+public function multiFactorChallengeForm(Schema $schema): Schema
+{
+    return $schema
+        ->components(MultiFactorChallenge::make()->getSchemaComponents(Filament::auth()->user()))
+        ->statePath('multiFactorData');
+}
+```
+
+Some providers need to do work before their challenge is presented, such as emailing the user a code. Run `beforeChallenge()` at the point that you present the challenge to them:
+
+```php
+use Filament\Auth\MultiFactor\MultiFactorChallenge;
+use Filament\Facades\Filament;
+
+$user = Filament::auth()->user();
+$challenge = MultiFactorChallenge::make();
+
+if (! $challenge->hasEnabledProviders($user)) {
+    // The user has not set up any multi-factor authentication.
+}
+
+$challenge->beforeChallenge($user);
+```
+
+Challenges should be rate limited, so that a user's second factor cannot be brute forced. The rate limiter is shared with the login page's challenge, and is keyed by user:
+
+```php
+if ($challenge->isRateLimited($user)) {
+    // Too many attempts have been made recently.
+}
+
+$challenge->hitRateLimiter($user);
+```
+
+<Aside variant="warning">
+    Verifying a challenge does not authenticate anyone. It only proves that the user holds the second factor that is registered against their account. Signing a user in, or authorizing whatever action the challenge protects, remains your responsibility.
+</Aside>
+
 ## Security notes about multi-factor authentication
 
 In Filament, the multi-factor authentication process occurs before the user is actually authenticated into the app. This allows you to be sure that no users can authenticate and access the app without passing the multi-factor authentication step. You do not need to remember to add middleware to any of your authenticated routes to ensure that users completed the multi-factor authentication step.
