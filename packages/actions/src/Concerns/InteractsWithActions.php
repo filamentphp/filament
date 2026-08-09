@@ -216,7 +216,15 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 return null;
             }
 
-            return $this->callMountedAction();
+            $result = $this->callMountedAction();
+
+            // The action can have stopped itself without unmounting, by halting, and it
+            // has no modal to stop in.
+            if ($this->unmountActionsWithoutModals()) {
+                $this->syncActionModals();
+            }
+
+            return $result;
         }
 
         $this->syncActionModals();
@@ -224,6 +232,36 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $this->resetErrorBag();
 
         return null;
+    }
+
+    /**
+     * Unmounts every action on top of the stack that has no modal to be seen in.
+     */
+    protected function unmountActionsWithoutModals(): bool
+    {
+        $hasUnmountedAnyAction = false;
+
+        while (filled($this->mountedActions ?? [])) {
+            try {
+                $action = $this->getMountedAction();
+            } catch (ActionNotResolvableException $exception) {
+                $action = null;
+            }
+
+            if ($action && $this->mountedActionShouldOpenModal(mountedAction: $action)) {
+                break;
+            }
+
+            array_pop($this->mountedActions);
+
+            while (count($this->cachedMountedActions ?? []) > count($this->mountedActions)) {
+                array_pop($this->cachedMountedActions);
+            }
+
+            $hasUnmountedAnyAction = true;
+        }
+
+        return $hasUnmountedAnyAction;
     }
 
     /**
@@ -796,6 +834,10 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 }
             }
         }
+
+        // Closing a modal can expose an action that has no modal of its own, which
+        // would then be stuck on the stack with nothing to show.
+        $this->unmountActionsWithoutModals();
 
         $this->syncActionModals();
 
