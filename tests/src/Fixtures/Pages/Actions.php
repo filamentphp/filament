@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Fixtures\Pages;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
@@ -14,6 +15,41 @@ use Filament\Tests\Fixtures\Models\Post;
 class Actions extends Page
 {
     protected string $view = 'pages.actions';
+
+    public bool $shouldPauseActions = true;
+
+    /**
+     * Counts hook calls across requests, which dispatched events cannot do, since only
+     * the events of the latest request are asserted against.
+     *
+     * @var array<string, int>
+     */
+    public array $pauseHookCallCounts = [];
+
+    /**
+     * Not a Livewire property, so that it only lives for the request that sets it, the
+     * way that a confirmation of the user's identity should.
+     */
+    protected bool $isPauseConfirmed = false;
+
+    /**
+     * Confirms the paused parent action, unmounts this nested action, and resumes the
+     * parent, which is how a plugin would resume an action once the user has satisfied
+     * whatever the pause was waiting for.
+     */
+    public function countPauseHookCall(string $hook): void
+    {
+        $this->pauseHookCallCounts[$hook] = ($this->pauseHookCallCounts[$hook] ?? 0) + 1;
+    }
+
+    public function confirmPause(): void
+    {
+        $this->isPauseConfirmed = true;
+
+        array_pop($this->mountedActions);
+
+        $this->callMountedAction();
+    }
 
     protected function getHeaderActions(): array
     {
@@ -229,6 +265,102 @@ class Actions extends Page
                 ->action(fn () => $this->dispatch(
                     'rate-limited-called',
                 )),
+            Action::make('pause')
+                ->requiresConfirmation()
+                ->pauseWhen(fn (): bool => $this->shouldPauseActions)
+                ->before(function (): void {
+                    $this->countPauseHookCall('pause-before');
+                    $this->dispatch('pause-before-called');
+                })
+                ->action(fn () => $this->dispatch('pause-called'))
+                ->after(fn () => $this->dispatch('pause-after-called')),
+            Action::make('pause-with-schema')
+                ->schema([
+                    TextInput::make('payload')
+                        ->required(),
+                ])
+                ->beforeFormValidated(fn () => $this->countPauseHookCall('pause-with-schema-before-form-validated'))
+                ->afterFormValidated(fn () => $this->countPauseHookCall('pause-with-schema-after-form-validated'))
+                ->pauseWhen(fn (): bool => $this->shouldPauseActions)
+                ->before(fn () => $this->countPauseHookCall('pause-with-schema-before'))
+                ->action(fn (array $data) => $this->dispatch('pause-with-schema-called', data: $data)),
+            Action::make('pause-from-before')
+                ->requiresConfirmation()
+                ->before(function (Action $action): void {
+                    $this->countPauseHookCall('pause-from-before-before');
+
+                    if (! $this->shouldPauseActions) {
+                        return;
+                    }
+
+                    $action->pause();
+                })
+                ->action(fn () => $this->dispatch('pause-from-before-called')),
+            Action::make('rate-limited-pause')
+                ->rateLimit(2)
+                ->pauseWhen(fn (): bool => $this->shouldPauseActions)
+                ->action(fn () => $this->dispatch('rate-limited-pause-called')),
+            Action::make('pause-until-filled')
+                ->schema([
+                    TextInput::make('title')
+                        ->required(),
+                    TextInput::make('reference'),
+                ])
+                ->pauseWhen(function (Action $action): bool {
+                    if (filled($action->getData()['reference'] ?? null)) {
+                        return false;
+                    }
+
+                    $action->getLivewire()->mountAction('generate-reference');
+
+                    return true;
+                })
+                ->registerModalActions([
+                    Action::make('generate-reference')
+                        ->schema([
+                            TextInput::make('prefix')
+                                ->required(),
+                        ])
+                        ->action(function (Action $action, array $data): void {
+                            $livewire = $action->getLivewire();
+
+                            data_set($livewire->mountedActions, '0.data.reference', "{$data['prefix']}-123");
+
+                            array_pop($livewire->mountedActions);
+
+                            $livewire->callMountedAction();
+                        }),
+                ])
+                ->action(fn (array $data) => $this->dispatch('pause-until-filled-called', data: $data)),
+            Action::make('pause-until-confirmed')
+                ->requiresConfirmation()
+                ->pauseWhen(function (): bool {
+                    if ($this->isPauseConfirmed) {
+                        return false;
+                    }
+
+                    $this->mountAction('confirm-pause');
+
+                    return true;
+                })
+                ->registerModalActions([
+                    Action::make('confirm-pause')
+                        ->schema([
+                            TextInput::make('code')
+                                ->required()
+                                ->rule(static fn (): Closure => static function (string $attribute, mixed $value, Closure $fail): void {
+                                    if ($value === '123456') {
+                                        return;
+                                    }
+
+                                    $fail('The code is invalid.');
+                                }),
+                        ])
+                        ->action(function (Actions $livewire): void {
+                            $livewire->confirmPause();
+                        }),
+                ])
+                ->action(fn () => $this->dispatch('pause-until-confirmed-called')),
             Action::make('predefined-arguments')
                 ->arguments(['foo' => 'bar', 'baz' => 'qux'])
                 ->label(fn (array $arguments): string => "Action for {$arguments['foo']}")

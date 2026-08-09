@@ -40,6 +40,8 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
      */
     public static array $authorizedRecordKeys = [];
 
+    public bool $shouldPauseActions = true;
+
     public function table(Table $table): Table
     {
         return $table
@@ -391,6 +393,12 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                         $this->dispatch('halt-called');
 
                         $action->halt();
+                    }),
+                BulkAction::make('pause')
+                    ->requiresConfirmation()
+                    ->pauseWhen(fn (): bool => $this->shouldPauseActions)
+                    ->action(function (Collection $records): void {
+                        $this->dispatch('pause-called', count: $records->count());
                     }),
                 BulkAction::make('visible'),
                 BulkAction::make('hidden')

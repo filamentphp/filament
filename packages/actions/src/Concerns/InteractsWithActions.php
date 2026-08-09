@@ -6,6 +6,7 @@ use Closure;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\Enums\ActionCallStage;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
@@ -14,6 +15,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Exceptions\Pause;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Auth\Access\Response;
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -37,6 +40,16 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      * @var array<array<string, mixed>> | null
      */
     public ?array $mountedActions = [];
+
+    /**
+     * The stage that each paused mounted action paused in, keyed by its nesting index.
+     * Locked, since resuming an action skips the stages that already completed, which
+     * is not a decision that the browser may make.
+     *
+     * @var array<int, int>
+     */
+    #[Locked]
+    public array $pausedMountedActions = [];
 
     protected ?int $originallyMountedActionIndex = null;
 
@@ -252,7 +265,20 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             return null;
         }
 
-        if ($rateLimit = $action->getRateLimit()) {
+        // Resolved before a pause condition has the chance to mount another action on
+        // top of this one, which would make the last mounted action the wrong one.
+        $nestingIndex = $action->getNestingIndex() ?? array_key_last($this->mountedActions);
+
+        // The action is no longer paused from this point on. If it pauses again, the
+        // stage that it pauses in is recorded afresh.
+        $pausedAtStage = $this->pullMountedActionPausedAtStage($nestingIndex);
+
+        $stage = ActionCallStage::RateLimit;
+
+        if (
+            ($rateLimit = $action->getRateLimit()) &&
+            $stage->isAfter($pausedAtStage)
+        ) {
             try {
                 $this->rateLimit($rateLimit, method: json_encode(array_map(fn (array $action): array => Arr::except($action, ['data']), $this->mountedActions)));
             } catch (TooManyRequestsException $exception) {
@@ -284,24 +310,51 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 }
             }
 
-            if ($this->mountedActionHasSchema(mountedAction: $action)) {
-                $action->callBeforeFormValidated();
+            // Pause conditions are re-evaluated every time, including when the action
+            // is resumed. They are what keeps a paused action paused, so skipping them
+            // on resumption would let the action be resumed without them being met.
+            $callPauseConditionsAndBefore = function () use ($action, $pausedAtStage, &$stage): void {
+                $stage = ActionCallStage::PauseConditions;
 
-                $schema->getState(afterValidate: function (array $state) use ($action, $schemaState): void {
-                    $action->callAfterFormValidated();
+                if ($action->shouldPause()) {
+                    $action->pause();
+                }
+
+                $stage = ActionCallStage::Before;
+
+                if (! $stage->isAfter($pausedAtStage)) {
+                    return;
+                }
+
+                $action->callBefore();
+            };
+
+            // A resumed action is always validated again, since its data can have
+            // changed since it paused. Only the hooks around validation are skipped,
+            // as they already ran.
+            $stage = ActionCallStage::Validation;
+            $hasBeenValidated = ! $stage->isAfter($pausedAtStage);
+
+            if ($this->mountedActionHasSchema(mountedAction: $action)) {
+                $hasBeenValidated || $action->callBeforeFormValidated();
+
+                $schema->getState(afterValidate: function (array $state) use ($action, $callPauseConditionsAndBefore, $hasBeenValidated, $schemaState): void {
+                    $hasBeenValidated || $action->callAfterFormValidated();
 
                     $action->data([
                         ...$schemaState,
                         ...$state,
                     ]);
 
-                    $action->callBefore();
+                    $callPauseConditionsAndBefore();
                 });
             } else {
                 $action->data($schemaState);
 
-                $action->callBefore();
+                $callPauseConditionsAndBefore();
             }
+
+            $stage = ActionCallStage::Call;
 
             $result = $action->call([
                 'form' => $schema,
@@ -322,6 +375,16 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                     $action->dispatchFailureRedirect();
                 },
             })();
+        } catch (Pause $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
+
+            $this->pausedMountedActions[$nestingIndex] = $stage->value;
+
+            $action->arguments($originalActionArguments);
+
+            return null;
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
@@ -383,6 +446,47 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         return $result;
     }
 
+    public function isMountedActionPaused(?Action $mountedAction = null): bool
+    {
+        $mountedAction ??= $this->getMountedAction();
+
+        if (! $mountedAction) {
+            return false;
+        }
+
+        return array_key_exists($mountedAction->getNestingIndex(), $this->pausedMountedActions);
+    }
+
+    /**
+     * Returns the stage that the action paused in, and forgets it, so that the action
+     * is only ever resumed from it once.
+     */
+    protected function pullMountedActionPausedAtStage(int $nestingIndex): ?ActionCallStage
+    {
+        if (! array_key_exists($nestingIndex, $this->pausedMountedActions)) {
+            return null;
+        }
+
+        $stage = ActionCallStage::tryFrom($this->pausedMountedActions[$nestingIndex]);
+
+        unset($this->pausedMountedActions[$nestingIndex]);
+
+        return $stage;
+    }
+
+    protected function forgetUnmountedPausedActions(): void
+    {
+        $mountedActionsCount = count($this->mountedActions ?? []);
+
+        foreach (array_keys($this->pausedMountedActions) as $nestingIndex) {
+            if ($nestingIndex < $mountedActionsCount) {
+                continue;
+            }
+
+            unset($this->pausedMountedActions[$nestingIndex]);
+        }
+    }
+
     public function forceRender(): void
     {
         app(PartialsComponentHook::class)->forceRender($this);
@@ -419,6 +523,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     public function replaceMountedAction(string $name, array $arguments = [], array $context = []): void
     {
         $this->mountedActions = [];
+        $this->pausedMountedActions = [];
         $this->cachedMountedActions = null;
 
         foreach ($this->cachedSchemas as $schemaName => $schema) {
@@ -798,6 +903,8 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         }
 
         $this->syncActionModals();
+
+        $this->forgetUnmountedPausedActions();
 
         while (count($this->cachedMountedActions ?? []) > count($this->mountedActions)) {
             array_pop($this->cachedMountedActions);

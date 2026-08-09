@@ -508,6 +508,140 @@ Action::make('delete')
     })
 ```
 
+## Pausing an action
+
+An action can be paused, which stops it before it runs, but keeps it mounted along with any data that the user has already entered. The next time it is called, it resumes instead of starting again: the stages that already completed, such as rate limiting and the hooks around form validation, are not repeated.
+
+This is useful when an action needs something more from the user before it may run - confirming their identity, for example - and you want to ask for it once their form has been validated, without the action running in the meantime.
+
+Register a condition with `pauseWhen()`. It is evaluated after the action's schema is validated, and before the `before()` hook:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('transferFunds')
+    ->schema([
+        // ...
+    ])
+    ->pauseWhen(fn (): bool => ! session()->has('identity_confirmed_at'))
+    ->action(function (array $data): void {
+        // ...
+    })
+```
+
+Conditions accumulate rather than replace each other, so a plugin may pause an action without overwriting a condition that you registered, and the other way around.
+
+Alternatively, `$action->pause()` may be called from inside the `before()` hook or the action itself:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('transferFunds')
+    ->before(function (Action $action): void {
+        if (session()->has('identity_confirmed_at')) {
+            return;
+        }
+
+        $action->pause();
+    })
+    ->action(function (): void {
+        // ...
+    })
+```
+
+<Aside variant="info">
+    A hook that pauses is not called again when the action resumes, since it already ran up to the point that it paused. Pause conditions are the exception: they are evaluated every time, including on resumption. They are what keeps a paused action paused, so an action whose conditions are still met simply pauses again.
+</Aside>
+
+### Asking the user for something before an action resumes
+
+Since a paused action stays mounted, another action can be mounted on top of it, and its modal is stacked above the paused action's modal. Once the user has done what the pause was waiting for, unmount the child action and call the parent action again, which resumes it:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('transferFunds')
+    ->schema([
+        // ...
+    ])
+    ->pauseWhen(function (Action $action): bool {
+        if (session()->has('identity_confirmed_at')) {
+            return false;
+        }
+
+        $action->getLivewire()->mountAction('confirmIdentity');
+
+        return true;
+    })
+    ->registerModalActions([
+        Action::make('confirmIdentity')
+            ->schema([
+                // ...
+            ])
+            ->action(function (Action $action): void {
+                session()->put('identity_confirmed_at', now());
+
+                $livewire = $action->getLivewire();
+
+                array_pop($livewire->mountedActions);
+
+                $livewire->callMountedAction();
+            }),
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+```
+
+The parent action's data survives the round trip, so it receives everything that the user entered before it paused.
+
+The nested action can also write to it. The paused action's schema state lives on the Livewire component at `mountedActions.{nestingIndex}.data`, so a nested action can fill in a field that the user left empty, and the paused action receives it once it resumes:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('createInvoice')
+    ->schema([
+        TextInput::make('title')
+            ->required(),
+        TextInput::make('reference'),
+    ])
+    ->pauseWhen(function (Action $action): bool {
+        if (filled($action->getData()['reference'] ?? null)) {
+            return false;
+        }
+
+        $action->getLivewire()->mountAction('generateReference');
+
+        return true;
+    })
+    ->registerModalActions([
+        Action::make('generateReference')
+            ->schema([
+                TextInput::make('prefix')
+                    ->required(),
+            ])
+            ->action(function (Action $action, array $data): void {
+                $livewire = $action->getLivewire();
+
+                data_set($livewire->mountedActions, '0.data.reference', "{$data['prefix']}-123");
+
+                array_pop($livewire->mountedActions);
+
+                $livewire->callMountedAction();
+            }),
+    ])
+    ->action(function (array $data): void {
+        // `$data['reference']` is now filled in.
+    })
+```
+
+Since a resumed action validates its schema again, anything that a nested action writes into it is validated by the rules of the paused action, just as if the user had entered it themselves.
+
+<Aside variant="warning">
+    Whatever a pause condition checks must be decided on the server. The action can be called again from the browser at any time - after its child action is cancelled, for example - and resuming re-evaluates the conditions, so the action only runs once they genuinely no longer hold.
+</Aside>
+
 ## Using actions in schemas
 
 Action objects can be inserted anywhere in a [schema](../schemas/overview), such as in [form field slots](../forms/overview#adding-extra-content-to-a-field), [section headers and footers](../schemas/sections), or alongside [prime components](../schemas/primes). When an action is used in a schema, it has access to the schema's state via [utility injection](#injecting-utilities-from-a-schema) - you can use `$schemaGet` and `$schemaSet` in closures to read and modify form field values.
