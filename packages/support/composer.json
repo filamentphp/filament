@@ -8,7 +8,7 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-intl": "*",
         "blade-ui-kit/blade-heroicons": "^2.5",
         "danharrin/livewire-rate-limiting": "^2.0",

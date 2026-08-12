@@ -8,7 +8,7 @@ import RadioGroupOption from "@components/RadioGroupOption.astro"
 
 Filament requires the following to run:
 
-- PHP 8.2+
+- PHP 8.3+
 - Laravel v11.28+
 - Tailwind CSS v4.1+
 
