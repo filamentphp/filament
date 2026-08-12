@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Dashboard',
+
     'actions' => [
 
         'filter' => [
