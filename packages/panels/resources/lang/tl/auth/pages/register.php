@@ -25,6 +25,11 @@ return [
             'label' => 'Pangalan',
         ],
 
+        'password' => [
+            'label' => 'Password',
+            'validation_attribute' => 'password',
+        ],
+
         'password_confirmation' => [
             'label' => 'Kumpirmahin ang password',
         ],

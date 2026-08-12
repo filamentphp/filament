@@ -2,6 +2,8 @@
 
 return [
 
+    'label' => 'Navigation ng pagination',
+
     'overview' => '{1} Ipinapakita ang 1 resulta|[2,*] Ipinapakita ang :first hanggang :last sa :total resulta',
 
     'fields' => [

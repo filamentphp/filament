@@ -2,6 +2,8 @@
 
 return [
 
+    'label' => 'Profile',
+
     'form' => [
 
         'email' => [
@@ -14,15 +16,18 @@ return [
 
         'password' => [
             'label' => 'Bagong password',
+            'validation_attribute' => 'password',
         ],
 
         'password_confirmation' => [
             'label' => 'Kumpirmahin ang bagong password',
+            'validation_attribute' => 'kumpirmasyon ng password',
         ],
 
         'current_password' => [
             'label' => 'Kasalukuyang password',
             'below_content' => 'Para sa seguridad, kumpirmahin ang iyong password para magpatuloy.',
+            'validation_attribute' => 'kasalukuyang password',
         ],
 
         'actions' => [
@@ -33,6 +38,10 @@ return [
 
         ],
 
+    ],
+
+    'multi_factor_authentication' => [
+        'label' => 'Two-factor authentication (2FA)',
     ],
 
     'notifications' => [

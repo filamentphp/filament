@@ -46,6 +46,8 @@ return [
 
                 'label' => 'Ilagay ang 6-digit code mula sa authenticator app',
 
+                'validation_attribute' => 'code',
+
                 'below_content' => 'Kakailanganin mong ilagay ang 6-digit code mula sa iyong authenticator app sa tuwing magsa-sign in ka o gagawa ng sensitibong action.',
 
                 'messages' => [

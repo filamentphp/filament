@@ -12,6 +12,8 @@ return [
 
             'file' => [
 
+                'label' => 'File',
+
                 'placeholder' => 'Mag-upload ng CSV file',
 
                 'rules' => [

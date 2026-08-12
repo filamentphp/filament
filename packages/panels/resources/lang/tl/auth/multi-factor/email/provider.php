@@ -27,6 +27,8 @@ return [
 
             'label' => 'Ilagay ang 6-digit code na ipinadala namin sa email mo',
 
+            'validation_attribute' => 'code',
+
             'actions' => [
 
                 'resend' => [

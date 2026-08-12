@@ -110,11 +110,23 @@ return [
                 'label' => 'Kabuuan',
             ],
 
+            'average' => [
+                'label' => 'Average',
+            ],
+
         ],
 
     ],
 
     'actions' => [
+
+        'open_bulk_actions' => [
+            'label' => 'Mga bulk action',
+        ],
+
+        'column_manager' => [
+            'label' => 'Tagapamahala ng column',
+        ],
 
         'disable_reordering' => [
             'label' => 'Tapusin ang pag-aayos ng mga record',
@@ -149,6 +161,8 @@ return [
         'description' => 'Gumawa ng :model para makapagsimula.',
 
     ],
+
+    'default_model_label' => 'record',
 
     'filters' => [
 

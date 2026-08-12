@@ -10,6 +10,14 @@ return [
 
             'heading' => 'Iugnay ang :label',
 
+            'fields' => [
+
+                'record_id' => [
+                    'label' => 'Record',
+                ],
+
+            ],
+
             'actions' => [
 
                 'associate' => [

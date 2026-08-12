@@ -25,6 +25,10 @@ return [
             'label' => 'Address ng email',
         ],
 
+        'password' => [
+            'label' => 'Password',
+        ],
+
         'remember' => [
             'label' => 'Tandaan ako',
         ],

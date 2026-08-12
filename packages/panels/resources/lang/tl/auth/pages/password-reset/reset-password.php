@@ -12,6 +12,11 @@ return [
             'label' => 'Address ng email',
         ],
 
+        'password' => [
+            'label' => 'Password',
+            'validation_attribute' => 'password',
+        ],
+
         'password_confirmation' => [
             'label' => 'Kumpirmahin ang password',
         ],

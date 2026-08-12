@@ -10,6 +10,14 @@ return [
 
             'heading' => 'I-attach ang :label',
 
+            'fields' => [
+
+                'record_id' => [
+                    'label' => 'Record',
+                ],
+
+            ],
+
             'actions' => [
 
                 'attach' => [

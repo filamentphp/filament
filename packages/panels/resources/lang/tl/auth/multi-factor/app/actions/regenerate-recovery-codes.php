@@ -16,6 +16,8 @@ return [
 
                 'label' => 'Ilagay ang 6-digit code mula sa authenticator app',
 
+                'validation_attribute' => 'code',
+
                 'messages' => [
 
                     'invalid' => 'Invalid ang code na inilagay mo.',
@@ -29,6 +31,8 @@ return [
             'password' => [
 
                 'label' => 'O, ilagay ang kasalukuyan mong password',
+
+                'validation_attribute' => 'password',
 
             ],
 

@@ -16,6 +16,8 @@ return [
 
                 'label' => 'Ilagay ang 6-digit code mula sa authenticator app',
 
+                'validation_attribute' => 'code',
+
                 'actions' => [
 
                     'use_recovery_code' => [
@@ -37,6 +39,8 @@ return [
             'recovery_code' => [
 
                 'label' => 'O, maglagay ng recovery code',
+
+                'validation_attribute' => 'recovery code',
 
                 'messages' => [
 

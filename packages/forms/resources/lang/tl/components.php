@@ -296,6 +296,18 @@ return [
 
     'key_value' => [
 
+        'fields' => [
+
+            'key' => [
+                'label' => 'Key',
+            ],
+
+            'value' => [
+                'label' => 'Value',
+            ],
+
+        ],
+
         'actions' => [
 
             'add' => [
@@ -334,6 +346,18 @@ return [
 
         'tools' => [
             'attach_files' => 'Mag-attach ng mga file',
+            'blockquote' => 'Blockquote',
+            'bold' => 'Bold',
+            'bullet_list' => 'Bullet list',
+            'code_block' => 'Code block',
+            'heading' => 'Heading',
+            'italic' => 'Italic',
+            'link' => 'Link',
+            'ordered_list' => 'Numbered list',
+            'redo' => 'Redo',
+            'strike' => 'Strikethrough',
+            'table' => 'Table',
+            'undo' => 'Undo',
         ],
 
     ],
@@ -450,6 +474,7 @@ return [
                         'file' => [
 
                             'label' => [
+                                'new' => 'File',
                                 'existing' => 'Palitan ang file',
                             ],
 
@@ -458,6 +483,7 @@ return [
                         'alt' => [
 
                             'label' => [
+                                'new' => 'Alt text',
                                 'existing' => 'Palitan ang alt text',
                             ],
 
@@ -491,11 +517,17 @@ return [
 
             'grid' => [
 
+                'label' => 'Grid',
+
                 'modal' => [
+
+                    'heading' => 'Grid',
 
                     'form' => [
 
                         'preset' => [
+
+                            'label' => 'Preset',
 
                             'placeholder' => 'Wala',
 
@@ -521,8 +553,21 @@ return [
 
                             'options' => [
                                 'default' => 'Lahat',
+                                'sm' => 'Maliit',
+                                'md' => 'Katamtaman',
+                                'lg' => 'Malaki',
+                                'xl' => 'Extra large',
+                                '2xl' => 'Dalawang extra large',
                             ],
 
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start span',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'End span',
                         ],
 
                         'is_asymmetric' => [
@@ -537,7 +582,11 @@ return [
 
             'link' => [
 
+                'label' => 'Link',
+
                 'modal' => [
+
+                    'heading' => 'Link',
 
                     'form' => [
 
@@ -633,14 +682,36 @@ return [
             'align_justify' => 'I-align justify',
             'align_start' => 'I-align sa simula',
             'attach_files' => 'Mag-attach ng mga file',
+            'blockquote' => 'Blockquote',
+            'bold' => 'Bold',
+            'bullet_list' => 'Bullet list',
             'clear_formatting' => 'Alisin ang formatting',
+            'code' => 'Code',
+            'code_block' => 'Code block',
             'custom_blocks' => 'Mga block',
             'details' => 'Mga detalye',
             'h1' => 'Pamagat',
+            'h2' => 'Heading 2',
+            'h3' => 'Heading 3',
+            'h4' => 'Heading 4',
+            'h5' => 'Heading 5',
+            'h6' => 'Heading 6',
+            'grid' => 'Grid',
             'grid_delete' => 'Burahin ang grid',
+            'highlight' => 'Highlight',
+            'horizontal_rule' => 'Horizontal rule',
+            'italic' => 'Italic',
+            'lead' => 'Lead text',
+            'link' => 'Link',
             'merge_tags' => 'Mga merge tag',
+            'ordered_list' => 'Numbered list',
             'paragraph' => 'Talata',
+            'redo' => 'Redo',
             'small' => 'Maliit na text',
+            'strike' => 'Strikethrough',
+            'subscript' => 'Subscript',
+            'superscript' => 'Superscript',
+            'table' => 'Table',
             'table_delete' => 'Burahin ang table',
             'table_add_column_before' => 'Magdagdag ng column bago nito',
             'table_add_column_after' => 'Magdagdag ng column pagkatapos nito',
@@ -653,6 +724,8 @@ return [
             'table_toggle_header_row' => 'I-toggle ang header row',
             'table_toggle_header_cell' => 'I-toggle ang header cell',
             'text_color' => 'Kulay ng text',
+            'underline' => 'Underline',
+            'undo' => 'Undo',
         ],
 
         'uploading_file_message' => 'Ina-upload ang file...',
