@@ -6,6 +6,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -2380,3 +2381,92 @@ describe('authorization', function (): void {
         });
     });
 });
+
+describe('unmounting actions', function (): void {
+    it('does not hand a closed action\'s schema to the next action mounted in its place', function (): void {
+        $component = livewire(StaleMountedActionSchemaHarness::class)
+            ->mountAction('parent')
+            ->mountAction('first');
+
+        expect(array_keys($component->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['alpha']);
+
+        $component->call('unmountThenMountAction', 'second');
+
+        expect(array_keys($component->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['beta']);
+    });
+
+    it('does not hand it over at the root of the stack either', function (): void {
+        $component = livewire(StaleMountedActionSchemaHarness::class)
+            ->mountAction('parent');
+
+        expect(array_keys($component->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField']);
+
+        $component->call('unmountThenMountAction', 'other');
+
+        expect(array_keys($component->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['otherField']);
+    });
+
+    it('keeps the schema of an action that is still mounted', function (): void {
+        $component = livewire(StaleMountedActionSchemaHarness::class)
+            ->mountAction('parent')
+            ->mountAction('first');
+
+        $component->call('unmountAction');
+
+        expect(array_keys($component->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField'])
+            ->and($component->instance()->getSchema('mountedActionSchema1'))
+            ->toBeNull();
+    });
+});
+
+class StaleMountedActionSchemaHarness extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public function parentAction(): Action
+    {
+        return Action::make('parent')
+            ->schema([
+                TextInput::make('parentField'),
+            ])
+            ->registerModalActions([
+                Action::make('first')
+                    ->schema([
+                        TextInput::make('alpha'),
+                    ])
+                    ->action(fn () => null),
+                Action::make('second')
+                    ->schema([
+                        TextInput::make('beta'),
+                    ])
+                    ->action(fn () => null),
+            ])
+            ->action(fn () => null);
+    }
+
+    public function unmountThenMountAction(string $name): void
+    {
+        $this->unmountAction();
+        $this->mountAction($name);
+    }
+
+    public function otherAction(): Action
+    {
+        return Action::make('other')
+            ->schema([
+                TextInput::make('otherField'),
+            ])
+            ->action(fn () => null);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
