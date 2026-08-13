@@ -8,7 +8,7 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "danharrin/date-format-converter": "^0.3",
         "filament/actions": "self.version",
         "filament/schemas": "self.version",

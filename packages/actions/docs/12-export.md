@@ -658,20 +658,21 @@ You can only specify a single character, otherwise an exception will be thrown.
 
 ### Styling XLSX rows
 
-If you want to style the cells of the XLSX file, you may override the `getXlsxCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling):
+If you want to style the cells of the XLSX file, you may override the `getXlsxCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/5.x/docs/documentation.md#styling):
 
 ```php
 use OpenSpout\Common\Entity\Style\Style;
 
 public function getXlsxCellStyle(): ?Style
 {
-    return (new Style())
-        ->setFontSize(12)
-        ->setFontName('Consolas');
+    return new Style(
+        fontSize: 12,
+        fontName: 'Consolas',
+    );
 }
 ```
 
-If you want to use a different style for the header cells of the XLSX file only, you may override the `getXlsxHeaderCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling):
+If you want to use a different style for the header cells of the XLSX file only, you may override the `getXlsxHeaderCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/5.x/docs/documentation.md#styling):
 
 ```php
 use OpenSpout\Common\Entity\Style\CellAlignment;
@@ -681,15 +682,16 @@ use OpenSpout\Common\Entity\Style\Style;
 
 public function getXlsxHeaderCellStyle(): ?Style
 {
-    return (new Style())
-        ->setFontBold()
-        ->setFontItalic()
-        ->setFontSize(14)
-        ->setFontName('Consolas')
-        ->setFontColor(Color::rgb(255, 255, 77))
-        ->setBackgroundColor(Color::rgb(0, 0, 0))
-        ->setCellAlignment(CellAlignment::CENTER)
-        ->setCellVerticalAlignment(CellVerticalAlignment::CENTER);
+    return new Style(
+        fontBold: true,
+        fontItalic: true,
+        fontSize: 14,
+        fontName: 'Consolas',
+        fontColor: Color::rgb(255, 255, 77),
+        cellAlignment: CellAlignment::CENTER,
+        cellVerticalAlignment: CellVerticalAlignment::CENTER,
+        backgroundColor: Color::rgb(0, 0, 0),
+    );
 }
 ```
 
@@ -706,51 +708,49 @@ use OpenSpout\Common\Entity\Style\Style;
  */
 public function makeXlsxRow(array $values, ?Style $style = null): Row
 {
-    return Row::fromValues($values, $style);
+    if ($style === null) {
+        return Row::fromValues($values);
+    }
+
+    return Row::fromValuesWithStyles($values, array_fill(0, count($values), $style));
 }
 ```
 
-When a user exports, they can choose which columns to export. As such, the `$this->columnMap` property may be used to determine which columns are being exported and in which order. You can replace `Row::fromValues()` with an array of `Cell` objects, which allow you to style them individually using [OpenSpout `Style` objects](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling). A `StyleMerger` can be used to merge the default style with the custom style for a cell, allowing you to apply additional styles on top of the default ones:
+When a user exports, they can choose which columns to export. As such, the `$this->columnMap` property may be used to determine which columns are being exported and in which order. You can replace `Row::fromValues()` with an array of `Cell` objects, which allow you to style them individually using [OpenSpout `Style` objects](https://github.com/openspout/openspout/blob/5.x/docs/documentation.md#styling). Since a `Style` object is immutable, use its `with*()` methods to derive a new style from the one passed in, layering additional formatting on top of it:
 
 ```php
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Style\Style;
-use OpenSpout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * @param array<mixed> $values
  */
 public function makeXlsxRow(array $values, ?Style $style = null): Row
 {
-    $styleMerger = new StyleMerger();
-
     $cells = [];
-    
+
     foreach (array_keys($this->columnMap) as $columnIndex => $column) {
         $cells[] = match ($column) {
             'name' => Cell::fromValue(
                 $values[$columnIndex],
-                $styleMerger->merge(
-                    (new Style())->setFontUnderline(),
-                    $style,
-                ),
+                ($style ?? new Style())->withFontUnderline(true),
             ),
             'price' => Cell::fromValue(
                 $values[$columnIndex],
-                (new Style())->setFontSize(12),
+                new Style(fontSize: 12),
             ),
-            default => Cell::fromValue($values[$columnIndex]),
+            default => Cell::fromValue($values[$columnIndex], $style),
         },
     }
-    
-    return new Row($cells, $style);
+
+    return new Row($cells);
 }
 ```
 
 ### Customizing the XLSX writer
 
-If you want to pass "options" to the [OpenSpout XLSX `Writer`](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#column-widths), you can return an `OpenSpout\Writer\XLSX\Options` instance from the `getXlsxWriterOptions()` method of the exporter class:
+If you want to pass "options" to the [OpenSpout XLSX `Writer`](https://github.com/openspout/openspout/blob/5.x/docs/documentation.md#column-widths), you can return an `OpenSpout\Writer\XLSX\Options` instance from the `getXlsxWriterOptions()` method of the exporter class:
 
 ```php
 use OpenSpout\Writer\XLSX\Options;
@@ -774,9 +774,9 @@ use OpenSpout\Writer\XLSX\Writer;
 
 public function configureXlsxWriterAfterOpen(Writer $writer): Writer
 {
-    $writer->addRow(Row::fromValues(
+    $writer->addRow(Row::fromValuesWithStyles(
         ['This is a custom header added after opening the XLSX writer.'],
-        (new Style())->setShouldWrapText(false),
+        [new Style(shouldWrapText: false)],
     ));
 
     return $writer;
@@ -784,7 +784,7 @@ public function configureXlsxWriterAfterOpen(Writer $writer): Writer
 ```
 
 <Aside variant="warning">
-    Any rows you add here appear above the header row, shifting the exported table down. If you also use `configureXlsxWriterBeforeClose()` to freeze rows, remember to account for the extra rows in `setFreezeRow()`.
+    Any rows you add here appear above the header row, shifting the exported table down. If you also use `configureXlsxWriterBeforeClose()` to freeze rows, remember to account for the extra rows in `withFreezeRow()`.
 </Aside>
 
 If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClose()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
@@ -795,10 +795,10 @@ use OpenSpout\Writer\XLSX\Writer;
 
 public function configureXlsxWriterBeforeClose(Writer $writer): Writer
 {
-    $sheetView = new SheetView();
-    $sheetView->setFreezeRow(2);
-    $sheetView->setFreezeColumn('B');
-    
+    $sheetView = (new SheetView())
+        ->withFreezeRow(2)
+        ->withFreezeColumn('B');
+
     $sheet = $writer->getCurrentSheet();
     $sheet->setSheetView($sheetView);
     $sheet->setName('export');
