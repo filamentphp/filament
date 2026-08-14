@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -86,6 +88,72 @@ it('can validate from the component itself', function (): void {
         ->call('submit')
         ->assertHasFormErrors(['title' => ['required']]);
 });
+
+it('can remove items from a list field in a mounted action form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->mountAction('roles')
+        ->assertSchemaStateSet(['roles' => ['viewer', 'creator']])
+        ->fillForm(['roles' => ['viewer']])
+        ->assertSchemaStateSet(['roles' => ['viewer']]);
+});
+
+it('can remove items from a list field in a page form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->assertFormSet(['roles' => ['viewer', 'creator']])
+        ->fillForm(['roles' => ['viewer']])
+        ->assertFormSet(['roles' => ['viewer']]);
+});
+
+it('can clear a list field in a mounted action form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->mountAction('roles')
+        ->fillForm(['roles' => []])
+        ->assertSchemaStateSet(['roles' => []]);
+});
+
+it('can add items to a list field in a mounted action form', function (): void {
+    livewire(TestComponentWithListFields::class)
+        ->mountAction('roles')
+        ->fillForm(['roles' => ['viewer', 'creator', 'editor']])
+        ->assertSchemaStateSet(['roles' => ['viewer', 'creator', 'editor']]);
+});
+
+class TestComponentWithListFields extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill(['roles' => ['viewer', 'creator']]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                CheckboxList::make('roles')
+                    ->options([
+                        'viewer' => 'Viewer',
+                        'creator' => 'Creator',
+                        'editor' => 'Editor',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function rolesAction(): Action
+    {
+        return Action::make('roles')
+            ->fillForm(['roles' => ['viewer', 'creator']])
+            ->schema([
+                CheckboxList::make('roles')
+                    ->options([
+                        'viewer' => 'Viewer',
+                        'creator' => 'Creator',
+                        'editor' => 'Editor',
+                    ]),
+            ])
+            ->action(static function (): void {});
+    }
+}
 
 class TestComponentWithValidation extends Livewire
 {

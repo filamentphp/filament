@@ -56,7 +56,7 @@ class DisableAppAuthenticationAction
 
                             RateLimiter::hit($rateLimitingKey);
 
-                            if (is_string($value) && $appAuthentication->verifyCode($value)) {
+                            if (is_string($value) && $appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
                                 return;
                             }
 

@@ -54,6 +54,13 @@ it('allows `hsl()` and `hsla()` functional colors', function (): void {
         ->and(Str::sanitizeCssColor('hsla(120, 50%, 50%, 0.5)'))->toBe('hsla(120, 50%, 50%, 0.5)');
 });
 
+it('allows space-separated CSS Color Level 4 `rgb()` and `hsl()` syntax', function (): void {
+    expect(Str::sanitizeCssColor('rgb(255 0 0)'))->toBe('rgb(255 0 0)')
+        ->and(Str::sanitizeCssColor('rgb(255 0 0 / 50%)'))->toBe('rgb(255 0 0 / 50%)')
+        ->and(Str::sanitizeCssColor('hsl(120 50% 50%)'))->toBe('hsl(120 50% 50%)')
+        ->and(Str::sanitizeCssColor('hsl(120deg 50% 50% / 0.5)'))->toBe('hsl(120deg 50% 50% / 0.5)');
+});
+
 it('allows `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()` and `color()` functional colors', function (): void {
     expect(Str::sanitizeCssColor('hwb(194 0% 0%)'))->toBe('hwb(194 0% 0%)')
         ->and(Str::sanitizeCssColor('lab(52.2% 40.1 59.9)'))->toBe('lab(52.2% 40.1 59.9)')
@@ -123,6 +130,13 @@ it('exposes a `Stringable` macro', function (): void {
         ->and((string) Str::of('#ff0000')->sanitizeCssColor())
         ->toBe('#ff0000')
         ->and((string) Str::of('red;position:fixed')->sanitizeCssColor())
+        ->toBe('');
+});
+
+it('returns an empty `Stringable` from the macro when the sanitizer returns `null`', function (): void {
+    expect(Str::of('')->sanitizeCssColor())
+        ->toBeInstanceOf(Stringable::class)
+        ->and((string) Str::of('')->sanitizeCssColor())
         ->toBe('');
 });
 

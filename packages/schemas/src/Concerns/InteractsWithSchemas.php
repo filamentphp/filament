@@ -474,12 +474,12 @@ trait InteractsWithSchemas
     protected function unsetMissingNumericArrayKeys(array &$target, array $state, string $currentStatePath, ?string $schemaStatePath = null): void
     {
         foreach ($target as $key => $value) {
-            $currentStatePath .= ".{$key}";
+            $keyStatePath = "{$currentStatePath}.{$key}";
 
             if (
                 (is_numeric($key) || array_is_list($state)) &&
                 (! array_key_exists($key, $state)) &&
-                str($currentStatePath)->startsWith($schemaStatePath)
+                str($keyStatePath)->startsWith($schemaStatePath)
             ) {
                 unset($target[$key]);
 
@@ -487,7 +487,7 @@ trait InteractsWithSchemas
             }
 
             if (is_array($value) && is_array($state[$key] ?? null)) {
-                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key], $currentStatePath, $schemaStatePath);
+                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key], $keyStatePath, $schemaStatePath);
             }
         }
     }

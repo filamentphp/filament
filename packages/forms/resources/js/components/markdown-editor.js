@@ -289,7 +289,7 @@ export default function markdownEditorFormComponent({
             const isEditorVisible = this.isEditorVisible()
 
             if (isEditorVisible && !this.wasEditorVisible) {
-                this.editor?.codemirror?.refresh()
+                Alpine.raw(this.editor)?.codemirror?.refresh()
             }
 
             this.wasEditorVisible = isEditorVisible

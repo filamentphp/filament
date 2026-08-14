@@ -21,6 +21,10 @@ trait CanBeCloned
             return false;
         }
 
+        if (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount())) {
+            return false;
+        }
+
         return (bool) $this->evaluate($this->isCloneable);
     }
 }

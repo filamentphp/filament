@@ -3,17 +3,13 @@
 return [
 
     'actions' => [
-
         'filter' => [
             'label' => 'تصفية',
         ],
-
     ],
 
     'filters' => [
-
         'actions' => [
-
             'apply' => [
                 'label' => 'تطبيق',
             ],
@@ -21,12 +17,15 @@ return [
             'reset' => [
                 'label' => 'إعادة تعيين',
             ],
-
         ],
-
     ],
 
     'empty' => [
         'heading' => 'لا توجد بيانات للعرض',
     ],
+
+    'filter' => [
+        'label' => 'تصفية بيانات الرسم البياني',
+    ],
+
 ];

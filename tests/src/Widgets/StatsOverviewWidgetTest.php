@@ -39,9 +39,15 @@ it('returns description from `getSectionContentComponent()` when `$description` 
 });
 
 it('returns a 3-column layout for fewer than 3 stats via `getColumns()`', function (): void {
-    $widget = Livewire::test(TestStatsOverviewWidgetTwoStats::class);
+    $widgetWithNoStats = Livewire::test(TestStatsOverviewWidgetDefault::class);
+    $widgetWithOneStat = Livewire::test(TestStatsOverviewWidgetOneStat::class);
+    $widgetWithTwoStats = Livewire::test(TestStatsOverviewWidgetTwoStats::class);
 
-    expect($widget->instance()->getSectionContentComponent()->getColumns())
+    expect($widgetWithNoStats->instance()->getSectionContentComponent()->getColumns())
+        ->toBe(['@xl' => 3, '!@lg' => 3])
+        ->and($widgetWithOneStat->instance()->getSectionContentComponent()->getColumns())
+        ->toBe(['@xl' => 3, '!@lg' => 3])
+        ->and($widgetWithTwoStats->instance()->getSectionContentComponent()->getColumns())
         ->toBe(['@xl' => 3, '!@lg' => 3]);
 });
 
@@ -70,7 +76,10 @@ it('initializes `$chartDataChecksums` on mount via `mountHasChartData()`', funct
 
     $widget = Livewire::test(TestStatsOverviewWidgetWithChart::class);
 
-    expect($widget->get('chartDataChecksums'))->toHaveKey('stats-overview-stat-0');
+    $chartDataChecksums = $widget->get('chartDataChecksums');
+
+    expect($chartDataChecksums)->toHaveKey('stats-overview-stat-0')
+        ->and($chartDataChecksums['stats-overview-stat-0'])->toBe(md5(json_encode([1, 2, 3])));
 });
 
 it('does not dispatch `updateStatsOverviewChartData` when chart data is unchanged', function (): void {
@@ -134,6 +143,16 @@ class TestStatsOverviewWidgetWithChart extends StatsOverviewWidget
         return [
             Stat::make('Users', 100)
                 ->chart(static::$chartData),
+        ];
+    }
+}
+
+class TestStatsOverviewWidgetOneStat extends StatsOverviewWidget
+{
+    protected function getStats(): array
+    {
+        return [
+            Stat::make('Users', 100),
         ];
     }
 }

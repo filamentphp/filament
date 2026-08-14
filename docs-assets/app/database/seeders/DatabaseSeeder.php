@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\WebsitePage;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +20,11 @@ class DatabaseSeeder extends Seeder
     {
         // Pin timestamps so screenshots are reproducible across reseeds
         $baseDate = '2025-06-01 09:00:00';
+
+        // Copy sample images to the `public` disk for the file upload demos.
+        // Serve them by linking the disk with `php artisan storage:link`.
+        File::ensureDirectoryExists(storage_path('app/public/test'));
+        File::copyDirectory(database_path('seed-images'), storage_path('app/public/test'));
 
         // Use a fixed password hash so the database is byte-identical across reseeds.
         // This is bcrypt('password') with a fixed salt — only used for doc screenshots.

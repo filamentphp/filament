@@ -138,6 +138,20 @@ describe('state from tags', function (): void {
         expect($state)->toBe([]);
     });
 
+    it('wraps a non-array custom state in an array', function (): void {
+        $record = Article::factory()->create();
+        $record->load('tags');
+
+        $entry = SpatieTagsEntry::make('tags')
+            ->state('Laravel')
+            ->container(
+                Schema::make(Livewire::make())
+                    ->record($record)
+            );
+
+        expect($entry->getState())->toBe(['Laravel']);
+    });
+
     it('deduplicates tag names in state', function (): void {
         $record = Article::factory()->create();
         $record->attachTags(['Laravel', 'PHP']);
