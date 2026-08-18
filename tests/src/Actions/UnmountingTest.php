@@ -38,6 +38,21 @@ describe('an action that cannot open a modal', function (): void {
             ->callAction('simple')
             ->assertDispatched('simple-called');
     });
+
+    it('does not take a mounted parent that can open a modal with it', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction(['hasModalAndMountsAnActionWithoutModal', 'nestedActionWithoutModal']);
+
+        expect(array_column($livewire->instance()->mountedActions, 'name'))
+            ->toBe(['hasModalAndMountsAnActionWithoutModal', 'nestedActionWithoutModal', 'childOfNestedActionWithoutModal']);
+
+        $livewire->unmountAction(false);
+
+        // Unmounting stops at the grandparent, which has a modal to be seen in, so the user
+        // returns to it rather than losing the whole flow.
+        expect(array_column($livewire->instance()->mountedActions, 'name'))
+            ->toBe(['hasModalAndMountsAnActionWithoutModal']);
+    });
 });
 
 describe('an action that can open a modal', function (): void {
