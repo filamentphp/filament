@@ -1833,7 +1833,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $hasInitialNoOptionsMessage = $this->hasInitialNoOptionsMessage();
         $canOptionLabelsWrap = $this->canOptionLabelsWrap();
         $isRequired = $this->isRequired();
-        $isConcealed = $this->isConcealed();
         $isHtmlAllowed = $this->isHtmlAllowed();
         $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $this->isNative());
         $isPrefixInline = $this->isPrefixInline();
@@ -1889,7 +1888,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                 'autofocus' => $isAutofocused,
                                 'disabled' => $isDisabled,
                                 'id' => $id,
-                                'required' => $isRequired && (! $isConcealed),
+                                'required' => $isRequired,
                                 'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
                                 $this->applyStateBindingModifiers('wire:model') => $statePath,
                             ], escape: false)
