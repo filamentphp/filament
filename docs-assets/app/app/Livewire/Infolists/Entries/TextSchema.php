@@ -209,7 +209,7 @@ class TextSchema
                         ->state('HGA3CH5AB345JD9MQ3')
                         ->copyable()
                         ->copyMessage('Copied!')
-                        ->copyMessageDuration(1500),
+                        ->copyMessageDuration(30000),
                 ]),
             Group::make()
                 ->id('textNumeric')

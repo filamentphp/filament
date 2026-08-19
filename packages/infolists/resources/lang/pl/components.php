@@ -15,6 +15,11 @@ return [
 
         ],
 
+        'icon' => [
+            'true' => 'Tak',
+            'false' => 'Nie',
+        ],
+
         'key_value' => [
 
             'columns' => [

@@ -423,7 +423,18 @@ public static function getNavigationGroup(): ?string
 
 #### Grouping resource navigation items under other items
 
-You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
+You may group navigation items as children of other items by setting the `$navigationParentItem` property. You may reference the parent item either by its page or resource class, or by its label:
+
+```php
+use App\Filament\Resources\Products\ProductsResource;
+use UnitEnum;
+
+protected static ?string $navigationParentItem = ProductsResource::class;
+
+protected static string | UnitEnum | null $navigationGroup = 'Shop';
+```
+
+Alternatively, you may reference the parent by its label:
 
 ```php
 use UnitEnum;
@@ -433,9 +444,18 @@ protected static ?string $navigationParentItem = 'Products';
 protected static string | UnitEnum | null $navigationGroup = 'Shop';
 ```
 
-As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
+You may also use the `getNavigationParentItem()` method to determine the parent dynamically:
 
-You may also use the `getNavigationParentItem()` method to set a dynamic parent item label:
+```php
+use App\Filament\Resources\Products\ProductsResource;
+
+public static function getNavigationParentItem(): ?string
+{
+    return ProductsResource::class;
+}
+```
+
+Alternatively, you may return the parent's label:
 
 ```php
 public static function getNavigationParentItem(): ?string
@@ -443,6 +463,8 @@ public static function getNavigationParentItem(): ?string
     return __('filament/navigation.groups.shop.items.products');
 }
 ```
+
+The parent and child items must belong to the same navigation group. If the parent item has a navigation group, that group must also be defined on the child, otherwise the correct parent item cannot be identified. This applies whether you reference the parent by its class or by its label.
 
 <Aside variant="tip">
     If you're reaching for a third level of navigation like this, you should consider using [clusters](../navigation/clusters) instead, which are a logical grouping of resources and [custom pages](../navigation/custom-pages), which can share their own separate navigation.
@@ -672,3 +694,15 @@ protected function mutateFormDataBeforeFill(array $data): array
 ```
 
 In this example, we remove the `is_admin` attribute from JavaScript, as it's not being used by the form.
+
+<Aside variant="warning">
+    Adding a column to `$hidden` is required, not just recommended, when it contains binary data that is not valid UTF-8, such as a `geometry`, `point`, or `blob` column. Since Filament exposes model attributes to JavaScript, these values are sent to the browser as part of the Livewire request, but they cannot be serialized to JSON. This causes the page to fail to load, often with a blank screen and no error in the Laravel log.
+
+    Adding such columns to [the `$hidden` array](https://laravel.com/docs/eloquent-serialization#hiding-attributes-from-json) on your model excludes them from its array and JSON representations, resolving the issue:
+
+    ```php
+    protected $hidden = ['location'];
+    ```
+
+    If you need to work with the value, expose it through an [accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) instead of the raw column.
+</Aside>

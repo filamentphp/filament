@@ -29,7 +29,7 @@ use Throwable;
 
 use function Livewire\store;
 
-trait InteractsWithActions
+trait InteractsWithActions /** @phpstan-ignore trait.unused */
 {
     use WithRateLimiting;
 
@@ -88,6 +88,33 @@ trait InteractsWithActions
 
     protected bool $hasActionsModalRendered = false;
 
+    /**
+     * Context for the `mountAction()` call that opens the `?action=` default action on
+     * page load. `mountedFromUrl` is forced on last, so a crafted `?actionContext=` value
+     * cannot unset it to run a modal-less action.
+     *
+     * @return array<string, mixed>
+     */
+    public function getDefaultActionUrlContext(): array
+    {
+        return array_merge(
+            is_array($this->defaultActionContext) ? $this->defaultActionContext : [],
+            ['mountedFromUrl' => true],
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDefaultTableActionUrlContext(): array
+    {
+        return [
+            'table' => true,
+            'recordKey' => $this->defaultTableActionRecord,
+            'mountedFromUrl' => true,
+        ];
+    }
+
     public function bootedInteractsWithActions(): void
     {
         if (filled($originallyMountedActionIndex = array_key_last($this->mountedActions))) {
@@ -123,13 +150,13 @@ trait InteractsWithActions
         }
 
         if (! $action) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         }
 
         if ($action->isDisabled()) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         }
@@ -167,20 +194,28 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         } catch (Cancel $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             return null;
         } catch (ValidationException $exception) {
-            $this->unmountAction(canCancelParentActions: false);
+            $this->unmountAction(cancelParentActions: false);
 
             throw $exception;
         }
 
         if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
+            if ($context['mountedFromUrl'] ?? false) {
+                // A modal-less action mounted from the URL has nothing to show the user, so
+                // running it here would let a crafted link trigger it with no interaction.
+                $this->unmountAction(cancelParentActions: false);
+
+                return null;
+            }
+
             return $this->callMountedAction();
         }
 
@@ -232,6 +267,8 @@ trait InteractsWithActions
         $originallyMountedActions = $this->mountedActions;
 
         $result = null;
+
+        $hasFinalizedDatabaseTransaction = false;
 
         try {
             $action->beginDatabaseTransaction();
@@ -295,6 +332,8 @@ trait InteractsWithActions
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
                 $action->commitDatabaseTransaction();
+
+            $hasFinalizedDatabaseTransaction = true;
         } catch (ValidationException $exception) {
             $action->rollBackDatabaseTransaction();
 
@@ -312,7 +351,9 @@ trait InteractsWithActions
             throw $exception;
         }
 
-        $action->commitDatabaseTransaction();
+        if (! $hasFinalizedDatabaseTransaction) {
+            $action->commitDatabaseTransaction();
+        }
 
         if (store($this)->has('redirect')) {
             $this->unmountAction();
@@ -723,7 +764,7 @@ trait InteractsWithActions
         return null;
     }
 
-    public function unmountAction(bool $canCancelParentActions = true): void
+    public function unmountAction(bool | string | null $cancelParentActions = null): void
     {
         try {
             $action = $this->getMountedAction();
@@ -731,18 +772,24 @@ trait InteractsWithActions
             $action = null;
         }
 
-        if (! ($canCancelParentActions && $action)) {
+        if (($cancelParentActions === false) || (! $action)) {
             array_pop($this->mountedActions);
-        } elseif ($action->shouldCancelAllParentActions()) {
+        } elseif (
+            ($cancelParentActions === true) ||
+            (($cancelParentActions === null) && $action->shouldCancelAllParentActions())
+        ) {
             $this->mountedActions = [];
         } else {
-            $parentActionToCancelTo = $action->getParentActionToCancelTo();
+            $parentActionToCancelTo = is_string($cancelParentActions)
+                ? $cancelParentActions
+                : $action->getParentActionToCancelTo();
 
             while (true) {
                 $recentlyClosedParentAction = array_pop($this->mountedActions);
 
                 if (
                     blank($parentActionToCancelTo) ||
+                    ($recentlyClosedParentAction === null) ||
                     ($recentlyClosedParentAction['name'] === $parentActionToCancelTo)
                 ) {
                     break;

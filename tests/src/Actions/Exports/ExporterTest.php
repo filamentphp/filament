@@ -25,6 +25,23 @@ class TestPostExporter extends Exporter
     }
 }
 
+class TestPostWithHiddenColumnExporter extends Exporter
+{
+    public static function getColumns(): array
+    {
+        return [
+            ExportColumn::make('title'),
+            ExportColumn::make('content')->hidden(),
+            ExportColumn::make('status'),
+        ];
+    }
+
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        return 'Export completed';
+    }
+}
+
 describe('`getModel()` logic', function (): void {
     it('auto-generates model class from exporter class name', function (): void {
         // TestPostExporter → removes "Exporter" → "TestPost" → App\Models\TestPost
@@ -117,5 +134,21 @@ describe('job configuration', function (): void {
         $exporter = new TestPostExporter($export, [], []);
 
         expect($exporter->getJobBatchName())->toBeNull();
+    });
+});
+
+describe('`getVisibleColumns()`', function (): void {
+    it('returns all columns when none are hidden', function (): void {
+        $columns = TestPostExporter::getVisibleColumns();
+
+        expect($columns)->toHaveCount(2);
+    });
+
+    it('excludes columns marked with `hidden()`', function (): void {
+        $columns = TestPostWithHiddenColumnExporter::getVisibleColumns();
+
+        expect($columns)->toHaveCount(2);
+        expect(array_values($columns)[0]->getName())->toBe('title');
+        expect(array_values($columns)[1]->getName())->toBe('status');
     });
 });

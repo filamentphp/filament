@@ -58,7 +58,7 @@ class AssociateAction extends Action
         $this->modalWidth(Width::Large);
 
         $this->extraModalFooterActions(function (): array {
-            return $this->canAssociateAnother ? [
+            return $this->canAssociateAnother() ? [
                 $this->makeModalSubmitAction('associateAnother', arguments: ['another' => true])
                     ->label(__('filament-actions::associate.single.modal.actions.associate_another.label')),
             ] : [];

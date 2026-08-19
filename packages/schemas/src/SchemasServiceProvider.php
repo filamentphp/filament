@@ -2,6 +2,7 @@
 
 namespace Filament\Schemas;
 
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Testing\TestsSchemas;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Js;
@@ -10,6 +11,8 @@ use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+
+use function Livewire\on;
 
 class SchemasServiceProvider extends PackageServiceProvider
 {
@@ -44,5 +47,33 @@ class SchemasServiceProvider extends PackageServiceProvider
         }
 
         Testable::mixin(new TestsSchemas);
+
+        on('call', function (object $component, string $method): void {
+            if (! in_array($method, ['validate', 'validateOnly'], strict: true)) {
+                return;
+            }
+
+            if (! ($component instanceof HasSchemas)) {
+                return;
+            }
+
+            abort(403);
+        });
+
+        on('call', function (object $component, string $method, array $params): void {
+            if (! in_array($method, ['_startUpload', '_finishUpload'], strict: true)) {
+                return;
+            }
+
+            if (! (
+                method_exists($component, 'shouldRestrictFileUploadsToSchemaComponents') &&
+                method_exists($component, 'isFileUploadForSchemaComponent') &&
+                $component->shouldRestrictFileUploadsToSchemaComponents()
+            )) {
+                return;
+            }
+
+            abort_unless($component->isFileUploadForSchemaComponent($params[0] ?? ''), 403);
+        });
     }
 }

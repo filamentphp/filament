@@ -20,4 +20,9 @@ trait HasTooltip
     {
         return $this->evaluate($this->tooltip);
     }
+
+    public function hasTooltip(): bool
+    {
+        return $this->tooltip !== null;
+    }
 }

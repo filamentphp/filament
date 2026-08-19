@@ -28,4 +28,9 @@ trait HasWeight
 
         return FontWeight::tryFrom($weight) ?? $weight;
     }
+
+    public function hasWeight(): bool
+    {
+        return $this->weight !== null;
+    }
 }

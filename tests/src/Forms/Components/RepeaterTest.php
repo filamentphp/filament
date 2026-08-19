@@ -5,11 +5,14 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -253,6 +256,113 @@ it('can remove items from a repeater', function (): void {
     $undoRepeaterFake();
 });
 
+it('can evaluate a `setUp()` closure bound to the original component with a `$get` injection inside a repeater item', function (): void {
+    $repeater = Repeater::make('items')
+        ->schema([
+            TextInput::make('name'),
+            SelectWithOptionsEvaluatedInSetUp::make('option'),
+        ])
+        ->default([
+            ['name' => 'First', 'option' => null],
+        ]);
+
+    Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([$repeater])
+        ->fill();
+
+    $select = Arr::first($repeater->getItems())->getComponents()[1];
+
+    expect($select->getOptions())->toBe(['First' => 'First']);
+});
+
+describe('`getItems()` memoization', function (): void {
+    it('builds one schema per item keyed by the item key', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+                ['name' => 'Third'],
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        $items = $repeater->getItems();
+
+        expect($items)->toHaveCount(3)
+            ->and(array_keys($items))->toBe(array_keys($repeater->getRawState()))
+            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        expect($repeater->getItems())->toBe($repeater->getItems());
+    });
+
+    it('rebuilds `getItems()` to reflect the new item count after the cache is cleared', function (): void {
+        $repeater = Repeater::make('items')
+            ->schema([
+                TextInput::make('name'),
+            ])
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        $firstItems = $repeater->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        $repeater->state([
+            ['name' => 'First'],
+            ['name' => 'Second'],
+            ['name' => 'Third'],
+        ]);
+
+        // `clearCachedChildSchemas()` is what the state-update lifecycle invokes via
+        // `callAfterStateUpdatedHooks()`; the memoized items must be dropped alongside it.
+        $repeater->clearCachedChildSchemas();
+
+        expect($repeater->getItems())
+            ->toHaveCount(3)
+            ->not->toBe($firstItems);
+    });
+
+    it('reflects the new item count after a state-updating action', function (): void {
+        livewire(TestComponentWithRepeaterSetByAction::class)
+            ->callAction(TestAction::make('insert')->schemaComponent('questionsSection'))
+            ->assertSchemaStateSet(function (array $state): array {
+                expect($state['questions'])->toHaveCount(3);
+
+                return [];
+            });
+    });
+});
+
 describe('relationships', function (): void {
     it('loads a relationship', function (): void {
         $user = User::factory()
@@ -359,6 +469,22 @@ describe('relationships', function (): void {
         DB::disableQueryLog();
 
         expect($queriesWithEagerLoading)->toBe($queriesWithoutEagerLoading);
+
+        $undoRepeaterFake();
+    });
+
+    it('loads existing records when `modifyQueryUsing()` adds a join and `orderColumn()` is set, without an ambiguous column error', function (): void {
+        $undoRepeaterFake = Repeater::fake();
+
+        $user = User::factory()->create();
+        Post::factory()->count(3)->create(['author_id' => $user->id]);
+
+        livewire(RepeaterWithHasManyRelationshipJoinAndOrderColumn::class, ['record' => $user])
+            ->assertSchemaStateSet(function (array $state) {
+                expect($state['posts'])->toHaveCount(3);
+
+                return [];
+            });
 
         $undoRepeaterFake();
     });
@@ -811,6 +937,154 @@ class TestComponentWithRepeaterAndBuilder extends Livewire
     }
 }
 
+describe('`distinct()` validation on boolean fields', function (): void {
+    it('does not force an optional `distinct()` boolean field to be selected when sibling items exist', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => false],
+                    'item-2' => ['primary' => false],
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithDistinctBooleanToggleInRepeater::class,
+    ]);
+
+    it('allows a single `distinct()` boolean field to be selected across sibling items', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => true],
+                    'item-2' => ['primary' => false],
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithDistinctBooleanToggleInRepeater::class,
+    ]);
+
+    it('does not allow more than one `distinct()` boolean field to be selected across sibling items', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => true],
+                    'item-2' => ['primary' => true],
+                ],
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithDistinctBooleanToggleInRepeater::class,
+    ]);
+
+    it('forces a `required()` `distinct()` boolean field to be selected across sibling items', function (string $component): void {
+        livewire($component)
+            ->fillForm([
+                'items' => [
+                    'item-1' => ['primary' => false],
+                    'item-2' => ['primary' => false],
+                ],
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['items.item-1.primary', 'items.item-2.primary']);
+    })->with([
+        'checkbox' => TestComponentWithRequiredDistinctBooleanCheckboxInRepeater::class,
+        'toggle' => TestComponentWithRequiredDistinctBooleanToggleInRepeater::class,
+    ]);
+});
+
+class TestComponentWithDistinctBooleanCheckboxInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Checkbox::make('primary')
+                            ->distinct(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithDistinctBooleanToggleInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Toggle::make('primary')
+                            ->distinct(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithRequiredDistinctBooleanCheckboxInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Checkbox::make('primary')
+                            ->distinct()
+                            ->required(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithRequiredDistinctBooleanToggleInRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        Toggle::make('primary')
+                            ->distinct()
+                            ->required(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
 describe('actions in repeater', function (): void {
     it('can set repeater state programmatically via action', function (): void {
         livewire(TestComponentWithRepeaterSetByAction::class)
@@ -1028,6 +1302,51 @@ class RepeaterWithHasManyRelationshipAndModifyQuery extends Component implements
     {
         $this->form->getState();
         $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterWithHasManyRelationshipJoinAndOrderColumn extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship(
+                        'posts',
+                        // The join brings in a second `created_at` column, so the order column must be
+                        // qualified to avoid an ambiguous column error when existing records are loaded.
+                        modifyQueryUsing: fn ($query) => $query->join('users', 'users.id', '=', 'posts.author_id'),
+                    )
+                    ->orderColumn('created_at')
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 
     public function render(): View
@@ -1986,9 +2305,27 @@ describe('properties', function (): void {
     it('can set `partiallyRenderAfterActionsCalled()` and check `shouldPartiallyRenderAfterActionsCalled()`', function (): void {
         $enabled = Repeater::make('items')->partiallyRenderAfterActionsCalled();
         $disabled = Repeater::make('items')->partiallyRenderAfterActionsCalled(false);
+        $liveEnabled = Repeater::make('items')->live()->partiallyRenderAfterActionsCalled();
 
         expect($enabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
         expect($disabled->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($liveEnabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+    });
+
+    it('defaults `shouldPartiallyRenderAfterActionsCalled()` based on `live()`', function (): void {
+        [$default, $live, $conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
+            ->components([
+                Repeater::make('default'),
+                Repeater::make('live')->live(),
+                Repeater::make('conditionallyLive')->live(condition: static fn (): bool => true),
+                Repeater::make('conditionallyNotLive')->live(condition: static fn (): bool => false),
+            ])
+            ->getComponents();
+
+        expect($default->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+        expect($live->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyLive->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyNotLive->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
     });
 
     it('can set `addActionAlignment()` and get with `getAddActionAlignment()`', function (): void {
@@ -2766,6 +3103,67 @@ class RepeaterWithMutateBeforeCreateReturnsNull extends Component implements Has
     }
 }
 
+it('rebuilds items after an `afterStateUpdated` hook uses `$set()` on an ancestor\'s state path', function (): void {
+    livewire(RepeaterInStatePathAncestorSetByHook::class)
+        ->assertSeeText('Original item')
+        ->set('data.trigger', 'anything')
+        ->assertSeeText('Added item');
+});
+
+class RepeaterInStatePathAncestorSetByHook extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public ?array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'trigger' => null,
+            'group' => [
+                'items' => [
+                    ['name' => 'Original item'],
+                ],
+            ],
+        ]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                // The `Section` is deliberately registered before the `trigger` field, so that
+                // the `afterStateUpdated` walk traverses it, and the `Repeater` caches its
+                // items, before the `trigger` field's hook runs `$set()`.
+                Section::make('Items')
+                    ->statePath('group')
+                    ->schema([
+                        Repeater::make('items')
+                            ->itemLabel(static fn (?array $state): string => $state['name'] ?? '')
+                            ->schema([
+                                TextInput::make('name'),
+                            ]),
+                    ]),
+                TextInput::make('trigger')
+                    ->live()
+                    ->afterStateUpdated(function (Set $set): void {
+                        $set('group', [
+                            'items' => [
+                                ['name' => 'Original item'],
+                                ['name' => 'Added item'],
+                            ],
+                        ]);
+                    }),
+            ])
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
 class RepeaterWithTranslatableContentDriver extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
@@ -2807,5 +3205,19 @@ class RepeaterWithTranslatableContentDriver extends Component implements HasActi
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class SelectWithOptionsEvaluatedInSetUp extends Select
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->options(function (): array {
+            $name = $this->evaluate(fn (Get $get): ?string => $get('name'));
+
+            return [$name => $name];
+        });
     }
 }

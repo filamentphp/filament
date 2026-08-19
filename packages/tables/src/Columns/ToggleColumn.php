@@ -8,13 +8,13 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\ToggleComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\get_component_color_classes;
@@ -70,13 +70,25 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'fi-inline' => $this->isInline(),
             ]);
 
-        $buttonAttributes = (new ComponentAttributeBag)
+        $buttonAttributes = (new FilamentComponentAttributeBag)
             ->merge([
+                'aria-disabled' => $this->isDisabled() ? 'true' : null,
+                'aria-label' => e(trim(strip_tags(($ariaLabel = $this->getLabel()) instanceof Htmlable ? $ariaLabel->toHtml() : $ariaLabel)), doubleEncode: false),
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
             ], escape: false)
             ->class(['fi-toggle']);
+
+        $onClasses = Js::from(Arr::toCssClasses([
+            'fi-toggle-on',
+            ...get_component_color_classes(ToggleComponent::class, $onColor),
+        ]));
+
+        $offClasses = Js::from(Arr::toCssClasses([
+            'fi-toggle-off',
+            ...get_component_color_classes(ToggleComponent::class, $offColor),
+        ]));
 
         ob_start(); ?>
 
@@ -87,15 +99,18 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
             <input type="hidden" value="<?= $state ? 1 : 0 ?>" x-ref="serverState" />
 
             <div
-                x-bind:aria-checked="state?.toString()"
+                aria-checked="<?= $state ? 'true' : 'false' ?>"
+                x-bind:aria-checked="state ? 'true' : 'false'"
+                <?php // `tabindex` is bound client-side rather than server-rendered on purpose: a `ToggleColumn`
+                      // in a table with a record URL/action is rendered inside the record `<a>`/`<button>`, and a
+                      // `tabindex` descendant is invalid inside an `<a>`. Applying it after Alpine boots keeps the
+                      // served markup valid while still making the switch keyboard-focusable.?>
+                x-bind:tabindex="$el.hasAttribute('disabled') ? '-1' : '0'"
+                x-bind:aria-disabled="$el.hasAttribute('disabled') ? 'true' : null"
                 x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
-                x-bind:class="state ? '<?= Arr::toCssClasses([
-                    'fi-toggle-on',
-                    ...get_component_color_classes(ToggleComponent::class, $onColor),
-                ]) ?>' : '<?= Arr::toCssClasses([
-                    'fi-toggle-off',
-                    ...get_component_color_classes(ToggleComponent::class, $offColor),
-                ]) ?>'"
+                x-on:keydown.enter.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:keydown.space.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
                 <?php if ($state) { ?> x-cloak <?php } ?>
                 x-tooltip="
                     error === undefined

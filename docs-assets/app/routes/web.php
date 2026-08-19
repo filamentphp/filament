@@ -26,6 +26,7 @@ use App\Livewire\Panels\Navigation\SidebarFullyCollapsibleOnDesktop;
 use App\Livewire\Panels\Navigation\SortItems;
 use App\Livewire\Panels\Navigation\TopNavigation;
 use App\Livewire\Panels\Navigation\UserMenuCustomization;
+use App\Livewire\Panels\Navigation\UserMenuGrouping;
 use App\Livewire\Panels\Navigation\UserMenuSidebar;
 use App\Livewire\PrimesDemo;
 use App\Livewire\Schemas\LayoutDemo;
@@ -33,17 +34,6 @@ use App\Livewire\Schemas\OverviewDemo;
 use App\Livewire\TablesDemo;
 use App\Livewire\WidgetsDemo;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/actions', ActionsDemo::class);
 Route::get('/actions-crud', ActionsCrudDemo::class);
@@ -66,6 +56,7 @@ Route::get('/notifications', NotificationsDemo::class);
 Route::prefix('panels')->middleware(['panel:nav'])->group(function (): void {
     Route::prefix('navigation')->group(function (): void {
         Route::get('user-menu-customization', UserMenuCustomization::class);
+        Route::get('user-menu-grouping', UserMenuGrouping::class);
         Route::get('disabled-navigation', DisabledNavigation::class);
         Route::get('active-icon', ActiveIcon::class);
         Route::get('change-icon', ChangeIcon::class);

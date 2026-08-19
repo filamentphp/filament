@@ -6,7 +6,7 @@ use Filament\Tests\TestCase;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class)->group('commands');
+uses(TestCase::class)->group('serial');
 
 beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
@@ -61,6 +61,19 @@ it('can generate a relation manager', function (): void {
     assertFileExists($path = app_path('Filament/Resources/Users/RelationManagers/TeamsRelationManager.php'));
     expect(file_get_contents($path))
         ->toMatchSnapshot();
+});
+
+it('can run `make:filament-relation-manager` non-interactively before the relationship exists', function (): void {
+    $this->artisan('make:filament-relation-manager', [
+        'resource' => 'Users',
+        'relationship' => 'members',
+        'recordTitleAttribute' => 'name',
+        '--related-model' => 'Filament\\Tests\\Fixtures\\Models\\Team',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists(app_path('Filament/Resources/Users/RelationManagers/MembersRelationManager.php'));
 });
 
 it('can generate a relation manager with a related resource', function (): void {

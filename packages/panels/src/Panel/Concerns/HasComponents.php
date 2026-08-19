@@ -80,6 +80,11 @@ trait HasComponents
     protected array $resources = [];
 
     /**
+     * @var array<class-string<Model>, class-string | null>
+     */
+    protected array $modelResources = [];
+
+    /**
      * @var array<class-string, array<string, ResourceConfiguration>>
      */
     protected array $resourceConfigurations = [];
@@ -160,6 +165,8 @@ trait HasComponents
      */
     public function resources(array $resources): static
     {
+        $this->modelResources = [];
+
         $hasCachedComponents = $this->hasCachedComponents();
 
         foreach ($resources as $resource) {
@@ -200,15 +207,19 @@ trait HasComponents
             $model = $model::class;
         }
 
+        if (array_key_exists($model, $this->modelResources)) {
+            return $this->modelResources[$model];
+        }
+
         foreach ($this->getResources() as $resource) {
             if ($model !== $resource::getModel()) {
                 continue;
             }
 
-            return $resource;
+            return $this->modelResources[$model] = $resource;
         }
 
-        return null;
+        return $this->modelResources[$model] = null;
     }
 
     /**
@@ -340,6 +351,8 @@ trait HasComponents
         if ($this->hasCachedComponents()) {
             return $this;
         }
+
+        $this->modelResources = [];
 
         $this->resourceDirectories[] = $in;
         $this->resourceNamespaces[] = $for;

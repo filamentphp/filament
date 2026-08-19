@@ -5,6 +5,8 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -520,9 +522,11 @@ describe('properties', function (): void {
     it('can set `partiallyRenderAfterActionsCalled()` and check `shouldPartiallyRenderAfterActionsCalled()`', function (): void {
         $enabled = Builder::make('content')->partiallyRenderAfterActionsCalled();
         $disabled = Builder::make('content')->partiallyRenderAfterActionsCalled(false);
+        $liveEnabled = Builder::make('content')->live()->partiallyRenderAfterActionsCalled();
 
         expect($enabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
         expect($disabled->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($liveEnabled->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
     });
 
     it('can set `addActionAlignment()` and get with `getAddActionAlignment()`', function (): void {
@@ -965,10 +969,20 @@ describe('boolean properties', function (): void {
         expect($builder->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
     });
 
-    it('defaults `shouldPartiallyRenderAfterActionsCalled()` to `true`', function (): void {
-        $builder = Builder::make('content');
+    it('defaults `shouldPartiallyRenderAfterActionsCalled()` based on `live()`', function (): void {
+        [$default, $live, $conditionallyLive, $conditionallyNotLive] = Schema::make(Livewire::make())
+            ->components([
+                Builder::make('default'),
+                Builder::make('live')->live(),
+                Builder::make('conditionallyLive')->live(condition: static fn (): bool => true),
+                Builder::make('conditionallyNotLive')->live(condition: static fn (): bool => false),
+            ])
+            ->getComponents();
 
-        expect($builder->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+        expect($default->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
+        expect($live->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyLive->shouldPartiallyRenderAfterActionsCalled())->toBeFalse();
+        expect($conditionallyNotLive->shouldPartiallyRenderAfterActionsCalled())->toBeTrue();
     });
 });
 
@@ -1550,6 +1564,77 @@ describe('`blockPickerColumns()` default behavior', function (): void {
     });
 });
 
+describe('`getItems()` memoization', function (): void {
+    $makeBuilder = function (array $default): Builder {
+        $builder = Builder::make('content')
+            ->blocks([
+                Builder\Block::make('one')
+                    ->schema([
+                        TextInput::make('foo'),
+                    ]),
+                Builder\Block::make('two')
+                    ->schema([
+                        TextInput::make('bar'),
+                    ]),
+            ])
+            ->default($default);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$builder])
+            ->fill();
+
+        return $builder;
+    };
+
+    it('builds one schema per block of differing types', function () use ($makeBuilder): void {
+        $builder = $makeBuilder([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+            ['type' => 'one', 'data' => ['foo' => 'C']],
+        ]);
+
+        $items = $builder->getItems();
+
+        expect($items)->toHaveCount(3)
+            ->and(array_keys($items))->toBe(array_keys($builder->getRawState()))
+            ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('memoizes `getItems()` so repeated calls return the same instances', function () use ($makeBuilder): void {
+        $builder = $makeBuilder([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+        ]);
+
+        expect($builder->getItems())->toBe($builder->getItems());
+    });
+
+    it('rebuilds `getItems()` to reflect the new block count after the cache is cleared', function () use ($makeBuilder): void {
+        $builder = $makeBuilder([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+        ]);
+
+        $firstItems = $builder->getItems();
+
+        expect($firstItems)->toHaveCount(2);
+
+        $builder->state([
+            ['type' => 'one', 'data' => ['foo' => 'A']],
+            ['type' => 'two', 'data' => ['bar' => 'B']],
+            ['type' => 'one', 'data' => ['foo' => 'C']],
+        ]);
+
+        // Mirrors the state-update lifecycle's `clearCachedChildSchemas()` call.
+        $builder->clearCachedChildSchemas();
+
+        expect($builder->getItems())
+            ->toHaveCount(3)
+            ->not->toBe($firstItems);
+    });
+});
+
 class RenderBuilderWithNotAddable extends Livewire
 {
     public function form(Schema $form): Schema
@@ -1770,6 +1855,68 @@ class TestComponentWithBuilderFilledFromMount extends Livewire
                                 TextInput::make('foo'),
                             ]),
                     ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+it('rebuilds blocks after an `afterStateUpdated` hook uses `$set()` on an ancestor\'s state path', function (): void {
+    livewire(BuilderInStatePathAncestorSetByHook::class)
+        ->assertSeeText('First block type')
+        ->assertDontSeeText('Second block type')
+        ->set('data.trigger', 'anything')
+        ->assertSeeText('Second block type');
+});
+
+class BuilderInStatePathAncestorSetByHook extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill([
+            'trigger' => null,
+            'group' => [
+                'blocks' => [
+                    ['type' => 'one', 'data' => ['foo' => 'A']],
+                ],
+            ],
+        ]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                // The `Section` is deliberately registered before the `trigger` field, so that
+                // the `afterStateUpdated` walk traverses it, and the `Builder` caches its
+                // items, before the `trigger` field's hook runs `$set()`.
+                Section::make('Blocks')
+                    ->statePath('group')
+                    ->schema([
+                        Builder::make('blocks')
+                            ->addable(false) // Without the add action, its block picker does not render every block type's label, so the assertions below can rely on the rendered block headers alone.
+                            ->blocks([
+                                Builder\Block::make('one')
+                                    ->label('First block type')
+                                    ->schema([
+                                        TextInput::make('foo'),
+                                    ]),
+                                Builder\Block::make('two')
+                                    ->label('Second block type')
+                                    ->schema([
+                                        TextInput::make('bar'),
+                                    ]),
+                            ]),
+                    ]),
+                TextInput::make('trigger')
+                    ->live()
+                    ->afterStateUpdated(function (Set $set): void {
+                        $set('group', [
+                            'blocks' => [
+                                ['type' => 'one', 'data' => ['foo' => 'A']],
+                                ['type' => 'two', 'data' => ['bar' => 'B']],
+                            ],
+                        ]);
+                    }),
             ])
             ->statePath('data');
     }

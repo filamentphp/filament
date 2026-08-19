@@ -6,10 +6,12 @@ use BackedEnum;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanWrap;
+use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
@@ -18,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
+use Stringable;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -326,7 +328,7 @@ class IconColumn extends Column implements HasEmbeddedView
             $color = $this->getColor($stateItem);
             $size = $this->getSize($stateItem);
 
-            $item = generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+            $item = generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{
@@ -338,6 +340,23 @@ class IconColumn extends Column implements HasEmbeddedView
                 ], escape: false)
                 ->color(IconComponent::class, $color), size: $size ?? IconSize::Large)
                 ->toHtml();
+
+            // The icon is hidden from assistive technology, so a text alternative is
+            // rendered alongside it. It also gives any `<a>` / `<button>` wrapping the
+            // cell's content an accessible name.
+            $stateItemTextAlternative = match (true) {
+                filled($tooltip) => $tooltip,
+                $this->isBoolean() => __('filament-tables::table.columns.icon.boolean.' . ($stateItem ? 'true' : 'false')),
+                $stateItem instanceof LabelInterface => $stateItem->getLabel(),
+                $stateItem instanceof BackedEnum => $stateItem->value,
+                $stateItem instanceof Htmlable => strip_tags($stateItem->toHtml()),
+                is_scalar($stateItem) || $stateItem instanceof Stringable => $stateItem,
+                default => null,
+            };
+
+            if (filled($stateItemTextAlternative)) {
+                $item .= '<span class="fi-sr-only">' . e(trim(strip_tags((string) $stateItemTextAlternative))) . '</span>';
+            }
 
             if (filled($url = $this->getUrl($stateItem))) {
                 $item = '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>' . $item . '</a>';

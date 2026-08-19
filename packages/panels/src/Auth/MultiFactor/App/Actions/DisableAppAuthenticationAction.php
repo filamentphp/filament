@@ -43,7 +43,7 @@ class DisableAppAuthenticationAction
                         ->action(fn (Set $set) => $set('useRecoveryCode', true))
                         ->visible(fn (): bool => $isRecoverable && (! $get('useRecoveryCode'))))
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.validation_attribute'))
-                    ->required(fn (Get $get): bool => (! $isRecoverable) || blank($get('recoveryCode')))
+                    ->required(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             $rateLimitingKey = 'filament-disable-app-authentication:' . Filament::auth()->id();
@@ -56,7 +56,7 @@ class DisableAppAuthenticationAction
 
                             RateLimiter::hit($rateLimitingKey);
 
-                            if (is_string($value) && $appAuthentication->verifyCode($value)) {
+                            if (is_string($value) && $appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
                                 return;
                             }
 
@@ -68,6 +68,7 @@ class DisableAppAuthenticationAction
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/disable.modal.form.recovery_code.validation_attribute'))
                     ->password()
                     ->revealable(Filament::arePasswordsRevealable())
+                    ->autocomplete('one-time-code')
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($appAuthentication): void {
                             if (blank($value)) {

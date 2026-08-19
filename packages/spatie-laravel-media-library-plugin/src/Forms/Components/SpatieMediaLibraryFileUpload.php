@@ -53,6 +53,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     {
         parent::setUp();
 
+        $this->preventFilePathTampering(false);
+
         $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, HasMedia $record): void {
             /** @var Model&HasMedia $record */
             $media = $record->load('media')->getMedia($component->getCollection() ?? 'default')

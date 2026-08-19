@@ -9,21 +9,22 @@ use Filament\Forms\Components\Slider\Enums\Behavior;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\SliderStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 
-class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules
+class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
     use HasExtraAlpineAttributes;
     use HasNestedRecursiveValidationRules;
     use HasStep;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.slider';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.slider';
 
     protected int | float | Closure $minValue = 0;
 
@@ -512,6 +513,71 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
     public function getDecimalPlaces(): ?int
     {
         return $this->evaluate($this->decimalPlaces);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $isVertical = $this->isVertical();
+        $pipsMode = $this->getPipsMode();
+        $livewireKey = $this->getLivewireKey();
+        $isDisabled = $this->isDisabled();
+        $statePath = $this->getStatePath();
+
+        $id = $this->getId();
+
+        $attributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->merge($this->getExtraAlpineAttributes(), escape: false)
+            ->class([
+                'fi-fo-slider',
+                'fi-fo-slider-has-pips' => $pipsMode,
+                'fi-fo-slider-has-tooltips' => $this->hasTooltips(),
+                'fi-fo-slider-vertical' => $isVertical,
+            ]);
+
+        $alpineComponentSrc = FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms');
+
+        ob_start(); ?>
+
+        <div
+            x-load
+            x-load-src="<?= e($alpineComponentSrc) ?>"
+            x-data="sliderFormComponent({
+                        arePipsStepped: <?= Js::from($this->arePipsStepped()) ?>,
+                        behavior: <?= Js::from($this->getBehaviorForJs()) ?>,
+                        decimalPlaces: <?= Js::from($this->getDecimalPlaces()) ?>,
+                        fillTrack: <?= Js::from($this->getFillTrack()) ?>,
+                        isDisabled: <?= Js::from($isDisabled) ?>,
+                        isRtl: <?= Js::from($this->isRtl()) ?>,
+                        isVertical: <?= Js::from($isVertical) ?>,
+                        maxDifference: <?= Js::from($this->getMaxDifference()) ?>,
+                        minDifference: <?= Js::from($this->getMinDifference()) ?>,
+                        maxValue: <?= Js::from($this->getMaxValue()) ?>,
+                        minValue: <?= Js::from($this->getMinValue()) ?>,
+                        nonLinearPoints: <?= Js::from($this->getNonLinearPoints()) ?>,
+                        pipsDensity: <?= Js::from($this->getPipsDensity()) ?>,
+                        pipsFilter: <?= Js::from($this->getPipsFilterForJs()) ?>,
+                        pipsFormatter: <?= Js::from($this->getPipsFormatterForJs()) ?>,
+                        pipsMode: <?= Js::from($pipsMode) ?>,
+                        pipsValues: <?= Js::from($this->getPipsValues()) ?>,
+                        rangePadding: <?= Js::from($this->getRangePadding()) ?>,
+                        state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                        step: <?= Js::from($this->getStep()) ?>,
+                        tooltips: <?= Js::from($this->getTooltipsForJs()) ?>,
+                    })"
+            wire:ignore
+            wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([
+                $isDisabled,
+            ])), 0, 64) ?>"
+            <?= $attributes->toHtml() ?>
+        ></div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: VerticalAlignment::Center, labelTag: 'div');
     }
 
     /**

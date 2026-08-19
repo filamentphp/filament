@@ -214,7 +214,7 @@ trait HasState
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
-        $this->clearCachedDefaultChildSchemas();
+        $this->clearCachedChildSchemas();
 
         return $this;
     }
@@ -665,7 +665,7 @@ trait HasState
         // it is already present, cached child schemas must be
         // cleared so they can be re-evaluated. `rawState()`
         // is called during this process.
-        $this->clearCachedDefaultChildSchemas();
+        $this->clearCachedChildSchemas();
 
         return $this;
     }
@@ -719,7 +719,8 @@ trait HasState
     public function getStatePath(bool $isAbsolute = true): ?string
     {
         if (! $isAbsolute) {
-            return $this->statePath;
+            // Security: Strip characters that could break out of a quoted HTML attribute or a JS string (e.g. `$entangle()`, `wire:model`), so every downstream sink that embeds the state path raw is safe without per-sink escaping. Client-influenced repeater item keys flow in here, and legitimate state paths never contain these characters.
+            return ($this->statePath === null) ? null : preg_replace('/[<>"\'`\x00-\x1F\x7F]/', '', $this->statePath);
         }
 
         if (isset($this->cachedAbsoluteStatePath)) {
@@ -733,7 +734,7 @@ trait HasState
         }
 
         if ($this->hasStatePath()) {
-            $pathComponents[] = $this->statePath;
+            $pathComponents[] = $this->getStatePath(isAbsolute: false);
         }
 
         return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);

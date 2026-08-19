@@ -74,6 +74,12 @@ trait CanGenerateModelTables
 
             $type = $this->parseColumnType($column);
 
+            if (! $this->canGenerateSchemaComponentForColumnType($type)) {
+                $this->recordSkippedColumn($model, $column);
+
+                continue;
+            }
+
             if (in_array($type['name'], [
                 'json',
                 'text',

@@ -22,7 +22,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
-use Livewire\Attributes\Locked;
 use Throwable;
 
 /**
@@ -47,7 +46,14 @@ class CreateRecord extends Page
 
     protected static bool $canCreateAnother = true;
 
-    #[Locked]
+    /**
+     * After a successful creation, this stays `true` while the user is redirected, to prevent duplicate
+     * records from additional clicks of the submit button. In SPA mode, if the user then navigates back,
+     * the page is restored from Livewire's history cache with this still `true`, which would block the
+     * form from ever being submitted again. JavaScript detects the restoration and resets this property
+     * in Livewire's client-side state, which is synced with the server during the next request. It is
+     * deliberately not `#[Locked]`, since that would prevent the client-side reset from being synced.
+     */
     public bool $isCreating = false;
 
     public function getBreadcrumb(): string

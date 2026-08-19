@@ -2,17 +2,29 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Actions\Testing\TestAction;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
@@ -46,6 +58,23 @@ describe('calling actions', function (): void {
             ]);
     });
 
+    it('finalizes the database transaction exactly once when a `databaseTransaction()` action is cancelled', function (): void {
+        $levelBeforeOuterTransaction = DB::transactionLevel();
+
+        // Simulate the action running inside a surrounding transaction.
+        DB::beginTransaction();
+
+        livewire(Actions::class)
+            ->callAction('cancelWithDatabaseTransaction');
+
+        // The cancelled inner action must NOT pop the outer transaction. With the
+        // double-commit bug, the stray second commit drops the level back to where
+        // it was before we opened the outer transaction.
+        expect(DB::transactionLevel())->toBe($levelBeforeOuterTransaction + 1);
+
+        DB::rollBack();
+    });
+
     it('can call an action and halt', function (): void {
         livewire(Actions::class)
             ->callAction('halt')
@@ -67,6 +96,109 @@ describe('calling actions', function (): void {
             ->assertActionMounted('replaced-action')
             ->callMountedAction()
             ->assertDispatched('replaced-action-called');
+    });
+});
+
+describe('authorization enforcement', function (): void {
+    // These tests prove that INVOKING a hidden, disabled, or unauthorized action is a
+    // no-op, not merely that it renders as such. `mountAction()` and `callMountedAction()`
+    // in `InteractsWithActions` early-return when `$action->isDisabled()`, which is `true`
+    // for `hidden()`, `visible(false)`, `disabled()`, and `authorize(false)` actions.
+
+    it('does not invoke a `hidden()` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementHidden')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-hidden-called');
+    });
+
+    it('does not invoke a `visible(false)` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementInvisible')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-invisible-called');
+    });
+
+    it('does not invoke a `disabled()` action when it is called via `callAction()`', function (): void {
+        livewire(Actions::class)
+            ->callAction('enforcementDisabled')
+            ->assertActionNotMounted()
+            ->assertNotDispatched('enforcement-disabled-called');
+    });
+
+    it('does not invoke a `disabled()` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementDisabled')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-disabled-called');
+    });
+
+    it('does not invoke an `authorize(false)` action when it is mounted and called', function (): void {
+        livewire(Actions::class)
+            ->mountAction('enforcementUnauthorized')
+            ->assertActionNotMounted()
+            ->callMountedAction()
+            ->assertNotDispatched('enforcement-unauthorized-called');
+    });
+
+    it('does invoke an `authorize(true)` action when it is called via `callAction()`', function (): void {
+        // Positive control: proves the negative assertions above are not vacuous. An
+        // authorized action is not disabled, so invoking it runs its `action()` closure.
+        livewire(Actions::class)
+            ->callAction('enforcementAuthorized')
+            ->assertDispatched('enforcement-authorized-called');
+    });
+});
+
+describe('actions mounted from a URL query parameter', function (): void {
+    // The `?action=` / `?tableAction=` query string parameters open an action on page
+    // load via a `wire:init="mountAction(...)"` call carrying a `mountedFromUrl` context
+    // flag. An action mounted this way may only open its modal — it must never run its
+    // `action()` closure with no interaction, or a crafted link could trigger it.
+
+    it('opens the modal for an action mounted from the URL when it has a modal', function (): void {
+        livewire(Actions::class)
+            ->call('mountAction', 'arguments', [], ['mountedFromUrl' => true])
+            ->assertSet('mountedActions.0.name', 'arguments') // Still mounted, so the modal opened rather than the action running.
+            ->assertNotDispatched('arguments-called');
+    });
+
+    it('does not run an action mounted from the URL when it has no modal', function (): void {
+        livewire(Actions::class)
+            ->call('mountAction', 'simple', [], ['mountedFromUrl' => true])
+            ->assertNotDispatched('simple-called');
+    });
+
+    it('still runs a modal-less action when it is triggered by a user click', function (): void {
+        // A real click carries no `mountedFromUrl` flag, so it must keep running immediately.
+        livewire(Actions::class)
+            ->mountAction('simple')
+            ->assertDispatched('simple-called');
+    });
+
+    it('forces `mountedFromUrl` on even when the `actionContext` query string tries to unset it', function (): void {
+        // `$defaultActionContext` is populated from the `?actionContext=` query string, so
+        // an attacker controls it. The context builder must always win, keeping any other
+        // keys but forcing `mountedFromUrl` to `true`.
+        $context = livewire(Actions::class)
+            ->set('defaultActionContext', ['mountedFromUrl' => false, 'schemaComponent' => 'foo'])
+            ->instance()
+            ->getDefaultActionUrlContext();
+
+        expect($context['mountedFromUrl'])->toBeTrue()
+            ->and($context['schemaComponent'])->toBe('foo');
+    });
+
+    it('does not run a modal-less action even when the `actionContext` query string tries to unset `mountedFromUrl`', function (): void {
+        $component = livewire(Actions::class)
+            ->set('defaultActionContext', ['mountedFromUrl' => false]);
+
+        $component
+            ->call('mountAction', 'simple', [], $component->instance()->getDefaultActionUrlContext())
+            ->assertNotDispatched('simple-called');
     });
 });
 
@@ -236,6 +368,46 @@ describe('nested actions', function (): void {
             ->assertHasNoFormErrors()
             ->assertActionNotMounted()
             ->assertNotDispatched('parent-called');
+    });
+
+    it('keeps parent actions mounted when closing the modal does not cancel them', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction([
+                'grandparentWithModalCloseCancellation',
+                TestAction::make('parentWithModalCloseCancellation')->schemaComponent('grandparentValue'),
+                TestAction::make('modalClosePreservesParentActions')->schemaComponent('parentValue'),
+            ]);
+
+        expect($livewire->instance()->getMountedAction()->shouldCancelParentActionsOnClose())->toBeFalse();
+
+        $livewire
+            ->unmountAction(cancelParentActions: false)
+            ->assertActionMounted([
+                'grandparentWithModalCloseCancellation',
+                TestAction::make('parentWithModalCloseCancellation')->schemaComponent('grandparentValue'),
+            ]);
+    });
+
+    it('can cancel all parent actions when closing a modal', function (): void {
+        livewire(Actions::class)
+            ->mountAction([
+                'grandparentWithModalCloseCancellation',
+                TestAction::make('parentWithModalCloseCancellation')->schemaComponent('grandparentValue'),
+                TestAction::make('modalCloseCancelsAllParentActions')->schemaComponent('parentValue'),
+            ])
+            ->unmountAction(cancelParentActions: true)
+            ->assertActionNotMounted();
+    });
+
+    it('can cancel parent actions to a named action when closing a modal', function (): void {
+        livewire(Actions::class)
+            ->mountAction([
+                'grandparentWithModalCloseCancellation',
+                TestAction::make('parentWithModalCloseCancellation')->schemaComponent('grandparentValue'),
+                TestAction::make('modalCloseCancelsToNamedParentAction')->schemaComponent('parentValue'),
+            ])
+            ->unmountAction(cancelParentActions: 'parentWithModalCloseCancellation')
+            ->assertActionMounted('grandparentWithModalCloseCancellation');
     });
 
     it('can mount a nested action with parent arguments', function (): void {
@@ -422,6 +594,24 @@ describe('properties', function (): void {
         livewire(Actions::class)
             ->assertActionShouldOpenUrlInNewTab('urlInNewTab')
             ->assertActionShouldNotOpenUrlInNewTab('urlNotInNewTab');
+    });
+
+    it('can use `cancelParentActionsOnClose()` to cancel all parent actions when closing a modal', function (): void {
+        $action = Action::make('test')
+            ->cancelParentActionsOnClose();
+
+        expect($action->shouldCancelParentActionsOnClose())->toBeTrue();
+        expect($action->shouldCancelAllParentActionsOnClose())->toBeTrue();
+        expect($action->getParentActionToCancelToOnClose())->toBeNull();
+    });
+
+    it('can use `cancelParentActionsOnClose()` to cancel parent actions to a named action when closing a modal', function (): void {
+        $action = Action::make('test')
+            ->cancelParentActionsOnClose('parentAction');
+
+        expect($action->shouldCancelParentActionsOnClose())->toBeTrue();
+        expect($action->shouldCancelAllParentActionsOnClose())->toBeFalse();
+        expect($action->getParentActionToCancelToOnClose())->toBe('parentAction');
     });
 
     it('can use `badge()` to set badge display mode', function (): void {
@@ -661,7 +851,7 @@ describe('notifications', function (): void {
 
     it('will raise an exception if a notification was sent checking with a different notification title', function (): void {
         $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-        $this->expectExceptionMessage('Failed asserting that two arrays are identical.');
+        $this->expectExceptionMessage('A notification was not sent');
 
         livewire(Actions::class)
             ->callAction('shows-notification-with-id')
@@ -1549,6 +1739,476 @@ describe('construction and properties', function (): void {
         expect($action)->toBeInstanceOf(Action::class);
     });
 });
+
+describe('rendering', function (): void {
+    it('can render an optimized URL `link()` action with SPA navigation attributes', function (): void {
+        FilamentView::spa();
+
+        $html = Action::make('link')
+            ->link()
+            ->defaultSize(Size::Small)
+            ->url('/foo')
+            ->toHtml();
+
+        expect($html)
+            ->toStartWith('<a ')
+            ->toContain('wire:navigate')
+            ->toContain('href="/foo"');
+
+        FilamentView::spa(false);
+    });
+
+    it('can render a link action with an array `color()` and a URL', function (): void {
+        $html = Action::make('test')
+            ->link()
+            ->defaultSize(Size::Small)
+            ->color(Color::Blue)
+            ->url('/foo')
+            ->toHtml();
+
+        expect($html)
+            ->toStartWith('<a ')
+            ->toContain('fi-ac-link-action')
+            ->toContain('fi-link')
+            ->toContain('fi-color')
+            ->toContain('style="--color-')
+            ->toContain('href="/foo"');
+    });
+
+    it('can render a link action with an array `color()` and a click handler', function (): void {
+        $html = Action::make('test')
+            ->link()
+            ->defaultSize(Size::Small)
+            ->color(Color::Red)
+            ->toHtml();
+
+        expect($html)
+            ->toStartWith('<button ')
+            ->toContain('fi-ac-link-action')
+            ->toContain('fi-color')
+            ->toContain('style="--color-')
+            ->toContain('wire:click="mountAction(');
+    });
+
+    it('can render a link action with a string `color()` without inline styles', function (): void {
+        $html = Action::make('test')
+            ->link()
+            ->defaultSize(Size::Small)
+            ->color('primary')
+            ->url('/foo')
+            ->toHtml();
+
+        expect($html)
+            ->toStartWith('<a ')
+            ->toContain('fi-ac-link-action')
+            ->not->toContain('style=');
+    });
+
+    it('can render a grouped action with an array `color()`', function (): void {
+        $html = Action::make('test')
+            ->grouped()
+            ->color(Color::Blue)
+            ->url('/foo')
+            ->toHtml();
+
+        expect($html)
+            ->toStartWith('<a ')
+            ->toContain('fi-ac-grouped-action')
+            ->toContain('fi-color')
+            ->toContain('style="--color-');
+    });
+
+    it('renders a default action as a `<button>` with the click handler', function (): void {
+        $html = Action::make('test')->toHtml();
+
+        expect($html)
+            ->toContain('<button')
+            ->toContain('wire:click="mountAction(');
+    });
+
+    it('renders a `link()` action as an `<a>` when given a `url()`', function (): void {
+        $html = Action::make('test')->link()->url('/foo')->toHtml();
+
+        expect($html)
+            ->toContain('<a')
+            ->toContain('href="/foo"')
+            ->toContain('fi-link');
+    });
+
+    it('renders a `link()` action as a `<button>` when no URL is set', function (): void {
+        $html = Action::make('test')->link()->toHtml();
+
+        expect($html)
+            ->toContain('<button')
+            ->toContain('fi-link');
+    });
+
+    it('renders an `iconButton()` action with the `fi-icon-btn` class and an inline `<svg>` icon', function (): void {
+        $html = Action::make('test')->iconButton()->icon('heroicon-o-pencil')->toHtml();
+
+        expect($html)
+            ->toContain('fi-icon-btn')
+            ->toContain('<svg')
+            ->toContain('fi-icon');
+    });
+
+    it('renders a `badge()` action with the `fi-badge` class', function (): void {
+        $html = Action::make('test')->badge()->toHtml();
+
+        expect($html)->toContain('fi-badge');
+    });
+
+    it('renders a `grouped()` action with the dropdown list-item class', function (): void {
+        $html = Action::make('test')->grouped()->toHtml();
+
+        expect($html)
+            ->toContain('fi-ac-grouped-action')
+            ->toContain('fi-dropdown-list-item');
+    });
+
+    it('renders a string `color()` on a button as a `fi-color-*` class', function (): void {
+        $html = Action::make('test')->color('danger')->toHtml();
+
+        expect($html)->toContain('fi-color-danger');
+    });
+
+    it('renders a `size()` as a `fi-size-*` class', function (): void {
+        $html = Action::make('test')->size(Size::Large)->toHtml();
+
+        expect($html)->toContain('fi-size-lg');
+    });
+
+    it('renders an `icon()` on a button action as an inline `<svg>` with `fi-icon`', function (): void {
+        $html = Action::make('test')->icon('heroicon-o-trash')->toHtml();
+
+        expect($html)
+            ->toContain('<svg')
+            ->toContain('fi-icon');
+    });
+
+    it('renders an `outlined()` action with the `fi-outlined` modifier class', function (): void {
+        $html = Action::make('test')->outlined()->toHtml();
+
+        expect($html)->toContain('fi-outlined');
+    });
+
+    it('renders a `tooltip()` as an `x-tooltip` attribute', function (): void {
+        $html = Action::make('test')->tooltip('Helpful tip')->toHtml();
+
+        expect($html)->toContain('x-tooltip');
+    });
+
+    it('renders a `disabled()` action with `aria-disabled="true"`', function (): void {
+        $html = Action::make('test')->disabled()->toHtml();
+
+        expect($html)->toContain('aria-disabled="true"');
+    });
+
+    it('renders an `extraAttributes()` value through to the rendered element', function (): void {
+        $html = Action::make('test')
+            ->extraAttributes(['data-test-marker' => 'present'])
+            ->toHtml();
+
+        expect($html)->toContain('data-test-marker="present"');
+    });
+
+    it('renders a `keyBindings()` as an `x-mousetrap` directive', function (): void {
+        $html = Action::make('test')->keyBindings('mod+s')->toHtml();
+
+        expect($html)->toContain('x-mousetrap');
+    });
+
+    it('renders a `badge()` content on the action', function (): void {
+        $html = Action::make('test')->badge('5')->toHtml();
+
+        expect($html)->toContain('5');
+    });
+
+    it('renders a `label()` override', function (): void {
+        $html = Action::make('test')->label('Custom Label')->toHtml();
+
+        expect($html)->toContain('Custom Label');
+    });
+
+    it('renders `hiddenLabel()` by setting `aria-label` instead of visible text', function (): void {
+        $html = Action::make('test')->label('Hidden')->hiddenLabel()->toHtml();
+
+        expect($html)->toContain('aria-label="Hidden"');
+    });
+
+    it('renders a `url()` with `openUrlInNewTab()` as `target="_blank"`', function (): void {
+        $html = Action::make('test')->url('/foo', shouldOpenInNewTab: true)->toHtml();
+
+        expect($html)->toContain('target="_blank"');
+    });
+
+    it('renders an `iconPosition(After)` icon after the label', function (): void {
+        $html = Action::make('test')
+            ->icon('heroicon-o-arrow-right')
+            ->iconPosition(\Filament\Support\Enums\IconPosition::After)
+            ->label('Next')
+            ->toHtml();
+
+        // Heroicons render as inline SVG carrying `data-slot="icon"`.
+        $iconAt = strpos($html, 'data-slot="icon"');
+        $labelAt = strpos($html, 'Next');
+
+        expect($iconAt)->toBeGreaterThan($labelAt);
+    });
+
+    it('renders the default `iconPosition(Before)` icon before the label', function (): void {
+        $html = Action::make('test')
+            ->icon('heroicon-o-arrow-right')
+            ->label('Next')
+            ->toHtml();
+
+        $iconAt = strpos($html, 'data-slot="icon"');
+        $labelAt = strpos($html, 'Next');
+
+        expect($iconAt)->toBeLessThan($labelAt);
+    });
+
+    it('renders an array `color()` on a button action with inline custom-color styles', function (): void {
+        $html = Action::make('test')->color(Color::Blue)->toHtml();
+
+        expect($html)
+            ->toContain('fi-color')
+            ->toContain('--color-');
+    });
+
+    it('renders an `iconSize()` as a `fi-size-*` class on the icon', function (): void {
+        $html = Action::make('test')
+            ->icon('heroicon-o-trash')
+            ->iconSize(\Filament\Support\Enums\IconSize::Large)
+            ->toHtml();
+
+        expect($html)->toContain('fi-size-lg');
+    });
+
+    it('renders a `requiresConfirmation()` action with the modal mount handler', function (): void {
+        $html = Action::make('test')->requiresConfirmation()->toHtml();
+
+        // Confirmation actions still bind a click handler that mounts the modal.
+        expect($html)->toContain('wire:click');
+    });
+
+    it('renders an icon-only `iconButton()` with an `aria-label` for accessibility', function (): void {
+        $html = Action::make('test')
+            ->iconButton()
+            ->icon('heroicon-o-x-mark')
+            ->label('Close')
+            ->toHtml();
+
+        expect($html)->toContain('aria-label="Close"');
+    });
+
+    it('escapes HTML in a `label()` to prevent XSS', function (): void {
+        $html = Action::make('test')->label('<script>alert(1)</script>')->toHtml();
+
+        expect($html)
+            ->not->toContain('<script>alert(1)</script>')
+            ->toContain('&lt;script&gt;');
+    });
+
+    it('escapes HTML in a `url()` to prevent attribute-injection', function (): void {
+        $html = Action::make('test')->url('/foo"><script>')->toHtml();
+
+        expect($html)->not->toContain('"><script>');
+    });
+
+    it('renders an `ActionGroup` with a dropdown trigger', function (): void {
+        $group = ActionGroup::make([
+            Action::make('first')->label('First'),
+            Action::make('second')->label('Second'),
+        ])->label('Open menu');
+
+        $html = $group->toHtml();
+
+        expect($html)
+            ->toContain('fi-dropdown')
+            ->toContain('Open menu');
+    });
+
+    it('renders an `ActionGroup` containing all child action labels', function (): void {
+        $group = ActionGroup::make([
+            Action::make('alpha')->label('Alpha'),
+            Action::make('bravo')->label('Bravo'),
+            Action::make('charlie')->label('Charlie'),
+        ]);
+
+        $html = $group->toHtml();
+
+        expect($html)
+            ->toContain('Alpha')
+            ->toContain('Bravo')
+            ->toContain('Charlie');
+    });
+
+    it('skips hidden actions in `ActionGroup` rendering', function (): void {
+        $group = ActionGroup::make([
+            Action::make('visible')->label('Visible Action'),
+            Action::make('hidden')->label('Hidden Action')->hidden(),
+        ]);
+
+        $html = $group->toHtml();
+
+        expect($html)
+            ->toContain('Visible Action')
+            ->not->toContain('Hidden Action');
+    });
+
+    it('renders a `link()` `Action` with an icon and a label', function (): void {
+        $html = Action::make('test')
+            ->link()
+            ->icon('heroicon-o-arrow-right')
+            ->label('Go')
+            ->toHtml();
+
+        expect($html)
+            ->toContain('<svg')
+            ->toContain('fi-icon')
+            ->toContain('Go');
+    });
+
+    it('renders a `formId()` as a `form` attribute', function (): void {
+        $html = Action::make('test')->formId('my-form')->toHtml();
+
+        expect($html)->toContain('form="my-form"');
+    });
+});
+
+describe('visibility cache', function (): void {
+    it('does NOT memoise `isHidden()` when the action has no table (every call re-evaluates)', function (): void {
+        // The cache is gated by `hasTable()` because page-level / schema-level actions
+        // don't have a stable record key to use as a cache identifier. Without a table,
+        // each `isHidden()` call must re-evaluate the closure.
+        $invocations = 0;
+        $action = Action::make('test')->hidden(function () use (&$invocations): bool {
+            $invocations++;
+
+            return false;
+        });
+
+        $action->isHidden();
+        $action->isHidden();
+        $action->isHidden();
+
+        expect($invocations)->toBe(3);
+    });
+
+    it('memoises `isHidden()` when bound to a table and a record', function (): void {
+        // For the same record on a table-bound action, repeated visibility checks should
+        // hit the cache. This is the hot path for table row rendering — every column
+        // potentially queries every row-action's visibility.
+        $component = livewire(VisibilityCacheHarness::class);
+        $post = Post::factory()->create();
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->hidden(function () use (&$invocations): bool {
+                $invocations++;
+
+                return false;
+            })
+            ->table($component->instance()->getTable())
+            ->record($post);
+
+        $action->isHidden();
+        $action->isHidden();
+        $action->isHidden();
+
+        expect($invocations)->toBe(1);
+    });
+
+    it('re-evaluates `isHidden()` when the record changes', function (): void {
+        // `record($x)` must clear the cache so a new row gets a fresh visibility decision.
+        // Without this, multi-record tables would render every row with row-1's verdict.
+        $component = livewire(VisibilityCacheHarness::class);
+        $postA = Post::factory()->create();
+        $postB = Post::factory()->create();
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->hidden(function () use (&$invocations): bool {
+                $invocations++;
+
+                return false;
+            })
+            ->table($component->instance()->getTable())
+            ->record($postA);
+
+        $action->isHidden(); // 1
+        $action->record($postB);
+        $action->isHidden(); // 2
+
+        expect($invocations)->toBe(2);
+    });
+
+    it('keys the visibility cache by `ArrayRecord` key when given an array record', function (): void {
+        // The cache supports both Eloquent models (keyed via `spl_object_id`) and arrays
+        // (keyed via the `ArrayRecord` key). Two different array records → two evaluations.
+        $component = livewire(VisibilityCacheHarness::class);
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->hidden(function () use (&$invocations): bool {
+                $invocations++;
+
+                return false;
+            })
+            ->table($component->instance()->getTable())
+            ->record(['__key' => '1', 'name' => 'Alice']);
+
+        $action->isHidden(); // 1
+        $action->isHidden(); // memoised
+        $action->record(['__key' => '2', 'name' => 'Bob']);
+        $action->isHidden(); // 2 (different cache key)
+        $action->isHidden(); // memoised
+
+        expect($invocations)->toBe(2);
+    });
+
+    it('memoises `isAuthorized()` alongside `isHidden()` under the same cache key', function (): void {
+        // Auth and visibility share the same cache slot keyed by the record. Two `isAuthorized()`
+        // calls on the same record must invoke the policy closure exactly once.
+        $component = livewire(VisibilityCacheHarness::class);
+        $post = Post::factory()->create();
+
+        $invocations = 0;
+        $action = Action::make('test')
+            ->authorize(function () use (&$invocations): bool {
+                $invocations++;
+
+                return true;
+            })
+            ->table($component->instance()->getTable())
+            ->record($post);
+
+        $action->isAuthorized();
+        $action->isAuthorized();
+
+        expect($invocations)->toBe(1);
+    });
+});
+
+class VisibilityCacheHarness extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Post::query())->columns([
+            TextColumn::make('title'),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
 
 describe('authorization', function (): void {
     it('is visible by default when no `authorize()` is configured', function (): void {

@@ -6,11 +6,12 @@ use Filament\Forms\Commands\FileGenerators\Concerns\CanGenerateModelForms;
 use Filament\Schemas\Schema;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Commands\FileGenerators\Contracts\HasSkippedColumns;
 use Illuminate\Database\Eloquent\Model;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 
-class FormSchemaClassGenerator extends ClassGenerator
+class FormSchemaClassGenerator extends ClassGenerator implements HasSkippedColumns
 {
     use CanGenerateModelForms;
     use CanReadModelSchemas;

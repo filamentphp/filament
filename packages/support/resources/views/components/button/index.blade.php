@@ -2,6 +2,7 @@
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Enums\Size;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\ButtonComponent;
     use Illuminate\View\ComponentAttributeBag;
@@ -65,6 +66,10 @@
     }
 
     $hasTooltip = filled($tooltip);
+
+    $loadingDelay = ($icon || $hasLoadingIndicator)
+        ? config('filament.livewire_loading_delay', 'default')
+        : null;
 @endphp
 
 @if ($labeledFrom)
@@ -116,9 +121,11 @@
         $attributes
             ->merge([
                 'aria-disabled' => $disabled ? 'true' : null,
-                'aria-label' => $labelSrOnly ? trim(strip_tags($slot->toHtml())) : null,
+                // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in the slot.
+                'aria-label' => $labelSrOnly ? e(trim(strip_tags($slot->toHtml())), doubleEncode: false) : null,
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
+                'tabindex' => (($tag === 'a') && $disabled && $hasTooltip) ? '0' : null,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
@@ -138,14 +145,14 @@
                 ($size instanceof Size) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
                 is_string($labeledFrom) ? "fi-labeled-from-{$labeledFrom}" : null,
             ])
-            ->color(app(ButtonComponent::class, ['isOutlined' => $outlined]), $color)
+            ->color(ButtonComponent::make($outlined), $color)
     }}
 >
     @if ($iconPosition === IconPosition::Before)
-        @if ($icon)
+        @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
             }}
@@ -153,8 +160,8 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
             }}
@@ -162,7 +169,7 @@
 
         @if ($hasFormProcessingLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
                     'x-cloak' => 'x-cloak',
                     'x-show' => 'isProcessing',
                 ])), size: $iconSize)
@@ -189,10 +196,10 @@
     @endif
 
     @if ($iconPosition === IconPosition::After)
-        @if ($icon)
+        @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
             }}
@@ -200,8 +207,8 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
             }}
@@ -209,7 +216,7 @@
 
         @if ($hasFormProcessingLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
                     'x-cloak' => 'x-cloak',
                     'x-show' => 'isProcessing',
                 ])), size: $iconSize)
@@ -224,7 +231,7 @@
             @else
                 <span
                     {{
-                        (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                        (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                             'fi-badge',
                             ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
                         ])

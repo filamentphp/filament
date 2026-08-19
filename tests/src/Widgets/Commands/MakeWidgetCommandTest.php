@@ -4,7 +4,7 @@ use Filament\Tests\TestCase;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class)->group('commands');
+uses(TestCase::class)->group('serial');
 
 it('can generate a custom widget class', function (): void {
     $this->withoutMockingConsoleOutput();
@@ -40,6 +40,18 @@ it('can generate a custom widget view', function (): void {
     assertFileExists($path = resource_path('views/filament/widgets/custom-widget.blade.php'));
     expect(file_get_contents($path))
         ->toMatchSnapshot();
+});
+
+it('can run `make:filament-widget` non-interactively to generate a custom widget', function (): void {
+    $this->withoutMockingConsoleOutput();
+
+    $this->artisan('make:filament-widget', [
+        'name' => 'NonInteractiveWidget',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists(app_path('Filament/Widgets/NonInteractiveWidget.php'));
 });
 
 it('can generate a chart widget class', function (): void {
