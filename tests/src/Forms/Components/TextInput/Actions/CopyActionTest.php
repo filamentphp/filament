@@ -2,6 +2,7 @@
 
 use Filament\Forms\Components\TextInput\Actions\CopyAction;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Js;
 
 uses(TestCase::class);
 
@@ -13,6 +14,16 @@ it('has a label', function (): void {
     $action = CopyAction::make();
 
     expect($action->getLabel())->toBeString()->not->toBeEmpty();
+});
+
+it('reads the current input value from the DOM instead of baking in the server-rendered `$state`', function (): void {
+    $action = CopyAction::make();
+
+    $handler = $action->getCustomAlpineClickHandler();
+
+    expect($handler)
+        ->toContain("\$el.closest('.fi-input-wrp')?.querySelector('input')?.value")
+        ->not->toContain(Js::from('test'));
 });
 
 describe('copy message', function (): void {

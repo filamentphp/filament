@@ -536,6 +536,8 @@ it('can render and type in `TextInput` in the browser', function (): void {
             ->assertSee('Email')
             ->assertSee('Password')
             ->type('[data-testid="text-input"] input', 'John Doe')
+            ->type('[data-testid="copyable-input"] input', 'ABC123')
+            ->click('[data-testid="copyable-input"] button')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
