@@ -106,7 +106,9 @@ trait InteractsWithTable
             $this->tableSearch = session()->get($searchSessionKey);
         }
 
-        $this->tableSearch = strval($this->tableSearch);
+        $this->tableSearch = is_array($this->tableSearch)
+            ? json_encode($this->tableSearch)
+            : strval($this->tableSearch);
 
         if ($shouldPersistSearchInSession) {
             session()->put(

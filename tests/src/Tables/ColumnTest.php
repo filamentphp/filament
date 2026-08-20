@@ -236,6 +236,14 @@ describe('searching', function (): void {
             ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
     });
 
+    it('does not error when `tableSearch` is tampered into an array', function (): void {
+        Post::factory()->count(10)->create();
+
+        livewire(PostsTable::class)
+            ->set('tableSearch', [123])
+            ->assertOk();
+    });
+
     it('can search individual column records', function (): void {
         $posts = Post::factory()->count(10)->create();
 

@@ -72,4 +72,7 @@ it('can trim the search query', function (): void {
 
     $trait->tableSearch = "\u{1160}\u{1160}test\u{1160}\u{1160}";
     $this->assertSame('test', $trait->getTableSearch());
+
+    $trait->tableSearch = [123];
+    $this->assertSame('[123]', $trait->getTableSearch());
 });

@@ -206,7 +206,13 @@ trait CanSearchRecords
 
     public function getTableSearch(): ?string
     {
-        return filled($this->tableSearch) ? Str::trim(strval($this->tableSearch)) : null;
+        $search = $this->tableSearch;
+
+        if (is_array($search)) {
+            $search = json_encode($search);
+        }
+
+        return filled($search) ? Str::trim(strval($search)) : null;
     }
 
     public function hasTableSearch(): bool
