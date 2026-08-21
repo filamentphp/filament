@@ -27,6 +27,7 @@ use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTableWithScopedPostsCount;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTableWithScopedPostsRatingAggregate;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\QueryBuilderItem;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
@@ -1724,6 +1725,34 @@ describe('relationship method constraints', function (): void {
                 ->call('applyTableFilters'))
             ->assertCanSeeTableRecords([$highMinUser])
             ->assertCanNotSeeTableRecords([$lowMinUser]);
+    });
+
+    it('can filter self-related records using number constraint aggregate with a connection table prefix', function (): void {
+        $databaseConnection = QueryBuilderItem::query()->getConnection();
+        $originalTablePrefix = $databaseConnection->getTablePrefix();
+
+        $databaseConnection->setTablePrefix('fo_');
+
+        try {
+            $matchingParent = QueryBuilderItem::query()->create(['length' => 1]);
+            $matchingParent->children()->create(['length' => 700]);
+
+            $nonMatchingParent = QueryBuilderItem::query()->create(['length' => 1]);
+            $nonMatchingParent->children()->create(['length' => 699]);
+
+            $constraint = NumberConstraint::make('children.length');
+
+            $operator = IsMinOperator::make()
+                ->constraint($constraint)
+                ->settings(['number' => 700, 'aggregate' => 'min']);
+
+            $filteredQuery = $operator->applyToBaseQuery(QueryBuilderItem::query());
+
+            expect($filteredQuery->pluck('id')->all())
+                ->toBe([$matchingParent->id]);
+        } finally {
+            $databaseConnection->setTablePrefix($originalTablePrefix);
+        }
     });
 
     it('can filter records using number constraint with max aggregate on relationship', function (): void {
