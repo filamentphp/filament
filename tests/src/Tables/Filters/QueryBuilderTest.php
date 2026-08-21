@@ -1755,6 +1755,27 @@ describe('relationship method constraints', function (): void {
         }
     });
 
+    it('can filter records using number constraint aggregate on a `latestOfMany()` relationship', function (): void {
+        $matchingUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $matchingUser->id, 'rating' => 3]);
+        Post::factory()->create(['author_id' => $matchingUser->id, 'rating' => 8]);
+
+        $nonMatchingUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $nonMatchingUser->id, 'rating' => 8]);
+        Post::factory()->create(['author_id' => $nonMatchingUser->id, 'rating' => 3]);
+
+        $constraint = NumberConstraint::make('latestPost.rating');
+
+        $operator = IsMinOperator::make()
+            ->constraint($constraint)
+            ->settings(['number' => 7, 'aggregate' => 'min']);
+
+        $filteredQuery = $operator->applyToBaseQuery(User::query());
+
+        expect($filteredQuery->pluck('id')->all())
+            ->toBe([$matchingUser->id]);
+    });
+
     it('can filter records using number constraint with max aggregate on relationship', function (): void {
         // Create user with at least one very high rating
         $highMaxUser = User::factory()->create();

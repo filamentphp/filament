@@ -65,7 +65,9 @@ trait CanAggregateRelationships
         $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
 
         /** @var Relation $relationship */
-        $relationship = $query->getModel()->{$relationshipName}();
+        $relationship = Relation::noConstraints(
+            static fn (): Relation => $query->getModel()->{$relationshipName}(),
+        );
 
         $relatedModel = $relationship->getModel();
         $castType = $this->getNumericCastType($query);

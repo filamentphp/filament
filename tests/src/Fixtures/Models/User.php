@@ -68,6 +68,11 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return $this->hasOne(Post::class, 'author_id')->where('is_published', true);
     }
 
+    public function latestPost(): HasOne
+    {
+        return $this->hasOne(Post::class, 'author_id')->latestOfMany();
+    }
+
     protected static function newFactory()
     {
         return UserFactory::new();
