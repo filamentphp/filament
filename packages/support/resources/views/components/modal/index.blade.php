@@ -147,6 +147,7 @@
         $attributes->class([
             'fi-modal',
             'fi-absolute-positioning-context',
+            'fi-modal-alert' => $alert,
             'fi-modal-slide-over' => $slideOver,
             'fi-modal-slide-over-from-start' => $slideOver && $slideOverPosition === SlideOverPosition::Start,
             'fi-modal-slide-over-from-end' => $slideOver && $slideOverPosition === SlideOverPosition::End,
