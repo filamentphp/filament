@@ -31,6 +31,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 use function Filament\Tests\livewire;
 
@@ -2020,6 +2021,19 @@ describe('relationship method constraints', function (): void {
             ]))
             ->assertCanSeeTableRecords([$inScopeUser])
             ->assertCanNotSeeTableRecords([$outOfScopeUser]);
+    });
+
+    it('qualifies the aggregate column with the connection table prefix', function (): void {
+        DB::connection()->setTablePrefix('fo_');
+
+        $query = User::query();
+
+        IsMinOperator::make('isMin')
+            ->constraint(NumberConstraint::make('posts.rating'))
+            ->settings(['number' => 7, 'aggregate' => 'min'])
+            ->applyToBaseQuery($query);
+
+        expect($query->toSql())->toContain('min("fo_posts"."rating")');
     });
 
 });

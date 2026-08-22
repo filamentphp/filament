@@ -68,7 +68,7 @@ trait CanAggregateRelationships
         $relationship = $query->getModel()->{$relationshipName}();
 
         $relatedModel = $relationship->getModel();
-        $attributeForQuery = $relatedModel->qualifyColumn($attributeForQuery);
+        $attributeForQuery = $relatedModel->getConnection()->getQueryGrammar()->wrap($relatedModel->qualifyColumn($attributeForQuery));
         $castType = $this->getNumericCastType($query);
 
         if ($relationship instanceof BelongsToMany) {
