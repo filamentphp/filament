@@ -74,6 +74,7 @@ class InstallCommand extends Command
             $this->installAdminPanel();
             $this->installScaffolding();
             $this->installUpgradeCommand();
+            $this->ignorePublishedAssets();
         } catch (FailureCommandOutput) {
             return static::FAILURE;
         }
@@ -188,6 +189,44 @@ class InstallCommand extends Command
                     replace: '    "keywords": ["framework", "laravel"],',
                 ),
         );
+    }
+
+    protected function ignorePublishedAssets(): void
+    {
+        $path = base_path('.gitignore');
+
+        if (! file_exists($path)) {
+            return;
+        }
+
+        $contents = str_replace("\r\n", PHP_EOL, file_get_contents($path));
+
+        $existingRules = collect(explode(PHP_EOL, $contents))
+            ->map(fn (string $rule): string => ltrim(trim($rule), '/'))
+            ->all();
+
+        $assetsPath = trim((string) config('filament.assets_path'), '/');
+
+        $newRules = collect(['css', 'js', 'fonts'])
+            ->map(fn (string $directory): string => collect(['public', $assetsPath, $directory, 'filament'])
+                ->filter()
+                ->implode('/'))
+            ->reject(fn (string $rule): bool => in_array($rule, $existingRules))
+            ->map(fn (string $rule): string => "/{$rule}")
+            ->implode(PHP_EOL);
+
+        if (blank($newRules)) {
+            return;
+        }
+
+        $contents = rtrim($contents, PHP_EOL);
+
+        file_put_contents(
+            $path,
+            (filled($contents) ? ($contents . PHP_EOL . PHP_EOL) : '') . $newRules . PHP_EOL,
+        );
+
+        $this->components->info('Added the published Filament assets to [.gitignore].');
     }
 
     protected function askToStar(): void
