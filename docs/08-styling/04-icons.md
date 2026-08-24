@@ -138,6 +138,7 @@ Using class `Filament\Forms\View\FormsIconAlias`
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE` - Trigger button of a clone action in a builder item
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_COLLAPSE` - Trigger button of a collapse action in a builder item
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE` - Trigger button of a delete action in a builder item
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EDIT` - Trigger button of an edit action in a builder item, when block previews are enabled
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EXPAND` - Trigger button of an expand action in a builder item
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_DOWN` - Trigger button of a move down action in a builder item
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_UP` - Trigger button of a move up action in a builder item
@@ -158,6 +159,7 @@ Using class `Filament\Forms\View\FormsIconAlias`
 - `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ZOOM_OUT` - Trigger button of a zoom out action in a file upload editor
 - `FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE` - Trigger button of a delete action in a key-value field item
 - `FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_REORDER` - Trigger button of a reorder action in a key-value field item
+- `FormsIconAlias::COMPONENTS_MODAL_TABLE_SELECT_ACTIONS_SELECT` - Trigger button of the select action in a modal table select field
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_CLONE` - Trigger button of a clone action in a repeater item
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE` - Trigger button of a collapse action in a repeater item
 - `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE` - Trigger button of a delete action in a repeater item
@@ -171,6 +173,7 @@ Using class `Filament\Forms\View\FormsIconAlias`
 - `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON` - Close button for merge tags panel in a rich editor
 - `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_CREATE_OPTION` - Trigger button of a create option action in a select field
 - `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_EDIT_OPTION` - Trigger button of an edit option action in a select field
+- `FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_COPY` - Trigger button of a copy action in a text input field
 - `FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_HIDE_PASSWORD` - Trigger button of a hide password action in a text input field
 - `FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_SHOW_PASSWORD` - Trigger button of a show password action in a text input field
 - `FormsIconAlias::COMPONENTS_TOGGLE_BUTTONS_BOOLEAN_FALSE` - "False" option of a `boolean()` toggle buttons field
@@ -198,6 +201,21 @@ Using class `Filament\Notifications\View\NotificationsIconAlias`
 
 Using class `Filament\View\PanelsIconAlias`
 
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE` - Trigger button of the action to disable app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_MODAL` - Modal of the action to disable app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_NOTIFICATION` - Notification sent after disabling app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES` - Trigger button of the action to regenerate the recovery codes for app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_MODAL` - Modal of the action to regenerate the recovery codes for app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_NOTIFICATION` - Notification sent after regenerating the recovery codes for app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP` - Trigger button of the action to set up app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_MODAL` - Modal of the action to set up app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_NOTIFICATION` - Notification sent after setting up app authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE` - Trigger button of the action to disable email authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_MODAL` - Modal of the action to disable email authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_NOTIFICATION` - Notification sent after disabling email authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP` - Trigger button of the action to set up email authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_MODAL` - Modal of the action to set up email authentication
+- `PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_NOTIFICATION` - Notification sent after setting up email authentication
 - `PanelsIconAlias::GLOBAL_SEARCH_FIELD` - Global search field
 - `PanelsIconAlias::PAGES_DASHBOARD_ACTIONS_FILTER` - Trigger button of the dashboard filter action
 - `PanelsIconAlias::PAGES_DASHBOARD_NAVIGATION_ITEM` - Dashboard page navigation item
@@ -212,6 +230,7 @@ Using class `Filament\View\PanelsIconAlias`
 - `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` - Button to expand the sidebar (right-to-left direction)
 - `PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON` - Collapse button for a sidebar group
 - `PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON` - Button to open the database notifications modal
+- `PanelsIconAlias::SUB_NAVIGATION_MOBILE_MENU_BUTTON` - Button to open the sub-navigation menu on mobile
 - `PanelsIconAlias::TENANT_MENU_BILLING_BUTTON` - Billing button in the tenant menu
 - `PanelsIconAlias::TENANT_MENU_PROFILE_BUTTON` - Profile button in the tenant menu
 - `PanelsIconAlias::TENANT_MENU_REGISTRATION_BUTTON` - Registration button in the tenant menu
@@ -230,10 +249,30 @@ Using class `Filament\View\PanelsIconAlias`
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON` - Button to open the documentation from the Filament info widget
 - `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON` - Button to open GitHub from the Filament info widget
 
+### Query builder icon aliases
+
+Using class `Filament\QueryBuilder\View\QueryBuilderIconAlias`
+
+- `QueryBuilderIconAlias::ADD_RULE_ACTION` - Trigger button of the action to add a rule
+- `QueryBuilderIconAlias::CONSTRAINTS_BOOLEAN` - Default icon for a boolean constraint
+- `QueryBuilderIconAlias::CONSTRAINTS_DATE` - Default icon for a date constraint
+- `QueryBuilderIconAlias::CONSTRAINTS_NUMBER` - Default icon for a number constraint
+- `QueryBuilderIconAlias::CONSTRAINTS_RELATIONSHIP` - Default icon for a relationship constraint
+- `QueryBuilderIconAlias::CONSTRAINTS_SELECT` - Default icon for a select constraint
+- `QueryBuilderIconAlias::CONSTRAINTS_TEXT` - Default icon for a text constraint
+- `QueryBuilderIconAlias::OR_GROUP_ADD_GROUP_ACTION` - Trigger button of the action to add an "or" group
+- `QueryBuilderIconAlias::OR_GROUP_BLOCK` - Block that separates the rules in an "or" group
+
 ### Schema icon aliases
 
 Using class `Filament\Schemas\View\SchemaIconAlias`
 
+- `SchemaIconAlias::COMPONENTS_CALLOUT_DANGER` - Danger callout
+- `SchemaIconAlias::COMPONENTS_CALLOUT_INFO` - Info callout
+- `SchemaIconAlias::COMPONENTS_CALLOUT_SUCCESS` - Success callout
+- `SchemaIconAlias::COMPONENTS_CALLOUT_WARNING` - Warning callout
+- `SchemaIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON` - Button to open the dropdown containing the tabs, when they do not fit on one line
+- `SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON` - Button to reveal the tabs that do not fit on one line
 - `SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP` - Completed step in a wizard
 
 ### Tables icon aliases
@@ -268,7 +307,7 @@ Using class `Filament\Tables\View\TablesIconAlias`
 
 Using class `Filament\Support\View\SupportIconAlias`
 
-- `SupportIconAlias::BADGE_DELETE_BUTTON` - Button to delete a badge
+- `SupportIconAlias::BADGE_DELETE_BUTTON` - Button to delete a badge, including the badges for each selected option in a multiple select
 - `SupportIconAlias::BREADCRUMBS_SEPARATOR` - Separator between breadcrumbs
 - `SupportIconAlias::BREADCRUMBS_SEPARATOR_RTL` - Separator between breadcrumbs (right-to-left direction)
 - `SupportIconAlias::MODAL_CLOSE_BUTTON` - Button to close a modal
