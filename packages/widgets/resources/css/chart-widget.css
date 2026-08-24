@@ -65,6 +65,21 @@
         @apply text-gray-500 dark:text-gray-400;
     }
 
+    /* Tooltips are painted onto the canvas, so these three sentinels are the
+       only way to color them. The values are Chart.js' own defaults, written
+       out longhand so that a theme overriding them is an opt-in. */
+    & .fi-wi-chart-tooltip-bg-color {
+        color: rgb(0 0 0 / 0.8);
+    }
+
+    & .fi-wi-chart-tooltip-text-color {
+        color: #fff;
+    }
+
+    & .fi-wi-chart-tooltip-border-color {
+        color: transparent;
+    }
+
     & .fi-empty-state {
         @apply p-0;
     }

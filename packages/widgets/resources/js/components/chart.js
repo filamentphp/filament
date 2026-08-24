@@ -33,6 +33,10 @@ export default function chart({ cachedData, options, type }) {
         userYGridColor: options?.scales?.y?.grid?.color,
         userRadialGridColor: options?.scales?.r?.grid?.color,
         userRadialTicksColor: options?.scales?.r?.ticks?.color,
+        userTooltipBackgroundColor: options?.plugins?.tooltip?.backgroundColor,
+        userTooltipTitleColor: options?.plugins?.tooltip?.titleColor,
+        userTooltipBodyColor: options?.plugins?.tooltip?.bodyColor,
+        userTooltipBorderColor: options?.plugins?.tooltip?.borderColor,
 
         init() {
             this.$wire.$on('updateChartData', ({ data }) =>
@@ -114,6 +118,39 @@ export default function chart({ cachedData, options, type }) {
             options.scales.y.border ??= {}
             options.scales.y.border.display ??= false
             options.scales.y.grid ??= {}
+
+            const {
+                lineTension,
+                pointStyle,
+                barBorderRadius,
+                tooltipBorderRadius,
+                tooltipBorderWidth,
+            } = this.getChartVars()
+
+            if (lineTension !== null) {
+                options.tension ??= lineTension
+            }
+
+            if (pointStyle !== null) {
+                options.pointStyle ??= pointStyle
+            }
+
+            if (type === 'bar' && barBorderRadius !== null) {
+                options.borderRadius ??= barBorderRadius
+            }
+
+            if (tooltipBorderRadius !== null || tooltipBorderWidth !== null) {
+                options.plugins ??= {}
+                options.plugins.tooltip ??= {}
+
+                if (tooltipBorderRadius !== null) {
+                    options.plugins.tooltip.cornerRadius ??= tooltipBorderRadius
+                }
+
+                if (tooltipBorderWidth !== null) {
+                    options.plugins.tooltip.borderWidth ??= tooltipBorderWidth
+                }
+            }
 
             if (['doughnut', 'pie', 'polarArea'].includes(type)) {
                 options.scales.x.display ??= false
@@ -208,8 +245,15 @@ export default function chart({ cachedData, options, type }) {
         },
 
         applyChartColors(options) {
-            const { backgroundColor, borderColor, textColor, gridColor } =
-                this.getChartColors()
+            const {
+                backgroundColor,
+                borderColor,
+                textColor,
+                gridColor,
+                tooltipBackgroundColor,
+                tooltipTextColor,
+                tooltipBorderColor,
+            } = this.getChartColors()
 
             const resolvedBorderColor = this.userBorderColor ?? borderColor
 
@@ -223,6 +267,22 @@ export default function chart({ cachedData, options, type }) {
             options.elements ??= {}
             options.elements.bar ??= {}
             options.elements.bar.borderColor = resolvedBorderColor
+
+            // The tooltip sentinels arrived after the others, so a published
+            // copy of the view may not have them; without them Chart.js keeps
+            // its own tooltip colors.
+            if (tooltipBackgroundColor) {
+                options.plugins ??= {}
+                options.plugins.tooltip ??= {}
+                options.plugins.tooltip.backgroundColor =
+                    this.userTooltipBackgroundColor ?? tooltipBackgroundColor
+                options.plugins.tooltip.titleColor =
+                    this.userTooltipTitleColor ?? tooltipTextColor
+                options.plugins.tooltip.bodyColor =
+                    this.userTooltipBodyColor ?? tooltipTextColor
+                options.plugins.tooltip.borderColor =
+                    this.userTooltipBorderColor ?? tooltipBorderColor
+            }
 
             if (['doughnut', 'pie', 'polarArea'].includes(type)) {
                 options.elements.arc ??= {}
@@ -283,6 +343,9 @@ export default function chart({ cachedData, options, type }) {
         },
 
         getChartColors() {
+            const sentinelColor = (element) =>
+                element ? getComputedStyle(element).color : null
+
             return {
                 backgroundColor: getComputedStyle(
                     this.$refs.backgroundColorElement,
@@ -291,6 +354,44 @@ export default function chart({ cachedData, options, type }) {
                     .color,
                 textColor: getComputedStyle(this.$refs.textColorElement).color,
                 gridColor: getComputedStyle(this.$refs.gridColorElement).color,
+                tooltipBackgroundColor: sentinelColor(
+                    this.$refs.tooltipBackgroundColorElement,
+                ),
+                tooltipTextColor: sentinelColor(
+                    this.$refs.tooltipTextColorElement,
+                ),
+                tooltipBorderColor: sentinelColor(
+                    this.$refs.tooltipBorderColorElement,
+                ),
+            }
+        },
+
+        // Chart geometry a stylesheet cannot otherwise reach — everything here
+        // is painted onto a bare `<canvas>`. Unset properties return `null` and
+        // leave the Chart.js default in place.
+        getChartVars() {
+            const styles = getComputedStyle(this.$el)
+
+            const read = (property) =>
+                styles.getPropertyValue(property).trim() || null
+
+            const number = (property) => {
+                const parsed = parseFloat(read(property))
+
+                return Number.isNaN(parsed) ? null : parsed
+            }
+
+            const pointStyle = read('--chart-point-style')
+
+            return {
+                lineTension: number('--chart-line-tension'),
+                // Chart.js needs boolean `false` to drop the markers, and a
+                // custom property can only ever yield the string `'false'`,
+                // which is truthy — hence the `none` keyword.
+                pointStyle: pointStyle === 'none' ? false : pointStyle,
+                barBorderRadius: number('--chart-bar-border-radius'),
+                tooltipBorderRadius: number('--chart-tooltip-border-radius'),
+                tooltipBorderWidth: number('--chart-tooltip-border-width'),
             }
         },
 
