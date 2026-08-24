@@ -56,13 +56,6 @@
 @endphp
 
 <div
-    @if ($ariaLabelledby)
-        aria-labelledby="{{ $ariaLabelledby }}"
-    @elseif ($heading)
-        aria-labelledby="{{ "{$id}.heading" }}"
-    @endif
-    aria-modal="true"
-    role="dialog"
     x-data="{
         isOpen: false,
 
@@ -120,7 +113,17 @@
         </div>
     @endif
 
-    <div x-cloak x-show="isOpen">
+    <div
+        @if ($ariaLabelledby)
+            aria-labelledby="{{ $ariaLabelledby }}"
+        @elseif ($heading)
+            aria-labelledby="{{ "{$id}.heading" }}"
+        @endif
+        aria-modal="true"
+        role="dialog"
+        x-cloak
+        x-show="isOpen"
+    >
         <div
             aria-hidden="true"
             x-show="isOpen"
