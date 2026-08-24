@@ -18,13 +18,11 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-use Filament\Support\View\SupportIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -45,7 +43,6 @@ use Livewire\Attributes\Renderless;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
-use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
@@ -2000,7 +1997,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     optionsLimit: <?= Js::from($this->getOptionsLimit()) ?>,
                                     placeholder: <?= Js::from($this->getPlaceholder()) ?>,
                                     position: <?= Js::from($this->getPosition()) ?>,
-                                    removeButtonIconHtml: <?= Js::from(generate_icon_html(Heroicon::XMark, alias: SupportIconAlias::BADGE_DELETE_BUTTON, size: IconSize::ExtraSmall)?->toHtml()) ?>,
                                     removeButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.remove_option.label')) ?>,
                                     searchDebounce: <?= Js::from($this->getSearchDebounce()) ?>,
                                     searchingMessage: <?= Js::from($this->getSearchingMessage()) ?>,

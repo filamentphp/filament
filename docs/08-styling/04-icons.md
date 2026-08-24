@@ -307,7 +307,6 @@ Using class `Filament\Tables\View\TablesIconAlias`
 
 Using class `Filament\Support\View\SupportIconAlias`
 
-- `SupportIconAlias::BADGE_DELETE_BUTTON` - Button to delete a badge, including the badges for each selected option in a multiple select
 - `SupportIconAlias::BREADCRUMBS_SEPARATOR` - Separator between breadcrumbs
 - `SupportIconAlias::BREADCRUMBS_SEPARATOR_RTL` - Separator between breadcrumbs (right-to-left direction)
 - `SupportIconAlias::MODAL_CLOSE_BUTTON` - Button to close a modal

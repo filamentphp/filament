@@ -51,7 +51,6 @@ export class Select {
         optionsLimit = null,
         placeholder,
         position = null,
-        removeButtonIconHtml = '',
         removeButtonLabel = 'Remove :label',
         searchableOptionFields = ['label'],
         searchDebounce = 1000,
@@ -95,7 +94,6 @@ export class Select {
         this.originalOptions = JSON.parse(JSON.stringify(options))
         this.placeholder = placeholder
         this.position = position
-        this.removeButtonIconHtml = removeButtonIconHtml
         this.removeButtonLabel = removeButtonLabel
         this.searchableOptionFields = Array.isArray(searchableOptionFields)
             ? searchableOptionFields
@@ -820,7 +818,6 @@ export class Select {
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
         removeButton.className = 'fi-badge-delete-btn'
-        removeButton.innerHTML = this.removeButtonIconHtml
         removeButton.setAttribute(
             'aria-label',
             this.removeButtonLabel.replace(
@@ -828,6 +825,11 @@ export class Select {
                 this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label,
             ),
         )
+
+        const removeButtonIcon = document.createElement('span')
+        removeButtonIcon.className = 'fi-badge-delete-btn-icon'
+        removeButtonIcon.setAttribute('aria-hidden', 'true')
+        removeButton.appendChild(removeButtonIcon)
 
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
