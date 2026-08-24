@@ -249,7 +249,7 @@ class Actions extends Component implements HasEmbeddedView
                         ->class([
                             'fi-ac',
                             'fi-width-full' => $isFullWidth,
-                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : null)) => ! $isFullWidth,
+                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => ! $isFullWidth,
                         ])->toHtml() ?>
                 >
                     <?php foreach ($visibleActions as $action) { ?>
