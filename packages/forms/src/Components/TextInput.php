@@ -311,7 +311,6 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $extraAlpineAttributes = $this->getExtraAlpineAttributes();
         $extraAttributeBag = $this->getExtraAttributeBag();
         $id = $this->getId();
-        $isConcealed = $this->isConcealed();
         $isDisabled = $this->isDisabled();
         $isPasswordRevealable = $this->isPasswordRevealable();
         $isPrefixInline = $this->isPrefixInline();
@@ -356,13 +355,13 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                 'inputmode' => $this->getInputMode(),
                 'list' => ($datalistOptions = $this->getDatalistOptions()) ? $id . '-list' : null,
-                'max' => (! $isConcealed) ? $this->getMaxValue() : null,
-                'maxlength' => (! $isConcealed) ? $this->getMaxLength() : null,
-                'min' => (! $isConcealed) ? $this->getMinValue() : null,
-                'minlength' => (! $isConcealed) ? $this->getMinLength() : null,
+                'max' => $this->getMaxValue(),
+                'maxlength' => $this->getMaxLength(),
+                'min' => $this->getMinValue(),
+                'minlength' => $this->getMinLength(),
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'readonly' => $this->isReadOnly(),
-                'required' => $this->isRequired() && (! $isConcealed),
+                'required' => $this->isRequired(),
                 'step' => $this->getStep(),
                 'type' => $type,
                 $this->applyStateBindingModifiers('wire:model') => $statePath,

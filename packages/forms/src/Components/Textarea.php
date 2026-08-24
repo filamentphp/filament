@@ -70,7 +70,6 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
 
     public function toEmbeddedHtml(): string
     {
-        $isConcealed = $this->isConcealed();
         $isDisabled = $this->isDisabled();
         $rows = $this->getRows();
         $placeholder = $this->getPlaceholder();
@@ -92,11 +91,11 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained, HasEmb
                 'cols' => $this->getCols(),
                 'disabled' => $isDisabled,
                 'id' => $this->getId(),
-                'maxlength' => (! $isConcealed) ? $this->getMaxLength() : null,
-                'minlength' => (! $isConcealed) ? $this->getMinLength() : null,
+                'maxlength' => $this->getMaxLength(),
+                'minlength' => $this->getMinLength(),
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'readonly' => $this->isReadOnly(),
-                'required' => $this->isRequired() && (! $isConcealed),
+                'required' => $this->isRequired(),
                 'rows' => $rows,
                 $this->applyStateBindingModifiers('wire:model') => $statePath,
             ], escape: false);
