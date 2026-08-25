@@ -81,6 +81,12 @@
                                 @apply text-gray-500 dark:text-gray-400;
                             }
                         }
+
+                        & .fi-sc-wizard-header-step-text {
+                            & .fi-sc-wizard-header-step-label {
+                                @apply text-gray-500 dark:text-gray-400;
+                            }
+                        }
                     }
                 }
             }
@@ -110,12 +116,6 @@
 
                         & .fi-sc-wizard-header-step-number {
                             @apply text-gray-500 dark:text-gray-400;
-                        }
-
-                        & .fi-sc-wizard-header-step-text {
-                            & .fi-sc-wizard-header-step-label {
-                                @apply text-gray-500 dark:text-gray-400;
-                            }
                         }
                     }
                 }

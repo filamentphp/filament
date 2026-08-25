@@ -138,6 +138,21 @@
                     x-ref="textColorElement"
                     class="fi-wi-chart-text-color"
                 ></span>
+
+                <span
+                    x-ref="tooltipBackgroundColorElement"
+                    class="fi-wi-chart-tooltip-bg-color"
+                ></span>
+
+                <span
+                    x-ref="tooltipTextColorElement"
+                    class="fi-wi-chart-tooltip-text-color"
+                ></span>
+
+                <span
+                    x-ref="tooltipBorderColorElement"
+                    class="fi-wi-chart-tooltip-border-color"
+                ></span>
             </div>
         </div>
 
