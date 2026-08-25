@@ -37,7 +37,7 @@ class Checkbox extends Field implements HasEmbeddedView
                 'autofocus' => $this->isAutofocused(),
                 'disabled' => $this->isDisabled(),
                 'id' => $this->getId(),
-                'required' => $this->isRequired() && (! $this->isConcealed()),
+                'required' => $this->isRequired(),
                 'wire:loading.attr' => 'disabled',
                 $this->applyStateBindingModifiers('wire:model') => $statePath,
             ], escape: false)

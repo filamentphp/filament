@@ -1,0 +1,36 @@
+/* Tooltips are rendered by `tippy.js`, whose stylesheets ship inside this package's compiled JS bundle that `index.css` imports before this file. Its bundled `light` theme paints the arrow with explicit per-placement border colors instead of `currentColor`, so recoloring the tooltip on its own leaves a mismatched arrow. Routing the background through one custom property keeps the box and the arrow together, in both themes. */
+.tippy-box {
+    background-color: var(--tippy-background-color, #333);
+}
+
+.tippy-arrow {
+    color: var(--tippy-background-color, #333);
+}
+
+.tippy-box[data-theme~='light'] {
+    --tippy-background-color: #fff;
+
+    background-color: var(--tippy-background-color);
+    box-shadow: var(
+        --tippy-box-shadow,
+        0 0 20px 4px rgba(154, 161, 177, 0.15),
+        0 4px 80px -8px rgba(36, 40, 47, 0.25),
+        0 4px 4px -2px rgba(91, 94, 105, 0.15)
+    );
+
+    &[data-placement^='top'] > .tippy-arrow::before {
+        border-top-color: var(--tippy-background-color);
+    }
+
+    &[data-placement^='bottom'] > .tippy-arrow::before {
+        border-bottom-color: var(--tippy-background-color);
+    }
+
+    &[data-placement^='left'] > .tippy-arrow::before {
+        border-left-color: var(--tippy-background-color);
+    }
+
+    &[data-placement^='right'] > .tippy-arrow::before {
+        border-right-color: var(--tippy-background-color);
+    }
+}
