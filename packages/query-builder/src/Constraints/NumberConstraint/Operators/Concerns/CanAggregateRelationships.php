@@ -80,7 +80,7 @@ trait CanAggregateRelationships
             $relatedModel->newQueryWithoutRelationships(),
             $query,
             [],
-        );
+        )->mergeConstraintsFrom($relationship->getQuery());
 
         $attributeForQuery = $subQuery->qualifyColumn($attributeForQuery);
         $attributeForQuery = $subQuery->getQuery()->getGrammar()->wrap($attributeForQuery);

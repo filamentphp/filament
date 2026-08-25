@@ -73,6 +73,11 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return $this->hasOne(Post::class, 'author_id')->latestOfMany();
     }
 
+    public function publishedPosts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'author_id')->where('is_published', true);
+    }
+
     protected static function newFactory()
     {
         return UserFactory::new();
@@ -96,6 +101,11 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
+    }
+
+    public function ownedTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)->wherePivot('role', 'owner');
     }
 
     public function profile(): HasOne

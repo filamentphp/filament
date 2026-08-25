@@ -1776,6 +1776,70 @@ describe('relationship method constraints', function (): void {
             ->toBe([$matchingUser->id]);
     });
 
+    it('applies constraints defined in the relationship method to the aggregate subquery', function (): void {
+        $matchingUser = User::factory()->create();
+        Post::factory()->create([
+            'author_id' => $matchingUser->id,
+            'is_published' => true,
+            'rating' => 9,
+        ]);
+        Post::factory()->create([
+            'author_id' => $matchingUser->id,
+            'is_published' => false,
+            'rating' => 1,
+        ]);
+
+        $nonMatchingUser = User::factory()->create();
+        Post::factory()->create([
+            'author_id' => $nonMatchingUser->id,
+            'is_published' => true,
+            'rating' => 1,
+        ]);
+        Post::factory()->create([
+            'author_id' => $nonMatchingUser->id,
+            'is_published' => false,
+            'rating' => 9,
+        ]);
+
+        livewire(UsersQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$matchingUser, $nonMatchingUser])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'publishedPosts.rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 7, 'aggregate' => 'min'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$matchingUser])
+            ->assertCanNotSeeTableRecords([$nonMatchingUser]);
+    });
+
+    it('applies `wherePivot()` constraints defined in the relationship method to the aggregate subquery', function (): void {
+        $matchingUser = User::factory()->create();
+        $matchingUser->teams()->attach(Team::factory()->create(['budget' => 5000])->id, ['role' => 'owner']);
+        $matchingUser->teams()->attach(Team::factory()->create(['budget' => 100])->id, ['role' => 'member']);
+
+        $nonMatchingUser = User::factory()->create();
+        $nonMatchingUser->teams()->attach(Team::factory()->create(['budget' => 100])->id, ['role' => 'owner']);
+        $nonMatchingUser->teams()->attach(Team::factory()->create(['budget' => 5000])->id, ['role' => 'member']);
+
+        livewire(UsersQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$matchingUser, $nonMatchingUser])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'ownedTeams.budget',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 1000, 'aggregate' => 'min'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$matchingUser])
+            ->assertCanNotSeeTableRecords([$nonMatchingUser]);
+    });
+
     it('can filter records using number constraint with max aggregate on relationship', function (): void {
         // Create user with at least one very high rating
         $highMaxUser = User::factory()->create();
