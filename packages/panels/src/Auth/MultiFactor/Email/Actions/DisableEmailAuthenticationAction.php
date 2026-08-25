@@ -11,7 +11,9 @@ use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use SensitiveParameter;
@@ -23,7 +25,7 @@ class DisableEmailAuthenticationAction
         return Action::make('disableEmailAuthentication')
             ->label(__('filament-panels::auth/multi-factor/email/actions/disable.label'))
             ->color('danger')
-            ->icon(Heroicon::LockOpen)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE) ?? Heroicon::LockOpen)
             ->link()
             ->mountUsing(function (Schema $schema) use ($emailAuthentication): void {
                 $schema->fill();
@@ -34,7 +36,7 @@ class DisableEmailAuthenticationAction
                 $emailAuthentication->sendCode($user);
             })
             ->modalWidth(Width::Medium)
-            ->modalIcon(Heroicon::OutlinedLockOpen)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_MODAL) ?? Heroicon::OutlinedLockOpen)
             ->modalHeading(__('filament-panels::auth/multi-factor/email/actions/disable.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/email/actions/disable.modal.description'))
             ->schema([
@@ -96,7 +98,7 @@ class DisableEmailAuthenticationAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/email/actions/disable.notifications.disabled.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedLockOpen)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_NOTIFICATION) ?? Heroicon::OutlinedLockOpen)
                     ->send();
             })
             ->rateLimit(5);

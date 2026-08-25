@@ -704,7 +704,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->icon(Heroicon::Cog6Tooth)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EDIT) ?? Heroicon::Cog6Tooth)
             ->size(Size::Small)
             ->visible(fn (Builder $component): bool => (! $component->isDisabled()) && $component->hasBlockPreviews());
 

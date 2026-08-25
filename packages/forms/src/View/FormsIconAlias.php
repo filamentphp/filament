@@ -10,6 +10,8 @@ class FormsIconAlias
 
     const COMPONENTS_BUILDER_ACTIONS_DELETE = 'forms::components.builder.actions.delete';
 
+    const COMPONENTS_BUILDER_ACTIONS_EDIT = 'forms::components.builder.actions.edit';
+
     const COMPONENTS_BUILDER_ACTIONS_EXPAND = 'forms::components.builder.actions.expand';
 
     const COMPONENTS_BUILDER_ACTIONS_MOVE_DOWN = 'forms::components.builder.actions.move-down';
@@ -49,6 +51,8 @@ class FormsIconAlias
     const COMPONENTS_KEY_VALUE_ACTIONS_DELETE = 'forms::components.key-value.actions.delete';
 
     const COMPONENTS_KEY_VALUE_ACTIONS_REORDER = 'forms::components.key-value.actions.reorder';
+
+    const COMPONENTS_MODAL_TABLE_SELECT_ACTIONS_SELECT = 'forms::components.modal-table-select.actions.select';
 
     const COMPONENTS_REPEATER_ACTIONS_CLONE = 'forms::components.repeater.actions.clone';
 
