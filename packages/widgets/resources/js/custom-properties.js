@@ -2,9 +2,9 @@
 // stylesheet. The `--chart-*` and `--stat-chart-*` custom properties bridge that
 // gap, and this is how the chart components read them.
 //
-// Each property is registered with `@property` in the widget's CSS, which gives it a type
-// and an initial value matching the default it is standing in for. The `fallback`
-// arguments here cover a theme that was compiled before those registrations existed.
+// An unset property reads back as an empty string, so every call passes the default it
+// stands in for as a `fallback`. That keeps each default in one place, and leaves a value
+// Chart.js cannot use to be ignored by Chart.js rather than second-guessed here.
 export default function readCustomProperties(element) {
     const styles = getComputedStyle(element)
 

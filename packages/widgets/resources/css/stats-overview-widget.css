@@ -1,27 +1,3 @@
-/* Chart.js paints the stat's sparkline onto a `<canvas>`, out of reach of a stylesheet,
-   so the shape of its line is exposed as custom properties that the sparkline's
-   JavaScript reads instead. Registering them types each value, so a typo falls back to
-   the initial value rather than reaching Chart.js, and states the default it stands in
-   for. */
-
-@property --stat-chart-border-width {
-    syntax: '<number>';
-    inherits: true;
-    initial-value: 2;
-}
-
-@property --stat-chart-fill {
-    syntax: 'start | end | origin | stack | none';
-    inherits: true;
-    initial-value: start;
-}
-
-@property --stat-chart-line-tension {
-    syntax: '<number>';
-    inherits: true;
-    initial-value: 0.5;
-}
-
 .fi-wi-stats-overview-stat {
     @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 relative block h-full rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 outline-none focus-visible:ring-2 dark:bg-gray-900 dark:ring-white/10;
 
