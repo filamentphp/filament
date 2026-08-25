@@ -9,10 +9,21 @@ use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+function temporaryUploadedFileReference(string $filename): string
+{
+    FileUploadConfiguration::storage();
+
+    return (string) str(
+        TemporaryUploadedFile::createFromLivewire($filename)->serializeForLivewireResponse(),
+    )->after('livewire-file:');
+}
 
 it('blocks `_startUpload` when the schema has no file-upload components', function (): void {
     livewire(RestrictedUploadsTestComponentWithoutFileUpload::class)
@@ -64,13 +75,13 @@ it('blocks `_startUpload` for a layout component state path (`Section`) even tho
 
 it('blocks `_finishUpload` when no schema component matches', function (): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
-        ->call('_finishUpload', 'data.somethingElse.fileKey', ['livewire-tmp/tampered.jpg'], false)
+        ->call('_finishUpload', 'data.somethingElse.fileKey', [temporaryUploadedFileReference('tampered.jpg')], false)
         ->assertForbidden();
 });
 
 it('allows `_finishUpload` when the property path maps to a `FileUpload` field', function (): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
-        ->call('_finishUpload', 'data.photo.fileKey', ['livewire-tmp/legitimate.jpg'], false)
+        ->call('_finishUpload', 'data.photo.fileKey', [temporaryUploadedFileReference('legitimate.jpg')], false)
         ->assertDispatched('upload:finished');
 });
 
@@ -100,13 +111,13 @@ it('blocks `_startUpload` when a component supporting file attachments has them 
 
 it('allows `_finishUpload` for `componentFileAttachments.{statePath}` uploads targeting a component that supports file attachments', function (): void {
     livewire(RestrictedUploadsTestComponentWithMarkdownEditor::class)
-        ->call('_finishUpload', 'componentFileAttachments.data.content', ['livewire-tmp/legitimate.jpg'], false)
+        ->call('_finishUpload', 'componentFileAttachments.data.content', [temporaryUploadedFileReference('legitimate.jpg')], false)
         ->assertDispatched('upload:finished');
 });
 
 it('blocks `_finishUpload` for `componentFileAttachments.{statePath}` when the underlying component is unrelated', function (): void {
     livewire(RestrictedUploadsTestComponentWithFileUpload::class)
-        ->call('_finishUpload', 'componentFileAttachments.data.tampered', ['livewire-tmp/tampered.jpg'], false)
+        ->call('_finishUpload', 'componentFileAttachments.data.tampered', [temporaryUploadedFileReference('tampered.jpg')], false)
         ->assertForbidden();
 });
 
