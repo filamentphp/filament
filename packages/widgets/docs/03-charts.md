@@ -480,6 +480,70 @@ protected function getOptions(): RawJs
 }
 ```
 
+## Styling charts from CSS
+
+Chart.js paints onto a `<canvas>`, so most of a chart is out of reach of a stylesheet. Filament bridges the parts a theme is most likely to want through CSS custom properties, which you can set on `.fi-wi-chart` or anywhere above it:
+
+```css
+.fi-wi-chart {
+    --chart-line-tension: 0;
+    --chart-bar-border-radius: 4;
+    --chart-point-style: rect;
+    --chart-tooltip-border-radius: 0;
+    --chart-tooltip-border-width: 1;
+}
+```
+
+| Property | Chart.js option | When unset |
+| --- | --- | --- |
+| `--chart-line-tension` | line `tension` | Chart.js default (`0`) |
+| `--chart-bar-border-radius` | bar `borderRadius` | Chart.js default (`0`) |
+| `--chart-point-style` | `pointStyle` — any Chart.js keyword, or `none` to hide the markers | Chart.js default (`circle`) |
+| `--chart-tooltip-border-radius` | tooltip `cornerRadius` | Chart.js default (`6`) |
+| `--chart-tooltip-border-width` | tooltip `borderWidth` | Chart.js default (`0`) |
+
+The values are plain numbers without units, and are read when the chart is built. Anything you pass through `getOptions()` still takes precedence over them.
+
+Tooltip colors work differently, since they need to follow a switch between light and dark mode. Like the chart's other colors, they are read from hidden sentinel elements, so you style them with a normal `color` declaration:
+
+```css
+.fi-wi-chart {
+    & .fi-wi-chart-tooltip-bg-color {
+        color: var(--color-gray-900);
+    }
+
+    & .fi-wi-chart-tooltip-text-color {
+        color: var(--color-white);
+    }
+
+    & .fi-wi-chart-tooltip-border-color {
+        color: transparent;
+    }
+}
+```
+
+The `.fi-wi-chart-bg-color`, `.fi-wi-chart-border-color`, `.fi-wi-chart-grid-color`, and `.fi-wi-chart-text-color` elements style the series, grid lines, and axis labels in the same way.
+
+### Styling stat sparklines
+
+The small trend charts inside a [stats overview widget](stats-overview) have their own properties, set on `.fi-wi-stats-overview-stat`:
+
+```css
+.fi-wi-stats-overview-stat {
+    --stat-chart-border-width: 1;
+    --stat-chart-fill: none;
+    --stat-chart-line-tension: 0;
+}
+```
+
+| Property | Chart.js option | When unset |
+| --- | --- | --- |
+| `--stat-chart-border-width` | `borderWidth` | `2` |
+| `--stat-chart-fill` | `fill` — any Chart.js fill mode, or `none` for no area fill | `start` |
+| `--stat-chart-line-tension` | `tension` | `0.5` |
+
+These are re-read whenever the color scheme changes, so a sparkline can have a different line in light and dark mode.
+
 ## Adding a description
 
 You may add a description, below the heading of the chart, using the `getDescription()` method:

@@ -69,6 +69,7 @@ export default function statsOverviewStatChart({ key, labels, values }) {
             this.getChart()?.destroy()
 
             const { backgroundColor, borderColor } = this.getChartColors()
+            const { borderWidth, fill, tension } = this.getChartVars()
 
             new Chart(this.$refs.canvas, {
                 type: 'line',
@@ -77,9 +78,9 @@ export default function statsOverviewStatChart({ key, labels, values }) {
                     datasets: [
                         {
                             data: values,
-                            borderWidth: 2,
-                            fill: 'start',
-                            tension: 0.5,
+                            borderWidth,
+                            fill,
+                            tension,
                             backgroundColor,
                             borderColor,
                         },
@@ -136,8 +137,15 @@ export default function statsOverviewStatChart({ key, labels, values }) {
 
             const { backgroundColor, borderColor } = this.getChartColors()
 
+            // The custom properties are re-read too: a theme may legitimately
+            // give light and dark mode a different line.
+            const { borderWidth, fill, tension } = this.getChartVars()
+
             chart.data.datasets[0].backgroundColor = backgroundColor
             chart.data.datasets[0].borderColor = borderColor
+            chart.data.datasets[0].borderWidth = borderWidth
+            chart.data.datasets[0].fill = fill
+            chart.data.datasets[0].tension = tension
             chart.update('none')
         },
 
@@ -156,6 +164,34 @@ export default function statsOverviewStatChart({ key, labels, values }) {
                 ).color,
                 borderColor: getComputedStyle(this.$refs.borderColorElement)
                     .color,
+            }
+        },
+
+        // The sparkline paints onto a bare `<canvas>`, so the shape of its line
+        // is unreachable from a stylesheet. These custom properties are the
+        // bridge; unset, each falls back to the value the sparkline has always
+        // used.
+        getChartVars() {
+            const styles = getComputedStyle(this.$el)
+
+            const read = (property) =>
+                styles.getPropertyValue(property).trim() || null
+
+            const number = (value, fallback) => {
+                const parsed = parseFloat(value)
+
+                return Number.isNaN(parsed) ? fallback : parsed
+            }
+
+            const fill = read('--stat-chart-fill')
+
+            return {
+                borderWidth: number(read('--stat-chart-border-width'), 2),
+                // Chart.js needs boolean `false` to drop the area fill, and a
+                // custom property can only ever yield the string `'false'`,
+                // which is truthy — hence the `none` keyword.
+                fill: fill === null ? 'start' : fill === 'none' ? false : fill,
+                tension: number(read('--stat-chart-line-tension'), 0.5),
             }
         },
 
