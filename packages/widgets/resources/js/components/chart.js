@@ -1,6 +1,7 @@
 import Chart from 'chart.js/auto'
 import { color } from 'chart.js/helpers'
 import 'chartjs-adapter-luxon'
+import readCustomProperties from '../custom-properties'
 
 const darken = (value, amount) => {
     if (Array.isArray(value)) {
@@ -20,7 +21,6 @@ if (
     Chart.register(...window.filamentChartJsGlobalPlugins)
 }
 
-Chart.defaults.plugins.legend.labels.boxWidth = 12
 Chart.defaults.plugins.legend.position = 'bottom'
 
 export default function chart({ cachedData, options, type }) {
@@ -37,6 +37,17 @@ export default function chart({ cachedData, options, type }) {
         userTooltipTitleColor: options?.plugins?.tooltip?.titleColor,
         userTooltipBodyColor: options?.plugins?.tooltip?.bodyColor,
         userTooltipBorderColor: options?.plugins?.tooltip?.borderColor,
+        userLineTension: options?.tension,
+        userPointStyle: options?.pointStyle,
+        userBarBorderRadius: options?.borderRadius,
+        userTooltipCornerRadius: options?.plugins?.tooltip?.cornerRadius,
+        userTooltipBorderWidth: options?.plugins?.tooltip?.borderWidth,
+        userLegendBorderRadius: options?.plugins?.legend?.labels?.borderRadius,
+        userLegendUseBorderRadius:
+            options?.plugins?.legend?.labels?.useBorderRadius,
+        userLegendBoxWidth: options?.plugins?.legend?.labels?.boxWidth,
+        userBorderWidth: options?.borderWidth,
+        userPointRadius: options?.pointRadius,
 
         init() {
             this.$wire.$on('updateChartData', ({ data }) =>
@@ -103,11 +114,9 @@ export default function chart({ cachedData, options, type }) {
             options.animation.duration ??= 0
             options.font ??= {}
             options.font.family ??= fontFamily
-            options.borderWidth ??= 2
             options.responsive ??= false
             options.maintainAspectRatio ??= hasMaxHeight
             options.pointHitRadius ??= 4
-            options.pointRadius ??= 2
             options.scales ??= {}
             options.scales.x ??= {}
             options.scales.x.border ??= {}
@@ -118,39 +127,6 @@ export default function chart({ cachedData, options, type }) {
             options.scales.y.border ??= {}
             options.scales.y.border.display ??= false
             options.scales.y.grid ??= {}
-
-            const {
-                lineTension,
-                pointStyle,
-                barBorderRadius,
-                tooltipBorderRadius,
-                tooltipBorderWidth,
-            } = this.getChartVars()
-
-            if (lineTension !== null) {
-                options.tension ??= lineTension
-            }
-
-            if (pointStyle !== null) {
-                options.pointStyle ??= pointStyle
-            }
-
-            if (type === 'bar' && barBorderRadius !== null) {
-                options.borderRadius ??= barBorderRadius
-            }
-
-            if (tooltipBorderRadius !== null || tooltipBorderWidth !== null) {
-                options.plugins ??= {}
-                options.plugins.tooltip ??= {}
-
-                if (tooltipBorderRadius !== null) {
-                    options.plugins.tooltip.cornerRadius ??= tooltipBorderRadius
-                }
-
-                if (tooltipBorderWidth !== null) {
-                    options.plugins.tooltip.borderWidth ??= tooltipBorderWidth
-                }
-            }
 
             if (['doughnut', 'pie', 'polarArea'].includes(type)) {
                 options.scales.x.display ??= false
@@ -185,6 +161,7 @@ export default function chart({ cachedData, options, type }) {
             }
 
             this.applyChartColors(options)
+            this.applyChartCustomProperties(options)
             this.normalizeDatasets(cachedData)
 
             new Chart(this.$refs.canvas, {
@@ -241,7 +218,15 @@ export default function chart({ cachedData, options, type }) {
             }
 
             this.applyChartColors(chart.options)
-            chart.update('none')
+            this.applyChartCustomProperties(chart.options)
+
+            // Not `'none'`: that is one of Chart.js' "direct update" modes, which reuse a
+            // cached snapshot of the options shared between a dataset's elements instead of
+            // refreshing it. Every per-element option - bar and arc colors, point colors,
+            // point radius and style - would keep the value it was built with. `'resize'`
+            // refreshes them, and its transition is already zero-duration, so nothing
+            // animates. It is the mode `updateChartData()` uses for the same reason.
+            chart.update('resize')
         },
 
         applyChartColors(options) {
@@ -268,10 +253,9 @@ export default function chart({ cachedData, options, type }) {
             options.elements.bar ??= {}
             options.elements.bar.borderColor = resolvedBorderColor
 
-            // The tooltip sentinels arrived after the others, so a published
-            // copy of the view may not have them; without them Chart.js keeps
-            // its own tooltip colors.
-            if (tooltipBackgroundColor) {
+            // The tooltip color elements arrived after the others, so a published copy of
+            // the view may not have them; without them Chart.js keeps its own colors.
+            if (this.$refs.tooltipBackgroundColorElement) {
                 options.plugins ??= {}
                 options.plugins.tooltip ??= {}
                 options.plugins.tooltip.backgroundColor =
@@ -366,32 +350,70 @@ export default function chart({ cachedData, options, type }) {
             }
         },
 
-        // Chart geometry a stylesheet cannot otherwise reach — everything here
-        // is painted onto a bare `<canvas>`. Unset properties return `null` and
-        // leave the Chart.js default in place.
-        getChartVars() {
-            const styles = getComputedStyle(this.$el)
+        applyChartCustomProperties(options) {
+            const {
+                lineTension,
+                pointStyle,
+                barBorderRadius,
+                tooltipCornerRadius,
+                tooltipBorderWidth,
+                legendBorderRadius,
+                legendBoxWidth,
+                borderWidth,
+                pointRadius,
+            } = this.getChartCustomProperties()
 
-            const read = (property) =>
-                styles.getPropertyValue(property).trim() || null
+            options.borderWidth = this.userBorderWidth ?? borderWidth
+            options.tension = this.userLineTension ?? lineTension
+            options.pointStyle = this.userPointStyle ?? pointStyle
+            options.pointRadius = this.userPointRadius ?? pointRadius
 
-            const number = (property) => {
-                const parsed = parseFloat(read(property))
-
-                return Number.isNaN(parsed) ? null : parsed
+            if (type === 'bar') {
+                options.borderRadius =
+                    this.userBarBorderRadius ?? barBorderRadius
             }
 
-            const pointStyle = read('--chart-point-style')
+            options.plugins ??= {}
+            options.plugins.tooltip ??= {}
+            options.plugins.tooltip.cornerRadius =
+                this.userTooltipCornerRadius ?? tooltipCornerRadius
+            options.plugins.tooltip.borderWidth =
+                this.userTooltipBorderWidth ?? tooltipBorderWidth
+
+            const resolvedLegendBorderRadius =
+                this.userLegendBorderRadius ?? legendBorderRadius
+
+            options.plugins.legend ??= {}
+            options.plugins.legend.labels ??= {}
+            options.plugins.legend.labels.borderRadius =
+                resolvedLegendBorderRadius
+            // Chart.js ignores the radius unless this is on, and treats a radius of `0` as
+            // "inherit from the data" rather than "square", so it is derived rather than
+            // exposed as a property of its own.
+            options.plugins.legend.labels.useBorderRadius =
+                this.userLegendUseBorderRadius ?? resolvedLegendBorderRadius > 0
+            options.plugins.legend.labels.boxWidth =
+                this.userLegendBoxWidth ?? legendBoxWidth
+        },
+
+        // The parts of a chart that a stylesheet cannot otherwise reach, since Chart.js
+        // paints them onto a bare `<canvas>`. This covers the static appearance of what is
+        // painted, including everything Filament pins to a value of its own; how a chart
+        // behaves - animation, hit areas, which scales it shows - belongs in `getOptions()`.
+        // Each fallback is the default it stands in for.
+        getChartCustomProperties() {
+            const { number, keyword } = readCustomProperties(this.$el)
 
             return {
-                lineTension: number('--chart-line-tension'),
-                // Chart.js needs boolean `false` to drop the markers, and a
-                // custom property can only ever yield the string `'false'`,
-                // which is truthy — hence the `none` keyword.
-                pointStyle: pointStyle === 'none' ? false : pointStyle,
-                barBorderRadius: number('--chart-bar-border-radius'),
-                tooltipBorderRadius: number('--chart-tooltip-border-radius'),
-                tooltipBorderWidth: number('--chart-tooltip-border-width'),
+                lineTension: number('--chart-line-tension', 0),
+                pointStyle: keyword('--chart-point-style', 'circle'),
+                barBorderRadius: number('--chart-bar-border-radius', 0),
+                tooltipCornerRadius: number('--chart-tooltip-corner-radius', 6),
+                tooltipBorderWidth: number('--chart-tooltip-border-width', 0),
+                legendBorderRadius: number('--chart-legend-border-radius', 0),
+                legendBoxWidth: number('--chart-legend-box-width', 12),
+                borderWidth: number('--chart-border-width', 2),
+                pointRadius: number('--chart-point-radius', 2),
             }
         },
 

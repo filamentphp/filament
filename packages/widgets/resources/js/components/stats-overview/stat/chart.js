@@ -8,6 +8,8 @@ import {
     PointElement,
 } from 'chart.js'
 
+import readCustomProperties from '../../../custom-properties'
+
 Chart.register(
     CategoryScale,
     Filler,
@@ -69,7 +71,8 @@ export default function statsOverviewStatChart({ key, labels, values }) {
             this.getChart()?.destroy()
 
             const { backgroundColor, borderColor } = this.getChartColors()
-            const { borderWidth, fill, tension } = this.getChartVars()
+            const { borderWidth, fill, lineTension } =
+                this.getChartCustomProperties()
 
             new Chart(this.$refs.canvas, {
                 type: 'line',
@@ -80,7 +83,7 @@ export default function statsOverviewStatChart({ key, labels, values }) {
                             data: values,
                             borderWidth,
                             fill,
-                            tension,
+                            tension: lineTension,
                             backgroundColor,
                             borderColor,
                         },
@@ -137,16 +140,19 @@ export default function statsOverviewStatChart({ key, labels, values }) {
 
             const { backgroundColor, borderColor } = this.getChartColors()
 
-            // The custom properties are re-read too: a theme may legitimately
-            // give light and dark mode a different line.
-            const { borderWidth, fill, tension } = this.getChartVars()
+            // The custom properties are re-read too: a theme may legitimately give light
+            // and dark mode a different line.
+            const { borderWidth, fill, lineTension } =
+                this.getChartCustomProperties()
 
             chart.data.datasets[0].backgroundColor = backgroundColor
             chart.data.datasets[0].borderColor = borderColor
             chart.data.datasets[0].borderWidth = borderWidth
             chart.data.datasets[0].fill = fill
-            chart.data.datasets[0].tension = tension
-            chart.update('none')
+            chart.data.datasets[0].tension = lineTension
+
+            // `'resize'` rather than `'none'`, for the reason given in the chart widget.
+            chart.update('resize')
         },
 
         getChart() {
@@ -167,31 +173,16 @@ export default function statsOverviewStatChart({ key, labels, values }) {
             }
         },
 
-        // The sparkline paints onto a bare `<canvas>`, so the shape of its line
-        // is unreachable from a stylesheet. These custom properties are the
-        // bridge; unset, each falls back to the value the sparkline has always
-        // used.
-        getChartVars() {
-            const styles = getComputedStyle(this.$el)
-
-            const read = (property) =>
-                styles.getPropertyValue(property).trim() || null
-
-            const number = (value, fallback) => {
-                const parsed = parseFloat(value)
-
-                return Number.isNaN(parsed) ? fallback : parsed
-            }
-
-            const fill = read('--stat-chart-fill')
+        // The parts of the sparkline that a stylesheet cannot otherwise reach, since
+        // Chart.js paints them onto a bare `<canvas>`. Each fallback is the value the
+        // sparkline has always used.
+        getChartCustomProperties() {
+            const { number, keyword } = readCustomProperties(this.$el)
 
             return {
-                borderWidth: number(read('--stat-chart-border-width'), 2),
-                // Chart.js needs boolean `false` to drop the area fill, and a
-                // custom property can only ever yield the string `'false'`,
-                // which is truthy — hence the `none` keyword.
-                fill: fill === null ? 'start' : fill === 'none' ? false : fill,
-                tension: number(read('--stat-chart-line-tension'), 0.5),
+                borderWidth: number('--stat-chart-border-width', 2),
+                fill: keyword('--stat-chart-fill', 'start'),
+                lineTension: number('--stat-chart-line-tension', 0.5),
             }
         },
 

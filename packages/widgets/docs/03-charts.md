@@ -480,69 +480,75 @@ protected function getOptions(): RawJs
 }
 ```
 
-## Styling charts from CSS
+## Styling charts in a theme
 
-Chart.js paints onto a `<canvas>`, so most of a chart is out of reach of a stylesheet. Filament bridges the parts a theme is most likely to want through CSS custom properties, which you can set on `.fi-wi-chart` or anywhere above it:
+Chart.js paints a chart onto a `<canvas>`, so almost none of it can be reached from a stylesheet. A [custom theme](../styling/overview) is CSS only and cannot call `getOptions()`, so Filament exposes the parts of a chart that a theme is most likely to want to change as CSS custom properties. You may set them on `.fi-wi-chart`, or on any element above it to cover every chart in the panel at once:
 
 ```css
 .fi-wi-chart {
-    --chart-line-tension: 0;
-    --chart-bar-border-radius: 4;
+    --chart-border-width: 1;
+    --chart-line-tension: 0.4;
+    --chart-point-radius: 3;
     --chart-point-style: rect;
-    --chart-tooltip-border-radius: 0;
+    --chart-bar-border-radius: 4;
+}
+```
+
+`--chart-border-width` sets the thickness of the line that a chart draws around its data. `--chart-line-tension` curves the line of a line chart, from `0` for straight segments up to `1`. `--chart-point-radius` sizes the markers on a line, radar or scatter chart, and `--chart-point-style` shapes them, accepting any of Chart.js' point styles - `circle`, `cross`, `crossRot`, `dash`, `line`, `rect`, `rectRounded`, `rectRot`, `star` or `triangle` - as well as `none` to hide them entirely. `--chart-bar-border-radius` rounds the corners of the bars in a bar chart.
+
+These values are handed to Chart.js rather than used by the browser, so they are plain numbers and keywords, without units. If you set one to something Chart.js cannot use, it is ignored and the chart keeps its default. They are also read again whenever the color scheme changes, so you may give light and dark mode different values.
+
+<Aside variant="info">
+    These properties are for styling every chart in a panel at once, which is what a theme usually wants. To change a single chart, use [`getOptions()`](#setting-chart-configuration-options) instead - anything you set there wins over the properties here.
+</Aside>
+
+### Styling the chart legend
+
+The legend beneath a chart is drawn onto the canvas as well. Two properties control the color swatch next to each label:
+
+```css
+.fi-wi-chart {
+    --chart-legend-box-width: 16;
+    --chart-legend-border-radius: 2;
+}
+```
+
+`--chart-legend-box-width` sets how wide each swatch is, and `--chart-legend-border-radius` rounds its corners. A swatch is square unless you give it a radius.
+
+### Styling chart tooltips
+
+The tooltip that appears when hovering over a chart is drawn onto the canvas as well. Its shape comes from two more properties:
+
+```css
+.fi-wi-chart {
+    --chart-tooltip-corner-radius: 0;
     --chart-tooltip-border-width: 1;
 }
 ```
 
-| Property | Chart.js option | When unset |
-| --- | --- | --- |
-| `--chart-line-tension` | line `tension` | Chart.js default (`0`) |
-| `--chart-bar-border-radius` | bar `borderRadius` | Chart.js default (`0`) |
-| `--chart-point-style` | `pointStyle` — any Chart.js keyword, or `none` to hide the markers | Chart.js default (`circle`) |
-| `--chart-tooltip-border-radius` | tooltip `cornerRadius` | Chart.js default (`6`) |
-| `--chart-tooltip-border-width` | tooltip `borderWidth` | Chart.js default (`0`) |
-
-The values are plain numbers without units, and are read when the chart is built. Anything you pass through `getOptions()` still takes precedence over them.
-
-Tooltip colors work differently, since they need to follow a switch between light and dark mode. Like the chart's other colors, they are read from hidden sentinel elements, so you style them with a normal `color` declaration:
+Its colors are set differently, so that you can use the same palette and dark mode variants as the rest of your theme. Filament reads them from elements that you style with an ordinary `color` declaration:
 
 ```css
 .fi-wi-chart {
     & .fi-wi-chart-tooltip-bg-color {
-        color: var(--color-gray-900);
+        @apply text-gray-900 dark:text-white;
     }
 
     & .fi-wi-chart-tooltip-text-color {
-        color: var(--color-white);
+        @apply text-white dark:text-gray-900;
     }
 
     & .fi-wi-chart-tooltip-border-color {
-        color: transparent;
+        @apply text-gray-700 dark:text-gray-200;
     }
 }
 ```
 
-The `.fi-wi-chart-bg-color`, `.fi-wi-chart-border-color`, `.fi-wi-chart-grid-color`, and `.fi-wi-chart-text-color` elements style the series, grid lines, and axis labels in the same way.
+A tooltip has no border until you give it a width, so `--chart-tooltip-border-width` and `.fi-wi-chart-tooltip-border-color` usually change together.
 
-### Styling stat sparklines
+The colors of the chart itself work in the same way: `.fi-wi-chart-bg-color` and `.fi-wi-chart-border-color` fill and outline the data, `.fi-wi-chart-grid-color` draws the grid lines, and `.fi-wi-chart-text-color` labels the axes.
 
-The small trend charts inside a [stats overview widget](stats-overview) have their own properties, set on `.fi-wi-stats-overview-stat`:
-
-```css
-.fi-wi-stats-overview-stat {
-    --stat-chart-border-width: 1;
-    --stat-chart-fill: none;
-    --stat-chart-line-tension: 0;
-}
-```
-
-| Property | Chart.js option | When unset |
-| --- | --- | --- |
-| `--stat-chart-border-width` | `borderWidth` | `2` |
-| `--stat-chart-fill` | `fill` — any Chart.js fill mode, or `none` for no area fill | `start` |
-| `--stat-chart-line-tension` | `tension` | `0.5` |
-
-These are re-read whenever the color scheme changes, so a sparkline can have a different line in light and dark mode.
+The small charts inside a [stats overview widget](stats-overview#styling-stat-charts-in-a-theme) are styled separately, with their own set of properties.
 
 ## Adding a description
 

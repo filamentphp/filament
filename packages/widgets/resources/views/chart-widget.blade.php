@@ -119,37 +119,49 @@
                     ])
                 ></canvas>
 
+                {{--
+                    Chart.js paints the chart onto the canvas, where a stylesheet cannot reach it. These empty
+                    elements carry the colors it should use, so that a theme can set them with an ordinary
+                    `color` declaration and they follow light and dark mode like any other element.
+                --}}
                 <span
+                    aria-hidden="true"
                     x-ref="backgroundColorElement"
                     class="fi-wi-chart-bg-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="borderColorElement"
                     class="fi-wi-chart-border-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="gridColorElement"
                     class="fi-wi-chart-grid-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="textColorElement"
                     class="fi-wi-chart-text-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="tooltipBackgroundColorElement"
                     class="fi-wi-chart-tooltip-bg-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="tooltipTextColorElement"
                     class="fi-wi-chart-tooltip-text-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="tooltipBorderColorElement"
                     class="fi-wi-chart-tooltip-border-color"
                 ></span>
