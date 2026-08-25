@@ -494,7 +494,7 @@ Chart.js paints a chart onto a `<canvas>`, so almost none of it can be reached f
 }
 ```
 
-`--chart-border-width` sets the thickness of the line that a chart draws around its data. `--chart-line-tension` curves the line of a line chart, from `0` for straight segments up to `1`. `--chart-point-radius` sizes the markers on a line, radar or scatter chart, and `--chart-point-style` shapes them, accepting any of Chart.js' point styles - `circle`, `cross`, `crossRot`, `dash`, `line`, `rect`, `rectRounded`, `rectRot`, `star` or `triangle` - as well as `none` to hide them entirely. `--chart-bar-border-radius` rounds the corners of the bars in a bar chart.
+`--chart-border-width` sets the thickness of the line that a chart draws around its data. `--chart-line-tension` curves the line of a line chart, from `0` for straight segments up to `1`. `--chart-point-radius` sizes the markers on a line, radar or scatter chart, and `--chart-point-style` shapes them, accepting any of Chart.js' point styles - `circle`, `cross`, `crossRot`, `dash`, `line`, `rect`, `rectRounded`, `rectRot`, `star` or `triangle` - as well as `none` to hide them entirely. `--chart-bar-border-radius` rounds the corners of the bars in a bar chart, which are already slightly rounded by default. Set it to `0` for square bars.
 
 These values are handed to Chart.js rather than used by the browser, so they are plain numbers and keywords, without units. If you set one to something Chart.js cannot use, it is ignored and the chart keeps its default. They are also read again whenever the color scheme changes, so you may give light and dark mode different values.
 
@@ -509,11 +509,11 @@ The legend beneath a chart is drawn onto the canvas as well. Two properties cont
 ```css
 .fi-wi-chart {
     --chart-legend-box-width: 16;
-    --chart-legend-border-radius: 2;
+    --chart-legend-border-radius: 0;
 }
 ```
 
-`--chart-legend-box-width` sets how wide each swatch is, and `--chart-legend-border-radius` rounds its corners. A swatch is square unless you give it a radius.
+`--chart-legend-box-width` sets how wide each swatch is, and `--chart-legend-border-radius` rounds its corners, which are slightly rounded by default to match the bars of a bar chart. Set it to `0` for square swatches.
 
 ### Styling chart tooltips
 

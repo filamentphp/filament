@@ -400,17 +400,20 @@ export default function chart({ cachedData, options, type }) {
         // paints them onto a bare `<canvas>`. This covers the static appearance of what is
         // painted, including everything Filament pins to a value of its own; how a chart
         // behaves - animation, hit areas, which scales it shows - belongs in `getOptions()`.
-        // Each fallback is the default it stands in for.
+        // Each fallback is the default it stands in for: Chart.js' own, except where the
+        // panel's design language asks for something else. Bars and legend swatches are
+        // slightly rounded, since nothing else in Filament has square corners, and the
+        // tooltip's `4` is the radius `tippy.js` gives every other tooltip in a panel.
         getChartCustomProperties() {
             const { number, keyword } = readCustomProperties(this.$el)
 
             return {
                 lineTension: number('--chart-line-tension', 0),
                 pointStyle: keyword('--chart-point-style', 'circle'),
-                barBorderRadius: number('--chart-bar-border-radius', 0),
-                tooltipCornerRadius: number('--chart-tooltip-corner-radius', 6),
+                barBorderRadius: number('--chart-bar-border-radius', 2),
+                tooltipCornerRadius: number('--chart-tooltip-corner-radius', 4),
                 tooltipBorderWidth: number('--chart-tooltip-border-width', 0),
-                legendBorderRadius: number('--chart-legend-border-radius', 0),
+                legendBorderRadius: number('--chart-legend-border-radius', 2),
                 legendBoxWidth: number('--chart-legend-box-width', 12),
                 borderWidth: number('--chart-border-width', 2),
                 pointRadius: number('--chart-point-radius', 2),
