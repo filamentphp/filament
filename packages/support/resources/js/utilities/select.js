@@ -2267,7 +2267,7 @@ export class Select {
             // If there are remove buttons in multiple mode, disable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.setAttribute('disabled', 'disabled')
@@ -2300,7 +2300,7 @@ export class Select {
             // If there are remove buttons in multiple mode, enable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.removeAttribute('disabled')
