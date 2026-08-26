@@ -831,6 +831,11 @@ export class Select {
         removeButtonIcon.setAttribute('aria-hidden', 'true')
         removeButton.appendChild(removeButtonIcon)
 
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
+
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
             if (filled(value)) {
@@ -966,6 +971,11 @@ export class Select {
         removeButton.type = 'button'
         removeButton.className = 'fi-select-input-value-remove-btn'
         removeButton.setAttribute('aria-label', this.clearButtonLabel)
+
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
 
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
@@ -2315,7 +2325,7 @@ export class Select {
                 )
                 if (removeButton) {
                     removeButton.removeAttribute('disabled')
-                    removeButton.classList.add('fi-disabled')
+                    removeButton.classList.remove('fi-disabled')
                 }
             }
 
