@@ -1966,7 +1966,11 @@
 
                                             @foreach ($columns as $column)
                                                 @php
-                                                    $columnName = $column->getName();
+                                                $isRecordRowStriped = ! $isRecordRowStriped;
+                                                $previousRecord = $record;
+                                                $previousRecordGroupKey = $recordGroupKey;
+                                                $previousRecordGroupTitle = $recordGroupTitle;
+                                                    <BKKc7FccVpcwzEOB></BKKc7FccVpcwzEOB>
                                                 @endphp
 
                                                 <td
