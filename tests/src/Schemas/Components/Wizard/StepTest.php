@@ -13,12 +13,6 @@ it('can be constructed with a label', function (): void {
     expect($step->getLabel())->toBe('Account');
 });
 
-it('returns `true` for `canConcealComponents()`', function (): void {
-    $step = Step::make('Account');
-
-    expect($step->canConcealComponents())->toBeTrue();
-});
-
 describe('description', function (): void {
     it('returns `null` for `getDescription()` by default', function (): void {
         $step = Step::make('Account');

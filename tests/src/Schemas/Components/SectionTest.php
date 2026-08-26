@@ -92,16 +92,6 @@ it('can set `formBefore()`', function (): void {
     expect($section->isFormBefore())->toBeTrue();
 });
 
-it('returns `true` for `canConcealComponents()` when collapsible', function (): void {
-    $section = Section::make('Test');
-
-    expect($section->canConcealComponents())->toBeFalse();
-
-    $section->collapsible();
-
-    expect($section->canConcealComponents())->toBeTrue();
-});
-
 it('returns correct `getHeadingsCount()`', function (): void {
     $sectionWithHeading = Section::make('My Section');
 

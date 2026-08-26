@@ -72,7 +72,7 @@
 }
 
 .fi-body-has-topbar .fi-sidebar {
-    @apply lg:top-[4rem] lg:h-[calc(100dvh-4rem)];
+    @apply lg:top-(--topbar-height) lg:h-[calc(100dvh-var(--topbar-height))];
 }
 
 .fi-sidebar-close-overlay {
@@ -120,7 +120,7 @@
 }
 
 .fi-sidebar-header {
-    @apply flex h-16 items-center justify-center;
+    @apply flex h-(--topbar-height) items-center justify-center;
 }
 
 .fi-sidebar-header-logo-ctn {

@@ -6,6 +6,8 @@ return [
 
         'heading' => 'ដំណឹង',
 
+        'unread_label' => 'ការជូនដំណឹងមិនទាន់អាន',
+
         'actions' => [
 
             'clear' => [

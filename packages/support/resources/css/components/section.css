@@ -147,7 +147,7 @@
         }
 
         & > .fi-section-content-ctn {
-            @apply invisible absolute h-0 overflow-hidden border-none;
+            @apply hidden;
         }
     }
 

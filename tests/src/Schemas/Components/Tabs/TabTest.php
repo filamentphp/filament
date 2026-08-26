@@ -34,12 +34,6 @@ it('can set `label()` with an `Htmlable`', function (): void {
     expect($tab->getLabel())->toBe($htmlable);
 });
 
-it('returns `true` for `canConcealComponents()`', function (): void {
-    $tab = Tab::make('Test');
-
-    expect($tab->canConcealComponents())->toBeTrue();
-});
-
 describe('label visibility', function (): void {
     it('reports `hasCustomLabel()` as `false` by default', function (): void {
         $tab = Tab::make();

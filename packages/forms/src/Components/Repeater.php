@@ -10,7 +10,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -33,7 +32,7 @@ use LogicException;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, HasExtraItemActions
+class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use CanBeCompact;
@@ -1503,11 +1502,6 @@ class Repeater extends Field implements CanConcealComponents, HasEmbeddedView, H
                 ],
             );
         }
-    }
-
-    public function canConcealComponents(): bool
-    {
-        return $this->isCollapsible();
     }
 
     public function getPublishedViewOverrideCheckPath(): ?string

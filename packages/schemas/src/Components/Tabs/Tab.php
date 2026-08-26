@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Tabs;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasBadge;
@@ -21,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
-class Tab extends Component implements CanConcealComponents, HasEmbeddedView
+class Tab extends Component implements HasEmbeddedView
 {
     use HasBadge;
     use HasBadgeTooltip;
@@ -76,11 +75,6 @@ class Tab extends Component implements CanConcealComponents, HasEmbeddedView
         }
 
         return parent::getAllColumns();
-    }
-
-    public function canConcealComponents(): bool
-    {
-        return true;
     }
 
     public function query(?Closure $callback): static

@@ -81,6 +81,12 @@
                                 @apply text-gray-500 dark:text-gray-400;
                             }
                         }
+
+                        & .fi-sc-wizard-header-step-text {
+                            & .fi-sc-wizard-header-step-label {
+                                @apply text-gray-500 dark:text-gray-400;
+                            }
+                        }
                     }
                 }
             }
@@ -111,12 +117,6 @@
                         & .fi-sc-wizard-header-step-number {
                             @apply text-gray-500 dark:text-gray-400;
                         }
-
-                        & .fi-sc-wizard-header-step-text {
-                            & .fi-sc-wizard-header-step-label {
-                                @apply text-gray-500 dark:text-gray-400;
-                            }
-                        }
                     }
                 }
             }
@@ -127,7 +127,7 @@
         @apply outline-hidden;
 
         &:not(.fi-active) {
-            @apply invisible absolute h-0 overflow-hidden p-0;
+            @apply hidden;
         }
     }
 

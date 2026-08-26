@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Wizard;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -14,7 +13,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
-class Step extends Component implements CanConcealComponents, HasEmbeddedView
+class Step extends Component implements HasEmbeddedView
 {
     use HasLabel;
 
@@ -137,11 +136,6 @@ class Step extends Component implements CanConcealComponents, HasEmbeddedView
         }
 
         return parent::getAllColumns();
-    }
-
-    public function canConcealComponents(): bool
-    {
-        return true;
     }
 
     public function formWrapper(bool | Closure $condition = true): static

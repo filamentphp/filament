@@ -48,6 +48,8 @@ You can even apply `!important` to only specific Tailwind classes, which is a li
 }
 ```
 
+A few parts of the UI cannot be styled with a hook class at all, because they are painted onto a `<canvas>` rather than built from HTML elements. [Chart widgets](../widgets/charts#styling-charts-in-a-theme) and the [charts inside stats](../widgets/stats-overview#styling-stat-charts-in-a-theme) expose those parts as CSS custom properties instead.
+
 ## Common hook class abbreviations
 
 We use a few common abbreviations in our hook classes to keep them short and readable:

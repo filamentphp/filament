@@ -15,7 +15,13 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
         $name = str(Filament::getNameForDefaultAvatar($record))
             ->trim()
             ->explode(' ')
-            ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+            ->map(function (string $segment): string {
+                // Skip leading punctuation (e.g. a "[SYSTEM] Admin" service-account
+                // naming convention) so it doesn't become part of the initials.
+                $letters = preg_replace('/^[^\p{L}\p{N}]+/u', '', $segment);
+
+                return filled($letters) ? mb_substr($letters, 0, 1) : '';
+            })
             ->join(' ');
 
         $background = Color::convertToHex(FilamentColor::getColor('gray')[950] ?? Color::Gray[950]);

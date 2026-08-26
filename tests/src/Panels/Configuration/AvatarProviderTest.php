@@ -43,3 +43,13 @@ it('includes background color in the URL', function (): void {
     expect($url)->toContain('background=');
     expect($url)->toMatch('/background=%23([0-9a-f]{3}){1,2}$/');
 });
+
+it('skips leading punctuation when building initials', function (): void {
+    $provider = new UiAvatarsProvider;
+    $user = User::factory()->create(['name' => '[SYSTEM] Admin']);
+
+    $url = $provider->get($user);
+
+    expect($url)->toContain('name=S+A');
+    expect($url)->not->toContain('name=%5B');
+});

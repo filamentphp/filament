@@ -6,12 +6,12 @@ return [
 
     'breadcrumb' => 'Angalia',
 
-    'content' => [
+    'navigation_label' => 'Angalia',
 
+    'content' => [
         'tab' => [
             'label' => 'Angalia',
         ],
-
     ],
 
 ];

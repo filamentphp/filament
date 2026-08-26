@@ -89,7 +89,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Component' => 'Filament\\Schemas\\Components\\Component',
             'Filament\\Forms\\Components\\Concerns\\BelongsToContainer' => 'Filament\\Schemas\\Components\\Concerns\\BelongsToContainer',
             'Filament\\Forms\\Components\\Concerns\\BelongsToModel' => 'Filament\\Schemas\\Components\\Concerns\\BelongsToModel',
-            'Filament\\Forms\\Components\\Concerns\\CanBeConcealed' => 'Filament\\Schemas\\Components\\Concerns\\CanBeConcealed',
             'Filament\\Forms\\Components\\Concerns\\CanBeDisabled' => 'Filament\\Schemas\\Components\\Concerns\\CanBeDisabled',
             'Filament\\Forms\\Components\\Concerns\\CanBeHidden' => 'Filament\\Schemas\\Components\\Concerns\\CanBeHidden',
             'Filament\\Forms\\Components\\Concerns\\CanBeRepeated' => 'Filament\\Schemas\\Components\\Concerns\\CanBeRepeated',

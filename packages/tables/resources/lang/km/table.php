@@ -10,6 +10,9 @@ return [
             'apply' => [
                 'label' => 'អនុវត្ត',
             ],
+            'reorder' => [
+                'label' => 'តម្រៀបជួរឈរឡើងវិញ',
+            ],
             'reset' => [
                 'label' => 'កំណត់ឡើងវិញ',
             ],
@@ -21,6 +24,15 @@ return [
 
         'actions' => [
             'label' => 'សកម្មភាព|សកម្មភាព',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'បាទ',
+                'false' => 'ទេ',
+            ],
+
         ],
 
         'text' => [
@@ -105,6 +117,10 @@ return [
             'label' => 'តម្រៀបកំណត់ត្រាឡើងវិញ',
         ],
 
+        'reorder_record' => [
+            'label' => 'តម្រៀបធាតុ :key ឡើងវិញ',
+        ],
+
         'filter' => [
             'label' => 'តម្រង',
         ],
@@ -119,6 +135,10 @@ return [
 
         'column_manager' => [
             'label' => 'បិទ/បើកជួរឈរ',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'ពង្រីក/បង្រួមធាតុ :key',
         ],
 
     ],
@@ -206,7 +226,11 @@ return [
 
     ],
 
+    'loading' => 'កំពុងផ្ទុក...',
+
     'reorder_indicator' => 'អូស និងទម្លាក់កំណត់ត្រាតាមលំដាប់លំដោយ.',
+
+    'result_count' => '{0} គ្មានលទ្ធផល|{1} លទ្ធផល :count|[2,*] លទ្ធផល :count',
 
     'selection_indicator' => [
 

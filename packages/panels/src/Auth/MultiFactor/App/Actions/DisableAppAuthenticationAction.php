@@ -14,7 +14,9 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use SensitiveParameter;
@@ -28,10 +30,10 @@ class DisableAppAuthenticationAction
         return Action::make('disableAppAuthentication')
             ->label(__('filament-panels::auth/multi-factor/app/actions/disable.label'))
             ->color('danger')
-            ->icon(Heroicon::LockOpen)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE) ?? Heroicon::LockOpen)
             ->link()
             ->modalWidth(Width::Medium)
-            ->modalIcon(Heroicon::OutlinedLockOpen)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_MODAL) ?? Heroicon::OutlinedLockOpen)
             ->modalHeading(__('filament-panels::auth/multi-factor/app/actions/disable.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/app/actions/disable.modal.description'))
             ->schema([
@@ -112,7 +114,7 @@ class DisableAppAuthenticationAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/app/actions/disable.notifications.disabled.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedLockOpen)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_NOTIFICATION) ?? Heroicon::OutlinedLockOpen)
                     ->send();
             })
             ->rateLimit(5);

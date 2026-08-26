@@ -143,13 +143,17 @@
                     ])
             }}
         >
-            {{
-                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Support\View\SupportIconAlias::BADGE_DELETE_BUTTON, attributes: (new \Filament\Support\View\ComponentAttributeBag([
-                    'aria-hidden' => 'true',
-                    'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
-                    'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
-                ])), size: \Filament\Support\Enums\IconSize::ExtraSmall)
-            }}
+            <span
+                {{
+                    (new \Filament\Support\View\ComponentAttributeBag([
+                        'aria-hidden' => 'true',
+                        'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
+                        'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
+                    ]))->class([
+                        'fi-badge-delete-btn-icon',
+                    ])
+                }}
+            ></span>
 
             @if ($deleteButtonHasLoadingIndicator)
                 {{

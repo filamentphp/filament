@@ -28,7 +28,7 @@
                     @apply w-1/2 p-0;
 
                     &.fi-has-action {
-                        @apply w-auto p-0.5;
+                        @apply w-auto px-3 py-2;
 
                         & .fi-fo-key-value-table-row-sortable-handle {
                             @apply flex;

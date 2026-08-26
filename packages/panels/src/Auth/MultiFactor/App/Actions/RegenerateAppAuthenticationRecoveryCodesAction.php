@@ -17,7 +17,9 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
@@ -31,10 +33,10 @@ class RegenerateAppAuthenticationRecoveryCodesAction
         return Action::make('regenerateAppAuthenticationRecoveryCodes')
             ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.label'))
             ->color('gray')
-            ->icon(Heroicon::ArrowPath)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES) ?? Heroicon::ArrowPath)
             ->link()
             ->modalWidth(Width::Large)
-            ->modalIcon(Heroicon::OutlinedArrowPath)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_MODAL) ?? Heroicon::OutlinedArrowPath)
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.description'))
@@ -88,7 +90,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.notifications.regenerated.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedArrowPath)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_NOTIFICATION) ?? Heroicon::OutlinedArrowPath)
                     ->send();
             })
             ->registerModalActions([

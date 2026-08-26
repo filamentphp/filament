@@ -736,6 +736,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'Clear selection',
+            ],
+
             'create_option' => [
 
                 'label' => 'Create',
@@ -780,6 +784,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Remove :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -798,6 +806,8 @@ return [
         'placeholder' => 'Select an option',
 
         'searching_message' => 'Searching...',
+
+        'search_label' => 'Search',
 
         'search_prompt' => 'Start typing to search...',
 

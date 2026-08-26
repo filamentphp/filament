@@ -110,3 +110,12 @@
         }
     }
 }
+
+/* The `<fieldset>` around a component with a client-side visibility condition exists to
+   be `disabled` while the component is hidden, not to group controls, so it must not
+   affect the layout like a fieldset. */
+fieldset.fi-sc-visibility-fieldset {
+    @apply m-0 min-w-0 border-0 p-0;
+
+    min-inline-size: 0;
+}

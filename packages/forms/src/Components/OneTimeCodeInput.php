@@ -56,7 +56,7 @@ class OneTimeCodeInput extends Field implements HasEmbeddedView
                 'disabled' => $this->isDisabled(),
                 'id' => $this->getId(),
                 'readonly' => $this->isReadOnly(),
-                'required' => $this->isRequired() && (! $this->isConcealed()),
+                'required' => $this->isRequired(),
             ], escape: false);
 
         // The remaining inputs mirror the first input's resolved `disabled` and `readonly`

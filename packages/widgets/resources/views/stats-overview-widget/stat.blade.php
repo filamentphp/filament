@@ -72,12 +72,18 @@
                 {{-- The label and value are already exposed as text, so the trend sparkline is decorative. --}}
                 <canvas x-ref="canvas" aria-hidden="true"></canvas>
 
+                {{--
+                    These empty elements carry the colors the chart should be painted in, so that a theme
+                    can set them with an ordinary `color` declaration.
+                --}}
                 <span
+                    aria-hidden="true"
                     x-ref="backgroundColorElement"
                     class="fi-wi-stats-overview-stat-chart-bg-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="borderColorElement"
                     class="fi-wi-stats-overview-stat-chart-border-color"
                 ></span>

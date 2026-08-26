@@ -27,8 +27,6 @@ trait Macroable
 
         foreach ($methods as $method) {
             if ($replace || (! isset(static::$macros[$method->name][static::class]))) {
-                $method->setAccessible(true);
-
                 static::macro($method->name, $method->invoke($mixin));
             }
         }
