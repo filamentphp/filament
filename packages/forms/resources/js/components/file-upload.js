@@ -364,6 +364,28 @@ export default function fileUploadFormComponent({
 
                 this.lastState = JSON.stringify(this.state)
 
+                // Skip refetching on a pure reorder: re-requesting file URLs here would
+                // regenerate a fresh signed URL per file on private disks, breaking browser caching.
+                const previousFileKeys = new Set(Object.keys(this.fileKeyIndex))
+                const newFileKeys = Object.keys(this.state ?? {})
+
+                const isPureReorder =
+                    newFileKeys.length === previousFileKeys.size &&
+                    newFileKeys.every((fileKey) => previousFileKeys.has(fileKey))
+
+                if (isPureReorder) {
+                    this.fileKeyIndex = Object.fromEntries(
+                        newFileKeys.map((fileKey) => [
+                            fileKey,
+                            this.fileKeyIndex[fileKey],
+                        ]),
+                    )
+
+                    this.pond.files = this.buildPondFiles()
+
+                    return
+                }
+
                 this.pond.files = await this.getFiles()
             })
 
@@ -525,6 +547,10 @@ export default function fileUploadFormComponent({
         async getFiles() {
             await this.getUploadedFiles()
 
+            return this.buildPondFiles()
+        },
+
+        buildPondFiles() {
             let files = []
 
             for (const uploadedFile of Object.values(this.fileKeyIndex)) {
