@@ -123,6 +123,52 @@ describe('authentication', function (): void {
         $this->get(route('filament.admin.pages.dashboard'))->assertRedirect(Filament::getLoginUrl());
     });
 
+    it('does not pad a successful authentication when the panel registers no multi-factor authentication providers', function (): void {
+        expect(Filament::getMultiFactorAuthenticationProviders())->toBe([]);
+
+        $userToAuthenticate = User::factory()->create();
+
+        $padding = [];
+
+        Sleep::fake();
+        Sleep::whenFakingSleep(function ($duration) use (&$padding): void {
+            $padding[] = $duration->totalMilliseconds;
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertRedirect(Filament::getUrl());
+
+        expect($padding)->toBe([]);
+    });
+
+    it('still pads a successful authentication when the panel registers a multi-factor authentication provider (control)', function (): void {
+        Filament::setCurrentPanel('app-authentication');
+
+        $userToAuthenticate = User::factory()->create();
+
+        $padding = [];
+
+        Sleep::fake();
+        Sleep::whenFakingSleep(function ($duration) use (&$padding): void {
+            $padding[] = $duration->totalMilliseconds;
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasNoFormErrors();
+
+        expect($padding)->not->toBe([]);
+    });
+
 });
 
 describe('authentication failures', function (): void {

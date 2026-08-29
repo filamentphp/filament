@@ -152,6 +152,10 @@ class Login extends SimplePage
                 return true;
             }
 
+            if (Filament::getMultiFactorAuthenticationProviders() === []) {
+                $timebox->returnEarly();
+            }
+
             return false;
         }, $timeboxDuration);
 
