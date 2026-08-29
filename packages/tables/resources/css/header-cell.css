@@ -124,6 +124,9 @@
 
     & .fi-ta-header-cell-sort-btn {
         @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 flex w-full cursor-pointer appearance-none items-center justify-start gap-x-1 rounded-md border-0 bg-transparent p-0 text-start outline-none focus-visible:ring-2;
+
+        /* The user agent stylesheet sets `text-transform: none` on form controls, and preflight only restores `font`, `letter-spacing`, and `color` inheritance — so without this, styling applied to the header cell reaches the plain label but not the sortable button. */
+        text-transform: inherit;
     }
 
     & .fi-icon {

@@ -2434,19 +2434,6 @@ it('can set `table()` columns and check `isTable()`', function (): void {
     expect($repeater->getTableColumns())->toHaveCount(2);
 });
 
-it('returns `false` for `canConcealComponents()` when not collapsible', function (): void {
-    $repeater = Repeater::make('items');
-
-    expect($repeater->canConcealComponents())->toBeFalse();
-});
-
-it('returns `true` for `canConcealComponents()` when collapsible', function (): void {
-    $repeater = Repeater::make('items')
-        ->collapsible();
-
-    expect($repeater->canConcealComponents())->toBeTrue();
-});
-
 it('returns `0` for `getHeadingsCount()` by default', function (): void {
     $repeater = Repeater::make('items');
 

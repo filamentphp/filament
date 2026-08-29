@@ -41,6 +41,64 @@ const findClosestLivewireComponent = (el) => {
     return closestRoot.__livewire
 }
 
+let isRetryingConcealedValidation = false
+
+// `invalid` events do not bubble, so they are only observable at the document
+// level in the capture phase.
+document.addEventListener(
+    'invalid',
+    (event) => {
+        const control = event.target
+
+        // Only controls that belong to a Filament field are handled, so that
+        // other forms on the page keep their own validation behavior.
+        if (!control.closest('[data-field-wrapper]')) {
+            return
+        }
+
+        // Visible controls use the default native validation UI.
+        if (
+            control.offsetParent !== null &&
+            getComputedStyle(control).visibility !== 'hidden'
+        ) {
+            return
+        }
+
+        // The browser cannot focus a concealed control or anchor a validation
+        // bubble to it, so suppress the native UI for it.
+        event.preventDefault()
+
+        // Only attempt one reveal per validation burst, so a control that
+        // stays concealed cannot cause an infinite retry loop.
+        if (isRetryingConcealedValidation) {
+            return
+        }
+
+        isRetryingConcealedValidation = true
+
+        // Reveal the concealing containers, using the same `expand` event
+        // contract as `handleFormValidationError()` below.
+        let elementToExpand = control
+
+        while (elementToExpand) {
+            elementToExpand.dispatchEvent(new CustomEvent('expand'))
+
+            elementToExpand = elementToExpand.parentNode
+        }
+
+        // Re-run native validation once Alpine has applied the reveal, so the
+        // browser can focus the control and show its validation bubble.
+        requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+                control.form?.reportValidity()
+
+                setTimeout(() => (isRetryingConcealedValidation = false), 100)
+            }),
+        )
+    },
+    true,
+)
+
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentSchema', ({ livewireId, schemaKey }) => ({
         handleFormValidationError(event) {

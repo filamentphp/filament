@@ -26,3 +26,35 @@ test('component is macroable', function (): void {
     expect(Section::hasMacro('someMacro'))
         ->toBeFalse();
 });
+
+it('can use `mixin()` to register macros from public and protected methods', function (): void {
+    expect(Field::hasMacro('publicMixinMacro'))
+        ->toBeFalse()
+        ->and(Field::hasMacro('protectedMixinMacro'))
+        ->toBeFalse();
+
+    Field::mixin(new FieldMixin);
+
+    expect(Field::hasMacro('publicMixinMacro'))
+        ->toBeTrue()
+        ->and(Field::hasMacro('protectedMixinMacro'))
+        ->toBeTrue();
+
+    expect(TextInput::make('name')->publicMixinMacro())
+        ->toBe('Hello')
+        ->and(TextInput::make('name')->protectedMixinMacro())
+        ->toBe('Hi');
+});
+
+class FieldMixin
+{
+    public function publicMixinMacro(): Closure
+    {
+        return fn (): string => 'Hello';
+    }
+
+    protected function protectedMixinMacro(): Closure
+    {
+        return fn (): string => 'Hi';
+    }
+}

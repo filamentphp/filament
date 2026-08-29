@@ -149,6 +149,36 @@ protected function getStats(): array
 
 <AutoScreenshot name="widgets/stats-overview/chart" alt="Stats overview with charts" version="5.x" />
 
+## Styling stat charts in a theme
+
+Chart.js paints a stat's chart onto a `<canvas>`, so its line cannot be reached from a stylesheet. A [custom theme](../styling/overview) is CSS only, so Filament exposes the shape of that line as CSS custom properties, which you may set on `.fi-wi-stats-overview-stat`, or on any element above it to cover every stat in the panel at once:
+
+```css
+.fi-wi-stats-overview-stat {
+    --stat-chart-border-width: 1;
+    --stat-chart-line-tension: 0;
+    --stat-chart-fill: none;
+}
+```
+
+`--stat-chart-border-width` thickens the line, `--stat-chart-line-tension` curves it, from `0` for straight segments up to `1`, and `--stat-chart-fill` shades the area beneath it, accepting `start`, `end`, `origin` or `stack`, as well as `none` to leave the line bare.
+
+These values are handed to Chart.js rather than used by the browser, so they are plain numbers and keywords, without units. If you set one to something Chart.js cannot use, it is ignored and the chart keeps its default. They are also read again whenever the color scheme changes, so you may give light and dark mode different values.
+
+The chart takes its colors from the [color of the stat](#changing-the-color-of-the-stat). To change them in a theme, style the `.fi-wi-stats-overview-stat-chart-bg-color` and `.fi-wi-stats-overview-stat-chart-border-color` elements with an ordinary `color` declaration:
+
+```css
+.fi-wi-stats-overview-stat {
+    & .fi-wi-stats-overview-stat-chart-border-color {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+```
+
+<Aside variant="info">
+    These properties only affect the charts inside stats. [Chart widgets](charts#styling-charts-in-a-theme) are styled with their own set, prefixed `--chart-`.
+</Aside>
+
 ## Live updating stats (polling)
 
 By default, stats overview widgets refresh their data every 5 seconds.
