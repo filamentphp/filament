@@ -164,20 +164,24 @@ class Login extends SimplePage
             return null;
         }
 
-        event(new Validated($authGuard->name, $user));
+        app(Timebox::class)->call(function (Timebox $timebox) use ($authProvider, $authGuard, $credentials, $remember, $user): void {
+            event(new Validated($authGuard->name, $user));
 
-        // `Validated` listeners can change authorization state, so panel access must be
-        // checked again before login to preserve the ordering from `attemptWhen()`.
-        if (! $this->isUserAllowedToAccessPanel($user)) {
-            $this->fireFailedEvent($authGuard, $user, $credentials);
-            $this->throwFailureValidationException();
-        }
+            // `Validated` listeners can change authorization state, so panel access must be
+            // checked again before login to preserve the ordering from `attemptWhen()`.
+            if (! $this->isUserAllowedToAccessPanel($user)) {
+                $this->fireFailedEvent($authGuard, $user, $credentials);
+                $this->throwFailureValidationException();
+            }
 
-        if (config('hashing.rehash_on_login', true)) {
-            $authProvider->rehashPasswordIfRequired($user, $credentials);
-        }
+            if (config('hashing.rehash_on_login', true)) {
+                $authProvider->rehashPasswordIfRequired($user, $credentials);
+            }
 
-        $authGuard->login($user, $remember);
+            $authGuard->login($user, $remember);
+
+            $timebox->returnEarly();
+        }, $timeboxDuration);
 
         session()->regenerate();
 

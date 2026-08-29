@@ -188,11 +188,20 @@ describe('authentication', function (): void {
         Event::assertDispatchedTimes(Validated::class, 1);
     });
 
-    it('rechecks panel access after `Validated` listeners run', function (): void {
+    it('timeboxes panel access rechecks after `Validated` listeners run', function (): void {
         $userToAuthenticate = User::factory()->create();
 
         Event::listen(Validated::class, static function (): void {
             Filament::setCurrentPanel('custom');
+        });
+
+        config()->set('auth.timebox_duration', 10_000_000);
+
+        $padding = [];
+
+        Sleep::fake();
+        Sleep::whenFakingSleep(function ($duration) use (&$padding): void {
+            $padding[] = $duration->totalMilliseconds;
         });
 
         livewire(Login::class)
@@ -204,6 +213,8 @@ describe('authentication', function (): void {
             ->assertHasFormErrors(['email']);
 
         $this->assertGuest();
+
+        expect($padding)->toHaveCount(1);
     });
 
     it('rehashes a password that was stored at a lower cost', function (): void {
