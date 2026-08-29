@@ -421,12 +421,12 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $this->mountedActions = [];
         $this->cachedMountedActions = null;
 
-        $this->unCacheMountedActionSchemas();
+        $this->forgetCachedMountedActionSchemas();
 
         $this->mountAction($name, $arguments, $context);
     }
 
-    protected function unCacheMountedActionSchemas(int $fromNestingIndex = 0): void
+    protected function forgetCachedMountedActionSchemas(int $fromNestingIndex = 0): void
     {
         foreach (array_keys($this->cachedSchemas) as $schemaName) {
             if (! str_starts_with($schemaName, 'mountedActionSchema')) {
@@ -816,7 +816,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         // action mounted at one of those indexes later in this request would otherwise be handed
         // the schema of the action that used to be there, since `getMountedActionSchema()` reads
         // the cache before it builds anything.
-        $this->unCacheMountedActionSchemas(fromNestingIndex: count($this->mountedActions));
+        $this->forgetCachedMountedActionSchemas(fromNestingIndex: count($this->mountedActions));
 
         if (! count($this->mountedActions)) {
             $action?->clearRecordAfter();

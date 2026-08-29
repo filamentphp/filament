@@ -121,6 +121,28 @@ class Actions extends Page
                         ])
                         ->action(fn () => null),
                 ]),
+            Action::make('staleSchemaParent')
+                ->schema([
+                    TextInput::make('parentField'),
+                ])
+                ->registerModalActions([
+                    Action::make('first')
+                        ->schema([
+                            TextInput::make('alpha'),
+                        ])
+                        ->action(fn () => null),
+                    Action::make('second')
+                        ->schema([
+                            TextInput::make('beta'),
+                        ])
+                        ->action(fn () => null),
+                ])
+                ->action(fn () => null),
+            Action::make('staleSchemaOther')
+                ->schema([
+                    TextInput::make('otherField'),
+                ])
+                ->action(fn () => null),
             Action::make('grandparentWithModalCloseCancellation')
                 ->schema([
                     TextInput::make('grandparentValue')
@@ -280,5 +302,11 @@ class Actions extends Page
                     $this->dispatch('enforcement-authorized-called');
                 }),
         ];
+    }
+
+    public function unmountThenMountAction(string $name): void
+    {
+        $this->unmountAction();
+        $this->mountAction($name);
     }
 }
