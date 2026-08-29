@@ -47,6 +47,14 @@ it('can strip characters before applying `numeric()` state cast', function (mixe
     [null, null],
 ]);
 
+it('casts state to an integer when using `integer()`', function (): void {
+    $component = livewire(TestComponentWithIntegerTextInput::class)
+        ->fillForm(['quantity' => '1234'])
+        ->call('save');
+
+    expect($component->get('data.quantity'))->toBe(1234);
+});
+
 it('can set `email()`', function (): void {
     $input = TextInput::make('email');
 
@@ -280,6 +288,26 @@ class TestComponentWithNumericAndStripCharacters extends Livewire
                 TextInput::make('price')
                     ->numeric()
                     ->stripCharacters(','),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->data = $this->form->getState();
+    }
+}
+
+class TestComponentWithIntegerTextInput extends Livewire
+{
+    public $data = [];
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                TextInput::make('quantity')
+                    ->integer(),
             ])
             ->statePath('data');
     }
