@@ -54,7 +54,7 @@
 
     if ($hasError && filled($statePath) && blank($errorMessage) && blank($errorMessages)) {
         if ($shouldShowAllValidationMessages) {
-            $errorMessages = $errors->has($statePath) ? $errors->get($statePath) : ($hasNestedRecursiveValidationRules ? $errors->get("{$statePath}.*") : []);
+            $errorMessages = $errors->has($statePath) ? $errors->get($statePath) : ($hasNestedRecursiveValidationRules ? Arr::flatten($errors->get("{$statePath}.*")) : []);
 
             if (count($errorMessages) === 1) {
                 $errorMessage = Arr::first($errorMessages);

@@ -459,13 +459,22 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         $this->mountedActions = [];
         $this->cachedMountedActions = null;
 
-        foreach ($this->cachedSchemas as $schemaName => $schema) {
-            if (str($schemaName)->startsWith('mountedActionSchema')) {
+        $this->forgetCachedMountedActionSchemas();
+
+        $this->mountAction($name, $arguments, $context);
+    }
+
+    protected function forgetCachedMountedActionSchemas(int $fromNestingIndex = 0): void
+    {
+        foreach (array_keys($this->cachedSchemas) as $schemaName) {
+            if (! str_starts_with($schemaName, 'mountedActionSchema')) {
+                continue;
+            }
+
+            if (((int) substr($schemaName, strlen('mountedActionSchema'))) >= $fromNestingIndex) {
                 unset($this->cachedSchemas[$schemaName]);
             }
         }
-
-        $this->mountAction($name, $arguments, $context);
     }
 
     public function cacheAction(Action $action): Action
@@ -844,6 +853,12 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         while (count($this->cachedMountedActions ?? []) > count($this->mountedActions)) {
             array_pop($this->cachedMountedActions);
         }
+
+        // The schemas of the actions that have just closed, which are cached by nesting index: an
+        // action mounted at one of those indexes later in this request would otherwise be handed
+        // the schema of the action that used to be there, since `getMountedActionSchema()` reads
+        // the cache before it builds anything.
+        $this->forgetCachedMountedActionSchemas(fromNestingIndex: count($this->mountedActions));
 
         if (! count($this->mountedActions)) {
             $action?->clearRecordAfter();
