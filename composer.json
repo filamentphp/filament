@@ -80,7 +80,7 @@
     "scripts": {
         "cs": [
             "rector",
-            "pint --cache-file=.pint.cache",
+            "pint --parallel --cache-file=.pint.cache",
             "npm run prettier"
         ],
         "pint": "pint --config pint-strict-imports.json --cache-file=.pint.cache",
