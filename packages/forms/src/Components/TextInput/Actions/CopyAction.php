@@ -30,7 +30,7 @@ class CopyAction extends Action
             $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($state));
 
             return <<<JS
-                window.navigator.clipboard.writeText(\$el.closest('.fi-input-wrp')?.querySelector('input')?.value ?? '')
+                window.navigator.clipboard.writeText(\$el.closest('.fi-input-wrp').querySelector('input').value)
                 \$tooltip({$copyMessageJs}, {
                     theme: \$store.theme,
                     timeout: {$copyMessageDurationJs},

@@ -531,15 +531,21 @@ it('can render and type in `TextInput` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/text-input-test')
+        $page = visit('/text-input-test')
             ->assertSee('Name')
             ->assertSee('Email')
             ->assertSee('Password')
-            ->type('[data-testid="text-input"] input', 'John Doe')
+            ->type('[data-testid="text-input"] input', 'John Doe');
+
+        $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");
+
+        $page
             ->type('[data-testid="copyable-input"] input', 'ABC123')
             ->click('[data-testid="copyable-input"] button')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
+
+        expect($page->script('window.__copiedText'))->toBe('ABC123');
 
         visit('/text-input-test')
             ->inDarkMode()
