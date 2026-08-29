@@ -30,7 +30,6 @@ use Filament\Support\Enums\Alignment;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
@@ -164,24 +163,12 @@ class Login extends SimplePage
             return null;
         }
 
-        app(Timebox::class)->call(function (Timebox $timebox) use ($authProvider, $authGuard, $credentials, $remember, $user): void {
-            event(new Validated($authGuard->name, $user));
-
-            // `Validated` listeners can change authorization state, so panel access must be
-            // checked again before login to preserve the ordering from `attemptWhen()`.
-            if (! $this->isUserAllowedToAccessPanel($user)) {
-                $this->fireFailedEvent($authGuard, $user, $credentials);
-                $this->throwFailureValidationException();
-            }
-
-            if (config('hashing.rehash_on_login', true)) {
-                $authProvider->rehashPasswordIfRequired($user, $credentials);
-            }
-
-            $authGuard->login($user, $remember);
-
-            $timebox->returnEarly();
-        }, $timeboxDuration);
+        // Credentials are deliberately validated again after the multi-factor challenge so that
+        // password and panel access changes made during the challenge are observed before login.
+        // The corresponding second `Attempting` event is intentional.
+        if (! $authGuard->attemptWhen($credentials, fn (Authenticatable $user): bool => $this->isUserAllowedToAccessPanel($user), $remember)) {
+            $this->throwFailureValidationException();
+        }
 
         session()->regenerate();
 

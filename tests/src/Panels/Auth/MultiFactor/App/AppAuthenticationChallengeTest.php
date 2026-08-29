@@ -6,12 +6,14 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FAQRCode\Google2FA;
@@ -137,6 +139,68 @@ describe('authentication flow', function (): void {
             ->assertRedirect(Filament::getUrl());
 
         $this->assertAuthenticatedAs($userToAuthenticate);
+    });
+
+    it('does not authenticate when the password changes during the multi-factor challenge', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create([
+                'password' => Hash::make('password', ['rounds' => 4]),
+            ]);
+
+        config()->set('hashing.bcrypt.rounds', 5);
+        Hash::forgetDrivers();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->assertNoRedirect()
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+
+        $failedEvents = 0;
+        $passwordWasReset = false;
+        $userClass = $userToAuthenticate::class;
+
+        Event::listen(Failed::class, static function () use (&$failedEvents): void {
+            $failedEvents++;
+        });
+
+        Event::listen("eloquent.saved: {$userClass}", static function (User $savedUser) use (&$passwordWasReset, $userToAuthenticate): void {
+            if ($passwordWasReset || ($savedUser->getKey() !== $userToAuthenticate->getKey())) {
+                return;
+            }
+
+            $passwordWasReset = true;
+
+            $savedUser->newQuery()
+                ->whereKey($savedUser->getKey())
+                ->update(['password' => Hash::make('new-password')]);
+        });
+
+        $livewire
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'recoveryCode' => Arr::random($recoveryCodes),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasFormErrors(['email'])
+            ->assertNoRedirect();
+
+        $this->assertGuest();
+
+        $freshUser = $userToAuthenticate->fresh();
+
+        expect(Hash::check('new-password', $freshUser->password))->toBeTrue()
+            ->and(Hash::check('password', $freshUser->password))->toBeFalse()
+            ->and($failedEvents)->toBe(1);
     });
 
     it('will authenticate the user with a one-time code after enabling the recovery code field', function (): void {
