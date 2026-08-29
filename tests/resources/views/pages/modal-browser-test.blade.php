@@ -1,4 +1,24 @@
 <x-filament-panels::page>
+    <span data-testid="action-after-child-result">
+        {{ $didRunActionAfterClosingChild ? 'ran' : 'not-ran' }}
+    </span>
+
+    <button
+        type="button"
+        wire:click="mountAction('modalLessParentWithChild')"
+        data-testid="modal-less-parent-trigger"
+    >
+        Open child from action without modal
+    </button>
+
+    <button
+        type="button"
+        wire:click="mountAction('runAfterClosingChild')"
+        data-testid="action-after-child-trigger"
+    >
+        Run after closing child
+    </button>
+
     <button
         type="button"
         data-testid="behind-button"

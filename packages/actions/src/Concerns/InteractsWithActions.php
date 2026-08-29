@@ -40,6 +40,8 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
     protected ?int $originallyMountedActionIndex = null;
 
+    protected int $mountActionNestingLevel = 0;
+
     /**
      * @var mixed
      */
@@ -137,110 +139,115 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      */
     public function mountAction(string $name, array $arguments = [], array $context = []): mixed
     {
-        $this->mountedActions[] = [
-            'name' => $name,
-            'arguments' => $arguments,
-            'context' => $context,
-        ];
+        $this->mountActionNestingLevel++;
 
         try {
-            $action = $this->getMountedAction();
-        } catch (ActionNotResolvableException $exception) {
-            $action = null;
-        }
+            $this->mountedActions[] = [
+                'name' => $name,
+                'arguments' => $arguments,
+                'context' => $context,
+            ];
 
-        if (! $action) {
-            $this->unmountAction(cancelParentActions: false);
-
-            return null;
-        }
-
-        if ($action->isDisabled()) {
-            $this->unmountAction(cancelParentActions: false);
-
-            return null;
-        }
-
-        if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
-            foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
-                $actionComponentChildSchema->validate();
-            }
-        }
-
-        try {
-            if (
-                $action->hasAuthorizationNotification() &&
-                ($response = $action->getAuthorizationResponseWithMessage())->denied()
-            ) {
-                $action->sendUnauthorizedNotification($response);
-
-                throw new Cancel;
+            try {
+                $action = $this->getMountedAction();
+            } catch (ActionNotResolvableException $exception) {
+                $action = null;
             }
 
-            $hasSchema = $this->mountedActionHasSchema(mountedAction: $action);
-
-            if ($hasSchema) {
-                $action->callBeforeFormFilled();
-            }
-
-            $schema = $this->getMountedActionSchema(mountedAction: $action);
-
-            $action->mount([
-                'form' => $schema,
-                'schema' => $schema,
-            ]);
-
-            if ($hasSchema) {
-                $action->callAfterFormFilled();
-            }
-        } catch (Halt $exception) {
-            $this->unmountAction(cancelParentActions: false);
-
-            return null;
-        } catch (Cancel $exception) {
-            $this->unmountAction(cancelParentActions: false);
-
-            return null;
-        } catch (ValidationException $exception) {
-            $this->unmountAction(cancelParentActions: false);
-
-            throw $exception;
-        }
-
-        if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
-            if ($context['mountedFromUrl'] ?? false) {
-                // A modal-less action mounted from the URL has nothing to show the user, so
-                // running it here would let a crafted link trigger it with no interaction.
+            if (! $action) {
                 $this->unmountAction(cancelParentActions: false);
 
                 return null;
             }
 
-            $result = $this->callMountedAction();
+            if ($action->isDisabled()) {
+                $this->unmountAction(cancelParentActions: false);
 
-            // The action can have stopped itself without unmounting, by halting, and it
-            // has no modal to stop in.
-            if ($this->unmountActionsWithoutModals()) {
-                $this->syncActionModals();
+                return null;
             }
 
-            return $result;
+            if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
+                foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
+                    $actionComponentChildSchema->validate();
+                }
+            }
+
+            try {
+                if (
+                    $action->hasAuthorizationNotification() &&
+                    ($response = $action->getAuthorizationResponseWithMessage())->denied()
+                ) {
+                    $action->sendUnauthorizedNotification($response);
+
+                    throw new Cancel;
+                }
+
+                $hasSchema = $this->mountedActionHasSchema(mountedAction: $action);
+
+                if ($hasSchema) {
+                    $action->callBeforeFormFilled();
+                }
+
+                $schema = $this->getMountedActionSchema(mountedAction: $action);
+
+                $action->mount([
+                    'form' => $schema,
+                    'schema' => $schema,
+                ]);
+
+                if ($hasSchema) {
+                    $action->callAfterFormFilled();
+                }
+            } catch (Halt $exception) {
+                $this->unmountAction(cancelParentActions: false);
+
+                return null;
+            } catch (Cancel $exception) {
+                $this->unmountAction(cancelParentActions: false);
+
+                return null;
+            } catch (ValidationException $exception) {
+                $this->unmountAction(cancelParentActions: false);
+
+                throw $exception;
+            }
+
+            if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
+                if ($context['mountedFromUrl'] ?? false) {
+                    // A modal-less action mounted from the URL has nothing to show the user, so
+                    // running it here would let a crafted link trigger it with no interaction.
+                    $this->unmountAction(cancelParentActions: false);
+
+                    return null;
+                }
+
+                $result = $this->callMountedAction();
+
+                // The action can have stopped itself without unmounting, by halting, and it has no
+                // modal to stop in. If another action was mounted while it was running, it must remain
+                // on the stack until that action closes.
+                if ($this->getMountedAction() === $action) {
+                    $this->unmountAction(cancelParentActions: false);
+                }
+
+                return $result;
+            }
+
+            $this->syncActionModals();
+
+            $this->resetErrorBag();
+
+            return null;
+        } finally {
+            $this->mountActionNestingLevel--;
         }
-
-        $this->syncActionModals();
-
-        $this->resetErrorBag();
-
-        return null;
     }
 
     /**
      * Unmounts every action on top of the stack that has no modal to be seen in.
      */
-    protected function unmountActionsWithoutModals(): bool
+    protected function unmountActionsWithoutModals(): void
     {
-        $hasUnmountedAnyAction = false;
-
         while (filled($this->mountedActions ?? [])) {
             try {
                 $action = $this->getMountedAction();
@@ -257,11 +264,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             while (count($this->cachedMountedActions ?? []) > count($this->mountedActions)) {
                 array_pop($this->cachedMountedActions);
             }
-
-            $hasUnmountedAnyAction = true;
         }
-
-        return $hasUnmountedAnyAction;
     }
 
     /**
@@ -844,9 +847,11 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             }
         }
 
-        // Closing a modal can expose an action that has no modal of its own, which
-        // would then be stuck on the stack with nothing to show.
-        $this->unmountActionsWithoutModals();
+        if ($this->mountActionNestingLevel === 0) {
+            // Closing a modal can expose an action that has no modal of its own, which
+            // would then be stuck on the stack with nothing to show.
+            $this->unmountActionsWithoutModals();
+        }
 
         $this->syncActionModals();
 

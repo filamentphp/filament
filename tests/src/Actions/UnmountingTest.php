@@ -17,6 +17,14 @@ describe('an action that cannot open a modal', function (): void {
         expect($livewire->instance()->mountedActions)->toBe([]);
     });
 
+    it('can continue mounting nested actions after an action without a modal completes', function (): void {
+        $livewire = livewire(Actions::class)
+            ->callAction('callsTwoNestedActionsWithoutModal');
+
+        expect(array_column($livewire->instance()->mountedActions, 'name'))
+            ->toBe(['callsTwoNestedActionsWithoutModal', 'secondNestedActionWithModal']);
+    });
+
     it('does not stay mounted once the modal it opened is closed', function (): void {
         $livewire = livewire(Actions::class)
             ->callAction('haltsWithoutModalAfterMountingAChild');
@@ -27,6 +35,14 @@ describe('an action that cannot open a modal', function (): void {
         // `false` is what a modal sends when it is closed, unless the action opts into
         // cancelling its parents with `cancelParentActionsOnClose()`.
         $livewire->unmountAction(false);
+
+        expect($livewire->instance()->mountedActions)->toBe([]);
+    });
+
+    it('does not stay mounted once the action it opened is completed', function (): void {
+        $livewire = livewire(Actions::class)
+            ->callAction('haltsWithoutModalAfterMountingAChild')
+            ->callMountedAction();
 
         expect($livewire->instance()->mountedActions)->toBe([]);
     });

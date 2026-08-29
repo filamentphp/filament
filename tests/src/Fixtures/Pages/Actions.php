@@ -177,6 +177,20 @@ class Actions extends Page
 
                     $action->halt();
                 }),
+            Action::make('callsTwoNestedActionsWithoutModal')
+                ->registerModalActions([
+                    Action::make('firstNestedActionWithoutModal')
+                        ->action(static fn () => null),
+                    Action::make('secondNestedActionWithModal')
+                        ->requiresConfirmation()
+                        ->action(static fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('firstNestedActionWithoutModal');
+                    $action->getLivewire()->mountAction('secondNestedActionWithModal');
+
+                    $action->halt();
+                }),
             Action::make('haltsWithoutModalAfterMountingAChild')
                 ->registerModalActions([
                     Action::make('childOfActionWithoutModal')
