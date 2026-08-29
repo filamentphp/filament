@@ -79,7 +79,7 @@
     },
     "scripts": {
         "cs": [
-            "rector",
+            "@rector",
             "@pint",
             "npm run prettier"
         ],
