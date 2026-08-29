@@ -483,6 +483,48 @@ describe('nested actions', function (): void {
     });
 });
 
+describe('unmounting actions', function (): void {
+    it('forgets a nested action schema before another action is mounted at the same index', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent')
+            ->mountAction('first');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['alpha']);
+
+        $livewire->call('unmountThenMountAction', 'second');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['beta']);
+    });
+
+    it('forgets a root action schema before another action is mounted at the same index', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField']);
+
+        $livewire->call('unmountThenMountAction', 'staleSchemaOther');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['otherField']);
+    });
+
+    it('preserves the schema of an action that remains mounted', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent')
+            ->mountAction('first');
+
+        $livewire->call('unmountAction');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField'])
+            ->and($livewire->instance()->getSchema('mountedActionSchema1'))
+            ->toBeNull();
+    });
+});
+
 describe('extra modal footer actions', function (): void {
     it('can mount an action that has a group in `extraModalFooterActions()`', function (): void {
         livewire(Actions::class)
