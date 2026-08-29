@@ -159,11 +159,25 @@ prepare_demo_checkout() {
     printf 'Using filamentphp/demo %s at %s.\n' "${current_demo_branch:-detached HEAD}" "$(git -C "$demo_root" rev-parse --short HEAD)"
 
     mkdir -p "$demo_root/.git/info"
-    for excluded_path in composer.orb.json composer.orb.lock .composer-orb-hash .orb-demo-state-branch; do
+    for excluded_path in composer.orb.json composer.orb.lock .composer-orb-hash .orb-demo-state-branch config/trustedproxy.php; do
         if ! grep -Fqx "/$excluded_path" "$demo_root/.git/info/exclude" 2>/dev/null; then
             printf '/%s\n' "$excluded_path" >> "$demo_root/.git/info/exclude"
         fi
     done
+}
+
+write_demo_proxy_configuration() {
+    if [[ -e "$demo_root/config/trustedproxy.php" ]]; then
+        return
+    fi
+
+    cat > "$demo_root/config/trustedproxy.php" <<'PHP'
+<?php
+
+return [
+    'proxies' => 'REMOTE_ADDR',
+];
+PHP
 }
 
 write_demo_composer_manifest() {
@@ -253,7 +267,10 @@ initialize_demo_application() {
         php "$demo_root/artisan" migrate --force
     fi
 
-    php "$demo_root/artisan" storage:link
+    if [[ ! -L "$demo_root/public/storage" ]]; then
+        php "$demo_root/artisan" storage:link
+    fi
+
     printf '%s\n' "${current_demo_branch:-detached HEAD}" > "$demo_state_branch_file"
 }
 
@@ -265,6 +282,7 @@ run_step 'Installing Filament Composer dependencies' composer install --prefer-d
 run_step 'Installing Filament Node.js dependencies' npm ci --ignore-scripts
 run_step 'Installing Playwright Chromium' npx playwright install --with-deps chromium
 run_step 'Preparing the matching Filament demo checkout' prepare_demo_checkout
+run_step 'Configuring the demo portal proxy' write_demo_proxy_configuration
 run_step 'Installing locally linked demo dependencies' install_demo_dependencies
 run_step 'Initializing the demo Laravel application' initialize_demo_application
 
