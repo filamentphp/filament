@@ -188,6 +188,24 @@ describe('authentication', function (): void {
         Event::assertDispatchedTimes(Validated::class, 1);
     });
 
+    it('rechecks panel access after `Validated` listeners run', function (): void {
+        $userToAuthenticate = User::factory()->create();
+
+        Event::listen(Validated::class, static function (): void {
+            Filament::setCurrentPanel('custom');
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        $this->assertGuest();
+    });
+
     it('rehashes a password that was stored at a lower cost', function (): void {
         $userToAuthenticate = User::factory()->create([
             'password' => Hash::make('password', ['rounds' => 4]),

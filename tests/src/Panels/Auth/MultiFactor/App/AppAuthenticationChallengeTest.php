@@ -6,10 +6,12 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FAQRCode\Google2FA;
@@ -45,20 +47,26 @@ describe('authentication flow', function (): void {
     });
 
     it('will authenticate the user after a valid challenge code is used', function (): void {
+        Event::fake([Validated::class]);
+
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
             ->hasAppAuthentication()
             ->create();
 
-        livewire(Login::class)
+        $livewire = livewire(Login::class)
             ->fillForm([
                 'email' => $userToAuthenticate->email,
                 'password' => 'password',
             ])
             ->call('authenticate')
             ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
-            ->assertNoRedirect()
+            ->assertNoRedirect();
+
+        Event::assertNotDispatched(Validated::class);
+
+        $livewire
             ->fillForm([
                 $appAuthentication->getId() => [
                     'code' => $appAuthentication->getCurrentCode($userToAuthenticate),
@@ -69,6 +77,8 @@ describe('authentication flow', function (): void {
             ->assertRedirect(Filament::getUrl());
 
         $this->assertAuthenticatedAs($userToAuthenticate);
+
+        Event::assertDispatchedTimes(Validated::class, 1);
     });
 
     it('will make the recovery code field visible when the user requests it', function (): void {

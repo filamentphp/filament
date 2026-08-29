@@ -119,8 +119,6 @@ class Login extends SimplePage
             return $user;
         }, $timeboxDuration);
 
-        event(new Validated($authGuard->name, $user));
-
         $needsMultiFactorChallenge = app(Timebox::class)->call(function (Timebox $timebox) use ($user): bool {
             if (
                 filled($this->userUndertakingMultiFactorAuthentication) &&
@@ -164,6 +162,15 @@ class Login extends SimplePage
 
         if ($needsMultiFactorChallenge) {
             return null;
+        }
+
+        event(new Validated($authGuard->name, $user));
+
+        // `Validated` listeners can change authorization state, so panel access must be
+        // checked again before login to preserve the ordering from `attemptWhen()`.
+        if (! $this->isUserAllowedToAccessPanel($user)) {
+            $this->fireFailedEvent($authGuard, $user, $credentials);
+            $this->throwFailureValidationException();
         }
 
         if (config('hashing.rehash_on_login', true)) {
