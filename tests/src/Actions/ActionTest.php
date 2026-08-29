@@ -10,6 +10,8 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
@@ -1945,7 +1947,7 @@ describe('rendering', function (): void {
     it('renders an `iconPosition(After)` icon after the label', function (): void {
         $html = Action::make('test')
             ->icon('heroicon-o-arrow-right')
-            ->iconPosition(\Filament\Support\Enums\IconPosition::After)
+            ->iconPosition(IconPosition::After)
             ->label('Next')
             ->toHtml();
 
@@ -1979,7 +1981,7 @@ describe('rendering', function (): void {
     it('renders an `iconSize()` as a `fi-size-*` class on the icon', function (): void {
         $html = Action::make('test')
             ->icon('heroicon-o-trash')
-            ->iconSize(\Filament\Support\Enums\IconSize::Large)
+            ->iconSize(IconSize::Large)
             ->toHtml();
 
         expect($html)->toContain('fi-size-lg');
