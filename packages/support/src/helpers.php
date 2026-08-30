@@ -54,9 +54,9 @@ if (! function_exists('Filament\Support\get_model_label')) {
      */
     function get_model_label(string $model): string
     {
-        static $cache = [];
+        static $modelLabels = [];
 
-        return $cache[$model] ??= (string) str($model)
+        return $modelLabels[$model] ??= (string) str($model)
             ->classBasename()
             ->kebab()
             ->replace('-', ' ');
@@ -66,10 +66,9 @@ if (! function_exists('Filament\Support\get_model_label')) {
 if (! function_exists('Filament\Support\locale_has_pluralization')) {
     function locale_has_pluralization(): bool
     {
-        static $cache = [];
         $locale = app()->getLocale();
 
-        return $cache[$locale] ??= ((new MessageSelector)->getPluralIndex($locale, 10) > 0);
+        return (new MessageSelector)->getPluralIndex($locale, 10) > 0;
     }
 }
 
@@ -105,13 +104,7 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
             $preparedAttributes[Str::camel($name)] = $value;
         }
 
-        foreach ($originalAttributes as $name => $value) {
-            if (is_numeric($name)) {
-                $preparedAttributes[] = $value;
-            } else {
-                $preparedAttributes[$name] = $value;
-            }
-        }
+        $preparedAttributes = array_merge($preparedAttributes, $originalAttributes);
 
         $attributes->setAttributes($preparedAttributes);
 
