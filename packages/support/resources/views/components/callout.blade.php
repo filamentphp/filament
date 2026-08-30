@@ -34,7 +34,7 @@
 <div
     {{
         $attributes
-            ->color(\Filament\Support\View\Components\CalloutComponent::class, $color)
+            ->color(CalloutComponent::class, $color)
             ->class(['fi-callout'])
     }}
 >
@@ -42,7 +42,7 @@
         {{
             generate_icon_html(
                 $icon,
-                attributes: (new \Filament\Support\View\ComponentAttributeBag(['aria-hidden' => 'true']))
+                attributes: (new ComponentAttributeBag(['aria-hidden' => 'true']))
                     ->color(IconComponent::class, $iconColor)
                     ->class(['fi-callout-icon']),
                 size: $iconSize ?? IconSize::Large,

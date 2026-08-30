@@ -7,9 +7,10 @@
 
 @php
     use Illuminate\Contracts\Pagination\CursorPaginator;
+    use Illuminate\Pagination\LengthAwarePaginator;
 
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
-    $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
+    $isSimple = ! $paginator instanceof LengthAwarePaginator;
 @endphp
 
 <nav
@@ -48,9 +49,9 @@
                     'filament::components/pagination.overview',
                     $paginator->total(),
                     [
-                        'first' => \Illuminate\Support\Number::format($paginator->firstItem() ?? 0),
-                        'last' => \Illuminate\Support\Number::format($paginator->lastItem() ?? 0),
-                        'total' => \Illuminate\Support\Number::format($paginator->total()),
+                        'first' => Number::format($paginator->firstItem() ?? 0),
+                        'last' => Number::format($paginator->lastItem() ?? 0),
+                        'total' => Number::format($paginator->total()),
                     ],
                 )
             }}
@@ -121,11 +122,11 @@
                 @if ($extremeLinks)
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.first.label')"
-                        :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronDoubleRight : \Filament\Support\Icons\Heroicon::ChevronDoubleLeft"
+                        :icon="$isRtl ? Heroicon::ChevronDoubleRight : Heroicon::ChevronDoubleLeft"
                         :icon-alias="
                             $isRtl
-                            ? \Filament\Support\View\SupportIconAlias::PAGINATION_FIRST_BUTTON_RTL
-                            : \Filament\Support\View\SupportIconAlias::PAGINATION_FIRST_BUTTON
+                            ? SupportIconAlias::PAGINATION_FIRST_BUTTON_RTL
+                            : SupportIconAlias::PAGINATION_FIRST_BUTTON
                         "
                         rel="first"
                         :wire:click="'gotoPage(1, \'' . $paginator->getPageName() . '\')'"
@@ -135,15 +136,15 @@
 
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.previous.label')"
-                    :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronRight : \Filament\Support\Icons\Heroicon::ChevronLeft"
+                    :icon="$isRtl ? Heroicon::ChevronRight : Heroicon::ChevronLeft"
                     {{-- @deprecated Use `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL` instead of `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON` for RTL. --}}
                     :icon-alias="
                         $isRtl
                         ? [
-                            \Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL,
-                            \Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON,
+                            SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL,
+                            SupportIconAlias::PAGINATION_PREVIOUS_BUTTON,
                         ]
-                        : \Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON
+                        : SupportIconAlias::PAGINATION_PREVIOUS_BUTTON
                     "
                     rel="prev"
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
@@ -160,8 +161,8 @@
                     @foreach ($element as $page => $url)
                         <x-filament::pagination.item
                             :active="$page === $paginator->currentPage()"
-                            :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => \Illuminate\Support\Number::format($page)])"
-                            :label="\Illuminate\Support\Number::format($page)"
+                            :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => Number::format($page)])"
+                            :label="Number::format($page)"
                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                             :wire:key="$this->getId() . '.pagination.' . $paginator->getPageName() . '.' . $page"
                         />
@@ -172,15 +173,15 @@
             @if ($paginator->hasMorePages())
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.next.label')"
-                    :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronLeft : \Filament\Support\Icons\Heroicon::ChevronRight"
+                    :icon="$isRtl ? Heroicon::ChevronLeft : Heroicon::ChevronRight"
                     {{-- @deprecated Use `SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL` instead of `SupportIconAlias::PAGINATION_NEXT_BUTTON` for RTL. --}}
                     :icon-alias="
                         $isRtl
                         ? [
-                            \Filament\Support\View\SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL,
-                            \Filament\Support\View\SupportIconAlias::PAGINATION_NEXT_BUTTON,
+                            SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL,
+                            SupportIconAlias::PAGINATION_NEXT_BUTTON,
                         ]
-                        : \Filament\Support\View\SupportIconAlias::PAGINATION_NEXT_BUTTON
+                        : SupportIconAlias::PAGINATION_NEXT_BUTTON
                     "
                     rel="next"
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
@@ -190,11 +191,11 @@
                 @if ($extremeLinks)
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.last.label')"
-                        :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronDoubleLeft : \Filament\Support\Icons\Heroicon::ChevronDoubleRight"
+                        :icon="$isRtl ? Heroicon::ChevronDoubleLeft : Heroicon::ChevronDoubleRight"
                         :icon-alias="
                             $isRtl
-                            ? \Filament\Support\View\SupportIconAlias::PAGINATION_LAST_BUTTON_RTL
-                            : \Filament\Support\View\SupportIconAlias::PAGINATION_LAST_BUTTON
+                            ? SupportIconAlias::PAGINATION_LAST_BUTTON_RTL
+                            : SupportIconAlias::PAGINATION_LAST_BUTTON
                         "
                         rel="last"
                         :wire:click="'gotoPage(' . $paginator->lastPage() . ', \'' . $paginator->getPageName() . '\')'"

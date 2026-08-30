@@ -44,6 +44,8 @@
         >
             @foreach ($blocks as $block)
                 @php
+                    use Illuminate\Support\Js;
+
                     $blockIcon = $block->getIcon();
 
                     $wireClickActionArguments = ['block' => $block->getName()];
@@ -52,7 +54,7 @@
                         $wireClickActionArguments['afterItem'] = $afterItem;
                     }
 
-                    $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
+                    $wireClickActionArguments = Js::from($wireClickActionArguments);
 
                     $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
                 @endphp

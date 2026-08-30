@@ -1,4 +1,24 @@
 <x-filament-panels::page>
+    <span data-testid="action-after-child-result">
+        {{ $didRunActionAfterClosingChild ? 'ran' : 'not-ran' }}
+    </span>
+
+    <button
+        type="button"
+        wire:click="mountAction('modalLessParentWithChild')"
+        data-testid="modal-less-parent-trigger"
+    >
+        Open child from action without modal
+    </button>
+
+    <button
+        type="button"
+        wire:click="mountAction('runAfterClosingChild')"
+        data-testid="action-after-child-trigger"
+    >
+        Run after closing child
+    </button>
+
     <button
         type="button"
         data-testid="behind-button"
@@ -10,7 +30,7 @@
 
     <x-filament::modal
         id="standalone-browser-test-modal"
-        :extra-modal-window-attribute-bag="new \Illuminate\View\ComponentAttributeBag(['data-testid' => 'standalone-modal'])"
+        :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'standalone-modal'])"
     >
         <x-slot name="trigger">
             <x-filament::button data-testid="standalone-trigger">
@@ -31,7 +51,7 @@
     <x-filament::modal
         id="standalone-browser-test-no-focus-restore-modal"
         :restores-focus="false"
-        :extra-modal-window-attribute-bag="new \Illuminate\View\ComponentAttributeBag(['data-testid' => 'no-focus-restore-modal'])"
+        :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'no-focus-restore-modal'])"
     >
         <x-slot name="trigger">
             <x-filament::button data-testid="no-focus-restore-trigger">

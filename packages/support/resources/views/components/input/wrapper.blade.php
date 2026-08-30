@@ -18,16 +18,18 @@
 ])
 
 @php
+    use Filament\Actions\Action;
+    use Filament\Support\View\ComponentAttributeBag;
     use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 
     $prefixActions = array_filter(
         $prefixActions,
-        fn (\Filament\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
+        fn (Action $prefixAction): bool => $prefixAction->isVisible(),
     );
 
     $suffixActions = array_filter(
         $suffixActions,
-        fn (\Filament\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
+        fn (Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
     $hasAlpineDisabledClasses = filled($alpineDisabled);
@@ -47,7 +49,7 @@
         : null;
 
     $prefixIconHtml = ($prefixIcon || $prefixIconAlias)
-        ? \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
+        ? \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new ComponentAttributeBag)
             ->merge([
                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
@@ -56,7 +58,7 @@
         : null;
 
     $suffixIconHtml = ($suffixIcon || $suffixIconAlias)
-        ? \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Filament\Support\View\ComponentAttributeBag)
+        ? \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new ComponentAttributeBag)
             ->merge([
                 'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
@@ -94,7 +96,7 @@
             @if (! $hasPrefix)
                 wire:loading.delay.{{ $loadingDelay }}.flex
                 wire:target="{{ $loadingIndicatorTarget }}"
-                wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
+                wire:key="{{ Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
             @if ($canClickPrefixAffix)
                 x-on:click="$dispatch('focus-input')"
@@ -121,7 +123,7 @@
 
             @if ($hasLoadingIndicator)
                 {{
-                    \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                    \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag([
                         'wire:loading.delay.' . $loadingDelay => $hasPrefix,
                         'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                     ]))->color(IconComponent::class, 'gray'))

@@ -39,11 +39,11 @@
 >
     <div>
         <div aria-hidden="true">
-            {{ \Filament\Support\generate_icon_html($offIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
+            {{ \Filament\Support\generate_icon_html($offIcon, size: IconSize::ExtraSmall) }}
         </div>
 
         <div aria-hidden="true">
-            {{ \Filament\Support\generate_icon_html($onIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
+            {{ \Filament\Support\generate_icon_html($onIcon, size: IconSize::ExtraSmall) }}
         </div>
     </div>
 </button>
@@ -61,7 +61,7 @@
             <div aria-hidden="true"></div>
 
             <div aria-hidden="true">
-                {{ \Filament\Support\generate_icon_html($onIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
+                {{ \Filament\Support\generate_icon_html($onIcon, size: IconSize::ExtraSmall) }}
             </div>
         </div>
     </div>

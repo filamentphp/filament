@@ -69,7 +69,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     {{
@@ -99,19 +99,19 @@
     @if ($iconPosition === IconPosition::Before)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
     @endif
@@ -145,7 +145,7 @@
         >
             <span
                 {{
-                    (new \Filament\Support\View\ComponentAttributeBag([
+                    (new Filament\Support\View\ComponentAttributeBag([
                         'aria-hidden' => 'true',
                         'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
                         'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
@@ -157,10 +157,10 @@
 
             @if ($deleteButtonHasLoadingIndicator)
                 {{
-                    \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                    \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                         'wire:loading.delay.' . $loadingDelay => '',
                         'wire:target' => $deleteButtonLoadingIndicatorTarget,
-                    ])), size: \Filament\Support\Enums\IconSize::ExtraSmall)
+                    ])), size: IconSize::ExtraSmall)
                 }}
             @endif
 
@@ -171,19 +171,19 @@
     @elseif ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
     @endif

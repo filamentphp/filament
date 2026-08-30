@@ -29,8 +29,8 @@
 
         <x-filament::button
             color="gray"
-            :icon="\Filament\Support\Icons\Heroicon::ChevronDown"
-            :icon-alias="\Filament\View\PanelsIconAlias::SUB_NAVIGATION_MOBILE_MENU_BUTTON"
+            :icon="Heroicon::ChevronDown"
+            :icon-alias="PanelsIconAlias::SUB_NAVIGATION_MOBILE_MENU_BUTTON"
             icon-position="after"
         >
             {{ $activeItem?->getLabel() }}

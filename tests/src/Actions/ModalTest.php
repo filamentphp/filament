@@ -11,6 +11,29 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
+    it('can run another action after closing a child opened by an action without a modal', function (bool $isDarkMode): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/modal-browser-test');
+
+        if ($isDarkMode) {
+            $browser->inDarkMode();
+        }
+
+        $browser
+            ->click('[data-testid="modal-less-parent-trigger"]')
+            ->assertVisible('[data-testid="modal-less-parent-child-modal"]')
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="modal-less-parent-child-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertMissing('[data-testid="modal-less-parent-child-modal"]')
+            ->click('[data-testid="action-after-child-trigger"]')
+            ->assertSeeIn('[data-testid="action-after-child-result"]', 'ran')
+            ->assertNoSmoke();
+    })->with([
+        'light mode' => false,
+        'dark mode' => true,
+    ]);
+
     it('restores focus to the trigger after closing a standalone modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

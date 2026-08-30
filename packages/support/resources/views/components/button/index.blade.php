@@ -110,7 +110,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     @if ($hasFormProcessingLoadingIndicator)
@@ -130,7 +130,7 @@
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
-                'x-bind:aria-label' => ($labelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . \Illuminate\Support\Js::from(trim(strip_tags($slot->toHtml())))) : null,
+                'x-bind:aria-label' => ($labelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags($slot->toHtml())))) : null,
             ], escape: false)
             ->when(
                 $disabled && $hasTooltip,
@@ -151,7 +151,7 @@
     @if ($iconPosition === IconPosition::Before)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
@@ -160,7 +160,7 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
@@ -169,7 +169,7 @@
 
         @if ($hasFormProcessingLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'x-cloak' => 'x-cloak',
                     'x-show' => 'isProcessing',
                 ])), size: $iconSize)
@@ -198,7 +198,7 @@
     @if ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
@@ -207,7 +207,7 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
@@ -216,7 +216,7 @@
 
         @if ($hasFormProcessingLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'x-cloak' => 'x-cloak',
                     'x-show' => 'isProcessing',
                 ])), size: $iconSize)
@@ -226,7 +226,7 @@
 
     @if (filled($badge))
         <div class="fi-btn-badge-ctn">
-            @if ($badge instanceof \Illuminate\View\ComponentSlot)
+            @if ($badge instanceof ComponentSlot)
                 {{ $badge }}
             @else
                 <span

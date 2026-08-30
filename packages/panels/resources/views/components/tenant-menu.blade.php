@@ -28,7 +28,7 @@
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TENANT_MENU_BEFORE) }}
+{{ FilamentView::renderHook(PanelsRenderHook::TENANT_MENU_BEFORE) }}
 
 <x-filament::dropdown
     placement="bottom-start"
@@ -68,7 +68,7 @@
                 @endif
                 class="fi-tenant-menu-trigger-text"
             >
-                @if ($currentTenant instanceof \Filament\Models\Contracts\HasCurrentTenantLabel)
+                @if ($currentTenant instanceof HasCurrentTenantLabel)
                     <span class="fi-tenant-menu-trigger-current-tenant-label">
                         {{ $currentTenant->getCurrentTenantLabel() }}
                     </span>
@@ -80,7 +80,7 @@
             </span>
 
             {{
-                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\View\PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html(Heroicon::ChevronDown, alias: PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new ComponentAttributeBag([
                     'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
                 ]))
             }}
@@ -158,4 +158,4 @@
     @endif
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TENANT_MENU_AFTER) }}
+{{ FilamentView::renderHook(PanelsRenderHook::TENANT_MENU_AFTER) }}

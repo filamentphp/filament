@@ -43,7 +43,7 @@
                 ])
             >
                 {{
-                    \Filament\Support\generate_icon_html($icon, attributes: (new \Filament\Support\View\ComponentAttributeBag)
+                    \Filament\Support\generate_icon_html($icon, attributes: (new ComponentAttributeBag)
                         ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
                 }}
             </div>

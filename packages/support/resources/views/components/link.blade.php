@@ -87,7 +87,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     {{
@@ -122,7 +122,7 @@
     @if ($iconPosition === IconPosition::Before)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
@@ -131,7 +131,7 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
@@ -148,7 +148,7 @@
     @if ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
@@ -157,7 +157,7 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
@@ -167,7 +167,7 @@
 
     @if (filled($badge))
         <div class="fi-link-badge-ctn">
-            @if ($badge instanceof \Illuminate\View\ComponentSlot)
+            @if ($badge instanceof ComponentSlot)
                 {{ $badge }}
             @else
                 <span

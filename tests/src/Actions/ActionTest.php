@@ -10,6 +10,8 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
@@ -478,6 +480,48 @@ describe('nested actions', function (): void {
                 ]),
             ])
             ->assertDispatched('arguments-test-called', foo: $foo, bar: $bar, baz: $baz);
+    });
+});
+
+describe('unmounting actions', function (): void {
+    it('forgets a nested action schema before another action is mounted at the same index', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent')
+            ->mountAction('first');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['alpha']);
+
+        $livewire->call('unmountThenMountAction', 'second');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['beta']);
+    });
+
+    it('forgets a root action schema before another action is mounted at the same index', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField']);
+
+        $livewire->call('unmountThenMountAction', 'staleSchemaOther');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['otherField']);
+    });
+
+    it('preserves the schema of an action that remains mounted', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent')
+            ->mountAction('first');
+
+        $livewire->call('unmountAction');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField'])
+            ->and($livewire->instance()->getSchema('mountedActionSchema1'))
+            ->toBeNull();
     });
 });
 
@@ -1945,7 +1989,7 @@ describe('rendering', function (): void {
     it('renders an `iconPosition(After)` icon after the label', function (): void {
         $html = Action::make('test')
             ->icon('heroicon-o-arrow-right')
-            ->iconPosition(\Filament\Support\Enums\IconPosition::After)
+            ->iconPosition(IconPosition::After)
             ->label('Next')
             ->toHtml();
 
@@ -1979,7 +2023,7 @@ describe('rendering', function (): void {
     it('renders an `iconSize()` as a `fi-size-*` class on the icon', function (): void {
         $html = Action::make('test')
             ->icon('heroicon-o-trash')
-            ->iconSize(\Filament\Support\Enums\IconSize::Large)
+            ->iconSize(IconSize::Large)
             ->toHtml();
 
         expect($html)->toContain('fi-size-lg');

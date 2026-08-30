@@ -71,7 +71,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     {{
@@ -138,7 +138,7 @@
     </span>
 
     @if (filled($badge))
-        @if ($badge instanceof \Illuminate\View\ComponentSlot)
+        @if ($badge instanceof ComponentSlot)
             {{ $badge }}
         @else
             <span
@@ -146,7 +146,7 @@
                     x-tooltip="{
                         content: @js($badgeTooltip),
                         theme: $store.theme,
-                        allowHTML: @js($badgeTooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+                        allowHTML: @js($badgeTooltip instanceof Htmlable),
                     }"
                 @endif
                 {{ (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}
@@ -160,7 +160,7 @@
             x-cloak
             class="fi-dropdown-list-item-badge-placeholder"
         >
-            {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::Small) }}
+            {{ \Filament\Support\generate_loading_indicator_html(size: IconSize::Small) }}
         </span>
 
         <template
