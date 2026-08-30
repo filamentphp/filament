@@ -1,9 +1,3 @@
-@php
-    use Filament\Support\Icons\Heroicon;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Tables\View\TablesIconAlias;
-@endphp
-
 @props([
     'debounce' => '500ms',
     'onBlur' => false,
@@ -12,6 +6,10 @@
 ])
 
 @php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Tables\View\TablesIconAlias;
+
     $wireModelAttribute = $onBlur ? 'wire:model.blur' : "wire:model.live.debounce.{$debounce}";
 @endphp
 

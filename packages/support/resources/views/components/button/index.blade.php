@@ -1,3 +1,29 @@
+@props([
+    'badge' => null,
+    'badgeColor' => 'primary',
+    'badgeSize' => Filament\Support\Enums\Size::ExtraSmall,
+    'color' => 'primary',
+    'disabled' => false,
+    'form' => null,
+    'formId' => null,
+    'href' => null,
+    'icon' => null,
+    'iconAlias' => null,
+    'iconPosition' => Filament\Support\Enums\IconPosition::Before,
+    'iconSize' => null,
+    'keyBindings' => null,
+    'labeledFrom' => null,
+    'labelSrOnly' => false,
+    'loadingIndicator' => true,
+    'outlined' => false,
+    'size' => Filament\Support\Enums\Size::Medium,
+    'spaMode' => null,
+    'tag' => 'button',
+    'target' => null,
+    'tooltip' => null,
+    'type' => 'button',
+])
+
 @php
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
@@ -9,35 +35,7 @@
     use Illuminate\Support\Js;
     use Illuminate\View\ComponentAttributeBag;
     use Illuminate\View\ComponentSlot;
-@endphp
 
-@props([
-    'badge' => null,
-    'badgeColor' => 'primary',
-    'badgeSize' => Size::ExtraSmall,
-    'color' => 'primary',
-    'disabled' => false,
-    'form' => null,
-    'formId' => null,
-    'href' => null,
-    'icon' => null,
-    'iconAlias' => null,
-    'iconPosition' => IconPosition::Before,
-    'iconSize' => null,
-    'keyBindings' => null,
-    'labeledFrom' => null,
-    'labelSrOnly' => false,
-    'loadingIndicator' => true,
-    'outlined' => false,
-    'size' => Size::Medium,
-    'spaMode' => null,
-    'tag' => 'button',
-    'target' => null,
-    'tooltip' => null,
-    'type' => 'button',
-])
-
-@php
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }

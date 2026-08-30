@@ -1,24 +1,12 @@
-@php
-    use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\SlideOverPosition;
-    use Filament\Support\Enums\Width;
-    use Filament\Support\Icons\Heroicon;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Support\View\Components\ModalComponent;
-    use Filament\Support\View\Components\ModalComponent\IconComponent;
-    use Filament\Support\View\SupportIconAlias;
-    use Illuminate\Contracts\Support\Htmlable;
-@endphp
-
 @props([
     'alert' => false,
-    'alignment' => Alignment::Start,
+    'alignment' => Filament\Support\Enums\Alignment::Start,
     'ariaLabelledby' => null,
-    'autofocus' => ModalComponent::$isAutofocused,
+    'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
     'clickThrough' => false,
-    'closeButton' => ModalComponent::$hasCloseButton,
-    'closeByClickingAway' => ModalComponent::$isClosedByClickingAway,
-    'closeByEscaping' => ModalComponent::$isClosedByEscaping,
+    'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
+    'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
+    'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
@@ -27,7 +15,7 @@
     'extraModalOverlayAttributeBag' => null,
     'footer' => null,
     'footerActions' => [],
-    'footerActionsAlignment' => Alignment::Start,
+    'footerActionsAlignment' => Filament\Support\Enums\Alignment::Start,
     'header' => null,
     'heading' => null,
     'icon' => null,
@@ -36,7 +24,7 @@
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
-    'slideOverPosition' => SlideOverPosition::End,
+    'slideOverPosition' => Filament\Support\Enums\SlideOverPosition::End,
     'stickyFooter' => false,
     'stickyHeader' => false,
     'teleport' => null,
@@ -46,7 +34,15 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\SlideOverPosition;
+    use Filament\Support\Enums\Width;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\ModalComponent\IconComponent;
+    use Filament\Support\View\SupportIconAlias;
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Js;
 
     $hasContent = ! \Filament\Support\is_slot_empty($slot);

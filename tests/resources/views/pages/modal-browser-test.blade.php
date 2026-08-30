@@ -1,5 +1,5 @@
 @php
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag;
 @endphp
 
 <x-filament-panels::page>

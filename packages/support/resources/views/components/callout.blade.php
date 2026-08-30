@@ -1,13 +1,3 @@
-@php
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\ComponentAttributeBag;
-    use Filament\Support\View\Components\CalloutComponent;
-    use Filament\Support\View\Components\CalloutComponent\IconComponent;
-
-    use function Filament\Support\generate_icon_html;
-    use function Filament\Support\is_slot_empty;
-@endphp
-
 @props([
     'color' => 'gray',
     'controls' => null,
@@ -20,6 +10,14 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\Components\CalloutComponent;
+    use Filament\Support\View\Components\CalloutComponent\IconComponent;
+
+    use function Filament\Support\generate_icon_html;
+    use function Filament\Support\is_slot_empty;
+
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
         $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }

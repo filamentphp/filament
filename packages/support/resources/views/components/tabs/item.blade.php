@@ -1,9 +1,3 @@
-@php
-    use Filament\Support\Enums\IconPosition;
-    use Filament\Support\Enums\IconSize;
-    use Illuminate\View\ComponentSlot;
-@endphp
-
 @props([
     'active' => false,
     'alpineActive' => null,
@@ -13,11 +7,11 @@
     'badgeColor' => null,
     'badgeTooltip' => null,
     'badgeIcon' => null,
-    'badgeIconPosition' => IconPosition::Before,
+    'badgeIconPosition' => Filament\Support\Enums\IconPosition::Before,
     'href' => null,
     'icon' => null,
     'iconColor' => 'gray',
-    'iconPosition' => IconPosition::Before,
+    'iconPosition' => Filament\Support\Enums\IconPosition::Before,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -25,6 +19,10 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Enums\IconSize;
+    use Illuminate\View\ComponentSlot;
+
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }

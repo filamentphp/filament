@@ -1,8 +1,3 @@
-@php
-    use Filament\Support\Enums\VerticalAlignment;
-    use Illuminate\View\ComponentSlot;
-@endphp
-
 @props([
     'areHtmlErrorMessagesAllowed' => null,
     'errorMessage' => null,
@@ -12,7 +7,7 @@
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
     'id' => null,
-    'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
+    'inlineLabelVerticalAlignment' => \Filament\Support\Enums\VerticalAlignment::Start,
     'isDisabled' => null,
     'label' => null,
     'labelPrefix' => null,
@@ -27,6 +22,7 @@
 @php
     use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
     use Illuminate\Support\Arr;
+    use Illuminate\View\ComponentSlot;
 
     if ($field) {
         $hasInlineLabel ??= $field->hasInlineLabel();

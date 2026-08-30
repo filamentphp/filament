@@ -1,8 +1,3 @@
-@php
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
-@endphp
-
 @props([
     'applyAction',
     'columns' => null,
@@ -10,8 +5,13 @@
     'hasToggleableColumns',
     'headingTag' => 'h3',
     'reorderAnimationDuration' => 300,
-    'resetActionPosition' => ColumnManagerResetActionPosition::Header,
+    'resetActionPosition' => Filament\Tables\Enums\ColumnManagerResetActionPosition::Header,
 ])
+
+@php
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+@endphp
 
 <div
     x-data="filamentTableColumnManager({

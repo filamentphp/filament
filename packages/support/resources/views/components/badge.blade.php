@@ -1,12 +1,3 @@
-@php
-    use Filament\Support\Enums\IconPosition;
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\Size;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Illuminate\Contracts\Support\Htmlable;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'color' => 'primary',
     'deleteButton' => null,
@@ -16,11 +7,11 @@
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => IconPosition::Before,
+    'iconPosition' => Filament\Support\Enums\IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
     'loadingIndicator' => true,
-    'size' => Size::Medium,
+    'size' => Filament\Support\Enums\Size::Medium,
     'spaMode' => null,
     'tag' => 'span',
     'target' => null,
@@ -29,6 +20,13 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\View\ComponentAttributeBag;
+
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }

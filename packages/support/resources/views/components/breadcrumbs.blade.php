@@ -1,3 +1,7 @@
+@props([
+    'breadcrumbs' => [],
+])
+
 @php
     use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -5,10 +9,6 @@
 
     use function Filament\Support\generate_icon_html;
 @endphp
-
-@props([
-    'breadcrumbs' => [],
-])
 
 <nav
     {{
