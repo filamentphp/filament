@@ -50,6 +50,23 @@ it('will prepare data attributes', function (): void {
     ]);
 });
 
+it('preserves numeric keys in `prepare_inherited_attributes()`', function (array $originalAttributes, array $expectedAttributes): void {
+    $bag = new ComponentAttributeBag($originalAttributes);
+
+    $attributes = prepare_inherited_attributes($bag);
+
+    expect($attributes->getAttributes())->toBe($expectedAttributes);
+})->with([
+    'integer key' => [
+        [1 => 'integer'],
+        ['integer', 'integer'],
+    ],
+    'numeric string key' => [
+        ['01' => 'numeric string'],
+        ['01' => 'numeric string'],
+    ],
+]);
+
 it('can handle policy being an object when method does not exist', function (): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 

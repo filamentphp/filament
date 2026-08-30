@@ -1,8 +1,11 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Panel;
+use Filament\Tests\Fixtures\Models\ConfiguredTenantScopedUser;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Tenancy\ConfiguredTenantScopedUsers\ConfiguredTenantScopedUserResource;
 use Filament\Tests\Fixtures\Resources\Tenancy\NonTenantScopedUsers\NonTenantScopedUserResource;
 use Filament\Tests\Fixtures\Resources\Tenancy\TenantScopedUsers\TenantScopedUserResource;
 use Filament\Tests\Panels\Pages\TestCase;
@@ -54,6 +57,49 @@ it('can scope a resource to the current tenant', function (): void {
     expect($results->pluck('id')->toArray())
         ->toContain($userInTenant->id)
         ->not->toContain($userNotInTenant->id);
+});
+
+it('can register tenancy for a configured resource', function (): void {
+    $panel = Panel::make()
+        ->id('configured-resource-tenancy')
+        ->tenant(Team::class)
+        ->resources([
+            ConfiguredTenantScopedUserResource::make(),
+        ]);
+
+    Filament::setCurrentPanel($panel);
+
+    $team = Team::factory()->create();
+
+    $userInTenant = ConfiguredTenantScopedUser::create([
+        'name' => 'User in tenant',
+        'email' => 'user-in-tenant@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $userInTenant->teams()->attach($team);
+
+    $userNotInTenant = ConfiguredTenantScopedUser::create([
+        'name' => 'User not in tenant',
+        'email' => 'user-not-in-tenant@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    Filament::setTenant($team);
+    $panel->boot();
+
+    $results = ConfiguredTenantScopedUserResource::getEloquentQuery()->get();
+
+    expect($results->pluck('id')->toArray())
+        ->toContain($userInTenant->id)
+        ->not->toContain($userNotInTenant->id);
+
+    $newUser = ConfiguredTenantScopedUser::create([
+        'name' => 'New user',
+        'email' => 'new-user@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    expect($team->users()->where('user_id', $newUser->id)->exists())->toBeTrue();
 });
 
 it('can create a model when multiple resources observe tenancy model creation on the same model', function (): void {

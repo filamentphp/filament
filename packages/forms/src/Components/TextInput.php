@@ -37,6 +37,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     protected bool | Closure $isEmail = false;
 
+    protected bool | Closure $isInteger = false;
+
     protected bool | Closure $isNumeric = false;
 
     protected bool | Closure $isPassword = false;
@@ -85,6 +87,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     public function integer(bool | Closure $condition = true): static
     {
+        $this->isInteger = $condition;
+
         $this->numeric($condition);
         $this->inputMode(static fn (): ?string => $condition ? 'numeric' : null);
         $this->step(static fn (): ?int => $condition ? 1 : null);
@@ -274,6 +278,11 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return (bool) $this->evaluate($this->isEmail);
     }
 
+    public function isInteger(): bool
+    {
+        return (bool) $this->evaluate($this->isInteger);
+    }
+
     public function isNumeric(): bool
     {
         return (bool) $this->evaluate($this->isNumeric);
@@ -302,7 +311,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return [
             ...parent::getDefaultStateCasts(),
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
-            ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true])] : []),
+            ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true, 'isInteger' => $this->isInteger()])] : []),
         ];
     }
 

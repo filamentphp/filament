@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
 
 use function Filament\Tests\livewire;
 
@@ -377,7 +378,7 @@ describe('rendering', function (): void {
             ->components([
                 $field = ToggleButtons::make('status')
                     ->options(['active' => 'Active'])
-                    ->tooltips(['active' => new \Illuminate\Support\HtmlString('<strong>Tip</strong>')]),
+                    ->tooltips(['active' => new HtmlString('<strong>Tip</strong>')]),
             ])
             ->fill();
 

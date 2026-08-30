@@ -14,6 +14,7 @@ use Filament\Tests\Fixtures\Notifications\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\AssertionFailedError;
 
 use function Filament\Tests\livewire;
 
@@ -190,7 +191,7 @@ it('fails `assertNotified()` when no sent notification matches the given instanc
 
     expect(fn () => Notification::assertNotified(
         Notification::make()->title('Third')->body('Third body'),
-    ))->toThrow(PHPUnit\Framework\AssertionFailedError::class);
+    ))->toThrow(AssertionFailedError::class);
 });
 
 it('fails `assertNotNotified()` when a matching notification was sent but was not first', function (): void {
@@ -200,7 +201,7 @@ it('fails `assertNotNotified()` when a matching notification was sent but was no
     // `Second` WAS sent (just not first), so asserting it was not notified must fail.
     expect(fn () => Notification::assertNotNotified(
         Notification::make()->title('Second')->body('Second body'),
-    ))->toThrow(PHPUnit\Framework\AssertionFailedError::class);
+    ))->toThrow(AssertionFailedError::class);
 });
 
 it('passes `assertNotNotified()` when the given instance was genuinely not sent', function (): void {

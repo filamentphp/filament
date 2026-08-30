@@ -831,6 +831,11 @@ export class Select {
         removeButtonIcon.setAttribute('aria-hidden', 'true')
         removeButton.appendChild(removeButtonIcon)
 
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
+
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
             if (filled(value)) {
@@ -966,6 +971,11 @@ export class Select {
         removeButton.type = 'button'
         removeButton.className = 'fi-select-input-value-remove-btn'
         removeButton.setAttribute('aria-label', this.clearButtonLabel)
+
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
 
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
@@ -2267,7 +2277,7 @@ export class Select {
             // If there are remove buttons in multiple mode, disable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.setAttribute('disabled', 'disabled')
@@ -2300,7 +2310,7 @@ export class Select {
             // If there are remove buttons in multiple mode, enable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.removeAttribute('disabled')
@@ -2315,7 +2325,7 @@ export class Select {
                 )
                 if (removeButton) {
                     removeButton.removeAttribute('disabled')
-                    removeButton.classList.add('fi-disabled')
+                    removeButton.classList.remove('fi-disabled')
                 }
             }
 

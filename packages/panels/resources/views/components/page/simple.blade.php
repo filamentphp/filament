@@ -4,13 +4,17 @@
 ])
 
 @php
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Tables\Contracts\HasTable;
+    use Filament\View\PanelsRenderHook;
+
     $heading ??= $this->getHeading();
     $subheading ??= $this->getSubHeading();
     $hasLogo = $this->hasLogo();
 @endphp
 
 <div {{ $attributes->class(['fi-simple-page']) }}>
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
+    {{ FilamentView::renderHook(PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
     <div class="fi-simple-page-content">
         @if (filled($heading) || $hasLogo || filled($subheading))
@@ -24,9 +28,9 @@
         {{ $slot }}
     </div>
 
-    @if (! $this instanceof \Filament\Tables\Contracts\HasTable)
+    @if (! $this instanceof HasTable)
         <x-filament-actions::modals />
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
+    {{ FilamentView::renderHook(PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
 </div>

@@ -22,7 +22,9 @@
 ])
 
 @php
-    $group ??= \Filament\Actions\ActionGroup::make($actions)
+    use Filament\Actions\ActionGroup;
+
+    $group ??= ActionGroup::make($actions)
         ->badgeColor($badgeColor)
         ->color($color)
         ->dropdownMaxHeight($dropdownMaxHeight)

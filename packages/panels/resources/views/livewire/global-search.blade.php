@@ -1,11 +1,17 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+    use Filament\View\PanelsRenderHook;
+    use Illuminate\Support\Arr;
+
     $debounce = filament()->getGlobalSearchDebounce();
     $keyBindings = filament()->getGlobalSearchKeyBindings();
     $suffix = filament()->getGlobalSearchFieldSuffix();
 @endphp
 
 <div class="fi-global-search-ctn">
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_START) }}
+    {{ FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_START) }}
 
     <div
         x-on:focus-first-global-search-result.stop="$el.querySelector('.fi-global-search-result-link')?.focus()"
@@ -17,8 +23,8 @@
             </label>
 
             <x-filament::input.wrapper
-                :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-                :prefix-icon-alias="\Filament\View\PanelsIconAlias::GLOBAL_SEARCH_FIELD"
+                :prefix-icon="Heroicon::MagnifyingGlass"
+                :prefix-icon-alias="PanelsIconAlias::GLOBAL_SEARCH_FIELD"
                 inline-prefix
                 :suffix="$suffix"
                 inline-suffix
@@ -110,7 +116,7 @@
                                                             <div
                                                                 class="fi-global-search-result-detail"
                                                             >
-                                                                @if ($isAssoc ??= \Illuminate\Support\Arr::isAssoc($result->details))
+                                                                @if ($isAssoc ??= Arr::isAssoc($result->details))
                                                                     <dt
                                                                         class="fi-global-search-result-detail-label"
                                                                     >
@@ -149,5 +155,5 @@
         @endif
     </div>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_END) }}
+    {{ FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_END) }}
 </div>

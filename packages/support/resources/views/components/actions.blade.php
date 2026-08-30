@@ -1,14 +1,15 @@
-@php
-    use Filament\Support\Enums\Alignment;
-@endphp
-
 @props([
     'actions' => [],
-    'alignment' => Alignment::Start,
+    'alignment' => null,
     'fullWidth' => false,
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+    use Illuminate\Contracts\Support\Htmlable;
+
+    $alignment ??= Alignment::Start;
+
     if (is_array($actions)) {
         $actions = array_filter(
             $actions,
@@ -23,7 +24,7 @@
     $hasActions = false;
 
     $hasSlot = ! \Filament\Support\is_slot_empty($slot);
-    $actionsAreHtmlable = $actions instanceof \Illuminate\Contracts\Support\Htmlable;
+    $actionsAreHtmlable = $actions instanceof Htmlable;
 
     if ($hasSlot) {
         $hasActions = true;

@@ -42,6 +42,11 @@ class TextInputTest extends Page
                     ->password()
                     ->revealable()
                     ->extraAttributes(['data-testid' => 'password-input']),
+
+                TextInput::make('code')
+                    ->label('Code')
+                    ->copyable()
+                    ->extraAttributes(['data-testid' => 'copyable-input']),
             ])
             ->statePath('data');
     }

@@ -291,6 +291,185 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Creating a custom multi-factor authentication provider
+
+You can add another MFA method by creating an object that implements the `MultiFactorAuthenticationProvider` interface. The provider tells Filament how to identify the method, determine whether it is enabled for a user, manage it, and validate its login challenge.
+
+The following sections use an SMS authentication provider as an example. The provider delegates code generation, storage, delivery, and verification to an `SmsAuthenticationService` in your app. This keeps the provider focused on integrating your authentication method with Filament:
+
+```php
+<?php
+
+namespace App\Filament\Auth\MultiFactor;
+
+use App\Services\SmsAuthenticationService;
+use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
+
+class SmsAuthentication implements MultiFactorAuthenticationProvider
+{
+    public function __construct(
+        protected SmsAuthenticationService $service,
+    ) {}
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    // ...
+}
+```
+
+The service should generate codes using a cryptographically secure random source, store only a hash of each code, scope codes to the user they were issued for, expire and consume codes, and rate-limit both delivery and verification attempts. It may deliver codes using any [SMS notification channel supported by Laravel](https://laravel.com/docs/notifications#sms-notifications).
+
+### Identifying the provider
+
+The `getId()` method must return a stable identifier that is unique among the panel's MFA providers. Filament uses it to identify the provider and scope its form state. The `getLoginFormLabel()` method returns the option shown when a user has more than one MFA method enabled:
+
+```php
+// ...
+
+public function getId(): string
+{
+    return 'sms';
+}
+
+public function getLoginFormLabel(): string
+{
+    return 'SMS';
+}
+
+// ...
+```
+
+### Checking whether the provider is enabled
+
+The `isEnabled()` method determines whether a user should be challenged by the provider. For example, you could store a `has_sms_authentication` boolean and a `phone_number` on the `User` model:
+
+```php
+use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+// ...
+
+public function isEnabled(Authenticatable $user): bool
+{
+    if (! ($user instanceof User)) {
+        return false;
+    }
+
+    return filled($user->phone_number) && ((bool) $user->has_sms_authentication);
+}
+
+// ...
+```
+
+The user passed to `isEnabled()` is not authenticated yet when Filament is preparing a login challenge, so you should always use the method's `$user` argument instead of the currently authenticated user.
+
+### Rendering the management schema
+
+The `getManagementSchemaComponents()` method returns the [schema components](../schemas) and [actions](../actions) used to manage the provider. Filament renders them on the user's profile page and, when MFA is required, on the required MFA setup page:
+
+```php
+use App\Filament\Auth\MultiFactor\Actions\DisableSmsAuthenticationAction;
+use App\Filament\Auth\MultiFactor\Actions\SetUpSmsAuthenticationAction;
+use Filament\Schemas\Components\Actions;
+
+// ...
+
+public function getManagementSchemaComponents(): array
+{
+    return [
+        Actions::make([
+            SetUpSmsAuthenticationAction::make($this->service),
+            DisableSmsAuthenticationAction::make($this->service),
+        ]),
+    ];
+}
+
+// ...
+```
+
+In this example, the setup and disable actions should send an SMS code, display a `OneTimeCodeInput`, verify the code using the service, and then persist the new enabled state. Keeping these workflows in separate action classes prevents the provider from becoming difficult to read. If your integration manages enrollment elsewhere, the management schema could instead contain an action that links to that page.
+
+### Rendering the challenge form
+
+The `getChallengeFormComponents()` method returns the fields shown after the user's password has been verified. Filament completes authentication only when the components pass validation, so the SMS code field uses the service to reject an invalid challenge:
+
+```php
+use Closure;
+use Filament\Forms\Components\OneTimeCodeInput;
+use Illuminate\Contracts\Auth\Authenticatable;
+use SensitiveParameter;
+
+// ...
+
+public function getChallengeFormComponents(Authenticatable $user): array
+{
+    return [
+        OneTimeCodeInput::make('code')
+            ->label('SMS code')
+            ->required()
+            ->rule(fn (): Closure => function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
+                if (is_string($value) && $this->service->verifyCode($user, $value)) {
+                    return;
+                }
+
+                $fail('The SMS code is invalid or has expired.');
+            }),
+    ];
+}
+
+// ...
+```
+
+The verification operation should consume a valid code so that it cannot be used successfully again.
+
+### Running logic before the challenge
+
+SMS providers need to send a code before displaying the challenge. To run logic at that point, also implement the `HasBeforeChallengeHook` interface and add the `beforeChallenge()` method:
+
+```php
+use Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+class SmsAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenticationProvider
+{
+    // ...
+
+    public function beforeChallenge(Authenticatable $user): void
+    {
+        $this->service->sendCode($user);
+    }
+
+    // ...
+}
+```
+
+The `beforeChallenge()` method may be called more than once if the user switches between enabled providers. The service should rate-limit code delivery and avoid invalidating an existing code when another code cannot be sent yet.
+
+<Aside variant="danger">
+    Store phone numbers in a consistent format such as E.164, and disable SMS authentication whenever a user's phone number changes so that they must verify the new number. You should also provide a secure account recovery process for users who lose access to their phone. SMS authentication is vulnerable to risks such as SIM swapping, so consider offering app authentication or security keys as stronger alternatives.
+</Aside>
+
+### Registering the provider
+
+Finally, register the provider with the panel's `multiFactorAuthentication()` method:
+
+```php
+use App\Filament\Auth\MultiFactor\SmsAuthentication;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->multiFactorAuthentication([
+            SmsAuthentication::make(),
+        ]);
+}
+```
+
 ## Requiring multi-factor authentication
 
 By default, users are not required to set up multi-factor authentication. You can require users to configure it by passing `isRequired: true` as a parameter to the `multiFactorAuthentication()` method in the [configuration](../panel-configuration):

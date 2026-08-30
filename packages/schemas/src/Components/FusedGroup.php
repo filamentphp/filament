@@ -259,7 +259,7 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
 
             if ($errors->has("{$statePath}.*")) {
                 if ($childComponent->shouldShowAllValidationMessages()) {
-                    $errorMessages = $errors->get("{$statePath}.*");
+                    $errorMessages = Arr::flatten($errors->get("{$statePath}.*"));
                 } else {
                     $errorMessage = $errors->first("{$statePath}.*");
                 }

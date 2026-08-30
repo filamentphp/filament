@@ -1,9 +1,3 @@
-@php
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\DropdownComponent\HeaderComponent;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'color' => 'gray',
     'icon' => null,
@@ -12,6 +6,9 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\Components\DropdownComponent\HeaderComponent;
+
     if (! ($iconSize instanceof IconSize)) {
         $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
     }

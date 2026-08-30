@@ -26,6 +26,15 @@ return [
             'label' => 'Handling|Handlinger',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Ja',
+                'false' => 'Nej',
+            ],
+
+        ],
+
         'select' => [
 
             'loading_message' => 'Indlæser...',

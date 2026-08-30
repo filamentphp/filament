@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\View\ComponentAttributeBag;
+
     $columns = $this->getColumns();
     $pollingInterval = $this->getPollingInterval();
 
@@ -10,7 +12,7 @@
 
 <x-filament-widgets::widget
     :attributes="
-        (new \Filament\Support\View\ComponentAttributeBag)
+        (new ComponentAttributeBag)
             ->merge([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? true : null,
             ], escape: false)

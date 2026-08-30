@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Sleep;
@@ -123,6 +124,52 @@ describe('authentication', function (): void {
         $this->get(route('filament.admin.pages.dashboard'))->assertRedirect(Filament::getLoginUrl());
     });
 
+    it('does not pad a successful authentication when the panel registers no multi-factor authentication providers', function (): void {
+        expect(Filament::getMultiFactorAuthenticationProviders())->toBe([]);
+
+        $userToAuthenticate = User::factory()->create();
+
+        $padding = [];
+
+        Sleep::fake();
+        Sleep::whenFakingSleep(function ($duration) use (&$padding): void {
+            $padding[] = $duration->totalMilliseconds;
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertRedirect(Filament::getUrl());
+
+        expect($padding)->toBe([]);
+    });
+
+    it('still pads a successful authentication when the panel registers a multi-factor authentication provider (control)', function (): void {
+        Filament::setCurrentPanel('app-authentication');
+
+        $userToAuthenticate = User::factory()->create();
+
+        $padding = [];
+
+        Sleep::fake();
+        Sleep::whenFakingSleep(function ($duration) use (&$padding): void {
+            $padding[] = $duration->totalMilliseconds;
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasNoFormErrors();
+
+        expect($padding)->not->toBe([]);
+    });
+
 });
 
 describe('authentication failures', function (): void {
@@ -159,10 +206,54 @@ describe('authentication failures', function (): void {
 
             return true;
         });
+
+        Event::assertDispatchedTimes(Failed::class, 1);
     });
 
-    it('fires the `Attempting` event when authentication fails because the email is unknown', function (): void {
-        Event::fake([Attempting::class]);
+    it('dispatches `Failed` once when credentials change before final validation without multi-factor authentication', function (): void {
+        expect(Filament::getMultiFactorAuthenticationProviders())->toBe([]);
+
+        $userToAuthenticate = User::factory()->create();
+
+        $attemptingEvents = 0;
+        $failedEvents = 0;
+
+        Event::listen(Attempting::class, static function () use (&$attemptingEvents, $userToAuthenticate): void {
+            $attemptingEvents++;
+
+            if ($attemptingEvents !== 2) {
+                return;
+            }
+
+            $userToAuthenticate->newQuery()
+                ->whereKey($userToAuthenticate->getKey())
+                ->update(['password' => Hash::make('new-password')]);
+        });
+
+        Event::listen(Failed::class, static function () use (&$failedEvents): void {
+            $failedEvents++;
+        });
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertHasFormErrors(['email']);
+
+        $this->assertGuest();
+
+        $freshUser = $userToAuthenticate->fresh();
+
+        expect(Hash::check('new-password', $freshUser->password))->toBeTrue()
+            ->and(Hash::check('password', $freshUser->password))->toBeFalse()
+            ->and($attemptingEvents)->toBe(2)
+            ->and($failedEvents)->toBe(1);
+    });
+
+    it('fires the `Attempting` and `Failed` events when authentication fails because the email is unknown', function (): void {
+        Event::fake([Attempting::class, Failed::class]);
 
         livewire(Login::class)
             ->fillForm([
@@ -182,6 +273,13 @@ describe('authentication failures', function (): void {
                 'password' => 'password',
             ];
         });
+
+        Event::assertDispatchedTimes(Attempting::class, 1);
+        Event::assertDispatched(static fn (Failed $event): bool => ($event->guard === 'web') && ($event->user === null) && ($event->credentials === [
+            'email' => 'nonexistent@example.com',
+            'password' => 'password',
+        ]));
+        Event::assertDispatchedTimes(Failed::class, 1);
     });
 
     it('fires the `Attempting` event when authentication fails because the password is wrong', function (): void {
@@ -244,6 +342,8 @@ describe('authentication failures', function (): void {
 
             return true;
         });
+
+        Event::assertDispatchedTimes(Failed::class, 1);
     });
 
     it('cannot reach the multi-factor challenge on a panel that `canAccessPanel()` denies', function (): void {
@@ -273,6 +373,8 @@ describe('authentication failures', function (): void {
 
             return $event->user->is($userToAuthenticate);
         });
+
+        Event::assertDispatchedTimes(Failed::class, 1);
     });
 
     it('returns the same failure for a correct and an incorrect password on a panel that `canAccessPanel()` denies', function (): void {

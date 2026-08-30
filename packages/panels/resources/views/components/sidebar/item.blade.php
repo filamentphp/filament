@@ -18,6 +18,9 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
+
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
@@ -55,9 +58,9 @@
     >
         @if (filled($icon) && ((! $subGrouped) || ($sidebarCollapsible && (! $subNavigation))))
             {{
-                \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new ComponentAttributeBag([
                     'x-show' => ($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false,
-                ]))->class(['fi-sidebar-item-icon']), size: \Filament\Support\Enums\IconSize::Large)
+                ]))->class(['fi-sidebar-item-icon']), size: IconSize::Large)
             }}
         @endif
 

@@ -1,18 +1,7 @@
-@php
-    use Filament\Support\Enums\FontWeight;
-    use Filament\Support\Enums\IconPosition;
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\Size;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Filament\Support\View\Components\LinkComponent;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => Size::ExtraSmall,
+    'badgeSize' => null,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -20,12 +9,12 @@
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => IconPosition::Before,
+    'iconPosition' => null,
     'iconSize' => null,
     'keyBindings' => null,
     'labelSrOnly' => false,
     'loadingIndicator' => true,
-    'size' => Size::Medium,
+    'size' => null,
     'spaMode' => null,
     'tag' => 'a',
     'target' => null,
@@ -35,6 +24,21 @@
 ])
 
 @php
+    use Filament\Support\Enums\FontWeight;
+    use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\LinkComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
+
+    $badgeSize ??= Size::ExtraSmall;
+    $iconPosition ??= IconPosition::Before;
+    $size ??= Size::Medium;
+
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
@@ -87,7 +91,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     {{
@@ -122,7 +126,7 @@
     @if ($iconPosition === IconPosition::Before)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
@@ -131,7 +135,7 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
@@ -148,7 +152,7 @@
     @if ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ])), size: $iconSize)
@@ -157,7 +161,7 @@
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
                 ])), size: $iconSize)
@@ -167,7 +171,7 @@
 
     @if (filled($badge))
         <div class="fi-link-badge-ctn">
-            @if ($badge instanceof \Illuminate\View\ComponentSlot)
+            @if ($badge instanceof ComponentSlot)
                 {{ $badge }}
             @else
                 <span
