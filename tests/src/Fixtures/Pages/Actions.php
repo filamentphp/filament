@@ -170,6 +170,68 @@ class Actions extends Page
                         ]),
                 ])
                 ->action(fn () => null),
+            // No schema and no confirmation, so this action has no modal of its own.
+            Action::make('haltsWithoutModal')
+                ->action(function (Action $action): void {
+                    $this->dispatch('halts-without-modal-called');
+
+                    $action->halt();
+                }),
+            Action::make('callsTwoNestedActionsWithoutModal')
+                ->registerModalActions([
+                    Action::make('firstNestedActionWithoutModal')
+                        ->action(static fn () => null),
+                    Action::make('secondNestedActionWithModal')
+                        ->requiresConfirmation()
+                        ->action(static fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('firstNestedActionWithoutModal');
+                    $action->getLivewire()->mountAction('secondNestedActionWithModal');
+
+                    $action->halt();
+                }),
+            Action::make('haltsWithoutModalAfterMountingAChild')
+                ->registerModalActions([
+                    Action::make('childOfActionWithoutModal')
+                        ->modalHeading('Child')
+                        ->action(fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childOfActionWithoutModal');
+
+                    $action->halt();
+                }),
+            Action::make('haltsWithModalAfterMountingAChild')
+                ->requiresConfirmation()
+                ->registerModalActions([
+                    Action::make('childOfActionWithModal')
+                        ->modalHeading('Child')
+                        ->action(fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childOfActionWithModal');
+
+                    $action->halt();
+                }),
+            // The grandparent has a modal of its own, so only the two actions above it on the
+            // stack have nothing to be seen in.
+            Action::make('hasModalAndMountsAnActionWithoutModal')
+                ->requiresConfirmation()
+                ->registerModalActions([
+                    Action::make('nestedActionWithoutModal')
+                        ->registerModalActions([
+                            Action::make('childOfNestedActionWithoutModal')
+                                ->modalHeading('Child')
+                                ->action(fn () => null),
+                        ])
+                        ->action(function (Action $action): void {
+                            $action->getLivewire()->mountAction('childOfNestedActionWithoutModal');
+
+                            $action->halt();
+                        }),
+                ])
+                ->action(fn () => null),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action): void {
