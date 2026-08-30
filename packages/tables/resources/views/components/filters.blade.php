@@ -20,7 +20,7 @@
                 <x-filament::link
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
-                            new \Filament\Support\View\ComponentAttributeBag([
+                            new ComponentAttributeBag([
                                 'color' => 'danger',
                                 'tag' => 'button',
                                 'wire:click' => 'resetTableFiltersForm',

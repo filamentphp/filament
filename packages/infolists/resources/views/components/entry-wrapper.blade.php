@@ -53,7 +53,7 @@
             <div
                 @class([
                     'fi-in-entry-label-ctn',
-                    ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
+                    ($label instanceof ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
                 {{ $beforeLabelContainer }}
@@ -62,7 +62,7 @@
                     <div
                         {{
                             (
-                                ($label instanceof \Illuminate\View\ComponentSlot)
+                                ($label instanceof ComponentSlot)
                                 ? $label->attributes
                                 : (new FilamentComponentAttributeBag)
                             )

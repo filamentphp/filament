@@ -66,7 +66,7 @@
     @endif
 
     @if (filled($badge))
-        @if ($badge instanceof \Illuminate\View\ComponentSlot)
+        @if ($badge instanceof ComponentSlot)
             {{ $badge }}
         @else
             <x-filament::badge
@@ -85,7 +85,7 @@
             x-cloak
             class="fi-tabs-item-badge-placeholder"
         >
-            {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::Small) }}
+            {{ \Filament\Support\generate_loading_indicator_html(size: IconSize::Small) }}
         </span>
 
         <template

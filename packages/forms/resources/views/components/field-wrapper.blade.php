@@ -24,11 +24,12 @@
 ])
 
 @php
+    use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
     use Illuminate\Support\Arr;
 
     if ($field) {
         $hasInlineLabel ??= $field->hasInlineLabel();
-        $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
+        $hasNestedRecursiveValidationRules ??= $field instanceof HasNestedRecursiveValidationRules;
         $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
         $label ??= $field->getLabel();
@@ -102,7 +103,7 @@
             <div
                 @class([
                     'fi-fo-field-label-ctn',
-                    ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
+                    ($label instanceof ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
                 {{ $beforeLabelSchema }}

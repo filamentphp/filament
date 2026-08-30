@@ -46,7 +46,7 @@
             </a>
 
             <p class="fi-filament-info-widget-version">
-                {{ \Composer\InstalledVersions::getPrettyVersion('filament/filament') }}
+                {{ InstalledVersions::getPrettyVersion('filament/filament') }}
             </p>
         </div>
 
@@ -54,8 +54,8 @@
             <x-filament::link
                 color="gray"
                 href="https://filamentphp.com/docs"
-                :icon="\Filament\Support\Icons\Heroicon::BookOpen"
-                :icon-alias="\Filament\View\PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON"
+                :icon="Heroicon::BookOpen"
+                :icon-alias="PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON"
                 rel="noopener noreferrer"
                 target="_blank"
             >
@@ -65,7 +65,7 @@
             <x-filament::link
                 color="gray"
                 href="https://github.com/filamentphp/filament"
-                :icon-alias="\Filament\View\PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON"
+                :icon-alias="PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON"
                 rel="noopener noreferrer"
                 target="_blank"
             >

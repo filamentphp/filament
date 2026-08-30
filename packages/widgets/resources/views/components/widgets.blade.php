@@ -16,8 +16,10 @@
 
 <div {{ $attributes->grid($columns)->class(['fi-wi']) }}>
     @php
-        $normalizeWidgetClass = function (string | Filament\Widgets\WidgetConfiguration $widget): string {
-            if ($widget instanceof \Filament\Widgets\WidgetConfiguration) {
+        use Filament\Widgets\WidgetConfiguration;
+
+        $normalizeWidgetClass = function (string | WidgetConfiguration $widget): string {
+            if ($widget instanceof WidgetConfiguration) {
                 return $widget->widget;
             }
 

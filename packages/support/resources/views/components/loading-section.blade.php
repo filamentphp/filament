@@ -9,7 +9,7 @@
     role="status"
     aria-busy="true"
     {{
-        ($attributes ?? new \Filament\Support\View\ComponentAttributeBag)
+        ($attributes ?? new ComponentAttributeBag)
             ->gridColumn($columnSpan, $columnStart)
             ->class(['fi-section fi-loading-section'])
             ->style(['height: ' . e($height ?? '8rem')])

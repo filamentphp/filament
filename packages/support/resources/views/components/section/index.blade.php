@@ -77,7 +77,7 @@
             class="fi-section-header"
         >
             {{
-                \Filament\Support\generate_icon_html($icon, attributes: (new \Filament\Support\View\ComponentAttributeBag)
+                \Filament\Support\generate_icon_html($icon, attributes: (new ComponentAttributeBag)
                     ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
             }}
 
@@ -107,8 +107,8 @@
                 {{-- The content container is not rendered when the slot and footer are empty, so `aria-controls` must not reference it then. --}}
                 <x-filament::icon-button
                     color="gray"
-                    :icon="\Filament\Support\Icons\Heroicon::ChevronUp"
-                    :icon-alias="\Filament\Support\View\SupportIconAlias::SECTION_COLLAPSE_BUTTON"
+                    :icon="Heroicon::ChevronUp"
+                    :icon-alias="SupportIconAlias::SECTION_COLLAPSE_BUTTON"
                     :label="__($collapsed ? 'filament::components/section.actions.expand.label' : 'filament::components/section.actions.collapse.label')"
                     :x-bind:aria-label="'isCollapsed ? ' . Js::from(__('filament::components/section.actions.expand.label')) . ' : ' . Js::from(__('filament::components/section.actions.collapse.label'))"
                     aria-expanded="{{ $collapsed ? 'false' : 'true' }}"

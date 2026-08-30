@@ -11,11 +11,11 @@
     'alert' => false,
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
-    'autofocus' => \Filament\Support\View\Components\ModalComponent::$isAutofocused,
+    'autofocus' => ModalComponent::$isAutofocused,
     'clickThrough' => false,
-    'closeButton' => \Filament\Support\View\Components\ModalComponent::$hasCloseButton,
-    'closeByClickingAway' => \Filament\Support\View\Components\ModalComponent::$isClosedByClickingAway,
-    'closeByEscaping' => \Filament\Support\View\Components\ModalComponent::$isClosedByEscaping,
+    'closeButton' => ModalComponent::$hasCloseButton,
+    'closeByClickingAway' => ModalComponent::$isClosedByClickingAway,
+    'closeByEscaping' => ModalComponent::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
@@ -43,11 +43,14 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Illuminate\Support\Js;
+
     $hasContent = ! \Filament\Support\is_slot_empty($slot);
     $hasDescription = filled($description);
     $hasFooter = (! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions)));
     $hasHeading = filled($heading);
-    $iconHtml = ($icon || $iconAlias) ? \Filament\Support\generate_icon_html($icon, $iconAlias, size: \Filament\Support\Enums\IconSize::Large) : null;
+    $iconHtml = ($icon || $iconAlias) ? \Filament\Support\generate_icon_html($icon, $iconAlias, size: IconSize::Large) : null;
     $hasIcon = $iconHtml !== null;
 
     $headingId = filled($id) ? "{$id}.heading" : null;
@@ -68,7 +71,7 @@
         $width = Width::tryFrom($width) ?? $width;
     }
 
-    $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
+    $closeEventHandler = filled($id) ? '$dispatch(' . Js::from($closeEventName) . ', { id: ' . Js::from($id) . ' })' : 'close()';
 
     $wireSubmitHandler = $attributes->get('wire:submit.prevent');
     $attributes = $attributes->except(['wire:submit.prevent']);
@@ -163,7 +166,7 @@
             x-show="isOpen"
             x-transition.duration.300ms.opacity
             {{
-                ($extraModalOverlayAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->class([
+                ($extraModalOverlayAttributeBag ?? new ComponentAttributeBag)->class([
                     'fi-modal-close-overlay',
                 ])
             }}
@@ -199,7 +202,7 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new \Filament\Support\View\ComponentAttributeBag)->merge([
+                ($extraModalWindowAttributeBag ?? new ComponentAttributeBag)->merge([
                     // When `Escape` does not close the modal, the close button stays in the tab order as the only keyboard way to dismiss it, so the window takes the focus trap's `[autofocus]` to stop the button from being autofocused when the modal opens.
                     'autofocus' => $closeButton && (! $closeByEscaping) && ($heading || $header),
                     'tabindex' => ($closeButton && (! $closeByEscaping) && ($heading || $header)) ? '-1' : null,
@@ -229,8 +232,8 @@
                         {{-- The close button is removed from the tab order when `Escape` also closes the modal, so it can sit first in the focus trap without being autofocused when the modal opens. When `Escape` does not close the modal, the button is the only keyboard way to dismiss it, so it stays in the tab order and the modal window is autofocused instead. --}}
                         <x-filament::icon-button
                             color="gray"
-                            :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
-                            :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
+                            :icon="Heroicon::OutlinedXMark"
+                            :icon-alias="SupportIconAlias::MODAL_CLOSE_BUTTON"
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
                             :tabindex="$closeByEscaping ? '-1' : null"

@@ -41,7 +41,7 @@
                 {{ (new FilamentComponentAttributeBag)->color(DescriptionComponent::class, $descriptionColor)->class(['fi-wi-stats-overview-stat-description']) }}
             >
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new ComponentAttributeBag)) }}
                 @endif
 
                 <span>
@@ -49,7 +49,7 @@
                 </span>
 
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new ComponentAttributeBag)) }}
                 @endif
             </div>
         @endif
@@ -60,7 +60,7 @@
         <div x-data="{ statsOverviewStatChart() {} }">
             <div
                 x-load
-                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
+                x-load-src="{{ FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
                 wire:ignore
                 x-data="statsOverviewStatChart({
                             key: @js($getKey(false)),

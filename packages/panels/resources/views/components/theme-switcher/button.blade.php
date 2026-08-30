@@ -21,9 +21,9 @@
 >
     {{
         \Filament\Support\generate_icon_html($icon, alias: match ($theme) {
-            'light' => \Filament\View\PanelsIconAlias::THEME_SWITCHER_LIGHT_BUTTON,
-            'dark' => \Filament\View\PanelsIconAlias::THEME_SWITCHER_DARK_BUTTON,
-            'system' => \Filament\View\PanelsIconAlias::THEME_SWITCHER_SYSTEM_BUTTON,
+            'light' => PanelsIconAlias::THEME_SWITCHER_LIGHT_BUTTON,
+            'dark' => PanelsIconAlias::THEME_SWITCHER_DARK_BUTTON,
+            'system' => PanelsIconAlias::THEME_SWITCHER_SYSTEM_BUTTON,
         })
     }}
 </button>

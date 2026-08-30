@@ -88,7 +88,7 @@
         >
             <div
                 x-load
-                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                x-load-src="{{ FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
                 data-chart-type="{{ $type }}"
                 x-data="chart({

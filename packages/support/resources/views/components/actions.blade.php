@@ -9,6 +9,8 @@
 ])
 
 @php
+    use Illuminate\Contracts\Support\Htmlable;
+
     if (is_array($actions)) {
         $actions = array_filter(
             $actions,
@@ -23,7 +25,7 @@
     $hasActions = false;
 
     $hasSlot = ! \Filament\Support\is_slot_empty($slot);
-    $actionsAreHtmlable = $actions instanceof \Illuminate\Contracts\Support\Htmlable;
+    $actionsAreHtmlable = $actions instanceof Htmlable;
 
     if ($hasSlot) {
         $hasActions = true;

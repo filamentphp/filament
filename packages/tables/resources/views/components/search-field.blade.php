@@ -23,8 +23,8 @@
 
     <x-filament::input.wrapper
         inline-prefix
-        :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-        :prefix-icon-alias="\Filament\Tables\View\TablesIconAlias::SEARCH_FIELD"
+        :prefix-icon="Heroicon::MagnifyingGlass"
+        :prefix-icon-alias="TablesIconAlias::SEARCH_FIELD"
         :wire:target="$wireModel"
     >
         <x-filament::input

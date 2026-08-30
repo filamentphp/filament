@@ -29,8 +29,8 @@
 
             <x-filament::button
                 color="gray"
-                :icon="\Filament\Support\Icons\Heroicon::ArrowLeftEndOnRectangle"
-                :icon-alias="\Filament\View\PanelsIconAlias::WIDGETS_ACCOUNT_LOGOUT_BUTTON"
+                :icon="Heroicon::ArrowLeftEndOnRectangle"
+                :icon-alias="PanelsIconAlias::WIDGETS_ACCOUNT_LOGOUT_BUTTON"
                 labeled-from="sm"
                 tag="button"
                 type="submit"

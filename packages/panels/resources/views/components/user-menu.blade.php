@@ -35,7 +35,7 @@
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
+{{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_BEFORE) }}
 
 <x-filament::dropdown
     :placement="($position === UserMenuPosition::Topbar) ? 'bottom-end' : 'top-end'"
@@ -72,7 +72,7 @@
                 </span>
 
                 {{
-                    \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new \Filament\Support\View\ComponentAttributeBag([
+                    \Filament\Support\generate_icon_html(Heroicon::ChevronUp, alias: PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new ComponentAttributeBag([
                         'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
                     ]))
                 }}
@@ -89,24 +89,24 @@
             unset($itemsBeforeThemeSwitcher['profile']);
         @endphp
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
         <x-filament::dropdown.header :color="$itemColor" :icon="$itemIcon">
             {{ $item->getLabel() }}
         </x-filament::dropdown.header>
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
     @endif
 
     @if ($itemsBeforeThemeSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
             @foreach ($itemsBeforeThemeSwitcher as $key => $item)
                 @if ($key === 'profile')
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
                     {{ $item }}
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
                 @else
                     {{ $item }}
                 @endif
@@ -125,11 +125,11 @@
             <x-filament::dropdown.list>
                 @foreach ($afterThemeGroup as $key => $item)
                     @if ($key === 'profile')
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+                        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
                         {{ $item }}
 
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+                        {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
                     @else
                         {{ $item }}
                     @endif
@@ -140,11 +140,11 @@
         <x-filament::dropdown.list>
             @foreach ($itemsAfterThemeSwitcher as $key => $item)
                 @if ($key === 'profile')
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
                     {{ $item }}
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
+                    {{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
                 @else
                     {{ $item }}
                 @endif
@@ -153,4 +153,4 @@
     @endif
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_AFTER) }}
+{{ FilamentView::renderHook(PanelsRenderHook::USER_MENU_AFTER) }}

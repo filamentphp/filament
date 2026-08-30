@@ -74,7 +74,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     {{
@@ -82,7 +82,7 @@
             ->merge([
                 'aria-disabled' => $disabled ? 'true' : null,
                 // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
-                'aria-label' => filled($label) ? e(trim(strip_tags($label instanceof \Illuminate\Contracts\Support\Htmlable ? $label->toHtml() : $label)), doubleEncode: false) : null,
+                'aria-label' => filled($label) ? e(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : $label)), doubleEncode: false) : null,
                 'disabled' => $disabled && blank($tooltip),
                 'form' => $formId,
                 'tabindex' => (($tag === 'a') && $disabled && $hasTooltip) ? '0' : null,
@@ -108,7 +108,7 @@
     }}
 >
     {{
-        \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+        \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
             'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
         ])), size: $iconSize)
@@ -116,7 +116,7 @@
 
     @if ($hasLoadingIndicator)
         {{
-            \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+            \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                 'wire:loading.delay.' . $loadingDelay => '',
                 'wire:target' => $loadingIndicatorTarget,
             ])), size: $iconSize)
@@ -125,7 +125,7 @@
 
     @if (filled($badge))
         <div class="fi-icon-btn-badge-ctn">
-            @if ($badge instanceof \Illuminate\View\ComponentSlot)
+            @if ($badge instanceof ComponentSlot)
                 {{ $badge }}
             @else
                 <span
