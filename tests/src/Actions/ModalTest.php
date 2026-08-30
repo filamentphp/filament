@@ -23,9 +23,9 @@ describe('browser interactions', function (): void {
         $browser
             ->click('[data-testid="modal-less-parent-trigger"]')
             ->assertVisible('[data-testid="modal-less-parent-child-modal"]')
-            ->assertNoAccessibilityIssues()
             ->click('[data-testid="modal-less-parent-child-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="modal-less-parent-child-modal"]')
+            ->assertNoAccessibilityIssues()
             ->click('[data-testid="action-after-child-trigger"]')
             ->assertSeeIn('[data-testid="action-after-child-result"]', 'ran')
             ->assertNoSmoke();
