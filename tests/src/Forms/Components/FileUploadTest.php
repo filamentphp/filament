@@ -1986,7 +1986,7 @@ it('can render `FileUpload` in the browser', function (): void {
 it('does not refetch file metadata when reordering files', function (): void {
     $this->actingAs(User::factory()->create());
 
-    $fileUploadAlpineData = "document.querySelector('.fi-fo-file-upload')._x_dataStack[0]";
+    $fileUploadAlpineData = "Alpine.\$data(document.querySelector('.fi-fo-file-upload'))";
     $fileUploadLivewireComponent = "Livewire.find(document.querySelector('.fi-fo-file-upload').closest('[wire\\\\:id]').getAttribute('wire:id'))";
 
     $page = visit('/file-upload-browser-test?testReordering=1')
