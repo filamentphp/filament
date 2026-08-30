@@ -7,7 +7,7 @@
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
     'id' => null,
-    'inlineLabelVerticalAlignment' => \Filament\Support\Enums\VerticalAlignment::Start,
+    'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
     'isDisabled' => null,
     'label' => null,
     'labelPrefix' => null,
