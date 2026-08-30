@@ -332,6 +332,8 @@ export default function fileUploadFormComponent({
                 },
             })
 
+            this.lastState = JSON.stringify(this.state)
+
             this.$watch('state', async () => {
                 if (!this.pond) {
                     return
@@ -357,21 +359,31 @@ export default function fileUploadFormComponent({
                     return
                 }
 
+                const newState = JSON.stringify(this.state)
+
                 // Don't do anything if the state hasn't changed
-                if (JSON.stringify(this.state) === this.lastState) {
+                if (newState === this.lastState) {
                     return
                 }
 
-                this.lastState = JSON.stringify(this.state)
+                const previousState = JSON.parse(this.lastState ?? '{}') ?? {}
+
+                this.lastState = newState
 
                 // Skip refetching on a pure reorder: re-requesting file URLs here would
                 // regenerate a fresh signed URL per file on private disks, breaking browser caching.
-                const previousFileKeys = new Set(Object.keys(this.fileKeyIndex))
+                const previousFileKeys = Object.keys(previousState)
                 const newFileKeys = Object.keys(this.state ?? {})
 
                 const isPureReorder =
-                    newFileKeys.length === previousFileKeys.size &&
-                    newFileKeys.every((fileKey) => previousFileKeys.has(fileKey))
+                    newFileKeys.length === previousFileKeys.length &&
+                    newFileKeys.length ===
+                        Object.keys(this.fileKeyIndex).length &&
+                    newFileKeys.every(
+                        (fileKey) =>
+                            previousState[fileKey] === this.state[fileKey] &&
+                            this.fileKeyIndex[fileKey],
+                    )
 
                 if (isPureReorder) {
                     this.fileKeyIndex = Object.fromEntries(

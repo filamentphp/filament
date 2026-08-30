@@ -1983,6 +1983,33 @@ it('can render `FileUpload` in the browser', function (): void {
     });
 });
 
+it('does not refetch file metadata when reordering files', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $fileUploadAlpineData = "document.querySelector('.fi-fo-file-upload')._x_dataStack[0]";
+    $fileUploadLivewireComponent = "Livewire.find(document.querySelector('.fi-fo-file-upload').closest('[wire\\\\:id]').getAttribute('wire:id'))";
+
+    $page = visit('/file-upload-browser-test?testReordering=1')
+        ->wait(1);
+
+    $page->script("window.initialUploadedFileUrls = Object.fromEntries(Object.entries({$fileUploadAlpineData}.fileKeyIndex).map(([fileKey, file]) => [fileKey, file.url]))");
+
+    $page->script("{$fileUploadLivewireComponent}.call('reorderAttachments')");
+
+    $page
+        ->wait(1)
+        ->assertScript("Object.keys({$fileUploadAlpineData}.fileKeyIndex).join(',')", 'second-key,first-key')
+        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].url === window.initialUploadedFileUrls['first-key']", true)
+        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['second-key'].url === window.initialUploadedFileUrls['second-key']", true);
+
+    $page->script("{$fileUploadLivewireComponent}.call('replaceAttachment')");
+
+    $page
+        ->wait(1)
+        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].name", 'replacement.txt')
+        ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].url !== window.initialUploadedFileUrls['first-key']", true);
+});
+
 class RenderFileUploadWithAvatar extends Livewire
 {
     public function form(Schema $form): Schema
