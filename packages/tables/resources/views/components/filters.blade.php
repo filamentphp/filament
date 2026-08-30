@@ -2,12 +2,14 @@
     'applyAction',
     'form',
     'headingTag' => 'h3',
-    'resetActionPosition' => Filament\Tables\Enums\FiltersResetActionPosition::Header,
+    'resetActionPosition' => null,
 ])
 
 @php
     use Filament\Support\View\ComponentAttributeBag;
     use Filament\Tables\Enums\FiltersResetActionPosition;
+
+    $resetActionPosition ??= FiltersResetActionPosition::Header;
 @endphp
 
 <div {{ $attributes->class(['fi-ta-filters']) }}>

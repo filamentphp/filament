@@ -7,11 +7,11 @@
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => Filament\Support\Enums\IconPosition::Before,
+    'iconPosition' => null,
     'iconSize' => null,
     'keyBindings' => null,
     'loadingIndicator' => true,
-    'size' => Filament\Support\Enums\Size::Medium,
+    'size' => null,
     'spaMode' => null,
     'tag' => 'span',
     'target' => null,
@@ -26,6 +26,9 @@
     use Filament\Support\View\Components\BadgeComponent;
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\View\ComponentAttributeBag;
+
+    $iconPosition ??= IconPosition::Before;
+    $size ??= Size::Medium;
 
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;

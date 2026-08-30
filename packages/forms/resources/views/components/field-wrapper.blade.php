@@ -7,7 +7,7 @@
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
     'id' => null,
-    'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
+    'inlineLabelVerticalAlignment' => null,
     'isDisabled' => null,
     'label' => null,
     'labelPrefix' => null,
@@ -21,8 +21,11 @@
 
 @php
     use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
+    use Filament\Support\Enums\VerticalAlignment;
     use Illuminate\Support\Arr;
     use Illuminate\View\ComponentSlot;
+
+    $inlineLabelVerticalAlignment ??= VerticalAlignment::Start;
 
     if ($field) {
         $hasInlineLabel ??= $field->hasInlineLabel();

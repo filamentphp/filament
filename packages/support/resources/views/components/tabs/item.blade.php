@@ -7,11 +7,11 @@
     'badgeColor' => null,
     'badgeTooltip' => null,
     'badgeIcon' => null,
-    'badgeIconPosition' => Filament\Support\Enums\IconPosition::Before,
+    'badgeIconPosition' => null,
     'href' => null,
     'icon' => null,
     'iconColor' => 'gray',
-    'iconPosition' => Filament\Support\Enums\IconPosition::Before,
+    'iconPosition' => null,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -22,6 +22,9 @@
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
     use Illuminate\View\ComponentSlot;
+
+    $badgeIconPosition ??= IconPosition::Before;
+    $iconPosition ??= IconPosition::Before;
 
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;

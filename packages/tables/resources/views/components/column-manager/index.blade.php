@@ -5,12 +5,14 @@
     'hasToggleableColumns',
     'headingTag' => 'h3',
     'reorderAnimationDuration' => 300,
-    'resetActionPosition' => Filament\Tables\Enums\ColumnManagerResetActionPosition::Header,
+    'resetActionPosition' => null,
 ])
 
 @php
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+
+    $resetActionPosition ??= ColumnManagerResetActionPosition::Header;
 @endphp
 
 <div

@@ -1,7 +1,7 @@
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => Filament\Support\Enums\Size::ExtraSmall,
+    'badgeSize' => null,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -13,7 +13,7 @@
     'keyBindings' => null,
     'label' => null,
     'loadingIndicator' => true,
-    'size' => Filament\Support\Enums\Size::Medium,
+    'size' => null,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -30,6 +30,9 @@
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\View\ComponentAttributeBag;
     use Illuminate\View\ComponentSlot;
+
+    $badgeSize ??= Size::ExtraSmall;
+    $size ??= Size::Medium;
 
     if (! $size instanceof Size) {
         $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;

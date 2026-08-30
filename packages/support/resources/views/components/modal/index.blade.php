@@ -1,12 +1,12 @@
 @props([
     'alert' => false,
-    'alignment' => Filament\Support\Enums\Alignment::Start,
+    'alignment' => null,
     'ariaLabelledby' => null,
-    'autofocus' => ModalComponent::$isAutofocused,
+    'autofocus' => null,
     'clickThrough' => false,
-    'closeButton' => ModalComponent::$hasCloseButton,
-    'closeByClickingAway' => ModalComponent::$isClosedByClickingAway,
-    'closeByEscaping' => ModalComponent::$isClosedByEscaping,
+    'closeButton' => null,
+    'closeByClickingAway' => null,
+    'closeByEscaping' => null,
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
@@ -15,7 +15,7 @@
     'extraModalOverlayAttributeBag' => null,
     'footer' => null,
     'footerActions' => [],
-    'footerActionsAlignment' => Filament\Support\Enums\Alignment::Start,
+    'footerActionsAlignment' => null,
     'header' => null,
     'heading' => null,
     'icon' => null,
@@ -24,7 +24,7 @@
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
-    'slideOverPosition' => Filament\Support\Enums\SlideOverPosition::End,
+    'slideOverPosition' => null,
     'stickyFooter' => false,
     'stickyHeader' => false,
     'teleport' => null,
@@ -40,10 +40,19 @@
     use Filament\Support\Enums\Width;
     use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\ModalComponent;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Filament\Support\View\SupportIconAlias;
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Js;
+
+    $alignment ??= Alignment::Start;
+    $autofocus ??= ModalComponent::$isAutofocused;
+    $closeButton ??= ModalComponent::$hasCloseButton;
+    $closeByClickingAway ??= ModalComponent::$isClosedByClickingAway;
+    $closeByEscaping ??= ModalComponent::$isClosedByEscaping;
+    $footerActionsAlignment ??= Alignment::Start;
+    $slideOverPosition ??= SlideOverPosition::End;
 
     $hasContent = ! \Filament\Support\is_slot_empty($slot);
     $hasDescription = filled($description);
