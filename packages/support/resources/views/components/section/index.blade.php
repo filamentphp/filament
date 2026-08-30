@@ -1,12 +1,3 @@
-@php
-    use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\SectionComponent\IconComponent;
-    use Illuminate\Support\Js;
-
-    use function Filament\Support\is_slot_empty;
-@endphp
-
 @props([
     'afterHeader' => null,
     'aside' => false,
@@ -30,6 +21,15 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\Components\SectionComponent\IconComponent;
+    use Filament\Support\View\SupportIconAlias;
+    use Illuminate\Support\Js;
+
+    use function Filament\Support\is_slot_empty;
+
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
         $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }

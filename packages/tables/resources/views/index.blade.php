@@ -3,9 +3,11 @@
     use Filament\Actions\BulkAction;
     use Filament\Actions\BulkActionGroup;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\IconSize;
     use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
@@ -16,12 +18,15 @@
     use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Filament\Tables\Filters\Indicator;
     use Filament\Tables\Table;
+    use Filament\Tables\View\TablesIconAlias;
     use Filament\Tables\View\TablesRenderHook;
     use Illuminate\Contracts\Pagination\CursorPaginator;
     use Illuminate\Contracts\Pagination\LengthAwarePaginator;
     use Illuminate\Contracts\Pagination\Paginator;
     use Illuminate\Database\Query\Builder;
+    use Illuminate\Support\Number;
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
 

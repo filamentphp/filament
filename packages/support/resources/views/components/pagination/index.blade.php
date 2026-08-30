@@ -6,8 +6,11 @@
 ])
 
 @php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\SupportIconAlias;
     use Illuminate\Contracts\Pagination\CursorPaginator;
     use Illuminate\Pagination\LengthAwarePaginator;
+    use Illuminate\Support\Number;
 
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof LengthAwarePaginator;

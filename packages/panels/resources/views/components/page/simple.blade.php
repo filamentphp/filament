@@ -4,6 +4,10 @@
 ])
 
 @php
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Tables\Contracts\HasTable;
+    use Filament\View\PanelsRenderHook;
+
     $heading ??= $this->getHeading();
     $subheading ??= $this->getSubHeading();
     $hasLogo = $this->hasLogo();

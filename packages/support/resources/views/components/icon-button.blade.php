@@ -1,16 +1,7 @@
-@php
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\Size;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Filament\Support\View\Components\IconButtonComponent;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => Size::ExtraSmall,
+    'badgeSize' => null,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -22,7 +13,7 @@
     'keyBindings' => null,
     'label' => null,
     'loadingIndicator' => true,
-    'size' => Size::Medium,
+    'size' => null,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -31,6 +22,18 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\IconButtonComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
+
+    $badgeSize ??= Size::ExtraSmall;
+    $size ??= Size::Medium;
+
     if (! $size instanceof Size) {
         $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;
     }

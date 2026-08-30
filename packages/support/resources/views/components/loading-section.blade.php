@@ -5,6 +5,10 @@
     'loadingLabel' => null,
 ])
 
+@php
+    use Filament\Support\View\ComponentAttributeBag;
+@endphp
+
 <div
     role="status"
     aria-busy="true"

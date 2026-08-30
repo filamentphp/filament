@@ -1,8 +1,3 @@
-@php
-    use Filament\Support\View\Components\ToggleComponent;
-    use Illuminate\Support\Arr;
-@endphp
-
 @props([
     'state',
     'offColor' => 'gray',
@@ -10,6 +5,12 @@
     'onColor' => 'primary',
     'onIcon' => null,
 ])
+
+@php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\Components\ToggleComponent;
+    use Illuminate\Support\Arr;
+@endphp
 
 <button
     x-data="{ state: {{ $state }} }"

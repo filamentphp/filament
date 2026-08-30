@@ -2,6 +2,10 @@
     'navigation',
 ])
 
+@php
+    use Illuminate\Contracts\Support\Htmlable;
+@endphp
+
 <x-filament::tabs
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->class(['fi-page-sub-navigation-tabs'])"
 >

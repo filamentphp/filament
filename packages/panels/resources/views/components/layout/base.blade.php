@@ -3,6 +3,10 @@
 ])
 
 @php
+    use Filament\Livewire\Notifications;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\View\PanelsRenderHook;
+
     $renderHookScopes = $livewire?->getRenderHookScopes();
 @endphp
 

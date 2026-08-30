@@ -1,13 +1,3 @@
-@php
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\Size;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Filament\Support\View\Components\DropdownComponent\ItemComponent;
-    use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'alpineDeferredBadgeData' => null,
     'alpineDeferredBadgeLoading' => null,
@@ -31,6 +21,15 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\DropdownComponent\ItemComponent;
+    use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
+
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
         $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }

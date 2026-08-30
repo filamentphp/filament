@@ -1,5 +1,14 @@
+@props([
+    'after' => null,
+    'heading' => null,
+    'subheading' => null,
+])
+
 @php
+    use Filament\Livewire\SimpleUserMenu;
     use Filament\Support\Enums\Width;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\View\PanelsRenderHook;
 
     $livewire ??= null;
 
@@ -12,12 +21,6 @@
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
-    @props([
-        'after' => null,
-        'heading' => null,
-        'subheading' => null,
-    ])
-
     <div class="fi-simple-layout">
         @if (($hasTopbar ?? true) && filament()->auth()->check())
             <a href="#fi-main-content" class="fi-skip-link fi-sr-only">

@@ -21,6 +21,7 @@
     use Filament\Actions\Action;
     use Filament\Support\View\ComponentAttributeBag;
     use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
+    use Illuminate\Support\Str;
 
     $prefixActions = array_filter(
         $prefixActions,

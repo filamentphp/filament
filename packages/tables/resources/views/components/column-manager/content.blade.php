@@ -1,14 +1,16 @@
-@php
-    use Filament\Support\Enums\GridDirection;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-@endphp
-
 @props([
     'columns' => null,
     'hasReorderableColumns',
     'hasToggleableColumns',
     'reorderAnimationDuration' => 300,
 ])
+
+@php
+    use Filament\Support\Enums\GridDirection;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Tables\View\TablesIconAlias;
+@endphp
 
 <div
     @if ($hasToggleableColumns)

@@ -1,9 +1,3 @@
-@php
-    use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\GridDirection;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-@endphp
-
 @props([
     'action',
     'actionAlignment' => null,
@@ -14,6 +8,12 @@
     'trigger',
     'width' => null,
 ])
+
+@php
+    use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\GridDirection;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+@endphp
 
 <x-filament::dropdown
     :placement="

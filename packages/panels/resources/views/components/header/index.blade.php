@@ -6,6 +6,11 @@
     'subheading' => null,
 ])
 
+@php
+    use Filament\Support\Facades\FilamentView;
+    use Filament\View\PanelsRenderHook;
+@endphp
+
 <header
     {{
         $attributes->class([
@@ -37,9 +42,6 @@
     </div>
 
     @php
-        use Filament\Support\Facades\FilamentView;
-        use Filament\View\PanelsRenderHook;
-
         $beforeActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
         $afterActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
     @endphp

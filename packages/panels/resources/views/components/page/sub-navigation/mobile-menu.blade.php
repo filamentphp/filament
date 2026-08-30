@@ -2,6 +2,11 @@
     'navigation',
 ])
 
+@php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+@endphp
+
 <x-filament::dropdown
     placement="bottom-start"
     width="xs"

@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\ChartWidgetComponent;
     use Illuminate\Contracts\Support\Htmlable;

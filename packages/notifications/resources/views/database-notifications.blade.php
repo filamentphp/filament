@@ -1,5 +1,7 @@
 @php
+    use Filament\Notifications\View\NotificationsIconAlias;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
     use Illuminate\Contracts\Pagination\Paginator;
@@ -19,7 +21,7 @@
         close-button
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
         :extra-modal-window-attribute-bag="
-            new ComponentAttributeBag([
+            new FilamentComponentAttributeBag([
                 'autofocus' => true,
                 'tabindex' => '-1',
             ])
@@ -39,7 +41,7 @@
         width="md"
         class="fi-no-database"
         :attributes="
-            new ComponentAttributeBag([
+            new FilamentComponentAttributeBag([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? '' : false,
             ])
         "

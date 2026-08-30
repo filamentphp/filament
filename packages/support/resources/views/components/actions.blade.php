@@ -1,15 +1,14 @@
-@php
-    use Filament\Support\Enums\Alignment;
-@endphp
-
 @props([
     'actions' => [],
-    'alignment' => Alignment::Start,
+    'alignment' => null,
     'fullWidth' => false,
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
     use Illuminate\Contracts\Support\Htmlable;
+
+    $alignment ??= Alignment::Start;
 
     if (is_array($actions)) {
         $actions = array_filter(
