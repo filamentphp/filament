@@ -13,7 +13,7 @@
         "danharrin/date-format-converter": "^0.3.1",
         "filament/support": "*",
         "larastan/larastan": "^3.0",
-        "laravel/pint": "1.25.1",
+        "laravel/pint": "1.29.2",
         "laravel/prompts": "^0.3.5",
         "league/csv": "^9.27",
         "league/flysystem-aws-s3-v3": "^3.0",
@@ -83,7 +83,7 @@
             "@pint",
             "npm run prettier"
         ],
-        "pint": "pint --config pint-strict-imports.json --cache-file=.pint.cache",
+        "pint": "pint --parallel --config pint-strict-imports.json --cache-file=.pint.cache",
         "rector": "rector",
         "test:pest": "pest --parallel --exclude-group=serial",
         "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=serial",
