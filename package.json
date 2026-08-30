@@ -33,7 +33,7 @@
         "@codemirror/state": "^6.5.2",
         "@codemirror/theme-one-dark": "^6.1.2",
         "@codemirror/view": "^6.36.6",
-        "@danharrin/alpine-mousetrap": "^0.1.8",
+        "@danharrin/alpine-mousetrap": "^0.1.10",
         "@floating-ui/dom": "^1.7.0",
         "@ryangjchandler/alpine-tooltip": "^2.0",
         "@tailwindcss/cli": "^4.1.10",
