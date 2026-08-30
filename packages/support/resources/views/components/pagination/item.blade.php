@@ -7,6 +7,11 @@
     'label' => null,
 ])
 
+@php
+    use Filament\Support\View\ComponentAttributeBag;
+    use Illuminate\Support\Number;
+@endphp
+
 <li
     {{
         $attributes->class([

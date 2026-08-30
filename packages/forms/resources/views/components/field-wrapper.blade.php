@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\VerticalAlignment;
+    use Illuminate\View\ComponentSlot;
 @endphp
 
 @props([

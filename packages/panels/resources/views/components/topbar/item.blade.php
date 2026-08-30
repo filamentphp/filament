@@ -10,6 +10,10 @@
 ])
 
 @php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\View\PanelsIconAlias;
+
     $tag = $url ? 'a' : 'button';
 @endphp
 

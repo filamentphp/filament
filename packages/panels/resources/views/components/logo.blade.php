@@ -1,4 +1,5 @@
 @php
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Arr;
 
     $brandName = filament()->getBrandName();

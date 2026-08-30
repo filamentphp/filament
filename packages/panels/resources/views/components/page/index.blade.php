@@ -4,6 +4,10 @@
 
 @php
     use Filament\Pages\Enums\SubNavigationPosition;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Tables\Contracts\HasTable;
+    use Filament\View\PanelsRenderHook;
+    use Illuminate\Contracts\Support\Htmlable;
 
     $subNavigation = $this->getCachedSubNavigation();
     $subNavigationPosition = $this->getSubNavigationPosition();

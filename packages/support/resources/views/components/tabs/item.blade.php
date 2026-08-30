@@ -1,5 +1,7 @@
 @php
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Enums\IconSize;
+    use Illuminate\View\ComponentSlot;
 @endphp
 
 @props([

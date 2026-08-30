@@ -9,6 +9,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
 
     if ($entry) {
         $action ??= $entry->getAction();

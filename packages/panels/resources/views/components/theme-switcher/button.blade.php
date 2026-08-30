@@ -4,6 +4,8 @@
 ])
 
 @php
+    use Filament\View\PanelsIconAlias;
+
     $label = __("filament-panels::layout.actions.theme_switcher.{$theme}.label");
 @endphp
 

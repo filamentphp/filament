@@ -1,6 +1,8 @@
 @php
     use Filament\Support\Enums\GridDirection;
+    use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Tables\View\TablesIconAlias;
 @endphp
 
 @props([

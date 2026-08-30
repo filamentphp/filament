@@ -1,3 +1,7 @@
+@php
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 <x-filament-panels::page>
     <span data-testid="action-after-child-result">
         {{ $didRunActionAfterClosingChild ? 'ran' : 'not-ran' }}

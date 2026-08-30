@@ -1,5 +1,8 @@
 @php
+    use Filament\Livewire\SimpleUserMenu;
     use Filament\Support\Enums\Width;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\View\PanelsRenderHook;
 
     $livewire ??= null;
 

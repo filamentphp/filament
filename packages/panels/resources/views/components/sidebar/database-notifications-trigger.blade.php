@@ -1,4 +1,7 @@
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
     use Illuminate\Support\Number;
 
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();

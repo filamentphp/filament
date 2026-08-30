@@ -4,7 +4,9 @@
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\IconButtonComponent;
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
 @endphp
 
 @props([

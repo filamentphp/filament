@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
@@ -41,7 +42,7 @@
                 {{ (new FilamentComponentAttributeBag)->color(DescriptionComponent::class, $descriptionColor)->class(['fi-wi-stats-overview-stat-description']) }}
             >
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new FilamentComponentAttributeBag)) }}
                 @endif
 
                 <span>
@@ -49,7 +50,7 @@
                 </span>
 
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new FilamentComponentAttributeBag)) }}
                 @endif
             </div>
         @endif

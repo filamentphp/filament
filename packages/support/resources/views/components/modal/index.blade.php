@@ -2,8 +2,11 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
+    use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\ModalComponent;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
+    use Filament\Support\View\SupportIconAlias;
     use Illuminate\Contracts\Support\Htmlable;
 @endphp
 
@@ -166,7 +169,7 @@
             x-show="isOpen"
             x-transition.duration.300ms.opacity
             {{
-                ($extraModalOverlayAttributeBag ?? new ComponentAttributeBag)->class([
+                ($extraModalOverlayAttributeBag ?? new FilamentComponentAttributeBag)->class([
                     'fi-modal-close-overlay',
                 ])
             }}
@@ -202,7 +205,7 @@
                 wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
             @endif
             {{
-                ($extraModalWindowAttributeBag ?? new ComponentAttributeBag)->merge([
+                ($extraModalWindowAttributeBag ?? new FilamentComponentAttributeBag)->merge([
                     // When `Escape` does not close the modal, the close button stays in the tab order as the only keyboard way to dismiss it, so the window takes the focus trap's `[autofocus]` to stop the button from being autofocused when the modal opens.
                     'autofocus' => $closeButton && (! $closeByEscaping) && ($heading || $header),
                     'tabindex' => ($closeButton && (! $closeByEscaping) && ($heading || $header)) ? '-1' : null,

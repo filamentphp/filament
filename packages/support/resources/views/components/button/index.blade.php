@@ -5,7 +5,10 @@
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\ButtonComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\Support\Js;
     use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
 @endphp
 
 @props([

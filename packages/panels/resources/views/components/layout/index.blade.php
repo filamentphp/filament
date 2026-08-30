@@ -1,5 +1,9 @@
 @php
     use Filament\Support\Enums\Width;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+    use Filament\View\PanelsRenderHook;
 
     $livewire ??= null;
 

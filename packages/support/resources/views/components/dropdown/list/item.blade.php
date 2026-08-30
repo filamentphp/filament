@@ -5,7 +5,9 @@
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\DropdownComponent\ItemComponent;
     use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
 @endphp
 
 @props([

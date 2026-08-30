@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
     use Filament\Support\View\Components\SectionComponent\IconComponent;
 @endphp
 

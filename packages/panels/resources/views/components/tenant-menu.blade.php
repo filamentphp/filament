@@ -4,6 +4,12 @@
 
 @php
     use Filament\Actions\Action;
+    use Filament\Models\Contracts\HasCurrentTenantLabel;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\View\PanelsIconAlias;
+    use Filament\View\PanelsRenderHook;
     use Illuminate\Support\Arr;
 
     $currentTenant = filament()->getTenant();

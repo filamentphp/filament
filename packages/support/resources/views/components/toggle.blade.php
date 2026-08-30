@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\IconSize;
     use Filament\Support\View\Components\ToggleComponent;
     use Illuminate\Support\Arr;
 @endphp

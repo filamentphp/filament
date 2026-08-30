@@ -1,3 +1,9 @@
+@php
+    use Composer\InstalledVersions;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+@endphp
+
 <x-filament-widgets::widget class="fi-filament-info-widget">
     <x-filament::section>
         <div class="fi-filament-info-widget-main">

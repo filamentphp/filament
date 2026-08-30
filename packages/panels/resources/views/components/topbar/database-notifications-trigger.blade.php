@@ -1,3 +1,9 @@
+@php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+    use Illuminate\Support\Number;
+@endphp
+
 <x-filament::icon-button
     :badge="$unreadNotificationsCount ?: null"
     color="gray"

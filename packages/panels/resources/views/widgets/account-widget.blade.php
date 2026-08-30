@@ -1,4 +1,7 @@
 @php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+
     $user = filament()->auth()->user();
 @endphp
 

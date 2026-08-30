@@ -5,6 +5,11 @@
 @php
     use Filament\Actions\Action;
     use Filament\Enums\UserMenuPosition;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\View\PanelsIconAlias;
+    use Filament\View\PanelsRenderHook;
     use Illuminate\Support\Arr;
 
     $user = filament()->auth()->user();

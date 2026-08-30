@@ -2,6 +2,11 @@
     'navigation',
 ])
 
+@php
+    use Filament\Support\Facades\FilamentView;
+    use Filament\View\PanelsRenderHook;
+@endphp
+
 <div
     {{ $attributes->class(['fi-page-sub-navigation-sidebar-ctn']) }}
 >

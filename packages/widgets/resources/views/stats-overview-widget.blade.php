@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\View\ComponentAttributeBag;
+
     $columns = $this->getColumns();
     $pollingInterval = $this->getPollingInterval();
 

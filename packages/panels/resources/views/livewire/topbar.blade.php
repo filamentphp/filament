@@ -1,3 +1,14 @@
+@php
+    use Filament\Enums\DatabaseNotificationsPosition;
+    use Filament\Enums\GlobalSearchPosition;
+    use Filament\Enums\UserMenuPosition;
+    use Filament\Livewire\GlobalSearch;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+    use Filament\View\PanelsRenderHook;
+@endphp
+
 <div class="fi-topbar-ctn">
     @php
         $isRtl = __('filament-panels::layout.direction') === 'rtl';

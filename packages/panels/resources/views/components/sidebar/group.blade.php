@@ -9,6 +9,10 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Str;
 
     $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();

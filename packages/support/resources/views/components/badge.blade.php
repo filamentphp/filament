@@ -3,6 +3,7 @@
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Enums\Size;
     use Filament\Support\View\Components\BadgeComponent;
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 

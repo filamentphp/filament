@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Icons\Heroicon;
+@endphp
+
 <div
     x-data="{ theme: null }"
     x-init="

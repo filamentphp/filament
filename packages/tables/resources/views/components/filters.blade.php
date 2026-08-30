@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\View\ComponentAttributeBag;
     use Filament\Tables\Enums\FiltersResetActionPosition;
 @endphp
 

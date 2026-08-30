@@ -1,5 +1,7 @@
 @php
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\Components\CalloutComponent;
     use Filament\Support\View\Components\CalloutComponent\IconComponent;
 
     use function Filament\Support\generate_icon_html;
