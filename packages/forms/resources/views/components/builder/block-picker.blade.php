@@ -13,6 +13,7 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Illuminate\Support\Js;
 @endphp
 
 <x-filament::dropdown
@@ -44,8 +45,6 @@
         >
             @foreach ($blocks as $block)
                 @php
-                    use Illuminate\Support\Js;
-
                     $blockIcon = $block->getIcon();
 
                     $wireClickActionArguments = ['block' => $block->getName()];

@@ -1,4 +1,5 @@
 @php
+    use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Actions\BulkAction;
     use Filament\Actions\BulkActionGroup;
@@ -25,6 +26,7 @@
     use Illuminate\Contracts\Pagination\CursorPaginator;
     use Illuminate\Contracts\Pagination\LengthAwarePaginator;
     use Illuminate\Contracts\Pagination\Paginator;
+    use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Database\Query\Builder;
     use Illuminate\Support\Number;
     use Illuminate\Support\Str;
@@ -901,8 +903,6 @@
                 >
                     @if ($records !== null)
                         @php
-                            use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-
                             // The total across all pages, not the current page's count — and since the total is
                             // stable across pages, the live region only announces when the result set really
                             // changes, not on every pagination click. Non-length-aware paginators fall back to
@@ -925,8 +925,6 @@
                     @if ($hasContentLayout && ($records !== null) && count($records))
                         @if (! $isReordering)
                             @php
-                                use Filament\Tables\Columns\Column;
-
                                 $sortableColumns = array_filter(
                                     $columns,
                                     fn (Column $column): bool => $column->isSortable(),
@@ -1444,8 +1442,6 @@
                         @endif
                     @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
                         @php
-                            use Filament\Tables\Columns\Column;
-
                             $sortableColumns = $isStackedOnMobile ? array_filter(
                                 $columns,
                                 fn (Column $column): bool => $column->isSortable(),
@@ -1764,8 +1760,6 @@
                                             {{ $headerCellView }}
                                         @else
                                             @php
-                                                use Illuminate\Contracts\Support\Htmlable;
-
                                                 $columnName = $column->getName();
                                                 $columnLabel = $column->getLabel();
                                                 $columnAlignment = $column->getAlignment();
@@ -2330,8 +2324,6 @@
 
                                                     @foreach ($columns as $column)
                                                         @php
-                                                            use Filament\Actions\Action;
-
                                                             $column->record($record);
                                                             $column->rowLoop($loop->parent);
                                                             $column->recordKey($recordKey);

@@ -9,6 +9,8 @@
 ])
 
 @php
+    use Filament\Widgets\WidgetConfiguration;
+
     if (is_array($columns)) {
         $columns['lg'] ??= ($columns ? (is_array($columns) ? null : $columns) : 2);
     }
@@ -16,8 +18,6 @@
 
 <div {{ $attributes->grid($columns)->class(['fi-wi']) }}>
     @php
-        use Filament\Widgets\WidgetConfiguration;
-
         $normalizeWidgetClass = function (string | WidgetConfiguration $widget): string {
             if ($widget instanceof WidgetConfiguration) {
                 return $widget->widget;
