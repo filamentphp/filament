@@ -232,12 +232,10 @@
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
                 $wire,
             })"
-    {{
-        $getExtraAttributeBag()->class([
+    {{ $getExtraAttributeBag()->class([
             'fi-ta',
             'fi-loading' => $records === null,
-        ])
-    }}
+        ]) }}
 >
     <input
         type="hidden"
@@ -775,12 +773,10 @@
                     wire:key="{{ $this->getId() }}.table.reorder.indicator"
                     class="fi-ta-reorder-indicator"
                 >
-                    {{
-                        \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                    {{ \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
                             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                             'wire:target' => 'reorderTable',
-                        ]))
-                    }}
+                        ])) }}
 
                     {{ __('filament-tables::table.reorder_indicator') }}
                 </div>
@@ -796,11 +792,9 @@
                     class="fi-ta-selection-indicator"
                 >
                     <div>
-                        {{
-                            \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                        {{ \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
                                 'x-show' => 'isLoading',
-                            ]))
-                        }}
+                            ])) }}
 
                         <span
                             x-text="
@@ -1080,15 +1074,13 @@
                                 @endif
                                 aria-label="{{ $pluralModelLabel }}"
                                 role="list"
-                                {{
-                                    (new FilamentComponentAttributeBag)
+                                {{ (new FilamentComponentAttributeBag)
                                         ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
                                         ->class([
                                             'fi-ta-content',
                                             'fi-ta-content-grid' => $contentGrid,
                                             'fi-ta-content-grouped' => $this->getTableGrouping(),
-                                        ])
-                                }}
+                                        ]) }}
                             >
                                 @php
                                     $previousRecord = null;
@@ -1295,13 +1287,11 @@
                                                         {{ $getExtraRecordLinkAttributeBag($record)->class(['fi-ta-record-content']) }}
                                                     >
                                                         @foreach ($columnsLayout as $columnsLayoutComponent)
-                                                            {{
-                                                                $columnsLayoutComponent
+                                                            {{ $columnsLayoutComponent
                                                                     ->record($record)
                                                                     ->recordKey($recordKey)
                                                                     ->rowLoop($loop)
-                                                                    ->renderInLayout()
-                                                            }}
+                                                                    ->renderInLayout() }}
                                                         @endforeach
                                                     </a>
                                                 @elseif ($recordAction)
@@ -1319,13 +1309,11 @@
                                                         class="fi-ta-record-content"
                                                     >
                                                         @foreach ($columnsLayout as $columnsLayoutComponent)
-                                                            {{
-                                                                $columnsLayoutComponent
+                                                            {{ $columnsLayoutComponent
                                                                     ->record($record)
                                                                     ->recordKey($recordKey)
                                                                     ->rowLoop($loop)
-                                                                    ->renderInLayout()
-                                                            }}
+                                                                    ->renderInLayout() }}
                                                         @endforeach
                                                     </button>
                                                 @else
@@ -1333,13 +1321,11 @@
                                                         class="fi-ta-record-content"
                                                     >
                                                         @foreach ($columnsLayout as $columnsLayoutComponent)
-                                                            {{
-                                                                $columnsLayoutComponent
+                                                            {{ $columnsLayoutComponent
                                                                     ->record($record)
                                                                     ->recordKey($recordKey)
                                                                     ->rowLoop($loop)
-                                                                    ->renderInLayout()
-                                                            }}
+                                                                    ->renderInLayout() }}
                                                         @endforeach
                                                     </div>
                                                 @endif
@@ -1417,12 +1403,10 @@
                         @endif
 
                         @if (($content || $hasColumnsLayout) && $contentFooter)
-                            {{
-                                $contentFooter->with([
+                            {{ $contentFooter->with([
                                     'columns' => $columns,
                                     'records' => $records,
-                                ])
-                            }}
+                                ]) }}
                         @endif
 
                         @if ($hasTopLevelSummary && (! $isReordering))
@@ -1634,15 +1618,13 @@
                                                     <th
                                                         colspan="{{ $columnGroupColumnsCount }}"
                                                         scope="colgroup"
-                                                        {{
-                                                            $columnGroup->getExtraHeaderAttributeBag()->class([
+                                                        {{ $columnGroup->getExtraHeaderAttributeBag()->class([
                                                                 'fi-ta-header-group-cell',
                                                                 'fi-wrapped' => $columnGroup->canHeaderWrap(),
                                                                 ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
                                                                 (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
                                                                 (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
-                                                            ])
-                                                        }}
+                                                            ]) }}
                                                     >
                                                         {{ $columnGroup->getLabel() }}
                                                     </th>
@@ -1781,8 +1763,7 @@
                                                     aria-sort="{{ $isColumnActivelySorted ? ($sortDirection === 'asc' ? 'ascending' : 'descending') : 'none' }}"
                                                 @endif
                                                 scope="col"
-                                                {{
-                                                    $column->getExtraHeaderAttributeBag()
+                                                {{ $column->getExtraHeaderAttributeBag()
                                                         ->class([
                                                             'fi-ta-header-cell',
                                                             'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
@@ -1796,8 +1777,7 @@
                                                         ])
                                                         ->style([
                                                             ('width: ' . e($columnWidth)) => filled($columnWidth),
-                                                        ])
-                                                }}
+                                                        ]) }}
                                             >
                                                 @if ($isColumnSortable)
                                                     <{{ $columnSortControlTag }}
@@ -1828,23 +1808,19 @@
                                                             {{ $columnLabel }}
                                                         @endif
 
-                                                        {{
-                                                            \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? Heroicon::ChevronUp : Heroicon::ChevronDown, alias: match (true) {
+                                                        {{ \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? Heroicon::ChevronUp : Heroicon::ChevronDown, alias: match (true) {
                                                                 $isColumnActivelySorted && ($sortDirection === 'asc') => TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
                                                                 $isColumnActivelySorted && ($sortDirection === 'desc') => TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                                                                 default => TablesIconAlias::HEADER_CELL_SORT_BUTTON,
                                                             }, attributes: (new Filament\Support\View\ComponentAttributeBag([
                                                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
                                                                 'wire:target' => "sortTable('{$columnName}')",
-                                                            ])))
-                                                        }}
+                                                            ]))) }}
 
-                                                        {{
-                                                            \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                                                        {{ \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
                                                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                                                 'wire:target' => "sortTable('{$columnName}')",
-                                                            ]))
-                                                        }}
+                                                            ])) }}
                                                     </{{ $columnSortControlTag }}>
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
@@ -2509,12 +2485,10 @@
                             @if (($records !== null) && count($records) && $contentFooter)
                                 <tfoot>
                                     <tr>
-                                        {{
-                                            $contentFooter->with([
+                                        {{ $contentFooter->with([
                                                 'columns' => $columns,
                                                 'records' => $records,
-                                            ])
-                                        }}
+                                            ]) }}
                                     </tr>
                                 </tfoot>
                             @endif
