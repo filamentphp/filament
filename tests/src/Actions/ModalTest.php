@@ -25,6 +25,7 @@ describe('browser interactions', function (): void {
             ->assertVisible('[data-testid="modal-less-parent-child-modal"]')
             ->click('[data-testid="modal-less-parent-child-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="modal-less-parent-child-modal"]')
+            ->wait(0.5)
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="action-after-child-trigger"]')
             ->assertSeeIn('[data-testid="action-after-child-result"]', 'ran')
