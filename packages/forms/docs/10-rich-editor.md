@@ -17,6 +17,27 @@ RichEditor::make('content')
 
 <AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="5.x" />
 
+## Configuring Livewire's maximum nesting depth
+
+The rich editor synchronizes its TipTap document with Livewire as nested data. Livewire limits nested property paths to 10 levels by default, which may not be enough for structures such as lists and tables. If you encounter a `Livewire\Exceptions\MaxNestingDepthExceededException` and your application does not already have a `config/livewire.php` file, publish Livewire's configuration file:
+
+```bash
+php artisan livewire:publish --config
+```
+
+The command overwrites an existing `config/livewire.php` file, so skip it if you have already published the configuration.
+
+Then, increase the existing `max_nesting_depth` setting in `config/livewire.php`. For example, a depth of 32 allows room for deeply nested rich content:
+
+```php
+'payload' => [
+    // ...
+    'max_nesting_depth' => 32,
+],
+```
+
+Only change the `max_nesting_depth` value in the existing `payload` array, so that you preserve Livewire's other version-specific payload settings.
+
 ## Storing content as JSON
 
 By default, the rich editor stores content as HTML. If you would like to store the content as JSON instead, you can use the `json()` method:
