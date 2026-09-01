@@ -331,7 +331,7 @@ Tabs::make('Tabs')
 
 <UtilityInjection set="schemaComponents" version="5.x">As well as allowing static values, the `persistTab()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Persisting the current tab in the URL's query string
+## Persisting the current tab in the URL's query string
 
 By default, the current tab is not persisted in the URL's query string. You can change this behavior using the `persistTabInQueryString()` method:
 

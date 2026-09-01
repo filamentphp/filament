@@ -291,6 +291,26 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Requiring multi-factor authentication
+
+By default, users are not required to set up multi-factor authentication. You can require users to configure it by passing `isRequired: true` as a parameter to the `multiFactorAuthentication()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->multiFactorAuthentication([
+            AppAuthentication::make(),
+        ], isRequired: true);
+}
+```
+
+When this is enabled, users will be prompted to set up multi-factor authentication after they sign in, if they have not already done so.
+
 ## Creating a custom multi-factor authentication provider
 
 You can add another MFA method by creating an object that implements the `MultiFactorAuthenticationProvider` interface. The provider tells Filament how to identify the method, determine whether it is enabled for a user, manage it, and validate its login challenge.
@@ -469,26 +489,6 @@ public function panel(Panel $panel): Panel
         ]);
 }
 ```
-
-## Requiring multi-factor authentication
-
-By default, users are not required to set up multi-factor authentication. You can require users to configure it by passing `isRequired: true` as a parameter to the `multiFactorAuthentication()` method in the [configuration](../panel-configuration):
-
-```php
-use Filament\Auth\MultiFactor\App\AppAuthentication;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->multiFactorAuthentication([
-            AppAuthentication::make(),
-        ], isRequired: true);
-}
-```
-
-When this is enabled, users will be prompted to set up multi-factor authentication after they sign in, if they have not already done so.
 
 ## Security notes about multi-factor authentication
 
