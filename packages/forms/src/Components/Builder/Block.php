@@ -23,10 +23,6 @@ class Block extends Component
 
     protected int | Closure | null $maxItems = null;
 
-    protected bool | Closure | null $isLazy = null;
-
-    protected bool | Closure | null $shouldUnloadOnCollapse = null;
-
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -75,37 +71,6 @@ class Block extends Component
     public function getMaxItems(): ?int
     {
         return $this->evaluate($this->maxItems);
-    }
-
-    /**
-     * Overrides the parent `Builder`'s lazy setting for this specific block.
-     *
-     * Only meaningful when the parent `Builder` has `->lazy()` enabled.
-     * The primary use case is opting a block out with `->lazy(false)`, so its
-     * fields are always rendered even though the builder is otherwise lazy.
-     *
-     * Passing `null` (the default when not called) inherits the builder's setting.
-     */
-    public function lazy(bool | Closure | null $condition = true, bool | Closure | null $unloadOnCollapse = null): static
-    {
-        $this->isLazy = $condition;
-        $this->shouldUnloadOnCollapse = $unloadOnCollapse;
-
-        return $this;
-    }
-
-    public function getIsLazy(): ?bool
-    {
-        $isLazy = $this->evaluate($this->isLazy);
-
-        return $isLazy === null ? null : (bool) $isLazy;
-    }
-
-    public function getShouldUnloadOnCollapse(): ?bool
-    {
-        $shouldUnload = $this->evaluate($this->shouldUnloadOnCollapse);
-
-        return $shouldUnload === null ? null : (bool) $shouldUnload;
     }
 
     /**

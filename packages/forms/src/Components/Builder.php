@@ -15,10 +15,8 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\GridDirection;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -39,7 +37,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
-    use Concerns\CanLazyLoadItems;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
@@ -195,11 +192,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
                 $component->rawState($items);
 
-                $newKey = $newUuid ?? array_key_last($items);
-
-                $component->getChildSchema($newKey)->fill(filled($data) ? $data : null);
-
-                $component->loadItem((string) $newKey);
+                $component->getChildSchema($newUuid ?? array_key_last($items))->fill(filled($data) ? $data : null);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -294,10 +287,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
                 $component->getChildSchema($newKey)->fill(filled($data) ? $data : null);
 
-                if ($newKey !== null) {
-                    $component->loadItem((string) $newKey);
-                }
-
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
@@ -356,14 +345,9 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                     $items[$newUuid] = $items[$arguments['item']];
                 } else {
                     $items[] = $items[$arguments['item']];
-                    $newUuid = array_key_last($items);
                 }
 
                 $component->rawState($items);
-
-                if ($newUuid !== null) {
-                    $component->loadItem((string) $newUuid);
-                }
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -407,8 +391,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                 unset($items[$arguments['item']]);
 
                 $component->rawState($items);
-
-                $component->unloadItem((string) $arguments['item']);
 
                 $component->callAfterStateUpdated();
 
@@ -1452,10 +1434,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
         $hasBlockPreviews = $this->hasBlockPreviews();
         $hasInteractiveBlockPreviews = $this->hasInteractiveBlockPreviews();
 
-        $this->loadItemsWithErrors();
-
-        $alpineComponentSrc = FilamentAsset::getAlpineComponentSrc('builder-item', 'filament/forms');
-
         $addAction = $this->getAction($this->getAddActionName());
         $addActionAlignment = $this->getAddActionAlignment();
         $addBetweenAction = $this->getAction($this->getAddBetweenActionName());
@@ -1548,12 +1526,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                         $isFirst = $itemIndex === 1;
                         $isLast = $itemIndex === $itemCount;
 
-                        $itemKeyString = (string) $itemKey;
-                        $itemIsLazy = $this->isLazy($item);
-                        $itemHasError = $this->itemHasErrors($itemKeyString);
-                        $itemIsLoaded = (! $itemIsLazy) || $this->isItemLoaded($itemKeyString) || $itemHasError;
-                        $itemUnloadOnCollapse = $this->shouldUnloadOnCollapse($item);
-
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
                             fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
@@ -1575,34 +1547,24 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                         <li
                             wire:ignore.self
                             wire:key="<?= e($item->getLivewireKey()) ?>.item"
-                            x-load
-                            x-load-src="<?= e($alpineComponentSrc) ?>"
-                            x-data="builderItemFormComponent({
-                                key: <?= Js::from($key) ?>,
-                                itemKey: <?= Js::from($itemKey) ?>,
+                            x-data="{
                                 isCollapsed: <?php if ($persistCollapsed) { ?>$persist(<?= Js::from($this->isCollapsed($item)) ?>).as(`builder-${<?= Js::from($key) ?>}-${<?= Js::from($itemKey) ?>}-isCollapsed`)<?php } else { ?><?= Js::from($this->isCollapsed($item)) ?><?php } ?>,
-                                isLoaded: <?= Js::from($itemIsLoaded) ?>,
-                                unloadOnCollapse: <?= Js::from($itemUnloadOnCollapse) ?>,
-                            })"
-                            <?php if ($itemHasError) { ?>
-                                x-init="isCollapsed = false"
-                            <?php } ?>
-                            x-on:builder-expand.window="$event.detail === '<?= e($statePath) ?>' && expand()"
-                            x-on:builder-collapse.window="$event.detail === '<?= e($statePath) ?>' && collapse()"
-                            x-on:expand="expand()"
+                            }"
+                            x-on:builder-expand.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = false)"
+                            x-on:builder-collapse.window="$event.detail === '<?= e($statePath) ?>' && (isCollapsed = true)"
+                            x-on:expand="isCollapsed = false"
                             x-sortable-item="<?= e($itemKey) ?>"
                             <?= $block->getExtraAttributeBag()
                                 ->class([
                                     'fi-fo-builder-item',
                                     'fi-fo-builder-item-has-header' => $hasItemHeader,
                                 ])->toHtml() ?>
-                            x-bind:class="{ 'fi-collapsed': isCollapsed, 'fi-loading': isLoading }"
-                            x-bind:aria-busy="isLoading"
+                            x-bind:class="{ 'fi-collapsed': isCollapsed }"
                         >
                             <?php if ($hasItemHeader) { ?>
                                 <div
                                     <?php if ($isCollapsible) { ?>
-                                        x-on:click.stop="toggleCollapsed()"
+                                        x-on:click.stop="isCollapsed = !isCollapsed"
                                     <?php } ?>
                                     class="fi-fo-builder-item-header"
                                 >
@@ -1662,7 +1624,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                                             <?php } ?>
 
                                             <?php if ($isCollapsible) { ?>
-                                                <li class="fi-fo-builder-item-header-collapsible-actions" x-on:click.stop="toggleCollapsed()">
+                                                <li class="fi-fo-builder-item-header-collapsible-actions" x-on:click.stop="isCollapsed = !isCollapsed">
                                                     <div class="fi-fo-builder-item-header-collapse-action">
                                                         <?= $this->getAction('collapse')->toHtml() ?>
                                                     </div>
@@ -1678,37 +1640,30 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
 
                             <div
                                 x-show="! isCollapsed"
-                                x-cloak
                                 <?= (new FilamentComponentAttributeBag)->class([
                                     'fi-fo-builder-item-content',
                                     'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $block->hasPreview(),
                                 ])->toHtml() ?>
                             >
-                                <?php if ($itemIsLoaded) { ?>
-                                    <?php if ($hasBlockPreviews && $block->hasPreview()) { ?>
-                                        <div
-                                            <?= (new FilamentComponentAttributeBag)->class([
-                                                'fi-fo-builder-item-preview',
-                                                'fi-interactive' => $hasInteractiveBlockPreviews,
-                                            ])->toHtml() ?>
-                                        >
-                                            <?= $block->renderPreview($item->getRawState())->render() ?>
-                                        </div>
+                                <?php if ($hasBlockPreviews && $block->hasPreview()) { ?>
+                                    <div
+                                        <?= (new FilamentComponentAttributeBag)->class([
+                                            'fi-fo-builder-item-preview',
+                                            'fi-interactive' => $hasInteractiveBlockPreviews,
+                                        ])->toHtml() ?>
+                                    >
+                                        <?= $block->renderPreview($item->getRawState())->render() ?>
+                                    </div>
 
-                                        <?php if ($editActionIsVisible && (! $hasInteractiveBlockPreviews)) { ?>
-                                            <div
-                                                class="fi-fo-builder-item-preview-edit-overlay"
-                                                role="button"
-                                                x-on:click.stop="<?= e('$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })') ?>"
-                                            ></div>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        <?= $item->toHtml() ?>
+                                    <?php if ($editActionIsVisible && (! $hasInteractiveBlockPreviews)) { ?>
+                                        <div
+                                            class="fi-fo-builder-item-preview-edit-overlay"
+                                            role="button"
+                                            x-on:click.stop="<?= e('$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })') ?>"
+                                        ></div>
                                     <?php } ?>
                                 <?php } else { ?>
-                                    <div class="fi-fo-builder-item-placeholder">
-                                        <?= generate_loading_indicator_html(size: IconSize::Large)->toHtml() ?>
-                                    </div>
+                                    <?= $item->toHtml() ?>
                                 <?php } ?>
                             </div>
                         </li>

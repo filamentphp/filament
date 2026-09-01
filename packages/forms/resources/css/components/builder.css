@@ -35,16 +35,6 @@
                 @apply pointer-events-none opacity-0;
             }
         }
-
-        &.fi-loading {
-            & .fi-fo-builder-item-header {
-                @apply pointer-events-none cursor-not-allowed;
-            }
-
-            & .fi-fo-builder-item-header-collapsible-actions {
-                @apply opacity-50;
-            }
-        }
     }
 
     &.fi-fo-builder-not-contained > .fi-fo-builder-items {
@@ -131,10 +121,6 @@
 
     & .fi-fo-builder-item-preview-edit-overlay {
         @apply absolute inset-0 z-1 cursor-pointer;
-    }
-
-    & .fi-fo-builder-item-placeholder {
-        @apply flex min-h-16 items-center justify-center text-gray-400 dark:text-gray-500;
     }
 
     & .fi-fo-builder-block-picker-ctn {

@@ -118,7 +118,6 @@ compile({
 })
 
 const formComponents = [
-    'builder-item',
     'checkbox-list',
     'code-editor',
     'color-picker',
