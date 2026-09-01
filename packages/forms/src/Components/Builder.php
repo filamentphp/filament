@@ -7,7 +7,6 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -32,7 +31,7 @@ use function Filament\Forms\array_move_before;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
 
-class Builder extends Field implements CanConcealComponents, HasEmbeddedView, HasExtraItemActions
+class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
@@ -705,7 +704,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                 $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->icon(Heroicon::Cog6Tooth)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EDIT) ?? Heroicon::Cog6Tooth)
             ->size(Size::Small)
             ->visible(fn (Builder $component): bool => (! $component->isDisabled()) && $component->hasBlockPreviews());
 
@@ -1062,11 +1061,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
     public function hasInteractiveBlockPreviews(): bool
     {
         return (bool) $this->evaluate($this->hasInteractiveBlockPreviews);
-    }
-
-    public function canConcealComponents(): bool
-    {
-        return $this->isCollapsible();
     }
 
     public function getLabelBetweenItems(): ?string

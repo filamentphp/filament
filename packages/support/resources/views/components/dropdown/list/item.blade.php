@@ -1,13 +1,3 @@
-@php
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\Size;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Filament\Support\View\Components\DropdownComponent\ItemComponent;
-    use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'alpineDeferredBadgeData' => null,
     'alpineDeferredBadgeLoading' => null,
@@ -31,6 +21,15 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\DropdownComponent\ItemComponent;
+    use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
+
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
         $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }
@@ -71,7 +70,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     {{
@@ -138,7 +137,7 @@
     </span>
 
     @if (filled($badge))
-        @if ($badge instanceof \Illuminate\View\ComponentSlot)
+        @if ($badge instanceof ComponentSlot)
             {{ $badge }}
         @else
             <span
@@ -146,7 +145,7 @@
                     x-tooltip="{
                         content: @js($badgeTooltip),
                         theme: $store.theme,
-                        allowHTML: @js($badgeTooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+                        allowHTML: @js($badgeTooltip instanceof Htmlable),
                     }"
                 @endif
                 {{ (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}
@@ -160,7 +159,7 @@
             x-cloak
             class="fi-dropdown-list-item-badge-placeholder"
         >
-            {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::Small) }}
+            {{ \Filament\Support\generate_loading_indicator_html(size: IconSize::Small) }}
         </span>
 
         <template

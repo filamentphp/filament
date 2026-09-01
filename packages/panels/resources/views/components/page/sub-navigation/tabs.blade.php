@@ -2,6 +2,10 @@
     'navigation',
 ])
 
+@php
+    use Illuminate\Contracts\Support\Htmlable;
+@endphp
+
 <x-filament::tabs
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->class(['fi-page-sub-navigation-tabs'])"
 >
@@ -47,7 +51,7 @@
                         >
                             {{ $navigationItem->getLabel() }}
 
-                            @if ($navigationItemIcon instanceof \Illuminate\Contracts\Support\Htmlable)
+                            @if ($navigationItemIcon instanceof Htmlable)
                                 <x-slot name="icon">
                                     {{ $navigationItemIcon }}
                                 </x-slot>
@@ -82,7 +86,7 @@
                 >
                     {{ $navigationItem->getLabel() }}
 
-                    @if ($navigationItemIcon instanceof \Illuminate\Contracts\Support\Htmlable)
+                    @if ($navigationItemIcon instanceof Htmlable)
                         <x-slot name="icon">
                             {{ $navigationItemIcon }}
                         </x-slot>

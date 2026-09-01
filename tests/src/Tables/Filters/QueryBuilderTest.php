@@ -27,6 +27,7 @@ use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTableWithScopedPostsCount;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTableWithScopedPostsRatingAggregate;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\QueryBuilderItem;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
@@ -1724,6 +1725,119 @@ describe('relationship method constraints', function (): void {
                 ->call('applyTableFilters'))
             ->assertCanSeeTableRecords([$highMinUser])
             ->assertCanNotSeeTableRecords([$lowMinUser]);
+    });
+
+    it('can filter self-related records using number constraint aggregate with a connection table prefix', function (): void {
+        $databaseConnection = QueryBuilderItem::query()->getConnection();
+        $originalTablePrefix = $databaseConnection->getTablePrefix();
+
+        $databaseConnection->setTablePrefix('fo_');
+
+        try {
+            $matchingParent = QueryBuilderItem::query()->create(['length' => 1]);
+            $matchingParent->children()->create(['length' => 700]);
+
+            $nonMatchingParent = QueryBuilderItem::query()->create(['length' => 1]);
+            $nonMatchingParent->children()->create(['length' => 699]);
+
+            $constraint = NumberConstraint::make('children.length');
+
+            $operator = IsMinOperator::make()
+                ->constraint($constraint)
+                ->settings(['number' => 700, 'aggregate' => 'min']);
+
+            $filteredQuery = $operator->applyToBaseQuery(QueryBuilderItem::query());
+
+            expect($filteredQuery->pluck('id')->all())
+                ->toBe([$matchingParent->id]);
+        } finally {
+            $databaseConnection->setTablePrefix($originalTablePrefix);
+        }
+    });
+
+    it('can filter records using number constraint aggregate on a `latestOfMany()` relationship', function (): void {
+        $matchingUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $matchingUser->id, 'rating' => 3]);
+        Post::factory()->create(['author_id' => $matchingUser->id, 'rating' => 8]);
+
+        $nonMatchingUser = User::factory()->create();
+        Post::factory()->create(['author_id' => $nonMatchingUser->id, 'rating' => 8]);
+        Post::factory()->create(['author_id' => $nonMatchingUser->id, 'rating' => 3]);
+
+        $constraint = NumberConstraint::make('latestPost.rating');
+
+        $operator = IsMinOperator::make()
+            ->constraint($constraint)
+            ->settings(['number' => 7, 'aggregate' => 'min']);
+
+        $filteredQuery = $operator->applyToBaseQuery(User::query());
+
+        expect($filteredQuery->pluck('id')->all())
+            ->toBe([$matchingUser->id]);
+    });
+
+    it('applies constraints defined in the relationship method to the aggregate subquery', function (): void {
+        $matchingUser = User::factory()->create();
+        Post::factory()->create([
+            'author_id' => $matchingUser->id,
+            'is_published' => true,
+            'rating' => 9,
+        ]);
+        Post::factory()->create([
+            'author_id' => $matchingUser->id,
+            'is_published' => false,
+            'rating' => 1,
+        ]);
+
+        $nonMatchingUser = User::factory()->create();
+        Post::factory()->create([
+            'author_id' => $nonMatchingUser->id,
+            'is_published' => true,
+            'rating' => 1,
+        ]);
+        Post::factory()->create([
+            'author_id' => $nonMatchingUser->id,
+            'is_published' => false,
+            'rating' => 9,
+        ]);
+
+        livewire(UsersQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$matchingUser, $nonMatchingUser])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'publishedPosts.rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 7, 'aggregate' => 'min'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$matchingUser])
+            ->assertCanNotSeeTableRecords([$nonMatchingUser]);
+    });
+
+    it('applies `wherePivot()` constraints defined in the relationship method to the aggregate subquery', function (): void {
+        $matchingUser = User::factory()->create();
+        $matchingUser->teams()->attach(Team::factory()->create(['budget' => 5000])->id, ['role' => 'owner']);
+        $matchingUser->teams()->attach(Team::factory()->create(['budget' => 100])->id, ['role' => 'member']);
+
+        $nonMatchingUser = User::factory()->create();
+        $nonMatchingUser->teams()->attach(Team::factory()->create(['budget' => 100])->id, ['role' => 'owner']);
+        $nonMatchingUser->teams()->attach(Team::factory()->create(['budget' => 5000])->id, ['role' => 'member']);
+
+        livewire(UsersQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$matchingUser, $nonMatchingUser])
+            ->tap(applyQueryBuilderFilter([
+                [
+                    'type' => 'ownedTeams.budget',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 1000, 'aggregate' => 'min'],
+                    ],
+                ],
+            ]))
+            ->assertCanSeeTableRecords([$matchingUser])
+            ->assertCanNotSeeTableRecords([$nonMatchingUser]);
     });
 
     it('can filter records using number constraint with max aggregate on relationship', function (): void {
