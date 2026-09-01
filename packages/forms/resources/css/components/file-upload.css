@@ -148,6 +148,14 @@
                 @apply flex items-center gap-3 px-4 py-3;
             }
 
+            & .fi-fo-file-upload-editor-control-panel-reset-wrapper {
+                @apply flex justify-end;
+            }
+
+            & .fi-fo-file-upload-editor-control-panel-reset-link {
+                @apply text-danger-600 hover:text-danger-500 dark:text-danger-400 dark:hover:text-danger-300 text-sm font-medium no-underline transition duration-75;
+            }
+
             & .fi-fo-file-upload-editor-control-panel-reset-action {
                 @apply ml-auto;
             }
