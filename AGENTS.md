@@ -215,6 +215,8 @@ Hook class naming:
 
 - **Tone**: Direct, second person ("You may set...", "You can do this using...")
 - **Structure**: Start with `## Introduction`, show simplest code first
+- **Section order**: Review the full page and analogous pages, then place sections by reader importance and logical flow, not by when they were added. Do not default new sections to the top.
+- **Hierarchy**: Keep foundational and common workflows before specialized content, and nest narrower topics under their parent section.
 - **Headings**: Use gerunds ("Setting the type" not "Type settings", "Enabling search" not "Search")
 - **Formatting**: Backticks for code (`method()`, `ClassName`), include `use` statements
 - **Asides**: `<Aside variant="tip|info|danger">...</Aside>`
