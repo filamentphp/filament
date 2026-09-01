@@ -307,6 +307,12 @@
                                                     @endforeach
                                                 </div>
                                             @endif
+                                            <x-filament::button
+                                                color="warning"
+                                                x-on:click.stop.prevent="editor.reset()"
+                                            >
+                                                {{ __('filament-forms::components.file_upload.editor.actions.reset.label') }}
+                                            </x-filament::button>
                                         </div>
                                     </div>
 
@@ -316,16 +322,9 @@
                                         <x-filament::button
                                             color="gray"
                                             x-on:click.prevent="pond.imageEditEditor.oncancel"
-                                        >
-                                            {{ __('filament-forms::components.file_upload.editor.actions.cancel.label') }}
-                                        </x-filament::button>
-
-                                        <x-filament::button
-                                            color="warning"
-                                            x-on:click.stop.prevent="editor.reset()"
                                             class="ml-auto"
                                         >
-                                            {{ __('filament-forms::components.file_upload.editor.actions.reset.label') }}
+                                            {{ __('filament-forms::components.file_upload.editor.actions.cancel.label') }}
                                         </x-filament::button>
 
                                         <x-filament::button
