@@ -12,14 +12,62 @@ return [
 
             'add' => [
                 'label' => ':labelga qo\'shish',
+
+                'modal' => [
+
+                    'heading' => ':labelga qo\'shish',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Qo\'shish',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'add_between' => [
                 'label' => 'Orasiga kiritish',
+
+                'modal' => [
+
+                    'heading' => ':labelga qo\'shish',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Qo\'shish',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'delete' => [
                 'label' => 'O\'chirish',
+            ],
+
+            'edit' => [
+
+                'label' => 'O\'zgartirish',
+
+                'modal' => [
+
+                    'heading' => 'O\'zgartirish',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'O\'zgarishlarni saqlash',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -230,7 +278,7 @@ return [
     ],
 
     'markdown_editor' => [
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Fayl biriktirish',
             'blockquote' => 'Iqtibos',
             'bold' => 'Qalin',
@@ -319,7 +367,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Fayl biriktirish',
             'blockquote' => 'Iqtibos',
             'bold' => 'Qalin',
@@ -404,6 +452,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Yangi teg',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Parolni yashirish',
+            ],
+
+            'show_password' => [
+                'label' => 'Parolni ko\'rsatish',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ha',
+            'false' => 'Yo\'q',
+        ],
+
     ],
 
 ];

@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Obriši odabrano :label',
+            'heading' => 'Obriši odabrano',
 
             'actions' => [
 

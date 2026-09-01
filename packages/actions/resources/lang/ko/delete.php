@@ -54,6 +54,18 @@ return [
                 'title' => '삭제 완료',
             ],
 
+            'deleted_partial' => [
+                'title' => ':total 중 :count개 삭제됨',
+                'missing_authorization_failure_message' => ':count개를 삭제할 권한이 없습니다.',
+                'missing_processing_failure_message' => ':count개를 삭제할 수 없습니다.',
+            ],
+
+            'deleted_none' => [
+                'title' => '삭제 실패',
+                'missing_authorization_failure_message' => ':count개를 삭제할 권한이 없습니다.',
+                'missing_processing_failure_message' => ':count개를 삭제할 수 없습니다.',
+            ],
+
         ],
 
     ],

@@ -7,7 +7,7 @@ fi
 
 echo "Cloning repository..."
 
-git clone git@github.com:filamentphp/demo.git -b 3.x playground &> /dev/null
+git clone git@github.com:filamentphp/demo.git -b 4.x playground &> /dev/null
 
 echo "Configuring application..."
 

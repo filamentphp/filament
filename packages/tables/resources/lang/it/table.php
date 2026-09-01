@@ -2,13 +2,26 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Colonne',
+
+        'actions' => [
+            'apply' => [
+                'label' => 'Applica colonne',
+            ],
+            'reset' => [
+                'label' => 'Reimposta',
+            ],
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Azione|Azioni',
+        ],
 
         'text' => [
 
@@ -18,6 +31,15 @@ return [
             ],
 
             'more_list_items' => 'e altri :count',
+        ],
+
+        'select' => [
+            'loading_message' => 'Caricamento...',
+            'no_options_message' => 'Nessuna opzione disponibile.',
+            'no_search_results_message' => 'Nessuna opzione corrisponde alla tua ricerca.',
+            'placeholder' => "Seleziona un'opzione",
+            'searching_message' => 'Ricerca...',
+            'search_prompt' => 'Digita per cercare...',
         ],
 
     ],
@@ -94,7 +116,7 @@ return [
             'label' => 'Azioni',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Mostra/Nascondi colonne',
         ],
 
@@ -111,6 +133,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Applica filtri',
+            ],
 
             'remove' => [
                 'label' => 'Rimuovi filtro',
@@ -137,6 +163,9 @@ return [
 
         'select' => [
             'placeholder' => 'Tutti',
+            'relationship' => [
+                'empty_option_label' => 'Nessuno',
+            ],
         ],
 
         'trashed' => [
@@ -159,7 +188,6 @@ return [
 
             'group' => [
                 'label' => 'Raggruppa per',
-                'placeholder' => 'Raggruppa per',
             ],
 
             'direction' => [
@@ -219,5 +247,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'record',
 
 ];

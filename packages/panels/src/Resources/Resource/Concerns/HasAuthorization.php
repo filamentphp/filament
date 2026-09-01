@@ -6,10 +6,20 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 
-use function Filament\authorize;
+use function Filament\get_authorization_response;
 
 trait HasAuthorization
 {
+    // Security: Resource authorization delegates to Laravel Model Policies.
+    // Standard CRUD operations (`viewAny`, `create`, `update`, `view`,
+    // `delete`, `forceDelete`, `restore`, `reorder`) are checked
+    // automatically. Bulk actions use `*Any()` policy methods
+    // (`deleteAny`, `forceDeleteAny`, `restoreAny`) for performance —
+    // use `authorizeIndividualRecords()` if per-record checks are
+    // needed. Inline editable table columns bypass these checks —
+    // they only respect `disabled()`. Custom actions require manual
+    // authorization via `authorize()`, `visible()`, or `hidden()`.
+
     protected static bool $shouldCheckPolicyExistence = true;
 
     protected static bool $shouldSkipAuthorization = false;
@@ -19,19 +29,18 @@ trait HasAuthorization
         return static::canViewAny();
     }
 
-    public static function can(string $action, ?Model $record = null): bool
+    public static function getAuthorizationResponse(string $action, ?Model $record = null): Response
     {
         if (static::shouldSkipAuthorization()) {
-            return true;
+            return Response::allow();
         }
 
-        $model = static::getModel();
+        return get_authorization_response($action, $record ?? static::getModel(), static::shouldCheckPolicyExistence());
+    }
 
-        try {
-            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
-        } catch (AuthorizationException $exception) {
-            return $exception->toResponse()->allowed();
-        }
+    public static function can(string $action, ?Model $record = null): bool
+    {
+        return static::getAuthorizationResponse($action, $record)->allowed();
     }
 
     /**
@@ -39,17 +48,7 @@ trait HasAuthorization
      */
     public static function authorize(string $action, ?Model $record = null): ?Response
     {
-        if (static::shouldSkipAuthorization()) {
-            return null;
-        }
-
-        $model = static::getModel();
-
-        try {
-            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence());
-        } catch (AuthorizationException $exception) {
-            return $exception->toResponse();
-        }
+        return static::getAuthorizationResponse($action, $record)->authorize();
     }
 
     public static function checkPolicyExistence(bool $condition = true): void
@@ -59,6 +58,10 @@ trait HasAuthorization
 
     public static function skipAuthorization(bool $condition = true): void
     {
+        // Security: Disabling authorization removes all policy checks for
+        // this resource. All panel users will be able to perform any
+        // operation. Not recommended for production.
+
         static::$shouldSkipAuthorization = $condition;
     }
 
@@ -72,83 +75,143 @@ trait HasAuthorization
         return static::$shouldSkipAuthorization;
     }
 
+    public static function getViewAnyAuthorizationResponse(): Response
+    {
+        return static::getAuthorizationResponse('viewAny');
+    }
+
+    public static function getCreateAuthorizationResponse(): Response
+    {
+        return static::getAuthorizationResponse('create');
+    }
+
+    public static function getEditAuthorizationResponse(Model $record): Response
+    {
+        return static::getAuthorizationResponse('update', $record);
+    }
+
+    public static function getDeleteAuthorizationResponse(Model $record): Response
+    {
+        return static::getAuthorizationResponse('delete', $record);
+    }
+
+    public static function getDeleteAnyAuthorizationResponse(): Response
+    {
+        return static::getAuthorizationResponse('deleteAny');
+    }
+
+    public static function getForceDeleteAuthorizationResponse(Model $record): Response
+    {
+        return static::getAuthorizationResponse('forceDelete', $record);
+    }
+
+    public static function getForceDeleteAnyAuthorizationResponse(): Response
+    {
+        return static::getAuthorizationResponse('forceDeleteAny');
+    }
+
+    public static function getReorderAuthorizationResponse(): Response
+    {
+        return static::getAuthorizationResponse('reorder');
+    }
+
+    public static function getReplicateAuthorizationResponse(Model $record): Response
+    {
+        return static::getAuthorizationResponse('replicate', $record);
+    }
+
+    public static function getRestoreAuthorizationResponse(Model $record): Response
+    {
+        return static::getAuthorizationResponse('restore', $record);
+    }
+
+    public static function getRestoreAnyAuthorizationResponse(): Response
+    {
+        return static::getAuthorizationResponse('restoreAny');
+    }
+
+    public static function getViewAuthorizationResponse(Model $record): Response
+    {
+        return static::getAuthorizationResponse('view', $record);
+    }
+
     public static function canViewAny(): bool
     {
-        return static::can('viewAny');
+        return static::getViewAnyAuthorizationResponse()->allowed();
     }
 
     public static function canCreate(): bool
     {
-        return static::can('create');
+        return static::getCreateAuthorizationResponse()->allowed();
     }
 
     public static function canEdit(Model $record): bool
     {
-        return static::can('update', $record);
+        return static::getEditAuthorizationResponse($record)->allowed();
     }
 
     public static function canDelete(Model $record): bool
     {
-        return static::can('delete', $record);
+        return static::getDeleteAuthorizationResponse($record)->allowed();
     }
 
     public static function canDeleteAny(): bool
     {
-        return static::can('deleteAny');
+        return static::getDeleteAnyAuthorizationResponse()->allowed();
     }
 
     public static function canForceDelete(Model $record): bool
     {
-        return static::can('forceDelete', $record);
+        return static::getForceDeleteAuthorizationResponse($record)->allowed();
     }
 
     public static function canForceDeleteAny(): bool
     {
-        return static::can('forceDeleteAny');
+        return static::getForceDeleteAnyAuthorizationResponse()->allowed();
     }
 
     public static function canReorder(): bool
     {
-        return static::can('reorder');
+        return static::getReorderAuthorizationResponse()->allowed();
     }
 
     public static function canReplicate(Model $record): bool
     {
-        return static::can('replicate', $record);
+        return static::getReplicateAuthorizationResponse($record)->allowed();
     }
 
     public static function canRestore(Model $record): bool
     {
-        return static::can('restore', $record);
+        return static::getRestoreAuthorizationResponse($record)->allowed();
     }
 
     public static function canRestoreAny(): bool
     {
-        return static::can('restoreAny');
+        return static::getRestoreAnyAuthorizationResponse()->allowed();
     }
 
     public static function canView(Model $record): bool
     {
-        return static::can('view', $record);
+        return static::getViewAuthorizationResponse($record)->allowed();
     }
 
     public static function authorizeViewAny(): void
     {
-        static::authorize('viewAny');
+        static::getViewAnyAuthorizationResponse()->authorize();
     }
 
     public static function authorizeCreate(): void
     {
-        static::authorize('create');
+        static::getCreateAuthorizationResponse()->authorize();
     }
 
     public static function authorizeEdit(Model $record): void
     {
-        static::authorize('update', $record);
+        static::getEditAuthorizationResponse($record)->authorize();
     }
 
     public static function authorizeView(Model $record): void
     {
-        static::authorize('view', $record);
+        static::getViewAuthorizationResponse($record)->authorize();
     }
 }

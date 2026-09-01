@@ -2,13 +2,43 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Colunas',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Aplicar colunas',
+            ],
+
+            'reset' => [
+                'label' => 'Repor',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Acção|Acções',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'A carregar...',
+
+            'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
+
+            'placeholder' => 'Selecionar uma opção',
+
+            'searching_message' => 'A pesquisar...',
+
+            'search_prompt' => 'Comece a escrever para pesquisar...',
+
+        ],
 
         'text' => [
 
@@ -95,7 +125,7 @@ return [
             'label' => 'Acções em massa',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Activar colunas',
         ],
 
@@ -141,7 +171,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Todos',
+
+            'relationship' => [
+                'empty_option_label' => 'Nenhum',
+            ],
+
         ],
 
         'trashed' => [
@@ -164,7 +200,6 @@ return [
 
             'group' => [
                 'label' => 'Agrupar por',
-                'placeholder' => 'Agrupar por',
             ],
 
             'direction' => [
@@ -224,5 +259,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'registo',
 
 ];

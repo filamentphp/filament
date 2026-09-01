@@ -3,40 +3,45 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
+use Filament\Forms\View\FormsIconAlias;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Filament\Support\View\Components\ButtonComponent;
 use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
+use InvalidArgumentException;
 
-class FileUpload extends BaseFileUpload
+use function Filament\Support\generate_icon_html;
+
+class FileUpload extends BaseFileUpload implements HasEmbeddedView
 {
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasAlignment;
     use HasExtraAlpineAttributes;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.file-upload';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.file-upload';
 
-    protected string | Closure | null $imageCropAspectRatio = null;
+    protected bool | Closure $shouldAutomaticallyCropImagesToAspectRatio = false;
+
+    protected string | Closure | null $automaticallyResizeImagesMode = null;
+
+    protected string | Closure | null $automaticallyResizeImagesHeight = null;
+
+    protected string | Closure | null $automaticallyResizeImagesWidth = null;
+
+    protected bool | Closure $shouldAutomaticallyUpscaleImagesWhenResizing = true;
 
     protected string | Closure | null $imagePreviewHeight = null;
 
-    protected string | Closure | null $imageResizeTargetHeight = null;
-
-    protected string | Closure | null $imageResizeTargetWidth = null;
-
-    protected string | Closure | null $imageResizeMode = null;
-
-    protected bool | Closure $imageResizeUpscale = true;
-
     protected bool | Closure $isAvatar = false;
 
-    protected int | float | Closure | null $itemPanelAspectRatio = null;
+    protected string | int | float | Closure | null $itemPanelAspectRatio = null;
 
     protected string | Closure $loadingIndicatorPosition = 'right';
 
@@ -62,18 +67,28 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $isSvgEditingConfirmed = false;
 
+    protected bool | Closure $shouldAutomaticallyOpenImageEditorForAspectRatio = false;
+
     protected int | Closure | null $imageEditorViewportWidth = null;
 
     protected int | Closure | null $imageEditorViewportHeight = null;
 
     protected int $imageEditorMode = 1;
 
-    protected string | Closure | null $imageEditorEmptyFillColor = null;
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $imageEditorEmptyFillColor = null;
 
     /**
-     * @var array<?string> | Closure
+     * @var array<string | null> | Closure
      */
-    protected array | Closure $imageEditorAspectRatios = [];
+    protected array | Closure $imageEditorAspectRatioOptions = [];
+
+    /**
+     * @var array<string, string> | Closure
+     */
+    protected array | Closure $mimeTypeMap = [];
 
     public function appendFiles(bool | Closure $condition = true): static
     {
@@ -87,11 +102,12 @@ class FileUpload extends BaseFileUpload
         $this->isAvatar = true;
 
         $this->image();
-        $this->imageResizeMode('cover');
-        $this->imageResizeUpscale(false);
-        $this->imageCropAspectRatio('1:1');
-        $this->imageResizeTargetHeight('500');
-        $this->imageResizeTargetWidth('500');
+        $this->imageAspectRatio('1:1');
+        $this->automaticallyResizeImagesMode('cover');
+        $this->automaticallyUpscaleImagesWhenResizing(false);
+        $this->automaticallyCropImagesToAspectRatio();
+        $this->automaticallyResizeImagesToHeight('500');
+        $this->automaticallyResizeImagesToWidth('500');
         $this->loadingIndicatorPosition('center bottom');
         $this->panelLayout('compact circle');
         $this->removeUploadedFileButtonPosition(fn (FileUpload $component) => $component->hasImageEditor() ? 'left bottom' : 'center bottom');
@@ -120,11 +136,82 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function imageCropAspectRatio(string | Closure | null $ratio): static
+    public function automaticallyCropImagesToAspectRatio(bool | Closure $condition = true): static
     {
-        $this->imageCropAspectRatio = $ratio;
+        $this->shouldAutomaticallyCropImagesToAspectRatio = $condition;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use `imageAspectRatio()` and `automaticallyCropImagesToAspectRatio()` instead.
+     */
+    public function imageCropAspectRatio(string | Closure | null $ratio): static
+    {
+        $this->imageAspectRatio($ratio);
+        $this->automaticallyCropImagesToAspectRatio(($ratio instanceof Closure) ? $ratio : filled($ratio));
+
+        return $this;
+    }
+
+    public function automaticallyResizeImagesMode(string | Closure | null $mode): static
+    {
+        $this->automaticallyResizeImagesMode = $mode;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyResizeImagesMode()` instead.
+     */
+    public function imageResizeMode(string | Closure | null $mode): static
+    {
+        return $this->automaticallyResizeImagesMode($mode);
+    }
+
+    public function automaticallyResizeImagesToHeight(string | Closure | null $height): static
+    {
+        $this->automaticallyResizeImagesHeight = $height;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyResizeImagesToHeight()` instead.
+     */
+    public function imageResizeTargetHeight(string | Closure | null $height): static
+    {
+        return $this->automaticallyResizeImagesToHeight($height);
+    }
+
+    public function automaticallyResizeImagesToWidth(string | Closure | null $width): static
+    {
+        $this->automaticallyResizeImagesWidth = $width;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyResizeImagesToWidth()` instead.
+     */
+    public function imageResizeTargetWidth(string | Closure | null $width): static
+    {
+        return $this->automaticallyResizeImagesToWidth($width);
+    }
+
+    public function automaticallyUpscaleImagesWhenResizing(bool | Closure $condition = true): static
+    {
+        $this->shouldAutomaticallyUpscaleImagesWhenResizing = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyUpscaleImagesWhenResizing()` instead.
+     */
+    public function imageResizeUpscale(bool | Closure $condition = true): static
+    {
+        return $this->automaticallyUpscaleImagesWhenResizing($condition);
     }
 
     public function imagePreviewHeight(string | Closure | null $height): static
@@ -134,35 +221,7 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function imageResizeTargetHeight(string | Closure | null $height): static
-    {
-        $this->imageResizeTargetHeight = $height;
-
-        return $this;
-    }
-
-    public function imageResizeTargetWidth(string | Closure | null $width): static
-    {
-        $this->imageResizeTargetWidth = $width;
-
-        return $this;
-    }
-
-    public function imageResizeMode(string | Closure | null $mode): static
-    {
-        $this->imageResizeMode = $mode;
-
-        return $this;
-    }
-
-    public function imageResizeUpscale(bool | Closure $condition = true): static
-    {
-        $this->imageResizeUpscale = $condition;
-
-        return $this;
-    }
-
-    public function itemPanelAspectRatio(int | float | Closure | null $ratio): static
+    public function itemPanelAspectRatio(string | int | float | Closure | null $ratio): static
     {
         $this->itemPanelAspectRatio = $ratio;
 
@@ -228,9 +287,88 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function shouldAutomaticallyCropImagesToAspectRatio(): bool
+    {
+        return (bool) $this->evaluate($this->shouldAutomaticallyCropImagesToAspectRatio);
+    }
+
+    public function getAutomaticallyCropImagesAspectRatio(): ?string
+    {
+        if (! $this->shouldAutomaticallyCropImagesToAspectRatio()) {
+            return null;
+        }
+
+        $imageAspectRatio = $this->getImageAspectRatio();
+
+        if (blank($imageAspectRatio)) {
+            return null;
+        }
+
+        if (is_array($imageAspectRatio)) {
+            $imageAspectRatio = $imageAspectRatio[0] ?? null;
+        }
+
+        return $this->normalizeAspectRatio($imageAspectRatio);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyCropImagesAspectRatio()` instead.
+     */
     public function getImageCropAspectRatio(): ?string
     {
-        return $this->evaluate($this->imageCropAspectRatio);
+        return $this->getAutomaticallyCropImagesAspectRatio();
+    }
+
+    public function getAutomaticallyResizeImagesMode(): ?string
+    {
+        return $this->evaluate($this->automaticallyResizeImagesMode);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyResizeImagesMode()` instead.
+     */
+    public function getImageResizeMode(): ?string
+    {
+        return $this->getAutomaticallyResizeImagesMode();
+    }
+
+    public function getAutomaticallyResizeImagesHeight(): ?string
+    {
+        return $this->evaluate($this->automaticallyResizeImagesHeight);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyResizeImagesHeight()` instead.
+     */
+    public function getImageResizeTargetHeight(): ?string
+    {
+        return $this->getAutomaticallyResizeImagesHeight();
+    }
+
+    public function getAutomaticallyResizeImagesWidth(): ?string
+    {
+        return $this->evaluate($this->automaticallyResizeImagesWidth);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyResizeImagesWidth()` instead.
+     */
+    public function getImageResizeTargetWidth(): ?string
+    {
+        return $this->getAutomaticallyResizeImagesWidth();
+    }
+
+    public function shouldAutomaticallyUpscaleImagesWhenResizing(): bool
+    {
+        return (bool) $this->evaluate($this->shouldAutomaticallyUpscaleImagesWhenResizing);
+    }
+
+    /**
+     * @deprecated Use `shouldAutomaticallyUpscaleImagesWhenResizing()` instead.
+     */
+    public function getImageResizeUpscale(): bool
+    {
+        return $this->shouldAutomaticallyUpscaleImagesWhenResizing();
     }
 
     public function getImagePreviewHeight(): ?string
@@ -238,38 +376,22 @@ class FileUpload extends BaseFileUpload
         return $this->evaluate($this->imagePreviewHeight);
     }
 
-    public function getImageResizeTargetHeight(): ?string
-    {
-        return $this->evaluate($this->imageResizeTargetHeight);
-    }
-
-    public function getImageResizeTargetWidth(): ?string
-    {
-        return $this->evaluate($this->imageResizeTargetWidth);
-    }
-
-    public function getImageResizeMode(): ?string
-    {
-        return $this->evaluate($this->imageResizeMode);
-    }
-
-    public function getImageResizeUpscale(): bool
-    {
-        return (bool) $this->evaluate($this->imageResizeUpscale);
-    }
-
     public function getItemPanelAspectRatio(): int | float | null
     {
-        $itemPanelAspectRatio = $this->evaluate($this->itemPanelAspectRatio);
+        $ratio = $this->evaluate($this->itemPanelAspectRatio);
 
         if (
             ($this->getPanelLayout() === 'grid') &&
-            (! $itemPanelAspectRatio)
+            (! $ratio)
         ) {
             return 1;
         }
 
-        return $itemPanelAspectRatio;
+        if (is_string($ratio)) {
+            return $this->calculateAspectRatio($this->normalizeAspectRatio($ratio));
+        }
+
+        return $ratio;
     }
 
     public function getLoadingIndicatorPosition(): string
@@ -279,7 +401,7 @@ class FileUpload extends BaseFileUpload
 
     public function getPanelAspectRatio(): ?string
     {
-        return $this->evaluate($this->panelAspectRatio);
+        return $this->normalizeAspectRatio($this->evaluate($this->panelAspectRatio));
     }
 
     public function getPanelLayout(): ?string
@@ -345,6 +467,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function automaticallyOpenImageEditorForAspectRatio(bool | Closure $condition = true): static
+    {
+        $this->shouldAutomaticallyOpenImageEditorForAspectRatio = $condition;
+
+        return $this;
+    }
+
     public function imageEditorViewportWidth(int | Closure | null $width): static
     {
         $this->imageEditorViewportWidth = $width;
@@ -362,7 +491,7 @@ class FileUpload extends BaseFileUpload
     public function imageEditorMode(int $mode): static
     {
         if (! in_array($mode, [1, 2, 3])) {
-            throw new Exception("The file upload editor mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
+            throw new InvalidArgumentException("The file upload editor mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs/blob/v1/README.md#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
         }
 
         $this->imageEditorMode = $mode;
@@ -378,25 +507,37 @@ class FileUpload extends BaseFileUpload
     }
 
     /**
-     * @param  array<?string> | Closure  $ratios
+     * @param  array<string | null> | Closure  $ratios
      */
-    public function imageEditorAspectRatios(array | Closure $ratios): static
+    public function imageEditorAspectRatioOptions(array | Closure $ratios): static
     {
-        $this->imageEditorAspectRatios = $ratios;
+        $this->imageEditorAspectRatioOptions = $ratios;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `imageEditorAspectRatioOptions()` instead.
+     *
+     * @param  array<string | null> | Closure  $ratios
+     */
+    public function imageEditorAspectRatios(array | Closure $ratios): static
+    {
+        return $this->imageEditorAspectRatioOptions($ratios);
+    }
+
     public function getImageEditorViewportHeight(): ?int
     {
-        if (($targetHeight = (int) $this->getImageResizeTargetHeight()) > 1) {
+        if (($targetHeight = (int) $this->getAutomaticallyResizeImagesHeight()) > 1) {
             return (int) round($targetHeight * $this->getParentTargetSizes($targetHeight), precision: 0);
         }
 
-        if (filled($ratio = $this->getImageCropAspectRatio())) {
-            [$numerator, $denominator] = explode(':', $ratio);
+        if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
+            $parts = explode(':', $ratio);
 
-            return (int) $denominator;
+            if (count($parts) === 2) {
+                return (int) $parts[1];
+            }
         }
 
         return $this->evaluate($this->imageEditorViewportHeight);
@@ -404,22 +545,30 @@ class FileUpload extends BaseFileUpload
 
     public function getImageEditorViewportWidth(): ?int
     {
-        if (($targetWidth = (int) $this->getImageResizeTargetWidth()) > 1) {
+        if (($targetWidth = (int) $this->getAutomaticallyResizeImagesWidth()) > 1) {
             return (int) round($targetWidth * $this->getParentTargetSizes($targetWidth), precision: 0);
         }
 
-        if (filled($ratio = $this->getImageCropAspectRatio())) {
-            [$numerator, $denominator] = explode(':', $ratio);
+        if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
+            $parts = explode(':', $ratio);
 
-            return (int) $numerator;
+            if (count($parts) === 2) {
+                return (int) $parts[0];
+            }
         }
 
         return $this->evaluate($this->imageEditorViewportWidth);
     }
 
-    protected function getParentTargetSizes(int $withOrHeight): float
+    protected function getParentTargetSizes(int $widthOrHeight): int | float
     {
-        return $withOrHeight > 1 ? 360 / (int) $this->getImageResizeTargetWidth() : 1;
+        $targetWidth = (int) $this->getAutomaticallyResizeImagesWidth();
+
+        if ($targetWidth === 0) {
+            return 1;
+        }
+
+        return $widthOrHeight > 1 ? 360 / $targetWidth : 1;
     }
 
     public function getImageEditorMode(): int
@@ -433,6 +582,15 @@ class FileUpload extends BaseFileUpload
     }
 
     public function hasImageEditor(): bool
+    {
+        if ($this->shouldAutomaticallyOpenImageEditorForAspectRatio()) {
+            return true;
+        }
+
+        return (bool) $this->evaluate($this->hasImageEditor);
+    }
+
+    public function isImageEditorExplicitlyEnabled(): bool
     {
         return (bool) $this->evaluate($this->hasImageEditor);
     }
@@ -452,21 +610,69 @@ class FileUpload extends BaseFileUpload
         return (bool) $this->evaluate($this->isSvgEditingConfirmed);
     }
 
+    public function shouldAutomaticallyOpenImageEditorForAspectRatio(): bool
+    {
+        if (! $this->evaluate($this->shouldAutomaticallyOpenImageEditorForAspectRatio)) {
+            return false;
+        }
+
+        if ($this->isMultiple()) {
+            throw new InvalidArgumentException('The [automaticallyOpenImageEditorForAspectRatio()] method cannot be used when [multiple()] is enabled.');
+        }
+
+        $ratio = $this->getImageAspectRatio();
+
+        if (blank($ratio)) {
+            throw new InvalidArgumentException('The [automaticallyOpenImageEditorForAspectRatio()] method requires [imageAspectRatio()] to be set with a single aspect ratio.');
+        }
+
+        if (is_array($ratio) && count($ratio) > 1) {
+            throw new InvalidArgumentException('The [automaticallyOpenImageEditorForAspectRatio()] method cannot be used when [imageAspectRatio()] has multiple allowed aspect ratios.');
+        }
+
+        return true;
+    }
+
+    public function getAutomaticallyOpenImageEditorForAspectRatio(): ?float
+    {
+        if (! $this->shouldAutomaticallyOpenImageEditorForAspectRatio()) {
+            return null;
+        }
+
+        $ratio = $this->getImageAspectRatio();
+
+        if (is_array($ratio)) {
+            $ratio = $ratio[0] ?? null;
+        }
+
+        if (blank($ratio)) {
+            return null;
+        }
+
+        return $this->calculateAspectRatio($ratio);
+    }
+
     /**
      * @return array<string, float | string>
      */
-    public function getImageEditorAspectRatiosForJs(): array
+    public function getImageEditorAspectRatioOptionsForJs(): array
     {
-        return collect($this->evaluate($this->imageEditorAspectRatios) ?? [])
+        return collect($this->evaluate($this->imageEditorAspectRatioOptions) ?? [])
             ->when(
-                filled($imageCropAspectRatio = $this->getImageCropAspectRatio()),
-                fn (Collection $ratios): Collection => $ratios->push($imageCropAspectRatio),
+                filled($automaticCropRatio = $this->getAutomaticallyCropImagesAspectRatio()),
+                fn (Collection $ratios): Collection => $ratios->push($automaticCropRatio),
             )
             ->unique()
-            ->mapWithKeys(fn (?string $ratio): array => [
-                $ratio ?? __('filament-forms::components.file_upload.editor.aspect_ratios.no_fixed.label') => $this->normalizeImageCroppingRatioForJs($ratio),
-            ])
-            ->filter(fn (float | string | false $ratio): bool => $ratio !== false)
+            ->mapWithKeys(function (?string $ratio): array {
+                $label = $ratio === null
+                    ? __('filament-forms::components.file_upload.editor.aspect_ratios.no_fixed.label')
+                    : str_replace('/', ':', $ratio);
+
+                $floatValue = $ratio === null ? 'NaN' : $this->calculateAspectRatio($ratio);
+
+                return [$label => $floatValue];
+            })
+            ->filter(fn (float | string | null $ratio): bool => $ratio !== null)
             ->when(
                 fn (Collection $ratios): bool => $ratios->count() < 2,
                 fn (Collection $ratios) => $ratios->take(0),
@@ -474,112 +680,526 @@ class FileUpload extends BaseFileUpload
             ->all();
     }
 
-    protected function normalizeImageCroppingRatioForJs(?string $ratio): float | string | false
+    /**
+     * @deprecated Use `getImageEditorAspectRatioOptionsForJs()` instead.
+     *
+     * @return array<string, float | string>
+     */
+    public function getImageEditorAspectRatiosForJs(): array
     {
-        if ($ratio === null) {
-            return 'NaN';
-        }
-
-        $ratioParts = explode(':', $ratio);
-
-        if (count($ratioParts) !== 2) {
-            return false;
-        }
-
-        [$numerator, $denominator] = $ratioParts;
-
-        if (! $denominator) {
-            return false;
-        }
-
-        if (! is_numeric($numerator)) {
-            return false;
-        }
-
-        if (! is_numeric($denominator)) {
-            return false;
-        }
-
-        return $numerator / $denominator;
+        return $this->getImageEditorAspectRatioOptionsForJs();
     }
 
     /**
      * @return array<array<array<string, mixed>>>
      */
-    public function getImageEditorActions(string $iconSizeClasses): array
+    public function getImageEditorActions(): array
     {
         return [
             'zoom' => [
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.drag_move.label'),
-                    'iconHtml' => ($icon = FilamentIcon::resolve('forms::components.file-upload.editor.actions.drag-move')) ? svg($icon, $iconSizeClasses)->toHtml() : new HtmlString('<svg class="' . $iconSizeClasses . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M13 6v5h5V7.75L22.25 12L18 16.25V13h-5v5h3.25L12 22.25L7.75 18H11v-5H6v3.25L1.75 12L6 7.75V11h5V6H7.75L12 1.75L16.25 6H13Z"/></svg>'),
+                    'iconHtml' => generate_icon_html(
+                        'fi-o-arrows-move',
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_MOVE,
+                    ),
                     'alpineClickHandler' => "editor.setDragMode('move')",
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.drag_crop.label'),
-                    'iconHtml' => ($icon = FilamentIcon::resolve('forms::components.file-upload.editor.actions.drag-crop')) ? svg($icon, $iconSizeClasses)->toHtml() : new HtmlString('<svg class="' . $iconSizeClasses . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M17 23v-4H7q-.825 0-1.412-.587Q5 17.825 5 17V7H1V5h4V1h2v16h16v2h-4v4Zm0-8V7H9V5h8q.825 0 1.413.588Q19 6.175 19 7v8Z"/></svg>'),
+                    'iconHtml' => generate_icon_html(
+                        'fi-o-crop',
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_CROP,
+                    ),
                     'alpineClickHandler' => "editor.setDragMode('crop')",
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_in.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-in') ?? 'heroicon-m-magnifying-glass-plus', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::MagnifyingGlassPlus,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ZOOM_IN,
+                    ),
                     'alpineClickHandler' => 'editor.zoom(0.1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_out.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-out') ?? 'heroicon-m-magnifying-glass-minus', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::MagnifyingGlassMinus,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ZOOM_OUT,
+                    ),
                     'alpineClickHandler' => 'editor.zoom(-0.1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_100.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-100') ?? 'heroicon-m-arrows-pointing-out', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::ArrowsPointingOut,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ZOOM_100,
+                    ),
                     'alpineClickHandler' => 'editor.zoomTo(1)',
                 ],
             ],
             'move' => [
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_left.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-left') ?? 'heroicon-m-arrow-left-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::ArrowLeftCircle,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_LEFT,
+                    ),
                     'alpineClickHandler' => 'editor.move(-10, 0)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_right.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-right') ?? 'heroicon-m-arrow-right-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::ArrowRightCircle,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_RIGHT,
+                    ),
                     'alpineClickHandler' => 'editor.move(10, 0)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_up.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-up') ?? 'heroicon-m-arrow-up-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::ArrowUpCircle,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_UP,
+                    ),
                     'alpineClickHandler' => 'editor.move(0, -10)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_down.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-down') ?? 'heroicon-m-arrow-down-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::ArrowDownCircle,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_DOWN,
+                    ),
                     'alpineClickHandler' => 'editor.move(0, 10)',
                 ],
             ],
             'transform' => [
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.rotate_left.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.rotate-left') ?? 'heroicon-m-arrow-uturn-left', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::ArrowUturnLeft,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ROTATE_LEFT,
+                    ),
                     'alpineClickHandler' => 'editor.rotate(-90)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.rotate_right.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.rotate-right') ?? 'heroicon-m-arrow-uturn-right', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => generate_icon_html(
+                        Heroicon::ArrowUturnRight,
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ROTATE_RIGHT,
+                    ),
                     'alpineClickHandler' => 'editor.rotate(90)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.flip_horizontal.label'),
-                    'iconHtml' => ($icon = FilamentIcon::resolve('forms::components.file-upload.editor.actions.flip-horizontal')) ? svg($icon, $iconSizeClasses)->toHtml() : new HtmlString('<svg class="' . $iconSizeClasses . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 7l5 5l-5 5V7m18 0l-5 5l5 5V7m-9 13v2m0-8v2m0-8v2m0-8v2"/></svg>'),
+                    'iconHtml' => generate_icon_html(
+                        'fi-o-flip-horizontal',
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_FLIP_HORIZONTAL,
+                    ),
                     'alpineClickHandler' => 'editor.scaleX(-editor.getData().scaleX || -1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.flip_vertical.label'),
-                    'iconHtml' => ($icon = FilamentIcon::resolve('forms::components.file-upload.editor.actions.flip-vertical')) ? svg($icon, $iconSizeClasses)->toHtml() : new HtmlString('<svg class="' . $iconSizeClasses . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 3l-5 5l-5-5h10m0 18l-5-5l-5 5h10M4 12H2m8 0H8m8 0h-2m8 0h-2"/></svg>'),
+                    'iconHtml' => generate_icon_html(
+                        'fi-o-flip-vertical',
+                        alias: FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_FLIP_VERTICAL,
+                    ),
                     'alpineClickHandler' => 'editor.scaleY(-editor.getData().scaleY || -1)',
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param  array<string, string> | Closure  $map
+     */
+    public function mimeTypeMap(array | Closure $map): static
+    {
+        $this->mimeTypeMap = $map;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getMimeTypeMap(): array
+    {
+        return $this->evaluate($this->mimeTypeMap);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $id = $this->getId();
+        $automaticallyCropImagesAspectRatio = $this->getAutomaticallyCropImagesAspectRatio();
+        $automaticallyResizeImagesHeight = $this->getAutomaticallyResizeImagesHeight();
+        $automaticallyResizeImagesWidth = $this->getAutomaticallyResizeImagesWidth();
+        $isAvatar = $this->isAvatar();
+        $isMultiple = $this->isMultiple();
+        $key = $this->getKey();
+        $statePath = $this->getStatePath();
+        $isDisabled = $this->isDisabled();
+        $hasImageEditor = $this->hasImageEditor();
+        $isImageEditorExplicitlyEnabled = $this->isImageEditorExplicitlyEnabled();
+        $hasCircleCropper = $this->hasCircleCropper();
+        $livewireKey = $this->getLivewireKey();
+        $maxFiles = $this->getMaxFiles();
+        $maxSize = $this->getMaxSize();
+        $minSize = $this->getMinSize();
+
+        $alignment = $this->getAlignment() ?? Alignment::Start;
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
+
+        $wireKey = $livewireKey . '.' . substr(md5(serialize([$isDisabled])), 0, 64);
+
+        $outerAttributes = $this->getExtraAttributeBag()
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'id' => $id,
+                'role' => 'group',
+            ], escape: false)
+            ->merge($this->getExtraAlpineAttributes(), escape: false)
+            ->class([
+                'fi-fo-file-upload',
+                'fi-fo-file-upload-avatar' => $isAvatar,
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
+            ]);
+
+        $inputAttributes = $this->getExtraInputAttributeBag()
+            ->merge([
+                'aria-labelledby' => "{$id}-label",
+                'disabled' => $isDisabled,
+                'multiple' => $isMultiple,
+                'type' => 'file',
+            ], escape: false);
+
+        $alpineComponentSrc = FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms');
+
+        ob_start(); ?>
+
+        <div
+            x-load
+            x-load-src="<?= e($alpineComponentSrc) ?>"
+            x-data="fileUploadFormComponent({
+                        acceptedFileTypes: <?= Js::from($this->getAcceptedFileTypes()) ?>,
+                        automaticallyCropImagesAspectRatio: <?= Js::from($automaticallyCropImagesAspectRatio) ?>,
+                        automaticallyOpenImageEditorForAspectRatio: <?= Js::from($this->getAutomaticallyOpenImageEditorForAspectRatio()) ?>,
+                        automaticallyResizeImagesMode: <?= Js::from($this->getAutomaticallyResizeImagesMode()) ?>,
+                        automaticallyResizeImagesHeight: <?= Js::from($automaticallyResizeImagesHeight) ?>,
+                        automaticallyResizeImagesWidth: <?= Js::from($automaticallyResizeImagesWidth) ?>,
+                        cancelUploadUsing: (fileKey) => {
+                            $wire.cancelUpload(`<?= e($statePath) ?>.${fileKey}`)
+                        },
+                        canEditSvgs: <?= Js::from($this->canEditSvgs()) ?>,
+                        confirmSvgEditingMessage: <?= Js::from(__('filament-forms::components.file_upload.editor.svg.messages.confirmation')) ?>,
+                        deleteUploadedFileUsing: async (fileKey) => {
+                            return await $wire.callSchemaComponentMethod(
+                                <?= Js::from($key) ?>,
+                                'deleteUploadedFile',
+                                { fileKey },
+                            )
+                        },
+                        disabledSvgEditingMessage: <?= Js::from(__('filament-forms::components.file_upload.editor.svg.messages.disabled')) ?>,
+                        getUploadedFilesUsing: async () => {
+                            return await $wire.callSchemaComponentMethod(
+                                <?= Js::from($key) ?>,
+                                'getUploadedFiles',
+                            )
+                        },
+                        hasCircleCropper: <?= Js::from($hasCircleCropper) ?>,
+                        hasImageEditor: <?= Js::from($hasImageEditor) ?>,
+                        imageEditorEmptyFillColor: <?= Js::from($this->getImageEditorEmptyFillColor()) ?>,
+                        imageEditorMode: <?= Js::from($this->getImageEditorMode()) ?>,
+                        imageEditorViewportHeight: <?= Js::from($this->getImageEditorViewportHeight()) ?>,
+                        imageEditorViewportWidth: <?= Js::from($this->getImageEditorViewportWidth()) ?>,
+                        imagePreviewHeight: <?= Js::from($this->getImagePreviewHeight()) ?>,
+                        isAvatar: <?= Js::from($isAvatar) ?>,
+                        isDeletable: <?= Js::from($this->isDeletable()) ?>,
+                        isDisabled: <?= Js::from($isDisabled) ?>,
+                        isDownloadable: <?= Js::from($this->isDownloadable()) ?>,
+                        isImageEditorExplicitlyEnabled: <?= Js::from($isImageEditorExplicitlyEnabled) ?>,
+                        isMultiple: <?= Js::from($isMultiple) ?>,
+                        isOpenable: <?= Js::from($this->isOpenable()) ?>,
+                        isPasteable: <?= Js::from($this->isPasteable()) ?>,
+                        isPreviewable: <?= Js::from($this->isPreviewable()) ?>,
+                        isReorderable: <?= Js::from($this->isReorderable()) ?>,
+                        isSvgEditingConfirmed: <?= Js::from($this->isSvgEditingConfirmed()) ?>,
+                        itemPanelAspectRatio: <?= Js::from($this->getItemPanelAspectRatio()) ?>,
+                        loadingIndicatorPosition: <?= Js::from($this->getLoadingIndicatorPosition()) ?>,
+                        locale: <?= Js::from(app()->getLocale()) ?>,
+                        maxFiles: <?= Js::from($maxFiles) ?>,
+                        maxFilesValidationMessage: <?= Js::from($maxFiles ? trans_choice('validation.max.array', $maxFiles, ['attribute' => $this->getValidationAttribute(), 'max' => $maxFiles]) : null) ?>,
+                        maxParallelUploads: <?= Js::from($this->getMaxParallelUploads()) ?>,
+                        maxSize: <?= Js::from($maxSize ? "{$maxSize}KB" : null) ?>,
+                        mimeTypeMap: <?= Js::from($this->getMimeTypeMap()) ?>,
+                        minSize: <?= Js::from($minSize ? "{$minSize}KB" : null) ?>,
+                        panelAspectRatio: <?= Js::from($this->getPanelAspectRatio()) ?>,
+                        panelLayout: <?= Js::from($this->getPanelLayout()) ?>,
+                        placeholder: <?= Js::from($this->getPlaceholder()) ?>,
+                        removeUploadedFileButtonPosition: <?= Js::from($this->getRemoveUploadedFileButtonPosition()) ?>,
+                        removeUploadedFileUsing: async (fileKey) => {
+                            return await $wire.callSchemaComponentMethod(
+                                <?= Js::from($key) ?>,
+                                'removeUploadedFile',
+                                { fileKey },
+                            )
+                        },
+                        reorderUploadedFilesUsing: async (fileKeys) => {
+                            return await $wire.callSchemaComponentMethod(
+                                <?= Js::from($key) ?>,
+                                'reorderUploadedFiles',
+                                { fileKeys },
+                            )
+                        },
+                        shouldAppendFiles: <?= Js::from($this->shouldAppendFiles()) ?>,
+                        shouldAutomaticallyUpscaleImagesWhenResizing: <?= Js::from($this->shouldAutomaticallyUpscaleImagesWhenResizing()) ?>,
+                        shouldOrientImageFromExif: <?= Js::from($this->shouldOrientImagesFromExif()) ?>,
+                        shouldTransformImage: <?= Js::from($automaticallyCropImagesAspectRatio || $automaticallyResizeImagesHeight || $automaticallyResizeImagesWidth) ?>,
+                        state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                        uploadButtonPosition: <?= Js::from($this->getUploadButtonPosition()) ?>,
+                        uploadingMessage: <?= Js::from($this->getUploadingMessage()) ?>,
+                        downloadActionLabel: <?= Js::from(__('filament-forms::components.file_upload.actions.download.label')) ?>,
+                        openActionLabel: <?= Js::from(__('filament-forms::components.file_upload.actions.open.label')) ?>,
+                        uploadProgressIndicatorPosition: <?= Js::from($this->getUploadProgressIndicatorPosition()) ?>,
+                        uploadUsing: (fileKey, file, success, error, progress) => {
+                            $wire.upload(
+                                `<?= e($statePath) ?>.${fileKey}`,
+                                file,
+                                () => {
+                                    success(fileKey)
+                                },
+                                error,
+                                (progressEvent) => {
+                                    progress(true, progressEvent.detail.progress, 100)
+                                },
+                            )
+                        },
+                    })"
+            wire:ignore
+            wire:key="<?= e($wireKey) ?>"
+            <?= $outerAttributes->toHtml() ?>
+        >
+            <div class="fi-fo-file-upload-input-ctn">
+                <input
+                    x-ref="input"
+                    <?= $inputAttributes->toHtml() ?>
+                />
+            </div>
+
+            <div
+                x-show="error"
+                x-text="error"
+                x-cloak
+                role="alert"
+                class="fi-fo-file-upload-error-message"
+            ></div>
+
+            <?php if ($hasImageEditor && ! $isDisabled) { ?>
+                <div
+                    aria-label="<?= e(__('filament-forms::components.file_upload.editor.label')) ?>"
+                    aria-modal="true"
+                    role="dialog"
+                    x-show="isEditorOpen"
+                    x-cloak
+                    x-on:click.stop=""
+                    x-trap.noscroll="isEditorOpen"
+                    x-on:keydown.escape.prevent.stop="closeEditor"
+                    <?= (new FilamentComponentAttributeBag)->class([
+                        'fi-fo-file-upload-editor',
+                        'fi-fo-file-upload-editor-circle-cropper' => $hasCircleCropper,
+                        'fi-fo-file-upload-editor-crop-only' => ! $isImageEditorExplicitlyEnabled,
+                    ])->toHtml() ?>
+                >
+                    <div
+                        aria-hidden="true"
+                        class="fi-fo-file-upload-editor-overlay"
+                    ></div>
+
+                    <div class="fi-fo-file-upload-editor-window">
+                        <div class="fi-fo-file-upload-editor-image-ctn">
+                            <?php // Decorative: Cropper.js drives this image and the editor dialog is labelled elsewhere.?>
+                            <img
+                                alt=""
+                                x-ref="editor"
+                                class="fi-fo-file-upload-editor-image"
+                            />
+                        </div>
+
+                        <div class="fi-fo-file-upload-editor-control-panel">
+                            <?php if ($isImageEditorExplicitlyEnabled) { ?>
+                                <div class="fi-fo-file-upload-editor-control-panel-main">
+                                    <div class="fi-fo-file-upload-editor-control-panel-group">
+                                        <?php foreach ([
+                                            [
+                                                'label' => __('filament-forms::components.file_upload.editor.fields.x_position.label'),
+                                                'ref' => 'xPositionInput',
+                                                'unit' => __('filament-forms::components.file_upload.editor.fields.x_position.unit'),
+                                                'alpineSaveHandler' => 'editor.setData({...editor.getData(true), x: +$el.value})',
+                                            ],
+                                            [
+                                                'label' => __('filament-forms::components.file_upload.editor.fields.y_position.label'),
+                                                'ref' => 'yPositionInput',
+                                                'unit' => __('filament-forms::components.file_upload.editor.fields.y_position.unit'),
+                                                'alpineSaveHandler' => 'editor.setData({...editor.getData(true), y: +$el.value})',
+                                            ],
+                                            [
+                                                'label' => __('filament-forms::components.file_upload.editor.fields.width.label'),
+                                                'ref' => 'widthInput',
+                                                'unit' => __('filament-forms::components.file_upload.editor.fields.width.unit'),
+                                                'alpineSaveHandler' => 'editor.setData({...editor.getData(true), width: +$el.value})',
+                                            ],
+                                            [
+                                                'label' => __('filament-forms::components.file_upload.editor.fields.height.label'),
+                                                'ref' => 'heightInput',
+                                                'unit' => __('filament-forms::components.file_upload.editor.fields.height.unit'),
+                                                'alpineSaveHandler' => 'editor.setData({...editor.getData(true), height: +$el.value})',
+                                            ],
+                                            [
+                                                'label' => __('filament-forms::components.file_upload.editor.fields.rotation.label'),
+                                                'ref' => 'rotationInput',
+                                                'unit' => __('filament-forms::components.file_upload.editor.fields.rotation.unit'),
+                                                'alpineSaveHandler' => 'editor.rotateTo(+$el.value)',
+                                            ],
+                                        ] as $input) { ?>
+                                            <label>
+                                                <div class="fi-input-wrp">
+                                                    <div class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content fi-input-wrp-prefix-has-label">
+                                                        <span class="fi-input-wrp-label">
+                                                            <?= e($input['label']) ?>
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="fi-input-wrp-content-ctn">
+                                                        <input
+                                                            x-on:keyup.enter.prevent.stop="editor && <?= $input['alpineSaveHandler'] ?>"
+                                                            x-on:blur="editor && <?= $input['alpineSaveHandler'] ?>"
+                                                            x-ref="<?= e($input['ref']) ?>"
+                                                            x-on:keydown.enter.prevent
+                                                            type="text"
+                                                            class="fi-input"
+                                                        />
+                                                    </div>
+
+                                                    <div class="fi-input-wrp-suffix fi-input-wrp-suffix-has-label">
+                                                        <span class="fi-input-wrp-label">
+                                                            <?= e($input['unit']) ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        <?php } ?>
+                                    </div>
+
+                                    <div class="fi-fo-file-upload-editor-control-panel-group">
+                                        <?php foreach ($this->getImageEditorActions() as $groupedActions) { ?>
+                                            <div class="fi-btn-group">
+                                                <?php foreach ($groupedActions as $action) { ?>
+                                                    <button
+                                                        aria-label="<?= e($action['label']) ?>"
+                                                        type="button"
+                                                        x-on:click.prevent.stop="<?= e($action['alpineClickHandler']) ?>"
+                                                        x-tooltip="{ content: <?= Js::from($action['label']) ?>, theme: $store.theme }"
+                                                        class="fi-btn"
+                                                    >
+                                                        <?= $action['iconHtml']?->toHtml() ?>
+                                                    </button>
+                                                <?php } ?>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+
+                                    <?php
+                                    $aspectRatios = $this->getImageEditorAspectRatioOptionsForJs();
+
+                                if (count($aspectRatios)) { ?>
+                                        <div class="fi-fo-file-upload-editor-control-panel-group">
+                                            <div class="fi-fo-file-upload-editor-control-panel-group-title">
+                                                <?= e(__('filament-forms::components.file_upload.editor.aspect_ratios.label')) ?>
+                                            </div>
+
+                                            <?php foreach (collect($aspectRatios)->chunk(5) as $ratiosChunk) { ?>
+                                                <div class="fi-btn-group">
+                                                    <?php foreach ($ratiosChunk as $label => $ratio) { ?>
+                                                        <button
+                                                            type="button"
+                                                            x-on:click.prevent.stop="
+                                                                currentRatio = <?= Js::from($label) ?>;
+                                                                editor.setAspectRatio(<?= Js::from($ratio) ?>)
+                                                            "
+                                                            x-tooltip="{ content: <?= Js::from(__('filament-forms::components.file_upload.editor.actions.set_aspect_ratio.label', ['ratio' => $label])) ?>, theme: $store.theme }"
+                                                            x-bind:class="{ 'fi-active': currentRatio === <?= Js::from($label) ?> }"
+                                                            class="fi-btn"
+                                                        >
+                                                            <?= e($label) ?>
+                                                        </button>
+                                                    <?php } ?>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+
+                            <div class="fi-fo-file-upload-editor-control-panel-footer">
+                                <?php if ($isImageEditorExplicitlyEnabled) { ?>
+                                    <button
+                                        type="button"
+                                        x-on:click.prevent="pond.imageEditEditor.oncancel"
+                                        class="fi-btn"
+                                    >
+                                        <?= e(__('filament-forms::components.file_upload.editor.actions.cancel.label')) ?>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        x-on:click.prevent.stop="editor.reset()"
+                                        <?= (new FilamentComponentAttributeBag)
+                                            ->color(ButtonComponent::class, 'danger')
+                                            ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
+                                            ->toHtml() ?>
+                                    >
+                                        <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        x-on:click.prevent="saveEditor"
+                                        <?= (new FilamentComponentAttributeBag)
+                                            ->color(ButtonComponent::class, 'success')
+                                            ->class(['fi-btn'])
+                                            ->toHtml() ?>
+                                    >
+                                        <?= e(__('filament-forms::components.file_upload.editor.actions.save.label')) ?>
+                                    </button>
+                                <?php } else { ?>
+                                    <button
+                                        type="button"
+                                        x-on:click.prevent="saveEditor"
+                                        <?= (new FilamentComponentAttributeBag)
+                                            ->color(ButtonComponent::class, 'success')
+                                            ->class(['fi-btn'])
+                                            ->toHtml() ?>
+                                    >
+                                        <?= e(__('filament-forms::components.file_upload.editor.actions.save.label')) ?>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        x-on:click.prevent="pond.imageEditEditor.oncancel"
+                                        class="fi-btn"
+                                    >
+                                        <?= e(__('filament-forms::components.file_upload.editor.actions.cancel.label')) ?>
+                                    </button>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
     }
 }

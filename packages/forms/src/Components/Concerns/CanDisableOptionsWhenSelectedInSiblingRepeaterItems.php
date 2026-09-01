@@ -2,8 +2,9 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use BackedEnum;
 use Filament\Forms\Components\Contracts\CanDisableOptions;
-use Filament\Schema\Components\Component;
+use Filament\Schemas\Components\Component;
 use Illuminate\Support\Arr;
 
 trait CanDisableOptionsWhenSelectedInSiblingRepeaterItems
@@ -20,14 +21,21 @@ trait CanDisableOptionsWhenSelectedInSiblingRepeaterItems
                 return false;
             }
 
-            return collect($repeater->getState())
+            return collect($repeater->getRawState())
                 ->pluck(
                     (string) str($component->getStatePath())
                         ->after("{$repeater->getStatePath()}.")
                         ->after('.'),
                 )
                 ->flatten()
-                ->diff(Arr::wrap($state))
+                ->map(function (mixed $siblingItemState): mixed {
+                    if ($siblingItemState instanceof BackedEnum) {
+                        return $siblingItemState->value;
+                    }
+
+                    return $siblingItemState;
+                })
+                ->diff(Arr::wrap(($state instanceof BackedEnum) ? $state->value : $state))
                 ->filter(fn (mixed $siblingItemState): bool => filled($siblingItemState))
                 ->contains($value);
         });

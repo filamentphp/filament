@@ -11,15 +11,67 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Додати до :label',
+
+                'modal' => [
+
+                    'heading' => 'Додати до :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Додати',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
-                'label' => 'Вставити між',
+
+                'label' => 'Вставити між блоками',
+
+                'modal' => [
+
+                    'heading' => 'Додати до :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Додати',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'Видалити',
+            ],
+
+            'edit' => [
+
+                'label' => 'Редагувати',
+
+                'modal' => [
+
+                    'heading' => 'Редагувати блок',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Зберегти зміни',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -81,19 +133,19 @@ return [
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Режим "кадрування"',
+                    'label' => 'Режим "обрізка"',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Режим "переміщення"',
+                    'label' => 'Режим перетягування',
                 ],
 
                 'flip_horizontal' => [
-                    'label' => 'Відобразити по горизонталі',
+                    'label' => 'Віддзеркалити горизонтально',
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'Відобразити по вертикалі',
+                    'label' => 'Віддзеркалити вертикально',
                 ],
 
                 'move_down' => [
@@ -109,7 +161,7 @@ return [
                 ],
 
                 'move_up' => [
-                    'label' => 'Перемістити у верх',
+                    'label' => 'Перемістити вгору',
                 ],
 
                 'reset' => [
@@ -125,7 +177,7 @@ return [
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'Відношення сторін :ratio',
+                    'label' => 'Встановити співвідношення сторін :ratio',
                 ],
 
                 'save' => [
@@ -177,10 +229,10 @@ return [
 
             'aspect_ratios' => [
 
-                'label' => 'Відношення сторін',
+                'label' => 'Співвідношення сторін',
 
                 'no_fixed' => [
-                    'label' => 'Вільне',
+                    'label' => 'Вільно',
                 ],
 
             ],
@@ -188,8 +240,8 @@ return [
             'svg' => [
 
                 'messages' => [
-                    'confirmation' => 'Не рекомендується редагувати SVG-файли, оскільки під час масштабування може погіршитися якість.\n Ви впевнені, що хочере продовжити?',
-                    'disabled' => 'Редагування SVG-файлів заблоковано, оскільки під час масштабування може погіршитися якість.',
+                    'confirmation' => 'Редагування SVG не рекомендується, оскільки може призвести до втрати якості при масштабуванні.\n Ви впевнені, що хочете продовжити?',
+                    'disabled' => 'Редагування SVG вимкнено, оскільки може призвести до втрати якості при масштабуванні.',
                 ],
 
             ],
@@ -209,8 +261,9 @@ return [
             'delete' => [
                 'label' => 'Видалити рядок',
             ],
+
             'reorder' => [
-                'label' => 'Перемістити рядок',
+                'label' => 'Змінити порядок рядка',
             ],
 
         ],
@@ -231,12 +284,16 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Файли для завантаження повинні бути наступного типу: :values.',
+
+        'file_attachments_max_size_message' => 'Розмір завантажених файлів не повинен перевищувати :max кілобайт.',
+
+        'tools' => [
             'attach_files' => 'Прикріпити файли',
             'blockquote' => 'Цитата',
             'bold' => 'Жирний',
-            'bullet_list' => 'Маркувальний список',
-            'code_block' => 'Код',
+            'bullet_list' => 'Маркований список',
+            'code_block' => 'Блок коду',
             'heading' => 'Заголовок',
             'italic' => 'Курсив',
             'link' => 'Посилання',
@@ -245,6 +302,28 @@ return [
             'strike' => 'Закреслений',
             'table' => 'Таблиця',
             'undo' => 'Скасувати',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Вибрати',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Вибрати',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -267,7 +346,7 @@ return [
             ],
 
             'add_between' => [
-                'label' => 'Додати між',
+                'label' => 'Вставити між',
             ],
 
             'delete' => [
@@ -287,7 +366,7 @@ return [
             ],
 
             'move_up' => [
-                'label' => 'Перемістити у верх',
+                'label' => 'Перемістити вгору',
             ],
 
             'collapse' => [
@@ -312,40 +391,231 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Завантажити файл',
+
+                'modal' => [
+
+                    'heading' => 'Завантажити файл',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Файл',
+                                'existing' => 'Замінити файл',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Альтернативний текст',
+                                'existing' => 'Змінити альтернативний текст',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Вставити',
+                        ],
+
+                        'save' => [
+                            'label' => 'Зберегти',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Сітка',
+
+                'modal' => [
+
+                    'heading' => 'Сітка',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Попередньо налаштована',
+
+                            'placeholder' => 'Жоден',
+
+                            'options' => [
+                                'two' => 'Дві',
+                                'three' => 'Три',
+                                'four' => 'Чотири',
+                                'five' => 'П\'ять',
+                                'two_start_third' => 'Дві (Початок Третя)',
+                                'two_end_third' => 'Дві (Кінець Третя)',
+                                'two_start_fourth' => 'Дві (Початок Четверта)',
+                                'two_end_fourth' => 'Дві (Кінець Четверта)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Колонки',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Від точки зупинки',
+
+                            'options' => [
+                                'default' => 'Всі',
+                                'sm' => 'Маленький',
+                                'md' => 'Середній',
+                                'lg' => 'Великий',
+                                'xl' => 'Дуже великий',
+                                '2xl' => 'Величезний',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Дві асиметричні колонки',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Початковий проміжок',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Кінцевий проміжок',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Посилання',
-                    'unlink' => 'Прибрати посилання',
+                'label' => 'Редагувати',
+
+                'modal' => [
+
+                    'heading' => 'Посилання',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Відкрити у новій вкладці',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Введіть URL',
+            'text_color' => [
+
+                'label' => 'Колір тексту',
+
+                'modal' => [
+
+                    'heading' => 'Колір тексту',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Колір',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Колір вибраний користувачем',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Файли для завантаження повинні бути наступного типу: :values.',
+
+        'file_attachments_max_size_message' => 'Розмір завантажених файлів не повинен перевищувати :max кілобайт.',
+
+        'no_merge_tag_search_results_message' => 'Немає результатів для тегів злиття.',
+
+        'tools' => [
+            'align_center' => 'Вирівняти по центру',
+            'align_end' => 'Вирівняти праворуч',
+            'align_justify' => 'Вирівняти по ширині',
+            'align_start' => 'Вирівняти ліворуч',
             'attach_files' => 'Прикріпити файли',
             'blockquote' => 'Цитата',
             'bold' => 'Жирний',
             'bullet_list' => 'Маркований список',
-            'code_block' => 'Код',
-            'h1' => 'Назва',
-            'h2' => 'Заголовок',
-            'h3' => 'Підзаголовок',
+            'clear_formatting' => 'Очистити форматування',
+            'code' => 'Код',
+            'code_block' => 'Блок коду',
+            'custom_blocks' => 'Блоки',
+            'details' => 'Деталі',
+            'h1' => 'Заголовок',
+            'h2' => 'Підзаголовок',
+            'h3' => 'Підпідзаголовок',
+            'grid' => 'Сітка',
+            'grid_delete' => 'Видалити сітку',
+            'highlight' => 'Виділити',
+            'horizontal_rule' => 'Горизонтальна лінія',
             'italic' => 'Курсив',
+            'lead' => 'Вступний текст',
             'link' => 'Посилання',
+            'merge_tags' => 'Теги злиття',
             'ordered_list' => 'Нумерований список',
             'redo' => 'Повторити',
+            'small' => 'Малий текст',
             'strike' => 'Закреслений',
+            'subscript' => 'Нижній індекс',
+            'superscript' => 'Верхній індекс',
+            'table' => 'Таблиця',
+            'table_delete' => 'Видалити таблицю',
+            'table_add_column_before' => 'Додати стовпець перед',
+            'table_add_column_after' => 'Додати стовпець після',
+            'table_delete_column' => 'Видалити стовпець',
+            'table_add_row_before' => 'Додати рядок вище',
+            'table_add_row_after' => 'Додати рядок нижче',
+            'table_delete_row' => 'Видалити рядок',
+            'table_merge_cells' => 'Обʼєднати клітинки',
+            'table_split_cell' => 'Розділити клітинку',
+            'table_toggle_header_row' => 'Увімкнути/вимкнути заголовок',
+            'text_color' => 'Колір тексту',
             'underline' => 'Підкреслений',
             'undo' => 'Скасувати',
         ],
+
+        'uploading_file_message' => 'Завантаження файлу...',
 
     ],
 
@@ -354,6 +624,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Створити',
 
                 'modal' => [
 
@@ -364,8 +636,9 @@ return [
                         'create' => [
                             'label' => 'Створити',
                         ],
+
                         'create_another' => [
-                            'label' => 'Створити ще один',
+                            'label' => 'Створити і створити ще',
                         ],
 
                     ],
@@ -376,9 +649,11 @@ return [
 
             'edit_option' => [
 
+                'label' => 'Редагувати',
+
                 'modal' => [
 
-                    'heading' => 'Змінити',
+                    'heading' => 'Редагувати',
 
                     'actions' => [
 
@@ -401,15 +676,16 @@ return [
 
         'loading_message' => 'Завантаження...',
 
-        'max_items_message' => 'Тільки :count можна вибрати.',
+        'max_items_message' => 'Можна вибрати лише :count.',
 
-        'no_search_results_message' => 'Немає варіантів, які відповідають вашому запиту.',
+        'no_search_results_message' => 'Немає відповідних варіантів.',
 
-        'placeholder' => 'Обрати варіант',
+        'placeholder' => 'Виберіть варіант',
 
         'searching_message' => 'Пошук...',
 
         'search_prompt' => 'Введіть текст для пошуку...',
+
     ],
 
     'tags_input' => [
@@ -419,6 +695,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Скопіювати',
+                'message' => 'Скопійовано',
+            ],
 
             'hide_password' => [
                 'label' => 'Приховати пароль',

@@ -223,7 +223,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Прикачи файлове',
             'blockquote' => 'Цитат',
             'bold' => 'Удебелен текст',
@@ -308,7 +308,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Прикачи файлове',
             'blockquote' => 'Цитат',
             'bold' => 'Удебелен текст',

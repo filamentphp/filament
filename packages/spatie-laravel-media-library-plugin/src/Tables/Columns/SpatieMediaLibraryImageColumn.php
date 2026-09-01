@@ -4,16 +4,20 @@ namespace Filament\Tables\Columns;
 
 use Closure;
 use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
+use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
+    use HasMediaFilter;
+
     protected string | AllMediaCollections | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
@@ -36,6 +40,10 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             }
 
             foreach ($records as $record) {
+                if (! method_exists($record, 'getFallbackMediaUrl')) {
+                    continue;
+                }
+
                 $url = $record->getFallbackMediaUrl($collection, $column->getConversion() ?? '');
 
                 if (blank($url)) {
@@ -105,7 +113,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             if ($this->getVisibility() === 'private') {
                 try {
                     return $media->getTemporaryUrl(
-                        now()->addMinutes(5),
+                        now()->addMinutes(config('filament.temporary_file_url_expiry_minutes', 30))->endOfHour(),
                         $conversion ?? '',
                     );
                 } catch (Throwable $exception) {
@@ -124,36 +132,48 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
      */
     public function getState(): array
     {
-        $record = $this->getRecord();
+        return $this->cacheState(function (): array {
+            $record = $this->getRecord();
 
-        if ($this->hasRelationship($record)) {
-            $record = $this->getRelationshipResults($record);
-        }
+            if ($this->hasRelationship($record)) {
+                $record = $this->getRelationshipResults($record);
+            }
 
-        $records = Arr::wrap($record);
+            $records = Arr::wrap($record);
 
-        $state = [];
+            $state = [];
 
-        $collection = $this->getCollection() ?? 'default';
+            $collection = $this->getCollection() ?? 'default';
 
-        foreach ($records as $record) {
-            /** @var Model $record */
-            $state = [
-                ...$state,
-                ...$record->getRelationValue('media')
-                    ->when(
-                        ! $collection instanceof AllMediaCollections,
-                        fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
-                    )
-                    ->sortBy('order_column')
-                    ->pluck('uuid')
-                    ->all(),
-            ];
-        }
+            foreach ($records as $record) {
+                /** @var Model $record */
+                $state = [
+                    ...$state,
+                    ...$record->getRelationValue('media')
+                        ->when(
+                            ! $collection instanceof AllMediaCollections,
+                            fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                        )
+                        ->when(
+                            $this->hasMediaFilter(),
+                            fn (Collection $media) => $this->filterMedia($media)
+                        )
+                        ->sortBy('order_column')
+                        ->pluck('uuid')
+                        ->all(),
+                ];
+            }
 
-        return array_unique($state);
+            return array_unique($state);
+        });
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>|Relation  $query
+     * @return Builder<TModel>|Relation
+     */
     public function applyEagerLoading(Builder | Relation $query): Builder | Relation
     {
         if ($this->isHidden()) {
@@ -165,7 +185,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         if ($this->hasRelationship($query->getModel())) {
             return $query->with([
-                "{$this->getRelationshipName()}.media" => $modifyMediaQuery,
+                "{$this->getRelationshipName($query->getModel())}.media" => $modifyMediaQuery,
             ]);
         }
 

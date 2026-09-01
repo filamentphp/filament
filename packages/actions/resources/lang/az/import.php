@@ -13,6 +13,9 @@ return [
             'file' => [
                 'label' => 'Fayl',
                 'placeholder' => 'Bir CSV faylı seçin',
+                'rules' => [
+                    'duplicate_columns' => '{0} Fayl bir boş sütun başlığından çox olmamalıdır. |{1,*} Fayl təkrarlanan sütun başlıqlarına sahib olmamalıdır: :columns.',
+                ],
             ],
 
             'columns' => [
@@ -72,6 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'xəta',
         'system_error' => 'Sistem xətası, texniki dəstək ilə əlaqə saxlayın',
+        'column_mapping_required_for_new_record' => ':attribute sütunu faylda bir sütuna təyin edilməyib, amma yeni qeydlər yaratmaq üçün tələb olunur.',
     ],
 
 ];

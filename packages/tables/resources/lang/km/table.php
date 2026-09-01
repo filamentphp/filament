@@ -2,13 +2,38 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'ជួរឈរ',
+
+        'actions' => [
+            'apply' => [
+                'label' => 'អនុវត្ត',
+            ],
+            'reorder' => [
+                'label' => 'តម្រៀបជួរឈរឡើងវិញ',
+            ],
+            'reset' => [
+                'label' => 'កំណត់ឡើងវិញ',
+            ],
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'សកម្មភាព|សកម្មភាព',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'បាទ',
+                'false' => 'ទេ',
+            ],
+
+        ],
 
         'text' => [
 
@@ -19,6 +44,15 @@ return [
 
             'more_list_items' => 'និង :count ច្រើនទៀត',
 
+        ],
+
+        'select' => [
+            'loading_message' => 'កំពុងដំណើរការ...',
+            'no_options_message' => 'គ្មានជម្រើស.',
+            'no_search_results_message' => 'រកមិនឃើញទិន្នន័យ.',
+            'placeholder' => 'ជ្រើសរើស',
+            'searching_message' => 'កំពុងស្វែងរក...',
+            'search_prompt' => 'វាយបញ្ចូលដើម្បីស្វែងរក...',
         ],
 
     ],
@@ -83,6 +117,10 @@ return [
             'label' => 'តម្រៀបកំណត់ត្រាឡើងវិញ',
         ],
 
+        'reorder_record' => [
+            'label' => 'តម្រៀបធាតុ :key ឡើងវិញ',
+        ],
+
         'filter' => [
             'label' => 'តម្រង',
         ],
@@ -95,8 +133,12 @@ return [
             'label' => 'សកម្មភាពភាគច្រើន',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'បិទ/បើកជួរឈរ',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'ពង្រីក/បង្រួមធាតុ :key',
         ],
 
     ],
@@ -105,7 +147,7 @@ return [
 
         'heading' => 'គ្មាន​​ :model',
 
-        'description' => 'បង្កើត​ :model មួយដើម្បីចាប់ផ្តើម។.',
+        'description' => 'បង្កើត​ :model មួយដើម្បីចាប់ផ្តើម។',
 
     ],
 
@@ -137,11 +179,14 @@ return [
         'indicator' => 'តម្រងសកម្ម',
 
         'multi_select' => [
-            'placeholder' => 'ទាំងអស់។',
+            'placeholder' => 'ទាំងអស់',
         ],
 
         'select' => [
-            'placeholder' => 'ទាំងអស់។',
+            'placeholder' => 'ទាំងអស់',
+            'relationship' => [
+                'empty_option_label' => 'គ្មាន',
+            ],
         ],
 
         'trashed' => [
@@ -164,7 +209,6 @@ return [
 
             'group' => [
                 'label' => 'ដាក់ជាក្រុមដោយ',
-                'placeholder' => 'ដាក់ជាក្រុមដោយ',
             ],
 
             'direction' => [
@@ -182,7 +226,11 @@ return [
 
     ],
 
+    'loading' => 'កំពុងផ្ទុក...',
+
     'reorder_indicator' => 'អូស និងទម្លាក់កំណត់ត្រាតាមលំដាប់លំដោយ.',
+
+    'result_count' => '{0} គ្មានលទ្ធផល|{1} លទ្ធផល :count|[2,*] លទ្ធផល :count',
 
     'selection_indicator' => [
 
@@ -224,5 +272,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'ទិន្នន័យ',
 
 ];

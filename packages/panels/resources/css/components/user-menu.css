@@ -1,0 +1,43 @@
+.fi-simple-user-menu-ctn {
+    @apply flex items-center gap-x-4;
+}
+
+.fi-topbar .fi-user-menu-trigger {
+    @apply shrink-0;
+}
+
+.fi-sidebar .fi-user-menu-trigger {
+    @apply flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-hidden transition duration-75;
+
+    & .fi-user-avatar {
+        @apply shrink-0;
+    }
+
+    & .fi-icon {
+        @apply ms-auto size-5 shrink-0 text-gray-400 transition duration-75 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400;
+    }
+
+    &:hover {
+        & .fi-icon {
+            @apply text-gray-500 dark:text-gray-400;
+        }
+    }
+
+    &:focus-visible {
+        & .fi-icon {
+            @apply text-gray-500 dark:text-gray-400;
+        }
+    }
+
+    .fi-tenant-menu-trigger-text {
+        @apply grid justify-items-start text-start text-gray-950 dark:text-white;
+    }
+}
+
+.fi-sidebar {
+    & .fi-user-menu {
+        & .fi-dropdown-panel {
+            max-width: max(14rem, calc(100% - 1.5rem)) !important;
+        }
+    }
+}

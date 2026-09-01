@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Redaguoti',
 
+    'navigation_label' => 'Redaguoti',
+
     'form' => [
 
         'actions' => [

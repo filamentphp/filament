@@ -1,0 +1,15 @@
+.fi-sc-unordered-list {
+    @apply ms-3 list-disc text-sm;
+
+    &.fi-size-xs {
+        @apply text-xs;
+    }
+
+    &.fi-size-md {
+        @apply text-base;
+    }
+
+    &.fi-size-lg {
+        @apply text-lg;
+    }
+}

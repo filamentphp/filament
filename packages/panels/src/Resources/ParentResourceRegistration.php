@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 class ParentResourceRegistration
 {
@@ -23,7 +24,33 @@ class ParentResourceRegistration
             ->plural();
         $this->inverseRelationshipName ??= (string) str($this->parentResource::getModel())
             ->classBasename()
-            ->camel();
+            ->camel()
+            ->when(
+                function (Stringable $singularRelationshipName): bool {
+                    $model = $this->childResource::getModel();
+
+                    if (method_exists($model, $singularRelationshipName)) {
+                        return false;
+                    }
+
+                    return method_exists($model, $singularRelationshipName->plural());
+                },
+                fn (Stringable $singularRelationshipName): Stringable => $singularRelationshipName->plural(),
+            );
+    }
+
+    public function relationship(string $name): static
+    {
+        $this->relationshipName = $name;
+
+        return $this;
+    }
+
+    public function inverseRelationship(string $name): static
+    {
+        $this->inverseRelationshipName = $name;
+
+        return $this;
     }
 
     public function getParentResource(): string
@@ -58,12 +85,9 @@ class ParentResourceRegistration
 
     public function getParentRouteParameterName(): string
     {
-        return Str::kebab($this->inverseRelationshipName);
-    }
-
-    public function getSlug(): string
-    {
-        return Str::slug($this->relationshipName);
+        return (string) str($this->inverseRelationshipName)
+            ->singular()
+            ->snake();
     }
 
     public function getRouteName(): string

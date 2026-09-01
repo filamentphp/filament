@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Anexar ficheiros',
             'blockquote' => 'Bloco de citação',
             'bold' => 'Negrito',
@@ -298,6 +298,28 @@ return [
             'strike' => 'Rasurado',
             'table' => 'Tabela',
             'undo' => 'Desfazer',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Selecionar',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Selecionar',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +387,135 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Carregar ficheiro',
+
+                'modal' => [
+
+                    'heading' => 'Carregar ficheiro',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Ficheiro',
+                                'existing' => 'Substituir ficheiro',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Texto alternativo',
+                                'existing' => 'Alterar texto alternativo',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Inserir',
+                        ],
+
+                        'save' => [
+                            'label' => 'Guardar',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Ligação',
-                    'unlink' => 'Remover ligação',
+                'label' => 'Editar',
+
+                'modal' => [
+
+                    'heading' => 'Hiperligação',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Abrir numa nova aba',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Indique uma URL',
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'no_merge_tag_search_results_message' => 'Nenhuma tag dinâmica encontrada.',
+
+        'tools' => [
+            'align_center' => 'Alinhar ao centro',
+            'align_end' => 'Alinhar à direita',
+            'align_justify' => 'Justificar',
+            'align_start' => 'Alinhar à esquerda',
             'attach_files' => 'Anexar ficheiros',
             'blockquote' => 'Bloco de citação',
             'bold' => 'Negrito',
             'bullet_list' => 'Lista',
+            'clear_formatting' => 'Limpar formatação',
+            'code' => 'Código',
             'code_block' => 'Bloco de código',
+            'custom_blocks' => 'Blocos',
+            'details' => 'Detalhes',
             'h1' => 'Título',
             'h2' => 'Cabeçalho',
             'h3' => 'Subtítulo',
+            'highlight' => 'Destacar',
+            'horizontal_rule' => 'Linha horizontal',
             'italic' => 'Itálico',
+            'lead' => 'Texto de destaque',
             'link' => 'Hiperligação',
+            'merge_tags' => 'Tags dinâmicas',
             'ordered_list' => 'Lista numerada',
             'redo' => 'Refazer',
+            'small' => 'Texto pequeno',
             'strike' => 'Rasurado',
+            'subscript' => 'Subscrito',
+            'superscript' => 'Sobrescrito',
+            'table' => 'Tabela',
+            'table_delete' => 'Eliminar tabela',
+            'table_add_column_before' => 'Adicionar coluna antes',
+            'table_add_column_after' => 'Adicionar coluna depois',
+            'table_delete_column' => 'Eliminar coluna',
+            'table_add_row_before' => 'Adicionar linha acima',
+            'table_add_row_after' => 'Adicionar linha abaixo',
+            'table_delete_row' => 'Eliminar linha',
+            'table_merge_cells' => 'Unir células',
+            'table_split_cell' => 'Dividir célula',
+            'table_toggle_header_row' => 'Alternar linha de cabeçalho',
             'underline' => 'Sublinhado',
             'undo' => 'Desfazer',
         ],
+
+        'uploading_file_message' => 'A carregar ficheiro...',
 
     ],
 
@@ -407,6 +524,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Criar',
 
                 'modal' => [
 
@@ -429,6 +548,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Editar',
 
                 'modal' => [
 
@@ -475,12 +596,17 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
+
             'hide_password' => [
-                'label' => 'Esconder palavra-passe',
+                'label' => 'Esconder a palavra-passe',
             ],
 
             'show_password' => [
-                'label' => 'Mostrar palavra-passe',
+                'label' => 'Mostrar a palavra-passe',
             ],
 
         ],

@@ -24,24 +24,32 @@ class XlsxDownloader implements Downloader
         $fileName = $export->file_name . '.xlsx';
 
         if ($disk->exists($filePath = $directory . DIRECTORY_SEPARATOR . $fileName)) {
-            return $disk->download($filePath);
+            $response = $disk->download($filePath);
+
+            if (ob_get_length() > 0) {
+                ob_end_clean();
+            }
+
+            $response->headers->set('X-Vapor-Base64-Encode', 'True');
+
+            return $response;
         }
 
         $writer = app(Writer::class);
 
         $csvDelimiter = $export->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer) {
-            $csvReader = CsvReader::createFromStream($disk->readStream($file));
+        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer): void {
+            $csvReader = CsvReader::from($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
-            $csvResults = Statement::create()->process($csvReader);
+            $csvResults = (new Statement)->process($csvReader);
 
             foreach ($csvResults->getRecords() as $row) {
                 $writer->addRow(Row::fromValues($row));
             }
         };
 
-        return response()->streamDownload(function () use ($disk, $directory, $fileName, $writer, $writeRowsFromFile) {
+        return response()->streamDownload(function () use ($disk, $directory, $fileName, $writer, $writeRowsFromFile): void {
             $writer->openToBrowser($fileName);
 
             $writeRowsFromFile($directory . DIRECTORY_SEPARATOR . 'headers.csv');

@@ -11,7 +11,7 @@ class UpgradeCommand extends Command
 {
     protected $description = 'Upgrade Filament to the latest version';
 
-    protected $signature = 'filament:upgrade';
+    protected $name = 'filament:upgrade';
 
     public function handle(): int
     {

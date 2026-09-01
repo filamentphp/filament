@@ -2,13 +2,58 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Columns',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Apply columns',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder column',
+            ],
+
+            'reset' => [
+                'label' => 'Reset',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Action|Actions',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Yes',
+                'false' => 'No',
+            ],
+
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Loading...',
+
+            'no_options_message' => 'No options available.',
+
+            'no_search_results_message' => 'No options match your search.',
+
+            'placeholder' => 'Select an option',
+
+            'searching_message' => 'Searching...',
+
+            'search_prompt' => 'Start typing to search...',
+
+        ],
 
         'text' => [
 
@@ -83,6 +128,10 @@ return [
             'label' => 'Reorder records',
         ],
 
+        'reorder_record' => [
+            'label' => 'Reorder item :key',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -95,8 +144,12 @@ return [
             'label' => 'Bulk actions',
         ],
 
-        'toggle_columns' => [
-            'label' => 'Toggle columns',
+        'column_manager' => [
+            'label' => 'Column manager',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Expand/collapse item :key',
         ],
 
     ],
@@ -141,7 +194,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'All',
+
+            'relationship' => [
+                'empty_option_label' => 'None',
+            ],
+
         ],
 
         'trashed' => [
@@ -164,7 +223,6 @@ return [
 
             'group' => [
                 'label' => 'Group by',
-                'placeholder' => 'Group by',
             ],
 
             'direction' => [
@@ -182,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Loading...',
+
     'reorder_indicator' => 'Drag and drop the records into order.',
+
+    'result_count' => '{0} No results|{1} :count result|[2,*] :count results',
 
     'selection_indicator' => [
 

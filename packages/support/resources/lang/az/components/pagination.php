@@ -20,12 +20,20 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Birinci',
+        ],
+
         'go_to_page' => [
             'label' => ':page. səhifəyə get',
         ],
 
         'next' => [
             'label' => 'Sonrakı',
+        ],
+
+        'last' => [
+            'label' => 'Son',
         ],
 
         'previous' => [

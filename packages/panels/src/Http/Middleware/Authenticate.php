@@ -19,7 +19,7 @@ class Authenticate extends Middleware
         if (! $guard->check()) {
             $this->unauthenticated($request, $guards);
 
-            return;
+            return; /** @phpstan-ignore-line */
         }
 
         $this->auth->shouldUse(Filament::getAuthGuard());
@@ -27,8 +27,11 @@ class Authenticate extends Middleware
         /** @var Model $user */
         $user = $guard->user();
 
-        $panel = Filament::getCurrentPanel();
+        $panel = Filament::getCurrentOrDefaultPanel();
 
+        // Security: If the user model does not implement `FilamentUser`,
+        // access is only allowed in local environments. In production,
+        // implement `FilamentUser` with `canAccessPanel()`.
         abort_if(
             $user instanceof FilamentUser ?
                 (! $user->canAccessPanel($panel)) :

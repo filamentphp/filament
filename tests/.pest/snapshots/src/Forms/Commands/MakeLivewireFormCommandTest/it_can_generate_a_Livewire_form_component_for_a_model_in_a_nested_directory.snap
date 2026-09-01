@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Livewire\Blog;
+
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Models\Blog\Category;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class CreateCategory extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public ?array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                //
+            ])
+            ->statePath('data')
+            ->model(Category::class);
+    }
+
+    public function create(): void
+    {
+        $data = $this->form->getState();
+
+        $record = Category::create($data);
+
+        $this->form->model($record)->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.blog.create-category');
+    }
+}

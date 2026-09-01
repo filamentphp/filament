@@ -1,7 +1,3 @@
-@php
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'debounce' => '500ms',
     'onBlur' => false,
@@ -10,6 +6,10 @@
 ])
 
 @php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Tables\View\TablesIconAlias;
+
     $wireModelAttribute = $onBlur ? 'wire:model.blur' : "wire:model.live.debounce.{$debounce}";
 @endphp
 
@@ -17,28 +17,29 @@
     x-id="['input']"
     {{ $attributes->class(['fi-ta-search-field']) }}
 >
-    <label x-bind:for="$id('input')" class="sr-only">
+    <label x-bind:for="$id('input')" class="fi-sr-only">
         {{ __('filament-tables::table.fields.search.label') }}
     </label>
 
     <x-filament::input.wrapper
         inline-prefix
-        prefix-icon="heroicon-m-magnifying-glass"
-        prefix-icon-alias="tables::search-field"
+        :prefix-icon="Heroicon::MagnifyingGlass"
+        :prefix-icon-alias="TablesIconAlias::SEARCH_FIELD"
         :wire:target="$wireModel"
     >
         <x-filament::input
             :attributes="
-                (new ComponentAttributeBag)->merge([
+                (new FilamentComponentAttributeBag)->merge([
                     'autocomplete' => 'off',
                     'inlinePrefix' => true,
+                    'maxlength' => 1000,
                     'placeholder' => $placeholder,
                     'type' => 'search',
                     'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
                     $wireModelAttribute => $wireModel,
                     'x-bind:id' => '$id(\'input\')',
                     'x-on:keyup' => 'if ($event.key === \'Enter\') { $wire.$refresh() }',
-                ])
+                ], escape: false)
             "
         />
     </x-filament::input.wrapper>

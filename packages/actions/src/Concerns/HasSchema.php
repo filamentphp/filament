@@ -3,21 +3,25 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Schema\Components\Component;
-use Filament\Schema\Components\Wizard;
-use Filament\Schema\Schema;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Schema;
 
 trait HasSchema
 {
     /**
-     * @var array<Component> | Closure | null
+     * @var array<Component | Action | ActionGroup> | Closure | null
      */
     protected array | Closure | null $schema = null;
 
     protected bool | Closure $isSchemaDisabled = false;
 
+    protected bool | Closure | null $hasFormWrapper = null;
+
     /**
-     * @param  array<Component> | Closure | null  $schema
+     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function schema(array | Closure | null $schema): static
     {
@@ -40,7 +44,7 @@ trait HasSchema
 
     public function getSchema(Schema $schema): ?Schema
     {
-        $modifiedSchema = $this->evaluate($this->schema, [
+        $modifiedSchema = $this->evaluate($this->schema ?? $this->getHasActionsLivewire()?->getDefaultActionSchemaResolver($this), [
             'form' => $schema,
             'schema' => $schema,
             'infolist' => $schema,
@@ -60,6 +64,7 @@ trait HasSchema
                 ->startOnStep($this->getWizardStartStep())
                 ->cancelAction($this->getModalCancelAction())
                 ->submitAction($this->getModalSubmitAction())
+                ->alpineSubmitHandler("\$wire.{$this->getLivewireCallMountedActionName()}()")
                 ->skippable($this->isWizardSkippable())
                 ->disabled($this->isSchemaDisabled());
 
@@ -73,7 +78,7 @@ trait HasSchema
         }
 
         if (is_array($modifiedSchema)) {
-            $modifiedSchema = $schema->schema($modifiedSchema);
+            $modifiedSchema = $schema->components($modifiedSchema);
         }
 
         if ($this->isSchemaDisabled()) {
@@ -81,5 +86,65 @@ trait HasSchema
         }
 
         return $modifiedSchema;
+    }
+
+    public function formWrapper(bool | Closure | null $condition = true): static
+    {
+        $this->hasFormWrapper = $condition;
+
+        return $this;
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return (bool) ($this->evaluate($this->hasFormWrapper) ?? (! $this->isWizard()));
+    }
+
+    /**
+     * @deprecated Use `disabledSchema() instead.
+     */
+    public function disableForm(bool | Closure $condition = true): static
+    {
+        $this->disabledSchema($condition);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `disabledSchema() instead.
+     */
+    public function disabledForm(bool | Closure $condition = true): static
+    {
+        $this->disabledSchema($condition);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `schema() instead.
+     *
+     * @param  array<Component| Action> | Closure | null  $form
+     */
+    public function form(array | Closure | null $form): static
+    {
+        $this->schema($form);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `getSchema()` instead.
+     */
+    public function getForm(Schema $schema): ?Schema
+    {
+        return $this->getSchema($schema);
+    }
+
+    /**
+     * @deprecated Use `isSchemaDisabled()` instead.
+     */
+    public function isFormDisabled(): bool
+    {
+        return $this->isSchemaDisabled();
     }
 }

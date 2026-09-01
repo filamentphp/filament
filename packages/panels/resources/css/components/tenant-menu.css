@@ -1,0 +1,41 @@
+.fi-tenant-menu-trigger {
+    @apply flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+    & .fi-tenant-avatar {
+        @apply shrink-0;
+    }
+
+    & .fi-icon {
+        @apply ms-auto size-5 shrink-0 text-gray-400 transition duration-75 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400;
+    }
+
+    &:hover {
+        & .fi-icon {
+            @apply text-gray-500 dark:text-gray-400;
+        }
+    }
+
+    &:focus-visible {
+        & .fi-icon {
+            @apply text-gray-500 dark:text-gray-400;
+        }
+    }
+}
+
+.fi-tenant-menu-trigger-text {
+    @apply grid justify-items-start text-start;
+}
+
+.fi-tenant-menu-trigger-current-tenant-label {
+    @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.fi-tenant-menu-trigger-tenant-name {
+    @apply text-gray-950 dark:text-white;
+}
+
+.fi-sidebar {
+    & .fi-tenant-menu {
+        @apply mx-4 mt-3;
+    }
+}

@@ -10,7 +10,9 @@ export default (Alpine) => {
 
         transitionEasing: null,
 
-        init: function () {
+        unsubscribeLivewireHook: null,
+
+        init() {
             this.computedStyle = window.getComputedStyle(this.$el)
 
             this.transitionDuration =
@@ -39,7 +41,7 @@ export default (Alpine) => {
             this.isShown = true
         },
 
-        configureTransitions: function () {
+        configureTransitions() {
             const display = this.computedStyle.display
 
             const show = () => {
@@ -73,12 +75,16 @@ export default (Alpine) => {
             Alpine.effect(() => toggle(this.isShown))
         },
 
-        configureAnimations: function () {
-            let animation
+        configureAnimations() {
+            // Inline notifications, such as those in the database
+            // notifications modal, are removed instantly, without animation.
+            if (this.$el.classList.contains('fi-inline')) {
+                return
+            }
 
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
-                ({ component, commit, succeed, fail, respond }) => {
+                ({ component, succeed }) => {
                     if (
                         !component.snapshot.data
                             .isFilamentNotificationsComponent
@@ -86,60 +92,106 @@ export default (Alpine) => {
                         return
                     }
 
-                    const getTop = () => this.$el.getBoundingClientRect().top
-                    const oldTop = getTop()
+                    // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
+                    // occasionally cause the page to scroll to the top.
+                    requestAnimationFrame(() => {
+                        const getTop = () =>
+                            this.$el.getBoundingClientRect().top
+                        const oldTop = getTop()
 
-                    respond(() => {
-                        animation = () => {
-                            if (!this.isShown) {
-                                return
-                            }
+                        succeed(() => {
+                            // `succeed` runs before Livewire morphs the DOM, which it
+                            // defers using two nested `queueMicrotask()` calls, so the
+                            // animation is deferred in the same way to run once the DOM
+                            // has been morphed, before the browser paints, so the new
+                            // position can be measured and the animation started without
+                            // the notification flashing in its final position.
+                            queueMicrotask(() =>
+                                queueMicrotask(() => {
+                                    if (!this.isShown) {
+                                        return
+                                    }
 
-                            this.$el.animate(
-                                [
-                                    {
-                                        transform: `translateY(${
-                                            oldTop - getTop()
-                                        }px)`,
-                                    },
-                                    { transform: 'translateY(0px)' },
-                                ],
-                                {
-                                    duration: this.transitionDuration,
-                                    easing: this.transitionEasing,
-                                },
+                                    // Finish any running animations so they do not distort
+                                    // the measurement of the new position.
+                                    this.$el
+                                        .getAnimations()
+                                        .forEach((animation) =>
+                                            animation.finish(),
+                                        )
+
+                                    const newTop = getTop()
+
+                                    if (oldTop === newTop) {
+                                        return
+                                    }
+
+                                    // Honor `prefers-reduced-motion`: `element.animate()`
+                                    // (the Web Animations API) is not covered by the CSS
+                                    // reduced-motion reset, so skip the FLIP reposition
+                                    // entirely — the element is already at its final
+                                    // position after the morph.
+                                    if (
+                                        window.matchMedia(
+                                            '(prefers-reduced-motion: reduce)',
+                                        ).matches
+                                    ) {
+                                        return
+                                    }
+
+                                    this.$el.animate(
+                                        [
+                                            {
+                                                transform: `translateY(${oldTop - newTop}px)`,
+                                            },
+                                            { transform: 'translateY(0px)' },
+                                        ],
+                                        {
+                                            duration: this.transitionDuration,
+                                            easing: this.transitionEasing,
+                                        },
+                                    )
+                                }),
                             )
-                        }
-
-                        this.$el
-                            .getAnimations()
-                            .forEach((animation) => animation.finish())
-                    })
-
-                    succeed(({ snapshot, effect }) => {
-                        animation()
+                        })
                     })
                 },
             )
         },
 
-        close: function () {
+        close(isImmediate = false) {
+            const dispatchClosedEvent = () =>
+                window.dispatchEvent(
+                    new CustomEvent('notificationClosed', {
+                        detail: {
+                            id: notification.id,
+                        },
+                    }),
+                )
+
+            if (isImmediate === true) {
+                this.isShown = false
+
+                dispatchClosedEvent()
+
+                return
+            }
+
+            // Inline notifications, such as those in the database
+            // notifications modal, are part of a list, so they are removed
+            // from it as soon as possible instead of fading out first.
+            if (this.$root.classList.contains('fi-inline')) {
+                dispatchClosedEvent()
+
+                return
+            }
+
             this.isShown = false
 
-            setTimeout(
-                () =>
-                    window.dispatchEvent(
-                        new CustomEvent('notificationClosed', {
-                            detail: {
-                                id: notification.id,
-                            },
-                        }),
-                    ),
-                this.transitionDuration,
-            )
+            setTimeout(dispatchClosedEvent, this.transitionDuration)
         },
 
-        markAsRead: function () {
+        markAsRead() {
             window.dispatchEvent(
                 new CustomEvent('markedNotificationAsRead', {
                     detail: {
@@ -149,7 +201,7 @@ export default (Alpine) => {
             )
         },
 
-        markAsUnread: function () {
+        markAsUnread() {
             window.dispatchEvent(
                 new CustomEvent('markedNotificationAsUnread', {
                     detail: {
@@ -157,6 +209,10 @@ export default (Alpine) => {
                     },
                 }),
             )
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }))
 }

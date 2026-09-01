@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait CanBeSearchable
@@ -11,7 +12,7 @@ trait CanBeSearchable
 
     protected bool $isIndividuallySearchable = false;
 
-    protected bool $isSearchable = false;
+    protected bool | Closure $isSearchable = false;
 
     /**
      * @var array<string> | null
@@ -22,16 +23,18 @@ trait CanBeSearchable
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure | null $shouldSplitIndividualSearchTerms = null;
+
     /**
-     * @param  bool | array<string> | string  $condition
+     * @param  bool | array<string> | string | Closure  $condition
      */
     public function searchable(
-        bool | array | string $condition = true,
+        bool | array | string | Closure $condition = true,
         ?Closure $query = null,
         bool $isIndividual = false,
         bool $isGlobal = true,
     ): static {
-        if (is_bool($condition)) {
+        if (is_bool($condition) || ($condition instanceof Closure)) {
             $this->isSearchable = $condition;
             $this->searchColumns = null;
         } else {
@@ -53,17 +56,24 @@ trait CanBeSearchable
         return $this;
     }
 
+    public function splitIndividualSearchTerms(bool | Closure | null $condition = true): static
+    {
+        $this->shouldSplitIndividualSearchTerms = $condition;
+
+        return $this;
+    }
+
     /**
      * @return array<string>
      */
-    public function getSearchColumns(): array
+    public function getSearchColumns(Model $record): array
     {
-        return $this->searchColumns ?? $this->getDefaultSearchColumns();
+        return $this->searchColumns ?? $this->getDefaultSearchColumns($record);
     }
 
     public function isSearchable(): bool
     {
-        return $this->isSearchable;
+        return $this->evaluate($this->isSearchable);
     }
 
     public function isGloballySearchable(): bool
@@ -81,11 +91,16 @@ trait CanBeSearchable
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
+    public function shouldSplitIndividualSearchTerms(): ?bool
+    {
+        return $this->evaluate($this->shouldSplitIndividualSearchTerms);
+    }
+
     /**
      * @return array{0: string}
      */
-    public function getDefaultSearchColumns(): array
+    public function getDefaultSearchColumns(Model $record): array
     {
-        return [(string) str($this->getName())->afterLast('.')];
+        return [$this->getFullAttributeName($record)];
     }
 }

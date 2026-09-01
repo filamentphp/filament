@@ -1,12 +1,7 @@
-@php
-    use Filament\Support\Enums\ActionSize;
-    use Filament\Support\Enums\IconSize;
-@endphp
-
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => 'xs',
+    'badgeSize' => null,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -18,7 +13,7 @@
     'keyBindings' => null,
     'label' => null,
     'loadingIndicator' => true,
-    'size' => ActionSize::Medium,
+    'size' => null,
     'spaMode' => null,
     'tag' => 'button',
     'target' => null,
@@ -27,90 +22,35 @@
 ])
 
 @php
-    if (! $size instanceof ActionSize) {
-        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\IconButtonComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
+
+    $badgeSize ??= Size::ExtraSmall;
+    $size ??= Size::Medium;
+
+    if (! $size instanceof Size) {
+        $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;
+    }
+
+    if (! $badgeSize instanceof Size) {
+        $badgeSize = filled($badgeSize) ? (Size::tryFrom($badgeSize) ?? $badgeSize) : null;
+    }
+
+    if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }
 
     $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall => IconSize::Small,
-        ActionSize::Small, ActionSize::Medium => IconSize::Medium,
-        ActionSize::Large, ActionSize::ExtraLarge => IconSize::Large,
-        default => IconSize::Medium,
+        Size::ExtraSmall => IconSize::Small,
+        Size::Large, Size::ExtraLarge => IconSize::Large,
+        default => null,
     };
-
-    if (! $iconSize instanceof IconSize) {
-        $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
-    }
-
-    $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2',
-        'pointer-events-none opacity-70' => $disabled,
-        ...match ($size) {
-            ActionSize::ExtraSmall => [
-                match ($iconSize) {
-                    IconSize::Small => '-m-1.5',
-                    IconSize::Medium => '-m-1',
-                    IconSize::Large => '-m-0.5',
-                },
-                'h-7 w-7',
-            ],
-            ActionSize::Small => [
-                match ($iconSize) {
-                    IconSize::Small => '-m-2',
-                    IconSize::Medium => '-m-1.5',
-                    IconSize::Large => '-m-1',
-                },
-                'h-8 w-8',
-            ],
-            ActionSize::Medium => [
-                match ($iconSize) {
-                    IconSize::Small => '-m-2.5',
-                    IconSize::Medium => '-m-2',
-                    IconSize::Large => '-m-1.5',
-                },
-                'h-9 w-9',
-            ],
-            ActionSize::Large => [
-                match ($iconSize) {
-                    IconSize::Small => '-m-3',
-                    IconSize::Medium => '-m-2.5',
-                    IconSize::Large => '-m-2',
-                },
-                'h-10 w-10',
-            ],
-            ActionSize::ExtraLarge => [
-                match ($iconSize) {
-                    IconSize::Small => '-m-3.5',
-                    IconSize::Medium => '-m-3',
-                    IconSize::Large => '-m-2.5',
-                },
-                'h-11 w-11',
-            ],
-        },
-        match ($color) {
-            'gray' => 'text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500',
-            default => 'fi-color-custom text-custom-500 hover:text-custom-600 focus-visible:ring-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus-visible:ring-custom-500',
-        },
-        is_string($color) ? "fi-color-{$color}" : null,
-    ]);
-
-    $buttonStyles = \Filament\Support\get_color_css_variables(
-        $color,
-        shades: [300, 400, 500, 600],
-        alias: 'icon-button',
-    );
-
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn-icon',
-        match ($iconSize) {
-            IconSize::Small => 'h-4 w-4',
-            IconSize::Medium => 'h-5 w-5',
-            IconSize::Large => 'h-6 w-6',
-            default => $iconSize,
-        },
-    ]);
-
-    $badgeContainerClasses = 'fi-icon-btn-badge-ctn absolute start-full top-1 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2';
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -120,121 +60,88 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 
-    $hasTooltip = filled($tooltip);
+    $hasTooltip = $hasTooltip = filled($tooltip);
+
+    $loadingDelay = config('filament.livewire_loading_delay', 'default');
 @endphp
 
-@if ($tag === 'button')
-    <button
-        @if ($keyBindings || $hasTooltip)
-            x-data="{}"
-        @endif
-        @if ($keyBindings)
-            x-bind:id="$id('key-bindings')"
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
-        @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
-        @endif
-        {{
-            $attributes
-                ->merge([
-                    'disabled' => $disabled,
-                    'form' => $formId,
-                    'type' => $type,
-                ], escape: false)
-                ->merge([
-                    'title' => $label,
-                ], escape: true)
-                ->class([$buttonClasses])
-                ->style([$buttonStyles])
-        }}
-    >
-        @if ($label)
-            <span class="sr-only">
-                {{ $label }}
-            </span>
-        @endif
-
-        <x-filament::icon
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag([
-                        'alias' => $iconAlias,
-                        'icon' => $icon,
-                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                    ])
-                )->class([$iconClasses])
-            "
-        />
-
-        @if ($hasLoadingIndicator)
-            <x-filament::loading-indicator
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => $loadingIndicatorTarget,
-                        ])
-                    )->class([$iconClasses])
-                "
-            />
-        @endif
-
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" :size="$badgeSize">
-                    {{ $badge }}
-                </x-filament::badge>
-            </div>
-        @endif
-    </button>
-@elseif ($tag === 'a')
-    <a
+<{{ $tag }}
+    @if (($tag === 'a') && (! ($disabled && $hasTooltip)))
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
-        @if ($keyBindings || $hasTooltip)
-            x-data="{}"
-        @endif
-        @if ($keyBindings)
-            x-bind:id="$id('key-bindings')"
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
-        @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
-        @endif
+    @endif
+    @if ($keyBindings)
+        x-bind:id="$id('key-bindings')"
+        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id)?.click()"
+    @endif
+    @if ($hasTooltip)
+        x-tooltip="{
+            content: @js($tooltip),
+            theme: $store.theme,
+            allowHTML: @js($tooltip instanceof Htmlable),
+        }"
+    @endif
+    {{
+        $attributes
+            ->merge([
+                'aria-disabled' => $disabled ? 'true' : null,
+                // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
+                'aria-label' => filled($label) ? e(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : $label)), doubleEncode: false) : null,
+                'disabled' => $disabled && blank($tooltip),
+                'form' => $formId,
+                'tabindex' => (($tag === 'a') && $disabled && $hasTooltip) ? '0' : null,
+                'type' => $tag === 'button' ? $type : null,
+                'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
+                'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+            ], escape: false)
+            ->merge([
+                'title' => $hasTooltip ? null : $label,
+            ], escape: true)
+            ->when(
+                $disabled && $hasTooltip,
+                fn (ComponentAttributeBag $attributes) => $attributes->filter(
+                    fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
+                ),
+            )
+            ->class([
+                'fi-icon-btn',
+                'fi-disabled' => $disabled,
+                ($size instanceof Size) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+            ])
+            ->color(IconButtonComponent::class, $color)
+    }}
+>
+    {{
+        \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
+            'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
+            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+        ])), size: $iconSize)
+    }}
+
+    @if ($hasLoadingIndicator)
         {{
-            $attributes
-                ->merge([
-                    'title' => $label,
-                ], escape: true)
-                ->class([$buttonClasses])
-                ->style([$buttonStyles])
+            \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
+                'wire:loading.delay.' . $loadingDelay => '',
+                'wire:target' => $loadingIndicatorTarget,
+            ])), size: $iconSize)
         }}
-    >
-        @if ($label)
-            <span class="sr-only">
-                {{ $label }}
-            </span>
-        @endif
+    @endif
 
-        <x-filament::icon
-            :alias="$iconAlias"
-            :icon="$icon"
-            :class="$iconClasses"
-        />
-
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
+    @if (filled($badge))
+        <div class="fi-icon-btn-badge-ctn">
+            @if ($badge instanceof ComponentSlot)
+                {{ $badge }}
+            @else
+                <span
+                    {{
+                        (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                            'fi-badge',
+                            ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                        ])
+                    }}
+                >
                     {{ $badge }}
-                </x-filament::badge>
-            </div>
-        @endif
-    </a>
-@endif
+                </span>
+            @endif
+        </div>
+    @endif
+</{{ $tag }}>

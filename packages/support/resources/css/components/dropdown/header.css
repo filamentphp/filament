@@ -1,0 +1,21 @@
+.fi-dropdown-header {
+    @apply flex w-full gap-2 p-3 text-sm font-medium;
+
+    & .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
+    & span {
+        @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
+    }
+
+    &.fi-color {
+        & .fi-icon {
+            @apply text-color-500 dark:text-color-400;
+        }
+
+        & span {
+            @apply text-(--text) dark:text-(--dark-text);
+        }
+    }
+}

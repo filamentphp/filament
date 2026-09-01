@@ -2,11 +2,11 @@
 
 namespace Filament\Pages\Enums;
 
-enum SubNavigationPosition
+enum SubNavigationPosition: string
 {
-    case Start;
+    case Start = 'start';
 
-    case End;
+    case End = 'end';
 
-    case Top;
+    case Top = 'top';
 }

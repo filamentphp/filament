@@ -13,14 +13,14 @@ return [
             'file' => [
                 'label' => 'Ficheiro',
                 'placeholder' => 'Carregar um ficheiro CSV',
+                'rules' => [
+                    'duplicate_columns' => '{0} O ficheiro não pode conter, em falta, mais de um cabeçalho.|{1,*} O ficheiro não pode conter cabeçalhos em duplicado: :columns.',
+                ],
             ],
 
             'columns' => [
                 'label' => 'Colunas',
                 'placeholder' => 'Seleccione uma coluna',
-                'rules' => [
-                    'duplicate_columns' => '{0} O ficheiro não pode conter, em falta, mais de um cabeçalho.|{1,*} O ficheiro não pode conter cabeçalhos em duplicado: :columns.',
-                ],
             ],
 
         ],
@@ -75,6 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'erro',
         'system_error' => 'Erro de sistema, por favor, contacte o suporte técnico.',
+        'column_mapping_required_for_new_record' => 'A coluna :attribute não foi mapeada a uma coluna no ficheiro, no entanto é necessária para a criação de novos registos.',
     ],
 
 ];

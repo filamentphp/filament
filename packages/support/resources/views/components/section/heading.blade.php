@@ -1,5 +1,14 @@
-<h3
-    {{ $attributes->class(['fi-section-header-heading text-base font-semibold leading-6 text-gray-950 dark:text-white']) }}
+@props([
+    'level' => 2,
+])
+
+@php
+    $level = max(1, (int) $level);
+    $headingTag = ($level > 6) ? 'p' : "h{$level}";
+@endphp
+
+<{{ $headingTag }}
+    {{ $attributes->class(['fi-section-header-heading']) }}
 >
     {{ $slot }}
-</h3>
+</{{ $headingTag }}>

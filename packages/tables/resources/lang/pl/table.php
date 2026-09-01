@@ -2,16 +2,68 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Kolumny',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Zastosuj kolumny',
+            ],
+
+            'reorder' => [
+                'label' => 'Zmień kolejność kolumn',
+            ],
+
+            'reset' => [
+                'label' => 'Zresetuj',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
 
+        'actions' => [
+            'label' => 'Akcja|Akcje',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Tak',
+                'false' => 'Nie',
+            ],
+
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Ładowanie...',
+
+            'no_options_message' => 'Brak dostępnych opcji.',
+
+            'no_search_results_message' => 'Brak wyników.',
+
+            'placeholder' => 'Wybierz opcję',
+
+            'searching_message' => 'Ładowanie...',
+
+            'search_prompt' => 'Zacznij pisać, aby wyszukać...',
+
+        ],
+
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Pokaż :count mniej',
+                'expand_list' => 'Pokaż :count więcej',
+            ],
+
             'more_list_items' => 'i :count więcej',
+
         ],
 
     ],
@@ -24,6 +76,10 @@ return [
 
         'bulk_select_record' => [
             'label' => 'Zaznacz/odznacz pozycję :key dla operacji zbiorczych.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Zaznacz/odznacz grupę :title dla operacji zbiorczych.',
         ],
 
         'search' => [
@@ -72,6 +128,10 @@ return [
             'label' => 'Zmień kolejność',
         ],
 
+        'reorder_record' => [
+            'label' => 'Zmień kolejność pozycji :key',
+        ],
+
         'filter' => [
             'label' => 'Filtr',
         ],
@@ -84,8 +144,12 @@ return [
             'label' => 'Akcje masowe',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Wybierz kolumny',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Rozwiń/zwiń pozycję :key',
         ],
 
     ],
@@ -101,6 +165,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Zastosuj filtry',
+            ],
 
             'remove' => [
                 'label' => 'Usuń filtr',
@@ -126,7 +194,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Wszystkie',
+
+            'relationship' => [
+                'empty_option_label' => 'Brak',
+            ],
+
         ],
 
         'trashed' => [
@@ -149,7 +223,6 @@ return [
 
             'group' => [
                 'label' => 'Grupuj według',
-                'placeholder' => 'Grupuj według',
             ],
 
             'direction' => [
@@ -167,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Ładowanie...',
+
     'reorder_indicator' => 'Zmień kolejność przeciągając.',
+
+    'result_count' => '{0} Brak wyników|{1} :count wynik|[2,*] :count wyników',
 
     'selection_indicator' => [
 
@@ -209,5 +286,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'rekord',
 
 ];

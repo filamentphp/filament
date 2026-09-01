@@ -1,33 +1,25 @@
+@props([
+    'columnSpan' => [],
+    'columnStart' => [],
+    'height' => null,
+    'loadingLabel' => null,
+])
+
 @php
-    if ((! isset($columnSpan)) || (! is_array($columnSpan))) {
-        $columnSpan = [
-            'default' => $columnSpan ?? null,
-        ];
-    }
-
-    if ((! isset($columnStart)) || (! is_array($columnStart))) {
-        $columnStart = [
-            'default' => $columnStart ?? null,
-        ];
-    }
-
-    $height ??= '8rem';
+    use Filament\Support\View\ComponentAttributeBag;
 @endphp
 
-<x-filament::grid.column
-    :default="$columnSpan['default'] ?? 1"
-    :sm="$columnSpan['sm'] ?? null"
-    :md="$columnSpan['md'] ?? null"
-    :lg="$columnSpan['lg'] ?? null"
-    :xl="$columnSpan['xl'] ?? null"
-    :twoXl="$columnSpan['2xl'] ?? null"
-    :defaultStart="$columnStart['default'] ?? null"
-    :smStart="$columnStart['sm'] ?? null"
-    :mdStart="$columnStart['md'] ?? null"
-    :lgStart="$columnStart['lg'] ?? null"
-    :xlStart="$columnStart['xl'] ?? null"
-    :twoXlStart="$columnStart['2xl'] ?? null"
-    class="fi-loading-section"
+<div
+    role="status"
+    aria-busy="true"
+    {{
+        ($attributes ?? new ComponentAttributeBag)
+            ->gridColumn($columnSpan, $columnStart)
+            ->class(['fi-section fi-loading-section'])
+            ->style(['height: ' . e($height ?? '8rem')])
+    }}
 >
-    <x-filament::section class="animate-pulse" style="height: {{ $height }}" />
-</x-filament::grid.column>
+    <span class="fi-sr-only">
+        {{ $loadingLabel ?? __('filament::components/loading-section.label') }}
+    </span>
+</div>

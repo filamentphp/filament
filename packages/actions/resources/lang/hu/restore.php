@@ -54,6 +54,18 @@ return [
                 'title' => 'Visszaállítva',
             ],
 
+            'restored_partial' => [
+                'title' => ':count elem visszaállítva :total-ból',
+                'missing_authorization_failure_message' => 'Nincs jogosultságod :count elem visszaállítására.',
+                'missing_processing_failure_message' => ':count elem nem állítható vissza.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Visszaállítás sikertelen',
+                'missing_authorization_failure_message' => 'Nincs jogosultságod :count elem visszaállítására.',
+                'missing_processing_failure_message' => ':count elem nem állítható vissza.',
+            ],
+
         ],
 
     ],

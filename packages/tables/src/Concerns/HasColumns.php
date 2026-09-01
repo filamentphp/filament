@@ -3,10 +3,13 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Renderless;
+use ReflectionMethod;
 
 trait HasColumns
 {
@@ -45,6 +48,10 @@ trait HasColumns
             return null;
         }
 
+        if ($column->isHidden()) {
+            return null;
+        }
+
         $record = $this->getTableRecord($record);
 
         if (! $record) {
@@ -66,6 +73,51 @@ trait HasColumns
         }
 
         return $column->updateState($input);
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callTableColumnMethod(string $name, string $recordKey, string $method, array $arguments = []): mixed
+    {
+        // Security: This method is callable from the frontend and dispatches
+        // to `#[ExposedLivewireMethod]` methods on table columns. It does
+        // not perform per-record policy checks. Inline editable columns
+        // called through here bypass Model Policies.
+
+        $column = $this->getTable()->getColumn($name);
+
+        if (! $column) {
+            return null;
+        }
+
+        if ($column->isHidden()) {
+            return null;
+        }
+
+        if (! method_exists($column, $method)) {
+            return null;
+        }
+
+        $methodReflection = new ReflectionMethod($column, $method);
+
+        if (! $methodReflection->getAttributes(ExposedLivewireMethod::class)) {
+            return null;
+        }
+
+        if ($methodReflection->getAttributes(Renderless::class)) {
+            $this->skipRender();
+        }
+
+        $record = $this->getTableRecord($recordKey);
+
+        if (! $record) {
+            return null;
+        }
+
+        $column->record($record);
+
+        return $column->{$method}(...$arguments);
     }
 
     /**

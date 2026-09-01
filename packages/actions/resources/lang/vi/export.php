@@ -12,16 +12,16 @@ return [
 
             'columns' => [
 
-                'label' => 'Cột',
+                'label' => 'Các cột',
 
                 'form' => [
 
                     'is_enabled' => [
-                        'label' => ':column đã kích hoạt',
+                        'label' => 'Đã bật :column',
                     ],
 
                     'label' => [
-                        'label' => ':column nhãn',
+                        'label' => 'Nhãn của :column',
                     ],
 
                 ],
@@ -44,7 +44,7 @@ return [
 
         'completed' => [
 
-            'title' => 'Xuất đã hoàn thành',
+            'title' => 'Quá trình xuất hoàn tất',
 
             'actions' => [
 
@@ -61,13 +61,13 @@ return [
         ],
 
         'max_rows' => [
-            'title' => 'Xuất quá lớn',
+            'title' => 'Nội dung xuất quá lớn',
             'body' => 'Bạn không thể xuất nhiều hơn 1 hàng cùng lúc.|Bạn không thể xuất nhiều hơn :count hàng cùng lúc.',
         ],
 
         'started' => [
-            'title' => 'Xuất đã bắt đầu',
-            'body' => 'Quá trình xuất của bạn đã bắt đầu và 1 hàng sẽ được xử lý ở nền.|Quá trình xuất của bạn đã bắt đầu và :count hàng sẽ được xử lý ở nền.',
+            'title' => 'Quá trình xuất đã bắt đầu',
+            'body' => 'Quá trình xuất của bạn đã bắt đầu và sẽ xử lý 1 hàng trong nền.|Quá trình xuất của bạn đã bắt đầu và sẽ xử lý :count hàng trong nền.',
         ],
 
     ],

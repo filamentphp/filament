@@ -13,6 +13,10 @@ return [
             'file' => [
                 'label' => 'Datei',
                 'placeholder' => 'CSV Datei hochladen',
+                'rules' => [
+                    'duplicate_columns' => '{0} Die Datei darf nicht mehr als einen leeren Spaltenkopf enthalten.|{1,*} Die Datei darf keine doppelten Spaltenköpfe enthalten: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +76,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'Fehler',
         'system_error' => 'Systemfehler, bitte Supportanfrage stellen.',
+        'column_mapping_required_for_new_record' => 'Die :attribute-Spalte wurde nicht einer Spalte in der Datei zugeordnet, wird jedoch für die Erstellung neuer Datensätze benötigt.',
     ],
 
 ];

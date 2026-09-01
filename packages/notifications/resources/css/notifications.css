@@ -1,0 +1,29 @@
+.fi-no {
+    @apply pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3;
+
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply items-start;
+    }
+
+    &.fi-align-center {
+        @apply items-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply items-end;
+    }
+
+    &.fi-vertical-align-start {
+        @apply flex-col-reverse justify-end;
+    }
+
+    &.fi-vertical-align-center {
+        @apply flex-col justify-center;
+    }
+
+    &.fi-vertical-align-end {
+        @apply flex-col justify-end;
+    }
+}

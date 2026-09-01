@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Filament\Resources\UserResource\RelationManagers;
+
+use App\Filament\Resources\TeamResource;
+use Filament\Actions;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Table;
+
+class TeamsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'teams';
+
+    protected static ?string $relatedResource = TeamResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->headerActions([
+                Actions\CreateAction::make(),
+            ]);
+    }
+}

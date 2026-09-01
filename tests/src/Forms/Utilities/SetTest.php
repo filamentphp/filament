@@ -1,10 +1,10 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
-use Filament\Schema\Components\Section;
-use Filament\Schema\Components\Utilities\Set;
-use Filament\Schema\Schema;
-use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -12,13 +12,13 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can set the value of a field', function () {
+it('can set the value of a field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo'),
                     TextInput::make('bar')
                         ->live()
@@ -30,18 +30,18 @@ it('can set the value of a field', function () {
         ->fillForm([
             'bar' => $bar = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => $bar,
         ]);
 });
 
-it('can set the value of a field and call its updated hook', function () {
+it('can set the value of a field and call its updated hook', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->afterStateUpdated(fn (Set $set) => $set('baz', 'qux')),
                     TextInput::make('bar')
@@ -54,19 +54,19 @@ it('can set the value of a field and call its updated hook', function () {
         ->fillForm([
             'bar' => $bar = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => $bar,
             'baz' => 'qux',
         ]);
 });
 
-it('can set the value of a nested field', function () {
+it('can set the value of a nested field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     Section::make()
                         ->statePath('nested')
                         ->schema([
@@ -82,18 +82,18 @@ it('can set the value of a nested field', function () {
         ->fillForm([
             'bar' => $bar = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'nested.foo' => $bar,
         ]);
 });
 
-it('can set the value of a parent level field', function () {
+it('can set the value of a parent level field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo'),
                     Section::make()
                         ->statePath('nested')
@@ -109,18 +109,18 @@ it('can set the value of a parent level field', function () {
         ->fillForm([
             'nested.bar' => $bar = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'foo' => $bar,
         ]);
 });
 
-it('can set the value of a parent level field with a nested field', function () {
+it('can set the value of a parent level field with a nested field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     Section::make()
                         ->statePath('nestedOne')
                         ->schema([
@@ -140,7 +140,7 @@ it('can set the value of a parent level field with a nested field', function () 
         ->fillForm([
             'nestedTwo.bar' => $bar = Str::random(),
         ])
-        ->assertFormSet([
+        ->assertSchemaStateSet([
             'nestedOne.foo' => $bar,
         ]);
 });

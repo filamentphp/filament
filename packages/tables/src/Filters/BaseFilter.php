@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Filters;
 
-use Exception;
 use Filament\Support\Components\Component;
+use LogicException;
 
 class BaseFilter extends Component
 {
@@ -13,10 +13,10 @@ class BaseFilter extends Component
     use Concerns\CanSpanColumns;
     use Concerns\HasColumns;
     use Concerns\HasDefaultState;
-    use Concerns\HasFormSchema;
     use Concerns\HasIndicators;
     use Concerns\HasLabel;
     use Concerns\HasName;
+    use Concerns\HasSchema;
     use Concerns\InteractsWithTableQuery;
 
     protected string $evaluationIdentifier = 'filter';
@@ -33,7 +33,7 @@ class BaseFilter extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Filter of class [$filterClass] must have a unique name, passed to the [make()] method.");
+            throw new LogicException("Filter of class [$filterClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($filterClass, ['name' => $name]);

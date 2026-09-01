@@ -11,15 +11,67 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Zu :label hinzufügen',
+
+                'modal' => [
+
+                    'heading' => 'Hinzufügen zu :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Hinzufügen',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
+
                 'label' => 'Dazwischen einfügen',
+
+                'modal' => [
+
+                    'heading' => 'Hinzufügen zu :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Hinzufügen',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'Löschen',
+            ],
+
+            'edit' => [
+
+                'label' => 'Bearbeiten',
+
+                'modal' => [
+
+                    'heading' => 'Block bearbeiten',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Änderungen speichern',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -70,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Farbauswahl',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Monat',
+        ],
+
+        'year_input' => [
+            'label' => 'Jahr',
+        ],
+
+        'hour_input' => [
+            'label' => 'Stunde',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minute',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekunde',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Herunterladen',
+            ],
+
+            'open' => [
+                'label' => 'In neuem Tab öffnen',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Bildeditor',
 
             'actions' => [
 
@@ -216,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Aktionen',
+            ],
+
+            'reorder' => [
+                'label' => 'Verschieben',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -232,7 +340,11 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Hochgeladene Dateien müssen vom Typ :values sein.',
+
+        'file_attachments_max_size_message' => 'Hochgeladene Dateien dürfen nicht größer als :max Kilobytes sein.',
+
+        'tools' => [
             'attach_files' => 'Dateien beifügen',
             'blockquote' => 'Zitat',
             'bold' => 'Fett',
@@ -250,6 +362,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Auswählen',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Auswählen',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -260,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Aktionen',
+            ],
+
+            'reorder' => [
+                'label' => 'Verschieben',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -313,40 +459,276 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Datei hochladen',
+
+                'modal' => [
+
+                    'heading' => 'Datei hochladen',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Datei',
+                                'existing' => 'Datei ersetzen',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt-Text',
+                                'existing' => 'Alt-Text ändern',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Einfügen',
+                        ],
+
+                        'save' => [
+                            'label' => 'Speichern',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Raster',
+
+                'modal' => [
+
+                    'heading' => 'Raster',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Voreinstellung',
+
+                            'placeholder' => 'Keine',
+
+                            'options' => [
+                                'two' => 'Zwei',
+                                'three' => 'Drei',
+                                'four' => 'Vier',
+                                'five' => 'Fünf',
+                                'two_start_third' => 'Zwei (Anfang Drittel)',
+                                'two_end_third' => 'Zwei (Ende Drittel)',
+                                'two_start_fourth' => 'Zwei (Anfang Viertel)',
+                                'two_end_fourth' => 'Zwei (Ende Viertel)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Spalten',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Ab Breakpoint',
+
+                            'options' => [
+                                'default' => 'Alle',
+                                'sm' => 'Klein (sm)',
+                                'md' => 'Mittel (md)',
+                                'lg' => 'Groß (lg)',
+                                'xl' => 'Extra groß (xl)',
+                                '2xl' => 'Zweifach extra groß (2xl)',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Zwei asymmetrische Spalten',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Spannweite am Anfang',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Spannweite am Ende',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Verlinken',
-                    'unlink' => 'Verlinkung aufheben',
+                'label' => 'Bearbeiten',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'In neuem Tab öffnen',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'URL eingeben',
+            'text_color' => [
+
+                'label' => 'Textfarbe',
+
+                'modal' => [
+
+                    'heading' => 'Textfarbe',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Farbe',
+
+                            'options' => [
+                                'slate' => 'Schiefer',
+                                'gray' => 'Grau',
+                                'zinc' => 'Zink',
+                                'neutral' => 'Neutral',
+                                'stone' => 'Stein',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Nebel',
+                                'taupe' => 'Taupe',
+                                'red' => 'Rot',
+                                'orange' => 'Orange',
+                                'amber' => 'Bernstein',
+                                'yellow' => 'Gelb',
+                                'lime' => 'Limette',
+                                'green' => 'Grün',
+                                'emerald' => 'Smaragd',
+                                'teal' => 'Blaugrün',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Himmel',
+                                'blue' => 'Blau',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violett',
+                                'purple' => 'Lila',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Pink',
+                                'rose' => 'Rose',
+                            ],
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Benutzerdefinierte Farbe',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Hochgeladene Dateien müssen vom Typ :values sein.',
+
+        'file_attachments_max_size_message' => 'Hochgeladene Dateien dürfen nicht größer als :max Kilobytes sein.',
+
+        'no_merge_tag_search_results_message' => 'Keine Ergebnisse für Merge-Tags.',
+
+        'mentions' => [
+            'no_options_message' => 'Keine Optionen verfügbar.',
+            'no_search_results_message' => 'Keine Ergebnisse gefunden.',
+            'search_prompt' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
+            'searching_message' => 'Sucht...',
+        ],
+
+        'toolbar' => [
+            'label' => 'Editor-Werkzeugleiste',
+        ],
+
+        'tools' => [
+            'align_center' => 'Zentriert ausrichten',
+            'align_end' => 'Rechts ausrichten',
+            'align_justify' => 'Blocksatz',
+            'align_start' => 'Links ausrichten',
             'attach_files' => 'Dateien anhängen',
             'blockquote' => 'Zitat',
             'bold' => 'Fett',
             'bullet_list' => 'Aufzählungsliste',
+            'clear_formatting' => 'Formatierung löschen',
+            'code' => 'Code',
             'code_block' => 'Code Block',
+            'custom_blocks' => 'Blöcke',
+            'details' => 'Details',
             'h1' => 'Titel',
             'h2' => 'Überschrift',
             'h3' => 'Unterüberschrift',
+            'h4' => 'Überschrift 4',
+            'h5' => 'Überschrift 5',
+            'h6' => 'Überschrift 6',
+            'grid' => 'Raster',
+            'grid_delete' => 'Raster löschen',
+            'highlight' => 'Hervorheben',
+            'horizontal_rule' => 'Horizontale Linie',
             'italic' => 'Kursiv',
+            'lead' => 'Einleitungstext',
             'link' => 'Link',
+            'merge_tags' => 'Merge-Tags',
             'ordered_list' => 'Nummerierte Aufzählung',
+            'paragraph' => 'Absatz',
             'redo' => 'Wiederherstellen',
+            'small' => 'Kleiner Text',
             'strike' => 'Durchgestrichen',
+            'subscript' => 'Tiefgestellt',
+            'superscript' => 'Hochgestellt',
+            'table' => 'Tabelle',
+            'table_delete' => 'Tabelle löschen',
+            'table_add_column_before' => 'Spalte davor einfügen',
+            'table_add_column_after' => 'Spalte danach einfügen',
+            'table_delete_column' => 'Spalte löschen',
+            'table_add_row_before' => 'Zeile davor einfügen',
+            'table_add_row_after' => 'Zeile danach einfügen',
+            'table_delete_row' => 'Zeile löschen',
+            'table_merge_cells' => 'Zellen verbinden',
+            'table_split_cell' => 'Zelle teilen',
+            'table_toggle_header_row' => 'Kopfzeile umschalten',
+            'table_toggle_header_cell' => 'Kopfzelle umschalten',
+            'text_color' => 'Textfarbe',
             'underline' => 'Unterstreichen',
             'undo' => 'Rückgängig',
         ],
+
+        'uploading_file_message' => 'Datei wird hochgeladen...',
 
     ],
 
@@ -355,6 +737,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Erstellen',
 
                 'modal' => [
 
@@ -378,6 +762,8 @@ return [
 
             'edit_option' => [
 
+                'label' => 'Bearbeiten',
+
                 'modal' => [
 
                     'heading' => 'Bearbeiten',
@@ -385,12 +771,11 @@ return [
                     'actions' => [
 
                         'save' => [
-
                             'label' => 'Speichern',
-
                         ],
 
                     ],
+
                 ],
 
             ],
@@ -406,6 +791,8 @@ return [
 
         'max_items_message' => 'Es können nur :count ausgewählt werden.',
 
+        'no_options_message' => 'Keine Optionen verfügbar.',
+
         'no_search_results_message' => 'Die Suche ergab keine Treffer.',
 
         'placeholder' => 'Wählen Sie eine Option',
@@ -417,12 +804,31 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Löschen',
+            ],
+
+        ],
+
         'placeholder' => 'Neue Kennzeichnung',
+
+        'tag_added' => 'Hinzugefügt: :tag',
+
+        'tag_removed' => 'Entfernt: :tag',
+
     ],
 
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopieren',
+                'message' => 'Kopiert',
+            ],
 
             'hide_password' => [
                 'label' => 'Passwort verbergen',

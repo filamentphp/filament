@@ -4,8 +4,12 @@ namespace Filament\Navigation;
 
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use LogicException;
+use UnitEnum;
 
 class NavigationManager
 {
@@ -25,7 +29,7 @@ class NavigationManager
 
     public function __construct()
     {
-        $this->panel = Filament::getCurrentPanel();
+        $this->panel = Filament::getCurrentOrDefaultPanel();
 
         $this->navigationGroups = array_map(
             fn (NavigationGroup | string $group): NavigationGroup | string => $group instanceof NavigationGroup ? (clone $group) : $group,
@@ -53,34 +57,58 @@ class NavigationManager
         $groups = collect($this->getNavigationGroups());
 
         return collect($this->getNavigationItems())
+            ->map(fn (NavigationItem $item): NavigationItem => clone $item)
             ->filter(fn (NavigationItem $item): bool => $item->isVisible())
             ->sortBy(fn (NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (NavigationItem $item): ?string => $item->getGroup())
-            ->map(function (Collection $items, ?string $groupIndex) use ($groups): NavigationGroup {
-                $parentItems = $items->groupBy(fn (NavigationItem $item): ?string => $item->getParentItem());
+            ->groupBy(function (NavigationItem $item): string {
+                $group = $item->getGroup();
 
-                $items = $parentItems->get('')
-                    ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
+                return serialize($group);
+            })
+            ->map(function (Collection $items, string $groupIndex) use ($groups): NavigationGroup {
+                $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
 
-                $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items) {
-                    if (! $items->has($parentItemLabel)) {
+                $items = $parentItems->get('', collect());
+
+                $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
+                    $parent = $items->first(
+                        fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
+                    );
+
+                    if (! $parent) {
                         return;
                     }
 
-                    $items->get($parentItemLabel)->childItems($parentItemItems);
+                    $mergedChildren = collect($parent->getChildItems())
+                        ->merge($parentItemItems)
+                        ->sortBy(fn (NavigationItem $item): int => $item->getSort())
+                        ->values();
+
+                    $parent->childItems($mergedChildren);
                 });
 
-                if (blank($groupIndex)) {
+                $items = $items->filter(fn (NavigationItem $item): bool => (filled($item->getChildItems()) || filled($item->getUrl())));
+
+                $groupName = unserialize($groupIndex);
+
+                if (blank($groupName)) {
                     return NavigationGroup::make()->items($items);
                 }
 
+                $groupEnum = null;
+
+                if ($groupName instanceof UnitEnum) {
+                    $groupEnum = $groupName;
+                    $groupName = $groupEnum->name;
+                }
+
                 $registeredGroup = $groups
-                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
-                        if ($registeredGroupIndex === $groupIndex) {
+                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupName) {
+                        if ($registeredGroupIndex === $groupName) {
                             return true;
                         }
 
-                        if ($registeredGroup === $groupIndex) {
+                        if ($registeredGroup === $groupName) {
                             return true;
                         }
 
@@ -88,21 +116,27 @@ class NavigationManager
                             return false;
                         }
 
-                        return $registeredGroup->getLabel() === $groupIndex;
+                        return $registeredGroup->getLabel() === $groupName;
                     });
 
                 if ($registeredGroup instanceof NavigationGroup) {
                     return $registeredGroup->items($items);
                 }
 
-                return NavigationGroup::make($registeredGroup ?? $groupIndex)
-                    ->items($items);
-            })
-            ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
-                if (blank($group->getLabel())) {
-                    return -1;
+                $group = NavigationGroup::make($registeredGroup ?? $groupName);
+
+                if ($groupEnum instanceof HasLabel) {
+                    $group->label($groupEnum->getLabel());
                 }
 
+                if ($groupEnum instanceof HasIcon) {
+                    $group->icon($groupEnum->getIcon());
+                }
+
+                return $group->items($items);
+            })
+            ->filter(fn (NavigationGroup $group): bool => filled($group->getItems()))
+            ->pipe(function (Collection $groupsCollection): Collection {
                 $registeredGroups = $this->getNavigationGroups();
 
                 $groupsToSearch = $registeredGroups;
@@ -114,38 +148,98 @@ class NavigationManager
                     ];
                 }
 
-                $sort = array_search(
-                    $groupIndex,
-                    $groupsToSearch,
-                );
+                return $groupsCollection->sortBy(function (NavigationGroup $group, ?string $groupIndex) use ($registeredGroups, $groupsToSearch): int {
+                    if (blank($group->getLabel())) {
+                        return -1;
+                    }
 
-                if ($sort === false) {
-                    return count($registeredGroups);
-                }
+                    $groupName = unserialize($groupIndex);
+                    $groupEnum = null;
 
-                return $sort;
+                    if ($groupName instanceof UnitEnum) {
+                        $groupEnum = $groupName;
+                        $groupName = $groupEnum->name;
+                    }
+
+                    $sort = array_search(
+                        $groupName,
+                        $groupsToSearch,
+                    );
+
+                    if ($groupEnum) {
+                        $enumCaseSort = array_search($groupEnum, $groupEnum::cases());
+                        $sort = ($enumCaseSort !== false) ? $enumCaseSort : $sort;
+                    }
+
+                    if ($sort === false) {
+                        return count($registeredGroups);
+                    }
+
+                    return $sort;
+                });
             })
             ->all();
     }
 
     public function mountNavigation(): void
     {
-        foreach ($this->panel->getPages() as $page) {
-            $page::registerNavigationItems();
-        }
+        $previousPageConfigurationKey = Filament::getCurrentPageConfigurationKey();
+        $previousResourceConfigurationKey = Filament::getCurrentResourceConfigurationKey();
 
-        foreach ($this->panel->getResources() as $resource) {
-            $resource::registerNavigationItems();
-        }
+        try {
+            Filament::setCurrentPageConfigurationKey(null);
+            Filament::setCurrentResourceConfigurationKey(null);
 
-        $this->isNavigationMounted = true;
+            foreach ($this->panel->getPages() as $page) {
+                $page::registerNavigationItems();
+            }
+
+            foreach ($this->panel->getPageConfigurations() as $configuration) {
+                Filament::setCurrentPageConfigurationKey($configuration->getKey());
+
+                $configuration->page::registerNavigationItems();
+
+                Filament::setCurrentPageConfigurationKey(null);
+            }
+
+            foreach ($this->panel->getResources() as $resource) {
+                $resource::registerNavigationItems();
+            }
+
+            foreach ($this->panel->getResourceConfigurations() as $configuration) {
+                Filament::setCurrentResourceConfigurationKey($configuration->getKey());
+
+                $configuration->resource::registerNavigationItems();
+
+                Filament::setCurrentResourceConfigurationKey(null);
+            }
+
+            $this->isNavigationMounted = true;
+        } finally {
+            Filament::setCurrentPageConfigurationKey($previousPageConfigurationKey);
+            Filament::setCurrentResourceConfigurationKey($previousResourceConfigurationKey);
+        }
     }
 
     /**
-     * @param  array<string | int, NavigationGroup | string>  $groups
+     * @param  array<string | int, NavigationGroup | string> | class-string<UnitEnum>  $groups
      */
-    public function navigationGroups(array $groups): static
+    public function navigationGroups(array | string $groups): static
     {
+        if (is_string($groups)) {
+            throw_unless(enum_exists($groups), new LogicException("Enum class [{$groups}] does not exist for navigation groups."));
+
+            $groups = array_reduce(
+                $groups::cases(),
+                function (array $carry, UnitEnum $case): array {
+                    $carry[$case->name] = NavigationGroup::fromEnum($case);
+
+                    return $carry;
+                },
+                initial: [],
+            );
+        }
+
         $this->navigationGroups = [
             ...$this->navigationGroups,
             ...$groups,

@@ -2,11 +2,12 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\Entry;
-use Filament\Schema\Components\Decorations\IconDecoration;
-use Filament\Schema\Components\Decorations\TextDecoration;
+use Filament\Schemas\Components\Icon;
+use Filament\Schemas\Components\Text;
 use Illuminate\Contracts\Support\Htmlable;
 
 trait HasHint
@@ -19,35 +20,69 @@ trait HasHint
     protected array $hintActions = [];
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $hintColor = null;
 
-    protected string | Closure | null $hintIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $hintIcon = null;
 
     protected string | Closure | null $hintIconTooltip = null;
 
     protected function setUpHint(): void
     {
         $this->afterLabel(function (Entry $component): array {
-            $decorations = [];
+            $components = [];
 
-            $hint = $component->getHint();
+            if ($component->hasHint()) {
+                $components[] = Text::make(static function (Text $component): string | Htmlable | null {
+                    /** @var self $parentComponent */
+                    $parentComponent = $component->getContainer()->getParentComponent();
 
-            if (filled($hint)) {
-                $decorations[] = TextDecoration::make($hint)
-                    ->color($component->getHintColor());
+                    return $parentComponent->getHint();
+                })
+                    ->color(static function (Text $component): string | array | null {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return $parentComponent->getHintColor();
+                    })
+                    ->visible(static function (Text $component): bool {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return filled($parentComponent->getHint());
+                    });
             }
 
-            $hintIcon = $component->getHintIcon();
+            if ($component->hasHintIcon()) {
+                $components[] = Icon::make(static function (Icon $component): string | BackedEnum | Htmlable | null {
+                    /** @var self $parentComponent */
+                    $parentComponent = $component->getContainer()->getParentComponent();
 
-            if (filled($hintIcon)) {
-                $decorations[] = IconDecoration::make($hintIcon)
-                    ->tooltip($component->getHintIconTooltip());
+                    return $parentComponent->getHintIcon();
+                })
+                    ->tooltip(static function (Icon $component): ?string {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return $parentComponent->getHintIconTooltip();
+                    })
+                    ->visible(static function (Icon $component): bool {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return filled($parentComponent->getHintIcon());
+                    })
+                    ->color(static function (Icon $component): string | array | null {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return $parentComponent->getHintColor();
+                    });
             }
 
             return [
-                ...$decorations,
+                ...$components,
                 ...$component->getHintActions(),
             ];
         });
@@ -61,7 +96,7 @@ trait HasHint
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function hintColor(string | array | Closure | null $color): static
     {
@@ -70,10 +105,13 @@ trait HasHint
         return $this;
     }
 
-    public function hintIcon(string | Closure | null $icon, string | Closure | null $tooltip = null): static
+    public function hintIcon(string | BackedEnum | Htmlable | Closure | null $icon, string | Closure | null $tooltip = null): static
     {
         $this->hintIcon = $icon;
-        $this->hintIconTooltip($tooltip);
+
+        if (func_num_args() >= 2) {
+            $this->hintIconTooltip($tooltip);
+        }
 
         return $this;
     }
@@ -105,20 +143,30 @@ trait HasHint
         return $this;
     }
 
+    public function hasHint(): bool
+    {
+        return filled($this->hint);
+    }
+
     public function getHint(): string | Htmlable | null
     {
         return $this->evaluate($this->hint);
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<string> | null
      */
     public function getHintColor(): string | array | null
     {
         return $this->evaluate($this->hintColor);
     }
 
-    public function getHintIcon(): ?string
+    public function hasHintIcon(): bool
+    {
+        return filled($this->hintIcon);
+    }
+
+    public function getHintIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->hintIcon);
     }
@@ -133,6 +181,9 @@ trait HasHint
      */
     public function getHintActions(): array
     {
-        return $this->evaluate($this->hintActions);
+        return array_filter(array_map(
+            fn (Action | Closure $hintAction): ?Action => $this->evaluate($hintAction),
+            $this->hintActions,
+        ));
     }
 }

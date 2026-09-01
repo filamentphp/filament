@@ -2,17 +2,18 @@
 
 namespace Filament\Tables\Testing;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
- * @method HasTable instance()
+ * @method Component&HasTable instance()
  *
- * @mixin Testable
  * @mixin Testable
  */
 class TestsBulkActions
@@ -54,7 +55,7 @@ class TestsBulkActions
     public function setTableBulkActionData(): Closure
     {
         return function (array $data): static {
-            $this->setActionData($data);
+            $this->fillForm($data);
 
             return $this;
         };
@@ -62,8 +63,8 @@ class TestsBulkActions
 
     public function assertTableBulkActionDataSet(): Closure
     {
-        return function (array $data): static {
-            $this->assertActionDataSet($data);
+        return function (array | Closure $data): static {
+            $this->assertSchemaStateSet($data);
 
             return $this;
         };
@@ -188,7 +189,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionHasIcon(): Closure
     {
-        return function (string | array $actions, string $icon): static {
+        return function (string | array $actions, string | BackedEnum $icon): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedTableBulkActions($actions);
@@ -201,7 +202,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionDoesNotHaveIcon(): Closure
     {
-        return function (string | array $actions, string $icon): static {
+        return function (string | array $actions, string | BackedEnum $icon): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedTableBulkActions($actions);
@@ -306,7 +307,7 @@ class TestsBulkActions
     public function assertHasTableBulkActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasActionErrors($keys);
+            $this->assertHasFormErrors($keys);
 
             return $this;
         };
@@ -315,7 +316,7 @@ class TestsBulkActions
     public function assertHasNoTableBulkActionErrors(): Closure
     {
         return function (array $keys = []): static {
-            $this->assertHasNoActionErrors($keys);
+            $this->assertHasNoFormErrors($keys);
 
             return $this;
         };

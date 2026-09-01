@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'ראשון',
+        ],
+
         'go_to_page' => [
             'label' => 'נווט לעמוד :page',
+        ],
+
+        'last' => [
+            'label' => 'אחרון',
         ],
 
         'next' => [

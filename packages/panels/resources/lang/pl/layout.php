@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Przejdź do treści',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Otwórz powiadomienia',
+            'label_with_unread_count' => '{1} Powiadomienie, :count nieprzeczytane|[2,*] Powiadomienia, :count nieprzeczytanych',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Motyw',
+
             'dark' => [
                 'label' => 'Tryb ciemny',
             ],
@@ -48,6 +55,31 @@ return [
                 'label' => 'Tryb systemowy',
             ],
 
+        ],
+
+    ],
+
+    'navigation' => [
+        'label' => 'Nawigacja w pasku bocznym',
+    ],
+
+    'topbar' => [
+        'label' => 'Górny pasek',
+    ],
+
+    'avatar' => [
+        'alt' => 'Awatar :name',
+    ],
+
+    'logo' => [
+        'alt' => 'Logo :name',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Wyszukiwanie najemcy',
+            'placeholder' => 'Szukaj',
         ],
 
     ],

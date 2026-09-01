@@ -9,6 +9,12 @@ use Illuminate\Support\Arr;
 
 trait CanUpdateState
 {
+    // Security: Inline editable columns (`ToggleColumn`, `TextInputColumn`,
+    // `SelectColumn`, `CheckboxColumn`) do not automatically check Laravel
+    // Model Policies before saving. Only the `disabled()` state is
+    // checked. Use `disabled()` with a closure, or use a full edit
+    // page / modal action where resource authorization is enforced.
+
     protected ?Closure $updateStateUsing = null;
 
     protected ?Closure $beforeStateUpdated = null;
@@ -58,9 +64,9 @@ trait CanUpdateState
 
         $columnName = $this->getName();
 
-        if ($this->getRelationship($record)) {
-            $columnName = $this->getRelationshipAttribute();
-            $columnRelationshipName = $this->getRelationshipName();
+        if ($this->hasRelationship($record)) {
+            $columnName = $this->getFullAttributeName($record);
+            $columnRelationshipName = $this->getRelationshipName($record);
 
             $record = Arr::get(
                 $record->load($columnRelationshipName),
@@ -68,18 +74,16 @@ trait CanUpdateState
             );
         } elseif (
             (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
-            in_array($columnName, $tableRelationship->getPivotColumns())
+            in_array($this->getAttributeName($record), $tableRelationship->getPivotColumns())
         ) {
-            $record = $record->{$tableRelationship->getPivotAccessor()};
-        } else {
-            $columnName = (string) str($columnName)->replace('.', '->');
+            $record = $record->getRelationValue($tableRelationship->getPivotAccessor());
         }
 
         if (! ($record instanceof Model)) {
             return null;
         }
 
-        $record->setAttribute($columnName, $state);
+        $record->setAttribute((string) str($columnName)->replace('.', '->'), $state);
         $record->save();
 
         $this->callAfterStateUpdated($state);

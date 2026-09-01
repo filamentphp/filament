@@ -129,15 +129,15 @@ return [
             'actions' => [
 
                 'cancel' => [
-                    'label' => 'Huỷ bỏ',
+                    'label' => 'Hủy thao tác',
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Chế độ kéo "cắt"',
+                    'label' => 'Chế độ kéo để cắt hẳn (crop)',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Chế độ kéo "di chuyển"',
+                    'label' => 'Chế độ kéo để di chuyển (move)',
                 ],
 
                 'flip_horizontal' => [
@@ -149,19 +149,19 @@ return [
                 ],
 
                 'move_down' => [
-                    'label' => 'Di chuyển hình ảnh xuống',
+                    'label' => 'Di chuyển ảnh xuống dưới',
                 ],
 
                 'move_left' => [
-                    'label' => 'Di chuyển hình ảnh sang trái',
+                    'label' => 'Di chuyển ảnh sang trái',
                 ],
 
                 'move_right' => [
-                    'label' => 'Di chuyển hình ảnh sang phải',
+                    'label' => 'Di chuyển ảnh sang phải',
                 ],
 
                 'move_up' => [
-                    'label' => 'Di chuyển hình ảnh lên trên',
+                    'label' => 'Di chuyển ảnh lên trên',
                 ],
 
                 'reset' => [
@@ -169,11 +169,11 @@ return [
                 ],
 
                 'rotate_left' => [
-                    'label' => 'Xoay hình ảnh sang trái',
+                    'label' => 'Xoay ảnh sang trái',
                 ],
 
                 'rotate_right' => [
-                    'label' => 'Xoay hình ảnh sang phải',
+                    'label' => 'Xoay ảnh sang phải',
                 ],
 
                 'set_aspect_ratio' => [
@@ -185,7 +185,7 @@ return [
                 ],
 
                 'zoom_100' => [
-                    'label' => 'Phóng to hình ảnh lên 100%',
+                    'label' => 'Phóng to ảnh lên 100%',
                 ],
 
                 'zoom_in' => [
@@ -240,8 +240,8 @@ return [
             'svg' => [
 
                 'messages' => [
-                    'confirmation' => 'Việc chỉnh sửa các tập tin SVG không được khuyến nghị vì có thể dẫn đến mất chất lượng khi thay đổi tỷ lệ.\n Bạn có chắc chắn muốn tiếp tục không?',
-                    'disabled' => 'Việc chỉnh sửa các tập tin SVG bị vô hiệu hóa vì có thể dẫn đến mất chất lượng khi thay đổi tỷ lệ..',
+                    'confirmation' => 'Không khuyến nghị chỉnh sửa các tập tin SVG vì có thể làm mất chất lượng khi thay đổi kích thước.\n Bạn có chắc chắn muốn tiếp tục không?',
+                    'disabled' => 'Đã tắt chức năng chỉnh sửa tập tin SVG vì có thể làm mất chất lượng khi thay đổi kích thước.',
                 ],
 
             ],
@@ -284,12 +284,16 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Tệp tải lên phải có định dạng: :values.',
+
+        'file_attachments_max_size_message' => 'Tệp tải lên không được lớn hơn :max kilobyte.',
+
+        'tools' => [
             'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách đánh dấu',
-            'code_block' => 'Khối mã',
+            'code_block' => 'Khối code',
             'heading' => 'Tiêu đề',
             'italic' => 'In nghiêng',
             'link' => 'Liên kết',
@@ -297,7 +301,30 @@ return [
             'redo' => 'Làm lại',
             'strike' => 'Gạch ngang',
             'table' => 'Bảng',
+
             'undo' => 'Hoàn tác',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Chọn',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Chọn',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +392,262 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Tải tệp lên',
+
+                'modal' => [
+
+                    'heading' => 'Tải tệp lên',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Tệp',
+                                'existing' => 'Thay thế tệp',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Văn bản thay thế (alt text)',
+                                'existing' => 'Thay đổi văn bản thay thế',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Chèn',
+                        ],
+
+                        'save' => [
+                            'label' => 'Lưu',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Liên kết',
-                    'unlink' => 'Bỏ liên kết',
+                'label' => 'Chỉnh sửa',
+
+                'modal' => [
+
+                    'heading' => 'Liên kết',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Mở trong tab mới',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Nhập URL',
+            'text_color' => [
+                'label' => 'Màu chữ',
+                'modal' => [
+                    'form' => [
+                        'color' => [
+                            'label' => 'Màu chữ',
+                            'options' => [
+                                'slate' => 'Xám xanh',
+                                'gray' => 'Xám',
+                                'zinc' => 'Xám kẽm',
+                                'neutral' => 'Trung tính',
+                                'stone' => 'Đá',
+                                'mauve' => 'Tím nhạt',
+                                'olive' => 'Ô liu',
+                                'mist' => 'Sương mù',
+                                'taupe' => 'Nâu xám',
+                                'red' => 'Đỏ',
+                                'orange' => 'Cam',
+                                'amber' => 'Hổ phách',
+                                'yellow' => 'Vàng',
+                                'lime' => 'Vàng chanh',
+                                'green' => 'Xanh lá cây',
+                                'emerald' => 'Lục bảo',
+                                'teal' => 'Xanh mòng két',
+                                'cyan' => 'Lục lam',
+                                'sky' => 'Xanh da trời',
+                                'blue' => 'Xanh dương',
+                                'indigo' => 'Chàm',
+                                'violet' => 'Tím ánh sáng',
+                                'purple' => 'Tím',
+                                'fuchsia' => 'Hồng tía',
+                                'pink' => 'Hồng',
+                                'rose' => 'Hồng đào',
+                            ],
+                        ],
+                        'custom_color' => [
+                            'label' => 'Màu chữ tùy chỉnh',
+                        ],
+                    ],
+                    'heading' => 'Chọn màu chữ',
+                ],
+            ],
+
+            'grid' => [
+
+                'label' => 'Mẫu lưới',
+
+                'modal' => [
+
+                    'heading' => 'Mẫu lưới',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Cấu hình',
+
+                            'placeholder' => 'Không có',
+
+                            'options' => [
+                                'two' => '2 cột',
+                                'three' => '3 cột',
+                                'four' => '4 cột',
+                                'five' => '5 cột',
+                                'two_start_third' => '2 cột (1 - 2)',
+                                'two_end_third' => '2 cột (2 - 1)',
+                                'two_start_fourth' => '2 cột (1 - 3)',
+                                'two_end_fourth' => '2 cột (3 - 1)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Số cột',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Từ điểm ngắt',
+
+                            'options' => [
+                                'default' => 'Mặc định',
+                                'sm' => 'Nhỏ',
+                                'md' => 'Trung bình',
+                                'lg' => 'Lớn',
+                                'xl' => 'Rất lớn',
+                                '2xl' => 'Rất rất lớn',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => '2 cột không đối xứng',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Số cột bắt đầu',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Số cột kết thúc',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Tệp tải lên phải có định dạng: :values.',
+
+        'file_attachments_max_size_message' => 'Tệp tải lên không được lớn hơn :max kilobyte.',
+
+        'mentions' => [
+            'no_options_message' => 'Không có tùy chọn nào.',
+            'no_search_results_message' => 'Không có kết quả phù hợp với tìm kiếm.',
+            'search_prompt' => 'Bắt đầu gõ để tìm kiếm...',
+            'searching_message' => 'Đang tìm...',
+        ],
+
+        'no_merge_tag_search_results_message' => 'Không tìm thấy thẻ nội dung động nào.',
+
+        'tools' => [
+            'align_center' => 'Canh giữa',
+            'align_end' => 'Canh đều bên phải',
+            'align_justify' => 'Canh đều hai bên',
+            'align_start' => 'Canh đều bên trái',
             'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách đánh dấu',
-            'code_block' => 'Khối mã',
-            'h1' => 'Tiêu đề chính',
+            'clear_formatting' => 'Xóa định dạng',
+            'code' => 'Code',
+            'code_block' => 'Khối code',
+            'custom_blocks' => 'Khối tùy chỉnh',
+            'details' => 'Khối chi tiết',
+            'h1' => 'Tựa đề',
             'h2' => 'Tiêu đề',
             'h3' => 'Tiêu đề phụ',
+            'h4' => 'Tiêu đề cấp 4',
+            'h5' => 'Tiêu đề cấp 5',
+            'h6' => 'Tiêu đề cấp 6',
+            'highlight' => 'Nổi bật',
+            'horizontal_rule' => 'Thước ngang',
             'italic' => 'In nghiêng',
+            'lead' => 'Đoạn dẫn',
             'link' => 'Liên kết',
+            'merge_tags' => 'Thẻ nội dung động',
             'ordered_list' => 'Danh sách đánh số',
+            'paragraph' => 'Đoạn văn',
             'redo' => 'Làm lại',
+            'small' => 'Chữ nhỏ',
             'strike' => 'Gạch ngang',
+            'subscript' => 'Chỉ số dưới',
+            'superscript' => 'Chỉ số trên',
+            'table' => 'Chèn bảng',
+            'table_delete' => 'Xóa bảng',
+            'table_add_column_before' => 'Thêm cột vào phía trước',
+            'table_add_column_after' => 'Thêm cột vào phía sau',
+            'table_delete_column' => 'Xóa cột',
+            'table_add_row_before' => 'Thêm dòng vào phía trên',
+            'table_add_row_after' => 'Thêm dòng vào phía dưới',
+            'table_delete_row' => 'Xóa dòng',
+            'table_merge_cells' => 'Gộp ô',
+            'table_split_cell' => 'Chia ô',
+            'table_toggle_header_row' => 'Bật/tắt dòng tiêu đề',
+            'table_toggle_header_cell' => 'Bật/tắt ô tiêu đề',
             'underline' => 'Gạch chân',
             'undo' => 'Hoàn tác',
+            'text_color' => 'Màu chữ',
+            'grid' => 'Mẫu lưới',
+            'grid_delete' => 'Xóa mẫu lưới',
         ],
+
+        'uploading_file_message' => 'Đang tải tệp lên...',
 
     ],
 
@@ -407,6 +656,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Tạo',
 
                 'modal' => [
 
@@ -430,6 +681,8 @@ return [
 
             'edit_option' => [
 
+                'label' => 'Chỉnh sửa',
+
                 'modal' => [
 
                     'heading' => 'Chỉnh sửa',
@@ -437,7 +690,7 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Lưu lại',
+                            'label' => 'Lưu',
                         ],
 
                     ],
@@ -457,23 +710,39 @@ return [
 
         'max_items_message' => 'Chỉ có thể chọn :count mục.',
 
+        'no_options_message' => 'Không có tùy chọn nào.',
+
         'no_search_results_message' => 'Không có kết quả tìm kiếm phù hợp.',
 
-        'placeholder' => 'Chọn một tuỳ chọn',
+        'placeholder' => 'Chọn một tùy chọn',
 
-        'searching_message' => 'Đang tìm kiếm...',
+        'searching_message' => 'Đang tìm...',
 
         'search_prompt' => 'Bắt đầu gõ để tìm kiếm...',
 
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Xóa',
+            ],
+
+        ],
+
         'placeholder' => 'Thêm thẻ mới',
     ],
 
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Sao chép',
+                'message' => 'Đã sao chép',
+            ],
 
             'hide_password' => [
                 'label' => 'Ẩn mật khẩu',

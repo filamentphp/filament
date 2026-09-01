@@ -4,10 +4,13 @@ namespace App\Livewire;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Support\DemoData;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -15,18 +18,28 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Support\Enums\ActionSize;
+use Filament\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\Size;
+use Filament\Support\Enums\TextSize;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
@@ -34,25 +47,31 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\Summarizers\Average;
 use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Columns\Summarizers\Range;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Enums\ColumnManagerLayout;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
+use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use stdClass;
 
-class TablesDemo extends Component implements HasForms, HasTable
+class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
 {
-    use InteractsWithForms;
+    use InteractsWithActions;
+    use InteractsWithSchemas;
     use InteractsWithTable;
 
     public string $tableConfiguration;
@@ -170,13 +189,13 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->gettingStartedFilters($table)
             ->actions([
                 Action::make('feature')
-                    ->action(function (Post $record) {
+                    ->action(function (Post $record): void {
                         $record->is_featured = true;
                         $record->save();
                     })
                     ->hidden(fn (Post $record): bool => $record->is_featured),
                 Action::make('unfeature')
-                    ->action(function (Post $record) {
+                    ->action(function (Post $record): void {
                         $record->is_featured = false;
                         $record->save();
                     })
@@ -246,7 +265,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
-    public function toggleableColumns(Table $table): Table
+    public function columnManager(Table $table): Table
     {
         return $this->usersTable($table)
             ->columns([
@@ -262,6 +281,63 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function columnManagerReorderable(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->toggleable(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at))
+                    ->toggleable(),
+            ])
+            ->reorderableColumns();
+    }
+
+    public function columnManagerModal(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->toggleable(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at))
+                    ->toggleable(),
+            ])
+            ->columnManagerLayout(ColumnManagerLayout::Modal);
+    }
+
+    public function columnManagerColumns(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->toggleable(),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->toggleable(),
+                TextColumn::make('phone')
+                    ->toggleable(),
+                TextColumn::make('job')
+                    ->label('Job title')
+                    ->toggleable(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at))
+                    ->toggleable(),
+            ])
+            ->columnManagerColumns(2);
+    }
+
     public function columnTooltips(Table $table): Table
     {
         return $this->usersTable($table)
@@ -274,6 +350,20 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->boolean()
                     ->getStateUsing(fn ($record) => filled($record->email_verified_at))
                     ->tooltip(fn ($record) => $record->email_verified_at?->toFormattedDateString()),
+            ]);
+    }
+
+    public function columnHeaderTooltips(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->label('Email address'),
+                TextColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->headerTooltip('The date the email address was verified')
+                    ->date(),
             ]);
     }
 
@@ -312,6 +402,87 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function columnListWithLineBreaks(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->label('Email addresses')
+                    ->getStateUsing(fn ($record): array => [
+                        $record->email,
+                        str($record->email)->replace('filamentphp.com', 'filament.dev'),
+                    ])
+                    ->listWithLineBreaks(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at)),
+            ]);
+    }
+
+    public function columnBulleted(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->label('Email addresses')
+                    ->getStateUsing(fn ($record): array => [
+                        $record->email,
+                        str($record->email)->replace('filamentphp.com', 'filament.dev'),
+                    ])
+                    ->bulleted(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at)),
+            ]);
+    }
+
+    public function columnWrapHeader(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->label('Full legal name of the registered user')
+                    ->wrapHeader()
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->label('Email address used for account notifications')
+                    ->wrapHeader(),
+                TextColumn::make('phone')
+                    ->label('Primary contact phone number on file')
+                    ->wrapHeader(),
+            ]);
+    }
+
+    public function tableHeading(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->heading('Blog Posts')
+            ->description('Manage your blog posts and articles.')
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    }),
+                TextColumn::make('author.name'),
+            ]);
+    }
+
     public function columnGrouping(Table $table): Table
     {
         return $this->postsTable($table)
@@ -323,10 +494,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 ColumnGroup::make('Visibility', [
                     TextColumn::make('status')
                         ->badge()
-                        ->icon(fn (string $state): string => match ($state) {
-                            'draft' => 'heroicon-o-pencil',
-                            'reviewing' => 'heroicon-o-clock',
-                            'published' => 'heroicon-o-check-circle',
+                        ->icon(fn (string $state): Heroicon => match ($state) {
+                            'draft' => Heroicon::OutlinedPencil,
+                            'reviewing' => Heroicon::OutlinedClock,
+                            'published' => Heroicon::OutlinedCheckCircle,
                         })
                         ->color(fn (string $state): string => match ($state) {
                             'draft' => 'gray',
@@ -337,6 +508,33 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->boolean(),
                 ]),
                 TextColumn::make('author.name'),
+            ]);
+    }
+
+    public function columnWidth(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->grow()
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+                IconColumn::make('is_featured')
+                    ->boolean()
+                    ->width('1%'),
             ]);
     }
 
@@ -362,6 +560,76 @@ class TablesDemo extends Component implements HasForms, HasTable
                         'rejected' => 'danger',
                     }),
             ]);
+    }
+
+    public function textColumnSeparatorBadge(Table $table): Table
+    {
+        $tagSets = [
+            'Laravel, Livewire, PHP',
+            'Filament, Admin Panel',
+            'Plugins, Open Source, Community',
+            'Tutorial, Beginner',
+            'Advanced, Performance, Tips',
+        ];
+
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('tags')
+                    ->getStateUsing(fn ($rowLoop): string => $tagSets[$rowLoop->index] ?? 'General')
+                    ->badge()
+                    ->separator(','),
+            ]);
+    }
+
+    public function textColumnMarkdown(Table $table): Table
+    {
+        $table = $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('description')
+                    ->markdown(),
+            ]);
+
+        $markdownContents = [
+            '**Bold text** and *italic text* with a [link](https://filamentphp.com)',
+            'Supports `inline code` and **nested** *formatting*',
+            'Built with **Laravel** and [Livewire](https://livewire.laravel.com)',
+            'Uses *Tailwind CSS* for **responsive** styling',
+            'A **powerful** framework for building *admin panels*',
+        ];
+
+        foreach (Post::orderBy('id')->limit(5)->get() as $index => $post) {
+            $post->timestamps = false;
+            $post->update(['description' => $markdownContents[$index]]);
+        }
+
+        return $table;
+    }
+
+    public function textColumnHtml(Table $table): Table
+    {
+        $table = $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('description')
+                    ->html(),
+            ]);
+
+        $htmlContents = [
+            '<strong>Bold text</strong> and <em>italic text</em> with a <a href="https://filamentphp.com">link</a>',
+            'Supports <code>inline code</code> and <strong>nested</strong> <em>formatting</em>',
+            'Built with <strong>Laravel</strong> and <a href="https://livewire.laravel.com">Livewire</a>',
+            'Uses <em>Tailwind CSS</em> for <strong>responsive</strong> styling',
+            'A <strong>powerful</strong> framework for building <em>admin panels</em>',
+        ];
+
+        foreach (Post::orderBy('id')->limit(5)->get() as $index => $post) {
+            $post->timestamps = false;
+            $post->update(['description' => $htmlContents[$index]]);
+        }
+
+        return $table;
     }
 
     public function textColumnDescription(Table $table): Table
@@ -398,7 +666,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->icon('heroicon-m-envelope'),
+                    ->icon(Heroicon::Envelope),
             ]);
     }
 
@@ -408,7 +676,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->icon('heroicon-m-envelope')
+                    ->icon(Heroicon::Envelope)
                     ->iconPosition(IconPosition::After),
             ]);
     }
@@ -419,7 +687,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->icon('heroicon-m-envelope')
+                    ->icon(Heroicon::Envelope)
                     ->iconColor('primary'),
             ]);
     }
@@ -429,7 +697,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->postsTable($table)
             ->columns([
                 TextColumn::make('title')
-                    ->size(TextColumn\Enums\TextColumnSize::Large),
+                    ->size(TextSize::Large),
             ]);
     }
 
@@ -460,8 +728,165 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('email')
                     ->copyable()
                     ->copyMessage('Email address copied')
-                    ->copyMessageDuration(1500),
+                    ->copyMessageDuration(30000),
             ]);
+    }
+
+    public function textColumnNumeric(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('rating')
+                    ->numeric(decimalPlaces: 1),
+            ]);
+    }
+
+    public function textColumnMoney(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('rating')
+                    ->label('Price')
+                    ->money('USD'),
+            ]);
+    }
+
+    public function textColumnDate(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('created_at')
+                    ->dateTime(),
+            ]);
+    }
+
+    public function textColumnSince(Table $table): Table
+    {
+        $table = $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('created_at')
+                    ->since(),
+            ]);
+
+        // Update dates to be relative to now for meaningful `since()` display
+        $dates = [
+            now()->subHours(2),
+            now()->subDays(3),
+            now()->subWeek(),
+            now()->subMonths(2),
+            now()->subMonths(6),
+        ];
+
+        foreach (Post::orderBy('id')->limit(5)->get() as $index => $post) {
+            $post->timestamps = false;
+            $post->update(['created_at' => $dates[$index]]);
+        }
+
+        return $table;
+    }
+
+    public function textColumnDateTooltip(Table $table): Table
+    {
+        $table = $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('created_at')
+                    ->since()
+                    ->dateTooltip(),
+            ]);
+
+        // Update dates to be relative to now for meaningful `since()` display
+        $dates = [
+            now()->subHours(2),
+            now()->subDays(3),
+            now()->subWeek(),
+            now()->subMonths(2),
+            now()->subMonths(6),
+        ];
+
+        foreach (Post::orderBy('id')->limit(5)->get() as $index => $post) {
+            $post->timestamps = false;
+            $post->update(['created_at' => $dates[$index]]);
+        }
+
+        return $table;
+    }
+
+    public function textColumnLimit(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('description')
+                    ->limit(50),
+            ]);
+    }
+
+    public function textColumnWords(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('description')
+                    ->words(10),
+            ]);
+    }
+
+    public function textColumnWrap(Table $table): Table
+    {
+        $table = $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('description')
+                    ->wrap(),
+            ]);
+
+        // Use longer descriptions so wrapping is clearly visible across 3+ lines
+        $descriptions = [
+            'Find out what Filament is and how it can help you build your next project. This comprehensive guide covers all the fundamentals you need to get started with the framework, including forms, tables, actions, and notifications.',
+            'Discover the top 5 best features of Filament and how they can help you build your next project. From forms to tables, actions to notifications, learn what makes Filament unique and why thousands of developers choose it for their admin panels.',
+            'Learn how to build a great Filament plugin and get it featured in the official plugin directory. We cover best practices for packaging, testing, and distributing your plugins to the community, including versioning and documentation strategies.',
+            'Learn how to customize Filament\'s UI with a theme and make it your own. Covers CSS hooks, color customization, font changes, and creating a cohesive brand experience across your entire admin panel and all of its components.',
+            'Discover the latest Filament plugins that were released in August. Includes reviews, installation guides, and tips for integrating them into your existing admin panel setup. Each plugin is evaluated for code quality, documentation, and ease of use.',
+        ];
+
+        foreach (Post::orderBy('id')->limit(5)->get() as $index => $post) {
+            $post->timestamps = false;
+            $post->update(['description' => $descriptions[$index]]);
+        }
+
+        return $table;
+    }
+
+    public function textColumnLineClamp(Table $table): Table
+    {
+        $table = $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('description')
+                    ->wrap()
+                    ->lineClamp(2),
+            ]);
+
+        // Use same longer descriptions so line clamping at 2 lines is clearly visible
+        $descriptions = [
+            'Find out what Filament is and how it can help you build your next project. This comprehensive guide covers all the fundamentals you need to get started with the framework, including forms, tables, actions, and notifications.',
+            'Discover the top 5 best features of Filament and how they can help you build your next project. From forms to tables, actions to notifications, learn what makes Filament unique and why thousands of developers choose it for their admin panels.',
+            'Learn how to build a great Filament plugin and get it featured in the official plugin directory. We cover best practices for packaging, testing, and distributing your plugins to the community, including versioning and documentation strategies.',
+            'Learn how to customize Filament\'s UI with a theme and make it your own. Covers CSS hooks, color customization, font changes, and creating a cohesive brand experience across your entire admin panel and all of its components.',
+            'Discover the latest Filament plugins that were released in August. Includes reviews, installation guides, and tips for integrating them into your existing admin panel setup. Each plugin is evaluated for code quality, documentation, and ease of use.',
+        ];
+
+        foreach (Post::orderBy('id')->limit(5)->get() as $index => $post) {
+            $post->timestamps = false;
+            $post->update(['description' => $descriptions[$index]]);
+        }
+
+        return $table;
     }
 
     public function iconColumn(Table $table): Table
@@ -470,10 +895,10 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('title'),
                 IconColumn::make('status')
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
             ]);
     }
@@ -484,10 +909,10 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('title'),
                 IconColumn::make('status')
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'info',
@@ -504,12 +929,12 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('title'),
                 IconColumn::make('status')
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
-                    ->size(IconColumn\Enums\IconColumnSize::Medium),
+                    ->size(IconSize::Medium),
             ]);
     }
 
@@ -530,8 +955,8 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('title'),
                 IconColumn::make('is_featured')
                     ->boolean()
-                    ->trueIcon('heroicon-o-check-badge')
-                    ->falseIcon('heroicon-o-x-mark'),
+                    ->trueIcon(Heroicon::OutlinedCheckBadge)
+                    ->falseIcon(Heroicon::OutlinedXMark),
             ]);
     }
 
@@ -547,12 +972,52 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function iconColumnWrap(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->grow(),
+                IconColumn::make('icons')
+                    ->width('1%')
+                    ->getStateUsing(fn ($rowLoop): array => match ($rowLoop->index) {
+                        0 => ['draft', 'reviewing', 'published', 'draft', 'published', 'reviewing', 'draft', 'published'],
+                        1 => ['published', 'reviewing', 'draft', 'published', 'draft', 'reviewing'],
+                        2 => ['draft', 'published', 'reviewing', 'published', 'draft', 'reviewing', 'published'],
+                        3 => ['reviewing', 'draft', 'published', 'reviewing', 'draft', 'published', 'reviewing', 'draft'],
+                        default => ['published', 'draft', 'reviewing', 'draft', 'published', 'reviewing', 'published', 'draft'],
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'info',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    })
+                    ->wrap(),
+            ]);
+    }
+
     public function imageColumn(Table $table): Table
     {
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name'),
                 ImageColumn::make('avatar'),
+            ]);
+    }
+
+    public function imageColumnSize(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('avatar')
+                    ->imageSize(60),
             ]);
     }
 
@@ -625,6 +1090,42 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function imageColumnStackedRing(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('colleagues')
+                    ->circular()
+                    ->stacked()
+                    ->ring(5),
+            ]);
+    }
+
+    public function imageColumnStackedOverlap(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('colleagues')
+                    ->circular()
+                    ->stacked()
+                    ->overlap(2),
+            ]);
+    }
+
+    public function imageColumnWrap(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('colleagues')
+                    ->circular()
+                    ->stacked()
+                    ->wrap(),
+            ]);
+    }
+
     public function colorColumn(Table $table): Table
     {
         return $this->postsTable($table)
@@ -656,7 +1157,28 @@ class TablesDemo extends Component implements HasForms, HasTable
                     })
                     ->copyable()
                     ->copyMessage('Color code copied')
-                    ->copyMessageDuration(1500),
+                    // Long enough that the message cannot expire before the
+                    // screenshot is captured on a busy machine.
+                    ->copyMessageDuration(30000),
+            ]);
+    }
+
+    public function colorColumnWrap(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->grow(),
+                ColorColumn::make('colors')
+                    ->width('1%')
+                    ->getStateUsing(fn ($rowLoop): array => match ($rowLoop->index) {
+                        0 => ['#ef4444', '#fde047', '#22c55e', '#0ea5e9', '#8b5cf6', '#ec4899'],
+                        1 => ['#ef4444', '#22c55e', '#0ea5e9', '#8b5cf6'],
+                        2 => ['#fde047', '#22c55e', '#0ea5e9', '#ec4899', '#f97316'],
+                        3 => ['#ef4444', '#fde047', '#8b5cf6'],
+                        default => ['#0ea5e9', '#22c55e', '#ef4444', '#fde047', '#8b5cf6'],
+                    })
+                    ->wrap(),
             ]);
     }
 
@@ -671,6 +1193,21 @@ class TablesDemo extends Component implements HasForms, HasTable
                         'reviewing' => 'Reviewing',
                         'published' => 'Published',
                     ]),
+            ]);
+    }
+
+    public function selectColumnJavascript(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                SelectColumn::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'reviewing' => 'Reviewing',
+                        'published' => 'Published',
+                    ])
+                    ->native(false),
             ]);
     }
 
@@ -690,6 +1227,39 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextInputColumn::make('email'),
+            ]);
+    }
+
+    public function textInputColumnAffix(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextInputColumn::make('slug')
+                    ->prefix('/')
+                    ->suffix('.html'),
+            ]);
+    }
+
+    public function textInputColumnPrefixIcon(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextInputColumn::make('slug')
+                    ->prefixIcon(Heroicon::GlobeAlt)
+                    ->suffixIcon(Heroicon::CheckCircle),
+            ]);
+    }
+
+    public function textInputColumnSuffixIconColor(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextInputColumn::make('email')
+                    ->suffixIcon(Heroicon::CheckCircle)
+                    ->suffixIconColor('success'),
             ]);
     }
 
@@ -713,10 +1283,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('slug'),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -757,7 +1327,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->filtersTable($table)
             ->filters([
                 Filter::make('created_at')
-                    ->form([
+                    ->schema([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
                     ]),
@@ -785,13 +1355,30 @@ class TablesDemo extends Component implements HasForms, HasTable
                 SelectFilter::make('status'),
                 SelectFilter::make('author'),
                 Filter::make('created_at')
-                    ->form([
+                    ->schema([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
                     ])
                     ->columns(2)
                     ->columnSpan(2),
             ], layout: FiltersLayout::AboveContent)
+            ->filtersFormColumns(4);
+    }
+
+    public function filtersAboveContentCollapsible(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status'),
+                SelectFilter::make('author'),
+                Filter::make('created_at')
+                    ->schema([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ])
+                    ->columns(2)
+                    ->columnSpan(2),
+            ], layout: FiltersLayout::AboveContentCollapsible)
             ->filtersFormColumns(4);
     }
 
@@ -802,7 +1389,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 SelectFilter::make('status'),
                 SelectFilter::make('author'),
                 Filter::make('created_at')
-                    ->form([
+                    ->schema([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
                     ])
@@ -810,6 +1397,54 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->columnSpan(2),
             ], layout: FiltersLayout::BelowContent)
             ->filtersFormColumns(4);
+    }
+
+    public function filtersBeforeContent(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status'),
+                SelectFilter::make('author'),
+                Filter::make('is_featured'),
+            ], layout: FiltersLayout::BeforeContent);
+    }
+
+    public function filtersAfterContent(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status'),
+                SelectFilter::make('author'),
+                Filter::make('is_featured'),
+            ], layout: FiltersLayout::AfterContent);
+    }
+
+    public function filtersCustomFormSchema(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                TernaryFilter::make('is_featured'),
+                SelectFilter::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'reviewing' => 'Reviewing',
+                        'published' => 'Published',
+                    ]),
+                SelectFilter::make('author'),
+            ])
+            ->filtersFormColumns(2)
+            ->filtersFormWidth(Width::FourExtraLarge)
+            ->filtersFormSchema(fn (array $filters): array => [
+                Section::make('Visibility')
+                    ->description('These filters affect the visibility of the records in the table.')
+                    ->schema([
+                        $filters['is_featured'],
+                        $filters['status'],
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull(),
+                $filters['author'],
+            ]);
     }
 
     public function filtersCustomTriggerAction(Table $table): Table
@@ -825,6 +1460,79 @@ class TablesDemo extends Component implements HasForms, HasTable
             );
     }
 
+    public function filtersCustomRemoveAllAction(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                Filter::make('is_featured')
+                    ->label('Featured')
+                    ->default(),
+            ])
+            ->filtersRemoveAllAction(
+                fn (Action $action) => $action
+                    ->tooltip('Clear filters'),
+            );
+    }
+
+    public function filtersGridColumns(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'reviewing' => 'Reviewing',
+                        'published' => 'Published',
+                    ]),
+                SelectFilter::make('author'),
+                TernaryFilter::make('is_featured'),
+            ])
+            ->filtersFormColumns(3)
+            ->filtersFormWidth(Width::FourExtraLarge);
+    }
+
+    public function filtersModal(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'reviewing' => 'Reviewing',
+                        'published' => 'Published',
+                    ]),
+                SelectFilter::make('author'),
+                Filter::make('is_featured'),
+            ], layout: FiltersLayout::Modal);
+    }
+
+    public function filtersTernary(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                TernaryFilter::make('is_featured'),
+            ]);
+    }
+
+    public function filtersQueryBuilder(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                QueryBuilder::make()
+                    ->constraints([
+                        TextConstraint::make('title'),
+                        BooleanConstraint::make('is_featured'),
+                        SelectConstraint::make('status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'reviewing' => 'Reviewing',
+                                'published' => 'Published',
+                            ]),
+                        DateConstraint::make('created_at'),
+                    ]),
+            ], layout: FiltersLayout::AboveContent);
+    }
+
     public function actionsTable(Table $table): Table
     {
         return $this->postsTable($table)
@@ -835,10 +1543,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('slug'),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -865,7 +1573,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: ActionsPosition::BeforeColumns);
+            ], position: RecordActionsPosition::BeforeColumns);
     }
 
     public function actionsBeforeCells(Table $table): Table
@@ -874,7 +1582,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: ActionsPosition::BeforeCells)
+            ], position: RecordActionsPosition::BeforeCells)
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
@@ -908,6 +1616,14 @@ class TablesDemo extends Component implements HasForms, HasTable
     {
         return $this->actionsTable($table)
             ->headerActions([
+                CreateAction::make(),
+            ]);
+    }
+
+    public function toolbarActions(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->toolbarActions([
                 CreateAction::make(),
             ]);
     }
@@ -972,7 +1688,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
-                ])->icon('heroicon-m-ellipsis-horizontal'),
+                ])->icon(Heroicon::EllipsisHorizontal),
             ]);
     }
 
@@ -996,7 +1712,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
-                ])->size(ActionSize::Small),
+                ])->size(Size::Small),
             ]);
     }
 
@@ -1042,17 +1758,17 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ]),
                     Stack::make([
                         TextColumn::make('phone')
-                            ->icon('heroicon-m-phone'),
+                            ->icon(Heroicon::Phone),
                         TextColumn::make('email')
-                            ->icon('heroicon-m-envelope'),
+                            ->icon(Heroicon::Envelope),
                     ])
                         ->visibleFrom('md'),
                 ]),
                 Panel::make([
                     TextColumn::make('email')
-                        ->icon('heroicon-m-envelope'),
+                        ->icon(Heroicon::Envelope),
                     TextColumn::make('phone')
-                        ->icon('heroicon-m-phone'),
+                        ->icon(Heroicon::Phone),
                 ])->collapsible(),
             ]);
     }
@@ -1120,9 +1836,9 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->sortable(),
                     Stack::make([
                         TextColumn::make('phone')
-                            ->icon('heroicon-m-phone'),
+                            ->icon(Heroicon::Phone),
                         TextColumn::make('email')
-                            ->icon('heroicon-m-envelope'),
+                            ->icon(Heroicon::Envelope),
                     ]),
                 ])->from('md'),
             ]);
@@ -1142,9 +1858,9 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->sortable(),
                     Stack::make([
                         TextColumn::make('phone')
-                            ->icon('heroicon-m-phone'),
+                            ->icon(Heroicon::Phone),
                         TextColumn::make('email')
-                            ->icon('heroicon-m-envelope'),
+                            ->icon(Heroicon::Envelope),
                     ])->visibleFrom('md'),
                 ])->from('md'),
             ]);
@@ -1164,14 +1880,36 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->sortable(),
                     Stack::make([
                         TextColumn::make('phone')
-                            ->icon('heroicon-m-phone')
+                            ->icon(Heroicon::Phone)
                             ->grow(false),
                         TextColumn::make('email')
-                            ->icon('heroicon-m-envelope')
+                            ->icon(Heroicon::Envelope)
                             ->grow(false),
                     ])
                         ->alignment(Alignment::End)
                         ->visibleFrom('md'),
+                ])->from('md'),
+            ]);
+    }
+
+    public function layoutStackSpaced(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    TextColumn::make('name')
+                        ->weight(FontWeight::Bold)
+                        ->searchable()
+                        ->sortable(),
+                    Stack::make([
+                        TextColumn::make('phone')
+                            ->icon(Heroicon::Phone),
+                        TextColumn::make('email')
+                            ->icon(Heroicon::Envelope),
+                    ])->space(1),
                 ])->from('md'),
             ]);
     }
@@ -1192,9 +1930,9 @@ class TablesDemo extends Component implements HasForms, HasTable
                 Panel::make([
                     Split::make([
                         TextColumn::make('phone')
-                            ->icon('heroicon-m-phone'),
+                            ->icon(Heroicon::Phone),
                         TextColumn::make('email')
-                            ->icon('heroicon-m-envelope'),
+                            ->icon(Heroicon::Envelope),
                     ])->from('md'),
                 ])->collapsible(),
             ]);
@@ -1224,6 +1962,48 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->defaultPaginationPageOption(6);
     }
 
+    public function layoutColumnGrid(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    Stack::make([
+                        TextColumn::make('name')
+                            ->weight(FontWeight::Bold)
+                            ->searchable()
+                            ->sortable(),
+                        TextColumn::make('job'),
+                    ]),
+                    Grid::make([
+                        'lg' => 2,
+                    ])
+                        ->schema([
+                            TextColumn::make('phone')
+                                ->icon(Heroicon::Phone),
+                            TextColumn::make('email')
+                                ->icon(Heroicon::Envelope),
+                        ]),
+                ])->from('md'),
+            ]);
+    }
+
+    public function layoutStackedOnMobile(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email'),
+                TextColumn::make('phone'),
+                TextColumn::make('job'),
+            ])
+            ->stackedOnMobile();
+    }
+
     public function summaries(Table $table): Table
     {
         return $this->postsTable($table)
@@ -1240,10 +2020,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ]),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -1271,10 +2051,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->numeric(),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -1297,10 +2077,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->numeric(),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -1313,6 +2093,159 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'reviewing' => 'Posts that are being checked by the content team.',
                 'published' => 'Posts that are public on the website.',
             }));
+    }
+
+    public function groupingCollapsible(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('author.name')
+                    ->numeric(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+            ])
+            ->defaultGroup(Group::make('status')->collapsible())
+            ->groupingSettingsHidden();
+    }
+
+    public function groupingSelectable(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('author.name')
+                    ->numeric(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+            ])
+            ->groups([
+                Group::make('status'),
+                Group::make('author.name'),
+            ])
+            ->defaultGroup('status');
+    }
+
+    public function groupingDate(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('author.name')
+                    ->numeric(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+            ])
+            ->defaultGroup(Group::make('created_at')->date());
+    }
+
+    public function groupingGroupsOnly(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('rating')
+                    ->summarize(Average::make()),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+            ])
+            ->defaultGroup('status')
+            ->groupsOnly();
+    }
+
+    public function summaryAverage(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('rating')
+                    ->numeric(decimalPlaces: 1)
+                    ->summarize(Average::make()),
+            ]);
+    }
+
+    public function summarySum(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('rating')
+                    ->numeric(decimalPlaces: 1)
+                    ->summarize(Sum::make()),
+            ]);
+    }
+
+    public function summaryCount(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title'),
+                IconColumn::make('is_featured')
+                    ->boolean()
+                    ->summarize(Count::make()->icons()),
+            ]);
+    }
+
+    public function summaryRange(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('rating')
+                    ->numeric(decimalPlaces: 1)
+                    ->summarize(Range::make()),
+            ]);
     }
 
     public function emptyState(Table $table): Table
@@ -1338,7 +2271,7 @@ class TablesDemo extends Component implements HasForms, HasTable
     public function emptyStateIcon(Table $table): Table
     {
         return $this->emptyStateDescription($table)
-            ->emptyStateIcon('heroicon-o-bookmark');
+            ->emptyStateIcon(Heroicon::OutlinedBookmark);
     }
 
     public function emptyStateActions(Table $table): Table
@@ -1347,7 +2280,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->emptyStateActions([
                 Action::make('create')
                     ->label('Create post')
-                    ->icon('heroicon-m-plus')
+                    ->icon(Heroicon::Plus)
                     ->button(),
             ]);
     }
@@ -1366,10 +2299,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->numeric(),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        'draft' => 'heroicon-o-pencil',
-                        'reviewing' => 'heroicon-o-clock',
-                        'published' => 'heroicon-o-check-circle',
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -1400,6 +2333,22 @@ class TablesDemo extends Component implements HasForms, HasTable
     {
         User::truncate();
         Post::truncate();
+
+        $authorIds = collect([
+            'Dan Harrin' => 'dan@filamentphp.com',
+            'Ryan Chandler' => 'ryan@filamentphp.com',
+            'Zep Fietje' => 'zep@filamentphp.com',
+            'Dennis Koch' => 'dennis@filamentphp.com',
+            'Adam Weston' => 'adam@filamentphp.com',
+        ])->map(fn (string $email, string $name): int => User::query()->insertGetId([
+            'name' => $name,
+            'email' => $email,
+            'email_verified_at' => '2023-08-01 11:30:00',
+            'password' => 'password',
+            'created_at' => '2023-08-01 11:30:00',
+            'updated_at' => '2023-08-01 11:30:00',
+        ]))->values()->all();
+
         Post::insert([
             [
                 'title' => 'What is Filament?',
@@ -1407,8 +2356,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'description' => 'Find out what Filament is and how it can help you build your next project.',
                 'is_featured' => true,
                 'status' => 'published',
-                'author_id' => User::factory()->create(['name' => 'Dan Harrin'])->id,
+                'author_id' => $authorIds[0],
                 'rating' => 8.1,
+                'created_at' => '2025-02-10 09:15:00',
+                'updated_at' => '2025-02-10 09:15:00',
             ],
             [
                 'title' => 'Top 5 best features of Filament',
@@ -1416,8 +2367,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'description' => 'Discover the top 5 best features of Filament and how they can help you build your next project.',
                 'is_featured' => false,
                 'status' => 'reviewing',
-                'author_id' => User::factory()->create(['name' => 'Ryan Chandler'])->id,
+                'author_id' => $authorIds[1],
                 'rating' => 9.3,
+                'created_at' => '2025-02-14 14:30:00',
+                'updated_at' => '2025-02-14 14:30:00',
             ],
             [
                 'title' => 'Tips for building a great Filament plugin',
@@ -1425,8 +2378,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'description' => 'Learn how to build a great Filament plugin and get it featured in the official plugin directory.',
                 'is_featured' => true,
                 'status' => 'draft',
-                'author_id' => User::factory()->create(['name' => 'Zep Fietje'])->id,
+                'author_id' => $authorIds[2],
                 'rating' => 9.7,
+                'created_at' => '2025-02-18 11:00:00',
+                'updated_at' => '2025-02-18 11:00:00',
             ],
             [
                 'title' => 'Customizing Filament\'s UI with a theme',
@@ -1434,8 +2389,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'description' => 'Learn how to customize Filament\'s UI with a theme and make it your own.',
                 'is_featured' => false,
                 'status' => 'reviewing',
-                'author_id' => User::factory()->create(['name' => 'Dennis Koch'])->id,
+                'author_id' => $authorIds[3],
                 'rating' => 9.5,
+                'created_at' => '2025-02-22 16:45:00',
+                'updated_at' => '2025-02-22 16:45:00',
             ],
             [
                 'title' => 'New Filament plugins in August',
@@ -1443,13 +2400,15 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'description' => 'Discover the latest Filament plugins that were released in August.',
                 'is_featured' => false,
                 'status' => 'published',
-                'author_id' => User::factory()->create(['name' => 'Adam Weston'])->id,
+                'author_id' => $authorIds[4],
                 'rating' => 8.4,
+                'created_at' => '2025-02-28 10:20:00',
+                'updated_at' => '2025-02-28 10:20:00',
             ],
         ]);
 
         if ($hasSeededPosts) {
-            Post::factory()->count(45)->create();
+            Post::insert(DemoData::posts($authorIds));
         }
 
         return $table
@@ -1552,11 +2511,155 @@ class TablesDemo extends Component implements HasForms, HasTable
                 ]),
             ],
         ]);
-        User::factory()->count(45)->create();
+        User::insert(DemoData::users());
 
         return $table
             ->query(User::query())
             ->defaultPaginationPageOption(5);
+    }
+
+    public function tableCustomRowClasses(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    }),
+                TextColumn::make('author.name'),
+            ])
+            ->recordClasses(fn (Post $record) => match ($record->status) {
+                'draft' => '!bg-danger-50 dark:!bg-danger-400/10',
+                'reviewing' => '!bg-warning-50 dark:!bg-warning-400/10',
+                'published' => '!bg-success-50 dark:!bg-success-400/10',
+                default => null,
+            });
+    }
+
+    public function tablePaginationDefault(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    }),
+                TextColumn::make('author.name'),
+            ])
+            ->defaultPaginationPageOption(5);
+    }
+
+    public function tablePaginationExtreme(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    }),
+                TextColumn::make('author.name'),
+            ])
+            ->extremePaginationLinks()
+            ->defaultPaginationPageOption(5);
+    }
+
+    public function tablePaginationCursor(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    }),
+                TextColumn::make('author.name'),
+            ])
+            ->paginationMode(PaginationMode::Cursor)
+            ->defaultPaginationPageOption(5);
+    }
+
+    public function tablePaginationSimple(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    }),
+                TextColumn::make('author.name'),
+            ])
+            ->paginationMode(PaginationMode::Simple)
+            ->defaultPaginationPageOption(3);
+    }
+
+    public function columnExpandableLimitedList(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->label('Email addresses')
+                    ->getStateUsing(fn ($record): array => [
+                        $record->email,
+                        str($record->email)->replace('filamentphp.com', 'filament.dev'),
+                        str($record->email)->replace('filamentphp.com', 'example.com'),
+                        str($record->email)->replace('filamentphp.com', 'company.org'),
+                    ])
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList(),
+            ]);
+    }
+
+    public function filtersMultiSelect(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->native(false)
+                    ->options([
+                        'draft' => 'Draft',
+                        'reviewing' => 'Reviewing',
+                        'published' => 'Published',
+                    ]),
+            ]);
     }
 
     public function table(Table $table): Table

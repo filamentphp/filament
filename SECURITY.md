@@ -1,13 +1,7 @@
 # Security Policy
 
-## Supported Versions
-
-| Version | Supported |
-|---------| ------------------ |
-| 1.x     | :white_check_mark: |
-| 2.x     | :white_check_mark: |
-| 3.x     | :white_check_mark: |
+Please review the [Version Support Policy](https://filamentphp.com/docs/introduction/version-support-policy) on our website.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within Filament, please email Dan Harrin via [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Filament, please [report it through GitHub](https://github.com/filamentphp/filament/security/advisories). All security vulnerabilities will be promptly addressed.

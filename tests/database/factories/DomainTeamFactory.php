@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Database\Factories;
 
-use Filament\Tests\Models\DomainTeam;
+use Filament\Tests\Fixtures\Models\DomainTeam;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DomainTeamFactory extends Factory

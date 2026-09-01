@@ -27,8 +27,6 @@ trait Macroable
 
         foreach ($methods as $method) {
             if ($replace || (! isset(static::$macros[$method->name][static::class]))) {
-                $method->setAccessible(true);
-
                 static::macro($method->name, $method->invoke($mixin));
             }
         }
@@ -37,6 +35,11 @@ trait Macroable
     public static function flushMacros(): void
     {
         static::$macros = [];
+    }
+
+    public static function hasMacro(string $name): bool
+    {
+        return (bool) static::getMacro($name);
     }
 
     /**

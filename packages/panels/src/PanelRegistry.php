@@ -12,24 +12,13 @@ class PanelRegistry
      */
     public array $panels = [];
 
+    public ?Panel $defaultPanel = null;
+
     public function register(Panel $panel): void
     {
         $this->panels[$panel->getId()] = $panel;
 
         $panel->register();
-
-        if (! $panel->isDefault()) {
-            return;
-        }
-
-        if (app()->resolved('filament')) {
-            app('filament')->setCurrentPanel($panel);
-        }
-
-        app()->resolving(
-            'filament',
-            fn (FilamentManager $manager) => $manager->setCurrentPanel($panel),
-        );
     }
 
     /**
@@ -37,22 +26,14 @@ class PanelRegistry
      */
     public function getDefault(): Panel
     {
-        return Arr::first(
+        return $this->defaultPanel ??= Arr::first(
             $this->panels,
             fn (Panel $panel): bool => $panel->isDefault(),
-            fn () => throw NoDefaultPanelSetException::make(),
+            fn () => throw new NoDefaultPanelSetException('No default Filament panel is set. You may do this with the `default()` method inside a Filament provider\'s `panel()` configuration.'),
         );
     }
 
-    /**
-     * @throws NoDefaultPanelSetException
-     */
-    public function get(?string $id = null, bool $isStrict = true): Panel
-    {
-        return $this->find($id, $isStrict) ?? $this->getDefault();
-    }
-
-    protected function find(?string $id = null, bool $isStrict = true): ?Panel
+    public function get(?string $id = null, bool $isStrict = true): ?Panel
     {
         if ($id === null) {
             return null;

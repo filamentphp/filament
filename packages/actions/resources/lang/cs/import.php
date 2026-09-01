@@ -13,6 +13,9 @@ return [
             'file' => [
                 'label' => 'Soubor',
                 'placeholder' => 'Nahrát CSV soubor',
+                'rules' => [
+                    'duplicate_columns' => '{0} Soubor nesmí obsahovat více než jednu prázdnou hlavičku sloupce.|{1,*} Soubor nesmí obsahovat duplicitní hlavičky sloupců: :columns.',
+                ],
             ],
 
             'columns' => [
@@ -72,6 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'chyba',
         'system_error' => 'Chyba systému, kontaktujte prosím podporu.',
+        'column_mapping_required_for_new_record' => 'Sloupec :attribute nebyl přiřazen k žádnému sloupci ve souboru, ale je vyžadován pro vytvoření nových záznamů.',
     ],
 
 ];

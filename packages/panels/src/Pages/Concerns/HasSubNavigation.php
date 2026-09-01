@@ -8,6 +8,8 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
+use Illuminate\Support\Collection;
+use UnitEnum;
 
 trait HasSubNavigation
 {
@@ -23,7 +25,7 @@ trait HasSubNavigation
      */
     public function getSubNavigation(): array
     {
-        if (filled($cluster = static::getCluster())) {
+        if (filled($cluster = static::getCluster()) && $cluster::shouldRegisterSubNavigation()) {
             return $this->generateNavigationItems($cluster::getClusteredComponents());
         }
 
@@ -74,10 +76,15 @@ trait HasSubNavigation
                 }
 
                 $itemGroup = $item->getGroup();
+                $itemGroupKey = $itemGroup;
 
-                if (array_key_exists($itemGroup, $navigationGroups)) {
-                    $navigationGroups[$itemGroup]->items([
-                        ...$navigationGroups[$itemGroup]->getItems(),
+                if ($itemGroup instanceof UnitEnum) {
+                    $itemGroupKey = $itemGroup->name;
+                }
+
+                if (array_key_exists($itemGroupKey ?? '', $navigationGroups)) {
+                    $navigationGroups[$itemGroupKey]->items([
+                        ...$navigationGroups[$itemGroupKey]->getItems(),
                         $item,
                     ]);
 
@@ -85,9 +92,9 @@ trait HasSubNavigation
                 }
 
                 if (filled($itemGroup)) {
-                    $navigationGroups[$itemGroup] = NavigationGroup::make()
-                        ->label($itemGroup)
-                        ->items([$item]);
+                    $navigationGroups[$itemGroupKey] = ($itemGroup instanceof UnitEnum)
+                        ? NavigationGroup::fromEnum($itemGroup)->items([$item])
+                        : NavigationGroup::make()->label($itemGroup)->items([$item]);
 
                     return false;
                 }
@@ -105,10 +112,48 @@ trait HasSubNavigation
             );
         }
 
+        $navigationItems = $this->processParentNavigationItems(collect($navigationItems))->all();
+
+        foreach ($navigationGroups as $navigationGroup) {
+            $navigationGroup->items(
+                $this->processParentNavigationItems(collect($navigationGroup->getItems()))->all(),
+            );
+        }
+
         return $this->cachedSubNavigation = [
             ...($navigationItems ? [NavigationGroup::make()->items($navigationItems)] : []),
             ...$navigationGroups,
         ];
+    }
+
+    /**
+     * @param  Collection<int, NavigationItem>  $items
+     * @return Collection<int, NavigationItem>
+     */
+    protected function processParentNavigationItems(Collection $items): Collection
+    {
+        $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
+
+        $items = $parentItems->get('', collect());
+
+        $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemKey) use ($items): void {
+            $parent = $items->first(
+                fn (NavigationItem $item): bool => $item->getKey() === $parentItemKey || $item->getLabel() === $parentItemKey
+            );
+
+            if (! $parent) {
+                return;
+            }
+
+            $mergedChildren = collect($parent->getChildItems())
+                ->merge($parentItemItems)
+                ->sortBy(fn (NavigationItem $item): int => $item->getSort())
+                ->values();
+
+            $parent->childItems($mergedChildren);
+        });
+
+        return $items;
     }
 
     /**

@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label lecstolása',
+            'heading' => ':label lecsatolása',
 
             'actions' => [
 

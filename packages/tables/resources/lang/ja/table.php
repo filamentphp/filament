@@ -2,13 +2,45 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'カラム',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'カラムに適用',
+            ],
+
+            'reset' => [
+                'label' => 'リセット',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'アクション',
+        ],
+
+        'select' => [
+
+            'loading_message' => '読み込み中...',
+
+            'no_options_message' => '利用可能なオプションはありません。',
+
+            'no_search_results_message' => '条件に一致するオプションがありません。',
+
+            'placeholder' => '選択してください',
+
+            'searching_message' => '検索中...',
+
+            'search_prompt' => '検索ワードを入力してください...',
+
+        ],
 
         'text' => [
 
@@ -95,7 +127,7 @@ return [
             'label' => '操作を開く',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => '列を切り替える',
         ],
 
@@ -142,6 +174,11 @@ return [
 
         'select' => [
             'placeholder' => '全件',
+
+            'relationship' => [
+                'empty_option_label' => 'なし',
+            ],
+
         ],
 
         'trashed' => [
@@ -164,7 +201,6 @@ return [
 
             'group' => [
                 'label' => 'グループ化',
-                'placeholder' => 'グループ化',
             ],
 
             'direction' => [
@@ -224,5 +260,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'レコード',
 
 ];

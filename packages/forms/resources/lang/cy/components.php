@@ -104,7 +104,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Atodi ffeiliau',
             'bold' => 'Trwm',
             'bullet_list' => 'Rhestr bwled',
@@ -186,7 +186,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Atodi ffeiliau',
             'blockquote' => 'Dyfynnod Bloc',
             'bold' => 'Trwm',

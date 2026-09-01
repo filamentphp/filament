@@ -53,6 +53,17 @@ trait HasAlignment
 
     public function getAlignment(): Alignment | string | null
     {
-        return $this->evaluate($this->alignment);
+        $alignment = $this->evaluate($this->alignment);
+
+        if (! is_string($alignment)) {
+            return $alignment;
+        }
+
+        return Alignment::tryFrom($alignment) ?? $alignment;
+    }
+
+    public function hasDynamicAlignment(): bool
+    {
+        return $this->alignment instanceof Closure;
     }
 }

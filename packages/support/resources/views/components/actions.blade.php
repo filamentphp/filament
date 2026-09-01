@@ -1,14 +1,15 @@
-@php
-    use Filament\Support\Enums\Alignment;
-@endphp
-
 @props([
     'actions' => [],
-    'alignment' => Alignment::Start,
+    'alignment' => null,
     'fullWidth' => false,
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+    use Illuminate\Contracts\Support\Htmlable;
+
+    $alignment ??= Alignment::Start;
+
     if (is_array($actions)) {
         $actions = array_filter(
             $actions,
@@ -23,7 +24,7 @@
     $hasActions = false;
 
     $hasSlot = ! \Filament\Support\is_slot_empty($slot);
-    $actionsAreHtmlable = $actions instanceof \Illuminate\Contracts\Support\Htmlable;
+    $actionsAreHtmlable = $actions instanceof Htmlable;
 
     if ($hasSlot) {
         $hasActions = true;
@@ -38,16 +39,9 @@
     <div
         {{
             $attributes->class([
-                'fi-ac gap-3',
-                'flex flex-wrap items-center' => ! $fullWidth,
-                match ($alignment) {
-                    Alignment::Start, Alignment::Left => 'justify-start',
-                    Alignment::Center => 'justify-center',
-                    Alignment::End, Alignment::Right => 'flex-row-reverse',
-                    Alignment::Between, Alignment::Justify => 'justify-between',
-                    default => $alignment,
-                } => ! $fullWidth,
-                'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
+                'fi-ac',
+                'fi-width-full' => $fullWidth,
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : null) => ! $fullWidth,
             ])
         }}
     >

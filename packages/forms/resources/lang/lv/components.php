@@ -232,7 +232,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Pievienot failus',
             'blockquote' => 'Citāts',
             'bold' => 'Treknraksts',
@@ -321,7 +321,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Pievienot failus',
             'blockquote' => 'Citāts',
             'bold' => 'Treknraksts',

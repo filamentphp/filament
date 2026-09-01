@@ -3,14 +3,13 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Collection;
+use Stringable;
 
-class KeyValueEntry extends Entry
+class KeyValueEntry extends Entry implements HasEmbeddedView
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-infolists::components.key-value-entry';
-
     protected string | Closure | null $keyLabel = null;
 
     protected string | Closure | null $valueLabel = null;
@@ -54,5 +53,59 @@ class KeyValueEntry extends Entry
     public function getValueLabel(): string
     {
         return $this->evaluate($this->valueLabel) ?? __('filament-infolists::components.entries.key_value.columns.value.label');
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $state = $this->getState();
+
+        if ($state instanceof Collection) {
+            $state = $state->all();
+        }
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-in-key-value',
+            ]);
+
+        ob_start(); ?>
+
+        <table <?= $attributes->toHtml() ?>>
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <?= e($this->getKeyLabel()) ?>
+                    </th>
+
+                    <th scope="col">
+                        <?= e($this->getValueLabel()) ?>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php foreach (($state ?? []) as $key => $value) { ?>
+                    <tr>
+                        <th scope="row">
+                            <?= e($key) ?>
+                        </th>
+
+                        <td>
+                            <?= e($value === null || is_scalar($value) || ($value instanceof Stringable) || ($value instanceof Htmlable) ? $value : json_encode($value)) ?>
+                        </td>
+                    </tr>
+                <?php } ?>
+
+                <?php if (empty($state)) { ?>
+                    <tr>
+                        <td colspan="2" class="fi-in-placeholder">
+                            <?= e($this->getPlaceholder()) ?>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 }

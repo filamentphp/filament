@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'ستوونەکان',
 
@@ -84,7 +84,7 @@ return [
             'label' => 'کۆمەڵی کردارەکان',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'پشاندان/لابردنی ستوونەکان',
         ],
 

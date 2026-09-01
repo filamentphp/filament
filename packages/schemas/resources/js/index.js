@@ -1,0 +1,237 @@
+import actions from './components/actions.js'
+
+const resolveRelativeStatePath = function (containerPath, path, isAbsolute) {
+    let containerPathCopy = containerPath
+
+    if (path.startsWith('/')) {
+        isAbsolute = true
+        path = path.slice(1)
+    }
+
+    if (isAbsolute) {
+        return path
+    }
+
+    while (path.startsWith('../')) {
+        containerPathCopy = containerPathCopy.includes('.')
+            ? containerPathCopy.slice(0, containerPathCopy.lastIndexOf('.'))
+            : null
+
+        path = path.slice(3)
+    }
+
+    if (['', null, undefined].includes(containerPathCopy)) {
+        return path
+    }
+
+    if (['', null, undefined].includes(path)) {
+        return containerPathCopy
+    }
+
+    return `${containerPathCopy}.${path}`
+}
+
+const findClosestLivewireComponent = (el) => {
+    let closestRoot = Alpine.findClosest(el, (i) => i.__livewire)
+
+    if (!closestRoot) {
+        throw 'Could not find Livewire component in DOM tree.'
+    }
+
+    return closestRoot.__livewire
+}
+
+let isRetryingConcealedValidation = false
+
+// `invalid` events do not bubble, so they are only observable at the document
+// level in the capture phase.
+document.addEventListener(
+    'invalid',
+    (event) => {
+        const control = event.target
+
+        // Only controls that belong to a Filament field are handled, so that
+        // other forms on the page keep their own validation behavior.
+        if (!control.closest('[data-field-wrapper]')) {
+            return
+        }
+
+        // Visible controls use the default native validation UI.
+        if (
+            control.offsetParent !== null &&
+            getComputedStyle(control).visibility !== 'hidden'
+        ) {
+            return
+        }
+
+        // The browser cannot focus a concealed control or anchor a validation
+        // bubble to it, so suppress the native UI for it.
+        event.preventDefault()
+
+        // Only attempt one reveal per validation burst, so a control that
+        // stays concealed cannot cause an infinite retry loop.
+        if (isRetryingConcealedValidation) {
+            return
+        }
+
+        isRetryingConcealedValidation = true
+
+        // Reveal the concealing containers, using the same `expand` event
+        // contract as `handleFormValidationError()` below.
+        let elementToExpand = control
+
+        while (elementToExpand) {
+            elementToExpand.dispatchEvent(new CustomEvent('expand'))
+
+            elementToExpand = elementToExpand.parentNode
+        }
+
+        // Re-run native validation once Alpine has applied the reveal, so the
+        // browser can focus the control and show its validation bubble.
+        requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+                control.form?.reportValidity()
+
+                setTimeout(() => (isRetryingConcealedValidation = false), 100)
+            }),
+        )
+    },
+    true,
+)
+
+document.addEventListener('alpine:init', () => {
+    window.Alpine.data('filamentSchema', ({ livewireId, schemaKey }) => ({
+        handleFormValidationError(event) {
+            if (event.detail.livewireId !== livewireId) {
+                return
+            }
+
+            this.$nextTick(() => {
+                let error = this.$el.querySelector('[data-validation-error]')
+
+                if (!error) {
+                    return
+                }
+
+                let elementToExpand = error
+
+                while (elementToExpand) {
+                    elementToExpand.dispatchEvent(new CustomEvent('expand'))
+
+                    elementToExpand = elementToExpand.parentNode
+                }
+
+                setTimeout(
+                    () =>
+                        error.closest('[data-field-wrapper]').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'start',
+                        }),
+                    200,
+                )
+            })
+        },
+
+        handleClientSideStateReset(event) {
+            if (
+                event.detail.livewireId !== livewireId ||
+                event.detail.schemaKey !== schemaKey
+            ) {
+                return
+            }
+
+            this.$nextTick(() => {
+                const fields = this.$el.querySelectorAll('[autofocus]')
+
+                for (const field of fields) {
+                    // Skip fields hidden by an ancestor (e.g. an inactive
+                    // wizard step or tab) — the wizard/tab Alpine scope owns
+                    // its own `$watch` that refocuses once the active step
+                    // or tab is restored.
+                    if (field.offsetParent === null) {
+                        continue
+                    }
+
+                    field.focus()
+
+                    if (document.activeElement === field) {
+                        break
+                    }
+                }
+            })
+        },
+
+        isStateChanged(state, old) {
+            if (state === undefined) {
+                return false
+            }
+
+            try {
+                return JSON.stringify(state) !== JSON.stringify(old)
+            } catch {
+                return state !== old
+            }
+        },
+    }))
+
+    window.Alpine.data(
+        'filamentSchemaComponent',
+        ({ path, containerPath, $wire }) => ({
+            $statePath: path,
+            $get: (path, isAbsolute) => {
+                return $wire.$get(
+                    resolveRelativeStatePath(containerPath, path, isAbsolute),
+                )
+            },
+            $set: (path, state, isAbsolute, isLive = false) => {
+                return $wire.$set(
+                    resolveRelativeStatePath(containerPath, path, isAbsolute),
+                    state,
+                    isLive,
+                )
+            },
+            get $state() {
+                return $wire.$get(path)
+            },
+        }),
+    )
+
+    window.Alpine.data('filamentActionsSchemaComponent', actions)
+
+    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+        succeed(({ snapshot, effects }) => {
+            effects.dispatches?.forEach((dispatch) => {
+                if (!dispatch.params?.awaitSchemaComponent) {
+                    return
+                }
+
+                let els = Array.from(
+                    component.el.querySelectorAll(
+                        `[wire\\:partial="schema-component::${dispatch.params.awaitSchemaComponent}"]`,
+                    ),
+                ).filter((el) => findClosestLivewireComponent(el) === component)
+
+                if (els.length === 1) {
+                    return
+                }
+
+                if (els.length > 1) {
+                    throw `Multiple schema components found with key [${dispatch.params.awaitSchemaComponent}].`
+                }
+
+                window.addEventListener(
+                    `schema-component-${component.id}-${dispatch.params.awaitSchemaComponent}-loaded`,
+                    () => {
+                        window.dispatchEvent(
+                            new CustomEvent(dispatch.name, {
+                                detail: dispatch.params,
+                            }),
+                        )
+                    },
+                    { once: true },
+                )
+            })
+        })
+    })
+})

@@ -3,7 +3,12 @@
 namespace Filament\Notifications\Livewire;
 
 use Carbon\CarbonInterface;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
@@ -12,12 +17,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class DatabaseNotifications extends Component
+class DatabaseNotifications extends Component implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
+    use InteractsWithSchemas;
     use WithPagination;
 
     public static bool $isPaginated = true;
@@ -34,6 +42,10 @@ class DatabaseNotifications extends Component
     #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {
+        if (! Str::isUuid($id)) {
+            return;
+        }
+
         $this->getNotificationsQuery()
             ->where('id', $id)
             ->delete();
@@ -42,6 +54,10 @@ class DatabaseNotifications extends Component
     #[On('markedNotificationAsRead')]
     public function markNotificationAsRead(string $id): void
     {
+        if (! Str::isUuid($id)) {
+            return;
+        }
+
         $this->getNotificationsQuery()
             ->where('id', $id)
             ->update(['read_at' => now()]);
@@ -50,6 +66,10 @@ class DatabaseNotifications extends Component
     #[On('markedNotificationAsUnread')]
     public function markNotificationAsUnread(string $id): void
     {
+        if (! Str::isUuid($id)) {
+            return;
+        }
+
         $this->getNotificationsQuery()
             ->where('id', $id)
             ->update(['read_at' => null]);
@@ -82,8 +102,14 @@ class DatabaseNotifications extends Component
 
     public function getNotificationsQuery(): Builder | Relation
     {
+        $user = $this->getUser();
+
+        if (! $user) {
+            abort(401);
+        }
+
         /** @phpstan-ignore-next-line */
-        return $this->getUser()->notifications()->where('data->format', 'filament');
+        return $user->notifications()->where('data->format', 'filament');
     }
 
     public function getUnreadNotificationsQuery(): Builder | Relation
@@ -111,6 +137,24 @@ class DatabaseNotifications extends Component
         }
 
         return view($viewPath);
+    }
+
+    public function markAllNotificationsAsReadAction(): Action
+    {
+        return Action::make('markAllNotificationsAsRead')
+            ->link()
+            ->label(__('filament-notifications::database.modal.actions.mark_all_as_read.label'))
+            ->action('markAllNotificationsAsRead');
+    }
+
+    public function clearNotificationsAction(): Action
+    {
+        return Action::make('clearNotifications')
+            ->link()
+            ->color('danger')
+            ->label(__('filament-notifications::database.modal.actions.clear.label'))
+            ->action('clearNotifications')
+            ->close();
     }
 
     public function getUser(): Model | Authenticatable | null
@@ -172,5 +216,10 @@ class DatabaseNotifications extends Component
     public function render(): View
     {
         return view('filament-notifications::database-notifications');
+    }
+
+    public function placeholder(): string
+    {
+        return '<div>' . $this->getTrigger()?->with(['unreadNotificationsCount' => $this->getUnreadNotificationsCount()])->render() . '</div>';
     }
 }

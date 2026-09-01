@@ -13,6 +13,9 @@ return [
             'file' => [
                 'label' => 'Fájl',
                 'placeholder' => 'Tölts fel egy CSV fájlt',
+                'rules' => [
+                    'duplicate_columns' => '{0} A fájl nem tartalmazhat egynél több üres oszlopfejlécet.|{1,*} A fájl nem tartalmazhat ismétlődő oszlopfejléceket: :columns.',
+                ],
             ],
 
             'columns' => [
@@ -72,6 +75,7 @@ return [
         'file_name' => 'importálás-:import_id-:csv_name-sikertelen-sorok',
         'error_header' => 'hiba',
         'system_error' => 'Rendszerhiba, kérlek lépj kapcsolatba az ügyfélszolgálattal.',
+        'column_mapping_required_for_new_record' => 'A :attribute oszlopot a fájlban lévő oszlopok egyikéhez sem sikerült hozzárendelni, így nem hozhatóak létre új rekordok.',
     ],
 
 ];

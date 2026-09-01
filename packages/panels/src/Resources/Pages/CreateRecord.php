@@ -8,32 +8,33 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Schema\Schema;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
 use Throwable;
 
-use function Filament\Support\is_app_url;
-
 /**
- * @property Schema $form
+ * @template TModel of Model = Model
+ *
+ * @property-read Schema $form
  */
 class CreateRecord extends Page
 {
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
-    use InteractsWithFormActions;
 
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::resources.pages.create-record';
-
+    /** @var ?TModel */
     public ?Model $record = null;
 
     /**
@@ -44,6 +45,16 @@ class CreateRecord extends Page
     public ?string $previousUrl = null;
 
     protected static bool $canCreateAnother = true;
+
+    /**
+     * After a successful creation, this stays `true` while the user is redirected, to prevent duplicate
+     * records from additional clicks of the submit button. In SPA mode, if the user then navigates back,
+     * the page is restored from Livewire's history cache with this still `true`, which would block the
+     * form from ever being submitted again. JavaScript detects the restoration and resets this property
+     * in Livewire's client-side state, which is synced with the server during the next request. It is
+     * deliberately not `#[Locked]`, since that would prevent the client-side reset from being synced.
+     */
+    public bool $isCreating = false;
 
     public function getBreadcrumb(): string
     {
@@ -64,6 +75,11 @@ class CreateRecord extends Page
         abort_unless(static::getResource()::canCreate(), 403);
     }
 
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
     protected function fillForm(): void
     {
         $this->callHook('beforeFill');
@@ -75,6 +91,12 @@ class CreateRecord extends Page
 
     public function create(bool $another = false): void
     {
+        if ($this->isCreating) {
+            return;
+        }
+
+        $this->isCreating = true;
+
         $this->authorizeAccess();
 
         if ($another) {
@@ -99,19 +121,25 @@ class CreateRecord extends Page
             $this->form->model($this->getRecord())->saveRelationships();
 
             $this->callHook('afterCreate');
-
-            $this->commitDatabaseTransaction();
+            Event::dispatch(RecordCreated::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
                 $this->commitDatabaseTransaction();
 
+            $this->isCreating = false;
+
             return;
         } catch (Throwable $exception) {
             $this->rollBackDatabaseTransaction();
 
+            $this->isCreating = false;
+
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         $this->rememberData();
 
@@ -129,12 +157,19 @@ class CreateRecord extends Page
                 ...$preserveRawState,
             ]);
 
+            // Rebuild child schemas without double-firing `afterStateHydrated()` hooks.
+            $hydratedDefaultState = null;
+            $this->form->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+            $this->form->dispatchClientSideStateReset();
+
+            $this->isCreating = false;
+
             return;
         }
 
         $redirectUrl = $this->getRedirectUrl();
 
-        $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+        $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
     }
 
     /**
@@ -179,6 +214,7 @@ class CreateRecord extends Page
 
     /**
      * @param  array<string, mixed>  $data
+     * @return TModel
      */
     protected function handleRecordCreation(array $data): Model
     {
@@ -188,29 +224,9 @@ class CreateRecord extends Page
             return $this->associateRecordWithParent($record, $parentRecord);
         }
 
-        if (
-            static::getResource()::isScopedToTenant() &&
-            ($tenant = Filament::getTenant())
-        ) {
-            return $this->associateRecordWithTenant($record, $tenant);
-        }
-
         $record->save();
 
         return $record;
-    }
-
-    protected function associateRecordWithTenant(Model $record, Model $tenant): Model
-    {
-        $relationship = static::getResource()::getTenantRelationship($tenant);
-
-        if ($relationship instanceof HasManyThrough) {
-            $record->save();
-
-            return $record;
-        }
-
-        return $relationship->save($record);
     }
 
     protected function associateRecordWithParent(Model $record, Model $parent): Model
@@ -241,15 +257,23 @@ class CreateRecord extends Page
 
     protected function getCreateFormAction(): Action
     {
+        $hasFormWrapper = $this->hasFormWrapper();
+
         return Action::make('create')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
-            ->submit('create')
+            ->submit($hasFormWrapper ? $this->getSubmitFormLivewireMethodName() : null)
+            ->action($hasFormWrapper ? null : $this->getSubmitFormLivewireMethodName())
             ->keyBindings(['mod+s']);
     }
 
     protected function getSubmitFormAction(): Action
     {
         return $this->getCreateFormAction();
+    }
+
+    protected function getSubmitFormLivewireMethodName(): string
+    {
+        return 'create';
     }
 
     protected function getCreateAnotherFormAction(): Action
@@ -263,9 +287,15 @@ class CreateRecord extends Page
 
     protected function getCancelFormAction(): Action
     {
+        $url = $this->previousUrl ?? $this->getResourceUrl();
+
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
-            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? $this->getResourceUrl()) . ')')
+            ->alpineClickHandler(
+                FilamentView::hasSpaMode($url)
+                    ? 'document.referrer ? window.history.back() : Livewire.navigate(' . Js::from($url) . ')'
+                    : 'document.referrer ? window.history.back() : (window.location.href = ' . Js::from($url) . ')',
+            )
             ->color('gray');
     }
 
@@ -280,31 +310,38 @@ class CreateRecord extends Page
         ]);
     }
 
-    public function form(Schema $form): Schema
+    public function defaultForm(Schema $schema): Schema
     {
-        return $form;
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
+        return $schema
+            ->inlineLabel($this->hasInlineLabels())
+            ->model($this->getModel())
+            ->operation('create')
+            ->statePath('data');
     }
 
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'form' => $this->form(static::getResource()::form(
-                $this->makeSchema()
-                    ->operation('create')
-                    ->model($this->getModel())
-                    ->statePath($this->getFormStatePath())
-                    ->columns($this->hasInlineLabels() ? 1 : 2)
-                    ->inlineLabel($this->hasInlineLabels()),
-            )),
-        ];
+        return static::getResource()::form($schema);
     }
 
     protected function getRedirectUrl(): string
     {
         $resource = static::getResource();
+
+        if (
+            filled($defaultRedirect = Filament::getResourceCreatePageRedirect()) &&
+            $resource::hasPage($defaultRedirect) &&
+            (
+                (($defaultRedirect !== 'view') || $resource::canView($this->getRecord())) &&
+                (($defaultRedirect !== 'edit') || $resource::canEdit($this->getRecord()))
+            )
+        ) {
+            return $this->getResourceUrl($defaultRedirect, $this->getRedirectUrlParameters());
+        }
 
         if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
             return $this->getResourceUrl('view', $this->getRedirectUrlParameters());
@@ -314,7 +351,7 @@ class CreateRecord extends Page
             return $this->getResourceUrl('edit', $this->getRedirectUrlParameters());
         }
 
-        return $this->getResourceUrl();
+        return $this->getResourceUrl(parameters: $this->getRedirectUrlParameters());
     }
 
     /**
@@ -325,6 +362,9 @@ class CreateRecord extends Page
         return [];
     }
 
+    /**
+     * @return TModel|class-string<TModel>|null
+     */
     protected function getMountedActionSchemaModel(): Model | string | null
     {
         return $this->getModel();
@@ -340,13 +380,66 @@ class CreateRecord extends Page
         static::$canCreateAnother = false;
     }
 
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
-    }
-
+    /**
+     * @return ?TModel
+     */
     public function getRecord(): ?Model
     {
         return $this->record;
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        if (! $this->hasFormWrapper()) {
+            return Group::make([
+                EmbeddedSchema::make('form'),
+                $this->getFormActionsContentComponent(),
+            ]);
+        }
+
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler($this->getSubmitFormLivewireMethodName())
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+    public function getFormActionsContentComponent(): Component
+    {
+        return Actions::make($this->getFormActions())
+            ->alignment($this->getFormActionsAlignment())
+            ->fullWidth($this->hasFullWidthFormActions())
+            ->sticky($this->areFormActionsSticky())
+            ->key('form-actions');
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPageClasses(): array
+    {
+        return [
+            'fi-resource-create-record-page',
+            'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug(Filament::getCurrentOrDefaultPanel())),
+        ];
+    }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return false;
     }
 }

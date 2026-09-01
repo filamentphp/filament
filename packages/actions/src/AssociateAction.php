@@ -5,8 +5,8 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
-use Filament\Schema\Schema;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,14 +51,14 @@ class AssociateAction extends Action
 
         $this->label(__('filament-actions::associate.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-actions::associate.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::associate.single.modal.heading', ['label' => $this->getTitleCaseModelLabel()]));
 
         $this->modalSubmitActionLabel(__('filament-actions::associate.single.modal.actions.associate.label'));
 
-        $this->modalWidth(MaxWidth::Large);
+        $this->modalWidth(Width::Large);
 
         $this->extraModalFooterActions(function (): array {
-            return $this->canAssociateAnother ? [
+            return $this->canAssociateAnother() ? [
                 $this->makeModalSubmitAction('associateAnother', arguments: ['another' => true])
                     ->label(__('filament-actions::associate.single.modal.actions.associate_another.label')),
             ] : [];
@@ -66,25 +66,36 @@ class AssociateAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::associate.single.notifications.associated.title'));
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
-        $this->form(fn (): array => [$this->getRecordSelect()]);
+        $this->schema(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, array $data, Schema $form, Table $table): void {
+        $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var HasMany | MorphMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $record = $relationship->getQuery()->find($data['recordId']);
+            $relationshipQuery = $relationship->getQuery();
+
+            if ($this->modifyRecordSelectOptionsQueryUsing) {
+                $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                    'query' => $relationshipQuery,
+                    'search' => null,
+                ]) ?? $relationshipQuery;
+            }
+
+            $record = $relationshipQuery->find($data['recordId']);
 
             foreach (($this->isMultiple ? $record : [$record]) as $record) {
-                if ($record instanceof Model) {
-                    $this->record($record);
+                if (! $record instanceof Model) {
+                    continue;
                 }
+
+                $this->record($record);
 
                 /** @var BelongsTo $inverseRelationship */
                 $inverseRelationship = $table->getInverseRelationshipFor($record);
 
-                $this->process(function () use ($inverseRelationship, $record, $relationship) {
+                $this->process(function () use ($inverseRelationship, $record, $relationship): void {
                     $inverseRelationship->associate($relationship->getParent());
                     $record->save();
                 }, [
@@ -99,7 +110,7 @@ class AssociateAction extends Action
 
                 $this->record(null);
 
-                $form->fill();
+                $schema->fill();
 
                 $this->halt();
 
@@ -201,6 +212,7 @@ class AssociateAction extends Action
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => $search,
                 ]) ?? $relationshipQuery;
             }
 
@@ -280,19 +292,40 @@ class AssociateAction extends Action
             ->multiple($this->isMultiple())
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(function ($value) use ($table): string {
+            ->getOptionLabelUsing(function ($value) use ($table): ?string {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                return $this->getRecordTitle($relationship->getQuery()->find($value));
+                $relationshipQuery = $relationship->getQuery();
+
+                if ($this->modifyRecordSelectOptionsQueryUsing) {
+                    $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                        'query' => $relationshipQuery,
+                        'search' => null,
+                    ]) ?? $relationshipQuery;
+                }
+
+                $record = $relationshipQuery->find($value);
+
+                return $record ? $this->getRecordTitle($record) : null;
             })
             ->getOptionLabelsUsing(function (array $values) use ($table): array {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                return $relationship->getQuery()->find($values)
+                $relationshipQuery = $relationship->getQuery();
+
+                if ($this->modifyRecordSelectOptionsQueryUsing) {
+                    $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                        'query' => $relationshipQuery,
+                        'search' => null,
+                    ]) ?? $relationshipQuery;
+                }
+
+                return $relationshipQuery->findMany($values)
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })
-            ->options(fn (Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : [])
+            ->options(fn (Select $component): ?array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : null)
+            ->dynamicOptions(fn (): ?bool => $this->isRecordSelectPreloaded() ? null : false)
             ->hiddenLabel();
 
         if ($this->modifyRecordSelectUsing) {

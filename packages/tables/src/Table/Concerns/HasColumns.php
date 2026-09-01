@@ -3,11 +3,9 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Actions\Action;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
-use InvalidArgumentException;
 
 trait HasColumns
 {
@@ -15,6 +13,16 @@ trait HasColumns
      * @var array<string, Column>
      */
     protected array $columns = [];
+
+    /**
+     * @var array<string, Column> | null
+     */
+    protected ?array $cachedVisibleColumns = null;
+
+    /**
+     * @var array<string, ColumnGroup>
+     */
+    protected array $columnGroups = [];
 
     /**
      * @var array<Column | ColumnLayoutComponent | ColumnGroup>
@@ -33,6 +41,7 @@ trait HasColumns
     public function columns(array $components): static
     {
         $this->columns = [];
+        $this->columnGroups = [];
         $this->columnsLayout = [];
         $this->collapsibleColumnsLayout = null;
         $this->hasColumnsLayout = false;
@@ -46,6 +55,8 @@ trait HasColumns
      */
     public function pushColumns(array $components): static
     {
+        $this->cachedVisibleColumns = null;
+
         foreach ($components as $component) {
             $component->table($this);
 
@@ -57,6 +68,8 @@ trait HasColumns
 
             if ($component instanceof ColumnGroup) {
                 $this->hasColumnGroups = true;
+
+                $this->columnGroups[e($component->getLabel())] = $component;
 
                 $this->columns = [
                     ...$this->columns,
@@ -81,18 +94,10 @@ trait HasColumns
         }
 
         foreach ($this->columns as $column) {
-            if ($column->hasSummary()) {
-                $this->hasSummary = true;
-            }
-
             $action = $column->getAction();
 
             if (($action === null) || ($action instanceof Closure)) {
                 continue;
-            }
-
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Table column actions must be an instance of ' . Action::class . '.');
             }
 
             $this->cacheAction($action->table($this));
@@ -110,19 +115,37 @@ trait HasColumns
     }
 
     /**
+     * @return array<string, ColumnGroup>
+     */
+    public function getColumnGroups(): array
+    {
+        return $this->columnGroups;
+    }
+
+    /**
      * @return array<string, Column>
      */
     public function getVisibleColumns(): array
     {
-        return array_filter(
+        return $this->cachedVisibleColumns ??= array_filter(
             $this->getColumns(),
             fn (Column $column): bool => $column->isVisible() && (! $column->isToggledHidden()),
         );
     }
 
+    public function flushCachedVisibleColumns(): void
+    {
+        $this->cachedVisibleColumns = null;
+    }
+
     public function getColumn(string $name): ?Column
     {
         return $this->getColumns()[$name] ?? null;
+    }
+
+    public function getColumnGroup(string $name): ?ColumnGroup
+    {
+        return $this->getColumnGroups()[$name] ?? null;
     }
 
     /**
@@ -140,7 +163,25 @@ trait HasColumns
 
     public function hasColumnGroups(): bool
     {
-        return $this->hasColumnGroups;
+        if (! $this->hasColumnGroups) {
+            return false;
+        }
+
+        foreach ($this->getVisibleColumns() as $column) {
+            $columnGroup = $column->getGroup();
+
+            if (! $columnGroup) {
+                continue;
+            }
+
+            if (empty($columnGroup->getVisibleColumns())) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public function hasColumnsLayout(): bool

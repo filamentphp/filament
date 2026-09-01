@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'שיוכים',
+        'label' => 'שיוך',
 
         'modal' => [
 

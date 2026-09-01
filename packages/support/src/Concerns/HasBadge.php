@@ -3,26 +3,20 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
-use Filament\Support\Enums\IconPosition;
 
 trait HasBadge
 {
-    protected string | int | float | Closure | null $badge = null;
+    protected string | Closure | null $badge = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $badgeColor = null;
 
-    protected string | Closure | null $badgeIcon = null;
-
-    protected IconPosition | string | Closure | null $badgeIconPosition = null;
-
-    public function badge(string | int | float | Closure | null $badge = null): static
+    public function badge(string | int | float | Closure | null $badge): static
     {
-        if (func_num_args() === 0) {
-            /** @phpstan-ignore-next-line */
-            return $this->view(static::BADGE_VIEW);
+        if (is_int($badge) || is_float($badge)) {
+            $badge = (string) $badge;
         }
 
         $this->badge = $badge;
@@ -39,7 +33,7 @@ trait HasBadge
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function badgeColor(string | array | Closure | null $color): static
     {
@@ -48,50 +42,31 @@ trait HasBadge
         return $this;
     }
 
-    public function badgeIcon(string | Closure | null $icon): static
-    {
-        $this->badgeIcon = $icon;
-
-        return $this;
-    }
-
-    public function badgeIconPosition(IconPosition | string | Closure | null $position): static
-    {
-        $this->badgeIconPosition = $position;
-
-        return $this;
-    }
-
     /**
      * @deprecated Use `badgeColor()` instead.
-     *
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
      */
-    public function indicatorColor(string | array | Closure | null $color): static
+    public function indicatorColor(string | Closure | null $color): static
     {
         return $this->badgeColor($color);
     }
 
-    public function getBadge(): string | int | float | null
+    public function getBadge(): ?string
     {
         return $this->evaluate($this->badge);
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<string> | null
      */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(?string $badge = null): string | array | null
     {
-        return $this->evaluate($this->badgeColor);
+        return $this->evaluate($this->badgeColor, [
+            'badge' => $badge,
+        ]);
     }
 
-    public function getBadgeIcon(): ?string
+    public function hasBadge(): bool
     {
-        return $this->evaluate($this->badgeIcon);
-    }
-
-    public function getBadgeIconPosition(): IconPosition | string
-    {
-        return $this->evaluate($this->badgeIconPosition) ?? IconPosition::Before;
+        return $this->badge !== null;
     }
 }

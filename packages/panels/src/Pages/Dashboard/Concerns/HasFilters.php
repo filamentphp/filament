@@ -4,7 +4,7 @@ namespace Filament\Pages\Dashboard\Concerns;
 
 use Livewire\Attributes\Url;
 
-trait HasFilters
+trait HasFilters /** @phpstan-ignore trait.unused */
 {
     /**
      * @var array<string, mixed> | null
@@ -78,7 +78,7 @@ trait HasFilters
 
     public function getFiltersSessionKey(): string
     {
-        $livewire = class_basename($this::class);
+        $livewire = md5($this::class);
 
         return "{$livewire}_filters";
     }

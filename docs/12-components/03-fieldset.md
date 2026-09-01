@@ -1,0 +1,21 @@
+---
+title: Fieldset Blade component
+---
+
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
+## Introduction
+
+You can use a fieldset to group multiple form fields together, optionally with a label:
+
+```blade
+<x-filament::fieldset>
+    <x-slot name="label">
+        Address
+    </x-slot>
+
+    {{-- Form fields --}}
+</x-filament::fieldset>
+```
+
+<AutoScreenshot name="components/fieldset/simple" alt="A fieldset with form fields" version="4.x" />

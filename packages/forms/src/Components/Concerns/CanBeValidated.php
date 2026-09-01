@@ -2,13 +2,17 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use BackedEnum;
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
-use Filament\Schema\Components\Component;
+use Filament\Schemas\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -27,6 +31,8 @@ trait CanBeValidated
      */
     protected array | Arrayable | string | Closure | null $inValidationRuleValues = null;
 
+    protected bool | Closure $shouldUniqueValidationIgnoreRecordByDefault = true;
+
     /**
      * @var array<mixed>
      */
@@ -37,7 +43,11 @@ trait CanBeValidated
      */
     protected array $validationMessages = [];
 
+    protected bool | Closure $areHtmlValidationMessagesAllowed = false;
+
     protected string | Closure | null $validationAttribute = null;
+
+    protected bool | Closure $shouldShowAllValidationMessages = false;
 
     public function activeUrl(bool | Closure $condition = true): static
     {
@@ -153,6 +163,29 @@ trait CanBeValidated
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
 
+            if (
+                class_exists($table) &&
+                is_subclass_of($table, Model::class) &&
+                class_exists(Filament::class) &&
+                $table::hasGlobalScope(Filament::getTenancyScopeName())
+            ) {
+                return function (string $attribute, mixed $value, Closure $fail) use ($column, $component, $modifyRuleUsing, $table): void {
+                    $query = $table::query()
+                        ->where($column, $value)
+                        ->withoutGlobalScope(SoftDeletingScope::class);
+
+                    if ($modifyRuleUsing) {
+                        $query = $component->evaluate($modifyRuleUsing, [
+                            'query' => $query,
+                        ]) ?? $query;
+                    }
+
+                    if (! $query->exists()) {
+                        $fail(__($component->getValidationMessages()['exists'] ?? 'validation.exists', ['attribute' => $component->getValidationAttribute()]));
+                    }
+                };
+            }
+
             $rule = Rule::exists($table, $column);
 
             if ($modifyRuleUsing) {
@@ -163,6 +196,32 @@ trait CanBeValidated
 
             return $rule;
         }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
+
+        return $this;
+    }
+
+    public function scopedExists(string | Closure | null $model = null, string | Closure | null $column = null, ?Closure $modifyQueryUsing = null): static
+    {
+        $this->rule(static function (Field $component) use ($column, $modifyQueryUsing, $model) {
+            $model = $component->evaluate($model) ?? $component->getModel();
+            $column = $component->evaluate($column) ?? $component->getName();
+
+            return function (string $attribute, mixed $value, Closure $fail) use ($column, $component, $modifyQueryUsing, $model): void {
+                $query = $model::query()
+                    ->where($column, $value)
+                    ->withoutGlobalScope(SoftDeletingScope::class);
+
+                if ($modifyQueryUsing) {
+                    $query = $component->evaluate($modifyQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                if (! $query->exists()) {
+                    $fail(__($component->getValidationMessages()['exists'] ?? 'validation.exists', ['attribute' => $component->getValidationAttribute()]));
+                }
+            };
+        }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($model) ?? $model));
 
         return $this;
     }
@@ -193,14 +252,6 @@ trait CanBeValidated
         }
 
         $this->inValidationRuleValues = $values;
-
-        match ($condition) {
-            true => $this->inValidationRuleValues = $values,
-            false => null,
-            default => $this->inValidationRuleValues = fn (Component $component): array | Arrayable | string | Closure | null => $component->evaluate($condition) ?
-                $values :
-                null,
-        };
 
         return $this;
     }
@@ -262,7 +313,7 @@ trait CanBeValidated
             }
 
             if (is_string($values)) {
-                $values = array_map('trim', explode(',', $values));
+                $values = array_map(trim(...), explode(',', $values));
             }
 
             return Rule::notIn($values);
@@ -329,6 +380,11 @@ trait CanBeValidated
     public function requiredIfAccepted(string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('required_if_accepted', $statePath, $isStatePathAbsolute);
+    }
+
+    public function requiredIfDeclined(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('required_if_declined', $statePath, $isStatePathAbsolute);
     }
 
     public function requiredUnless(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
@@ -504,12 +560,14 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, bool $ignoreRecord = false, ?Closure $modifyRuleUsing = null): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null, ?Closure $modifyRuleUsing = null): static
     {
         $this->rule(static function (Field $component, ?string $model) use ($column, $ignorable, $ignoreRecord, $modifyRuleUsing, $table) {
+            $ignoreRecord ??= $component->shouldUniqueValidationIgnoreRecordByDefault();
+
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
-            $ignorable = ($ignoreRecord && ! $ignorable) ?
+            $ignorable = ($ignoreRecord && (! $ignorable)) ?
                 $component->getRecord() :
                 $component->evaluate($ignorable);
 
@@ -534,11 +592,57 @@ trait CanBeValidated
         return $this;
     }
 
-    public function distinct(): static
+    public function scopedUnique(string | Closure | null $model = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null, ?Closure $modifyQueryUsing = null): static
     {
-        $this->rule(static function (Field $component, mixed $state) {
-            return function (string $attribute, mixed $value, Closure $fail) use ($component, $state) {
-                if (blank($state)) {
+        $this->rule(static function (Field $component) use ($column, $ignorable, $ignoreRecord, $modifyQueryUsing, $model) {
+            $ignoreRecord ??= $component->shouldUniqueValidationIgnoreRecordByDefault();
+
+            $model = $component->evaluate($model) ?? $component->getModel();
+            $column = $component->evaluate($column) ?? $component->getName();
+            $ignorable = ($ignoreRecord && (! $ignorable)) ?
+                $component->getRecord() :
+                $component->evaluate($ignorable);
+
+            return function (string $attribute, mixed $value, Closure $fail) use ($column, $component, $ignorable, $modifyQueryUsing, $model): void {
+                $query = $model::query()
+                    ->where($column, $value);
+
+                if (filled($ignorable)) {
+                    $query->whereKeyNot($ignorable);
+                }
+
+                if ($modifyQueryUsing) {
+                    $query = $component->evaluate($modifyQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                if ($query->exists()) {
+                    $fail(__($component->getValidationMessages()['unique'] ?? 'validation.unique', ['attribute' => $component->getValidationAttribute()]));
+                }
+            };
+        }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($model) ?? $model));
+
+        return $this;
+    }
+
+    public function uniqueValidationIgnoresRecordByDefault(bool | Closure $condition = true): static
+    {
+        $this->shouldUniqueValidationIgnoreRecordByDefault = $condition;
+
+        return $this;
+    }
+
+    public function shouldUniqueValidationIgnoreRecordByDefault(): bool
+    {
+        return (bool) $this->evaluate($this->shouldUniqueValidationIgnoreRecordByDefault);
+    }
+
+    public function distinct(bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component, mixed $rawState) {
+            return function (string $attribute, mixed $value, Closure $fail) use ($component, $rawState): void {
+                if (blank($rawState)) {
                     return;
                 }
 
@@ -558,7 +662,7 @@ trait CanBeValidated
                     ->after("{$repeaterStatePath}.")
                     ->beforeLast(".{$componentItemStatePath}");
 
-                $repeaterSiblingState = Arr::except($repeater->getState(), [$repeaterItemKey]);
+                $repeaterSiblingState = Arr::except($repeater->getRawState(), [$repeaterItemKey]);
 
                 if (empty($repeaterSiblingState)) {
                     return;
@@ -566,29 +670,31 @@ trait CanBeValidated
 
                 $validationMessages = $component->getValidationMessages();
 
-                if (is_bool($state)) {
+                if (is_bool($rawState)) {
                     $isSiblingItemSelected = collect($repeaterSiblingState)
                         ->pluck($componentItemStatePath)
                         ->contains(true);
 
-                    if ($state && $isSiblingItemSelected) {
+                    if ($rawState && $isSiblingItemSelected) {
                         $fail(__($validationMessages['distinct.only_one_must_be_selected'] ?? 'filament-forms::validation.distinct.only_one_must_be_selected', ['attribute' => $component->getValidationAttribute()]));
 
                         return;
                     }
 
-                    if ($state || $isSiblingItemSelected) {
+                    if ($rawState || $isSiblingItemSelected) {
                         return;
                     }
 
-                    $fail(__($validationMessages['distinct.must_be_selected'] ?? 'filament-forms::validation.distinct.must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+                    if ($component->isRequired()) {
+                        $fail(__($validationMessages['distinct.must_be_selected'] ?? 'filament-forms::validation.distinct.must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+                    }
 
                     return;
                 }
 
-                if (is_array($state)) {
+                if (is_array($rawState)) {
                     $hasSiblingStateIntersections = collect($repeaterSiblingState)
-                        ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $state)))
+                        ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $rawState)))
                         ->isNotEmpty();
 
                     if (! $hasSiblingStateIntersections) {
@@ -602,7 +708,7 @@ trait CanBeValidated
 
                 $hasDuplicateSiblingState = collect($repeaterSiblingState)
                     ->pluck($componentItemStatePath)
-                    ->contains($state);
+                    ->contains($rawState);
 
                 if (! $hasDuplicateSiblingState) {
                     return;
@@ -610,7 +716,7 @@ trait CanBeValidated
 
                 $fail(__($validationMessages['distinct'] ?? 'validation.distinct', ['attribute' => $component->getValidationAttribute()]));
             };
-        });
+        }, $condition);
 
         return $this;
     }
@@ -632,19 +738,47 @@ trait CanBeValidated
         return $this;
     }
 
+    public function allowHtmlValidationMessages(bool | Closure $condition = true): static
+    {
+        // Security: Enabling HTML in validation messages means they are
+        // rendered with `{!! !!}`. If messages include user input
+        // (e.g. via custom rules or placeholders), XSS is possible.
+
+        $this->areHtmlValidationMessagesAllowed = $condition;
+
+        return $this;
+    }
+
+    public function showAllValidationMessages(bool | Closure $condition = true): static
+    {
+        $this->shouldShowAllValidationMessages = $condition;
+
+        return $this;
+    }
+
     public function getRegexPattern(): ?string
     {
         return $this->evaluate($this->regexPattern);
     }
 
-    public function getRequiredValidationRule(): string
+    public function getRequiredValidationRule(): string | Closure
     {
         return $this->isRequired() ? 'required' : 'nullable';
     }
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+        if (filled($validationAttribute = $this->evaluate($this->validationAttribute))) {
+            return $validationAttribute;
+        }
+
+        $label = $this->getLabel();
+
+        if ($label instanceof Htmlable) {
+            $label = $this->getDefaultLabel();
+        }
+
+        return Str::lcfirst($label);
     }
 
     /**
@@ -659,6 +793,16 @@ trait CanBeValidated
         }
 
         return array_filter($messages);
+    }
+
+    public function areHtmlValidationMessagesAllowed(): bool
+    {
+        return (bool) $this->evaluate($this->areHtmlValidationMessagesAllowed);
+    }
+
+    public function shouldShowAllValidationMessages(): bool
+    {
+        return (bool) $this->evaluate($this->shouldShowAllValidationMessages);
     }
 
     public function getInValidationRule(): In | Enum | null
@@ -688,7 +832,7 @@ trait CanBeValidated
         }
 
         if (is_string($values)) {
-            $values = array_map('trim', explode(',', $values));
+            $values = array_map(trim(...), explode(',', $values));
         }
 
         return $values;
@@ -707,7 +851,7 @@ trait CanBeValidated
         $rules = [
             $this->getRequiredValidationRule(),
             ...($this instanceof CanBeLengthConstrained ? $this->getLengthValidationRules() : []),
-            ...(($inRule = $this->getInValidationRule()) ? [$inRule] : []),
+            ...(((! $this->hasInValidationOnMultipleValues()) && ($inRule = $this->getInValidationRule())) ? [$inRule] : []),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {
@@ -751,7 +895,7 @@ trait CanBeValidated
 
         if (count($componentMessages = $this->getValidationMessages())) {
             foreach ($componentMessages as $rule => $message) {
-                $messages["{$statePath}.{$rule}"] = $message;
+                $messages["{$statePath}.{$rule}"] = $message; /** @phpstan-ignore parameterByRef.type */
             }
         }
     }
@@ -769,9 +913,9 @@ trait CanBeValidated
 
         if (
             $this->hasInValidationOnMultipleValues() &&
-            filled($inValidationRuleValues = $this->getInValidationRuleValues())
+            ($inRule = $this->getInValidationRule())
         ) {
-            $rules["{$statePath}.*"] = [Rule::in($inValidationRuleValues)];
+            $rules["{$statePath}.*"] = [$inRule];
         }
 
         if (! $this instanceof HasNestedRecursiveValidationRules) {
@@ -806,11 +950,7 @@ trait CanBeValidated
             $date = $component->evaluate($date);
 
             if (! (strtotime($date) || $isStatePathAbsolute)) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $date = "{$containerStatePath}.{$date}";
-                }
+                $date = $component->resolveRelativeStatePath($date);
             }
 
             return "{$rule}:{$date}";
@@ -825,11 +965,7 @@ trait CanBeValidated
             $statePath = $component->evaluate($statePath);
 
             if (! $isStatePathAbsolute) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
-                }
+                $statePath = $component->resolveRelativeStatePath($statePath);
             }
 
             return "{$rule}:{$statePath}";
@@ -851,15 +987,10 @@ trait CanBeValidated
                     $statePaths = explode(',', $statePaths);
                 }
 
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePaths = array_map(function ($statePath) use ($containerStatePath) {
-                        $statePath = trim($statePath);
-
-                        return "{$containerStatePath}.{$statePath}";
-                    }, $statePaths);
-                }
+                $statePaths = array_map(
+                    fn (string $statePath): string => $component->resolveRelativeStatePath(trim($statePath)),
+                    $statePaths,
+                );
             }
 
             if (is_array($statePaths)) {
@@ -879,22 +1010,51 @@ trait CanBeValidated
             $stateValues = $component->evaluate($stateValues);
 
             if (! $isStatePathAbsolute) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
-                }
+                $statePath = $component->resolveRelativeStatePath($statePath);
             }
 
             if (is_array($stateValues)) {
+                $stateValues = array_map(
+                    static fn ($value) => $value instanceof BackedEnum ? $value->value : $value,
+                    $stateValues
+                );
                 $stateValues = implode(',', $stateValues);
             } elseif (is_bool($stateValues)) {
                 $stateValues = $stateValues ? 'true' : 'false';
+            } elseif ($stateValues instanceof BackedEnum) {
+                $stateValues = $stateValues->value;
             }
 
             return "{$rule}:{$statePath},{$stateValues}";
         }, fn (Field $component): bool => (bool) $component->evaluate($statePath));
 
         return $this;
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return true;
+    }
+
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        if (parent::mutatesStateForValidation()) {
+            $state = parent::mutateStateForValidation($state);
+        }
+
+        // Laravel's `in` validation rule expects state values to be
+        // scalar, so we need to convert any enum objects to their
+        // backed values before passing to the validator.
+        if (is_array($state)) {
+            foreach ($state as $key => $value) {
+                if ($value instanceof BackedEnum) {
+                    $state[$key] = $value->value;
+                }
+            }
+        } elseif ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
+
+        return $state;
     }
 }

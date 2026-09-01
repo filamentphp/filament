@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Sütunlar',
 
@@ -10,7 +10,17 @@ return [
 
     'columns' => [
 
+        'actions' => [
+            'label' => 'Əməliyyat|Əməliyyatlar',
+        ],
+
         'text' => [
+
+            'actions' => [
+                'collapse_list' => ':count az göstər',
+                'expand_list' => ':count daha çox göstər',
+            ],
+
             'more_list_items' => 'və :count daha',
         ],
 
@@ -88,7 +98,7 @@ return [
             'label' => 'Çoxlu hərəkətlər',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Sütunları göstər/gizlət',
         ],
 
@@ -105,6 +115,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Filtrləri tətbiq et',
+            ],
 
             'remove' => [
                 'label' => 'Filtri yığışdır',

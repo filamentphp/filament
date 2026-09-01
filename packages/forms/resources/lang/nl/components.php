@@ -32,7 +32,7 @@ return [
 
             'add_between' => [
 
-                'label' => 'Invoegen',
+                'label' => 'Invoegen tussen blokken',
 
                 'modal' => [
 
@@ -232,7 +232,7 @@ return [
                 'label' => 'Beeldverhoudingen',
 
                 'no_fixed' => [
-                    'label' => 'Geen',
+                    'label' => 'Vrij',
                 ],
 
             ],
@@ -284,7 +284,11 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Geüploade bestanden moeten van het volgende type zijn: :values.',
+
+        'file_attachments_max_size_message' => 'Geüploade bestanden mogen niet groter zijn dan :max kilobytes.',
+
+        'tools' => [
             'attach_files' => 'Bestanden bijvoegen',
             'blockquote' => 'Blokcitaat',
             'bold' => 'Vet',
@@ -297,7 +301,29 @@ return [
             'redo' => 'Opnieuw',
             'strike' => 'Doorhalen',
             'table' => 'Tabel',
-            'undo' => 'Herstellen',
+            'undo' => 'Ongedaan maken',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Selecteren',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Selecteren',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +391,243 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Bestand uploaden',
+
+                'modal' => [
+
+                    'heading' => 'Bestand uploaden',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Bestand',
+                                'existing' => 'Bestand vervangen',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt tekst',
+                                'existing' => 'Alt tekst wijzigen',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Invoegen',
+                        ],
+
+                        'save' => [
+                            'label' => 'Opslaan',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Raster',
+
+                'modal' => [
+
+                    'heading' => 'Raster',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Voorinstelling',
+
+                            'placeholder' => 'Geen',
+
+                            'options' => [
+                                'two' => 'Twee',
+                                'three' => 'Drie',
+                                'four' => 'Vier',
+                                'five' => 'Vijf',
+                                'two_start_third' => 'Twee (Start Derde)',
+                                'two_end_third' => 'Twee (Einde Derde)',
+                                'two_start_fourth' => 'Twee (Start Vierde)',
+                                'two_end_fourth' => 'Twee (Einde Vierde)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolommen',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Vanaf breekpunt',
+
+                            'options' => [
+                                'default' => 'Alle',
+                                'sm' => 'Klein',
+                                'md' => 'Medium',
+                                'lg' => 'Groot',
+                                'xl' => 'Extra groot',
+                                '2xl' => 'Twee keer extra groot',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Twee asymmetrische kolommen',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start bereik',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Eind bereik',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                'label' => 'Link',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Openen in nieuwe tab',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Voer een URL in',
+            'text_color' => [
+
+                'label' => 'Tekstkleur',
+
+                'modal' => [
+
+                    'heading' => 'Tekstkleur',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Kleur',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Aangepaste kleur',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Geüploade bestanden moeten van het volgende type zijn: :values.',
+
+        'file_attachments_max_size_message' => 'Geüploade bestanden mogen niet groter zijn dan :max kilobytes.',
+
+        'no_merge_tag_search_results_message' => 'Geen merge tags gevonden.',
+
+        'mentions' => [
+            'no_options_message' => 'Geen opties beschikbaar.',
+            'no_search_results_message' => 'Geen resultaten gevonden.',
+            'search_prompt' => 'Begin met typen om te zoeken...',
+            'searching_message' => 'Zoeken...',
+        ],
+
+        'tools' => [
+            'align_center' => 'Centreren',
+            'align_end' => 'Rechts uitlijnen',
+            'align_justify' => 'Uitvullen',
+            'align_start' => 'Links uitlijnen',
             'attach_files' => 'Bestanden bijvoegen',
-            'blockquote' => 'Quote',
+            'blockquote' => 'Citaatblok',
             'bold' => 'Vet',
-            'bullet_list' => 'Ongeordende lijst',
+            'bullet_list' => 'Opsommingstekens',
+            'clear_formatting' => 'Opmaak wissen',
+            'code' => 'Code',
             'code_block' => 'Codeblok',
+            'custom_blocks' => 'Blokken',
+            'details' => 'Details',
             'h1' => 'Titel',
             'h2' => 'Kop',
-            'h3' => 'Tussenkop',
+            'h3' => 'Subkop',
+            'h4' => 'Kop 4',
+            'h5' => 'Kop 5',
+            'h6' => 'Kop 6',
+            'grid' => 'Raster',
+            'grid_delete' => 'Raster verwijderen',
+            'highlight' => 'Markeren',
+            'horizontal_rule' => 'Horizontale lijn',
             'italic' => 'Cursief',
+            'lead' => 'Inleidende tekst',
             'link' => 'Link',
+            'merge_tags' => 'Merge tags',
             'ordered_list' => 'Genummerde lijst',
-            'redo' => 'Opnieuw uitvoeren',
+            'paragraph' => 'Paragraaf',
+            'redo' => 'Opnieuw',
+            'small' => 'Kleine tekst',
             'strike' => 'Doorhalen',
+            'subscript' => 'Subscript',
+            'superscript' => 'Superscript',
+            'table' => 'Tabel',
+            'table_delete' => 'Tabel verwijderen',
+            'table_add_column_before' => 'Kolom ervoor toevoegen',
+            'table_add_column_after' => 'Kolom erna toevoegen',
+            'table_delete_column' => 'Kolom verwijderen',
+            'table_add_row_before' => 'Rij erboven toevoegen',
+            'table_add_row_after' => 'Rij eronder toevoegen',
+            'table_delete_row' => 'Rij verwijderen',
+            'table_merge_cells' => 'Cellen samenvoegen',
+            'table_split_cell' => 'Cel splitsen',
+            'table_toggle_header_row' => 'Koprij wisselen',
+            'table_toggle_header_cell' => 'Kopcel wisselen',
+            'text_color' => 'Tekstkleur',
             'underline' => 'Onderstrepen',
             'undo' => 'Ongedaan maken',
         ],
+
+        'uploading_file_message' => 'Bestand uploaden...',
 
     ],
 
@@ -407,6 +636,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Aanmaken',
 
                 'modal' => [
 
@@ -429,6 +660,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Bewerken',
 
                 'modal' => [
 
@@ -457,23 +690,40 @@ return [
 
         'max_items_message' => 'Er kunnen maar :count geselecteerd worden.',
 
-        'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
+        'no_options_message' => 'Geen opties beschikbaar.',
+
+        'no_search_results_message' => 'Geen resultaten gevonden.',
 
         'placeholder' => 'Selecteer een optie',
 
         'searching_message' => 'Zoeken...',
 
-        'search_prompt' => 'Start met typen om te zoeken...',
+        'search_prompt' => 'Begin met typen om te zoeken...',
 
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Verwijderen',
+            ],
+
+        ],
+
         'placeholder' => 'Nieuwe tag',
+
     ],
 
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopiëren',
+                'message' => 'Gekopieerd',
+            ],
 
             'hide_password' => [
                 'label' => 'Wachtwoord verbergen',

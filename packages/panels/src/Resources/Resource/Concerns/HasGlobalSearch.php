@@ -3,6 +3,7 @@
 namespace Filament\Resources\Resource\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -10,21 +11,40 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use ReflectionProperty;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait HasGlobalSearch
 {
     protected static int $globalSearchResultsLimit = 50;
 
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
+    protected static ?bool $shouldSplitGlobalSearchTerms = null;
+
     protected static bool $isGloballySearchable = true;
+
+    protected static ?int $globalSearchSort = null;
 
     public static function canGloballySearch(): bool
     {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
+        $isGloballySearchable = static::$isGloballySearchable;
+
+        if (
+            $isGloballySearchable &&
+            Filament::getCurrentOrDefaultPanel()?->isGlobalSearchResourceOptIn()
+        ) {
+            $isGloballySearchable = (new ReflectionProperty(static::class, 'isGloballySearchable'))
+                ->getDeclaringClass()
+                ->getName() === static::class;
+        }
+
+        return $isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
     }
 
     /**
@@ -64,10 +84,11 @@ trait HasGlobalSearch
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
-        $canEdit = static::canEdit($record);
-
-        if (static::hasPage('edit') && $canEdit) {
-            return static::getUrl('edit', ['record' => $record]);
+        // In the future, Filament will support global search in nested resources.
+        // For now, you must specify custom global search result URLs to do so,
+        // since there are missing URL parameters from the parent records.
+        if (static::getParentResourceRegistration()) {
+            return null;
         }
 
         $canView = static::canView($record);
@@ -76,16 +97,22 @@ trait HasGlobalSearch
             return static::getUrl('view', ['record' => $record]);
         }
 
-        if ($canEdit) {
-            return static::getUrl(parameters: [
-                'tableAction' => 'edit',
-                'tableActionRecord' => $record,
-            ]);
+        $canEdit = static::canEdit($record);
+
+        if (static::hasPage('edit') && $canEdit) {
+            return static::getUrl('edit', ['record' => $record]);
         }
 
         if ($canView) {
             return static::getUrl(parameters: [
                 'tableAction' => 'view',
+                'tableActionRecord' => $record,
+            ]);
+        }
+
+        if ($canEdit) {
+            return static::getUrl(parameters: [
+                'tableAction' => 'edit',
                 'tableActionRecord' => $record,
             ]);
         }
@@ -122,7 +149,10 @@ trait HasGlobalSearch
                     title: static::getGlobalSearchResultTitle($record),
                     url: $url,
                     details: static::getGlobalSearchResultDetails($record),
-                    actions: static::getGlobalSearchResultActions($record),
+                    actions: array_map(
+                        fn (Action $action) => $action->hasRecord() ? $action : $action->record($record),
+                        static::getGlobalSearchResultActions($record),
+                    ),
                 );
             })
             ->filter();
@@ -133,6 +163,11 @@ trait HasGlobalSearch
         return static::$isGlobalSearchForcedCaseInsensitive;
     }
 
+    public static function shouldSplitGlobalSearchTerms(): bool
+    {
+        return static::$shouldSplitGlobalSearchTerms ?? true;
+    }
+
     protected static function applyGlobalSearchAttributeConstraints(Builder $query, string $search): void
     {
         /** @var Connection $databaseConnection */
@@ -140,8 +175,30 @@ trait HasGlobalSearch
 
         $search = generate_search_term_expression($search, static::isGlobalSearchForcedCaseInsensitive(), $databaseConnection);
 
-        foreach (explode(' ', $search) as $searchWord) {
-            $query->where(function (Builder $query) use ($searchWord) {
+        if (! static::shouldSplitGlobalSearchTerms()) {
+            $query->where(function (Builder $query) use ($search): void {
+                $isFirst = true;
+
+                foreach (static::getGloballySearchableAttributes() as $attributes) {
+                    static::applyGlobalSearchAttributeConstraint(
+                        query: $query,
+                        search: $search,
+                        searchAttributes: Arr::wrap($attributes),
+                        isFirst: $isFirst,
+                    );
+                }
+            });
+
+            return;
+        }
+
+        $searchWords = array_filter(
+            str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
+            fn ($word): bool => filled($word),
+        );
+
+        foreach ($searchWords as $searchWord) {
+            $query->where(function (Builder $query) use ($searchWord): void {
                 $isFirst = true;
 
                 foreach (static::getGloballySearchableAttributes() as $attributes) {
@@ -161,8 +218,6 @@ trait HasGlobalSearch
      */
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
     {
-        $model = $query->getModel();
-
         $isForcedCaseInsensitive = static::isGlobalSearchForcedCaseInsensitive();
 
         /** @var Connection $databaseConnection */
@@ -174,15 +229,17 @@ trait HasGlobalSearch
             $query->when(
                 str($searchAttribute)->contains('.'),
                 function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
-                    return $query->{"{$whereClause}Relation"}(
+                    return $query->{"{$whereClause}Has"}(
                         (string) str($searchAttribute)->beforeLast('.'),
-                        generate_search_column_expression((string) str($searchAttribute)->afterLast('.'), $isForcedCaseInsensitive, $databaseConnection),
-                        'like',
-                        "%{$search}%",
+                        fn (Builder $query) => $query->where(
+                            generate_search_column_expression($query->qualifyColumn((string) str($searchAttribute)->afterLast('.')), $isForcedCaseInsensitive, $databaseConnection),
+                            'like',
+                            "%{$search}%",
+                        ),
                     );
                 },
                 fn (Builder $query) => $query->{$whereClause}(
-                    generate_search_column_expression($searchAttribute, $isForcedCaseInsensitive, $databaseConnection),
+                    generate_search_column_expression($query->qualifyColumn($searchAttribute), $isForcedCaseInsensitive, $databaseConnection),
                     'like',
                     "%{$search}%",
                 ),
@@ -194,8 +251,21 @@ trait HasGlobalSearch
         return $query;
     }
 
+    /**
+     * @return Builder<TModel>
+     */
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGlobalSearchSort(): ?int
+    {
+        return static::$globalSearchSort;
+    }
+
+    public static function globalSearchSort(?int $sort): void
+    {
+        static::$globalSearchSort = $sort;
     }
 }

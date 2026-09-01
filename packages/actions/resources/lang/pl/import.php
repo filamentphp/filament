@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Plik',
+
                 'placeholder' => 'Wybierz plik CSV',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Plik nie może zawierać więcej niż jednego pustego nagłówka kolumny.|{1,*} Plik nie może zawierać duplikatów nagłówków kolumn: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'błąd',
         'system_error' => 'Błąd systemu, skontaktuj się z pomocą techniczną.',
+        'column_mapping_required_for_new_record' => 'Kolumna :attribute nie została odwzorowana na kolumnę w pliku, ale jest wymagana do tworzenia nowych rekordów.',
     ],
 
 ];

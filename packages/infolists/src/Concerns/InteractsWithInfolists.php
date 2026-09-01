@@ -3,9 +3,9 @@
 namespace Filament\Infolists\Concerns;
 
 use Filament\Actions\Action;
-use Filament\Schema\Schema;
+use Filament\Schemas\Schema;
 
-trait InteractsWithInfolists
+trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
 {
     /**
      * @deprecated Use `getSchema()` instead.
@@ -18,15 +18,15 @@ trait InteractsWithInfolists
     /**
      * @deprecated Use `cacheSchema()` instead.
      */
-    protected function cacheInfolist(string $name, Schema $infolist): ?Schema
+    protected function cacheInfolist(string $name, Schema $schema): ?Schema
     {
-        return $this->cacheSchema($name, $infolist);
+        return $this->cacheSchema($name, $schema);
     }
 
     /**
      * @return array<string, Schema>
      *
-     *@deprecated Use `getCachedSchemas()` instead.
+     * @deprecated Use `getCachedSchemas()` instead.
      */
     public function getCachedInfolists(): array
     {
@@ -90,6 +90,6 @@ trait InteractsWithInfolists
      */
     public function unmountInfolistAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($shouldCancelParentActions);
+        $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);
     }
 }

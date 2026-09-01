@@ -4,7 +4,7 @@ namespace Filament\Widgets\Concerns;
 
 use Livewire\Attributes\Reactive;
 
-trait InteractsWithPageFilters
+trait InteractsWithPageFilters /** @phpstan-ignore trait.unused */
 {
     /**
      * @var array<string, mixed> | null
@@ -12,7 +12,7 @@ trait InteractsWithPageFilters
     #[Reactive]
     public ?array $pageFilters = null;
 
-    public function __get($property)
+    public function __get($property): mixed
     {
         // Backwards compatibility for the `$this->filters` property before it was renamed.
         if ($property === 'filters') {

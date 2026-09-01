@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Колони',
 
@@ -95,7 +95,7 @@ return [
             'label' => 'Отвори масови действия',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Превключи колони',
         ],
 

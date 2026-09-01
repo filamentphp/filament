@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Prva',
+        ],
+
         'go_to_page' => [
             'label' => 'Idi na stranicu :page',
+        ],
+
+        'last' => [
+            'label' => 'Zadnja',
         ],
 
         'next' => [

@@ -122,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Selector de color',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Mes',
+        ],
+
+        'year_input' => [
+            'label' => 'Año',
+        ],
+
+        'hour_input' => [
+            'label' => 'Hora',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minuto',
+        ],
+
+        'second_input' => [
+            'label' => 'Segundo',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Descargar',
+            ],
+
+            'open' => [
+                'label' => 'Abrir en nueva pestaña',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Editor de imágenes',
 
             'actions' => [
 
@@ -268,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Acciones',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -284,7 +340,11 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
+        'tools' => [
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
@@ -302,6 +362,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Seleccionar',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Seleccionar',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -312,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Acciones',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -365,40 +459,276 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Subir archivo',
+
+                'modal' => [
+
+                    'heading' => 'Subir archivo',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Archivo',
+                                'existing' => 'Reemplazar archivo',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Texto alternativo',
+                                'existing' => 'Cambiar texto alternativo',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Insertar',
+                        ],
+
+                        'save' => [
+                            'label' => 'Guardar',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Cuadrícula',
+
+                'modal' => [
+
+                    'heading' => 'Cuadrícula',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Preestablecido',
+
+                            'placeholder' => 'Ninguno',
+
+                            'options' => [
+                                'two' => 'Dos',
+                                'three' => 'Tres',
+                                'four' => 'Cuatro',
+                                'five' => 'Cinco',
+                                'two_start_third' => 'Dos (Comienzo del tercio)',
+                                'two_end_third' => 'Dos (Final del tercio)',
+                                'two_start_fourth' => 'Dos (Comienzo del cuarto)',
+                                'two_end_fourth' => 'Dos (Final del cuarto)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Columnas',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Desde el punto de quiebre',
+
+                            'options' => [
+                                'default' => 'Todos',
+                                'sm' => 'Pequeño',
+                                'md' => 'Mediano',
+                                'lg' => 'Grande',
+                                'xl' => 'Extra grande',
+                                '2xl' => 'Doble extra grande',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dos columnas asimétricas',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Extensión inicial',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Extensión final',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Enlace',
-                    'unlink' => 'Quitar enlace',
+                'label' => 'Editar',
+
+                'modal' => [
+
+                    'heading' => 'Enlace',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Abrir en una nueva pestaña',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Teclee un enlace URL',
+            'text_color' => [
+
+                'label' => 'Color de texto',
+
+                'modal' => [
+
+                    'heading' => 'Color de texto',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Color',
+
+                            'options' => [
+                                'slate' => 'Gris pizarra',
+                                'gray' => 'Gris',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Gris neutral',
+                                'stone' => 'Piedra',
+                                'mauve' => 'Malva',
+                                'olive' => 'Oliva',
+                                'mist' => 'Neblina',
+                                'taupe' => 'Gris topo',
+                                'red' => 'Rojo',
+                                'orange' => 'Naranja',
+                                'amber' => 'Ámbar',
+                                'yellow' => 'Amarillo',
+                                'lime' => 'Lima',
+                                'green' => 'Verde',
+                                'emerald' => 'Verde esmeralda',
+                                'teal' => 'Verde azulado',
+                                'cyan' => 'Turquesa',
+                                'sky' => 'Cielo',
+                                'blue' => 'Azul',
+                                'indigo' => 'Índigo',
+                                'violet' => 'Violeta',
+                                'purple' => 'Púrpura',
+                                'fuchsia' => 'Fucsia',
+                                'pink' => 'Rosado',
+                                'rose' => 'Rosa',
+                            ],
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Color personalizado',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
+        'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
+
+        'mentions' => [
+            'no_options_message' => 'No hay opciones disponibles.',
+            'no_search_results_message' => 'No hay resultados que coincidan con su búsqueda.',
+            'search_prompt' => 'Comience a escribir para buscar...',
+            'searching_message' => 'Buscando...',
+        ],
+
+        'toolbar' => [
+            'label' => 'Barra de herramientas del editor',
+        ],
+
+        'tools' => [
+            'align_center' => 'Alinear al centro',
+            'align_end' => 'Alinear al final',
+            'align_justify' => 'Justificar',
+            'align_start' => 'Alinear al inicio',
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
+            'clear_formatting' => 'Limpiar formato',
+            'code' => 'Código',
             'code_block' => 'Bloque de código',
+            'custom_blocks' => 'Bloques',
+            'details' => 'Detalles',
             'h1' => 'Título',
-            'h2' => 'Encabezado',
-            'h3' => 'Subencabezado',
+            'h2' => 'Encabezado 2',
+            'h3' => 'Encabezado 3',
+            'h4' => 'Encabezado 4',
+            'h5' => 'Encabezado 5',
+            'h6' => 'Encabezado 6',
+            'grid' => 'Cuadrícula',
+            'grid_delete' => 'Eliminar cuadrícula',
+            'highlight' => 'Resaltar',
+            'horizontal_rule' => 'Línea horizontal',
             'italic' => 'Cursiva',
+            'lead' => 'Texto guía',
             'link' => 'Enlace',
+            'merge_tags' => 'Etiquetas dinámicas',
             'ordered_list' => 'Lista numerada',
+            'paragraph' => 'Párrafo',
             'redo' => 'Rehacer',
+            'small' => 'Texto pequeño',
             'strike' => 'Tachar',
+            'subscript' => 'Subíndice',
+            'superscript' => 'Superíndice',
+            'table' => 'Tabla',
+            'table_delete' => 'Eliminar tabla',
+            'table_add_column_before' => 'Añadir columna antes',
+            'table_add_column_after' => 'Añadir columna después',
+            'table_delete_column' => 'Eliminar columna',
+            'table_add_row_before' => 'Añadir fila encima',
+            'table_add_row_after' => 'Añadir fila debajo',
+            'table_delete_row' => 'Eliminar fila',
+            'table_merge_cells' => 'Combinar celdas',
+            'table_split_cell' => 'Dividir celda',
+            'table_toggle_header_row' => 'Alternar fila de encabezado',
+            'table_toggle_header_cell' => 'Alternar celda de encabezado',
+            'text_color' => 'Color de texto',
             'underline' => 'Subrayar',
             'undo' => 'Deshacer',
         ],
+
+        'uploading_file_message' => 'Cargando archivo...',
 
     ],
 
@@ -407,6 +737,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Crear',
 
                 'modal' => [
 
@@ -429,6 +761,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Editar',
 
                 'modal' => [
 
@@ -457,6 +791,8 @@ return [
 
         'max_items_message' => 'Solo :count pueden ser seleccionados.',
 
+        'no_options_message' => 'No hay opciones disponibles.',
+
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
 
         'placeholder' => 'Seleccione una opción',
@@ -468,12 +804,31 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Eliminar',
+            ],
+
+        ],
+
         'placeholder' => 'Nueva etiqueta',
+
+        'tag_added' => 'Agregado: :tag',
+
+        'tag_removed' => 'Eliminado: :tag',
+
     ],
 
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
 
             'hide_password' => [
                 'label' => 'Ocultar contraseña',

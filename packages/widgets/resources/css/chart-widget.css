@@ -1,0 +1,88 @@
+.fi-wi-chart {
+    & .fi-wi-chart-frame {
+        @apply mx-auto flex w-full items-center justify-center;
+
+        &:not(.fi-wi-chart-frame-no-aspect-ratio) {
+            @apply aspect-square;
+        }
+    }
+
+    @supports (container-type: inline-size) {
+        & .fi-section-content {
+            @apply @container;
+        }
+
+        & .fi-wi-chart-frame:not(.fi-wi-chart-frame-no-aspect-ratio) {
+            @apply @sm:aspect-[1.5];
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & .fi-wi-chart-frame:not(.fi-wi-chart-frame-no-aspect-ratio) {
+            @apply sm:aspect-[1.5];
+        }
+    }
+
+    & .fi-wi-chart-filter {
+        &.fi-input-wrp {
+            @apply w-max sm:-my-2;
+        }
+
+        &.fi-dropdown {
+            & .fi-wi-chart-filter-content {
+                @apply grid gap-y-4 p-6;
+            }
+
+            & .fi-wi-chart-filter-content-actions-ctn {
+                @apply flex gap-3;
+            }
+        }
+    }
+
+    & .fi-color {
+        & .fi-wi-chart-bg-color {
+            @apply text-color-50 dark:text-color-400/10;
+        }
+
+        & .fi-wi-chart-border-color {
+            @apply text-color-500 dark:text-color-400;
+        }
+    }
+
+    & .fi-wi-chart-bg-color {
+        @apply text-gray-100 dark:text-gray-800;
+    }
+
+    & .fi-wi-chart-border-color {
+        @apply text-gray-400;
+    }
+
+    & .fi-wi-chart-grid-color {
+        @apply text-gray-200 dark:text-gray-800;
+    }
+
+    & .fi-wi-chart-text-color {
+        @apply text-gray-500 dark:text-gray-400;
+    }
+
+    /* Tooltips are painted onto the canvas, so these three elements are the only way to
+       color them. Their values are Chart.js' own tooltip colors rather than Filament
+       palette values, which is why they are written out longhand instead of `@apply`.
+       The border only appears once `--chart-tooltip-border-width` is set, so its
+       color defaults to a hairline that suits the background above it. */
+    & .fi-wi-chart-tooltip-bg-color {
+        color: rgb(0 0 0 / 0.8);
+    }
+
+    & .fi-wi-chart-tooltip-text-color {
+        color: rgb(255 255 255);
+    }
+
+    & .fi-wi-chart-tooltip-border-color {
+        color: rgb(255 255 255 / 0.2);
+    }
+
+    & .fi-empty-state {
+        @apply p-0;
+    }
+}

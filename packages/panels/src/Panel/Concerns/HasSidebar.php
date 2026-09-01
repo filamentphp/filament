@@ -3,18 +3,22 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Livewire\Sidebar;
+use Livewire\Component;
 
 trait HasSidebar
 {
-    protected string $sidebarWidth = '20rem';
+    protected string | Closure $sidebarWidth = '20rem';
 
-    protected string $collapsedSidebarWidth = '4.5rem';
+    protected string | Closure $collapsedSidebarWidth = '4.5rem';
 
     protected bool | Closure $isSidebarCollapsibleOnDesktop = false;
 
     protected bool | Closure $isSidebarFullyCollapsibleOnDesktop = false;
 
     protected bool | Closure $hasCollapsibleNavigationGroups = true;
+
+    protected string | Closure | null $sidebarLivewireComponent = null;
 
     public function sidebarCollapsibleOnDesktop(bool | Closure $condition = true): static
     {
@@ -37,14 +41,24 @@ trait HasSidebar
         return $this;
     }
 
-    public function sidebarWidth(string $width): static
+    /**
+     * @param  class-string<Component> | Closure | null  $component
+     */
+    public function sidebarLivewireComponent(string | Closure | null $component): static
+    {
+        $this->sidebarLivewireComponent = $component;
+
+        return $this;
+    }
+
+    public function sidebarWidth(string | Closure $width): static
     {
         $this->sidebarWidth = $width;
 
         return $this;
     }
 
-    public function collapsedSidebarWidth(string $width): static
+    public function collapsedSidebarWidth(string | Closure $width): static
     {
         $this->collapsedSidebarWidth = $width;
 
@@ -53,12 +67,12 @@ trait HasSidebar
 
     public function getSidebarWidth(): string
     {
-        return $this->sidebarWidth;
+        return $this->evaluate($this->sidebarWidth);
     }
 
     public function getCollapsedSidebarWidth(): string
     {
-        return $this->collapsedSidebarWidth;
+        return $this->evaluate($this->collapsedSidebarWidth);
     }
 
     public function isSidebarCollapsibleOnDesktop(): bool
@@ -74,5 +88,13 @@ trait HasSidebar
     public function hasCollapsibleNavigationGroups(): bool
     {
         return (bool) $this->evaluate($this->hasCollapsibleNavigationGroups);
+    }
+
+    /**
+     * @return class-string<Component>
+     */
+    public function getSidebarLivewireComponent(): string
+    {
+        return $this->evaluate($this->sidebarLivewireComponent) ?? Sidebar::class;
     }
 }

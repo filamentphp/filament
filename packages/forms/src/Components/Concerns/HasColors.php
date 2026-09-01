@@ -10,22 +10,32 @@ use UnitEnum;
 trait HasColors
 {
     /**
-     * @var array<string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null> | Arrayable | Closure | null
+     * @var array<string | array<int | string, string | int> | null> | Arrayable | Closure | null
      */
     protected array | Arrayable | Closure | null $colors = null;
 
     /**
-     * @param  array<string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null> | Arrayable | Closure | null  $colors
+     * @var array<string | array<int | string, string | int> | null> | null
+     */
+    protected ?array $cachedColors = null;
+
+    protected bool $hasCachedColors = false;
+
+    /**
+     * @param  array<string | array<int | string, string | int> | null> | Arrayable | Closure | null  $colors
      */
     public function colors(array | Arrayable | Closure | null $colors): static
     {
         $this->colors = $colors;
 
+        $this->cachedColors = null;
+        $this->hasCachedColors = false;
+
         return $this;
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public function getColor(mixed $value): string | array | null
     {
@@ -33,10 +43,14 @@ trait HasColors
     }
 
     /**
-     * @return array<string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null>
+     * @return array<string | array<int | string, string | int> | null>
      */
     public function getColors(): array
     {
+        if ($this->hasCachedColors) {
+            return $this->cachedColors;
+        }
+
         $colors = $this->evaluate($this->colors);
 
         if ($colors instanceof Arrayable) {
@@ -48,13 +62,15 @@ trait HasColors
             filled($enum = $this->getEnum()) &&
             is_a($enum, ColorInterface::class, allow_string: true)
         ) {
-            return array_reduce($enum::cases(), function (array $carry, ColorInterface & UnitEnum $case): array {
-                $carry[$case?->value ?? $case->name] = $case->getColor();
+            $colors = array_reduce($enum::cases(), function (array $carry, ColorInterface & UnitEnum $case): array {
+                $carry[$case->value ?? $case->name] = $case->getColor();
 
                 return $carry;
             }, []);
         }
 
-        return $colors ?? [];
+        $this->hasCachedColors = true;
+
+        return $this->cachedColors = $colors ?? [];
     }
 }

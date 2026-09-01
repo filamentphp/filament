@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Zum Inhalt springen',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Benachrichtigungen öffnen',
+            'label_with_unread_count' => '{1} Benachrichtigungen, :count ungelesene Benachrichtigung|[2,*] Benachrichtigungen, :count ungelesene Benachrichtigungen',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Thema',
+
             'dark' => [
                 'label' => 'Dark Mode einschalten',
             ],
@@ -52,12 +59,29 @@ return [
 
     ],
 
+    'navigation' => [
+        'label' => 'Seitennavigation',
+    ],
+
+    'topbar' => [
+        'label' => 'Menüleiste',
+    ],
+
     'avatar' => [
         'alt' => 'Avatar von :name',
     ],
 
     'logo' => [
         'alt' => 'Logo von :name',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Mandant suchen',
+            'placeholder' => 'Suchen',
+        ],
+
     ],
 
 ];

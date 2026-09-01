@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Testing;
 
+use BackedEnum;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
@@ -10,10 +11,11 @@ use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
- * @method HasTable instance()
+ * @method Component&HasTable instance()
  *
  * @mixin Testable
  */
@@ -38,11 +40,11 @@ class TestsFilters
             } elseif ($filter instanceof SelectFilter) {
                 if ($filter->isMultiple()) {
                     $data = ['values' => array_map(
-                        fn ($record) => $record instanceof Model ? $record->getKey() : $record,
+                        fn ($data) => $data instanceof Model ? $data->getKey() : ($data instanceof BackedEnum ? $data->value : $data),
                         Arr::wrap($data ?? []),
                     )];
                 } else {
-                    $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
+                    $data = ['value' => $data instanceof Model ? $data->getKey() : ($data instanceof BackedEnum ? $data->value : $data)];
                 }
             } elseif (! is_array($data)) {
                 $data = ['isActive' => $data === true || $data === null];
@@ -83,7 +85,7 @@ class TestsFilters
 
     public function assertTableFilterExists(): Closure
     {
-        return function (string $name): static {
+        return function (string $name, ?Closure $checkFilterUsing = null): static {
             $name = $this->instance()->parseTableFilterName($name);
 
             $filter = $this->instance()->getTable()->getFilter($name);
@@ -93,7 +95,56 @@ class TestsFilters
             Assert::assertInstanceOf(
                 BaseFilter::class,
                 $filter,
-                message: "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
+                "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
+            );
+
+            if ($checkFilterUsing) {
+                Assert::assertTrue(
+                    $checkFilterUsing($filter),
+                    "Failed asserting that a table filter with name [{$name}] and provided configuration exists on the [{$livewireClass}] component.",
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertTableFilterVisible(): Closure
+    {
+        return function (string $name): static {
+            $name = $this->instance()->parseTableFilterName($name);
+
+            $filter = $this->instance()->getTable()->getFilter(
+                name: $name,
+                withHidden: true,
+            );
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertTrue(
+                $filter->isVisible(),
+                "Failed asserting that a table filter with name [{$name}] is visible on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableFilterHidden(): Closure
+    {
+        return function (string $name): static {
+            $name = $this->instance()->parseTableFilterName($name);
+
+            $filter = $this->instance()->getTable()->getFilter(
+                name: $name,
+                withHidden: true,
+            );
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertTrue(
+                $filter->isHidden(),
+                "Failed asserting that a table filter with name [{$name}] is hidden on the [{$livewireClass}] component."
             );
 
             return $this;

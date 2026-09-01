@@ -13,6 +13,9 @@ return [
             'file' => [
                 'label' => 'Arxiu',
                 'placeholder' => 'Carregar un arxiu CSV',
+                'rules' => [
+                    'duplicate_columns' => '{0} El fitxer no ha de contenir més d\'un encapçalament de columna buit.|{1,*} El fitxer no ha de contenir encapçalaments de columna duplicats: :columns.',
+                ],
             ],
 
             'columns' => [
@@ -72,6 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'error',
         'system_error' => 'Error del sistema, poseu-vos en contacte amb el servei d\'assistència.',
+        'column_mapping_required_for_new_record' => 'La columna :attribute no s\'ha assignat a cap columna del fitxer, però és necessària per crear nous registres.',
     ],
 
 ];

@@ -2,8 +2,8 @@
 
 namespace Filament\Panel\Concerns;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 trait CanGenerateResourceUrls
 {
@@ -14,7 +14,7 @@ trait CanGenerateResourceUrls
     {
         $modelClass = is_string($model) ? $model : $model::class;
 
-        $resource = $this->getModelResource($modelClass) ?? throw new Exception("No Filament resource found for model [{$modelClass}].");
+        $resource = $this->getModelResource($modelClass) ?? throw new InvalidArgumentException("No Filament resource found for model [{$modelClass}].");
 
         if (
             ($model instanceof Model) &&

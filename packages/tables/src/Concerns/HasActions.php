@@ -4,13 +4,11 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Schema\Schema;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasActions
 {
-    protected function configureTableAction(Action $action): void {}
-
     /**
      * @deprecated Use the `callMountedAction()` method instead.
      *
@@ -92,7 +90,7 @@ trait HasActions
      */
     public function unmountTableAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($shouldCancelParentActions);
+        $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);
     }
 
     /**

@@ -1,23 +1,23 @@
 @props([
+    'contained' => true,
     'label' => null,
     'labelHidden' => false,
+    'required' => false,
 ])
 
 <fieldset
     {{
         $attributes->class([
-            'fi-fieldset rounded-xl border border-gray-200 p-6 dark:border-white/10',
+            'fi-fieldset',
+            'fi-fieldset-label-hidden' => $labelHidden,
+            'fi-fieldset-not-contained' => ! $contained,
         ])
     }}
 >
     @if (filled($label))
-        <legend
-            @class([
-                '-ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white',
-                'sr-only' => $labelHidden,
-            ])
-        >
-            {{ $label }}
+        <legend>
+            {{ $label }}@if ($required)<sup class="fi-fieldset-label-required-mark">*</sup>
+            @endif
         </legend>
     @endif
 

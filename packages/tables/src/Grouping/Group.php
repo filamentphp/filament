@@ -8,7 +8,8 @@ use Carbon\CarbonInterface;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use Filament\Tables\Table;
+use Filament\Support\Services\RelationshipOrderer;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -17,6 +18,8 @@ use Illuminate\Support\Arr;
 
 class Group extends Component
 {
+    use Concerns\BelongsToTable;
+
     protected ?string $column;
 
     protected ?Closure $getDescriptionFromRecordUsing = null;
@@ -33,7 +36,7 @@ class Group extends Component
 
     protected ?Closure $scopeQueryByKeyUsing = null;
 
-    protected ?string $label;
+    protected string | Htmlable | Closure | null $label = null;
 
     protected string $id;
 
@@ -42,6 +45,13 @@ class Group extends Component
     protected bool $isTitlePrefixedWithLabel = true;
 
     protected bool $isDate = false;
+
+    /**
+     * @var array<string, string | Htmlable | null>
+     */
+    protected array $cachedTitles = [];
+
+    protected string $evaluationIdentifier = 'group';
 
     final public function __construct(?string $id = null)
     {
@@ -84,7 +94,7 @@ class Group extends Component
         return $this;
     }
 
-    public function label(?string $label): static
+    public function label(string | Htmlable | Closure | null $label): static
     {
         $this->label = $label;
 
@@ -177,9 +187,9 @@ class Group extends Component
         return $this->id;
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
-        return $this->label ?? (string) str($this->getId())
+        return $this->evaluate($this->label) ?? (string) str($this->getId())
             ->beforeLast('.')
             ->afterLast('.')
             ->kebab()
@@ -187,7 +197,10 @@ class Group extends Component
             ->ucfirst();
     }
 
-    public function getDescription(Model $record, ?string $title): ?string
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getDescription(Model | array $record, string | Htmlable | null $title): string | Htmlable | null
     {
         if (! $this->getDescriptionFromRecordUsing) {
             return null;
@@ -199,14 +212,17 @@ class Group extends Component
                 'record' => $record,
                 'title' => $title,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         );
     }
 
-    public function getStringKey(Model $record): ?string
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getStringKey(Model | array $record): ?string
     {
         $key = $this->getKey($record);
 
@@ -225,7 +241,10 @@ class Group extends Component
         return filled($key) ? strval($key) : null;
     }
 
-    public function getKey(Model $record): mixed
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getKey(Model | array $record): mixed
     {
         $column = $this->getColumn();
 
@@ -236,17 +255,38 @@ class Group extends Component
                     'column' => $column,
                     'record' => $record,
                 ],
-                typedInjections: [
+                typedInjections: ($record instanceof Model) ? [
                     Model::class => $record,
                     $record::class => $record,
-                ],
+                ] : [],
             );
         }
 
         return Arr::get($record, $this->getColumn());
     }
 
-    public function getTitle(Model $record): ?string
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getTitle(Model | array $record, ?string $key = null): string | Htmlable | null
+    {
+        if ($this->getTitleFromRecordUsing) {
+            return $this->resolveTitle($record);
+        }
+
+        $key ??= $this->getStringKey($record);
+
+        if (! array_key_exists($key, $this->cachedTitles)) {
+            $this->cachedTitles[$key] = $this->resolveTitle($record);
+        }
+
+        return $this->cachedTitles[$key];
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    protected function resolveTitle(Model | array $record): string | Htmlable | null
     {
         $column = $this->getColumn();
 
@@ -257,10 +297,10 @@ class Group extends Component
                     'column' => $column,
                     'record' => $record,
                 ],
-                typedInjections: [
+                typedInjections: ($record instanceof Model) ? [
                     Model::class => $record,
                     $record::class => $record,
-                ],
+                ] : [],
             );
         } else {
             $title = Arr::get($record, $column);
@@ -270,12 +310,16 @@ class Group extends Component
             $title = $title->getLabel();
         }
 
+        if ($title instanceof Htmlable) {
+            return $title;
+        }
+
         if (filled($title) && $this->isDate()) {
             if (! ($title instanceof CarbonInterface)) {
                 $title = Carbon::parse($title);
             }
 
-            $title = $title->translatedFormat(Table::$defaultDateDisplayFormat);
+            $title = $title->translatedFormat($this->getTable()->getDefaultDateDisplayFormat());
         }
 
         return $title;
@@ -313,44 +357,20 @@ class Group extends Component
             ]) ?? $query;
         }
 
-        return $query->orderBy($this->getSortColumnForQuery($query, $this->getRelationshipAttribute()), $direction);
+        if (filled($relationshipName = $this->getRelationshipName())) {
+            return $query->orderBy(
+                app(RelationshipOrderer::class)->buildSubquery($query, $relationshipName, $this->getRelationshipAttribute()),
+                $direction
+            );
+        }
+
+        return $query->orderBy($this->getRelationshipAttribute(), $direction);
     }
 
     /**
-     * @param  array<string> | null  $relationships
+     * @param  Model | array<string, mixed>  $record
      */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null, ?Relation $lastRelationship = null): string | Builder
-    {
-        $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
-            explode('.', $relationshipName) :
-            [];
-
-        if (! count($relationships)) {
-            return $lastRelationship ? $lastRelationship->getQuery()->getModel()->qualifyColumn($sortColumn) : $sortColumn;
-        }
-
-        $currentRelationshipName = array_shift($relationships);
-
-        $relationship = $this->getRelationship($query->getModel(), $currentRelationshipName);
-
-        $relatedQuery = $relationship->getRelated()::query();
-
-        return $relationship
-            ->getRelationExistenceQuery(
-                $relatedQuery,
-                $query,
-                [$currentRelationshipName => $this->getSortColumnForQuery(
-                    $relatedQuery,
-                    $sortColumn,
-                    $relationships,
-                    $relationship,
-                )],
-            )
-            ->applyScopes()
-            ->getQuery();
-    }
-
-    public function scopeQuery(EloquentBuilder $query, Model $record): EloquentBuilder
+    public function scopeQuery(EloquentBuilder $query, Model | array $record): EloquentBuilder
     {
         if ($this->scopeQueryUsing) {
             return $this->evaluate(
@@ -360,10 +380,10 @@ class Group extends Component
                     'query' => $query,
                     'record' => $record,
                 ],
-                typedInjections: [
+                typedInjections: ($record instanceof Model) ? [
                     Model::class => $record,
                     $record::class => $record,
-                ],
+                ] : [],
             ) ?? $query;
         }
 
@@ -372,7 +392,7 @@ class Group extends Component
         return $query;
     }
 
-    public function scopeQueryByKey(EloquentBuilder $query, string $key): EloquentBuilder
+    public function scopeQueryByKey(EloquentBuilder $query, ?string $key): EloquentBuilder
     {
         $column = $this->getColumn();
 
@@ -391,7 +411,7 @@ class Group extends Component
             return $query->whereHas(
                 $relationshipName,
                 fn (EloquentBuilder $query) => $this->applyDefaultScopeToQuery($query, $this->getRelationshipAttribute(), $key),
-            );
+            )->when(blank($key), fn (EloquentBuilder $query) => $query->orWhereDoesntHave($relationshipName));
         }
 
         return $this->applyDefaultScopeToQuery($query, $column, $key);
@@ -415,6 +435,12 @@ class Group extends Component
         $relationship = null;
 
         foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -468,5 +494,17 @@ class Group extends Component
         }
 
         return $query->with([$relationshipName]);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 }

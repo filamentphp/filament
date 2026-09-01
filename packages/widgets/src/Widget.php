@@ -3,11 +3,13 @@
 namespace Filament\Widgets;
 
 use Filament\Support\Concerns\CanBeLazy;
+use Filament\Widgets\Concerns\CanAuthorizeAccess;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 abstract class Widget extends Component
 {
+    use CanAuthorizeAccess;
     use CanBeLazy;
 
     protected static bool $isDiscovered = true;
@@ -17,7 +19,7 @@ abstract class Widget extends Component
     /**
      * @var view-string
      */
-    protected static string $view;
+    protected string $view;
 
     /**
      * @var int | string | array<string, int | null>
@@ -70,7 +72,7 @@ abstract class Widget extends Component
 
     public function render(): View
     {
-        return view(static::$view, $this->getViewData());
+        return view($this->view, $this->getViewData());
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace Filament\Actions;
 
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\View\TablesIconAlias;
 
 class BulkActionGroup extends ActionGroup
 {
@@ -12,14 +14,26 @@ class BulkActionGroup extends ActionGroup
 
         $this->label(__('filament-tables::table.actions.open_bulk_actions.label'));
 
-        $this->icon(FilamentIcon::resolve('tables::actions.open-bulk-actions') ?? 'heroicon-m-ellipsis-vertical');
+        $this->icon(FilamentIcon::resolve(TablesIconAlias::ACTIONS_OPEN_BULK_ACTIONS) ?? Heroicon::EllipsisVertical);
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
         $this->button();
 
         $this->dropdownPlacement('bottom-start');
 
         $this->labeledFrom('sm');
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getExtraDropdownAttributes(): array
+    {
+        return [
+            'x-cloak' => true,
+            'x-show' => 'getSelectedRecordsCount()',
+            ...parent::getExtraAttributes(),
+        ];
     }
 }

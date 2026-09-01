@@ -2,15 +2,19 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
-use Filament\Schema\Schema;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
+use LogicException;
+
+use function Livewire\invade;
 
 trait HasBulkActions
 {
@@ -19,9 +23,14 @@ trait HasBulkActions
      */
     public array $selectedTableRecords = [];
 
-    protected Collection $cachedSelectedTableRecords;
+    /**
+     * @var array<int | string>
+     */
+    public array $deselectedTableRecords = [];
 
-    protected function configureTableBulkAction(BulkAction $action): void {}
+    public bool $isTrackingDeselectedTableRecords = false;
+
+    protected EloquentCollection | Collection | LazyCollection $cachedSelectedTableRecords;
 
     /**
      * @deprecated Use the `callMountedAction()` method instead.
@@ -48,7 +57,7 @@ trait HasBulkActions
     }
 
     /**
-     * @deprecated Use the `mountAction()` method instead.
+     * @deprecated Use the `replaceMountedAction()` method instead.
      *
      * @param  array<int | string> | null  $selectedRecords
      */
@@ -79,7 +88,7 @@ trait HasBulkActions
 
     public function deselectAllTableRecords(): void
     {
-        $this->dispatch('deselectAllTableRecords');
+        $this->dispatch('deselectAllTableRecords')->self();
     }
 
     /**
@@ -97,7 +106,7 @@ trait HasBulkActions
 
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords()->pluck($query->getModel()->getKeyName()) :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             /** @phpstan-ignore-next-line */
             return $records->map(fn ($key): string => (string) $key)->all();
@@ -124,21 +133,53 @@ trait HasBulkActions
     /**
      * @return array<string>
      */
-    public function getGroupedSelectableTableRecordKeys(string $group): array
+    public function getGroupedSelectableTableRecordKeys(?string $group): array
     {
-        $query = $this->getFilteredTableQuery();
-
         $tableGrouping = $this->getTableGrouping();
+
+        if (! $this->getTable()->hasQuery()) {
+            $groupColumn = $tableGrouping->getColumn();
+
+            $records = $this->getTableRecords()
+                ->filter(static function (array $record) use ($groupColumn, $group): bool {
+                    $key = $record[$groupColumn] ?? null;
+                    $stringKey = filled($key) ? strval($key) : null;
+
+                    return $stringKey === $group;
+                });
+
+            if (! $this->getTable()->checksIfRecordIsSelectable()) {
+                return $records
+                    ->map(fn (array $record): string => $this->getTableRecordKey($record)) /** @phpstan-ignore method.notFound */
+                    ->values()
+                    ->all();
+            }
+
+            /** @phpstan-ignore-next-line */
+            return $records->reduce(
+                function (array $carry, array $record): array {
+                    if (! $this->getTable()->isRecordSelectable($record)) {
+                        return $carry;
+                    }
+
+                    $carry[] = $this->getTableRecordKey($record);
+
+                    return $carry;
+                },
+                initial: [],
+            );
+        }
+
+        $query = $this->getFilteredTableQuery();
 
         $tableGrouping->scopeQueryByKey($query, $group);
 
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             $records = $this->getTable()->selectsCurrentPageOnly() ?
-                /** @phpstan-ignore-next-line */
                 $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
-                    ->pluck($query->getModel()->getKeyName()) :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+                    ->pluck($query->getModel()->getKeyName()) : /** @phpstan-ignore method.notFound */
+                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             return $records
                 ->map(fn ($key): string => (string) $key)
@@ -189,7 +230,7 @@ trait HasBulkActions
         return $this->getFilteredTableQuery()?->count() ?? $this->cachedTableRecords->count();
     }
 
-    public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true): EloquentCollection | Collection
+    public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection
     {
         if (isset($this->cachedSelectedTableRecords)) {
             return $this->cachedSelectedTableRecords;
@@ -197,23 +238,80 @@ trait HasBulkActions
 
         $table = $this->getTable();
 
-        if (
-            $shouldFetchSelectedRecords ||
-            (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates()))
-        ) {
-            if (! $table->hasQuery()) {
-                $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
+        if (! $table->hasQuery()) {
+            $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
 
-                return $this->cachedSelectedTableRecords = $resolveSelectedRecords ?
-                    $table->evaluate($resolveSelectedRecords, [
-                        'keys' => $this->selectedTableRecords,
-                        'records' => $this->selectedTableRecords,
-                    ]) :
-                    $this->getTableRecords()->only($this->selectedTableRecords);
+            $resolvedSelectedRecords = $resolveSelectedRecords ?
+                $table->evaluate($resolveSelectedRecords, [
+                    'keys' => $this->selectedTableRecords,
+                    'records' => $this->selectedTableRecords,
+                    'deselectedKeys' => $this->deselectedTableRecords,
+                    'deselectedRecords' => $this->deselectedTableRecords,
+                    'isTrackingDeselectedKeys' => $this->isTrackingDeselectedTableRecords,
+                    'isTrackingDeselectedRecords' => $this->isTrackingDeselectedTableRecords,
+                ]) :
+                ($this->isTrackingDeselectedTableRecords ? $this->getTableRecords()->except($this->deselectedTableRecords) : $this->getTableRecords()->only($this->selectedTableRecords));
+
+            if ($table->checksIfRecordIsSelectable()) {
+                $resolvedSelectedRecords = $resolvedSelectedRecords->filter(
+                    fn (Model | array $record): bool => $table->isRecordSelectable($record)
+                );
             }
 
-            $query = $table->getQuery()->whereKey($this->selectedTableRecords);
-            $this->applySortingToTableQuery($query);
+            $maxSelectableRecords = $table->getMaxSelectableRecords();
+
+            if ($maxSelectableRecords && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
+                throw new LogicException("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
+            }
+
+            return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
+        }
+
+        $query = $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize);
+
+        if (! $shouldFetchSelectedRecords) {
+            return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
+        }
+
+        if ($chunkSize && $table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+            $invadedRelationship = invade($table->getRelationship());
+
+            $resolvedSelectedRecords = $query->lazyById($chunkSize)
+                ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
+        } elseif ($chunkSize) {
+            $resolvedSelectedRecords = $query->lazyById($chunkSize);
+        } else {
+            $resolvedSelectedRecords = $this->hydratePivotRelationForTableRecords($query->get());
+        }
+
+        if ($table->checksIfRecordIsSelectable()) {
+            $resolvedSelectedRecords = $resolvedSelectedRecords->filter(
+                fn (Model | array $record): bool => $table->isRecordSelectable($record)
+            );
+        }
+
+        return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
+    }
+
+    public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
+    {
+        $table = $this->getTable();
+        $maxSelectableRecords = $table->getMaxSelectableRecords();
+
+        if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
+            if ($this->isTrackingDeselectedTableRecords) {
+                $query = $table->getQuery()->whereKeyNot($this->deselectedTableRecords);
+            } else {
+                $query = $table->getQuery()->whereKey($this->selectedTableRecords);
+            }
+
+            if ($maxSelectableRecords) {
+                $query->limit($maxSelectableRecords);
+            }
+
+            if (! $chunkSize) {
+                $this->applySortingToTableQuery($query);
+            }
 
             if ($shouldFetchSelectedRecords) {
                 foreach ($this->getTable()->getColumns() as $column) {
@@ -226,9 +324,11 @@ trait HasBulkActions
                 $this->filterTableQuery($query);
             }
 
-            return $this->cachedSelectedTableRecords = $shouldFetchSelectedRecords ?
-                $query->get() :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+            if (! $shouldFetchSelectedRecords) {
+                $this->constrainQueryToSelectableTableRecords($query);
+            }
+
+            return $query;
         }
 
         /** @var BelongsToMany $relationship */
@@ -237,16 +337,55 @@ trait HasBulkActions
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
-
-        foreach ($this->getTable()->getColumns() as $column) {
-            $column->applyEagerLoading($relationship);
-            $column->applyRelationshipAggregates($relationship);
+        if ($this->isTrackingDeselectedTableRecords) {
+            $relationship->wherePivotNotIn($pivotKeyName, $this->deselectedTableRecords);
+        } else {
+            $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
         }
 
-        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords(
-            $table->selectPivotDataInQuery($relationship)->get(),
-        );
+        if ($maxSelectableRecords) {
+            $relationship->limit($maxSelectableRecords);
+        }
+
+        if ($shouldFetchSelectedRecords) {
+            foreach ($this->getTable()->getColumns() as $column) {
+                $column->applyEagerLoading($relationship);
+                $column->applyRelationshipAggregates($relationship);
+            }
+        }
+
+        $relationship = $table->selectPivotDataInQuery($relationship);
+
+        $query = $relationship->getQuery();
+
+        if (! $chunkSize) {
+            $this->applySortingToTableQuery($query);
+        }
+
+        if (! $shouldFetchSelectedRecords) {
+            $this->constrainQueryToSelectableTableRecords($query);
+        }
+
+        return $query;
+    }
+
+    protected function constrainQueryToSelectableTableRecords(Builder $query): void
+    {
+        $table = $this->getTable();
+
+        if (! $table->checksIfRecordIsSelectable()) {
+            return;
+        }
+
+        $selectableKeys = [];
+
+        (clone $query)->lazyById()->each(function (Model $record) use (&$selectableKeys, $table): void {
+            if ($table->isRecordSelectable($record)) {
+                $selectableKeys[] = $record->getKey();
+            }
+        });
+
+        $query->whereKey($selectableKeys);
     }
 
     /**
@@ -289,13 +428,5 @@ trait HasBulkActions
     protected function getTableBulkActions(): array
     {
         return [];
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    public function isTableRecordSelectable(): ?Closure
-    {
-        return null;
     }
 }

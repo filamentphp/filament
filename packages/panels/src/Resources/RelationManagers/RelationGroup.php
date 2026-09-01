@@ -3,23 +3,33 @@
 namespace Filament\Resources\RelationManagers;
 
 use Closure;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasBadgeTooltip;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasIconPosition;
 use Illuminate\Database\Eloquent\Model;
 
 class RelationGroup extends Component
 {
+    use HasBadgeTooltip;
     use HasIcon;
+    use HasIconPosition;
 
     protected string | Closure | null $badge = null;
 
-    protected string | Closure | null $badgeColor = null;
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $badgeColor = null;
 
-    protected string | Closure | null $badgeTooltip = null;
+    protected bool | Closure $isBadgeDeferred = false;
 
     protected ?Model $ownerRecord = null;
 
     protected ?string $pageClass = null;
+
+    protected ?Closure $modifyTabUsing = null;
 
     /**
      * @param  array<class-string<RelationManager> | RelationManagerConfiguration>  $managers
@@ -61,16 +71,19 @@ class RelationGroup extends Component
         return $this;
     }
 
-    public function badgeColor(string | Closure | null $color): static
+    /**
+     * @param  string | array<string> | Closure | null  $color
+     */
+    public function badgeColor(string | array | Closure | null $color): static
     {
         $this->badgeColor = $color;
 
         return $this;
     }
 
-    public function badgeTooltip(string | Closure | null $tooltip): static
+    public function deferBadge(bool | Closure $condition = true): static
     {
-        $this->badgeTooltip = $tooltip;
+        $this->isBadgeDeferred = $condition;
 
         return $this;
     }
@@ -78,6 +91,13 @@ class RelationGroup extends Component
     public function getLabel(): string
     {
         return $this->evaluate($this->label);
+    }
+
+    public function tab(?Closure $callback): static
+    {
+        $this->modifyTabUsing = $callback;
+
+        return $this;
     }
 
     /**
@@ -116,14 +136,19 @@ class RelationGroup extends Component
         return $this->evaluate($this->badge);
     }
 
-    public function getBadgeColor(): ?string
+    /**
+     * @return string | array<string> | null
+     */
+    public function getBadgeColor(?string $badge = null): string | array | null
     {
-        return $this->evaluate($this->badgeColor);
+        return $this->evaluate($this->badgeColor, [
+            'badge' => $badge,
+        ]);
     }
 
-    public function getBadgeTooltip(): ?string
+    public function isBadgeDeferred(): bool
     {
-        return $this->evaluate($this->badgeTooltip);
+        return (bool) $this->evaluate($this->isBadgeDeferred);
     }
 
     public function getOwnerRecord(): ?Model
@@ -153,7 +178,7 @@ class RelationGroup extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $ownerRecord = $this->getOwnerRecord();
+        $ownerRecord = is_a($parameterType, Model::class, allow_string: true) ? $this->getOwnerRecord() : null;
 
         if (! $ownerRecord) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
@@ -163,5 +188,24 @@ class RelationGroup extends Component
             Model::class, $ownerRecord::class => [$ownerRecord],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
+    }
+
+    public function getTabComponent(): Tab
+    {
+        $isTabBadgeDeferred = $this->isBadgeDeferred();
+
+        $tab = Tab::make($this->getLabel())
+            ->badge($isTabBadgeDeferred
+                ? fn (): ?string => $this->getBadge()
+                : ($badge = $this->getBadge()))
+            ->deferBadge($isTabBadgeDeferred)
+            ->badgeColor($this->getBadgeColor($badge ?? null))
+            ->badgeTooltip($this->getBadgeTooltip($badge ?? null))
+            ->icon($this->getIcon())
+            ->iconPosition($this->getIconPosition());
+
+        return $this->evaluate($this->modifyTabUsing, [
+            'tab' => $tab,
+        ]) ?? $tab;
     }
 }

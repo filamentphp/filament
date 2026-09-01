@@ -1,0 +1,69 @@
+@props([
+    'compact' => false,
+    'contained' => true,
+    'description' => null,
+    'footer' => null,
+    'heading',
+    'headingTag' => 'h2',
+    'icon' => null,
+    'iconColor' => 'primary',
+    'iconSize' => null,
+])
+
+@php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\Components\SectionComponent\IconComponent;
+
+    if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+    }
+
+    $hasDescription = filled((string) $description);
+    $hasFooter = filled((string) $footer);
+    $hasIcon = filled($icon);
+@endphp
+
+<div
+    {{
+        $attributes->class([
+            'fi-empty-state',
+            'fi-compact' => $compact,
+            'fi-empty-state-not-contained' => ! $contained,
+        ])
+    }}
+>
+    <div class="fi-empty-state-content">
+        @if ($hasIcon)
+            <div
+                @class([
+                    'fi-empty-state-icon-bg',
+                    'fi-color ' . ('fi-color-' . $iconColor) => $iconColor !== 'gray',
+                ])
+            >
+                {{
+                    \Filament\Support\generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+                        ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
+                }}
+            </div>
+        @endif
+
+        <div class="fi-empty-state-text-ctn">
+            <{{ $headingTag }} class="fi-empty-state-heading">
+                {{ $heading }}
+            </{{ $headingTag }}>
+
+            @if ($hasDescription)
+                <p class="fi-empty-state-description">
+                    {{ $description }}
+                </p>
+            @endif
+
+            @if ($hasFooter)
+                <footer class="fi-empty-state-footer">
+                    {{ $footer }}
+                </footer>
+            @endif
+        </div>
+    </div>
+</div>

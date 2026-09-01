@@ -1,123 +1,151 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
-use Filament\Schema\Components\Section;
-use Filament\Schema\Components\Wizard;
-use Filament\Schema\Schema;
-use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('has a form with the default name \'form\'', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormExists();
+describe('form and field existence', function (): void {
+    it('has a form with the default name \'form\'', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormExists();
+    });
+
+    it('can have forms with non-default names', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertFormExists('fooForm')
+            ->assertFormExists('barForm');
+    });
+
+    it('has fields', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormFieldExists('title')
+            ->assertFormFieldExists('nested.input')
+            ->assertFormFieldExists('disabled', function (TextInput $field): bool {
+                return $field->isDisabled();
+            });
+    });
+
+    it('does not have fields', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormFieldDoesNotExist('not-such-field');
+    });
+
+    it('has fields on multiple forms', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertFormFieldExists('title', 'fooForm')
+            ->assertFormFieldExists('title', 'barForm')
+            ->assertFormFieldExists('disabled', 'barForm', function (TextInput $field): bool {
+                return $field->isDisabled();
+            });
+    });
+
+    it('can fill fields on multiple forms', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->fillForm(['title' => 'value'], 'fooForm')
+            ->assertSchemaStateSet(['title' => 'value'], 'fooForm');
+    });
 });
 
-it('can have forms with non-default names', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->assertFormExists('fooForm')
-        ->assertFormExists('barForm');
+describe('field state', function (): void {
+    it('can have disabled fields', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormFieldDisabled('disabled');
+    });
+
+    it('can have disabled fields on multiple forms', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertFormFieldDisabled('disabled', 'fooForm')
+            ->assertFormFieldDisabled('disabled', 'barForm');
+    });
+
+    it('can have enabled fields', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormFieldEnabled('enabled');
+    });
+
+    it('can have enabled fields on multiple forms', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertFormFieldEnabled('enabled', 'fooForm')
+            ->assertFormFieldEnabled('enabled', 'barForm');
+    });
+
+    it('can have hidden fields', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormFieldHidden('hidden');
+    });
+
+    it('can have hidden fields on multiple forms', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertFormFieldHidden('hidden', 'fooForm')
+            ->assertFormFieldHidden('hidden', 'barForm');
+    });
+
+    it('can have visible fields', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormFieldVisible('visible');
+    });
+
+    it('can have visible fields on multiple forms', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertFormFieldVisible('visible', 'fooForm')
+            ->assertFormFieldVisible('visible', 'barForm');
+    });
 });
 
-it('has fields', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormFieldExists('title')
-        ->assertFormFieldExists('nested.input')
-        ->assertFormFieldExists('disabled', function (TextInput $field): bool {
-            return $field->isDisabled();
-        });
-});
+describe('schema components', function (): void {
+    it('has layout components', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormComponentExists('section')
+            ->assertFormComponentExists('section.nested.section')
+            ->assertFormComponentExists('section.nested.section', function (Section $section): bool {
+                return $section->getHeading() === 'I am nested';
+            });
+    });
 
-it('does not have fields', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormFieldDoesNotExist('not-such-field');
-});
+    it('does not have layout components', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertFormComponentDoesNotExist('no-such-section');
+    });
 
-it('has fields on multiple forms', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldExists('title', 'fooForm')
-        ->assertFormFieldExists('title', 'barForm')
-        ->assertFormFieldExists('disabled', 'barForm', function (TextInput $field): bool {
-            return $field->isDisabled();
-        });
-});
+    it('can have hidden schema components', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertSchemaComponentHidden('hidden.section');
+    });
 
-it('can fill fields on multiple forms', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->fillForm(['title' => 'value'], 'fooForm')
-        ->assertFormSet(['title' => 'value'], 'fooForm');
-});
+    it('can have hidden schema components on multiple schemas', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertSchemaComponentHidden('hidden.section', 'fooForm')
+            ->assertSchemaComponentHidden('hidden.section', 'barForm');
+    });
 
-it('can have disabled fields', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsDisabled('disabled');
-});
+    it('can have visible schema components', function (): void {
+        livewire(TestComponentWithForm::class)
+            ->assertSchemaComponentVisible('visible.section');
+    });
 
-it('can have disabled fields on multiple forms', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsDisabled('disabled', 'fooForm')
-        ->assertFormFieldIsDisabled('disabled', 'barForm');
-});
+    it('can have visible schema components on multiple schemas', function (): void {
+        livewire(TestComponentWithMultipleForms::class)
+            ->assertSchemaComponentVisible('visible.section', 'fooForm')
+            ->assertSchemaComponentVisible('visible.section', 'barForm');
+    });
 
-it('can have enabled fields', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsEnabled('enabled');
-});
+    it('can go to next wizard step on multiple forms', function (): void {
+        livewire(TestComponentWithMultipleWizardForms::class)
+            ->assertHasNoFormErrors(form: 'fooForm')
+            ->assertHasNoFormErrors(form: 'barForm')
 
-it('can have enabled fields on multiple forms', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsEnabled('enabled', 'fooForm')
-        ->assertFormFieldIsEnabled('enabled', 'barForm');
-});
-
-it('can have hidden fields', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsHidden('hidden');
-});
-
-it('can have hidden fields on multiple forms', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsHidden('hidden', 'fooForm')
-        ->assertFormFieldIsHidden('hidden', 'barForm');
-});
-
-it('can have visible fields', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsVisible('visible');
-});
-
-it('can have visible fields on multiple forms', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsVisible('visible', 'fooForm')
-        ->assertFormFieldIsVisible('visible', 'barForm');
-});
-
-it('has layout components', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormComponentExists('section')
-        ->assertFormComponentExists('section.nested.section')
-        ->assertFormComponentExists('section.nested.section', function (Section $section): bool {
-            return $section->getHeading() === 'I am nested';
-        });
-});
-
-it('does not have layout components', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormComponentDoesNotExist('no-such-section');
-});
-
-it('can go to next wizard step on multiple forms', function () {
-    livewire(TestComponentWithMultipleWizardForms::class)
-        ->assertHasNoFormErrors(formName: 'fooForm')
-        ->assertHasNoFormErrors(formName: 'barForm')
-
-        ->assertWizardStepExists(2, 'fooForm')
-        ->goToWizardStep(2, formName: 'fooForm')
-        ->assertHasFormErrors(['title'], 'fooForm')
-        ->assertHasNoFormErrors(['title'], 'barForm');
+            ->assertWizardStepExists(2, 'fooForm')
+            ->goToWizardStep(2, schema: 'fooForm')
+            ->assertHasFormErrors(['title'], 'fooForm')
+            ->assertHasNoFormErrors(['title'], 'barForm');
+    });
 });
 
 class TestComponentWithForm extends Livewire
@@ -125,7 +153,7 @@ class TestComponentWithForm extends Livewire
     public function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 TextInput::make('title'),
 
                 TextInput::make('nested.input'),
@@ -146,7 +174,15 @@ class TestComponentWithForm extends Livewire
                         Section::make('I am nested')
                             ->key('nested.section'),
                     ]),
-            ]);
+
+                Section::make()
+                    ->key('hidden.section')
+                    ->hidden(),
+
+                Section::make()
+                    ->key('visible.section'),
+            ])
+            ->statePath('data');
     }
 }
 
@@ -169,14 +205,14 @@ class TestComponentWithMultipleForms extends Livewire
     public function fooForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('data');
     }
 
     public function barForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('data');
     }
 
@@ -194,6 +230,13 @@ class TestComponentWithMultipleForms extends Livewire
                 ->hidden(),
 
             TextInput::make('visible'),
+
+            Section::make()
+                ->key('hidden.section')
+                ->hidden(),
+
+            Section::make()
+                ->key('visible.section'),
         ];
     }
 }
@@ -221,14 +264,14 @@ class TestComponentWithMultipleWizardForms extends Livewire
     public function fooForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('fooData');
     }
 
     public function barForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('barData');
     }
 

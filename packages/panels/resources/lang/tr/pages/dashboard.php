@@ -2,6 +2,32 @@
 
 return [
 
-    'title' => 'Genel Bakış',
+    'title' => 'Panel',
+
+    'actions' => [
+
+        'filter' => [
+
+            'label' => 'Filtre',
+
+            'modal' => [
+
+                'heading' => 'Filtre',
+
+                'actions' => [
+
+                    'apply' => [
+
+                        'label' => 'Uygula',
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
 
 ];

@@ -2,13 +2,58 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Sloupce',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Použít sloupce',
+            ],
+
+            'reorder' => [
+                'label' => 'Přesunout sloupec',
+            ],
+
+            'reset' => [
+                'label' => 'Resetovat sloupce',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Akce|Akce',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Ano',
+                'false' => 'Ne',
+            ],
+
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Načítává se...',
+
+            'no_options_message' => 'Nejsou dostupné žádné možnosti.',
+
+            'no_search_results_message' => 'Žádné možnosti neodpovídají vašemu hledání.',
+
+            'placeholder' => 'Vyberte možnost',
+
+            'searching_message' => 'Vyhledává se...',
+
+            'search_prompt' => 'Začněte psát pro vyhledávání...',
+
+        ],
 
         'text' => [
 
@@ -82,6 +127,10 @@ return [
             'label' => 'Změnit pořadí položek',
         ],
 
+        'reorder_record' => [
+            'label' => 'Přesunout položku :key',
+        ],
+
         'filter' => [
             'label' => 'Filtrovat',
         ],
@@ -94,8 +143,12 @@ return [
             'label' => 'Otevřít panel akcí',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Skrýt/zobrazit sloupce',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Rozbalit/sbalit položku :key',
         ],
 
     ],
@@ -140,7 +193,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Vše',
+
+            'relationship' => [
+                'empty_option_label' => 'Žádná',
+            ],
+
         ],
 
         'trashed' => [
@@ -163,7 +222,6 @@ return [
 
             'group' => [
                 'label' => 'Seskupit podle',
-                'placeholder' => 'Seskupit podle',
             ],
 
             'direction' => [
@@ -181,7 +239,11 @@ return [
 
     ],
 
+    'loading' => 'Načítává se...',
+
     'reorder_indicator' => 'Vyberte a přesuňte položky.',
+
+    'result_count' => '{0} Žádné výsledky|{1} :count výsledek|[2,4] :count výsledky|[5,*] :count výsledků',
 
     'selection_indicator' => [
 
@@ -223,5 +285,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'záznam',
 
 ];

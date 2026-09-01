@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'گێڕانەوە',
+        'label' => 'گەڕاندنەوە',
 
         'modal' => [
 
-            'heading' => 'گێڕانەوەی :label',
+            'heading' => 'گەڕاندنەوەی :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'گێڕانەوە',
+                    'label' => 'گەڕاندنەوە',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'گێڕێندرایەوە',
+                'title' => 'گەڕێندراوەیەوە',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'گێڕانەوەی دیاریکراوەکان',
+        'label' => 'گەڕاندنەوەی هەڵبژێردراوەکان',
 
         'modal' => [
 
-            'heading' => 'گێڕانەوەی دیاریکراوەکانی :label',
+            'heading' => 'گەڕاندنەوەی هەڵبژێردراوەکانی :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'گێڕانەوە',
+                    'label' => 'گەڕاندنەوە',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'گێڕێندرایەوە',
+                'title' => 'گەڕێندراوەیەوە',
             ],
 
         ],

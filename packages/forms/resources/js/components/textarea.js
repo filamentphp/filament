@@ -1,42 +1,61 @@
-export default function textareaFormComponent({ initialHeight }) {
+export default function textareaFormComponent({
+    initialHeight,
+    shouldAutosize,
+    state,
+}) {
     return {
-        height: initialHeight + 'rem',
+        state,
 
-        init: function () {
+        wrapperEl: null,
+
+        init() {
+            this.wrapperEl = this.$el.parentNode
+
             this.setInitialHeight()
-            this.setUpResizeObserver()
+
+            if (shouldAutosize) {
+                this.$watch('state', () => {
+                    this.resize()
+                })
+            } else {
+                this.setUpResizeObserver()
+            }
         },
 
-        setInitialHeight: function () {
-            this.height = initialHeight + 'rem'
-
+        setInitialHeight() {
             if (this.$el.scrollHeight <= 0) {
                 return
             }
 
-            this.$el.style.height = this.height
+            this.wrapperEl.style.height = initialHeight + 'rem'
         },
 
-        resize: function () {
-            this.setInitialHeight()
-
+        resize() {
             if (this.$el.scrollHeight <= 0) {
                 return
             }
 
-            const newHeight = this.$el.scrollHeight + 'px'
+            const previousHeight = this.$el.style.height
+            this.$el.style.height = '0px'
 
-            if (this.height === newHeight) {
+            const contentHeight = this.$el.scrollHeight
+            this.$el.style.height = previousHeight
+
+            const minHeightPx =
+                parseFloat(initialHeight) *
+                parseFloat(getComputedStyle(document.documentElement).fontSize)
+            const newHeight = Math.max(contentHeight, minHeightPx) + 'px'
+
+            if (this.wrapperEl.style.height === newHeight) {
                 return
             }
 
-            this.height = newHeight
-            this.$el.style.height = this.height
+            this.wrapperEl.style.height = newHeight
         },
 
-        setUpResizeObserver: function () {
+        setUpResizeObserver() {
             const observer = new ResizeObserver(() => {
-                this.height = this.$el.style.height
+                this.wrapperEl.style.height = this.$el.style.height
             })
 
             observer.observe(this.$el)

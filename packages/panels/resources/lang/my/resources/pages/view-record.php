@@ -1,7 +1,12 @@
 <?php
 
 return [
-
-    'breadcrumb' => 'စစ်ဆေးပါ',
-
+    'title' => ':label ကိုကြည့်ရန်',
+    'breadcrumb' => 'ကြည့်ရန်',
+    'navigation_label' => 'ကြည့်ရန်',
+    'content' => [
+        'tab' => [
+            'label' => 'ကြည့်ရန်',
+        ],
+    ],
 ];

@@ -2,13 +2,45 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Kolumner',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Använd kolumner',
+            ],
+
+            'reset' => [
+                'label' => 'Återställ',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Åtgärd|Åtgärder',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Laddar...',
+
+            'no_options_message' => 'Inga alternativ tillgängliga.',
+
+            'no_search_results_message' => 'Inga alternativ matchar din sökning.',
+
+            'placeholder' => 'Välj ett alternativ',
+
+            'searching_message' => 'Söker...',
+
+            'search_prompt' => 'Börja skriva för att söka...',
+
+        ],
 
         'text' => [
 
@@ -95,7 +127,7 @@ return [
             'label' => 'Öppna åtgärder',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Växla kolumner',
         ],
 
@@ -141,7 +173,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Alla',
+
+            'relationship' => [
+                'empty_option_label' => 'Ingen',
+            ],
+
         ],
 
         'trashed' => [
@@ -164,7 +202,6 @@ return [
 
             'group' => [
                 'label' => 'Gruppera',
-                'placeholder' => 'Gruppera efter',
             ],
 
             'direction' => [
@@ -224,5 +261,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'post',
 
 ];

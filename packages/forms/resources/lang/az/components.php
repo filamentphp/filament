@@ -12,14 +12,62 @@ return [
 
             'add' => [
                 'label' => ':label əlavə et',
+
+                'modal' => [
+
+                    'heading' => ':label əlavə et',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'əlavə et',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'add_between' => [
                 'label' => 'Bloklar arasına əlavə et',
+
+                'modal' => [
+
+                    'heading' => ':label əlavə et',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'əlavə et',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'delete' => [
                 'label' => 'Sil',
+            ],
+
+            'edit' => [
+
+                'label' => 'Dəyişdir',
+
+                'modal' => [
+
+                    'heading' => 'Bloku redaktə et',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Dəyişiklikləri yadda saxla',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -185,6 +233,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'SVG fayllarını redaktə etmək tövsiyə edilmir, çünki miqyaslandırılarkən keyfiyyət itkisinə səbəb ola bilər.\n Davam etmək istədiyinizə əminsiniz.',
+                    'disabled' => 'SVG fayllarını redaktə etmək deaktiv edilib, çünki miqyaslandırılarkən keyfiyyət itkisinə səbəb ola bilər.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -223,7 +280,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Fayl əlavə et',
             'blockquote' => 'Sitat',
             'bold' => 'Qalın',
@@ -241,12 +298,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Bəli',
+            'false' => 'Xeyr',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => ':label\'e əlavə et',
+            ],
+
+            'add_between' => [
+                'label' => 'Arasına daxil et',
             ],
 
             'delete' => [
@@ -308,7 +378,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Fayl əlavə et',
             'blockquote' => 'Sitat',
             'bold' => 'Qalın',
@@ -395,6 +465,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Yeni etiket',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Şifrəni gizlət',
+            ],
+
+            'show_password' => [
+                'label' => 'Şifrəni göstər',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Bəli',
+            'false' => 'Xeyr',
+        ],
+
     ],
 
 ];

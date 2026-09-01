@@ -11,6 +11,16 @@ trait HasNestedRecursiveValidationRules
      */
     protected array $nestedRecursiveValidationRules = [];
 
+    public function nestedRecursiveRule(mixed $rule, bool | Closure $condition = true): static
+    {
+        $this->nestedRecursiveValidationRules = [
+            ...$this->nestedRecursiveValidationRules,
+            [$rule, $condition],
+        ];
+
+        return $this;
+    }
+
     /**
      * @param  string | array<mixed>  $rules
      */

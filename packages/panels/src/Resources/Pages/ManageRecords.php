@@ -8,4 +8,9 @@ class ManageRecords extends ListRecords
     {
         return false;
     }
+
+    public function getBreadcrumb(): ?string
+    {
+        return static::$breadcrumb;
+    }
 }

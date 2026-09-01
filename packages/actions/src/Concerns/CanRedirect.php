@@ -5,8 +5,6 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Support\Facades\FilamentView;
 
-use function Filament\Support\is_app_url;
-
 trait CanRedirect
 {
     protected string | Closure | null $failureRedirectUrl = null;
@@ -15,7 +13,7 @@ trait CanRedirect
 
     public function dispatchFailureRedirect(): static
     {
-        $url = $this->evaluate($this->failureRedirectUrl);
+        $url = $this->evaluate($this->failureRedirectUrl) ?? $this->getHasActionsLivewire()->getDefaultActionFailureRedirectUrl($this);
 
         if (filled($url)) {
             $this->redirect($url);
@@ -26,7 +24,7 @@ trait CanRedirect
 
     public function dispatchSuccessRedirect(): static
     {
-        $url = $this->evaluate($this->successRedirectUrl);
+        $url = $this->evaluate($this->successRedirectUrl) ?? $this->getHasActionsLivewire()->getDefaultActionSuccessRedirectUrl($this);
 
         if (filled($url)) {
             $this->redirect($url);
@@ -35,11 +33,11 @@ trait CanRedirect
         return $this;
     }
 
-    public function redirect(string | Closure $url): void
+    public function redirect(string | Closure $url, ?bool $navigate = null): void
     {
         $url = $this->evaluate($url);
 
-        $this->getLivewire()->redirect($url, navigate: FilamentView::hasSpaMode() && is_app_url($url));
+        $this->getLivewire()->redirect($url, navigate: $navigate ?? FilamentView::hasSpaMode($url));
     }
 
     public function failureRedirectUrl(string | Closure | null $url): static

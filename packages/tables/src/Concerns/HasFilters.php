@@ -2,12 +2,18 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Schema\Schema;
+use Filament\Facades\Filament;
+use Filament\QueryBuilder\Forms\Components\RuleBuilder;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Indicator;
+use Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 /**
- * @property Schema $tableFiltersForm
+ * @property-read Schema $tableFiltersForm
  */
 trait HasFilters
 {
@@ -30,9 +36,9 @@ trait HasFilters
         $table = $this->getTable();
 
         return $this->makeSchema()
-            ->schema($table->getFiltersFormSchema())
             ->columns($table->getFiltersFormColumns())
             ->model($table->getModel())
+            ->schema($table->getFiltersFormSchema())
             ->when(
                 $table->hasDeferredFilters(),
                 fn (Schema $schema) => $schema
@@ -74,21 +80,32 @@ trait HasFilters
         $filter = $this->getTable()->getFilter($filterName);
         $filterResetState = $filter->getResetState();
 
-        $filterFormGroup = $this->getTableFiltersForm()->getComponent($filterName);
-        $filterFields = $filterFormGroup?->getChildComponentContainer()->getFlatFields();
+        $filterFormGroup = $this->getTableFiltersForm()->getComponentByStatePath($filterName);
 
-        if (filled($field) && array_key_exists($field, $filterFields)) {
-            $filterFields = [$field => $filterFields[$field]];
-        }
+        if (($filter instanceof QueryBuilder) && blank($field)) {
+            $filterFormGroup->getChildSchema()->fill();
+        } elseif ($filter instanceof QueryBuilder) {
+            $ruleBuilder = $filterFormGroup?->getChildSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
-        foreach ($filterFields as $fieldName => $field) {
-            $state = $field->getState();
+            $ruleBuilderRawState = $ruleBuilder?->getRawState() ?? [];
+            unset($ruleBuilderRawState[$field]);
+            $ruleBuilder?->rawState($ruleBuilderRawState);
+        } else {
+            $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields() ?? [];
 
-            $field->state($filterResetState[$fieldName] ?? match (true) {
-                is_array($state) => [],
-                is_bool($state) => false,
-                default => null,
-            });
+            if (filled($field) && array_key_exists($field, $filterFields)) {
+                $filterFields = [$field => $filterFields[$field]];
+            }
+
+            foreach ($filterFields as $fieldName => $field) {
+                $state = $field->getState();
+
+                $field->state($filterResetState[$fieldName] ?? match (true) {
+                    is_array($state) => [],
+                    is_bool($state) => $field->hasNullableBooleanState() ? null : false,
+                    default => null,
+                });
+            }
         }
 
         if ($isRemovingAllFilters) {
@@ -109,10 +126,12 @@ trait HasFilters
         $filters = $this->getTable()->getFilters();
 
         foreach ($filters as $filterName => $filter) {
-            $this->removeTableFilter(
-                $filterName,
-                isRemovingAllFilters: true,
-            );
+            if (collect($filter->getIndicators())->every(fn (Indicator $indicator): bool => $indicator->isRemovable())) {
+                $this->removeTableFilter(
+                    $filterName,
+                    isRemovingAllFilters: true,
+                );
+            }
         }
 
         $this->resetTableSearch();
@@ -147,30 +166,55 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
-    protected function applyFiltersToTableQuery(Builder $query): Builder
+    protected function applyFiltersToTableQuery(Builder $query, bool $isResolvingRecord = false): Builder
     {
-        $data = $this->tableFilters;
+        $table = $this->getTable();
 
-        foreach ($this->getTable()->getFilters() as $filter) {
-            $filter->applyToBaseQuery(
-                $query,
-                $data[$filter->getName()] ?? [],
-            );
+        if ($table->hasDeferredFilters()) {
+            $filtersForm = $this->getTableFiltersForm()->statePath('tableFilters');
+
+            $filtersForm->flushCachedAbsoluteStatePaths();
+            $filtersForm->clearCachedChildSchemas();
         }
 
-        return $query->where(function (Builder $query) use ($data) {
-            foreach ($this->getTable()->getFilters() as $filter) {
-                $filter->apply(
+        try {
+            foreach ($table->getFilters() as $filter) {
+                $filter->applyToBaseQuery(
                     $query,
-                    $data[$filter->getName()] ?? [],
+                    $this->getTableFilterState($filter->getName()) ?? [],
                 );
             }
-        });
+
+            return $query->where(function (Builder $query) use ($table, $isResolvingRecord): void {
+                foreach ($table->getFilters() as $filter) {
+                    if ($isResolvingRecord && $filter->shouldExcludeWhenResolvingRecord()) {
+                        continue;
+                    }
+
+                    $filter->apply(
+                        $query,
+                        $this->getTableFilterState($filter->getName()) ?? [],
+                    );
+                }
+            });
+        } finally {
+            if ($table->hasDeferredFilters()) {
+                $filtersForm = $this->getTableFiltersForm()->statePath('tableDeferredFilters');
+
+                $filtersForm->flushCachedAbsoluteStatePaths();
+                $filtersForm->clearCachedChildSchemas();
+            }
+        }
     }
 
     public function getTableFilterState(string $name): ?array
     {
-        return $this->tableFilters[$this->parseTableFilterName($name)] ?? null;
+        return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
+    }
+
+    public function getTableFilterFormState(string $name): ?array
+    {
+        return Arr::get($this->getTable()->hasDeferredFilters() ? $this->tableDeferredFilters : $this->tableFilters, $this->parseTableFilterName($name));
     }
 
     public function parseTableFilterName(string $name): string
@@ -188,7 +232,19 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $namespace = $this::class;
+
+        $tenantKey = null;
+
+        if (class_exists(Filament::class)) {
+            $tenantKey = Filament::getTenant()?->getKey();
+        }
+
+        if (filled($tenantKey)) {
+            $namespace .= '|' . $tenantKey;
+        }
+
+        $table = md5($namespace);
 
         return "tables.{$table}_filters";
     }

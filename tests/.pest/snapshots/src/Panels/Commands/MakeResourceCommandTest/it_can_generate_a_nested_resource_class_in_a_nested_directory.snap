@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Filament\Resources\Users\Resources\Blog\Posts;
+
+use App\Filament\Resources\Users\Resources\Blog\Posts\Pages\CreatePost;
+use App\Filament\Resources\Users\Resources\Blog\Posts\Pages\EditPost;
+use App\Filament\Resources\Users\Resources\Blog\Posts\Schemas\PostForm;
+use App\Filament\Resources\Users\Resources\Blog\Posts\Tables\PostsTable;
+use App\Filament\Resources\Users\UserResource;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Models\Blog\Post;
+
+class PostResource extends Resource
+{
+    protected static ?string $model = Post::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $parentResource = UserResource::class;
+
+    public static function form(Schema $schema): Schema
+    {
+        return PostForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return PostsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'create' => CreatePost::route('/create'),
+            'edit' => EditPost::route('/{record}/edit'),
+        ];
+    }
+}

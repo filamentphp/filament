@@ -3,65 +3,27 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\ActionGroup;
+use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Gate;
 
 trait CanBeHidden
 {
-    protected mixed $authorization = null;
-
     protected bool | Closure $isHidden = false;
 
     protected bool | Closure $isVisible = true;
 
-    /**
-     * @param  Model | class-string | array<mixed> | null  $arguments
-     */
-    public function authorize(mixed $abilities, Model | string | array | null $arguments = null): static
-    {
-        if (is_string($abilities) || is_array($abilities)) {
-            $this->authorization = [
-                'type' => 'all',
-                'abilities' => Arr::wrap($abilities),
-                'arguments' => Arr::wrap($arguments),
-            ];
-        } else {
-            $this->authorization = $abilities;
-        }
+    protected ?bool $cachedIsAuthorized = null;
 
-        return $this;
-    }
+    protected ?bool $cachedIsHidden = null;
 
-    /**
-     * @param  string | array<string>  $abilities
-     * @param  Model | array<mixed> | null  $arguments
-     */
-    public function authorizeAny(string | array $abilities, Model | array | null $arguments = null): static
-    {
-        $this->authorization = [
-            'type' => 'any',
-            'abilities' => Arr::wrap($abilities),
-            'arguments' => Arr::wrap($arguments),
-        ];
+    protected ?bool $cachedIsHiddenInGroup = null;
 
-        return $this;
-    }
+    protected ?bool $cachedIsAuthorizedOrNotHiddenWhenUnauthorized = null;
 
-    /**
-     * @param  array<mixed>  $arguments
-     * @return array<mixed>
-     */
-    protected function parseAuthorizationArguments(array $arguments): array
-    {
-        if ($record = $this->getRecord()) {
-            array_unshift($arguments, $record);
-        } elseif ($model = $this->getModel()) {
-            array_unshift($arguments, $model);
-        }
+    protected ?string $cachedVisibilityRecordKey = null;
 
-        return $arguments;
-    }
+    protected bool $hasVisibilityCache = false;
 
     public function hidden(bool | Closure $condition = true): static
     {
@@ -77,37 +39,39 @@ trait CanBeHidden
         return $this;
     }
 
-    public function isAuthorized(): bool
-    {
-        if ($this->authorization === null) {
-            return true;
-        }
-
-        if (! is_array($this->authorization)) {
-            return (bool) $this->evaluate($this->authorization);
-        }
-
-        $abilities = $this->authorization['abilities'] ?? [];
-        $arguments = $this->parseAuthorizationArguments($this->authorization['arguments'] ?? []);
-        $type = $this->authorization['type'] ?? null;
-
-        return match ($type) {
-            'all' => Gate::check($abilities, $arguments),
-            'any' => Gate::any($abilities, $arguments),
-            default => false,
-        };
-    }
-
     public function isHidden(): bool
     {
-        if ($this->getGroup()?->baseIsHidden()) {
-            return true;
+        if (! $this->hasTable()) {
+            return $this->getGroup()?->baseIsHidden()
+                ? true
+                : $this->isHiddenInGroup();
         }
 
-        return $this->isHiddenInGroup();
+        if (! $this->prepareVisibilityCache()) {
+            return $this->getGroup()?->baseIsHidden()
+                ? true
+                : $this->isHiddenInGroup();
+        }
+
+        return $this->cachedIsHidden ??= ($this->getGroup()?->baseIsHidden()
+            ? true
+            : $this->isHiddenInGroup());
     }
 
     public function isHiddenInGroup(): bool
+    {
+        if (! $this->hasTable()) {
+            return $this->resolveIsHiddenInGroup();
+        }
+
+        if (! $this->prepareVisibilityCache()) {
+            return $this->resolveIsHiddenInGroup();
+        }
+
+        return $this->cachedIsHiddenInGroup ??= $this->resolveIsHiddenInGroup();
+    }
+
+    protected function resolveIsHiddenInGroup(): bool
     {
         if ($this->evaluate($this->isHidden)) {
             return true;
@@ -117,11 +81,69 @@ trait CanBeHidden
             return true;
         }
 
-        return ! $this->isAuthorized();
+        if ($this instanceof ActionGroup) {
+            foreach ($this->getActions() as $action) {
+                if (! $action->isHiddenInGroup()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return ! $this->isAuthorizedOrNotHiddenWhenUnauthorized();
     }
 
     public function isVisible(): bool
     {
         return ! $this->isHidden();
+    }
+
+    protected function prepareVisibilityCache(): bool
+    {
+        $current = $this->getCurrentVisibilityRecordKey();
+
+        if ($current === null) {
+            $this->clearVisibilityCache();
+
+            return false;
+        }
+
+        if ($this->hasVisibilityCache && ($this->cachedVisibilityRecordKey === $current)) {
+            return true;
+        }
+
+        $this->clearVisibilityCache();
+        $this->cachedVisibilityRecordKey = $current;
+        $this->hasVisibilityCache = true;
+
+        return true;
+    }
+
+    protected function getCurrentVisibilityRecordKey(): ?string
+    {
+        $record = $this->getRecord();
+
+        if ($record instanceof Model) {
+            return (string) spl_object_id($record);
+        }
+
+        if (is_array($record)) {
+            $key = $record[ArrayRecord::getKeyName()] ?? null;
+
+            return ($key === null) ? null : (string) $key;
+        }
+
+        return '__null__';
+    }
+
+    public function clearVisibilityCache(): void
+    {
+        $this->cachedIsAuthorized = null;
+        $this->cachedIsHidden = null;
+        $this->cachedIsHiddenInGroup = null;
+        $this->cachedIsAuthorizedOrNotHiddenWhenUnauthorized = null;
+        $this->cachedVisibilityRecordKey = null;
+        $this->hasVisibilityCache = false;
     }
 }

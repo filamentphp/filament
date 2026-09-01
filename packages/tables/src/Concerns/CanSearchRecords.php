@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
@@ -42,7 +43,11 @@ trait CanSearchRecords
     public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
         if (blank($value) && filled($key)) {
-            Arr::forget($this->tableColumnSearches, $key);
+            if (in_array($key, $this->getReservedTableColumnSearchKeys(), strict: true)) {
+                Arr::set($this->tableColumnSearches, $key, '');
+            } else {
+                Arr::forget($this->tableColumnSearches, $key);
+            }
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
@@ -69,12 +74,15 @@ trait CanSearchRecords
 
     protected function applyColumnSearchesToTableQuery(Builder $query): Builder
     {
+        $table = $this->getTable();
+        $shouldSplitSearchTermsByDefault = $table->shouldSplitSearchTerms();
+
         foreach ($this->getTableColumnSearches() as $column => $search) {
             if (blank($search)) {
                 continue;
             }
 
-            $column = $this->getTable()->getColumn($column);
+            $column = $table->getColumn($column);
 
             if (! $column) {
                 continue;
@@ -88,8 +96,22 @@ trait CanSearchRecords
                 continue;
             }
 
+            if (! ($column->shouldSplitIndividualSearchTerms() ?? $shouldSplitSearchTermsByDefault)) {
+                $query->where(function (Builder $query) use ($column, $search): void {
+                    $isFirst = true;
+
+                    $column->applySearchConstraint(
+                        $query,
+                        $search,
+                        $isFirst,
+                    );
+                });
+
+                continue;
+            }
+
             foreach ($this->extractTableSearchWords($search) as $searchWord) {
-                $query->where(function (Builder $query) use ($column, $searchWord) {
+                $query->where(function (Builder $query) use ($column, $searchWord): void {
                     $isFirst = true;
 
                     $column->applySearchConstraint(
@@ -110,7 +132,7 @@ trait CanSearchRecords
     protected function extractTableSearchWords(string $search): array
     {
         return array_filter(
-            str_getcsv(preg_replace('/\s+/', ' ', $search), ' '),
+            str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
     }
@@ -123,8 +145,40 @@ trait CanSearchRecords
             return $query;
         }
 
+        if ($this->getTable()->hasSearchUsingCallback()) {
+            $this->getTable()->callSearchUsing($query, $search);
+
+            return $query;
+        }
+
+        if (! $this->getTable()->shouldSplitSearchTerms()) {
+            $query->where(function (Builder $query) use ($search): void {
+                $isFirst = true;
+
+                foreach ($this->getTable()->getColumns() as $column) {
+                    if ($column->isHidden()) {
+                        continue;
+                    }
+
+                    if (! $column->isGloballySearchable()) {
+                        continue;
+                    }
+
+                    $column->applySearchConstraint(
+                        $query,
+                        $search,
+                        $isFirst,
+                    );
+                }
+
+                $this->getTable()->applyExtraSearchConstraints($query, $search, $isFirst);
+            });
+
+            return $query;
+        }
+
         foreach ($this->extractTableSearchWords($search) as $searchWord) {
-            $query->where(function (Builder $query) use ($searchWord) {
+            $query->where(function (Builder $query) use ($searchWord): void {
                 $isFirst = true;
 
                 foreach ($this->getTable()->getColumns() as $column) {
@@ -142,6 +196,8 @@ trait CanSearchRecords
                         $isFirst,
                     );
                 }
+
+                $this->getTable()->applyExtraSearchConstraints($query, $searchWord, $isFirst);
             });
         }
 
@@ -150,7 +206,7 @@ trait CanSearchRecords
 
     public function getTableSearch(): ?string
     {
-        return filled($this->tableSearch) ? trim(strval($this->tableSearch)) : null;
+        return filled($this->tableSearch) ? Str::trim(strval($this->tableSearch)) : null;
     }
 
     public function hasTableSearch(): bool
@@ -172,7 +228,40 @@ trait CanSearchRecords
     public function resetTableColumnSearches(): void
     {
         $this->tableColumnSearches = [];
+        $this->fillReservedTableColumnSearchKeys();
         $this->updatedTableColumnSearches();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function getReservedTableColumnSearchKeys(): array
+    {
+        return ['at', 'concat', 'constructor', 'entries', 'every', 'fill', 'filter', 'find', 'flat', 'includes', 'join', 'keys', 'length', 'map', 'pop', 'push', 'reduce', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'unshift', 'values', 'with'];
+    }
+
+    protected function fillReservedTableColumnSearchKeys(): void
+    {
+        $reservedKeys = $this->getReservedTableColumnSearchKeys();
+
+        foreach ($this->getTable()->getColumns() as $column) {
+            if (! $column->isIndividuallySearchable()) {
+                continue;
+            }
+
+            $columnName = $column->getName();
+
+            // Other names already read back as an empty search from a JSON array, so only reserved names need seeding.
+            if (! in_array($columnName, $reservedKeys, strict: true)) {
+                continue;
+            }
+
+            if (Arr::has($this->tableColumnSearches, $columnName)) {
+                continue;
+            }
+
+            Arr::set($this->tableColumnSearches, $columnName, '');
+        }
     }
 
     public function getTableSearchIndicator(): Indicator
@@ -242,7 +331,7 @@ trait CanSearchRecords
         // The `$this->tableColumnSearches` array is potentially nested.
         // So, we iterate through it deeply:
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveArrayIterator($this->tableColumnSearches),
+            new RecursiveArrayIterator($this->tableColumnSearches), /** @phpstan-ignore argument.type */
             RecursiveIteratorIterator::SELF_FIRST
         );
 
@@ -273,14 +362,14 @@ trait CanSearchRecords
 
     public function getTableSearchSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_search";
     }
 
     public function getTableColumnSearchesSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_column_search";
     }

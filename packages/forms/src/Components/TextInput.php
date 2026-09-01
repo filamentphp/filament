@@ -3,14 +3,22 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
-use Filament\Schema\Components\Contracts\HasAffixActions;
+use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
+use Filament\Schemas\Components\Concerns\CanTrimState;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\NumberStateCast;
+use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\RawJs;
+use LogicException;
 
-class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions
+class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, Contracts\HasAffixes, HasEmbeddedView
 {
+    use CanStripCharactersFromState;
+    use CanTrimState;
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
@@ -23,20 +31,21 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.text-input';
+    protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.text-input';
 
     protected string | RawJs | Closure | null $mask = null;
 
     protected bool | Closure $isEmail = false;
+
+    protected bool | Closure $isInteger = false;
 
     protected bool | Closure $isNumeric = false;
 
     protected bool | Closure $isPassword = false;
 
     protected bool | Closure $isRevealable = false;
+
+    protected bool | Closure $isCopyable = false;
 
     protected bool | Closure $isTel = false;
 
@@ -56,9 +65,13 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     protected string | Closure | null $type = null;
 
-    public function currentPassword(bool | Closure $condition = true): static
+    public function currentPassword(bool | Closure $condition = true, ?string $guard = null): static
     {
-        $this->rule('current_password', $condition);
+        if (filled($guard)) {
+            $this->rule("current_password:{$guard}", $condition);
+        } else {
+            $this->rule('current_password', $condition);
+        }
 
         return $this;
     }
@@ -74,6 +87,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     public function integer(bool | Closure $condition = true): static
     {
+        $this->isInteger = $condition;
+
         $this->numeric($condition);
         $this->inputMode(static fn (): ?string => $condition ? 'numeric' : null);
         $this->step(static fn (): ?int => $condition ? 1 : null);
@@ -156,7 +171,29 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
             return false;
         }
 
-        return $this->isPassword() ?: throw new Exception("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
+        return $this->isPassword() ?: throw new LogicException("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
+    }
+
+    public function copyable(
+        bool | Closure $condition = true,
+        string | Closure | null $copyMessage = null,
+        int | Closure | null $copyMessageDuration = null
+    ): static {
+        $this->isCopyable = $condition;
+
+        $this->suffixAction(
+            TextInput\Actions\CopyAction::make()
+                ->copyMessage($copyMessage)
+                ->copyMessageDuration($copyMessageDuration)
+                ->visible($condition),
+        );
+
+        return $this;
+    }
+
+    public function isCopyable(): bool
+    {
+        return (bool) $this->evaluate($this->isCopyable);
     }
 
     public function tel(bool | Closure $condition = true): static
@@ -241,6 +278,11 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return (bool) $this->evaluate($this->isEmail);
     }
 
+    public function isInteger(): bool
+    {
+        return (bool) $this->evaluate($this->isInteger);
+    }
+
     public function isNumeric(): bool
     {
         return (bool) $this->evaluate($this->isNumeric);
@@ -259,5 +301,141 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     public function isUrl(): bool
     {
         return (bool) $this->evaluate($this->isUrl);
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        return [
+            ...parent::getDefaultStateCasts(),
+            ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
+            ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true, 'isInteger' => $this->isInteger()])] : []),
+        ];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAlpineAttributes = $this->getExtraAlpineAttributes();
+        $extraAttributeBag = $this->getExtraAttributeBag();
+        $id = $this->getId();
+        $isDisabled = $this->isDisabled();
+        $isPasswordRevealable = $this->isPasswordRevealable();
+        $isPrefixInline = $this->isPrefixInline();
+        $isSuffixInline = $this->isSuffixInline();
+        $mask = $this->getMask();
+        $prefixActions = $this->getPrefixActions();
+        $prefixIcon = $this->getPrefixIcon();
+        $prefixIconColor = $this->getPrefixIconColor();
+        $prefixLabel = $this->getPrefixLabel();
+        $suffixActions = $this->getSuffixActions();
+        $suffixIcon = $this->getSuffixIcon();
+        $suffixIconColor = $this->getSuffixIconColor();
+        $suffixLabel = $this->getSuffixLabel();
+        $statePath = $this->getStatePath();
+        $placeholder = $this->getPlaceholder();
+
+        if ($isPasswordRevealable) {
+            $xData = '{ isPasswordRevealed: false }';
+        } elseif (count($extraAlpineAttributes) || filled($mask)) {
+            $xData = '{}';
+        } else {
+            $xData = null;
+        }
+
+        if ($isPasswordRevealable) {
+            $type = null;
+        } elseif (filled($mask)) {
+            $type = 'text';
+        } else {
+            $type = $this->getType();
+        }
+
+        $inputAttributes = $this->getExtraInputAttributeBag()
+            ->merge($extraAlpineAttributes, escape: false)
+            ->merge([
+                'autocapitalize' => $this->getAutocapitalize(),
+                'autocomplete' => $this->getAutocomplete(),
+                'autofocus' => $this->isAutofocused(),
+                'disabled' => $isDisabled,
+                'id' => $id,
+                'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'inputmode' => $this->getInputMode(),
+                'list' => ($datalistOptions = $this->getDatalistOptions()) ? $id . '-list' : null,
+                'max' => $this->getMaxValue(),
+                'maxlength' => $this->getMaxLength(),
+                'min' => $this->getMinValue(),
+                'minlength' => $this->getMinLength(),
+                'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                'readonly' => $this->isReadOnly(),
+                'required' => $this->isRequired(),
+                'step' => $this->getStep(),
+                'type' => $type,
+                $this->applyStateBindingModifiers('wire:model') => $statePath,
+                'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
+                'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+            ], escape: false)
+            ->class([
+                'fi-input',
+                'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'fi-revealable' => $isPasswordRevealable,
+            ]);
+
+        $wrapperAttributes = $extraAttributeBag
+            ->merge([
+                'x-data' => $xData,
+                'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
+            ], escape: false)
+            ->class(['fi-fo-text-input']);
+
+        ob_start(); ?>
+
+        <input <?= $inputAttributes->toHtml() ?> />
+
+        <?php if ($datalistOptions) { ?>
+            <datalist id="<?= e($id) ?>-list">
+                <?php foreach ($datalistOptions as $option) { ?>
+                    <option value="<?= e($option) ?>"></option>
+                <?php } ?>
+            </datalist>
+        <?php } ?>
+
+        <?php $slotHtml = ob_get_clean();
+
+        return $this->wrapEmbeddedHtml(
+            $this->wrapInputHtml(
+                $slotHtml,
+                attributes: $wrapperAttributes,
+            ),
+            inlineLabelVerticalAlignment: VerticalAlignment::Center,
+        );
+    }
+
+    public function mutateDehydratedState(mixed $state): mixed
+    {
+        $state = $this->trimState($state);
+
+        return parent::mutateDehydratedState($state);
+    }
+
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        $state = $this->stripCharactersFromState($state);
+        $state = $this->trimState($state);
+
+        return parent::mutateStateForValidation($state);
+    }
+
+    public function mutatesDehydratedState(): bool
+    {
+        return parent::mutatesDehydratedState() || $this->isTrimmed();
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return parent::mutatesStateForValidation() || $this->hasStripCharacters() || $this->isTrimmed();
     }
 }

@@ -3,18 +3,18 @@
 namespace Filament\Forms\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
-use Filament\Schema\Components\Component;
-use Filament\Schema\Concerns\InteractsWithSchemas;
-use Filament\Schema\Schema;
+use Filament\Actions\ActionGroup;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use LogicException;
 
-trait InteractsWithForms
+trait InteractsWithForms /** @phpstan-ignore trait.unused */
 {
     use InteractsWithSchemas {
-        getCachedSchemas as baseGetCachedSchemas;
+        getCachedSchemas as getBaseCachedSchemas;
     }
 
     protected bool $hasCachedForms = false;
@@ -28,7 +28,7 @@ trait InteractsWithForms
             $this->cacheForms();
         }
 
-        return $this->baseGetCachedSchemas();
+        return $this->getBaseCachedSchemas();
     }
 
     /**
@@ -64,13 +64,13 @@ trait InteractsWithForms
                     if (! method_exists($this, $form)) {
                         $livewireClass = $this::class;
 
-                        throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
+                        throw new LogicException("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
                     }
 
                     return [$form => $this->{$form}($this->makeSchema())];
                 })
                 ->forget('')
-                ->map(fn (Schema $form, string $formName) => $form->key($formName))
+                ->map(fn (Schema $schema, string $formName) => $schema->key($formName))
                 ->all(),
         ];
 
@@ -120,7 +120,7 @@ trait InteractsWithForms
     /**
      * @return array<string, Schema>
      *
-     *@deprecated Use `getCachedSchemas()` instead.
+     * @deprecated Use `getCachedSchemas()` instead.
      */
     public function getCachedForms(): array
     {
@@ -139,10 +139,10 @@ trait InteractsWithForms
         ];
     }
 
-    public function form(Schema $form): Schema
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->getFormSchema())
+        return $schema
+            ->components($this->getFormSchema())
             ->model($this->getFormModel())
             ->statePath($this->getFormStatePath())
             ->operation($this->getFormContext());
@@ -150,6 +150,8 @@ trait InteractsWithForms
 
     /**
      * @deprecated Override the `form()` method to configure the default form.
+     *
+     * @return Model|class-string<Model>|null
      */
     protected function getFormModel(): Model | string | null
     {
@@ -159,7 +161,7 @@ trait InteractsWithForms
     /**
      * @deprecated Override the `form()` method to configure the default form.
      *
-     * @return array<Component>
+     * @return array<Component | Action | ActionGroup>
      */
     protected function getFormSchema(): array
     {
@@ -188,14 +190,6 @@ trait InteractsWithForms
     public function isCachingForms(): bool
     {
         return $this->isCachingSchemas();
-    }
-
-    /**
-     * @deprecated Use `getSchemaComponentFileAttachment()` instead.
-     */
-    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
-    {
-        return $this->getSchemaComponentFileAttachment($statePath);
     }
 
     /**
@@ -265,6 +259,6 @@ trait InteractsWithForms
      */
     public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($shouldCancelParentActions);
+        $this->unmountAction(cancelParentActions: $shouldCancelParentActions ? null : false);
     }
 }

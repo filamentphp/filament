@@ -28,8 +28,8 @@ class SpatieTagsEntry extends TextEntry
     {
         $state = parent::getState();
 
-        if ($state && (! $state instanceof Collection)) {
-            return $state;
+        if ($state && (! $state instanceof Collection) && (! is_array($state))) {
+            return Arr::wrap($state);
         }
 
         $record = $this->getRecord();

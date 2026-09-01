@@ -2,8 +2,8 @@
 
 namespace Filament\Panel\Concerns;
 
-use Exception;
 use Filament\Contracts\Plugin;
+use LogicException;
 
 trait HasPlugins
 {
@@ -42,7 +42,7 @@ trait HasPlugins
 
     public function getPlugin(string $id): Plugin
     {
-        return $this->getPlugins()[$id] ?? throw new Exception("Plugin [{$id}] is not registered for panel [{$this->getId()}].");
+        return $this->getPlugins()[$id] ?? throw new LogicException("Plugin [{$id}] is not registered for panel [{$this->getId()}].");
     }
 
     public function hasPlugin(string $id): bool

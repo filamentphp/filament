@@ -2,12 +2,14 @@
 
 namespace Filament\Resources\Resource\Concerns;
 
+use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use UnitEnum;
 
 use function Filament\Support\original_request;
 
@@ -17,15 +19,15 @@ trait HasNavigation
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?string $navigationBadgeTooltip = null;
+    protected static string | Htmlable | null $navigationBadgeTooltip = null;
 
-    protected static ?string $navigationGroup = null;
+    protected static string | UnitEnum | null $navigationGroup = null;
 
     protected static ?string $navigationParentItem = null;
 
-    protected static ?string $navigationIcon = null;
+    protected static string | BackedEnum | null $navigationIcon = null;
 
-    protected static ?string $activeNavigationIcon = null;
+    protected static string | BackedEnum | null $activeNavigationIcon = null;
 
     protected static ?string $navigationLabel = null;
 
@@ -41,7 +43,7 @@ trait HasNavigation
             return;
         }
 
-        if (static::getParentResource()) {
+        if (static::getParentResourceRegistration()) {
             return;
         }
 
@@ -49,7 +51,7 @@ trait HasNavigation
             return;
         }
 
-        Filament::getCurrentPanel()
+        Filament::getCurrentOrDefaultPanel()
             ->navigationItems(static::getNavigationItems());
     }
 
@@ -62,18 +64,29 @@ trait HasNavigation
             return [];
         }
 
+        $activeRoutePattern = static::getNavigationItemActiveRoutePattern();
+
         return [
             NavigationItem::make(static::getNavigationLabel())
+                ->key(static::class)
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => original_request()->routeIs(static::getRouteBaseName() . '.*'))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs($activeRoutePattern))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return static::getRouteBaseName() . '.*';
     }
 
     public static function getSubNavigationPosition(): SubNavigationPosition
@@ -89,7 +102,7 @@ trait HasNavigation
         return Filament::getSubNavigationPosition();
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | UnitEnum | null
     {
         return static::$navigationGroup;
     }
@@ -99,7 +112,7 @@ trait HasNavigation
         return static::$navigationParentItem;
     }
 
-    public static function navigationGroup(?string $group): void
+    public static function navigationGroup(string | UnitEnum | null $group): void
     {
         static::$navigationGroup = $group;
     }
@@ -109,17 +122,17 @@ trait HasNavigation
         static::$navigationParentItem = $item;
     }
 
-    public static function getNavigationIcon(): string | Htmlable | null
+    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon;
     }
 
-    public static function navigationIcon(?string $icon): void
+    public static function navigationIcon(string | BackedEnum $icon): void
     {
         static::$navigationIcon = $icon;
     }
 
-    public static function getActiveNavigationIcon(): string | Htmlable | null
+    public static function getActiveNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
@@ -134,13 +147,13 @@ trait HasNavigation
         return null;
     }
 
-    public static function getNavigationBadgeTooltip(): ?string
+    public static function getNavigationBadgeTooltip(): string | Htmlable | null
     {
         return static::$navigationBadgeTooltip;
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<string> | null
      */
     public static function getNavigationBadgeColor(): string | array | null
     {
@@ -169,6 +182,10 @@ trait HasNavigation
 
     public static function shouldRegisterNavigation(): bool
     {
+        // Security: Hiding a resource from navigation does NOT prevent
+        // direct URL access. Use resource authorization (Model
+        // Policies) to control who can access pages.
+
         return static::$shouldRegisterNavigation;
     }
 

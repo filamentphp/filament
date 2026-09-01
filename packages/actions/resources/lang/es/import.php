@@ -19,6 +19,7 @@ return [
                 'rules' => [
                     'duplicate_columns' => '{0} El archivo no debe contener más de un encabezado de columna vacío.|{1,*} El archivo no debe contener encabezados de columna duplicados: :columns.',
                 ],
+
             ],
 
             'columns' => [
@@ -78,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'error',
         'system_error' => 'Error del sistema, póngase en contacto con el servicio de asistencia.',
+        'column_mapping_required_for_new_record' => 'La columna :attribute no se asignó a una columna del archivo, pero esto es necesario para crear nuevos registros.',
     ],
 
 ];

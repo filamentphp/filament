@@ -1,0 +1,31 @@
+.fi-ta-actions {
+    @apply flex max-w-full shrink-0 items-center justify-end gap-3;
+
+    & > * {
+        @apply shrink-0;
+    }
+
+    &.fi-wrapped {
+        @apply flex-wrap;
+    }
+
+    &.sm\:fi-not-wrapped {
+        @apply sm:flex-nowrap;
+    }
+
+    &.fi-align-center {
+        @apply justify-center;
+    }
+
+    &.fi-align-start {
+        @apply justify-start;
+    }
+
+    &.fi-align-between {
+        @apply justify-between;
+    }
+
+    &.md\:fi-align-end {
+        @apply md:justify-end;
+    }
+}

@@ -17,10 +17,11 @@ trait BelongsToTable
 
     public function getTable(): ?Table
     {
-        if (isset($this->table)) {
-            return $this->table;
-        }
+        return $this->table ?? $this->getGroup()?->getTable();
+    }
 
-        return $this->getGroup()?->getTable();
+    public function hasTable(): bool
+    {
+        return $this->getTable() !== null;
     }
 }

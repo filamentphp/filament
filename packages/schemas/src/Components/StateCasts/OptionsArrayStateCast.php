@@ -1,0 +1,119 @@
+<?php
+
+namespace Filament\Schemas\Components\StateCasts;
+
+use BackedEnum;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Illuminate\Support\Arr;
+use Stringable;
+
+class OptionsArrayStateCast implements StateCast
+{
+    /**
+     * @return array<string | int>
+     */
+    public function get(mixed $state): array
+    {
+        if (blank($state)) {
+            return [];
+        }
+
+        if (! is_array($state)) {
+            $state = json_decode($state, associative: true);
+        }
+
+        /** @var array<mixed> $state */
+        $state = Arr::wrap($state);
+
+        return array_reduce(
+            $state,
+            function (array $carry, $stateItem): array {
+                if (blank($stateItem)) {
+                    return $carry;
+                }
+
+                // Security: each option must be a scalar or `BackedEnum`, but a tampered
+                // request payload can deliver a nested array, which would throw a `TypeError`
+                // at the `strval()` below and crash the request. Fail closed by skipping it.
+                if ((! is_scalar($stateItem)) && (! $stateItem instanceof BackedEnum) && (! $stateItem instanceof Stringable)) {
+                    return $carry;
+                }
+
+                if ($stateItem instanceof BackedEnum) {
+                    $stateItem = $stateItem->value;
+                }
+
+                if ($stateItem instanceof Stringable) {
+                    $stateItem = (string) $stateItem;
+                }
+
+                if (
+                    is_int($stateItem)
+                    || (
+                        is_string($stateItem)
+                        && ctype_digit($stateItem)
+                        && (($stateItem === '0') || (! str($stateItem)->startsWith('0')))
+                    )
+                ) {
+                    $max = (string) PHP_INT_MAX;
+
+                    if (
+                        (strlen($stateItem) > strlen($max)) ||
+                        ((strlen($stateItem) === strlen($max)) && (strcmp($stateItem, $max) > 0))
+                    ) {
+                        $carry[] = strval($stateItem);
+                    } else {
+                        $carry[] = intval($stateItem);
+                    }
+                } else {
+                    $carry[] = strval($stateItem);
+                }
+
+                return $carry;
+            },
+            initial: [],
+        );
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function set(mixed $state): array
+    {
+        if (blank($state)) {
+            return [];
+        }
+
+        if (! is_array($state)) {
+            $state = json_decode($state, associative: true);
+        }
+
+        /** @var array<mixed> $state */
+        $state = Arr::wrap($state);
+
+        return array_reduce(
+            $state,
+            function (array $carry, $stateItem): array {
+                if (blank($stateItem)) {
+                    return $carry;
+                }
+
+                // Security: each option must be a scalar or `BackedEnum`, but a tampered
+                // request payload can deliver a nested array, which would throw a `TypeError`
+                // at the `strval()` below and crash the request. Fail closed by skipping it.
+                if ((! is_scalar($stateItem)) && (! $stateItem instanceof BackedEnum) && (! $stateItem instanceof Stringable)) {
+                    return $carry;
+                }
+
+                if ($stateItem instanceof BackedEnum) {
+                    $stateItem = $stateItem->value;
+                }
+
+                $carry[] = strval($stateItem);
+
+                return $carry;
+            },
+            initial: [],
+        );
+    }
+}

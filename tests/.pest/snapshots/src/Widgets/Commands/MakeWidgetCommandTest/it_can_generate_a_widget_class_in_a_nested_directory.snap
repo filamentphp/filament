@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Filament\Widgets\Custom;
+
+use Filament\Widgets\Widget;
+
+class NestedWidget extends Widget
+{
+    protected string $view = 'filament.widgets.custom.nested-widget';
+}

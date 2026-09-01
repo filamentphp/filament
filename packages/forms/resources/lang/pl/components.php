@@ -11,15 +11,67 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Dodaj do :label',
+
+                'modal' => [
+
+                    'heading' => 'Dodaj do :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Dodaj',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
-                'label' => 'Wstaw',
+
+                'label' => 'Wstaw pomiędzy',
+
+                'modal' => [
+
+                    'heading' => 'Dodaj do :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Dodaj',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'Usuń',
+            ],
+
+            'edit' => [
+
+                'label' => 'Edytuj',
+
+                'modal' => [
+
+                    'heading' => 'Edytuj blok',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Zapisz zmiany',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -70,9 +122,51 @@ return [
 
     ],
 
+    'color_picker' => [
+        'panel_label' => 'Wybór koloru',
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Miesiąc',
+        ],
+
+        'year_input' => [
+            'label' => 'Rok',
+        ],
+
+        'hour_input' => [
+            'label' => 'Godzina',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minuta',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekunda',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Pobierz',
+            ],
+
+            'open' => [
+                'label' => 'Otwórz w nowej karcie',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Edytor obrazów',
 
             'actions' => [
 
@@ -185,6 +279,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Edycja plików SVG nie jest zalecana, ponieważ może to prowadzić do utraty jakości podczas skalowania.\n Czy na pewno chcesz kontynuować?',
+                    'disabled' => 'Edycja plików SVG jest wyłączona, ponieważ może to prowadzić do utraty jakości podczas skalowania.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -207,6 +310,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akcje',
+            ],
+
+            'reorder' => [
+                'label' => 'Zmień kolejność',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -223,7 +338,11 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Przesyłane pliki muszą być typu: :values.',
+
+        'file_attachments_max_size_message' => 'Przesyłane pliki nie mogą być większe niż :max kilobajtów.',
+
+        'tools' => [
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat blokowy',
             'bold' => 'Pogrubienie',
@@ -241,12 +360,59 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Wybierz',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Wybierz',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Tak',
+            'false' => 'Nie',
+        ],
+
+    ],
+
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Akcje',
+            ],
+
+            'reorder' => [
+                'label' => 'Zmień kolejność',
+            ],
+
+        ],
 
         'actions' => [
 
             'add' => [
                 'label' => 'Dodaj do :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Dodaj pomiędzy',
             ],
 
             'delete' => [
@@ -291,40 +457,276 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Prześlij plik',
+
+                'modal' => [
+
+                    'heading' => 'Prześlij plik',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Plik',
+                                'existing' => 'Zastąp plik',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Tekst alternatywny',
+                                'existing' => 'Zmień tekst alternatywny',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Wstaw',
+                        ],
+
+                        'save' => [
+                            'label' => 'Zapisz',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Siatka',
+
+                'modal' => [
+
+                    'heading' => 'Siatka',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Ustawienie predefiniowane',
+
+                            'placeholder' => 'Brak',
+
+                            'options' => [
+                                'two' => 'Dwie kolumny',
+                                'three' => 'Trzy kolumny',
+                                'four' => 'Cztery kolumny',
+                                'five' => 'Pięć kolumn',
+                                'two_start_third' => 'Dwie kolumny (1/3 i 2/3)',
+                                'two_end_third' => 'Dwie kolumny (2/3 i 1/3)',
+                                'two_start_fourth' => 'Dwie kolumny (1/4 i 3/4)',
+                                'two_end_fourth' => 'Dwie kolumny (3/4 i 1/4)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolumny',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Od punktu przerwania',
+
+                            'options' => [
+                                'default' => 'Każdy',
+                                'sm' => 'Mały (sm)',
+                                'md' => 'Średni (md)',
+                                'lg' => 'Duży (lg)',
+                                'xl' => 'Bardzo duży (xl)',
+                                '2xl' => 'Bardzo bardzo duży (2xl)',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dwie asymetryczne kolumny',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Szerokość pierwszej kolumny',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Szerokość drugiej kolumny',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Linkuj',
-                    'unlink' => 'Usuń link',
+                'label' => 'Edytuj',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Otwórz w nowej karcie',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Wprowadź URL',
+            'text_color' => [
+
+                'label' => 'Kolor tekstu',
+
+                'modal' => [
+
+                    'heading' => 'Kolor tekstu',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Kolor',
+
+                            'options' => [
+                                'slate' => 'Ciemnoszary',
+                                'gray' => 'Szary',
+                                'zinc' => 'Cynk',
+                                'neutral' => 'Neutralny',
+                                'stone' => 'Kamień',
+                                'mauve' => 'Fiołkowy',
+                                'olive' => 'Oliwkowy',
+                                'mist' => 'Mgiełka',
+                                'taupe' => 'Taupe',
+                                'red' => 'Czerwony',
+                                'orange' => 'Pomarańczowy',
+                                'amber' => 'Bursztynowy',
+                                'yellow' => 'Żółty',
+                                'lime' => 'Limonkowy',
+                                'green' => 'Zielony',
+                                'emerald' => 'Szmaragdowy',
+                                'teal' => 'Turkusowy',
+                                'cyan' => 'Cyjan',
+                                'sky' => 'Niebo',
+                                'blue' => 'Niebieski',
+                                'indigo' => 'Indygo',
+                                'violet' => 'Fioletowy',
+                                'purple' => 'Purpurowy',
+                                'fuchsia' => 'Fuksja',
+                                'pink' => 'Różowy',
+                                'rose' => 'Różany',
+                            ],
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Kolor niestandardowy',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Przesyłane pliki muszą być typu: :values.',
+
+        'file_attachments_max_size_message' => 'Przesyłane pliki nie mogą być większe niż :max kilobajtów.',
+
+        'no_merge_tag_search_results_message' => 'Brak wyników.',
+
+        'mentions' => [
+            'no_options_message' => 'Brak dostępnych opcji.',
+            'no_search_results_message' => 'Brak wyników wyszukiwania.',
+            'search_prompt' => 'Zacznij pisać aby wyszukać...',
+            'searching_message' => 'Wyszukiwanie...',
+        ],
+
+        'toolbar' => [
+            'label' => 'Pasek narzędzi edytora',
+        ],
+
+        'tools' => [
+            'align_center' => 'Wyśrodkuj',
+            'align_end' => 'Wyrównaj do prawej',
+            'align_justify' => 'Justuj',
+            'align_start' => 'Wyrównaj do lewej',
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat',
             'bold' => 'Pogrubienie',
             'bullet_list' => 'Lista punktowana',
+            'clear_formatting' => 'Usuń formatowanie',
+            'code' => 'Kod',
             'code_block' => 'Blok kodu',
+            'custom_blocks' => 'Bloki',
+            'details' => 'Szczegóły',
+            'highlight' => 'Podświetlenie',
+            'horizontal_rule' => 'Linia pozioma',
             'h1' => 'Tytuł',
             'h2' => 'Nagłówek',
             'h3' => 'Podtytuł',
+            'h4' => 'Nagłówek 4',
+            'h5' => 'Nagłówek 5',
+            'h6' => 'Nagłówek 6',
+            'grid' => 'Siatka',
+            'grid_delete' => 'Usuń siatkę',
             'italic' => 'Kursywa',
+            'lead' => 'Tekst wiodący',
             'link' => 'Adres',
+            'merge_tags' => 'Scal tagi',
             'ordered_list' => 'Lista numerowana',
+            'paragraph' => 'Akapit',
             'redo' => 'Ponów',
+            'small' => 'Mniejsza czcionka',
             'strike' => 'Przekreślenie',
+            'subscript' => 'Indeks dolny',
+            'superscript' => 'Indeks górny',
+            'table' => 'Tabela',
+            'table_delete' => 'Usuń tabelę',
+            'table_add_column_before' => 'Dodaj kolumnę przed',
+            'table_add_column_after' => 'Dodaj kolumnę po',
+            'table_delete_column' => 'Usuń kolumnę',
+            'table_add_row_before' => 'Dodaj wiersz powyżej',
+            'table_add_row_after' => 'Dodaj wiersz poniżej',
+            'table_delete_row' => 'Usuń wiersz',
+            'table_merge_cells' => 'Scal komórki',
+            'table_split_cell' => 'Podziel komórkę',
+            'table_toggle_header_row' => 'Przełącz wiersz nagłówka',
+            'table_toggle_header_cell' => 'Przełącz komórkę nagłówka',
+            'text_color' => 'Kolor tekstu',
             'underline' => 'Podkreślenie',
             'undo' => 'Cofnij',
         ],
+
+        'uploading_file_message' => 'Przesyłanie pliku...',
 
     ],
 
@@ -333,6 +735,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Utwórz',
 
                 'modal' => [
 
@@ -355,6 +759,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Edytuj',
 
                 'modal' => [
 
@@ -383,6 +789,8 @@ return [
 
         'max_items_message' => 'Można wybrać tylko :count elementów.',
 
+        'no_options_message' => 'Brak dostępnych opcji.',
+
         'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
 
         'placeholder' => 'Wybierz z listy',
@@ -394,7 +802,51 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Usuń',
+            ],
+
+        ],
+
         'placeholder' => 'Nowy tag',
+
+        'tag_added' => 'Dodano: :tag',
+
+        'tag_removed' => 'Usunięto: :tag',
+
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'copy' => [
+                'label' => 'Kopiuj',
+                'message' => 'Skopiowano',
+            ],
+
+            'hide_password' => [
+                'label' => 'Ukryj hasło',
+            ],
+
+            'show_password' => [
+                'label' => 'Pokaż hasło',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Tak',
+            'false' => 'Nie',
+        ],
+
     ],
 
 ];

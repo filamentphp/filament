@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Siirry sisältöön',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Avaa ilmoitukset',
+            'label_with_unread_count' => '{1} Ilmoitukset, :count ilmoitus lukematta|[2,*] Ilmoitukset, :count ilmoitusta lukematta',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Teema',
+
             'dark' => [
                 'label' => 'Tumma tila',
             ],
@@ -52,12 +59,29 @@ return [
 
     ],
 
+    'navigation' => [
+        'label' => 'Sivupalkin navigaatio',
+    ],
+
+    'topbar' => [
+        'label' => 'Yläpalkki',
+    ],
+
     'avatar' => [
         'alt' => ':name avatar',
     ],
 
     'logo' => [
         'alt' => ':name logo',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Asiakkaiden haku',
+            'placeholder' => 'Hae',
+        ],
+
     ],
 
 ];

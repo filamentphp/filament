@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Preskočiť na obsah',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Zobraziť notifikácie',
+            'label_with_unread_count' => '{1} Notifikácie, :count neprečítaná notifikácia|[2,*] Notifikácie, :count neprečítané notifikácie',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Téma',
+
             'dark' => [
                 'label' => 'Zapnúť tmavý režim',
             ],
@@ -52,12 +59,29 @@ return [
 
     ],
 
+    'navigation' => [
+        'label' => 'Bočná navigácia',
+    ],
+
+    'topbar' => [
+        'label' => 'Horný panel',
+    ],
+
     'avatar' => [
         'alt' => 'Profilový obrázok pre :name',
     ],
 
     'logo' => [
         'alt' => ':name logo',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Vyhľadávanie nájomcu',
+            'placeholder' => 'Hľadať',
+        ],
+
     ],
 
 ];

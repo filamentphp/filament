@@ -3,21 +3,40 @@
 namespace Filament\Actions\Exports;
 
 use Carbon\CarbonInterface;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Schema\Components\Component;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\XLSX\Options;
+use OpenSpout\Writer\XLSX\Writer;
 
 abstract class Exporter
 {
+    // Security: Exports do not perform per-record authorization checks.
+    // All records matching the query are included without consulting
+    // Laravel policies. Use `modifyQueryUsing()` on the export action
+    // to scope the query. Data is written to CSV/XLSX as-is — values
+    // starting with `=`, `+`, `-`, or `@` may be interpreted as
+    // formulas by spreadsheet software (CSV formula injection).
+    // Sanitize via `formatStateUsing()` if exporting
+    // untrusted user content.
+
     /** @var array<ExportColumn> */
     protected array $cachedColumns;
 
     protected ?Model $record;
 
+    /**
+     * @var class-string<Model>|null
+     */
     protected static ?string $model = null;
 
     /**
@@ -54,7 +73,18 @@ abstract class Exporter
     abstract public static function getColumns(): array;
 
     /**
-     * @return array<Component>
+     * @return array<ExportColumn>
+     */
+    public static function getVisibleColumns(): array
+    {
+        return array_filter(
+            static::getColumns(),
+            fn (ExportColumn $column): bool => $column->isVisible(),
+        );
+    }
+
+    /**
+     * @return array<Component | Action | ActionGroup>
      */
     public static function getOptionsFormComponents(): array
     {
@@ -68,7 +98,7 @@ abstract class Exporter
     {
         return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Exporter')
-            ->prepend('App\\Models\\');
+            ->prepend(app()->getNamespace() . 'Models\\');
     }
 
     abstract public static function getCompletedNotificationBody(Export $export): string;
@@ -76,6 +106,11 @@ abstract class Exporter
     public static function getCompletedNotificationTitle(Export $export): string
     {
         return __('filament-actions::export.notifications.completed.title');
+    }
+
+    public static function modifyCompletedNotification(Notification $notification, Export $export): Notification
+    {
+        return $notification;
     }
 
     /**
@@ -91,6 +126,14 @@ abstract class Exporter
     public function getJobRetryUntil(): ?CarbonInterface
     {
         return now()->addDay();
+    }
+
+    /**
+     * @return int | array<int> | null
+     */
+    public function getJobBackoff(): int | array | null
+    {
+        return [60, 120, 300, 600];
     }
 
     /**
@@ -121,7 +164,7 @@ abstract class Exporter
      */
     public function getCachedColumns(): array
     {
-        return $this->cachedColumns ?? array_reduce(static::getColumns(), function (array $carry, ExportColumn $column): array {
+        return $this->cachedColumns ??= array_reduce(static::getColumns(), function (array $carry, ExportColumn $column): array {
             $carry[$column->getName()] = $column->exporter($this);
 
             return $carry;
@@ -143,7 +186,13 @@ abstract class Exporter
 
     public function getFileDisk(): string
     {
-        return config('filament.default_filesystem_disk');
+        $disk = config('filament.default_filesystem_disk');
+
+        if (($disk === 'public') && array_key_exists('local', config('filesystems.disks'))) {
+            return 'local';
+        }
+
+        return $disk;
     }
 
     public function getFileName(Export $export): string
@@ -166,7 +215,7 @@ abstract class Exporter
     }
 
     /**
-     * @return array<ExportFormat>
+     * @return array<ExportFormatInterface>
      */
     public function getFormats(): array
     {
@@ -183,6 +232,43 @@ abstract class Exporter
         return null;
     }
 
+    public function getXlsxWriterOptions(): ?Options
+    {
+        return null;
+    }
+
+    /**
+     * @param  array<mixed>  $values
+     */
+    public function makeXlsxHeaderRow(array $values, ?Style $style = null): Row
+    {
+        return $this->makeXlsxRow($values, $style);
+    }
+
+    /**
+     * @param  array<mixed>  $values
+     */
+    public function makeXlsxRow(array $values, ?Style $style = null): Row
+    {
+        return Row::fromValues($values, $style);
+    }
+
+    public function configureXlsxWriterAfterOpen(Writer $writer): Writer
+    {
+        return $writer;
+    }
+
+    public function configureXlsxWriterBeforeClose(Writer $writer): Writer
+    {
+        return $writer;
+    }
+
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
+     */
     public static function modifyQuery(Builder $query): Builder
     {
         return $query;

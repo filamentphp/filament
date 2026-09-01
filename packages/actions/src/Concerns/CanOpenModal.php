@@ -2,23 +2,30 @@
 
 namespace Filament\Actions\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Support\View\Components\Modal;
+use Filament\Support\Enums\SlideOverPosition;
+use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\ModalComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 
 trait CanOpenModal
 {
     /**
-     * @var array<string, Action>
+     * @var array<string, Action | ActionGroup>
      */
     protected array $cachedExtraModalFooterActions;
 
     /**
-     * @var array<Action> | Closure
+     * @var array<Action | ActionGroup> | Closure
      */
     protected array | Closure $extraModalFooterActions = [];
 
@@ -32,16 +39,18 @@ trait CanOpenModal
     protected array $cachedModalActions;
 
     /**
-     * @var array<Action>
+     * @var array<Action | Closure>
      */
     protected array $modalActions = [];
 
     protected bool | Closure $isModalSlideOver = false;
 
+    protected SlideOverPosition | Closure | null $modalSlideOverPosition = null;
+
     protected Alignment | string | Closure | null $modalAlignment = null;
 
     /**
-     * @var array<string, Action>
+     * @var array<string, Action | ActionGroup>
      */
     protected array $cachedModalFooterActions;
 
@@ -68,11 +77,13 @@ trait CanOpenModal
 
     protected string | Htmlable | Closure | null $modalDescription = null;
 
-    protected MaxWidth | string | Closure | null $modalWidth = null;
+    protected Width | string | Closure | null $modalWidth = null;
 
     protected bool | Closure | null $hasModal = null;
 
     protected bool | Closure | null $isModalHidden = null;
+
+    protected bool | Closure | null $isModalClickThrough = null;
 
     protected bool | Closure | null $hasModalCloseButton = null;
 
@@ -82,12 +93,19 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalAutofocused = null;
 
-    protected string | Closure | null $modalIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $modalIcon = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $modalIconColor = null;
+
+    public function modalClickThrough(bool | Closure | null $condition = true): static
+    {
+        $this->isModalClickThrough = $condition;
+
+        return $this;
+    }
 
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
@@ -136,7 +154,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalIcon(string | Closure | null $icon = null): static
+    public function modalIcon(string | BackedEnum | Htmlable | Closure | null $icon = null): static
     {
         $this->modalIcon = $icon;
 
@@ -144,7 +162,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<string> | Closure | null  $color
      */
     public function modalIconColor(string | array | Closure | null $color = null): static
     {
@@ -160,10 +178,17 @@ trait CanOpenModal
         return $this;
     }
 
+    public function slideOverPosition(SlideOverPosition | Closure | null $position = null): static
+    {
+        $this->modalSlideOverPosition = $position;
+
+        return $this;
+    }
+
     /**
      * @param  array<Action> | Closure | null  $actions
      *
-     *@deprecated Use `modalFooterActions()` instead.
+     * @deprecated Use `modalFooterActions()` instead.
      */
     public function modalActions(array | Closure | null $actions = null): static
     {
@@ -192,7 +217,7 @@ trait CanOpenModal
     /**
      * @param  array<Action> | Closure  $actions
      *
-     *@deprecated Use `extraModalFooterActions()` instead.
+     * @deprecated Use `extraModalFooterActions()` instead.
      */
     public function extraModalActions(array | Closure $actions): static
     {
@@ -202,7 +227,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<Action> | Closure  $actions
+     * @param  array<Action | ActionGroup> | Closure  $actions
      */
     public function extraModalFooterActions(array | Closure $actions): static
     {
@@ -212,7 +237,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<Action>  $actions
+     * @param  array<Action | Closure>  $actions
      */
     public function registerModalActions(array $actions): static
     {
@@ -308,7 +333,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalWidth(MaxWidth | string | Closure | null $width = null): static
+    public function modalWidth(Width | string | Closure | null $width = null): static
     {
         $this->modalWidth = $width;
 
@@ -335,7 +360,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<string, Action>
+     * @return array<string, Action | ActionGroup>
      */
     public function getModalFooterActions(): array
     {
@@ -347,11 +372,11 @@ trait CanOpenModal
             return $this->cachedModalFooterActions;
         }
 
-        if ($this->modalFooterActions) {
+        if ($this->modalFooterActions !== null) {
             $actions = [];
 
-            foreach ($this->evaluate($this->modalFooterActions) as $action) {
-                $actions[$action->getName()] = $this->prepareModalAction($action);
+            foreach ($this->evaluate($this->modalFooterActions) as $modalAction) {
+                $actions[$modalAction->getName()] = $this->prepareModalAction($modalAction);
             }
 
             return $this->cachedModalFooterActions = $actions;
@@ -381,7 +406,15 @@ trait CanOpenModal
 
     public function getModalFooterActionsAlignment(): string | Alignment | null
     {
-        return $this->evaluate($this->modalFooterActionsAlignment);
+        if ($alignment = $this->evaluate($this->modalFooterActionsAlignment)) {
+            return $alignment;
+        }
+
+        if ($this->isConfirmationRequired()) {
+            return Alignment::Center;
+        }
+
+        return null;
     }
 
     /**
@@ -393,10 +426,22 @@ trait CanOpenModal
             return $this->cachedModalActions;
         }
 
-        $actions = $this->getModalFooterActions();
+        $actions = [];
+
+        foreach ($this->getModalFooterActions() as $key => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getFlatActions() as $flatAction) {
+                    $actions[$flatAction->getName()] = $flatAction;
+                }
+            } else {
+                $actions[$key] = $action;
+            }
+        }
 
         foreach ($this->modalActions as $action) {
-            $actions[$action->getName()] = $this->prepareModalAction($action);
+            foreach (Arr::wrap($this->evaluate($action)) as $modalAction) {
+                $actions[$modalAction->getName()] = $this->prepareModalAction($modalAction);
+            }
         }
 
         return $this->cachedModalActions = $actions;
@@ -407,24 +452,11 @@ trait CanOpenModal
         return $this->getModalActions()[$name] ?? null;
     }
 
-    public function getMountableModalAction(string $name): ?Action
-    {
-        $action = $this->getModalAction($name);
-
-        if (! $action instanceof Action) {
-            return null;
-        }
-
-        return $action;
-    }
-
     public function prepareModalAction(Action $action): Action
     {
-        if (! $action instanceof Action) {
-            return $action;
-        }
-
         return $action
+            ->parentAction($this)
+            ->schemaContainer($this->getSchemaContainer())
             ->schemaComponent($this->getSchemaComponent())
             ->livewire($this->getLivewire())
             ->when(
@@ -434,22 +466,50 @@ trait CanOpenModal
             ->table($this->getTable());
     }
 
+    protected function prepareModalActionGroup(ActionGroup $group): ActionGroup
+    {
+        $group
+            ->schemaContainer($this->getSchemaContainer())
+            ->schemaComponent($this->getSchemaComponent())
+            ->livewire($this->getLivewire())
+            ->when(
+                ! $group->hasRecord(),
+                fn (ActionGroup $group) => $group->record($this->getRecord()),
+            )
+            ->table($this->getTable());
+
+        foreach ($group->getActions() as $nestedAction) {
+            if ($nestedAction instanceof ActionGroup) {
+                $this->prepareModalActionGroup($nestedAction);
+
+                continue;
+            }
+
+            $this->prepareModalAction($nestedAction);
+        }
+
+        return $group;
+    }
+
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     public function getVisibleModalFooterActions(): array
     {
         return array_filter(
             $this->getModalFooterActions(),
-            fn (Action $action): bool => $action->isVisible(),
+            fn (Action | ActionGroup $action): bool => $action->isVisible(),
         );
     }
 
     public function getModalSubmitAction(): ?Action
     {
+        $hasFormWrapper = $this->hasFormWrapper();
+
         $action = static::makeModalAction('submit')
             ->label($this->getModalSubmitActionLabel())
-            ->submit($this->getLivewireCallMountedActionName())
+            ->submit($hasFormWrapper ? $this->getLivewireCallMountedActionName() : null)
+            ->action($hasFormWrapper ? null : $this->getLivewireCallMountedActionName())
             ->color(match ($color = $this->getColor()) {
                 'gray' => 'primary',
                 default => $color,
@@ -485,7 +545,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     public function getExtraModalFooterActions(): array
     {
@@ -496,7 +556,11 @@ trait CanOpenModal
         $actions = [];
 
         foreach ($this->evaluate($this->extraModalFooterActions) as $action) {
-            $actions[$action->getName()] = $this->prepareModalAction($action);
+            if ($action instanceof ActionGroup) {
+                $actions[] = $this->prepareModalActionGroup($action);
+            } else {
+                $actions[$action->getName()] = $this->prepareModalAction($action);
+            }
         }
 
         return $this->cachedExtraModalFooterActions = $actions;
@@ -504,12 +568,28 @@ trait CanOpenModal
 
     public function getModalAlignment(): Alignment | string
     {
-        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), [MaxWidth::ExtraSmall, MaxWidth::Small, 'xs', 'sm']) ? Alignment::Center : Alignment::Start);
+        if ($alignment = $this->evaluate($this->modalAlignment)) {
+            return $alignment;
+        }
+
+        if ($this->isConfirmationRequired() || in_array($this->getModalWidth(), [Width::ExtraSmall, Width::Small, 'xs', 'sm'])) {
+            return Alignment::Center;
+        }
+
+        return Alignment::Start;
     }
 
     public function getModalSubmitActionLabel(): string
     {
-        return $this->evaluate($this->modalSubmitActionLabel) ?? __('filament-actions::modal.actions.submit.label');
+        if (filled($label = $this->evaluate($this->modalSubmitActionLabel))) {
+            return $label;
+        }
+
+        if ($this->isConfirmationRequired()) {
+            return __('filament-actions::modal.actions.confirm.label');
+        }
+
+        return __('filament-actions::modal.actions.submit.label');
     }
 
     public function getModalCancelActionLabel(): string
@@ -554,7 +634,15 @@ trait CanOpenModal
 
     public function getModalDescription(): string | Htmlable | null
     {
-        return $this->evaluate($this->modalDescription);
+        if (filled($description = $this->evaluate($this->modalDescription))) {
+            return $description;
+        }
+
+        if ($this->isConfirmationRequired()) {
+            return __('filament-actions::modal.confirmation');
+        }
+
+        return null;
     }
 
     public function hasModalDescription(): bool
@@ -562,9 +650,17 @@ trait CanOpenModal
         return filled($this->getModalDescription());
     }
 
-    public function getModalWidth(): MaxWidth | string
+    public function getModalWidth(): Width | string
     {
-        return $this->evaluate($this->modalWidth) ?? MaxWidth::FourExtraLarge;
+        if ($width = $this->evaluate($this->modalWidth)) {
+            return $width;
+        }
+
+        if ($this->isConfirmationRequired()) {
+            return Width::Medium;
+        }
+
+        return Width::FourExtraLarge;
     }
 
     public function isModalFooterSticky(): bool
@@ -582,9 +678,19 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
+    public function getModalSlideOverPosition(): ?SlideOverPosition
+    {
+        return $this->evaluate($this->modalSlideOverPosition);
+    }
+
+    public function hasModal(): ?bool
+    {
+        return $this->evaluate($this->hasModal);
+    }
+
     public function shouldOpenModal(?Closure $checkForSchemaUsing = null): bool
     {
-        if (is_bool($hasModal = $this->evaluate($this->hasModal))) {
+        if (is_bool($hasModal = $this->hasModal())) {
             return $hasModal;
         }
 
@@ -599,24 +705,29 @@ trait CanOpenModal
             (value($checkForSchemaUsing, $this) ?? false);
     }
 
+    public function isModalClickThrough(): bool
+    {
+        return (bool) $this->evaluate($this->isModalClickThrough);
+    }
+
     public function hasModalCloseButton(): bool
     {
-        return $this->evaluate($this->hasModalCloseButton) ?? Modal::$hasCloseButton;
+        return $this->evaluate($this->hasModalCloseButton) ?? ModalComponent::$hasCloseButton;
     }
 
     public function isModalClosedByClickingAway(): bool
     {
-        return (bool) ($this->evaluate($this->isModalClosedByClickingAway) ?? Modal::$isClosedByClickingAway);
+        return (bool) ($this->evaluate($this->isModalClosedByClickingAway) ?? ModalComponent::$isClosedByClickingAway);
     }
 
     public function isModalClosedByEscaping(): bool
     {
-        return (bool) ($this->evaluate($this->isModalClosedByEscaping) ?? Modal::$isClosedByEscaping);
+        return (bool) ($this->evaluate($this->isModalClosedByEscaping) ?? ModalComponent::$isClosedByEscaping);
     }
 
     public function isModalAutofocused(): bool
     {
-        return $this->evaluate($this->isModalAutofocused) ?? Modal::$isAutofocused;
+        return $this->evaluate($this->isModalAutofocused) ?? ModalComponent::$isAutofocused;
     }
 
     /**
@@ -646,13 +757,21 @@ trait CanOpenModal
             ->button();
     }
 
-    public function getModalIcon(): ?string
+    public function getModalIcon(): string | BackedEnum | Htmlable | null
     {
-        return $this->evaluate($this->modalIcon);
+        if ($icon = $this->evaluate($this->modalIcon)) {
+            return $icon;
+        }
+
+        if ($this->isConfirmationRequired()) {
+            return FilamentIcon::resolve(ActionsIconAlias::MODAL_CONFIRMATION) ?? Heroicon::OutlinedExclamationTriangle;
+        }
+
+        return null;
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<string> | null
      */
     public function getModalIconColor(): string | array | null
     {
@@ -671,5 +790,10 @@ trait CanOpenModal
         $this->isModalHeaderSticky = $condition;
 
         return $this;
+    }
+
+    public function hasCustomModalPresence(): bool
+    {
+        return $this->hasModal !== null;
     }
 }

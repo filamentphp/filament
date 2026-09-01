@@ -1,22 +1,24 @@
 @php
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\Support\Arr;
+
     $brandName = filament()->getBrandName();
     $brandLogo = filament()->getBrandLogo();
     $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.5rem';
     $darkModeBrandLogo = filament()->getDarkModeBrandLogo();
     $hasDarkModeBrandLogo = filled($darkModeBrandLogo);
 
-    $getLogoClasses = fn (bool $isDarkMode): string => \Illuminate\Support\Arr::toCssClasses([
+    $getLogoClasses = fn (bool $isDarkMode): string => Arr::toCssClasses([
         'fi-logo',
-        'flex' => ! $hasDarkModeBrandLogo,
-        'flex dark:hidden' => $hasDarkModeBrandLogo && (! $isDarkMode),
-        'hidden dark:flex' => $hasDarkModeBrandLogo && $isDarkMode,
+        'fi-logo-light' => $hasDarkModeBrandLogo && (! $isDarkMode),
+        'fi-logo-dark' => $isDarkMode,
     ]);
 
-    $logoStyles = "height: {$brandLogoHeight}";
+    $logoStyles = 'height: ' . e($brandLogoHeight);
 @endphp
 
 @capture($content, $logo, $isDarkMode = false)
-    @if ($logo instanceof \Illuminate\Contracts\Support\Htmlable)
+    @if ($logo instanceof Htmlable)
         <div
             {{
                 $attributes
@@ -41,7 +43,6 @@
             {{
                 $attributes->class([
                     $getLogoClasses($isDarkMode),
-                    'text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white',
                 ])
             }}
         >

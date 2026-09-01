@@ -3,94 +3,64 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Enums\RecordCheckboxPosition;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use InvalidArgumentException;
 
 trait HasBulkActions
 {
-    /**
-     * @var array<BulkAction | ActionGroup>
-     */
-    protected array $bulkActions = [];
-
-    /**
-     * @var array<string, BulkAction>
-     */
-    protected array $flatBulkActions = [];
-
     protected ?Closure $checkIfRecordIsSelectableUsing = null;
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
+
+    protected bool | Closure | null $selectsGroupsOnly = false;
 
     protected RecordCheckboxPosition | Closure | null $recordCheckboxPosition = null;
 
     protected bool | Closure | null $isSelectable = null;
 
+    protected bool | Closure $canTrackDeselectedRecords = true;
+
+    protected string | Closure | null $currentSelectionLivewireProperty = null;
+
+    protected int | Closure | null $maxSelectableRecords = null;
+
+    protected bool | Closure $isSelectionDisabled = false;
+
     /**
-     * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
+     * @deprecated Use `toolbarActions()` instead.
+     *
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
     public function bulkActions(array | ActionGroup $actions): static
     {
-        $this->bulkActions = [];
-        $this->pushBulkActions($actions);
+        $this->toolbarActions($actions);
 
         return $this;
     }
 
     /**
-     * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
+     * @deprecated Use `pushToolbarActions()` instead.
+     *
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
     public function pushBulkActions(array | ActionGroup $actions): static
     {
-        foreach (Arr::wrap($actions) as $action) {
-            $action->table($this);
-
-            if ($action instanceof ActionGroup) {
-                /** @var array<string, BulkAction> $flatActions */
-                $flatActions = $action->getFlatActions();
-
-                $this->mergeCachedFlatBulkActions($flatActions);
-            } elseif ($action instanceof BulkAction) {
-                $this->cacheBulkAction($action);
-            } else {
-                throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . ' or ' . ActionGroup::class . '.');
-            }
-
-            $this->bulkActions[] = $action;
-        }
+        $this->pushToolbarActions($actions);
 
         return $this;
     }
 
     /**
-     * @param  array<BulkAction | ActionGroup>  $actions
+     * @param  array<Action | ActionGroup>  $actions
      */
     public function groupedBulkActions(array $actions): static
     {
-        $this->bulkActions([BulkActionGroup::make($actions)]);
+        $this->toolbarActions([BulkActionGroup::make($actions)]);
 
         return $this;
-    }
-
-    protected function cacheBulkAction(BulkAction $action): void
-    {
-        $this->flatBulkActions[$action->getName()] = $action;
-    }
-
-    /**
-     * @param  array<string, BulkAction>  $actions
-     */
-    protected function mergeCachedFlatBulkActions(array $actions): void
-    {
-        $this->flatBulkActions = [
-            ...$this->flatBulkActions,
-            ...$actions,
-        ];
     }
 
     public function checkIfRecordIsSelectableUsing(?Closure $callback): static
@@ -107,25 +77,11 @@ trait HasBulkActions
         return $this;
     }
 
-    /**
-     * @return array<BulkAction | ActionGroup>
-     */
-    public function getBulkActions(): array
+    public function selectGroupsOnly(bool | Closure $condition = true): static
     {
-        return $this->bulkActions;
-    }
+        $this->selectsGroupsOnly = $condition;
 
-    /**
-     * @return array<string, BulkAction>
-     */
-    public function getFlatBulkActions(): array
-    {
-        return $this->flatBulkActions;
-    }
-
-    public function getBulkAction(string $name): ?BulkAction
-    {
-        return $this->getFlatBulkActions()[$name] ?? null;
+        return $this;
     }
 
     /**
@@ -163,8 +119,8 @@ trait HasBulkActions
             return $isSelectable;
         }
 
-        foreach ($this->getFlatBulkActions() as $bulkAction) {
-            if ($bulkAction->isVisible()) {
+        foreach ($this->getFlatBulkActions() as $action) {
+            if ($action->isVisible()) {
                 return true;
             }
         }
@@ -175,6 +131,11 @@ trait HasBulkActions
     public function selectsCurrentPageOnly(): bool
     {
         return $this->evaluate($this->selectsCurrentPageOnly) || (! $this->hasQuery());
+    }
+
+    public function selectsGroupsOnly(): bool
+    {
+        return (bool) $this->evaluate($this->selectsGroupsOnly);
     }
 
     public function checksIfRecordIsSelectable(): bool
@@ -192,5 +153,67 @@ trait HasBulkActions
     public function getRecordCheckboxPosition(): RecordCheckboxPosition
     {
         return $this->evaluate($this->recordCheckboxPosition) ?? RecordCheckboxPosition::BeforeCells;
+    }
+
+    public function trackDeselectedRecords(bool | Closure $condition = true): static
+    {
+        $this->canTrackDeselectedRecords = $condition;
+
+        return $this;
+    }
+
+    public function canTrackDeselectedRecords(): bool
+    {
+        if (! $this->shouldDeselectAllRecordsWhenFiltered()) {
+            return false;
+        }
+
+        return (bool) $this->evaluate($this->canTrackDeselectedRecords);
+    }
+
+    public function currentSelectionLivewireProperty(string | Closure | null $property): static
+    {
+        $this->currentSelectionLivewireProperty = $property;
+
+        return $this;
+    }
+
+    public function getCurrentSelectionLivewireProperty(): ?string
+    {
+        return $this->evaluate($this->currentSelectionLivewireProperty);
+    }
+
+    public function maxSelectableRecords(int | Closure | null $count): static
+    {
+        $this->maxSelectableRecords = $count;
+
+        return $this;
+    }
+
+    public function getMaxSelectableRecords(): ?int
+    {
+        return $this->evaluate($this->maxSelectableRecords);
+    }
+
+    public function disabledSelection(bool | Closure $condition = true): static
+    {
+        $this->isSelectionDisabled = $condition;
+
+        return $this;
+    }
+
+    public function isSelectionDisabled(): bool
+    {
+        return (bool) $this->evaluate($this->isSelectionDisabled);
+    }
+
+    /**
+     * @deprecated Use `getToolbarActions()` instead.
+     *
+     * @return array<Action | ActionGroup>
+     */
+    public function getBulkActions(): array
+    {
+        return $this->getToolbarActions();
     }
 }

@@ -1,0 +1,60 @@
+.fi-page-sub-navigation-dropdown {
+    @apply md:hidden;
+
+    & > .fi-dropdown-trigger > .fi-btn {
+        @apply w-full justify-between;
+    }
+}
+
+.fi-page-sub-navigation-sidebar-ctn {
+    @apply hidden w-72 flex-col md:flex;
+}
+
+.fi-page-sub-navigation-sidebar {
+    @apply flex flex-col gap-y-7;
+}
+
+.fi-page-sub-navigation-tabs {
+    @apply hidden md:flex;
+}
+
+.fi-page {
+    &.fi-height-full {
+        @apply h-full;
+
+        & .fi-page-main,
+        & .fi-page-header-main-ctn,
+        & .fi-page-content {
+            @apply h-full;
+        }
+    }
+
+    &.fi-page-has-sub-navigation {
+        & .fi-page-main {
+            @apply flex flex-col gap-8;
+        }
+
+        &.fi-page-has-sub-navigation-start,
+        &.fi-page-has-sub-navigation-end {
+            & .fi-page-main {
+                @apply md:flex-row md:items-start;
+            }
+        }
+    }
+}
+
+.fi-page-header-main-ctn {
+    @apply flex flex-col gap-y-8 py-8;
+}
+
+.fi-page-main-sub-navigation-mobile-menu-render-hook-ctn {
+    @apply contents md:hidden;
+}
+
+.fi-page-content {
+    @apply grid flex-1 auto-cols-fr gap-y-8;
+}
+
+.fi-simple-page-content {
+    @apply grid auto-cols-fr gap-y-6;
+}

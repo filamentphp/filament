@@ -2,18 +2,20 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\Column;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasIcon
 {
-    protected string | bool | Closure | null $icon = null;
+    protected string | BackedEnum | Htmlable | bool | Closure | null $icon = null;
 
     protected IconPosition | string | Closure | null $iconPosition = null;
 
-    public function icon(string | bool | Closure | null $icon): static
+    public function icon(string | BackedEnum | Htmlable | bool | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -53,7 +55,7 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(mixed $state): ?string
+    public function getIcon(mixed $state): string | BackedEnum | Htmlable | null
     {
         $icon = $this->evaluate($this->icon, [
             'state' => $state,
@@ -74,8 +76,23 @@ trait HasIcon
         return $state->getIcon();
     }
 
-    public function getIconPosition(): IconPosition | string
+    public function getIconPosition(): IconPosition
     {
-        return $this->evaluate($this->iconPosition) ?? IconPosition::Before;
+        $position = $this->evaluate($this->iconPosition);
+
+        if ($position instanceof IconPosition) {
+            return $position;
+        }
+
+        if (blank($position)) {
+            return IconPosition::Before;
+        }
+
+        return IconPosition::tryFrom($position) ?? IconPosition::Before;
+    }
+
+    public function hasIcon(): bool
+    {
+        return $this->icon !== null && $this->icon !== false;
     }
 }

@@ -1,0 +1,29 @@
+.fi-ta-stack {
+    @apply flex flex-col;
+
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply items-start;
+    }
+
+    &.fi-align-center {
+        @apply items-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply items-end;
+    }
+
+    &.fi-gap-sm {
+        @apply space-y-1;
+    }
+
+    &.fi-gap-md {
+        @apply space-y-2;
+    }
+
+    &.fi-gap-lg {
+        @apply space-y-3;
+    }
+}

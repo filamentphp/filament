@@ -17,7 +17,7 @@ class CsvDownloader implements Downloader
             abort(404);
         }
 
-        return response()->streamDownload(function () use ($disk, $directory) {
+        return response()->streamDownload(function () use ($disk, $directory): void {
             echo $disk->get($directory . DIRECTORY_SEPARATOR . 'headers.csv');
 
             flush();

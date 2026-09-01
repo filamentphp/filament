@@ -1,0 +1,121 @@
+.fi-sc {
+    @apply text-sm;
+
+    &.fi-inline {
+        @apply flex grow flex-wrap items-center;
+
+        & > .fi-growable {
+            @apply w-full flex-1;
+        }
+
+        & > .fi-sc-action:not(.fi-hidden) {
+            @apply contents;
+        }
+    }
+
+    &.fi-sc-has-gap {
+        @apply gap-6;
+
+        &.fi-sc-dense {
+            @apply gap-3;
+        }
+    }
+
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply justify-start;
+    }
+
+    &.fi-align-center {
+        @apply justify-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply justify-end;
+    }
+
+    &.fi-align-between,
+    &.fi-align-justify {
+        @apply justify-between;
+    }
+
+    & > .fi-hidden {
+        @apply hidden;
+    }
+
+    & > .fi-grid-col {
+        &.fi-width-3xs {
+            @apply max-w-3xs;
+        }
+
+        &.fi-width-2xs {
+            @apply max-w-2xs;
+        }
+
+        &.fi-width-xs {
+            @apply max-w-xs;
+        }
+
+        &.fi-width-sm {
+            @apply max-w-sm;
+        }
+
+        &.fi-width-md {
+            @apply max-w-md;
+        }
+
+        &.fi-width-lg {
+            @apply max-w-lg;
+        }
+
+        &.fi-width-xl {
+            @apply max-w-xl;
+        }
+
+        &.fi-width-2xl {
+            @apply max-w-2xl;
+        }
+
+        &.fi-width-3xl {
+            @apply max-w-3xl;
+        }
+
+        &.fi-width-4xl {
+            @apply max-w-4xl;
+        }
+
+        &.fi-width-5xl {
+            @apply max-w-5xl;
+        }
+
+        &.fi-width-6xl {
+            @apply max-w-6xl;
+        }
+
+        &.fi-width-7xl {
+            @apply max-w-7xl;
+        }
+
+        &.fi-width-none {
+            @apply max-w-none;
+        }
+
+        &.fi-width-container {
+            @apply container;
+        }
+
+        & > .fi-sc-component {
+            @apply h-full;
+        }
+    }
+}
+
+/* The `<fieldset>` around a component with a client-side visibility condition exists to
+   be `disabled` while the component is hidden, not to group controls, so it must not
+   affect the layout like a fieldset. */
+fieldset.fi-sc-visibility-fieldset {
+    @apply m-0 min-w-0 border-0 p-0;
+
+    min-inline-size: 0;
+}

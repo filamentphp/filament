@@ -4,7 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Illuminate\Support\Arr;
 
 trait HasExtraItemActions
@@ -52,7 +52,7 @@ trait HasExtraItemActions
                 $this->cachedExtraItemActions[$action->getName()] = $this->prepareAction(
                     $action
                         ->defaultColor('gray')
-                        ->defaultSize(ActionSize::Small)
+                        ->defaultSize(Size::Small)
                         ->defaultView(Action::ICON_BUTTON_VIEW),
                 );
             }

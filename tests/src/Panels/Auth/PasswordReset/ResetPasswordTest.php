@@ -1,19 +1,21 @@
 <?php
 
+use Filament\Auth\Pages\PasswordReset\ResetPassword;
 use Filament\Facades\Filament;
-use Filament\Pages\Auth\PasswordReset\ResetPassword;
-use Filament\Tests\Models\User;
+use Filament\Notifications\Notification;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render page', function () {
+it('can render page', function (): void {
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
 
@@ -27,8 +29,8 @@ it('can render page', function () {
     $this->get($url)->assertSuccessful();
 });
 
-it('can render page with a custom slug', function () {
-    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+it('can render page with a custom slug', function (): void {
+    Filament::setCurrentPanel('slugs');
 
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
@@ -43,76 +45,113 @@ it('can render page with a custom slug', function () {
     $this->get($url)->assertSuccessful();
 });
 
-it('can reset password', function () {
-    Event::fake();
+describe('resetting password', function (): void {
+    it('can reset password', function (): void {
+        Event::fake();
 
-    $this->assertGuest();
+        $this->assertGuest();
 
-    $userToResetPassword = User::factory()->create();
-    $token = Password::createToken($userToResetPassword);
+        $userToResetPassword = User::factory()->create();
+        $token = Password::createToken($userToResetPassword);
 
-    livewire(ResetPassword::class, [
-        'email' => $userToResetPassword->email,
-        'token' => $token,
-    ])
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified()
-        ->assertRedirect(Filament::getLoginUrl());
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified(
+                Notification::make()
+                    ->success()
+                    ->title(__('passwords.reset'))
+            )
+            ->assertRedirect(Filament::getLoginUrl());
 
-    Event::assertDispatched(PasswordReset::class);
+        Event::assertDispatched(PasswordReset::class);
 
-    $this->assertCredentials([
-        'email' => $userToResetPassword->email,
-        'password' => 'new-password',
-    ]);
+        $this->assertCredentials([
+            'email' => $userToResetPassword->email,
+            'password' => 'new-password',
+        ]);
+    });
+
+    it('cannot reset password without panel access', function (): void {
+        Event::fake();
+
+        $this->assertGuest();
+
+        $userToResetPassword = User::factory()->create();
+        $token = Password::createToken($userToResetPassword);
+
+        Filament::setCurrentPanel(Filament::getPanel('custom'));
+
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified(
+                Notification::make()
+                    ->danger()
+                    ->title(__('passwords.user'))
+            );
+
+        Event::assertNotDispatched(PasswordReset::class);
+
+        $this->assertCredentials([
+            'email' => $userToResetPassword->email,
+            'password' => 'password',
+        ]);
+    });
+
+    it('requires request signature', function (): void {
+        $userToResetPassword = User::factory()->make();
+        $token = Password::createToken($userToResetPassword);
+
+        $this->get(route('filament.admin.auth.password-reset.reset', [
+            'email' => $userToResetPassword->getEmailForPasswordReset(),
+            'token' => $token,
+        ]))->assertForbidden();
+    });
+
+    it('requires valid email and token', function (): void {
+        Event::fake();
+
+        $this->assertGuest();
+
+        $userToResetPassword = User::factory()->create();
+        $token = Password::createToken($userToResetPassword);
+
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => Str::random(),
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified()
+            ->assertNoRedirect();
+
+        Event::assertNotDispatched(PasswordReset::class);
+
+        livewire(ResetPassword::class, [
+            'email' => fake()->email(),
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified()
+            ->assertNoRedirect();
+
+        Event::assertNotDispatched(PasswordReset::class);
+    });
 });
 
-it('requires request signature', function () {
-    $userToResetPassword = User::factory()->make();
-    $token = Password::createToken($userToResetPassword);
-
-    $this->get(route('filament.admin.auth.password-reset.reset', [
-        'email' => $userToResetPassword->getEmailForPasswordReset(),
-        'token' => $token,
-    ]))->assertForbidden();
-});
-
-it('requires valid email and token', function () {
-    Event::fake();
-
-    $this->assertGuest();
-
-    $userToResetPassword = User::factory()->create();
-    $token = Password::createToken($userToResetPassword);
-
-    livewire(ResetPassword::class, [
-        'email' => $userToResetPassword->email,
-        'token' => Str::random(),
-    ])
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified()
-        ->assertNoRedirect();
-
-    Event::assertNotDispatched(PasswordReset::class);
-
-    livewire(ResetPassword::class, [
-        'email' => fake()->email(),
-        'token' => $token,
-    ])
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified()
-        ->assertNoRedirect();
-
-    Event::assertNotDispatched(PasswordReset::class);
-});
-
-it('can throttle reset password attempts', function () {
+it('can throttle reset password attempts', function (): void {
     Event::fake();
 
     $this->assertGuest();
@@ -157,24 +196,93 @@ it('can throttle reset password attempts', function () {
     ]);
 });
 
-it('can validate `password` is required', function () {
-    livewire(ResetPassword::class)
-        ->set('password', '')
-        ->call('resetPassword')
-        ->assertHasErrors(['password' => ['required']]);
+describe('validation', function (): void {
+    it('can validate `password` is required', function (): void {
+        livewire(ResetPassword::class)
+            ->set('password', '')
+            ->call('resetPassword')
+            ->assertHasErrors(['password' => ['required']]);
+    });
+
+    it('can validate `password` is confirmed', function (): void {
+        livewire(ResetPassword::class)
+            ->set('password', Str::random())
+            ->set('passwordConfirmation', Str::random())
+            ->call('resetPassword')
+            ->assertHasErrors(['password' => ['same']]);
+    });
+
+    it('can validate `passwordConfirmation` is required', function (): void {
+        livewire(ResetPassword::class)
+            ->set('passwordConfirmation', '')
+            ->call('resetPassword')
+            ->assertHasErrors(['passwordConfirmation' => ['required']]);
+    });
 });
 
-it('can validate `password` is confirmed', function () {
-    livewire(ResetPassword::class)
-        ->set('password', Str::random())
-        ->set('passwordConfirmation', Str::random())
-        ->call('resetPassword')
-        ->assertHasErrors(['password' => ['same']]);
-});
+it('can throttle reset password attempts per email', function (): void {
+    Event::fake();
 
-it('can validate `passwordConfirmation` is required', function () {
-    livewire(ResetPassword::class)
-        ->set('passwordConfirmation', '')
+    $this->assertGuest();
+
+    $userToResetPassword = User::factory()->create();
+
+    // Clear the IP-based rate limiter between attempts to isolate the
+    // email-based rate limit (simulates an attacker rotating IPs).
+    $clearIpRateLimiter = function (): void {
+        RateLimiter::clear('livewire-rate-limiter:' . sha1(ResetPassword::class . '|resetPassword|' . request()->ip()));
+    };
+
+    foreach (range(1, 2) as $i) {
+        $clearIpRateLimiter();
+
+        $token = Password::createToken($userToResetPassword);
+
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified()
+            ->assertRedirect(Filament::getLoginUrl());
+    }
+
+    Event::assertDispatchedTimes(PasswordReset::class, times: 2);
+
+    $clearIpRateLimiter();
+
+    // The 3rd attempt should be rate limited by email
+    $token = Password::createToken($userToResetPassword);
+
+    livewire(ResetPassword::class, [
+        'email' => $userToResetPassword->email,
+        'token' => $token,
+    ])
+        ->set('password', 'newer-password')
+        ->set('passwordConfirmation', 'newer-password')
         ->call('resetPassword')
-        ->assertHasErrors(['passwordConfirmation' => ['required']]);
+        ->assertNotified()
+        ->assertNoRedirect();
+
+    Event::assertDispatchedTimes(PasswordReset::class, times: 2);
+
+    $clearIpRateLimiter();
+
+    // A different email should not be affected
+    $secondUser = User::factory()->create();
+    $secondToken = Password::createToken($secondUser);
+
+    livewire(ResetPassword::class, [
+        'email' => $secondUser->email,
+        'token' => $secondToken,
+    ])
+        ->set('password', 'new-password')
+        ->set('passwordConfirmation', 'new-password')
+        ->call('resetPassword')
+        ->assertNotified()
+        ->assertRedirect(Filament::getLoginUrl());
+
+    Event::assertDispatchedTimes(PasswordReset::class, times: 3);
 });

@@ -2,8 +2,8 @@
 
 namespace Filament\Tests\Database\Factories;
 
-use Filament\Tests\Models\Post;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PostFactory extends Factory

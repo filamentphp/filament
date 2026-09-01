@@ -1,0 +1,20 @@
+.fi-ta-checkbox {
+    @apply w-full;
+
+    &:not(.fi-inline) {
+        @apply px-3 py-4;
+    }
+
+    .fi-ta-table-stacked-on-mobile & {
+        @apply p-0 sm:px-3 sm:py-4;
+    }
+
+    &.fi-align-center {
+        @apply text-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply text-end;
+    }
+}

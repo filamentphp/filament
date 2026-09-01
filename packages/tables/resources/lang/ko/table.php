@@ -2,13 +2,43 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => '열',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => '열 적용',
+            ],
+
+            'reset' => [
+                'label' => '초기화',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => '작업|작업들',
+        ],
+
+        'select' => [
+
+            'loading_message' => '로드 중...',
+
+            'no_search_results_message' => '검색 결과가 없습니다.',
+
+            'placeholder' => '옵션을 선택하세요',
+
+            'searching_message' => '검색 중...',
+
+            'search_prompt' => '검색어를 입력하세요...',
+
+        ],
 
         'text' => [
 
@@ -76,11 +106,11 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => '재정렬 완료',
+            'label' => '순서 변경 완료',
         ],
 
         'enable_reordering' => [
-            'label' => '항목 재정렬',
+            'label' => '항목 순서 변경',
         ],
 
         'filter' => [
@@ -95,7 +125,7 @@ return [
             'label' => '일괄 작업',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => '열 전환',
         ],
 
@@ -134,14 +164,20 @@ return [
 
         'heading' => '필터',
 
-        'indicator' => '활성된 필터',
+        'indicator' => '활성화된 필터',
 
         'multi_select' => [
             'placeholder' => '전체',
         ],
 
         'select' => [
+
             'placeholder' => '전체',
+
+            'relationship' => [
+                'empty_option_label' => '없음',
+            ],
+
         ],
 
         'trashed' => [
@@ -164,7 +200,6 @@ return [
 
             'group' => [
                 'label' => '그룹 기준',
-                'placeholder' => '그룹 기준',
             ],
 
             'direction' => [
@@ -224,5 +259,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => '항목',
 
 ];

@@ -1,0 +1,511 @@
+.fi-grid {
+    &:not(.fi-grid-direction-col) {
+        @apply grid grid-cols-(--cols-default);
+
+        &.sm\:fi-grid-cols {
+            @apply sm:grid-cols-(--cols-sm);
+        }
+
+        &.md\:fi-grid-cols {
+            @apply md:grid-cols-(--cols-md);
+        }
+
+        &.lg\:fi-grid-cols {
+            @apply lg:grid-cols-(--cols-lg);
+        }
+
+        &.xl\:fi-grid-cols {
+            @apply xl:grid-cols-(--cols-xl);
+        }
+
+        &.\32xl\:fi-grid-cols {
+            @apply 2xl:grid-cols-(--cols-2xl);
+        }
+
+        @supports (container-type: inline-size) {
+            &.\@3xs\:fi-grid-cols {
+                @apply @3xs:grid-cols-(--cols-c3xs);
+            }
+
+            &.\@2xs\:fi-grid-cols {
+                @apply @2xs:grid-cols-(--cols-c2xs);
+            }
+
+            &.\@xs\:fi-grid-cols {
+                @apply @xs:grid-cols-(--cols-cxs);
+            }
+
+            &.\@sm\:fi-grid-cols {
+                @apply @sm:grid-cols-(--cols-csm);
+            }
+
+            &.\@md\:fi-grid-cols {
+                @apply @md:grid-cols-(--cols-cmd);
+            }
+
+            &.\@lg\:fi-grid-cols {
+                @apply @lg:grid-cols-(--cols-clg);
+            }
+
+            &.\@xl\:fi-grid-cols {
+                @apply @xl:grid-cols-(--cols-cxl);
+            }
+
+            &.\@2xl\:fi-grid-cols {
+                @apply @2xl:grid-cols-(--cols-c2xl);
+            }
+
+            &.\@3xl\:fi-grid-cols {
+                @apply @3xl:grid-cols-(--cols-c3xl);
+            }
+
+            &.\@4xl\:fi-grid-cols {
+                @apply @4xl:grid-cols-(--cols-c4xl);
+            }
+
+            &.\@5xl\:fi-grid-cols {
+                @apply @5xl:grid-cols-(--cols-c5xl);
+            }
+
+            &.\@6xl\:fi-grid-cols {
+                @apply @6xl:grid-cols-(--cols-c6xl);
+            }
+
+            &.\@7xl\:fi-grid-cols {
+                @apply @7xl:grid-cols-(--cols-c7xl);
+            }
+        }
+
+        @supports not (container-type: inline-size) {
+            &.\!\@sm\:fi-grid-cols {
+                @apply sm:grid-cols-(--cols-ncsm);
+            }
+
+            &.\!\@md\:fi-grid-cols {
+                @apply md:grid-cols-(--cols-ncmd);
+            }
+
+            &.\!\@lg\:fi-grid-cols {
+                @apply lg:grid-cols-(--cols-nclg);
+            }
+
+            &.\!\@xl\:fi-grid-cols {
+                @apply xl:grid-cols-(--cols-ncxl);
+            }
+
+            &.\!\@2xl\:fi-grid-cols {
+                @apply 2xl:grid-cols-(--cols-nc2xl);
+            }
+        }
+    }
+
+    &.fi-grid-direction-col {
+        @apply columns-(--cols-default);
+
+        &.sm\:fi-grid-cols {
+            @apply sm:columns-(--cols-sm);
+        }
+
+        &.md\:fi-grid-cols {
+            @apply md:columns-(--cols-md);
+        }
+
+        &.lg\:fi-grid-cols {
+            @apply lg:columns-(--cols-lg);
+        }
+
+        &.xl\:fi-grid-cols {
+            @apply xl:columns-(--cols-xl);
+        }
+
+        &.\32xl\:fi-grid-cols {
+            @apply 2xl:columns-(--cols-2xl);
+        }
+
+        @supports (container-type: inline-size) {
+            &.\@3xs\:fi-grid-cols {
+                @apply @3xs:columns-(--cols-c3xs);
+            }
+
+            &.\@2xs\:fi-grid-cols {
+                @apply @2xs:columns-(--cols-c2xs);
+            }
+
+            &.\@xs\:fi-grid-cols {
+                @apply @xs:columns-(--cols-cxs);
+            }
+
+            &.\@sm\:fi-grid-cols {
+                @apply @sm:columns-(--cols-csm);
+            }
+
+            &.\@md\:fi-grid-cols {
+                @apply @md:columns-(--cols-cmd);
+            }
+
+            &.\@lg\:fi-grid-cols {
+                @apply @lg:columns-(--cols-clg);
+            }
+
+            &.\@xl\:fi-grid-cols {
+                @apply @xl:columns-(--cols-cxl);
+            }
+
+            &.\@2xl\:fi-grid-cols {
+                @apply @2xl:columns-(--cols-c2xl);
+            }
+
+            &.\@3xl\:fi-grid-cols {
+                @apply @3xl:columns-(--cols-c3xl);
+            }
+
+            &.\@4xl\:fi-grid-cols {
+                @apply @4xl:columns-(--cols-c4xl);
+            }
+
+            &.\@5xl\:fi-grid-cols {
+                @apply @5xl:columns-(--cols-c5xl);
+            }
+
+            &.\@6xl\:fi-grid-cols {
+                @apply @6xl:columns-(--cols-c6xl);
+            }
+
+            &.\@7xl\:fi-grid-cols {
+                @apply @7xl:columns-(--cols-c7xl);
+            }
+        }
+
+        @supports not (container-type: inline-size) {
+            &.\!\@sm\:fi-grid-cols {
+                @apply sm:columns-(--cols-ncsm);
+            }
+
+            &.\!\@md\:fi-grid-cols {
+                @apply md:columns-(--cols-ncmd);
+            }
+
+            &.\!\@lg\:fi-grid-cols {
+                @apply lg:columns-(--cols-nclg);
+            }
+
+            &.\!\@xl\:fi-grid-cols {
+                @apply xl:columns-(--cols-ncxl);
+            }
+
+            &.\!\@2xl\:fi-grid-cols {
+                @apply 2xl:columns-(--cols-nc2xl);
+            }
+        }
+    }
+}
+
+@supports (container-type: inline-size) {
+    .fi-grid-ctn {
+        @apply @container;
+    }
+}
+
+.fi-grid-col {
+    @apply col-(--col-span-default);
+
+    &.sm\:fi-grid-col-span {
+        @apply sm:col-(--col-span-sm);
+    }
+
+    &.md\:fi-grid-col-span {
+        @apply md:col-(--col-span-md);
+    }
+
+    &.lg\:fi-grid-col-span {
+        @apply lg:col-(--col-span-lg);
+    }
+
+    &.xl\:fi-grid-col-span {
+        @apply xl:col-(--col-span-xl);
+    }
+
+    &.\32xl\:fi-grid-col-span {
+        @apply 2xl:col-(--col-span-2xl);
+    }
+
+    @supports (container-type: inline-size) {
+        &.\@3xs\:fi-grid-col-span {
+            @apply @3xs:col-(--col-span-c3xs);
+        }
+
+        &.\@2xs\:fi-grid-col-span {
+            @apply @2xs:col-(--col-span-c2xs);
+        }
+
+        &.\@xs\:fi-grid-col-span {
+            @apply @xs:col-(--col-span-cxs);
+        }
+
+        &.\@sm\:fi-grid-col-span {
+            @apply @sm:col-(--col-span-csm);
+        }
+
+        &.\@md\:fi-grid-col-span {
+            @apply @md:col-(--col-span-cmd);
+        }
+
+        &.\@lg\:fi-grid-col-span {
+            @apply @lg:col-(--col-span-clg);
+        }
+
+        &.\@xl\:fi-grid-col-span {
+            @apply @xl:col-(--col-span-cxl);
+        }
+
+        &.\@2xl\:fi-grid-col-span {
+            @apply @2xl:col-(--col-span-c2xl);
+        }
+
+        &.\@3xl\:fi-grid-col-span {
+            @apply @3xl:col-(--col-span-c3xl);
+        }
+
+        &.\@4xl\:fi-grid-col-span {
+            @apply @4xl:col-(--col-span-c4xl);
+        }
+
+        &.\@5xl\:fi-grid-col-span {
+            @apply @5xl:col-(--col-span-c5xl);
+        }
+
+        &.\@6xl\:fi-grid-col-span {
+            @apply @6xl:col-(--col-span-c6xl);
+        }
+
+        &.\@7xl\:fi-grid-col-span {
+            @apply @7xl:col-(--col-span-c7xl);
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        &.\!\@sm\:fi-grid-col-span {
+            @apply sm:col-(--col-span-ncsm);
+        }
+
+        &.\!\@md\:fi-grid-col-span {
+            @apply md:col-(--col-span-ncmd);
+        }
+
+        &.\!\@lg\:fi-grid-col-span {
+            @apply lg:col-(--col-span-nclg);
+        }
+
+        &.\!\@xl\:fi-grid-col-span {
+            @apply xl:col-(--col-span-ncxl);
+        }
+
+        &.\!\@2xl\:fi-grid-col-span {
+            @apply 2xl:col-(--col-span-nc2xl);
+        }
+    }
+
+    &.fi-grid-col-start {
+        @apply col-start-(--col-start-default);
+    }
+
+    &.sm\:fi-grid-col-start {
+        @apply sm:col-start-(--col-start-sm);
+    }
+
+    &.md\:fi-grid-col-start {
+        @apply md:col-start-(--col-start-md);
+    }
+
+    &.lg\:fi-grid-col-start {
+        @apply lg:col-start-(--col-start-lg);
+    }
+
+    &.xl\:fi-grid-col-start {
+        @apply xl:col-start-(--col-start-xl);
+    }
+
+    &.\32xl\:fi-grid-col-start {
+        @apply 2xl:col-start-(--col-start-2xl);
+    }
+
+    @supports (container-type: inline-size) {
+        &.\@3xs\:fi-grid-col-start {
+            @apply @3xs:col-start-(--col-start-c3xs);
+        }
+
+        &.\@2xs\:fi-grid-col-start {
+            @apply @2xs:col-start-(--col-start-c2xs);
+        }
+
+        &.\@xs\:fi-grid-col-start {
+            @apply @xs:col-start-(--col-start-cxs);
+        }
+
+        &.\@sm\:fi-grid-col-start {
+            @apply @sm:col-start-(--col-start-csm);
+        }
+
+        &.\@md\:fi-grid-col-start {
+            @apply @md:col-start-(--col-start-cmd);
+        }
+
+        &.\@lg\:fi-grid-col-start {
+            @apply @lg:col-start-(--col-start-clg);
+        }
+
+        &.\@xl\:fi-grid-col-start {
+            @apply @xl:col-start-(--col-start-cxl);
+        }
+
+        &.\@2xl\:fi-grid-col-start {
+            @apply @2xl:col-start-(--col-start-c2xl);
+        }
+
+        &.\@3xl\:fi-grid-col-start {
+            @apply @3xl:col-start-(--col-start-c3xl);
+        }
+
+        &.\@4xl\:fi-grid-col-start {
+            @apply @4xl:col-start-(--col-start-c4xl);
+        }
+
+        &.\@5xl\:fi-grid-col-start {
+            @apply @5xl:col-start-(--col-start-c5xl);
+        }
+
+        &.\@6xl\:fi-grid-col-start {
+            @apply @6xl:col-start-(--col-start-c6xl);
+        }
+
+        &.\@7xl\:fi-grid-col-start {
+            @apply @7xl:col-start-(--col-start-c7xl);
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        &.\!\@sm\:fi-grid-col-start {
+            @apply sm:col-start-(--col-start-ncsm);
+        }
+
+        &.\!\@md\:fi-grid-col-start {
+            @apply md:col-start-(--col-start-ncmd);
+        }
+
+        &.\!\@lg\:fi-grid-col-start {
+            @apply lg:col-start-(--col-start-nclg);
+        }
+
+        &.\!\@xl\:fi-grid-col-start {
+            @apply xl:col-start-(--col-start-ncxl);
+        }
+
+        &.\!\@2xl\:fi-grid-col-start {
+            @apply 2xl:col-start-(--col-start-nc2xl);
+        }
+    }
+
+    &.fi-grid-col-order {
+        @apply order-(--col-order-default);
+    }
+
+    &.sm\:fi-grid-col-order {
+        @apply sm:order-(--col-order-sm);
+    }
+
+    &.md\:fi-grid-col-order {
+        @apply md:order-(--col-order-md);
+    }
+
+    &.lg\:fi-grid-col-order {
+        @apply lg:order-(--col-order-lg);
+    }
+
+    &.xl\:fi-grid-col-order {
+        @apply xl:order-(--col-order-xl);
+    }
+
+    &.\32xl\:fi-grid-col-order {
+        @apply 2xl:order-(--col-order-2xl);
+    }
+
+    @supports (container-type: inline-size) {
+        &.\@3xs\:fi-grid-col-order {
+            @apply @3xs:order-(--col-order-c3xs);
+        }
+
+        &.\@2xs\:fi-grid-col-order {
+            @apply @2xs:order-(--col-order-c2xs);
+        }
+
+        &.\@xs\:fi-grid-col-order {
+            @apply @xs:order-(--col-order-cxs);
+        }
+
+        &.\@sm\:fi-grid-col-order {
+            @apply @sm:order-(--col-order-csm);
+        }
+
+        &.\@md\:fi-grid-col-order {
+            @apply @md:order-(--col-order-cmd);
+        }
+
+        &.\@lg\:fi-grid-col-order {
+            @apply @lg:order-(--col-order-clg);
+        }
+
+        &.\@xl\:fi-grid-col-order {
+            @apply @xl:order-(--col-order-cxl);
+        }
+
+        &.\@2xl\:fi-grid-col-order {
+            @apply @2xl:order-(--col-order-c2xl);
+        }
+
+        &.\@3xl\:fi-grid-col-order {
+            @apply @3xl:order-(--col-order-c3xl);
+        }
+
+        &.\@4xl\:fi-grid-col-order {
+            @apply @4xl:order-(--col-order-c4xl);
+        }
+
+        &.\@5xl\:fi-grid-col-order {
+            @apply @5xl:order-(--col-order-c5xl);
+        }
+
+        &.\@6xl\:fi-grid-col-order {
+            @apply @6xl:order-(--col-order-c6xl);
+        }
+
+        &.\@7xl\:fi-grid-col-order {
+            @apply @7xl:order-(--col-order-c7xl);
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        &.\!\@sm\:fi-grid-col-order {
+            @apply sm:order-(--col-order-ncsm);
+        }
+
+        &.\!\@md\:fi-grid-col-order {
+            @apply md:order-(--col-order-ncmd);
+        }
+
+        &.\!\@lg\:fi-grid-col-order {
+            @apply lg:order-(--col-order-nclg);
+        }
+
+        &.\!\@xl\:fi-grid-col-order {
+            @apply xl:order-(--col-order-ncxl);
+        }
+
+        &.\!\@2xl\:fi-grid-col-order {
+            @apply 2xl:order-(--col-order-nc2xl);
+        }
+    }
+
+    &.fi-hidden {
+        @apply hidden;
+    }
+}

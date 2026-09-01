@@ -6,10 +6,13 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Pages\Concerns;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
-use Filament\Schema\Schema;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -18,21 +21,14 @@ use Illuminate\Database\Eloquent\Model;
 use Throwable;
 
 use function Filament\authorize;
-use function Filament\Support\is_app_url;
 
 /**
- * @property Schema $form
+ * @property-read Schema $form
  */
 abstract class RegisterTenant extends SimplePage
 {
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasRoutes;
-    use InteractsWithFormActions;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::pages.tenancy.register-tenant';
 
     /**
      * @var array<string, mixed> | null
@@ -43,7 +39,7 @@ abstract class RegisterTenant extends SimplePage
 
     abstract public static function getLabel(): string;
 
-    public static function getRelativeRouteName(): string
+    public static function getRelativeRouteName(Panel $panel): string
     {
         return 'registration';
     }
@@ -60,6 +56,11 @@ abstract class RegisterTenant extends SimplePage
         $this->form->fill();
     }
 
+    public function hydrate(): void
+    {
+        abort_unless(static::canView(), 404);
+    }
+
     /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
@@ -71,6 +72,8 @@ abstract class RegisterTenant extends SimplePage
 
     public function register(): void
     {
+        abort_unless(static::canView(), 404);
+
         try {
             $this->beginDatabaseTransaction();
 
@@ -89,8 +92,6 @@ abstract class RegisterTenant extends SimplePage
             $this->form->model($this->tenant)->saveRelationships();
 
             $this->callHook('afterRegister');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -103,8 +104,10 @@ abstract class RegisterTenant extends SimplePage
             throw $exception;
         }
 
+        $this->commitDatabaseTransaction();
+
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -121,25 +124,21 @@ abstract class RegisterTenant extends SimplePage
         return Filament::getUrl($this->tenant);
     }
 
-    public function form(Schema $form): Schema
+    public function defaultForm(Schema $schema): Schema
     {
-        return $form;
+        return $schema
+            ->model($this->getModel())
+            ->statePath('data');
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema;
     }
 
     /**
-     * @return array<int | string, string | Schema>
+     * @return class-string<Model>
      */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form(
-                $this->makeSchema()
-                    ->model($this->getModel())
-                    ->statePath('data'),
-            ),
-        ];
-    }
-
     public function getModel(): string
     {
         return Filament::getTenantModel();
@@ -150,7 +149,7 @@ abstract class RegisterTenant extends SimplePage
         return static::getLabel();
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         return static::$slug ?? 'new';
     }
@@ -189,5 +188,27 @@ abstract class RegisterTenant extends SimplePage
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('register')
+            ->footer([
+                Actions::make($this->getFormActions())
+                    ->alignment($this->getFormActionsAlignment())
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->sticky($this->areFormActionsSticky())
+                    ->key('form-actions'),
+            ]);
     }
 }

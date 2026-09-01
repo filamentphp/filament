@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Icons\Heroicon;
+@endphp
+
 <div
     x-data="{ theme: null }"
     x-init="
@@ -7,20 +11,22 @@
 
         theme = localStorage.getItem('theme') || @js(filament()->getDefaultThemeMode()->value)
     "
-    class="fi-theme-switcher grid grid-flow-col gap-x-1"
+    role="group"
+    aria-label="{{ __('filament-panels::layout.actions.theme_switcher.label') }}"
+    class="fi-theme-switcher"
 >
     <x-filament-panels::theme-switcher.button
-        icon="heroicon-m-sun"
+        :icon="Heroicon::Sun"
         theme="light"
     />
 
     <x-filament-panels::theme-switcher.button
-        icon="heroicon-m-moon"
+        :icon="Heroicon::Moon"
         theme="dark"
     />
 
     <x-filament-panels::theme-switcher.button
-        icon="heroicon-m-computer-desktop"
+        :icon="Heroicon::ComputerDesktop"
         theme="system"
     />
 </div>

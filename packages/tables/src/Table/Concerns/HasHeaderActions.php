@@ -31,7 +31,25 @@ trait HasHeaderActions
      */
     public function headerActions(array | ActionGroup $actions, HeaderActionsPosition | Closure | null $position = null): static
     {
+        // We must remove the existing cached header actions before setting the new ones, as
+        // the visibility of the checkboxes is determined by which bulk actions are visible.
+        // The `$this->flatActions` array is used to determine if any bulk actions are
+        // visible. We cannot simply clear it, as the bulk actions defined in the header
+        // of the table are also stored in this array, and we do not want to remove them,
+        // only the bulk actions that are stored in the `$this->headerActions` array.
+        foreach ($this->headerActions as $existingAction) {
+            if ($existingAction instanceof ActionGroup) {
+                /** @var array<Action> $flatExistingActions */
+                $flatExistingActions = $existingAction->getFlatActions();
+
+                $this->removeCachedActions($flatExistingActions);
+            } elseif ($existingAction instanceof Action) {
+                $this->removeCachedActions([$existingAction]);
+            }
+        }
+
         $this->headerActions = [];
+
         $this->pushHeaderActions($actions);
 
         if ($position) {
@@ -51,14 +69,12 @@ trait HasHeaderActions
 
             if ($action instanceof ActionGroup) {
                 foreach ($action->getFlatActions() as $flatAction) {
-                    if ($flatAction instanceof Action) {
-                        $this->cacheAction($flatAction);
-                    }
+                    $this->cacheAction($flatAction);
                 }
             } elseif ($action instanceof Action) {
                 $this->cacheAction($action);
             } else {
-                throw new InvalidArgumentException('Table header actions must be an instance of ' . Action::class . ', ' . BulkAction::class . ' or ' . ActionGroup::class . '.');
+                throw new InvalidArgumentException('Table header actions must be an instance of [' . Action::class . '], [' . BulkAction::class . '] or [' . ActionGroup::class . '].');
             }
 
             $this->headerActions[] = $action;

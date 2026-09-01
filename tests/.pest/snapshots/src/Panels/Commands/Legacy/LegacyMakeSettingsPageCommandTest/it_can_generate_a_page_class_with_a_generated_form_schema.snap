@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use BackedEnum;
+use Filament\Forms;
+use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Panels\Commands\Legacy\Settings;
+use Filament\Tests\Panels\Commands\Legacy\SettingsPropertyEnum;
+
+class ManageSettings extends SettingsPage
+{
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+
+    protected static string $settings = Settings::class;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Forms\Components\TextInput::make('string')
+                    ->required(),
+                Forms\Components\TextInput::make('nullableString'),
+                Forms\Components\Toggle::make('bool')
+                    ->required(),
+                Forms\Components\TextInput::make('int')
+                    ->numeric()
+                    ->integer()
+                    ->required(),
+                Forms\Components\TextInput::make('nullableInt')
+                    ->numeric()
+                    ->integer(),
+                Forms\Components\TextInput::make('float')
+                    ->numeric()
+                    ->required(),
+                Forms\Components\TextInput::make('nullableFloat')
+                    ->numeric(),
+                Forms\Components\DateTimePicker::make('dateTimeInterface')
+                    ->required(),
+                Forms\Components\DateTimePicker::make('dateTime')
+                    ->required(),
+                Forms\Components\DateTimePicker::make('dateTimeImmutable')
+                    ->required(),
+                Forms\Components\DateTimePicker::make('carbonInterface')
+                    ->required(),
+                Forms\Components\DateTimePicker::make('carbon')
+                    ->required(),
+                Forms\Components\DateTimePicker::make('carbonImmutable')
+                    ->required(),
+                Forms\Components\DateTimePicker::make('nullableDateTimeInterface'),
+                Forms\Components\DateTimePicker::make('nullableDateTime'),
+                Forms\Components\DateTimePicker::make('nullableDateTimeImmutable'),
+                Forms\Components\DateTimePicker::make('nullableCarbonInterface'),
+                Forms\Components\DateTimePicker::make('nullableCarbon'),
+                Forms\Components\DateTimePicker::make('nullableCarbonImmutable'),
+                Forms\Components\Select::make('enum')
+                    ->options(SettingsPropertyEnum::class)
+                    ->required(),
+                Forms\Components\Select::make('nullableEnum')
+                    ->options(SettingsPropertyEnum::class),
+                Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->required(),
+                Forms\Components\FileUpload::make('nullableImage')
+                    ->image(),
+                Forms\Components\TextInput::make('id')
+                    ->label('ID')
+                    ->required(),
+                Forms\Components\TextInput::make('cost')
+                    ->numeric()
+                    ->prefix('$')
+                    ->required(),
+            ]);
+    }
+}

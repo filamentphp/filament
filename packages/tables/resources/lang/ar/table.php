@@ -2,29 +2,63 @@
 
 return [
 
-    'column_toggle' => [
-
+    'column_manager' => [
         'heading' => 'الأعمدة',
 
+        'actions' => [
+            'apply' => [
+                'label' => 'تطبيق الأعمدة',
+            ],
+
+            'reset' => [
+                'label' => 'إعادة تعيين',
+            ],
+
+            'reorder' => [
+                'label' => 'إعادة ترتيب العمود',
+            ],
+        ],
     ],
 
     'columns' => [
-
-        'text' => [
-
-            'actions' => [
-                'collapse_list' => 'عرض :count أقل',
-                'expand_list' => 'عرض :count أكثر',
-            ],
-
-            'more_list_items' => 'و :count إضافية',
-
+        'actions' => [
+            'label' => 'إجراء | إجراءات',
         ],
 
+        'select' => [
+            'loading_message' => 'جارٍ التحميل...',
+
+            'no_options_message' => 'لا توجد خيارات متاحة.',
+
+            'no_search_results_message' => 'لا توجد خيارات مطابقة لبحثك.',
+
+            'placeholder' => 'اختر',
+
+            'searching_message' => 'جارٍ البحث...',
+
+            'search_prompt' => 'ابدأ الكتابة للبحث...',
+        ],
+
+        'text' => [
+            'actions' => [
+                'collapse_list' => '{1} عرض أقل بعنصر واحد|{2} عرض أقل بعنصرين|[3,10] عرض أقل بـ :count عناصر|[11,*] عرض أقل بـ :count عنصراً',
+
+                'expand_list' => '{1} عرض عنصر إضافي واحد|{2} عرض عنصرين إضافيين|[3,10] عرض :count عناصر إضافية|[11,*] عرض :count عنصراً إضافياً',
+            ],
+
+            'more_list_items' => '{1} وعنصر آخر|{2} وعنصرين آخرين|[3,10] و:count عناصر أخرى|[11,*] و:count عنصراً آخر',
+        ],
+
+        'icon' => [
+            'boolean' => [
+                'true' => 'نعم',
+
+                'false' => 'لا',
+            ],
+        ],
     ],
 
     'fields' => [
-
         'bulk_select_page' => [
             'label' => 'تحديد/إلغاء تحديد كافة العناصر للإجراءات الجماعية.',
         ],
@@ -39,24 +73,25 @@ return [
 
         'search' => [
             'label' => 'بحث',
+
             'placeholder' => 'بحث',
+
             'indicator' => 'بحث',
         ],
-
     ],
 
     'summary' => [
-
         'heading' => 'الملخص',
 
         'subheadings' => [
             'all' => 'كافة :label',
+
             'group' => 'ملخص :group',
+
             'page' => 'هذه الصفحة',
         ],
 
         'summarizers' => [
-
             'average' => [
                 'label' => 'المتوسط',
             ],
@@ -68,13 +103,10 @@ return [
             'sum' => [
                 'label' => 'المجموع',
             ],
-
         ],
-
     ],
 
     'actions' => [
-
         'disable_reordering' => [
             'label' => 'إنهاء إعادة ترتيب السجلات',
         ],
@@ -95,24 +127,27 @@ return [
             'label' => 'الإجراءات',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'تبديل الأعمدة',
         ],
 
+        'reorder_record' => [
+            'label' => 'إعادة ترتيب العنصر :key',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'توسيع/طي العنصر :key',
+        ],
     ],
 
     'empty' => [
-
-        'heading' => 'لا توجد :model',
+        'heading' => 'لا يوجد :model',
 
         'description' => 'قم بإضافة :model للبدء.',
-
     ],
 
     'filters' => [
-
         'actions' => [
-
             'apply' => [
                 'label' => 'تطبيق التصفيات',
             ],
@@ -123,13 +158,13 @@ return [
 
             'remove_all' => [
                 'label' => 'إلغاء كافة التصفيات',
+
                 'tooltip' => 'إلغاء كافة التصفيات',
             ],
 
             'reset' => [
                 'label' => 'إعادة ضبط التصفيات',
             ],
-
         ],
 
         'heading' => 'التصفيات',
@@ -142,10 +177,13 @@ return [
 
         'select' => [
             'placeholder' => 'الكل',
+
+            'relationship' => [
+                'empty_option_label' => 'لا يوجد اختيار',
+            ],
         ],
 
         'trashed' => [
-
             'label' => 'السجلات المحذوفة',
 
             'only_trashed' => 'السجلات المحذوفة فقط',
@@ -153,76 +191,65 @@ return [
             'with_trashed' => 'مع السجلات المحذوفة',
 
             'without_trashed' => 'بدون السجلات المحذوفة',
-
         ],
-
     ],
 
     'grouping' => [
-
         'fields' => [
-
             'group' => [
                 'label' => 'تجميع حسب',
-                'placeholder' => 'تجميع حسب',
             ],
 
             'direction' => [
-
-                'label' => 'إتجاه التجميع',
+                'label' => 'اتجاه التجميع',
 
                 'options' => [
                     'asc' => 'تصاعدي',
+
                     'desc' => 'تنازلي',
                 ],
-
             ],
-
         ],
-
     ],
 
     'reorder_indicator' => 'قم بسحب وإسقاط السجلات بالترتيب.',
 
     'selection_indicator' => [
-
-        'selected_count' => '{1} تم تحديد سجل واحد|[3,10] تم تحديد :count سجلات |[2,*] تم تحديد :count سجل',
+        'selected_count' => '{1} تم تحديد سجل واحد|{2} تم تحديد سجلين|[3,10] تم تحديد :count سجلات|[11,*] تم تحديد :count سجلاً',
 
         'actions' => [
-
             'select_all' => [
-                'label' => 'تحديد كل السجلات :count',
+                'label' => 'تحديد جميع السجلات البالغ عددها :count',
             ],
 
             'deselect_all' => [
                 'label' => 'إلغاء تحديد الكل',
             ],
-
         ],
-
     ],
 
     'sorting' => [
-
         'fields' => [
-
             'column' => [
                 'label' => 'ترتيب حسب',
             ],
 
             'direction' => [
-
                 'label' => 'اتجاه الترتيب',
 
                 'options' => [
                     'asc' => 'تصاعدي',
+
                     'desc' => 'تنازلي',
                 ],
-
             ],
-
         ],
-
     ],
+
+    'default_model_label' => 'سجل',
+
+    'loading' => 'جارٍ التحميل...',
+
+    'result_count' => '{0} لا توجد نتائج|{1} نتيجة واحدة|{2} نتيجتان|[3,10] :count نتائج|[11,*] :count نتيجة',
 
 ];

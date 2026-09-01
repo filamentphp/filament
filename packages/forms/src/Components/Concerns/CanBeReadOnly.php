@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Support\Arr;
 
 trait CanBeReadOnly
@@ -22,7 +22,7 @@ trait CanBeReadOnly
      */
     public function readOnlyOn(string | array $operations): static
     {
-        $this->readOnly(static function (HasForms $livewire, string $operation) use ($operations): bool {
+        $this->readOnly(static function (HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $readOnlyOperation) {
                 if ($readOnlyOperation === $operation || $livewire instanceof $readOnlyOperation) {
                     return true;

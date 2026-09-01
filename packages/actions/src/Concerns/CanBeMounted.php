@@ -3,7 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Schema\Schema;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 
 trait CanBeMounted
 {
@@ -14,7 +15,11 @@ trait CanBeMounted
      */
     public function mount(array $parameters): mixed
     {
-        return $this->evaluate($this->getMountUsing(), $parameters);
+        try {
+            return $this->evaluate($this->getMountUsing(), $parameters);
+        } finally {
+            $this->clearVisibilityCache();
+        }
     }
 
     public function mountUsing(?Closure $callback): static
@@ -25,12 +30,12 @@ trait CanBeMounted
     }
 
     /**
-     * @param  array<string, mixed> | Closure  $data
+     * @param  array<string, mixed> | Closure | null  $data
      */
-    public function fillForm(array | Closure $data): static
+    public function fillForm(array | Closure | null $data): static
     {
-        $this->mountUsing(function (?Schema $form) use ($data) {
-            $form?->fill($this->evaluate($data));
+        $this->mountUsing(static function (Action $action, ?Schema $schema) use ($data): void {
+            $schema?->fill($action->evaluate($data));
         });
 
         return $this;
@@ -38,12 +43,12 @@ trait CanBeMounted
 
     public function getMountUsing(): Closure
     {
-        return $this->mountUsing ?? static function (?Schema $form = null): void {
-            if (! $form) {
+        return $this->mountUsing ?? static function (?Schema $schema = null): void {
+            if (! $schema) {
                 return;
             }
 
-            $form->fill();
+            $schema->fill();
         };
     }
 }

@@ -1,0 +1,337 @@
+.fi-sc-fused-group {
+    & > .fi-sc {
+        @apply focus-within:ring-primary-600 dark:focus-within:ring-primary-500 shadow-sm ring-1 ring-gray-950/10 focus-within:ring-2 dark:ring-white/20;
+    }
+
+    & .fi-sc {
+        @apply divide-y divide-gray-950/10 rounded-lg dark:divide-white/20;
+
+        & .fi-sc-component {
+            @apply min-h-full;
+
+            & .fi-fo-field {
+                @apply min-h-full;
+            }
+
+            & .fi-input {
+                @apply min-h-full;
+            }
+
+            & .fi-sc-actions {
+                @apply px-3 py-2;
+            }
+        }
+
+        & > :first-child .fi-input-wrp {
+            @apply rounded-t-lg;
+        }
+
+        & > :last-child .fi-input-wrp {
+            @apply rounded-b-lg;
+        }
+
+        &.fi-grid-cols {
+            @apply divide-x divide-y-0;
+
+            & > :first-child .fi-input-wrp {
+                @apply rounded-se-none rounded-es-lg;
+            }
+
+            & > :last-child .fi-input-wrp {
+                @apply rounded-se-lg rounded-es-none;
+            }
+        }
+
+        &.sm\:fi-grid-cols {
+            @apply sm:divide-x sm:divide-y-0;
+
+            & > :first-child .fi-input-wrp {
+                @apply sm:rounded-se-none sm:rounded-es-lg;
+            }
+
+            & > :last-child .fi-input-wrp {
+                @apply sm:rounded-se-lg sm:rounded-es-none;
+            }
+        }
+
+        &.md\:fi-grid-cols {
+            @apply md:divide-x md:divide-y-0;
+
+            & > :first-child .fi-input-wrp {
+                @apply md:rounded-se-none md:rounded-es-lg;
+            }
+
+            & > :last-child .fi-input-wrp {
+                @apply md:rounded-se-lg md:rounded-es-none;
+            }
+        }
+
+        &.lg\:fi-grid-cols {
+            @apply lg:divide-x lg:divide-y-0;
+
+            & > :first-child .fi-input-wrp {
+                @apply lg:rounded-se-none lg:rounded-es-lg;
+            }
+
+            & > :last-child .fi-input-wrp {
+                @apply lg:rounded-se-lg lg:rounded-es-none;
+            }
+        }
+
+        &.xl\:fi-grid-cols {
+            @apply xl:divide-x xl:divide-y-0;
+
+            & > :first-child .fi-input-wrp {
+                @apply xl:rounded-se-none xl:rounded-es-lg;
+            }
+
+            & > :last-child .fi-input-wrp {
+                @apply xl:rounded-se-lg xl:rounded-es-none;
+            }
+        }
+
+        &.\32xl\:fi-grid-cols {
+            @apply 2xl:divide-x 2xl:divide-y-0;
+
+            & > :first-child .fi-input-wrp {
+                @apply 2xl:rounded-se-none 2xl:rounded-es-lg;
+            }
+
+            & > :last-child .fi-input-wrp {
+                @apply 2xl:rounded-se-lg 2xl:rounded-es-none;
+            }
+        }
+
+        @supports (container-type: inline-size) {
+            &.\@3xs\:fi-grid-cols {
+                @apply @3xs:divide-x @3xs:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @3xs:rounded-se-none @3xs:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @3xs:rounded-se-lg @3xs:rounded-es-none;
+                }
+            }
+
+            &.\@2xs\:fi-grid-cols {
+                @apply @2xs:divide-x @2xs:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @2xs:rounded-se-none @2xs:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @2xs:rounded-se-lg @2xs:rounded-es-none;
+                }
+            }
+
+            &.\@xs\:fi-grid-cols {
+                @apply @xs:divide-x @xs:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @xs:rounded-se-none @xs:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @xs:rounded-se-lg @xs:rounded-es-none;
+                }
+            }
+
+            &.\@sm\:fi-grid-cols {
+                @apply @sm:divide-x @sm:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @sm:rounded-se-none @sm:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @sm:rounded-se-lg @sm:rounded-es-none;
+                }
+            }
+
+            &.\@md\:fi-grid-cols {
+                @apply @md:divide-x @md:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @md:rounded-se-none @md:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @md:rounded-se-lg @md:rounded-es-none;
+                }
+            }
+
+            &.\@lg\:fi-grid-cols {
+                @apply @lg:divide-x @lg:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @lg:rounded-se-none @lg:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @lg:rounded-se-lg @lg:rounded-es-none;
+                }
+            }
+
+            &.\@xl\:fi-grid-cols {
+                @apply @xl:divide-x @xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @xl:rounded-se-none @xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @xl:rounded-se-lg @xl:rounded-es-none;
+                }
+            }
+
+            &.\@2xl\:fi-grid-cols {
+                @apply @2xl:divide-x @2xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @2xl:rounded-se-none @2xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @2xl:rounded-se-lg @2xl:rounded-es-none;
+                }
+            }
+
+            &.\@3xl\:fi-grid-cols {
+                @apply @3xl:divide-x @3xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @3xl:rounded-se-none @3xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @3xl:rounded-se-lg @3xl:rounded-es-none;
+                }
+            }
+
+            &.\@4xl\:fi-grid-cols {
+                @apply @4xl:divide-x @4xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @4xl:rounded-se-none @4xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @4xl:rounded-se-lg @4xl:rounded-es-none;
+                }
+            }
+
+            &.\@5xl\:fi-grid-cols {
+                @apply @5xl:divide-x @5xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @5xl:rounded-se-none @5xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @5xl:rounded-se-lg @5xl:rounded-es-none;
+                }
+            }
+
+            &.\@6xl\:fi-grid-cols {
+                @apply @6xl:divide-x @6xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @6xl:rounded-se-none @6xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @6xl:rounded-se-lg @6xl:rounded-es-none;
+                }
+            }
+
+            &.\@7xl\:fi-grid-cols {
+                @apply @7xl:divide-x @7xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply @7xl:rounded-se-none @7xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply @7xl:rounded-se-lg @7xl:rounded-es-none;
+                }
+            }
+        }
+
+        @supports not (container-type: inline-size) {
+            &.\!\@sm\:fi-grid-cols {
+                @apply sm:divide-x sm:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply sm:rounded-se-none sm:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply sm:rounded-se-lg sm:rounded-es-none;
+                }
+            }
+
+            &.\!\@md\:fi-grid-cols {
+                @apply md:divide-x md:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply md:rounded-se-none md:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply md:rounded-se-lg md:rounded-es-none;
+                }
+            }
+
+            &.\!\@lg\:fi-grid-cols {
+                @apply lg:divide-x lg:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply lg:rounded-se-none lg:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply lg:rounded-se-lg lg:rounded-es-none;
+                }
+            }
+
+            &.\!\@xl\:fi-grid-cols {
+                @apply xl:divide-x xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply xl:rounded-se-none xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply xl:rounded-se-lg xl:rounded-es-none;
+                }
+            }
+
+            &.\!\@2xl\:fi-grid-cols {
+                @apply 2xl:divide-x 2xl:divide-y-0;
+
+                & > :first-child .fi-input-wrp {
+                    @apply 2xl:rounded-se-none 2xl:rounded-es-lg;
+                }
+
+                & > :last-child .fi-input-wrp {
+                    @apply 2xl:rounded-se-lg 2xl:rounded-es-none;
+                }
+            }
+        }
+    }
+
+    & .fi-input-wrp {
+        @apply rounded-none shadow-none ring-0;
+
+        &:not(.fi-disabled):not(:has(.fi-ac-action:focus)) {
+            @apply focus-within:ring-0;
+
+            &.fi-invalid {
+                @apply focus-within:ring-0;
+            }
+        }
+    }
+}

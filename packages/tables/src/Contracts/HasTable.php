@@ -3,7 +3,7 @@
 namespace Filament\Tables\Contracts;
 
 use Filament\Actions\Action;
-use Filament\Schema\Schema;
+use Filament\Schemas\Schema;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Grouping\Group;
@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 interface HasTable
 {
@@ -37,7 +38,14 @@ interface HasTable
      */
     public function getTableFilterState(string $name): ?array;
 
-    public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true): EloquentCollection | Collection;
+    /**
+     * @return array<string, mixed> | null
+     */
+    public function getTableFilterFormState(string $name): ?array;
+
+    public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection;
+
+    public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder;
 
     public function parseTableFilterName(string $name): string;
 
@@ -61,19 +69,17 @@ interface HasTable
 
     public function getTableRecordsPerPage(): int | string | null;
 
-    public function getTablePage(): int;
+    public function getTablePage(): int | string;
 
     public function getTableSortColumn(): ?string;
 
     public function getTableSortDirection(): ?string;
 
-    public function getAllTableSummaryQuery(): Builder;
+    public function getAllTableSummaryQuery(): ?Builder;
 
-    public function getPageTableSummaryQuery(): Builder;
+    public function getPageTableSummaryQuery(): ?Builder;
 
     public function isTableColumnToggledHidden(string $name): bool;
-
-    public function getTableColumnToggleForm(): Schema;
 
     /**
      * @return Model | array<string, mixed> | null

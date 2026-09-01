@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use Filament\Widgets\ChartWidget as BaseChartWidget;
+
+class ChartWidget extends BaseChartWidget
+{
+    protected ?string $heading = 'Chart Widget';
+
+    protected function getData(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
+}

@@ -54,6 +54,18 @@ return [
                 'title' => 'Ripristinati',
             ],
 
+            'restored_partial' => [
+                'title' => 'Ripristinati :count di :total',
+                'missing_authorization_failure_message' => 'Non hai il permesso di ripristinare :count.',
+                'missing_processing_failure_message' => ':count non possono essere ripristinati.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Ripristino fallito',
+                'missing_authorization_failure_message' => 'Non hai il permesso di ripristinare :count.',
+                'missing_processing_failure_message' => ':count non possono essere ripristinati.',
+            ],
+
         ],
 
     ],

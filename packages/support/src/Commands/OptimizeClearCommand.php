@@ -12,9 +12,9 @@ class OptimizeClearCommand extends Command
 {
     use CanCachePanelComponents;
 
-    protected $signature = 'filament:optimize-clear';
-
     protected $description = 'Remove the cached components and Blade icons';
+
+    protected $name = 'filament:optimize-clear';
 
     public function handle(): int
     {
@@ -25,13 +25,13 @@ class OptimizeClearCommand extends Command
         if ($this->canCachePanelComponents()) {
             $tasks->put(
                 'Clearing cached components',
-                fn (): bool => $this->callSilent('filament:clear-cached-components') === static::SUCCESS
+                fn (): bool => $this->callSilent('filament:clear-cached-components') === static::SUCCESS,
             );
         }
 
         $tasks->put(
             'Clearing cached Blade icons',
-            fn (): bool => $this->callSilent('icons:clear') === static::SUCCESS
+            fn (): bool => $this->callSilent('icons:clear') === static::SUCCESS,
         );
 
         $tasks->each(fn (Closure $task, string $description) => $this->components->task($description, $task));

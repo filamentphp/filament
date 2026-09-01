@@ -18,6 +18,8 @@ trait CanSortRecords
 
     protected string | Htmlable | Closure | null $defaultSortOptionLabel = null;
 
+    protected bool | Closure $hasDefaultKeySort = true;
+
     public function defaultSort(string | Closure | null $column, string | Closure | null $direction = 'asc'): static
     {
         $this->defaultSort = $column;
@@ -36,6 +38,13 @@ trait CanSortRecords
     public function defaultSortOptionLabel(string | Htmlable | Closure | null $label): static
     {
         $this->defaultSortOptionLabel = $label;
+
+        return $this;
+    }
+
+    public function defaultKeySort(bool | Closure $condition = true): static
+    {
+        $this->hasDefaultKeySort = $condition;
 
         return $this;
     }
@@ -120,5 +129,10 @@ trait CanSortRecords
     public function getDefaultSortOptionLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->defaultSortOptionLabel) ?? '-';
+    }
+
+    public function hasDefaultKeySort(): bool
+    {
+        return (bool) $this->evaluate($this->hasDefaultKeySort);
     }
 }

@@ -18,8 +18,19 @@ trait HasFontFamily
 
     public function getFontFamily(mixed $state = null): FontFamily | string | null
     {
-        return $this->evaluate($this->fontFamily, [
+        $family = $this->evaluate($this->fontFamily, [
             'state' => $state,
         ]);
+
+        if (is_string($family)) {
+            $family = FontFamily::tryFrom($family) ?? $family;
+        }
+
+        return $family;
+    }
+
+    public function hasFontFamily(): bool
+    {
+        return $this->fontFamily !== null;
     }
 }

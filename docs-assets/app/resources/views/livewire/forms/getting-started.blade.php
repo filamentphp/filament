@@ -1,5 +1,5 @@
 <div class="min-h-screen p-16">
-    @if (! count($this->mountedFormComponentActions))
+    @if (! count($this->mountedActions))
         {{ $this->form }}
     @endif
 

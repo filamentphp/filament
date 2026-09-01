@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'स्तम्भहरू',
 
@@ -84,7 +84,7 @@ return [
             'label' => 'बल्क कार्यहरू',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'स्तम्भहरू टगल गर्नुहोस्',
         ],
 

@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Stĺpce',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Vybrať všetko',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Zrušiť výber všetkých',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Export je príliš veľký',
             'body' => 'Naraz nemôžete exportovať viac ako 1 riadok.|Naraz nemôžete exportovať viac ako :count riadkov.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Nie sú vybrané žiadne stĺpce',
+            'body' => 'Prosím vyberte aspoň jeden stĺpec na export.',
         ],
 
         'started' => [

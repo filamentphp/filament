@@ -55,9 +55,17 @@ return [
     'avatar' => [
         'alt' => 'Avatar van :name',
     ],
-
     'logo' => [
         'alt' => ':name logo',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Tenant zoeken',
+            'placeholder' => 'Zoeken',
+        ],
+
     ],
 
 ];

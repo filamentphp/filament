@@ -3,7 +3,9 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteAction extends Action
@@ -25,16 +27,19 @@ class ForceDeleteAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::force-delete.single.modal.actions.delete.label'));
 
-        $this->color('danger');
+        $this->successNotificationTitle(__('filament-actions::force-delete.single.notifications.deleted.title'));
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::force-delete-action.grouped') ?? 'heroicon-m-trash');
+        $this->defaultColor('danger');
+
+        $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::FORCE_DELETE_ACTION) ?? Heroicon::Trash);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::FORCE_DELETE_ACTION_GROUPED) ?? Heroicon::Trash);
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(FilamentIcon::resolve('actions::force-delete-action.modal') ?? 'heroicon-o-trash');
+        $this->modalIcon(FilamentIcon::resolve(ActionsIconAlias::FORCE_DELETE_ACTION_MODAL) ?? Heroicon::OutlinedTrash);
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record) => $record->forceDelete());
+            $result = $this->process(static fn (Model $record): ?bool => $record->forceDelete());
 
             if (! $result) {
                 $this->failure();

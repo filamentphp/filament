@@ -23,6 +23,20 @@ trait CanPaginateRecords
 
     protected PaginationMode | Closure | null $paginationMode = null;
 
+    protected bool | Closure $shouldScrollToTopOnPageChange = false;
+
+    public function scrollToTopOnPageChange(bool | Closure $condition = true): static
+    {
+        $this->shouldScrollToTopOnPageChange = $condition;
+
+        return $this;
+    }
+
+    public function shouldScrollToTopOnPageChange(): bool
+    {
+        return (bool) $this->evaluate($this->shouldScrollToTopOnPageChange);
+    }
+
     public function paginationMode(PaginationMode | Closure | null $mode): static
     {
         $this->paginationMode = $mode;

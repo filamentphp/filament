@@ -1,8 +1,9 @@
 ---
 title: Stats overview widgets
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Overview
+## Introduction
 
 Filament comes with a "stats overview" widget template, which you can use to display a number of different stats in a single widget, without needing to write a custom view.
 
@@ -36,6 +37,8 @@ class StatsOverview extends BaseWidget
 ```
 
 Now, check out your widget in the dashboard.
+
+<AutoScreenshot name="widgets/stats-overview/simple" alt="Stats overview" version="4.x" />
 
 ## Adding a description and icon to a stat
 
@@ -71,9 +74,11 @@ Stat::make('Unique views', '192.1k')
     ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before)
 ```
 
+<AutoScreenshot name="widgets/stats-overview/description" alt="Stats overview with descriptions" version="4.x" />
+
 ## Changing the color of the stat
 
-You may also give stats a `color()` (`danger`, `gray`, `info`, `primary`, `success` or `warning`):
+You may also give stats a [color](../styling/colors):
 
 ```php
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -96,6 +101,8 @@ protected function getStats(): array
     ];
 }
 ```
+
+<AutoScreenshot name="widgets/stats-overview/color" alt="Stats overview with colors" version="4.x" />
 
 ## Adding extra HTML attributes to a stat
 
@@ -140,6 +147,38 @@ protected function getStats(): array
 }
 ```
 
+<AutoScreenshot name="widgets/stats-overview/chart" alt="Stats overview with charts" version="4.x" />
+
+## Styling stat charts in a theme
+
+Chart.js paints a stat's chart onto a `<canvas>`, so its line cannot be reached from a stylesheet. A [custom theme](../styling/overview) is CSS only, so Filament exposes the shape of that line as CSS custom properties, which you may set on `.fi-wi-stats-overview-stat`, or on any element above it to cover every stat in the panel at once:
+
+```css
+.fi-wi-stats-overview-stat {
+    --stat-chart-border-width: 1;
+    --stat-chart-line-tension: 0;
+    --stat-chart-fill: none;
+}
+```
+
+`--stat-chart-border-width` thickens the line, `--stat-chart-line-tension` curves it, from `0` for straight segments up to `1`, and `--stat-chart-fill` shades the area beneath it, accepting `start`, `end`, `origin` or `stack`, as well as `none` to leave the line bare.
+
+These values are handed to Chart.js rather than used by the browser, so they are plain numbers and keywords, without units. If you set one to something Chart.js cannot use, it is ignored and the chart keeps its default. They are also read again whenever the color scheme changes, so you may give light and dark mode different values.
+
+The chart takes its colors from the [color of the stat](#changing-the-color-of-the-stat). To change them in a theme, style the `.fi-wi-stats-overview-stat-chart-bg-color` and `.fi-wi-stats-overview-stat-chart-border-color` elements with an ordinary `color` declaration:
+
+```css
+.fi-wi-stats-overview-stat {
+    & .fi-wi-stats-overview-stat-chart-border-color {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+```
+
+<Aside variant="info">
+    These properties only affect the charts inside stats. [Chart widgets](charts#styling-charts-in-a-theme) are styled with their own set, prefixed `--chart-`.
+</Aside>
+
 ## Live updating stats (polling)
 
 By default, stats overview widgets refresh their data every 5 seconds.
@@ -147,13 +186,13 @@ By default, stats overview widgets refresh their data every 5 seconds.
 To customize this, you may override the `$pollingInterval` property on the class to a new interval:
 
 ```php
-protected static ?string $pollingInterval = '10s';
+protected ?string $pollingInterval = '10s';
 ```
 
 Alternatively, you may disable polling altogether:
 
 ```php
-protected static ?string $pollingInterval = null;
+protected ?string $pollingInterval = null;
 ```
 
 ## Disabling lazy loading
@@ -165,3 +204,29 @@ To disable this behavior, you may override the `$isLazy` property on the widget 
 ```php
 protected static bool $isLazy = false;
 ```
+
+## Adding a heading and description
+
+You may also add heading and description text above the widget by overriding the `$heading` and `$description` properties:
+
+```php
+protected ?string $heading = 'Analytics';
+
+protected ?string $description = 'An overview of some analytics.';
+```
+
+If you need to dynamically generate the heading or description text, you can instead override the `getHeading()` and `getDescription()` methods:
+
+```php
+protected function getHeading(): ?string
+{
+    return 'Analytics';
+}
+
+protected function getDescription(): ?string
+{
+    return 'An overview of some analytics.';
+}
+```
+
+<AutoScreenshot name="widgets/stats-overview/heading" alt="Stats overview with heading and description" version="4.x" />

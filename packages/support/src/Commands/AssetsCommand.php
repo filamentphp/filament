@@ -13,9 +13,9 @@ class AssetsCommand extends Command
 {
     use CanManipulateFiles;
 
-    protected $description = 'Set up Filament assets.';
+    protected $description = 'Set up Filament assets';
 
-    protected $signature = 'filament:assets';
+    protected $name = 'filament:assets';
 
     /** @var array<string> */
     protected array $publishedAssets = [];

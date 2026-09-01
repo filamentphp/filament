@@ -2,6 +2,9 @@
  * Source: https://github.com/Ionaru/easy-markdown-editor/blob/master/src/js/easymde.js
  * Changes:
  * - Removal of line 1 to 15, awaiting https://github.com/Ionaru/easy-markdown-editor/pull/263
+ * - Added `moveToNextField()` and `moveToPreviousField()` functions, and changed `Tab` and `Shift-Tab` key bindings to only indent the content when there is a selection in the editor. See https://github.com/filamentphp/filament/pull/16144.
+ * - Wrapped the indent/outdent operations in `toggleCodeBlock()` in `cm.operation()` so they group into a single CodeMirror undo step. See https://github.com/filamentphp/filament/pull/19890.
+ * - Changed `minHeight` and `maxHeight` to apply independently when both options are set. See https://github.com/Ionaru/easy-markdown-editor/issues/413.
  */
 
 // Some variables
@@ -439,11 +442,18 @@ function toggleFullScreen(editor) {
 
     // Remove or set maxHeight
     if (typeof editor.options.maxHeight !== 'undefined') {
+        var heightProperty = editor.hasExplicitMinHeight
+            ? 'max-height'
+            : 'height'
+
         if (cm.getOption('fullScreen')) {
-            cm.getScrollerElement().style.removeProperty('height')
-            sidebyside.style.removeProperty('height')
+            cm.getScrollerElement().style.removeProperty(heightProperty)
+            sidebyside.style.removeProperty(heightProperty)
         } else {
-            cm.getScrollerElement().style.height = editor.options.maxHeight
+            cm.getScrollerElement().style.setProperty(
+                heightProperty,
+                editor.options.maxHeight,
+            )
             editor.setPreviewMaxHeight()
         }
     }
@@ -823,16 +833,18 @@ function toggleCodeBlock(editor) {
             next_line_indented =
                 next_line_last_tok &&
                 token_state(next_line_last_tok).indentedCode
-        if (next_line_indented) {
-            cm.replaceRange('\n', {
-                line: block_end + 1,
-                ch: 0,
-            })
-        }
+        cm.operation(function () {
+            if (next_line_indented) {
+                cm.replaceRange('\n', {
+                    line: block_end + 1,
+                    ch: 0,
+                })
+            }
 
-        for (var i = block_start; i <= block_end; i++) {
-            cm.indentLine(i, 'subtract') // TODO: this doesn't get tracked in the history, so can't be undone :(
-        }
+            for (var i = block_start; i <= block_end; i++) {
+                cm.indentLine(i, 'subtract')
+            }
+        })
         cm.focus()
     } else {
         // insert code formatting
@@ -1920,6 +1932,8 @@ function EasyMDE(options) {
     // Handle options parameter
     options = options || {}
 
+    this.hasExplicitMinHeight = Boolean(options.minHeight)
+
     // Used later to refer to it"s parent
     options.parent = this
 
@@ -2045,8 +2059,12 @@ function EasyMDE(options) {
 
     options.direction = options.direction || 'ltr'
 
-    if (typeof options.maxHeight !== 'undefined') {
-        // Min and max height are equal if maxHeight is set
+    if (
+        typeof options.maxHeight !== 'undefined' &&
+        !this.hasExplicitMinHeight
+    ) {
+        // Preserve the fixed-height behavior introduced in
+        // https://github.com/Ionaru/easy-markdown-editor/pull/222
         options.minHeight = options.maxHeight
     } else {
         options.minHeight = options.minHeight || '300px'
@@ -2339,6 +2357,48 @@ EasyMDE.prototype.render = function (el) {
     var self = this
     var keyMaps = {}
 
+    function moveToNextField(cm) {
+        const inputField = cm.getInputField()
+        const form = inputField.form
+        if (form) {
+            const elements = Array.from(form.elements).filter((el) => {
+                if (el.closest && el.closest('.editor-toolbar')) return false
+                if (el.offsetParent === null) return false
+                return true
+            })
+            const index = elements.indexOf(inputField)
+            if (
+                index !== -1 &&
+                index + 1 < elements.length &&
+                elements[index + 1]
+            ) {
+                elements[index + 1].focus()
+            }
+        }
+    }
+
+    function moveToPreviousField(cm) {
+        const inputField = cm.getInputField()
+        const form = inputField.form
+        if (form) {
+            const elements = Array.from(form.elements).filter((el) => {
+                if (el.closest && el.closest('.editor-toolbar')) return false
+                if (el.offsetParent === null) return false
+                return true
+            })
+            const index = elements.indexOf(inputField)
+            if (index !== -1) {
+                for (let i = index - 1; i >= 0; i--) {
+                    const element = elements[i]
+                    if (element) {
+                        element.focus()
+                        break
+                    }
+                }
+            }
+        }
+    }
+
     for (var key in options.shortcuts) {
         // null stands for "do not bind this command"
         if (options.shortcuts[key] !== null && bindings[key] !== null) {
@@ -2356,8 +2416,22 @@ EasyMDE.prototype.render = function (el) {
     }
 
     keyMaps['Enter'] = 'newlineAndIndentContinueMarkdownList'
-    keyMaps['Tab'] = 'tabAndIndentMarkdownList'
-    keyMaps['Shift-Tab'] = 'shiftTabAndUnindentMarkdownList'
+    keyMaps['Tab'] = (cm) => {
+        const selection = cm.getSelection()
+        if (selection && selection.length > 0) {
+            cm.execCommand('indentMore')
+        } else {
+            moveToNextField(cm)
+        }
+    }
+    keyMaps['Shift-Tab'] = (cm) => {
+        const selection = cm.getSelection()
+        if (selection && selection.length > 0) {
+            cm.execCommand('indentLess')
+        } else {
+            moveToPreviousField(cm)
+        }
+    }
     keyMaps['Esc'] = function (cm) {
         if (cm.getOption('fullScreen')) toggleFullScreen(self)
     }
@@ -2461,7 +2535,12 @@ EasyMDE.prototype.render = function (el) {
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight
 
     if (typeof options.maxHeight !== 'undefined') {
-        this.codemirror.getScrollerElement().style.height = options.maxHeight
+        this.codemirror
+            .getScrollerElement()
+            .style.setProperty(
+                this.hasExplicitMinHeight ? 'max-height' : 'height',
+                options.maxHeight,
+            )
     }
 
     if (options.forceSync === true) {
@@ -2944,18 +3023,22 @@ EasyMDE.prototype.setPreviewMaxHeight = function () {
     var cm = this.codemirror
     var wrapper = cm.getWrapperElement()
     var preview = wrapper.nextSibling
+    var wrapperStyle = window.getComputedStyle(wrapper)
 
-    // Calc preview max height
-    var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop)
-    var borderTopWidth = parseInt(
-        window.getComputedStyle(wrapper).borderTopWidth,
+    preview.style.setProperty(
+        this.hasExplicitMinHeight ? 'max-height' : 'height',
+        'calc(' +
+            this.options.maxHeight +
+            ' + ' +
+            wrapperStyle.paddingTop +
+            ' + ' +
+            wrapperStyle.paddingBottom +
+            ' + ' +
+            wrapperStyle.borderTopWidth +
+            ' + ' +
+            wrapperStyle.borderBottomWidth +
+            ')',
     )
-    var optionsMaxHeight = parseInt(this.options.maxHeight)
-    var wrapperMaxHeight =
-        optionsMaxHeight + paddingTop * 2 + borderTopWidth * 2
-    var previewMaxHeight = wrapperMaxHeight.toString() + 'px'
-
-    preview.style.height = previewMaxHeight
 }
 
 EasyMDE.prototype.createSideBySide = function () {

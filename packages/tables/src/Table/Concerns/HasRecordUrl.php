@@ -3,13 +3,22 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\View\ComponentAttributeBag;
 
 trait HasRecordUrl
 {
     protected bool | Closure $shouldOpenRecordUrlInNewTab = false;
 
     protected string | Closure | null $recordUrl = null;
+
+    protected bool $hasCustomRecordUrl = false;
+
+    /**
+     * @var array<array<mixed> | Closure>
+     */
+    protected array $extraRecordLinkAttributes = [];
 
     public function openRecordUrlInNewTab(bool | Closure $condition = true): static
     {
@@ -18,12 +27,25 @@ trait HasRecordUrl
         return $this;
     }
 
-    public function recordUrl(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function recordUrl(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
-        $this->openRecordUrlInNewTab($shouldOpenInNewTab);
+        // Security: If this URL is derived from user input, validate it
+        // to prevent XSS via `javascript:` protocol URLs rendered
+        // in `href` attributes.
+
+        if ($shouldOpenInNewTab !== null) {
+            $this->openRecordUrlInNewTab($shouldOpenInNewTab);
+        }
+
         $this->recordUrl = $url;
+        $this->hasCustomRecordUrl = true;
 
         return $this;
+    }
+
+    public function hasCustomRecordUrl(): bool
+    {
+        return $this->hasCustomRecordUrl;
     }
 
     /**
@@ -58,5 +80,57 @@ trait HasRecordUrl
                 $record::class => $record,
             ] : [],
         );
+    }
+
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
+    public function extraRecordLinkAttributes(array | Closure $attributes, bool $merge = false): static
+    {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
+        if ($merge) {
+            $this->extraRecordLinkAttributes[] = $attributes;
+        } else {
+            $this->extraRecordLinkAttributes = [$attributes];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     * @return array<mixed>
+     */
+    public function getExtraRecordLinkAttributes(Model | array $record): array
+    {
+        $temporaryAttributeBag = new FilamentComponentAttributeBag;
+
+        foreach ($this->extraRecordLinkAttributes as $extraAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge(
+                $this->evaluate(
+                    $extraAttributes,
+                    namedInjections: [
+                        'record' => $record,
+                    ],
+                    typedInjections: ($record instanceof Model) ? [
+                        Model::class => $record,
+                        $record::class => $record,
+                    ] : [],
+                ),
+                escape: false,
+            );
+        }
+
+        return $temporaryAttributeBag->getAttributes();
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getExtraRecordLinkAttributeBag(Model | array $record): ComponentAttributeBag
+    {
+        return new FilamentComponentAttributeBag($this->getExtraRecordLinkAttributes($record));
     }
 }

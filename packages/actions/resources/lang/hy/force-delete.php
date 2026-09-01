@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Հարկադրված ջնջել',
+        'label' => 'Սպառիչ ջնջում',
 
         'modal' => [
 
-            'heading' => 'Հարկադրված ջնջել :label',
+            'heading' => 'Սպառիչ ջնջում :label',
 
             'actions' => [
 
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Գրառումը ջնջվել է',
+                'title' => 'Ջնջված է',
             ],
 
         ],
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Հարկադրված ջնջել ընտրվածը',
+        'label' => 'Սպառիչ ջնջել ընտրածը',
 
         'modal' => [
 
-            'heading' => 'Հարկադրված ջնջել ընտրված :label',
+            'heading' => 'Սպառիչ ջնջել ընտրած :label',
 
             'actions' => [
 
@@ -51,7 +51,19 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Գրառումները ջնջվել են',
+                'title' => 'Ջնջված է',
+            ],
+
+            'deleted_partial' => [
+                'title' => 'Ջնջվեց :count-ը ընդհանուր :total-ից',
+                'missing_authorization_failure_message' => 'Դուք իրավունք չունեք ջնջելու :count-ը։',
+                'missing_processing_failure_message' => ':count-ը հնարավոր չէր ջնջել։',
+            ],
+
+            'deleted_none' => [
+                'title' => 'Չհաջողվեց ջնջել',
+                'missing_authorization_failure_message' => 'Դուք իրավունք չունեք ջնջելու :count-ը։',
+                'missing_processing_failure_message' => ':count-ը հնարավոր չէր ջնջել։',
             ],
 
         ],

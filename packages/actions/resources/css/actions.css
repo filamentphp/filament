@@ -1,0 +1,30 @@
+.fi-ac {
+    @apply gap-3;
+
+    &:not(.fi-width-full) {
+        @apply flex flex-wrap items-center;
+
+        &.fi-align-start,
+        &.fi-align-left {
+            @apply justify-start;
+        }
+
+        &.fi-align-center {
+            @apply justify-center;
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            @apply flex-row-reverse;
+        }
+
+        &.fi-align-between,
+        &.fi-align-justify {
+            @apply justify-between;
+        }
+    }
+
+    &.fi-width-full {
+        @apply grid grid-cols-[repeat(auto-fit,minmax(0,1fr))];
+    }
+}

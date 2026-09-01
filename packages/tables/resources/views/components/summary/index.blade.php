@@ -1,10 +1,12 @@
 @props([
     'actions' => false,
     'actionsPosition' => null,
+    'allTableSummary' => true,
     'columns',
     'extraHeadingColumn' => false,
     'groupColumn' => null,
     'groupsOnly' => false,
+    'pageSummary' => true,
     'placeholderColumns' => true,
     'pluralModelLabel',
     'recordCheckboxPosition' => null,
@@ -15,8 +17,9 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Tables\Columns\Column;
-    use Filament\Tables\Enums\ActionsPosition;
+    use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Illuminate\Contracts\Pagination\Paginator;
 
     if ($groupsOnly && $groupColumn) {
         $columns = collect($columns)
@@ -24,14 +27,15 @@
             ->all();
     }
 
-    $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
+    $hasPageSummary = $pageSummary && (! $groupsOnly) && $records instanceof Paginator && $records->hasPages();
+
+    $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
+    $allTableSummaryQuery = $allTableSummary ? $this->getAllTableSummaryQuery() : null;
 @endphp
 
 @if ($hasPageSummary)
-    <x-filament-tables::row
-        class="fi-ta-summary-header-row bg-gray-50 dark:bg-white/5"
-    >
-        @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+    <tr class="fi-ta-row fi-ta-summary-header-row fi-striped">
+        @if ($placeholderColumns && $actions && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
             <td></td>
         @endif
 
@@ -40,13 +44,20 @@
         @endif
 
         @if ($extraHeadingColumn)
-            <x-filament-tables::summary.header-cell>
+            <th
+                scope="col"
+                class="fi-ta-cell fi-ta-summary-header-cell fi-align-start"
+            >
                 {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
-            </x-filament-tables::summary.header-cell>
+            </th>
         @endif
 
         @foreach ($columns as $column)
-            @if ($placeholderColumns || $column->hasSummary())
+            @php
+                $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+            @endphp
+
+            @if ($placeholderColumns || $columnHasSummary)
                 @php
                     $alignment = $column->getAlignment() ?? Alignment::Start;
 
@@ -54,48 +65,49 @@
                         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                     }
 
-                    $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
+                    $hasColumnHeaderLabel = (! $placeholderColumns) || $columnHasSummary;
+
+                    // Only labelled cells become column headers; empty placeholder cells stay `<td>` so screen
+                    // readers do not announce blank column headers.
+                    $isFirstSummaryHeading = $loop->first && (! $extraHeadingColumn);
+                    $isLabelledHeaderCell = $isFirstSummaryHeading || $hasColumnHeaderLabel;
+                    $headerCellTag = $isLabelledHeaderCell ? 'th' : 'td';
+
+                    $alignmentClass = $isFirstSummaryHeading
+                        ? 'fi-align-start'
+                        : (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''));
                 @endphp
 
-                <x-filament-tables::summary.header-cell
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
-                            ->class([
-                                'whitespace-nowrap' => ! $column->isHeaderWrapped(),
-                                'whitespace-normal' => $column->isHeaderWrapped(),
-                                match ($alignment) {
-                                    Alignment::Start => 'text-start',
-                                    Alignment::Center => 'text-center',
-                                    Alignment::End => 'text-end',
-                                    Alignment::Left => 'text-left',
-                                    Alignment::Right => 'text-right',
-                                    Alignment::Justify, Alignment::Between => 'text-justify',
-                                    default => $alignment,
-                                } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
-                            ])
-                    "
+                <{{ $headerCellTag }}
+                    @if ($isLabelledHeaderCell) scope="col" @endif
+                    {{
+                        $column->getExtraHeaderAttributeBag()->class([
+                            'fi-ta-cell fi-ta-summary-header-cell',
+                            'fi-wrapped' => $column->canHeaderWrap(),
+                            $alignmentClass => $isFirstSummaryHeading || $hasColumnHeaderLabel,
+                        ])
+                    }}
                 >
-                    @if ($loop->first && (! $extraHeadingColumn))
+                    @if ($isFirstSummaryHeading)
                         {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
                     @elseif ($hasColumnHeaderLabel)
                         {{ $column->getLabel() }}
                     @endif
-                </x-filament-tables::summary.header-cell>
+                </{{ $headerCellTag }}>
             @endif
         @endforeach
 
-        @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+        @if ($placeholderColumns && $actions && in_array($actionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
             <td></td>
         @endif
 
         @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
             <td></td>
         @endif
-    </x-filament-tables::row>
+    </tr>
 
     @php
-        $query = $this->getPageTableSummaryQuery();
-        $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
+        $selectedState = $this->getTableSummarySelectedState($pageTableSummaryQuery)[0] ?? [];
     @endphp
 
     <x-filament-tables::summary.row
@@ -105,31 +117,32 @@
         :extra-heading-column="$extraHeadingColumn"
         :heading="__('filament-tables::table.summary.subheadings.page', ['label' => $pluralModelLabel])"
         :placeholder-columns="$placeholderColumns"
-        :query="$query"
+        :query="$pageTableSummaryQuery"
         :record-checkbox-position="$recordCheckboxPosition"
         :selected-state="$selectedState"
         :selection-enabled="$selectionEnabled"
     />
 @endif
 
-@php
-    $query = $this->getAllTableSummaryQuery();
-    $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
-@endphp
+@if ($allTableSummary)
+    @php
+        $selectedState = $this->getTableSummarySelectedState($allTableSummaryQuery)[0] ?? [];
+    @endphp
 
-<x-filament-tables::summary.row
-    :actions="$actions"
-    :actions-position="$actionsPosition"
-    :columns="$columns"
-    :extra-heading-column="$extraHeadingColumn"
-    :groups-only="$groupsOnly"
-    :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
-    :placeholder-columns="$placeholderColumns"
-    :query="$query"
-    :record-checkbox-position="$recordCheckboxPosition"
-    :selected-state="$selectedState"
-    :selection-enabled="$selectionEnabled"
-    @class([
-        'bg-gray-50 dark:bg-white/5' => ! $hasPageSummary,
-    ])
-/>
+    <x-filament-tables::summary.row
+        :actions="$actions"
+        :actions-position="$actionsPosition"
+        :columns="$columns"
+        :extra-heading-column="$extraHeadingColumn"
+        :groups-only="$groupsOnly"
+        :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
+        :placeholder-columns="$placeholderColumns"
+        :query="$allTableSummaryQuery"
+        :record-checkbox-position="$recordCheckboxPosition"
+        :selected-state="$selectedState"
+        :selection-enabled="$selectionEnabled"
+        @class([
+            'fi-striped' => ! $hasPageSummary,
+        ])
+    />
+@endif

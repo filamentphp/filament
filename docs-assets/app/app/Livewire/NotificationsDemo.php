@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Notifications\DatabaseNotification;
 use Livewire\Component;
 
@@ -12,11 +13,20 @@ class NotificationsDemo extends Component
 {
     public function mount(): void
     {
-        User::truncate();
         DatabaseNotification::truncate();
 
-        $user = User::factory()->create();
-        auth()->login($user);
+        if (! auth()->check()) {
+            auth()->login(User::first());
+        }
+
+        // Send the notifications during mount, so the `database-notifications`
+        // modal already contains them when it first renders. Sending them from
+        // `openDatabaseNotifications()` instead would make the modal first
+        // render empty and rely on a Livewire refresh to morph them in, which
+        // races the screenshot capture.
+        if (request()->query('method') === 'openDatabaseNotifications') {
+            $this->sendDatabaseNotifications();
+        }
     }
 
     public function success(): void
@@ -31,7 +41,7 @@ class NotificationsDemo extends Component
     {
         Notification::make()
             ->title('Saved successfully')
-            ->icon('heroicon-o-document-text')
+            ->icon(Heroicon::OutlinedDocumentText)
             ->iconColor('success')
             ->send();
     }
@@ -91,7 +101,24 @@ class NotificationsDemo extends Component
             ->send();
     }
 
+    public function positioning(): void
+    {
+        Notification::make()
+            ->title('Saved successfully')
+            ->success()
+            ->body('Changes to the post have been saved.')
+            ->send();
+    }
+
     public function openDatabaseNotifications()
+    {
+        $this->dispatch(
+            'open-modal',
+            id: 'database-notifications',
+        );
+    }
+
+    protected function sendDatabaseNotifications(): void
     {
         $user = auth()->user();
 
@@ -119,12 +146,10 @@ class NotificationsDemo extends Component
             ->info()
             ->sendToDatabase($user);
 
-        $this->dispatch(
-            'open-modal',
-            id: 'database-notifications',
-        );
-
-        $this->dispatch('databaseNotificationsSent');
+        // Backdate the notifications so their relative timestamps always
+        // render as `2 minutes ago` in screenshots, instead of flip-flopping
+        // between `0 seconds ago` and `1 second ago` depending on timing.
+        DatabaseNotification::query()->update(['created_at' => now()->subMinutes(2)]);
     }
 
     public function call(string $method): void

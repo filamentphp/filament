@@ -2,9 +2,10 @@
 
 namespace Filament\Support\Assets;
 
-use Exception;
+use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Arr;
+use LogicException;
 
 class AssetManager
 {
@@ -43,6 +44,18 @@ class AssetManager
      */
     protected array $themes = [];
 
+    protected ?string $appVersion = null;
+
+    public function appVersion(?string $version): void
+    {
+        $this->appVersion = $version;
+    }
+
+    public function getAppVersion(): ?string
+    {
+        return $this->appVersion;
+    }
+
     /**
      * @param  array<Asset>  $assets
      */
@@ -51,7 +64,7 @@ class AssetManager
         foreach ($assets as $asset) {
             $asset->package($package);
 
-            match (true) {
+            match (true) { /** @phpstan-ignore expr.resultUnused */
                 $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
                 $asset instanceof AlpineComponent => $this->alpineComponents[$package][] = $asset,
                 $asset instanceof Css => $this->styles[$package][] = $asset,
@@ -109,7 +122,7 @@ class AssetManager
             return $component->getSrc();
         }
 
-        throw new Exception("Alpine component with ID [{$id}] not found for package [{$package}].");
+        throw new LogicException("Alpine component with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
@@ -123,7 +136,7 @@ class AssetManager
         foreach ($this->scriptData as $package => $packageData) {
             if (
                 ($packages !== null) &&
-                ($package !== null) &&
+                filled($package) &&
                 (! in_array($package, $packages))
             ) {
                 continue;
@@ -151,7 +164,7 @@ class AssetManager
             return $script->getSrc();
         }
 
-        throw new Exception("Script with ID [{$id}] not found for package [{$package}].");
+        throw new LogicException("Script with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
@@ -231,7 +244,7 @@ class AssetManager
             return $style->getHref();
         }
 
-        throw new Exception("Stylesheet with ID [{$id}] not found for package [{$package}].");
+        throw new LogicException("Stylesheet with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
@@ -245,7 +258,7 @@ class AssetManager
         foreach ($this->cssVariables as $package => $packageVariables) {
             if (
                 ($packages !== null) &&
-                ($package !== null) &&
+                filled($package) &&
                 (! in_array($package, $packages))
             ) {
                 continue;
@@ -265,11 +278,18 @@ class AssetManager
      */
     public function renderStyles(?array $packages = null): string
     {
-        $variables = $this->getCssVariables($packages);
+        $cssVariables = $this->getCssVariables($packages);
+        $customColors = [];
 
-        foreach (FilamentColor::getColors() as $name => $shades) {
-            foreach ($shades as $shade => $color) {
-                $variables["{$name}-{$shade}"] = $color;
+        $defaultColorNames = array_keys(ColorManager::DEFAULT_COLORS);
+
+        foreach (FilamentColor::getColors() as $name => $palette) {
+            foreach (array_keys($palette) as $shade) {
+                $cssVariables["{$name}-{$shade}"] = $this->resolveColorShadeFromPalette($palette, $shade);
+            }
+
+            if (! in_array($name, $defaultColorNames)) {
+                $customColors[$name] = array_keys($palette);
             }
         }
 
@@ -281,8 +301,27 @@ class AssetManager
                     $this->getFonts($packages),
                 ),
             ],
-            'cssVariables' => $variables,
+            'cssVariables' => $cssVariables,
+            'customColors' => $customColors,
         ])->render();
+    }
+
+    /**
+     * @param  array<int | string, string | int>  $palette
+     */
+    protected function resolveColorShadeFromPalette(array $palette, string | int $shade): string
+    {
+        $color = $palette[$shade];
+
+        while (! str_starts_with($color, 'oklch(')) {
+            if ($color === 0) {
+                return 'oklch(1 0 0)';
+            }
+
+            $color = $palette[$color];
+        }
+
+        return $color;
     }
 
     public function getTheme(?string $id): ?Theme

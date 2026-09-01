@@ -10,9 +10,17 @@ class BulkAction extends Action
 
         $this->bulk();
         $this->accessSelectedRecords();
+    }
 
-        $this->extraAttributes([
-            'x-bind:disabled' => '! selectedRecords.length',
-        ]);
+    /**
+     * @return array<mixed>
+     */
+    public function getExtraAttributes(): array
+    {
+        return [
+            'x-cloak' => true,
+            'x-show' => 'getSelectedRecordsCount()',
+            ...parent::getExtraAttributes(),
+        ];
     }
 }

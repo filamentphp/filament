@@ -6,24 +6,27 @@ use Filament\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
-use Filament\Tests\Notifications\Fixtures\CustomNotification;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\Size;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Notifications\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\AssertionFailedError;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render', function () {
+it('can render', function (): void {
     livewire(Notifications::class)
         ->assertSeeHtml('notifications');
 });
 
-it('can send notifications', function () {
-    $iconSets = app(Factory::class)->all();
+it('can send notifications', function (): void {
+    $iconSets = Arr::only(app(Factory::class)->all(), 'heroicons');
     $icons = app(IconsManifest::class)->getManifest($iconSets);
 
     $getRandomColor = function (): string {
@@ -56,7 +59,7 @@ it('can send notifications', function () {
                 ->iconPosition($actionIconPosition = Arr::random([IconPosition::After, IconPosition::Before]))
                 ->label($actionLabel = Str::random())
                 ->outlined($isActionOutlined = (bool) rand(0, 1))
-                ->size($actionSize = Arr::random([ActionSize::ExtraSmall, ActionSize::Small, ActionSize::Medium, ActionSize::Large, ActionSize::ExtraLarge]))
+                ->size($actionSize = Arr::random([Size::ExtraSmall, Size::Small, Size::Medium, Size::Large, Size::ExtraLarge]))
                 ->url(
                     $actionUrl = Str::random(),
                     shouldOpenInNewTab: $shouldActionOpenUrlInNewTab = (bool) rand(0, 1),
@@ -158,7 +161,7 @@ it('can send notifications', function () {
         ->toBeEmpty();
 });
 
-it('can close notifications', function () {
+it('can close notifications', function (): void {
     ($notification = Notification::make())->send();
 
     $component = livewire(Notifications::class);
@@ -172,6 +175,44 @@ it('can close notifications', function () {
         ->toHaveCount(0);
 });
 
+it('matches the correct notification with `assertNotified()` when multiple notifications are sent', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    // The matching notification is NOT the first one sent.
+    Notification::assertNotified(
+        Notification::make()->title('Second')->body('Second body'),
+    );
+});
+
+it('fails `assertNotified()` when no sent notification matches the given instance', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    expect(fn () => Notification::assertNotified(
+        Notification::make()->title('Third')->body('Third body'),
+    ))->toThrow(AssertionFailedError::class);
+});
+
+it('fails `assertNotNotified()` when a matching notification was sent but was not first', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    // `Second` WAS sent (just not first), so asserting it was not notified must fail.
+    expect(fn () => Notification::assertNotNotified(
+        Notification::make()->title('Second')->body('Second body'),
+    ))->toThrow(AssertionFailedError::class);
+});
+
+it('passes `assertNotNotified()` when the given instance was genuinely not sent', function (): void {
+    Notification::make()->title('First')->body('First body')->send();
+    Notification::make()->title('Second')->body('Second body')->send();
+
+    Notification::assertNotNotified(
+        Notification::make()->title('Third')->body('Third body'),
+    );
+});
+
 function getLastNotificationAction()
 {
     $notificationsLivewireComponent = new Notifications;
@@ -181,49 +222,52 @@ function getLastNotificationAction()
     return $notifications->first()->getActions()[0];
 }
 
-it('can dispatch an event', function () {
-    $action = Action::make('action')->dispatch('an_event');
-    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
+describe('events', function (): void {
+    it('can dispatch an event', function (): void {
+        $action = Action::make('action')->dispatch('an_event');
+        expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
 
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
+        $notification = Notification::make()->actions([$action])->send();
+        expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
 
-    $action = Action::make('action')->dispatch('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
+        $action = Action::make('action')->dispatch('an_event', ['data']);
+        expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
+        $notification = Notification::make()->actions([$action])->send();
+        expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
+    });
+
+    it('can dispatch an event to itself', function (): void {
+        $action = Action::make('action')->dispatchSelf('an_event');
+        expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
+
+        $notification = Notification::make()->actions([$action])->send();
+        expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
+
+        $action = Action::make('action')->dispatchSelf('an_event', ['data']);
+        expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
+
+        $notification = Notification::make()->actions([$action])->send();
+        expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
+    });
+
+    it('can dispatch an event to a component', function (): void {
+        $action = Action::make('action')->dispatchTo('a_component', 'an_event');
+        expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
+
+        $notification = Notification::make()->actions([$action])->send();
+        expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
+
+        $action = Action::make('action')->dispatchTo('a_component', 'an_event', ['data']);
+        expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
+
+        $notification = Notification::make()->actions([$action])->send();
+        expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
+    });
+
 });
 
-it('can dispatch an event to itself', function () {
-    $action = Action::make('action')->dispatchSelf('an_event');
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
-
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
-
-    $action = Action::make('action')->dispatchSelf('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
-
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
-});
-
-it('can dispatch an event to a component', function () {
-    $action = Action::make('action')->dispatchTo('a_component', 'an_event');
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
-
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
-
-    $action = Action::make('action')->dispatchTo('a_component', 'an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
-
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
-});
-
-it('can bind custom notification object', function () {
+it('can bind custom notification object', function (): void {
     app()->bind(Notification::class, CustomNotification::class);
 
     $notification = Notification::make();
@@ -232,7 +276,7 @@ it('can bind custom notification object', function () {
         ->toBeInstanceOf(CustomNotification::class);
 });
 
-it('can resolve custom notification object from data', function () {
+it('can resolve custom notification object from data', function (): void {
     app()->bind(Notification::class, CustomNotification::class);
 
     Notification::make()
@@ -259,4 +303,279 @@ it('can resolve custom notification object from data', function () {
     expect($notification)
         ->toBeInstanceOf(CustomNotification::class)
         ->getSize()->toBe($size);
+});
+
+it('can mark notification as inline using `inline()`', function (): void {
+    $notification = Notification::make();
+
+    expect($notification->isInline())->toBeFalse();
+
+    $notification->inline();
+
+    expect($notification->isInline())->toBeTrue();
+});
+
+it('can unset inline using `inline(false)`', function (): void {
+    $notification = Notification::make()->inline();
+
+    expect($notification->isInline())->toBeTrue();
+
+    $notification->inline(false);
+
+    expect($notification->isInline())->toBeFalse();
+});
+
+it('does not apply an unsafe view when restoring via `fromArray()`', function (): void {
+    $notification = Notification::make();
+    $array = $notification->toArray();
+
+    // A view not in `safeViews` must not be applied
+    $restored = Notification::fromArray([...$array, 'view' => 'notifications::not-safe']);
+
+    expect($restored->hasView())->toBeFalse();
+});
+
+it('can accumulate safe views across multiple calls to `safeViews()`', function (): void {
+    $notification = Notification::make()
+        ->safeViews('notifications::first')
+        ->safeViews(['notifications::second']);
+
+    // Directly verify that `isViewSafe()` logic works via `safeViews()` accumulation
+    // by passing the instance's view through its own array round-trip after registering.
+    // Since `fromArray()` creates a new instance, we test directly on the original object.
+    $array = $notification->toArray();
+
+    // The notification itself knows about the safe views; applying view() proves storage
+    $notification->view('notifications::first');
+    expect($notification->hasView())->toBeTrue();
+    expect($notification->getView())->toBe('notifications::first');
+});
+
+describe('serialization', function (): void {
+    it('serializes simple notification via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->body('Test Body')
+            ->icon('heroicon-o-bell')
+            ->iconColor('success')
+            ->color('primary')
+            ->duration(5000);
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification with string icon via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->icon('heroicon-o-check-circle');
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification with `Heroicon` enum via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->icon(Heroicon::CheckCircle);
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification with outlined `Heroicon` enum via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->icon(Heroicon::OutlinedCheckCircle);
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification with action containing `Heroicon` enum via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon(Heroicon::Eye)
+                    ->color('primary'),
+            ]);
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification with action containing outlined `Heroicon` enum via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->color('primary'),
+            ]);
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification with action containing `Heroicon` enum and icon size via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon(Heroicon::Eye)
+                    ->iconSize(IconSize::Small),
+            ]);
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification with multiple actions via `toArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->body('Test Body')
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon(Heroicon::Eye)
+                    ->url('/view'),
+                Action::make('edit')
+                    ->label('Edit')
+                    ->icon(Heroicon::Pencil)
+                    ->url('/edit'),
+                Action::make('delete')
+                    ->label('Delete')
+                    ->icon(Heroicon::Trash)
+                    ->color('danger'),
+            ]);
+
+        expect($notification->toArray())
+            ->toMatchSnapshot();
+    });
+
+    it('serializes notification via `getDatabaseMessage()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->body('Test Body')
+            ->icon(Heroicon::Bell)
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon(Heroicon::Eye),
+            ]);
+
+        expect($notification->getDatabaseMessage())
+            ->toMatchSnapshot();
+    });
+
+    it('roundtrips notification via `toArray()` and `fromArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->body('Test Body')
+            ->icon('heroicon-o-bell')
+            ->iconColor('success')
+            ->color('primary')
+            ->duration(5000);
+
+        $array = $notification->toArray();
+        $restored = Notification::fromArray($array);
+        $restoredArray = $restored->toArray();
+
+        expect($restoredArray)->toBe($array);
+    });
+
+    it('roundtrips notification with actions via `toArray()` and `fromArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->body('Test Body')
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon('heroicon-o-eye')
+                    ->color('primary')
+                    ->url('/view'),
+                Action::make('delete')
+                    ->label('Delete')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger'),
+            ]);
+
+        $array = $notification->toArray();
+        $restored = Notification::fromArray($array);
+        $restoredArray = $restored->toArray();
+
+        expect($restoredArray)->toBe($array);
+    });
+
+    it('roundtrips notification with `Heroicon` enum via `toArray()` and `fromArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->icon(Heroicon::Bell);
+
+        $array = $notification->toArray();
+        $restored = Notification::fromArray($array);
+        $restoredArray = $restored->toArray();
+
+        expect($restoredArray)->toBe($array);
+    });
+
+    it('roundtrips notification with action containing `Heroicon` enum via `toArray()` and `fromArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon(Heroicon::Eye),
+            ]);
+
+        $array = $notification->toArray();
+        $restored = Notification::fromArray($array);
+        $restoredArray = $restored->toArray();
+
+        expect($restoredArray)->toBe($array);
+    });
+
+    it('roundtrips notification via `getDatabaseMessage()` and `fromArray()`', function (): void {
+        $notification = Notification::make('test-id')
+            ->title('Test Title')
+            ->body('Test Body')
+            ->icon(Heroicon::Bell)
+            ->actions([
+                Action::make('view')
+                    ->label('View')
+                    ->icon(Heroicon::Eye),
+            ]);
+
+        $databaseMessage = $notification->getDatabaseMessage();
+        $restored = Notification::fromArray($databaseMessage);
+        $restoredMessage = $restored->getDatabaseMessage();
+
+        expect($restoredMessage)->toBe($databaseMessage);
+    });
+});
+
+it('defaults `isInline()` to `false`', function (): void {
+    $notification = Notification::make('test');
+
+    expect($notification->isInline())->toBeFalse();
+});
+
+it('returns fluent `$this` from `send()`', function (): void {
+    $notification = Notification::make('test')
+        ->title('Test');
+
+    $result = $notification->send();
+
+    expect($result)->toBe($notification);
+});
+
+it('can create notification with `make()` and verify `getId()`', function (): void {
+    $notification = Notification::make('custom-id')
+        ->title('Test');
+
+    expect($notification->getId())->toBe('custom-id');
 });

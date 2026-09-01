@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'បែកគ្នា។',
+                'title' => 'បែកគ្នា',
             ],
 
         ],

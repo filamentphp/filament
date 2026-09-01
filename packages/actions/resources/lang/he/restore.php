@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'שחזר את :label',
+            'heading' => 'שחזור :label',
 
             'actions' => [
 
@@ -52,6 +52,18 @@ return [
 
             'restored' => [
                 'title' => 'שוחזר',
+            ],
+
+            'restored_partial' => [
+                'title' => 'שוחזרו :count מתוך :total',
+                'missing_authorization_failure_message' => 'אין לך הרשאה לשחזר :count.',
+                'missing_processing_failure_message' => 'לא ניתן היה לשחזר :count.',
+            ],
+
+            'restored_none' => [
+                'title' => 'השחזור נכשל',
+                'missing_authorization_failure_message' => 'אין לך הרשאה לשחזר :count.',
+                'missing_processing_failure_message' => 'לא ניתן היה לשחזר :count.',
             ],
 
         ],

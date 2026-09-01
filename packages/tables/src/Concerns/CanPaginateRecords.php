@@ -7,7 +7,6 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\App;
 
 trait CanPaginateRecords
 {
@@ -47,22 +46,14 @@ trait CanPaginateRecords
             );
         }
 
-        if (version_compare(App::version(), '11.0', '>=')) {
-            $total = $query->toBase()->getCountForPagination();
+        $total = $query->toBase()->getCountForPagination();
 
-            /** @var LengthAwarePaginator $records */
-            $records = $query->paginate(
-                perPage: ($perPage === 'all') ? $total : $perPage,
-                pageName: $this->getTablePaginationPageName(),
-                total: $total,
-            );
-        } else {
-            /** @var LengthAwarePaginator $records */
-            $records = $query->paginate(
-                perPage: ($perPage === 'all') ? $query->toBase()->getCountForPagination() : $perPage,
-                pageName: $this->getTablePaginationPageName(),
-            );
-        }
+        /** @var LengthAwarePaginator $records */
+        $records = $query->paginate(
+            perPage: ($perPage === 'all') ? $total : $perPage,
+            pageName: $this->getTablePaginationPageName(),
+            total: $total,
+        );
 
         return $records->onEachSide(0);
     }
@@ -72,7 +63,7 @@ trait CanPaginateRecords
         return $this->tableRecordsPerPage;
     }
 
-    public function getTablePage(): int
+    public function getTablePage(): int | string
     {
         return $this->getPage($this->getTablePaginationPageName());
     }
@@ -102,7 +93,7 @@ trait CanPaginateRecords
 
     public function getTablePerPageSessionKey(): string
     {
-        $table = class_basename($this::class);
+        $table = md5($this::class);
 
         return "tables.{$table}_per_page";
     }

@@ -44,7 +44,7 @@ return [
 
         'completed' => [
 
-            'title' => 'AZ exportálás befejeződött',
+            'title' => 'Az exportálás befejeződött',
 
             'actions' => [
 
@@ -67,7 +67,7 @@ return [
 
         'started' => [
             'title' => 'Az exportálás elkezdődött',
-            'body' => 'Elkezdődött 1 exportálása a háttérben.|Elkezdődött :count sor exportálása a háttérben.',
+            'body' => 'Elkezdődött 1 sor exportálása a háttérben. Ha elkészült, akkor a letöltési hivatkozás egy új értesítésben fog megjelenni.|Elkezdődött :count sor exportálása a háttérben. Ha elkészült, akkor a letöltési hivatkozás egy új értesítésben fog megjelenni.',
         ],
 
     ],

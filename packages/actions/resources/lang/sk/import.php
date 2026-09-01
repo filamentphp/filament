@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Súbor',
+
                 'placeholder' => 'Nahrať CSV súbor',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Súbor nesmie obsahovať viac ako jeden prázdny názov stĺpca.|{1,*} Súbor nesmie obsahovať duplicitné názvy stĺpcov: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'chyba',
         'system_error' => 'Chyba systému, prosím, kontaktujte podporu.',
+        'column_mapping_required_for_new_record' => 'Stĺpec :attribute nebol namapovaný na stĺpec v súbore, ale je potrebný pre vytvorenie nových záznamov.',
     ],
 
 ];

@@ -1,6 +1,16 @@
 import * as esbuild from 'esbuild'
+import * as fs from 'fs'
+import { buildInter } from './fonts.js'
 
 const isDev = process.argv.includes('--dev')
+
+function cleanDirectory(directory) {
+    if (fs.existsSync(directory)) {
+        fs.rmSync(directory, { recursive: true })
+    }
+
+    fs.mkdirSync(directory, { recursive: true })
+}
 
 async function compile(options) {
     const context = await esbuild.context(options)
@@ -74,10 +84,11 @@ const defaultOptions = {
 }
 
 const corePackages = [
+    'actions',
     'forms',
     'notifications',
     'panels',
-    'schema',
+    'schemas',
     'support',
     'tables',
 ]
@@ -94,25 +105,17 @@ corePackages.forEach((packageName) => {
 compile({
     ...defaultOptions,
     platform: 'browser',
-    entryPoints: [`./node_modules/async-alpine/dist/async-alpine.script.js`],
-    outfile: `./packages/support/dist/async-alpine.js`,
-})
-
-compile({
-    ...defaultOptions,
-    platform: 'browser',
     entryPoints: [`./packages/panels/resources/js/echo.js`],
     outfile: `./packages/panels/dist/echo.js`,
 })
 
-compile({
-    ...defaultOptions,
-    platform: 'browser',
-    entryPoints: [`./packages/panels/resources/js/fonts/inter.js`],
-    outfile: `./packages/panels/dist/fonts/inter/index.js`,
-})
+cleanDirectory('./packages/panels/dist/fonts/inter')
+
+buildInter('./packages/panels/dist/fonts/inter')
 
 const formComponents = [
+    'checkbox-list',
+    'code-editor',
     'color-picker',
     'date-time-picker',
     'file-upload',
@@ -120,36 +123,53 @@ const formComponents = [
     'markdown-editor',
     'rich-editor',
     'select',
+    'slider',
     'tags-input',
     'textarea',
 ]
 
-formComponents.forEach((componentName) => {
+formComponents.forEach((component) => {
     compile({
         ...defaultOptions,
         entryPoints: [
-            `./packages/forms/resources/js/components/${componentName}.js`,
+            `./packages/forms/resources/js/components/${component}.js`,
         ],
-        outfile: `./packages/forms/dist/components/${componentName}.js`,
+        outfile: `./packages/forms/dist/components/${component}.js`,
     })
 })
 
-compile({
-    ...defaultOptions,
-    entryPoints: [`./packages/tables/resources/js/components/table.js`],
-    outfile: `./packages/tables/dist/components/table.js`,
+const schemaComponents = ['actions', 'tabs', 'wizard']
+
+schemaComponents.forEach((component) => {
+    compile({
+        ...defaultOptions,
+        entryPoints: [
+            `./packages/schemas/resources/js/components/${component}.js`,
+        ],
+        outfile: `./packages/schemas/dist/components/${component}.js`,
+    })
 })
 
-compile({
-    ...defaultOptions,
-    entryPoints: [`./packages/widgets/resources/js/components/chart.js`],
-    outfile: `./packages/widgets/dist/components/chart.js`,
+const tableColumns = ['checkbox', 'select', 'text-input', 'toggle']
+
+tableColumns.forEach((column) => {
+    compile({
+        ...defaultOptions,
+        entryPoints: [
+            `./packages/tables/resources/js/components/columns/${column}.js`,
+        ],
+        outfile: `./packages/tables/dist/components/columns/${column}.js`,
+    })
 })
 
-compile({
-    ...defaultOptions,
-    entryPoints: [
-        `./packages/widgets/resources/js/components/stats-overview/stat/chart.js`,
-    ],
-    outfile: `./packages/widgets/dist/components/stats-overview/stat/chart.js`,
+const widgets = ['chart', 'stats-overview/stat/chart']
+
+widgets.forEach((widget) => {
+    compile({
+        ...defaultOptions,
+        entryPoints: [
+            `./packages/widgets/resources/js/components/${widget}.js`,
+        ],
+        outfile: `./packages/widgets/dist/components/${widget}.js`,
+    })
 })

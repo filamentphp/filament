@@ -2,9 +2,11 @@
 
 namespace Filament\Navigation;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Support\Components\Component;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use Laravel\SerializableClosure\Serializers\Native;
 
@@ -13,12 +15,9 @@ use Laravel\SerializableClosure\Serializers\Native;
  */
 class MenuItem extends Component
 {
-    /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
-     */
-    protected string | array | Closure | null $color = null;
+    protected string | Closure | null $color = null;
 
-    protected string | Closure | null $icon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $icon = null;
 
     protected string | Closure | null $label = null;
 
@@ -44,17 +43,14 @@ class MenuItem extends Component
         return $static;
     }
 
-    /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
-     */
-    public function color(string | array | Closure | null $color): static
+    public function color(string | Closure | null $color): static
     {
         $this->color = $color;
 
         return $this;
     }
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -82,9 +78,16 @@ class MenuItem extends Component
         return $this;
     }
 
-    public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function url(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
-        $this->openUrlInNewTab($shouldOpenInNewTab);
+        // Security: If this URL is derived from user input, validate it
+        // to prevent XSS via `javascript:` protocol URLs rendered
+        // in `href` attributes.
+
+        if ($shouldOpenInNewTab !== null) {
+            $this->openUrlInNewTab($shouldOpenInNewTab);
+        }
+
         $this->url = $url;
 
         return $this;
@@ -125,15 +128,12 @@ class MenuItem extends Component
         return ! $this->evaluate($this->isVisible);
     }
 
-    /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    public function getColor(): string | array | null
+    public function getColor(): ?string
     {
         return $this->evaluate($this->color);
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->icon);
     }
@@ -150,7 +150,7 @@ class MenuItem extends Component
 
     public function getSort(): int
     {
-        return $this->evaluate($this->sort) ?? -1;
+        return $this->evaluate($this->sort) ?? 0;
     }
 
     public function getUrl(): ?string
@@ -168,7 +168,7 @@ class MenuItem extends Component
         $label = $this->getLabel();
         $postAction = $this->getPostAction();
 
-        return ($action ?? Action::make(Str::slug($label)))
+        return ($action ?? Action::make(Str::slug(Str::transliterate($label, strict: true))))
             ->color($this->getColor())
             ->icon($this->getIcon())
             ->label($label)

@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'تعديل',
 
+    'navigation_label' => 'تعديل',
+
     'form' => [
 
         'actions' => [

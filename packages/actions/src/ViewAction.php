@@ -4,8 +4,10 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Schema\Contracts\HasSchemas;
+use Filament\Actions\View\ActionsIconAlias;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewAction extends Action
@@ -28,9 +30,10 @@ class ViewAction extends Action
         $this->modalSubmitAction(false);
         $this->modalCancelAction(fn (Action $action) => $action->label(__('filament-actions::view.single.modal.actions.close.label')));
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::view-action.grouped') ?? 'heroicon-m-eye');
+        $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::VIEW_ACTION) ?? Heroicon::Eye);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::VIEW_ACTION_GROUPED) ?? Heroicon::Eye);
 
         $this->disabledSchema();
 

@@ -8,8 +8,8 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.1",
-        "illuminate/database": "^10.45|^11.0",
+        "php": "^8.2",
+        "filament/support": "self.version",
         "spatie/laravel-tags": "^4.0"
     },
     "autoload": {

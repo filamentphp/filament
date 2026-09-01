@@ -26,6 +26,8 @@ class Sum extends Summarizer
      */
     public function getSelectStatements(string $column): array
     {
+        $column = $this->getQuery()->getGrammar()->wrap($column);
+
         return [
             $this->getSelectAlias() => "sum({$column})",
         ];
@@ -33,7 +35,7 @@ class Sum extends Summarizer
 
     public function getSelectedState(): int | float | null
     {
-        if (! array_key_exists($this->selectAlias, $this->selectedState)) {
+        if (! array_key_exists($this->selectAlias ?? '', $this->selectedState)) {
             return null;
         }
 

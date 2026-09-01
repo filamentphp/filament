@@ -1,7 +1,6 @@
 name: Bug report
 description: Report a problem you're experiencing
 labels: bug,unconfirmed,medium priority
-projects: ['filamentphp/2']
 body:
   - type: markdown
     attributes:
@@ -22,12 +21,13 @@ body:
         - filament/forms
         - filament/infolists
         - filament/notifications
+        - filament/query-builder
+        - filament/schemas
         - filament/spark-billing-provider
         - filament/spatie-laravel-google-fonts-plugin
         - filament/spatie-laravel-media-library-plugin
         - filament/spatie-laravel-settings-plugin
         - filament/spatie-laravel-tags-plugin
-        - filament/spatie-laravel-translatable-plugin
         - filament/support
         - filament/tables
         - filament/widgets
@@ -62,7 +62,7 @@ body:
     attributes:
       label: PHP Version
       description: Please provide the full PHP version of your server.
-      placeholder: PHP 8.3.0
+      placeholder: PHP 8.5.0
     validations:
       required: true
   - type: textarea
@@ -90,7 +90,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction repository (issue will be closed if this is not valid)
-      description: The URL of a public GitHub repository which reproduces the problem. **Please do not link to your actual project**, what we need instead is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn\'t matter if your real project is private / confidential, since we want a link to a separate, isolated reproduction. This allows us to fix the problem much quicker. **This issue will be automatically closed and not reviewed if this is missing. Please make sure to format the URL starting with `https://github.com` - only repositories hosted on GitHub are accepted.** [Need a headstart? We have a template Filament project for you.](https://filament-issue.unitedbycode.com)
+      description: The URL of a public GitHub repository which reproduces the problem. **Please do not link to your actual project**, what we need instead is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn\'t matter if your real project is private / confidential, since we want a link to a separate, isolated reproduction. This allows us to fix the problem much quicker. **This issue will be automatically closed and not reviewed if this is missing. Please make sure to format the URL starting with `https://github.com` - only repositories hosted on GitHub are accepted.** [Need a headstart? Use our issue reproduction template.](https://github.com/filamentphp/issue-reproduction-template)
     validations:
       required: true
   - type: textarea

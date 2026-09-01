@@ -2,13 +2,29 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Colonnes',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Appliquer les colonnes',
+            ],
+
+            'reset' => [
+                'label' => 'Réinitialiser',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Action|Actions',
+        ],
 
         'text' => [
 
@@ -95,7 +111,7 @@ return [
             'label' => 'Ouvrir les actions',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Basculer les colonnes',
         ],
 
@@ -103,7 +119,7 @@ return [
 
     'empty' => [
 
-        'heading' => 'Aucun élément trouvé',
+        'heading' => 'Aucun(e) :model',
 
         'description' => 'Créer un(e) :model pour commencer.',
 
@@ -141,7 +157,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Tout',
+
+            'relationship' => [
+                'empty_option_label' => 'Aucun',
+            ],
+
         ],
 
         'trashed' => [
@@ -224,5 +246,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'enregistrement',
 
 ];

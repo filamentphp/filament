@@ -33,6 +33,8 @@ class BroadcastNotification extends BaseNotification implements ShouldQueue
      */
     public function toBroadcast($notifiable): BroadcastMessage
     {
-        return new BroadcastMessage($this->data);
+        return (new BroadcastMessage($this->data))
+            ->onConnection($this->connection)
+            ->onQueue($this->queue);
     }
 }

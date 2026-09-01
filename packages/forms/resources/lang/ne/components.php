@@ -223,7 +223,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'फाइलहरू संलग्न गर्नुहोस्',
             'blockquote' => 'ब्लककोट',
             'bold' => 'बोल्ड',
@@ -308,7 +308,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'फाइलहरू संलग्न गर्नुहोस्',
             'blockquote' => 'ब्लककोट',
             'bold' => 'बोल्ड',

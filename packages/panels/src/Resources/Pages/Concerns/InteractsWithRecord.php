@@ -3,6 +3,8 @@
 namespace Filament\Resources\Pages\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +17,11 @@ trait InteractsWithRecord
     public Model | int | string | null $record;
 
     public function mountCanAuthorizeAccess(): void
+    {
+        abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
+    }
+
+    public function hydrateCanAuthorizeAccess(): void
     {
         abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
@@ -45,7 +52,14 @@ trait InteractsWithRecord
 
     public function getRecord(): Model
     {
+        abort_unless($this->record instanceof Model, 404);
+
         return $this->record;
+    }
+
+    public function hasRecord(): bool
+    {
+        return filled($this->record);
     }
 
     public function getRecordTitle(): string | Htmlable
@@ -64,7 +78,7 @@ trait InteractsWithRecord
      */
     public function getBreadcrumbs(): array
     {
-        $breadcrumbs = parent::getBreadcrumbs();
+        $breadcrumbs = $this->getResourceBreadcrumbs();
 
         $resource = static::getResource();
         $record = $this->getRecord();
@@ -88,8 +102,10 @@ trait InteractsWithRecord
         return $breadcrumbs;
     }
 
-    protected function afterActionCalled(): void
+    protected function afterActionCalled(Action $action): void
     {
+        parent::afterActionCalled($action);
+
         if ($this->getRecord()->exists) {
             return;
         }
@@ -124,15 +140,29 @@ trait InteractsWithRecord
         ];
     }
 
+    /**
+     * @return Model|class-string<Model>|null
+     */
     protected function getMountedActionSchemaModel(): Model | string | null
     {
         return $this->getRecord();
     }
 
-    protected function configureAction(Action $action): void
+    public function getDefaultActionRecord(Action $action): ?Model
     {
-        $action
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+        return $this->hasRecord() ? $this->getRecord() : null;
+    }
+
+    public function getDefaultActionRecordTitle(Action $action): ?string
+    {
+        return $this->getRecordTitle();
+    }
+
+    public function getDefaultActionSuccessRedirectUrl(Action $action): ?string
+    {
+        return match (true) {
+            $action instanceof DeleteAction, $action instanceof ForceDeleteAction => $this->getResourceUrl(),
+            default => null,
+        };
     }
 }

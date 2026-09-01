@@ -1,9 +1,11 @@
 <?php
 
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\Testing\Fixtures\TestAction;
-use Filament\Tests\Models\Post;
-use Filament\Tests\Tables\Fixtures\PostsTable;
+use Filament\Actions\Testing\TestAction;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\SelectablePostsTable;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
 
@@ -12,7 +14,7 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
-it('can call bulk action', function () {
+it('can call bulk action', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
@@ -33,7 +35,7 @@ it('can call bulk action', function () {
     }
 });
 
-it('can call a bulk action with data', function () {
+it('can call a bulk action with data', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
@@ -41,7 +43,7 @@ it('can call a bulk action with data', function () {
         ->callAction(TestAction::make('data')->table()->bulk(), data: [
             'payload' => $payload = Str::random(),
         ])
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertDispatched('data-called', data: [
             'payload' => $payload,
         ]);
@@ -56,7 +58,7 @@ it('can call a bulk action with data', function () {
         ]);
 });
 
-it('can validate a bulk action\'s data', function () {
+it('can validate a bulk action\'s data', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
@@ -64,7 +66,7 @@ it('can validate a bulk action\'s data', function () {
         ->callAction(TestAction::make('data')->table()->bulk(), data: [
             'payload' => null,
         ])
-        ->assertHasActionErrors(['payload' => ['required']])
+        ->assertHasFormErrors(['payload' => ['required']])
         ->assertNotDispatched('data-called');
 
     livewire(PostsTable::class)
@@ -75,13 +77,13 @@ it('can validate a bulk action\'s data', function () {
         ->assertNotDispatched('data-called');
 });
 
-it('can set default bulk action data when mounted', function () {
+it('can set default bulk action data when mounted', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
         ->mountAction(TestAction::make('data')->table()->bulk())
-        ->assertActionDataSet([
+        ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
 
@@ -89,10 +91,13 @@ it('can set default bulk action data when mounted', function () {
         ->mountTableBulkAction('data', records: $posts)
         ->assertTableBulkActionDataSet([
             'foo' => 'bar',
-        ]);
+        ])
+        ->assertTableBulkActionDataSet(function (array $data): bool {
+            return $data['foo'] === 'bar';
+        });
 });
 
-it('can call a bulk action with arguments', function () {
+it('can call a bulk action with arguments', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
@@ -113,7 +118,7 @@ it('can call a bulk action with arguments', function () {
         ]);
 });
 
-it('can call a bulk action and halt', function () {
+it('can call a bulk action and halt', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
@@ -128,7 +133,7 @@ it('can call a bulk action and halt', function () {
         ->assertTableBulkActionHalted('halt');
 });
 
-it('can hide a bulk action', function () {
+it('can hide a bulk action', function (): void {
     livewire(PostsTable::class)
         ->assertActionVisible(TestAction::make('visible')->table()->bulk())
         ->assertActionHidden(TestAction::make('hidden')->table()->bulk());
@@ -138,7 +143,7 @@ it('can hide a bulk action', function () {
         ->assertTableBulkActionHidden('hidden');
 });
 
-it('can disable a bulk action', function () {
+it('can disable a bulk action', function (): void {
     livewire(PostsTable::class)
         ->assertActionEnabled(TestAction::make('enabled')->table()->bulk())
         ->assertActionDisabled(TestAction::make('disabled')->table()->bulk());
@@ -148,17 +153,17 @@ it('can disable a bulk action', function () {
         ->assertTableBulkActionDisabled('disabled');
 });
 
-it('can have an icon', function () {
+it('can have an icon', function (): void {
     livewire(PostsTable::class)
-        ->assertActionHasIcon(TestAction::make('hasIcon')->table()->bulk(), 'heroicon-m-pencil-square')
-        ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table()->bulk(), 'heroicon-m-trash');
+        ->assertActionHasIcon(TestAction::make('hasIcon')->table()->bulk(), Heroicon::PencilSquare)
+        ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table()->bulk(), Heroicon::Trash);
 
     livewire(PostsTable::class)
-        ->assertTableBulkActionHasIcon('hasIcon', 'heroicon-m-pencil-square')
-        ->assertTableBulkActionDoesNotHaveIcon('hasIcon', 'heroicon-m-trash');
+        ->assertTableBulkActionHasIcon('hasIcon', Heroicon::PencilSquare)
+        ->assertTableBulkActionDoesNotHaveIcon('hasIcon', Heroicon::Trash);
 });
 
-it('can have a label', function () {
+it('can have a label', function (): void {
     livewire(PostsTable::class)
         ->assertActionHasLabel(TestAction::make('hasLabel')->table()->bulk(), 'My Action')
         ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->table()->bulk(), 'My Other Action');
@@ -168,7 +173,7 @@ it('can have a label', function () {
         ->assertTableBulkActionDoesNotHaveLabel('hasLabel', 'My Other Action');
 });
 
-it('can have a color', function () {
+it('can have a color', function (): void {
     livewire(PostsTable::class)
         ->assertActionHasColor(TestAction::make('hasColor')->table()->bulk(), 'primary')
         ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->table()->bulk(), 'gray');
@@ -178,7 +183,7 @@ it('can have a color', function () {
         ->assertTableBulkActionDoesNotHaveColor('hasColor', 'gray');
 });
 
-it('can state whether a bulk action exists', function () {
+it('can state whether a bulk action exists', function (): void {
     livewire(PostsTable::class)
         ->assertActionExists(TestAction::make('exists')->table()->bulk())
         ->assertActionDoesNotExist(TestAction::make('doesNotExist')->table()->bulk());
@@ -188,7 +193,204 @@ it('can state whether a bulk action exists', function () {
         ->assertTableBulkActionDoesNotExist('doesNotExist');
 });
 
-it('can state whether bulk actions exist in order', function () {
+it('can state whether bulk actions exist in order', function (): void {
     livewire(PostsTable::class)
         ->assertTableBulkActionsExistInOrder(['exists', 'existsInOrder']);
+});
+
+it('does not receive non-selectable records when using select all', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    Post::factory()->create(['is_published' => false]);
+
+    livewire(SelectablePostsTable::class)
+        ->set('isTrackingDeselectedTableRecords', true)
+        ->set('deselectedTableRecords', [])
+        ->callTableBulkAction('customBulk', [])
+        ->assertDispatched('customBulk-called', records: $publishedPosts->pluck('id')->toArray());
+});
+
+it('does not delete non-selectable records when using select all with a query-based action', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    $unpublishedPost = Post::factory()->create(['is_published' => false]);
+
+    livewire(SelectablePostsTable::class)
+        ->set('isTrackingDeselectedTableRecords', true)
+        ->set('deselectedTableRecords', [])
+        ->callTableBulkAction('queryBulkDelete', []);
+
+    foreach ($publishedPosts as $post) {
+        assertSoftDeleted($post);
+    }
+
+    $this->assertDatabaseHas('posts', [
+        'id' => $unpublishedPost->id,
+        'deleted_at' => null,
+    ]);
+});
+
+it('deletes every record when all are selectable using a query-based action', function (): void {
+    $publishedPosts = Post::factory()->count(3)->create(['is_published' => true]);
+
+    livewire(SelectablePostsTable::class)
+        ->set('isTrackingDeselectedTableRecords', true)
+        ->set('deselectedTableRecords', [])
+        ->callTableBulkAction('queryBulkDelete', []);
+
+    foreach ($publishedPosts as $post) {
+        assertSoftDeleted($post);
+    }
+});
+
+it('does not receive non-selectable records when selecting specific records', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    $unpublishedPost = Post::factory()->create(['is_published' => false]);
+
+    livewire(SelectablePostsTable::class)
+        ->callTableBulkAction('customBulk', [$publishedPosts->first(), $publishedPosts->last(), $unpublishedPost])
+        ->assertDispatched('customBulk-called', records: $publishedPosts->pluck('id')->toArray());
+});
+
+it('respects both deselection and selectability when using select all', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    Post::factory()->create(['is_published' => false]);
+
+    livewire(SelectablePostsTable::class)
+        ->set('isTrackingDeselectedTableRecords', true)
+        ->set('deselectedTableRecords', [$publishedPosts->first()->getKey()])
+        ->callTableBulkAction('customBulk', [])
+        ->assertDispatched('customBulk-called', records: [$publishedPosts->last()->id]);
+});
+
+it('does not delete non-selectable records when selecting specific records with a query-based action', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    $unpublishedPost = Post::factory()->create(['is_published' => false]);
+
+    livewire(SelectablePostsTable::class)
+        ->callTableBulkAction('queryBulkDelete', [$publishedPosts->first(), $publishedPosts->last(), $unpublishedPost]);
+
+    foreach ($publishedPosts as $post) {
+        assertSoftDeleted($post);
+    }
+
+    $this->assertDatabaseHas('posts', [
+        'id' => $unpublishedPost->id,
+        'deleted_at' => null,
+    ]);
+});
+
+it('returns `false` from `checksIfRecordIsSelectable()` when no selectability closure is set', function (): void {
+    $table = livewire(PostsTable::class)->instance()->getTable();
+
+    expect($table->checksIfRecordIsSelectable())->toBeFalse();
+});
+
+it('returns `true` from `isRecordSelectable()` for any record when no selectability closure is set', function (): void {
+    $post = Post::factory()->create(['is_published' => false]);
+
+    $table = livewire(PostsTable::class)->instance()->getTable();
+
+    expect($table->isRecordSelectable($post))->toBeTrue();
+});
+
+it('only passes records that pass `authorizeIndividualRecords()` to the action body for a mixed selection', function (): void {
+    $posts = Post::factory()->count(4)->create();
+
+    $authorizedPosts = $posts->take(2);
+
+    PostsTable::$authorizedRecordKeys = $authorizedPosts->pluck('id')->all();
+
+    // Asserting the exact `keys` array proves both the count (only the 2 authorized
+    // records) and their identity, while `assertNotDispatched` proves the denied
+    // records never reached the action body alongside the authorized ones.
+    livewire(PostsTable::class)
+        ->callTableBulkAction('individuallyAuthorized', $posts)
+        ->assertDispatched('individually-authorized-processed', keys: $authorizedPosts->pluck('id')->toArray())
+        ->assertNotDispatched('individually-authorized-processed', keys: $posts->pluck('id')->toArray());
+
+    PostsTable::$authorizedRecordKeys = [];
+});
+
+it('passes no records to the action body when every record fails `authorizeIndividualRecords()`', function (): void {
+    $posts = Post::factory()->count(3)->create();
+
+    PostsTable::$authorizedRecordKeys = [];
+
+    livewire(PostsTable::class)
+        ->callTableBulkAction('individuallyAuthorized', $posts)
+        ->assertDispatched('individually-authorized-processed', keys: []);
+});
+
+it('passes every record to the action body when all records pass `authorizeIndividualRecords()`', function (): void {
+    $posts = Post::factory()->count(3)->create();
+
+    PostsTable::$authorizedRecordKeys = $posts->pluck('id')->all();
+
+    livewire(PostsTable::class)
+        ->callTableBulkAction('individuallyAuthorized', $posts)
+        ->assertDispatched('individually-authorized-processed', keys: $posts->pluck('id')->toArray());
+
+    PostsTable::$authorizedRecordKeys = [];
+});
+
+it('returns `true` from `checksIfRecordIsSelectable()` when a selectability closure is set', function (): void {
+    $table = livewire(SelectablePostsTable::class)->instance()->getTable();
+
+    expect($table->checksIfRecordIsSelectable())->toBeTrue();
+});
+
+it('evaluates the selectability closure per record in `isRecordSelectable()`', function (): void {
+    $publishedPost = Post::factory()->create(['is_published' => true]);
+    $unpublishedPost = Post::factory()->create(['is_published' => false]);
+
+    $table = livewire(SelectablePostsTable::class)->instance()->getTable();
+
+    expect($table->isRecordSelectable($publishedPost))->toBeTrue()
+        ->and($table->isRecordSelectable($unpublishedPost))->toBeFalse();
+});
+
+it('can still track deselected records when a selectability closure is set', function (): void {
+    $table = livewire(SelectablePostsTable::class)->instance()->getTable();
+
+    expect($table->canTrackDeselectedRecords())->toBeTrue();
+});
+
+it('only includes selectable records in `getAllSelectableTableRecordKeys()`', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    $publishedPosts = Post::factory()->count(2)->create(['is_published' => true]);
+    Post::factory()->create(['is_published' => false]);
+
+    $keys = livewire(SelectablePostsTable::class)->instance()->getAllSelectableTableRecordKeys();
+
+    expect($keys)->toEqualCanonicalizing(
+        $publishedPosts->pluck('id')->map(fn (int $id): string => (string) $id)->all(),
+    );
+});
+
+it('includes every record in `getAllSelectableTableRecordKeys()` when no selectability closure is set', function (): void {
+    $posts = Post::factory()->count(3)->create(['is_published' => false]);
+
+    $keys = livewire(PostsTable::class)->instance()->getAllSelectableTableRecordKeys();
+
+    expect($keys)->toEqualCanonicalizing(
+        $posts->pluck('id')->map(fn (int $id): string => (string) $id)->all(),
+    );
+});
+
+it('only counts selectable records in `getAllSelectableTableRecordsCount()`', function (): void {
+    // 2 published (selectable) and 1 unpublished (non-selectable)
+    Post::factory()->count(2)->create(['is_published' => true]);
+    Post::factory()->create(['is_published' => false]);
+
+    expect(livewire(SelectablePostsTable::class)->instance()->getAllSelectableTableRecordsCount())->toBe(2);
+});
+
+it('counts every record in `getAllSelectableTableRecordsCount()` when no selectability closure is set', function (): void {
+    Post::factory()->count(3)->create();
+
+    expect(livewire(PostsTable::class)->instance()->getAllSelectableTableRecordsCount())->toBe(3);
 });

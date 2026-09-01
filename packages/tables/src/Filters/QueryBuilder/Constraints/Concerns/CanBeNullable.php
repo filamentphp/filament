@@ -2,21 +2,7 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\Concerns;
 
-use Closure;
-
-trait CanBeNullable
+trait CanBeNullable /** @phpstan-ignore trait.unused */
 {
-    protected bool | Closure $isNullable = false;
-
-    public function nullable(bool | Closure $condition = true): static
-    {
-        $this->isNullable = $condition;
-
-        return $this;
-    }
-
-    public function isNullable(): bool
-    {
-        return (bool) $this->evaluate($this->isNullable);
-    }
+    use \Filament\QueryBuilder\Constraints\Concerns\CanBeNullable;
 }

@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Filament\Pages\Site;
+
+use Filament\Pages\Page;
+
+class ManageSettings extends Page
+{
+    protected string $view = 'filament.pages.site.manage-settings';
+}

@@ -12,7 +12,10 @@ use ReflectionException;
 
 trait CanReadModelSchemas
 {
-    protected function getModel(string $model): ?string
+    /**
+     * @return class-string<Model>|null
+     */
+    protected function parseModel(string $model): ?string
     {
         if (! class_exists($model)) {
             return null;
@@ -21,6 +24,9 @@ trait CanReadModelSchemas
         return $model;
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function getModelSchema(string $model): Builder
     {
         return app($model)
@@ -28,11 +34,17 @@ trait CanReadModelSchemas
             ->getSchemaBuilder();
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function getModelTable(string $model): string
     {
         return app($model)->getTable();
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function guessBelongsToRelationshipName(string $column, string $model): ?string
     {
         /** @var Model $modelInstance */
@@ -82,6 +94,9 @@ trait CanReadModelSchemas
         return $tableName;
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function guessBelongsToRelationshipTitleColumnName(string $column, string $model): string
     {
         $schema = $this->getModelSchema($model);
@@ -128,15 +143,18 @@ trait CanReadModelSchemas
             'timestamp', 'timestamptz' => 'timestamp',
             'text', 'tinytext', 'longtext', 'mediumtext', 'ntext' => 'text',
             'json', 'jsonb' => 'json',
+            'binary', 'varbinary', 'blob', 'tinyblob', 'mediumblob', 'longblob', 'bytea' => 'binary',
+            'geometry', 'geography', 'point', 'linestring', 'polygon', 'multipoint', 'multilinestring', 'multipolygon', 'geometrycollection', 'geomcollection' => 'binary',
             default => $column['type_name'],
         };
 
         $values = str_contains($column['type'], '(')
-            ? str_getcsv(Str::between($column['type'], '(', ')'), ',', "'")
+            ? str_getcsv(Str::between($column['type'], '(', ')'), enclosure: "'", escape: '\\')
             : null;
 
         $values = is_null($values) ? [] : match ($type) {
             'string', 'char', 'binary', 'bit' => ['length' => (int) $values[0]],
+            'enum' => ['values' => array_map(fn (string $value): string => trim($value, '\''), $values)],
             default => [],
         };
 
@@ -144,7 +162,47 @@ trait CanReadModelSchemas
     }
 
     /**
+     * Columns skipped while reading the model schema, keyed by column name with their database type as the value.
+     *
+     * @var array<string, string>
+     */
+    protected array $skippedColumns = [];
+
+    /**
+     * @param  array<string, mixed>  $type
+     */
+    protected function canGenerateSchemaComponentForColumnType(array $type): bool
+    {
+        // Binary and spatial columns (`blob`, `geometry`, `point`, etc.) hold data that
+        // is not valid UTF-8, so it cannot be serialized to JavaScript for a schema component.
+        return $type['name'] !== 'binary';
+    }
+
+    /**
+     * @param  class-string<Model>  $model
      * @param  array<string, mixed>  $column
+     */
+    protected function recordSkippedColumn(string $model, array $column): void
+    {
+        // A column that is already `$hidden` is excluded from the model's array representation, so it cannot cause errors and does not need a warning.
+        if (in_array($column['name'], app($model)->getHidden(), strict: true)) {
+            return;
+        }
+
+        $this->skippedColumns[$column['name']] = $column['type_name'];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getSkippedColumns(): array
+    {
+        return $this->skippedColumns;
+    }
+
+    /**
+     * @param  array<string, mixed>  $column
+     * @param  class-string<Model>  $model
      */
     protected function parseDefaultExpression(array $column, string $model): mixed
     {
@@ -206,5 +264,24 @@ trait CanReadModelSchemas
         }
 
         return $default;
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @param  class-string<Model>  $model
+     * @return array<string>
+     */
+    protected function getEnumCasts(string $model): array
+    {
+        $casts = app($model)->getCasts();
+
+        return array_filter(
+            $casts,
+            fn (mixed $cast): bool => is_string($cast) ? enum_exists($cast) : false,
+        );
     }
 }

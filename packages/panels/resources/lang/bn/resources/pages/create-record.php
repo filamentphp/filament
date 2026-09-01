@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => ':label তৈরী করুন',
+    'title' => ':label তৈরি করুন',
 
-    'breadcrumb' => 'তৈরী করুন',
+    'breadcrumb' => 'তৈরি করুন',
 
     'form' => [
 
@@ -15,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'তৈরী করুন',
+                'label' => 'তৈরি করুন',
             ],
 
             'create_another' => [
-                'label' => 'তৈরী এবং পুনরায় তৈরী করুন',
+                'label' => 'তৈরি এবং পুনরায় তৈরি করুন',
             ],
 
         ],

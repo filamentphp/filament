@@ -2,13 +2,45 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Columnes',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Aplicar columnes',
+            ],
+
+            'reset' => [
+                'label' => 'Reestablir columnes',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Acció|Accions',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Carregant...',
+
+            'no_options_message' => 'No hi ha opcions disponibles.',
+
+            'no_search_results_message' => 'No hi ha opcions que coincideixin amb la teva cerca.',
+
+            'placeholder' => 'Selecciona una opció',
+
+            'searching_message' => 'Cercant...',
+
+            'search_prompt' => 'Comença a escriure per buscar...',
+
+        ],
 
         'text' => [
 
@@ -95,7 +127,7 @@ return [
             'label' => 'Accions massives',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Alternar columnes',
         ],
 
@@ -141,7 +173,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Tots',
+
+            'relationship' => [
+                'empty_option_label' => 'Cap',
+            ],
+
         ],
 
         'trashed' => [
@@ -164,7 +202,6 @@ return [
 
             'group' => [
                 'label' => 'Agrupar per',
-                'placeholder' => 'Agrupar per',
             ],
 
             'direction' => [
@@ -224,5 +261,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'registre',
 
 ];

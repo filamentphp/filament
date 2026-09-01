@@ -2,12 +2,10 @@
 
 namespace Filament\Pages\Concerns;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use InvalidArgumentException;
 
-trait InteractsWithFormActions
+trait InteractsWithFormActions /** @phpstan-ignore trait.unused */
 {
     /**
      * @var array<Action | ActionGroup>
@@ -16,11 +14,7 @@ trait InteractsWithFormActions
 
     public function cacheInteractsWithFormActions(): void
     {
-        /** @var array<string, Action | ActionGroup> */
-        $actions = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureAction']),
-            fn (): array => $this->getFormActions(),
-        );
+        $actions = $this->getFormActions();
 
         foreach ($actions as $action) {
             if ($action instanceof ActionGroup) {
@@ -33,10 +27,6 @@ trait InteractsWithFormActions
                 $this->cachedFormActions[] = $action;
 
                 continue;
-            }
-
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Form actions must be an instance of ' . Action::class . ', or ' . ActionGroup::class . '.');
             }
 
             $this->cacheAction($action);

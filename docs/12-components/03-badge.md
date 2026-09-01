@@ -1,0 +1,84 @@
+---
+title: Badge Blade component
+---
+
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
+## Introduction
+
+The badge component is used to render a small box with some text inside:
+
+```blade
+<x-filament::badge>
+    New
+</x-filament::badge>
+```
+
+<AutoScreenshot name="components/badge/simple" alt="A simple badge" version="4.x" />
+
+## Setting the size of a badge
+
+By default, the size of a badge is "medium". You can make it "extra small" or "small" by using the `size` attribute:
+
+```blade
+<x-filament::badge size="xs">
+    New
+</x-filament::badge>
+
+<x-filament::badge size="sm">
+    New
+</x-filament::badge>
+```
+
+<AutoScreenshot name="components/badge/sizes" alt="Badges in different sizes" version="4.x" />
+
+## Changing the color of the badge
+
+By default, the color of a badge is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `color` attribute:
+
+```blade
+<x-filament::badge color="danger">
+    New
+</x-filament::badge>
+
+<x-filament::badge color="gray">
+    New
+</x-filament::badge>
+
+<x-filament::badge color="info">
+    New
+</x-filament::badge>
+
+<x-filament::badge color="success">
+    New
+</x-filament::badge>
+
+<x-filament::badge color="warning">
+    New
+</x-filament::badge>
+```
+
+<AutoScreenshot name="components/badge/colors" alt="Badges in different colors" version="4.x" />
+
+## Adding an icon to a badge
+
+You can add an [icon](../styling/icons) to a badge by using the `icon` attribute:
+
+```blade
+<x-filament::badge icon="heroicon-m-sparkles">
+    New
+</x-filament::badge>
+```
+
+You can also change the icon's position to be after the text instead of before it, using the `icon-position` attribute:
+
+```blade
+<x-filament::badge
+    icon="heroicon-m-sparkles"
+    icon-position="after"
+>
+    New
+</x-filament::badge>
+```
+
+<AutoScreenshot name="components/badge/icon" alt="Badges with icons" version="4.x" />

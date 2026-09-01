@@ -2,13 +2,25 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Oszlopok',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Alkalmazás',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Művelet|Műveletek',
+        ],
 
         'text' => [
 
@@ -95,7 +107,7 @@ return [
             'label' => 'Csoportos műveletek',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Oszlopok láthatósága',
         ],
 
@@ -141,7 +153,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Mind',
+
+            'relationship' => [
+                'empty_option_label' => 'Nincs',
+            ],
+
         ],
 
         'trashed' => [
@@ -224,5 +242,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'objektum',
 
 ];

@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Priloži i priloži drugi',
+                    'label' => 'Priloži i dodaj još jedan',
                 ],
 
             ],

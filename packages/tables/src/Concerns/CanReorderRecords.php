@@ -2,7 +2,10 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 trait CanReorderRecords
@@ -18,36 +21,59 @@ trait CanReorderRecords
             return;
         }
 
+        $this->getTable()->callBeforeReordering($order);
+
         $orderColumn = (string) str($this->getTable()->getReorderColumn())->afterLast('.');
 
-        DB::transaction(function () use ($order, $orderColumn) {
+        DB::transaction(function () use ($order, $orderColumn): void {
             if (
                 (($relationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
                 in_array($orderColumn, $relationship->getPivotColumns())
             ) {
-                foreach ($order as $index => $recordKey) {
-                    $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->update([
-                        $orderColumn => $index + 1,
+                $keyColumn = $this->getTable()->allowsDuplicates()
+                    ? app($relationship->getPivotClass())->getKeyName()
+                    : $relationship->getRelatedPivotKeyName();
+
+                $connection = $relationship->getRelated()->getConnection();
+
+                $relationship->newPivotQuery()
+                    ->whereIn($keyColumn, array_values($order))
+                    ->update([
+                        $orderColumn => $this->makeTableReorderColumnExpression($order, $connection->getQueryGrammar()->wrap($keyColumn), $connection),
                     ]);
-                }
 
                 return;
             }
 
             $model = app($this->getTable()->getModel());
             $modelKeyName = $model->getKeyName();
+            $connection = $model->getConnection();
 
-            $model
-                ->newModelQuery()
+            $this->getTable()
+                ->getQuery()
                 ->whereIn($modelKeyName, array_values($order))
                 ->update([
-                    $orderColumn => DB::raw(
-                        'case ' . collect($order)
-                            ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
-                            ->implode(' ') . ' end'
-                    ),
+                    $orderColumn => $this->makeTableReorderColumnExpression($order, $connection->getQueryGrammar()->wrap($modelKeyName), $connection),
                 ]);
         });
+
+        $this->getTable()->callAfterReordering($order);
+    }
+
+    /**
+     * @param  array<int | string>  $order
+     */
+    protected function makeTableReorderColumnExpression(array $order, string $wrappedKeyColumn, Connection $connection): Expression
+    {
+        return new Expression(
+            'case ' . collect($order)
+                ->when(
+                    $this->getTable()->getReorderDirection() === 'desc',
+                    fn (Collection $order): Collection => $order->reverse()->values(),
+                )
+                ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $wrappedKeyColumn . ' = ' . $connection->escape($recordKey) . ' then ' . ($recordIndex + 1))
+                ->implode(' ') . ' end'
+        );
     }
 
     public function toggleTableReordering(): void
