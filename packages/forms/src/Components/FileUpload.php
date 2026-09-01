@@ -1142,6 +1142,17 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                 </div>
                             <?php } ?>
 
+                                    <div class="fi-fo-file-upload-editor-control-panel-reset-wrapper">
+                                        <a
+                                            href="javascript:void(0)"
+                                            x-on:click.prevent.stop="editor.reset()"
+                                            class="fi-fo-file-upload-editor-control-panel-reset-link"
+                                        >
+                                            <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
+                                        </a>
+                                    </div>
+                            </div>
+
                             <div class="fi-fo-file-upload-editor-control-panel-footer">
                                 <?php if ($isImageEditorExplicitlyEnabled) { ?>
                                     <button
@@ -1150,19 +1161,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                         class="fi-btn"
                                     >
                                         <?= e(__('filament-forms::components.file_upload.editor.actions.cancel.label')) ?>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        x-on:click.prevent.stop="editor.reset()"
-                                        <?= (new FilamentComponentAttributeBag)
-                                            ->color(ButtonComponent::class, 'danger')
-                                            ->class(['fi-btn fi-fo-file-upload-editor-control-panel-reset-action'])
-                                            ->toHtml() ?>
-                                    >
-                                        <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
-                                    </button>
-
                                     <button
                                         type="button"
                                         x-on:click.prevent="saveEditor"
