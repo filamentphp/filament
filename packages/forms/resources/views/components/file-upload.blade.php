@@ -307,12 +307,13 @@
                                                     @endforeach
                                                 </div>
                                             @endif
-                                            <x-filament::button
+                                            <x-filament::link
                                                 color="warning"
                                                 x-on:click.stop.prevent="editor.reset()"
+                                                class="ml-auto"
                                             >
                                                 {{ __('filament-forms::components.file_upload.editor.actions.reset.label') }}
-                                            </x-filament::button>
+                                            </x-filament::link>
                                         </div>
                                     </div>
 
