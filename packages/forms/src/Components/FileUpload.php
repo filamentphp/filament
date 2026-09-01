@@ -1139,9 +1139,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                             <?php } ?>
                                         </div>
                                     <?php } ?>
-                                </div>
-                            <?php } ?>
-
                                     <div class="fi-fo-file-upload-editor-control-panel-reset-wrapper">
                                         <a
                                             href="javascript:void(0)"
@@ -1151,7 +1148,8 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                             <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
                                         </a>
                                     </div>
-                            </div>
+                                </div>
+                            <?php } ?>
 
                             <div class="fi-fo-file-upload-editor-control-panel-footer">
                                 <?php if ($isImageEditorExplicitlyEnabled) { ?>

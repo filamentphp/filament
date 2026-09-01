@@ -182,7 +182,7 @@
             }
 
             & .fi-fo-file-upload-editor-control-panel-footer {
-                @apply justify-start;
+                @apply justify-end;
             }
         }
     }
