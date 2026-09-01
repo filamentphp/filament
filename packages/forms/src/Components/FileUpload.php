@@ -1146,7 +1146,7 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                         <a
                                             href="javascript:void(0)"
                                             x-on:click.prevent.stop="editor.reset()"
-                                            class="fi-fo-file-upload-editor-control-panel-reset-link"
+                                            class="fi-ac-link-action fi-link fi-size-sm fi-color fi-color-danger fi-text-color-600 dark:fi-text-color-300"
                                         >
                                             <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
                                         </a>
@@ -1161,6 +1161,8 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                         class="fi-btn"
                                     >
                                         <?= e(__('filament-forms::components.file_upload.editor.actions.cancel.label')) ?>
+                                    </button>
+
                                     <button
                                         type="button"
                                         x-on:click.prevent="saveEditor"
