@@ -147,7 +147,7 @@
         }
 
         & > .fi-disabled {
-            @apply pointer-events-none opacity-70;
+            @apply pointer-events-none;
         }
     }
 

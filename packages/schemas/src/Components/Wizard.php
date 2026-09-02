@@ -362,7 +362,7 @@ class Wizard extends Component implements HasEmbeddedView
 
             $nextAction->livewireTarget(
                 collect(range(0, count($steps) - 2))
-                    ->map(fn (int $stepIndex): string => "callSchemaComponentMethod({$nextActionLivewireTargetKey}, 'nextStep', " . Js::from([
+                    ->map(static fn (int $stepIndex): string => "callSchemaComponentMethod({$nextActionLivewireTargetKey}, 'nextStep', " . Js::from([
                         'currentStepIndex' => $stepIndex,
                     ])->toHtml() . ')')
                     ->implode(', '),
