@@ -56,10 +56,7 @@
         @if ($hasNotifications)
             <x-slot name="header">
                 <div>
-                    <h2
-                        id="{{ $modalId }}.heading"
-                        class="fi-modal-heading"
-                    >
+                    <h2 id="{{ $modalId }}.heading" class="fi-modal-heading">
                         {{ __('filament-notifications::database.modal.heading') }}
 
                         @if ($unreadNotificationsCount)
