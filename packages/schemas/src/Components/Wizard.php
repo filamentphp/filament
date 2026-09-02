@@ -356,6 +356,19 @@ class Wizard extends Component implements HasEmbeddedView
             $this->getChildSchema()->getComponents(),
             static fn ($component): bool => $component instanceof Step,
         );
+
+        if (count($steps) > 1) {
+            $nextActionLivewireTargetKey = Js::from($key)->toHtml();
+
+            $nextAction->livewireTarget(
+                collect(range(0, count($steps) - 2))
+                    ->map(fn (int $stepIndex): string => "callSchemaComponentMethod({$nextActionLivewireTargetKey}, 'nextStep', " . Js::from([
+                        'currentStepIndex' => $stepIndex,
+                    ])->toHtml() . ')')
+                    ->implode(', '),
+            );
+        }
+
         $isHeaderHidden = $this->isHeaderHidden();
 
         $outerAttributes = (new FilamentComponentAttributeBag)
