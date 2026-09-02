@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
     use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
@@ -41,7 +42,7 @@
                 {{ (new FilamentComponentAttributeBag)->color(DescriptionComponent::class, $descriptionColor)->class(['fi-wi-stats-overview-stat-description']) }}
             >
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new FilamentComponentAttributeBag)) }}
                 @endif
 
                 <span>
@@ -49,7 +50,7 @@
                 </span>
 
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Filament\Support\View\ComponentAttributeBag)) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new FilamentComponentAttributeBag)) }}
                 @endif
             </div>
         @endif
@@ -60,7 +61,7 @@
         <div x-data="{ statsOverviewStatChart() {} }">
             <div
                 x-load
-                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
+                x-load-src="{{ FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
                 wire:ignore
                 x-data="statsOverviewStatChart({
                             key: @js($getKey(false)),
@@ -72,12 +73,18 @@
                 {{-- The label and value are already exposed as text, so the trend sparkline is decorative. --}}
                 <canvas x-ref="canvas" aria-hidden="true"></canvas>
 
+                {{--
+                    These empty elements carry the colors the chart should be painted in, so that a theme
+                    can set them with an ordinary `color` declaration.
+                --}}
                 <span
+                    aria-hidden="true"
                     x-ref="backgroundColorElement"
                     class="fi-wi-stats-overview-stat-chart-bg-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="borderColorElement"
                     class="fi-wi-stats-overview-stat-chart-border-color"
                 ></span>

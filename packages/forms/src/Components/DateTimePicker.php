@@ -124,7 +124,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
         $placeholder = $this->getPlaceholder();
         $isReadOnly = $this->isReadOnly();
         $isRequired = $this->isRequired();
-        $isConcealed = $this->isConcealed();
         $step = $this->getStep();
         $type = $this->getType();
         $livewireKey = $this->getLivewireKey();
@@ -172,7 +171,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixes, HasEmbeddedV
                                 'min' => $hasTime ? $minDate : ($minDate ? Carbon::parse($minDate)->toDateString() : null),
                                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                                 'readonly' => $isReadOnly,
-                                'required' => $isRequired && (! $isConcealed),
+                                'required' => $isRequired,
                                 'step' => $step,
                                 'type' => $type,
                                 $this->applyStateBindingModifiers('wire:model') => $statePath,
