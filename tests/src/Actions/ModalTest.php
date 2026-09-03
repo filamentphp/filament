@@ -125,8 +125,9 @@ describe('browser interactions', function (): void {
                 ->assertSee('Modal Browser Test')
                 ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="no-tabbable-content-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
                 ->assertVisible('[data-testid="no-tabbable-content-modal"]')
-                // Let the focus trap activate (it is deferred after opening) before checking the scroll position.
-                ->wait(1)
+                // Let the focus trap activate (it is deferred after opening) before checking where it put focus.
+                ->wait(0.5)
+                ->assertPresent('.fi-modal-window-ctn:focus')
                 ->assertScript('window.scrollY === window.modalTestScrollY', true)
                 ->assertNoSmoke();
         });
