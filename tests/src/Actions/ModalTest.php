@@ -117,6 +117,21 @@ describe('browser interactions', function (): void {
         });
     });
 
+    it('does not change the page scroll position when opening a standalone modal with no tabbable content', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertSee('Modal Browser Test')
+                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="no-tabbable-content-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+                ->assertVisible('[data-testid="no-tabbable-content-modal"]')
+                // Let the focus trap activate (it is deferred after opening) before checking the scroll position.
+                ->wait(1)
+                ->assertScript('window.scrollY === window.modalTestScrollY', true)
+                ->assertNoSmoke();
+        });
+    });
+
     it('does not restore focus to the trigger after closing a standalone modal using `:restores-focus="false"`', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());

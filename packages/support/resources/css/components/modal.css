@@ -130,8 +130,9 @@
         }
     }
 
+    /* The window container is the focus trap, so it does not show a focus outline when the trap falls back to focusing it. */
     & > .fi-modal-window-ctn {
-        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
+        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center outline-none sm:grid-rows-[1fr_auto_3fr];
 
         &.fi-clickable {
             @apply cursor-pointer;

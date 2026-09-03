@@ -53,6 +53,20 @@
     </x-filament::modal>
 
     <x-filament::modal
+        id="standalone-browser-test-no-tabbable-content-modal"
+        :close-button="false"
+        :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'no-tabbable-content-modal'])"
+    >
+        <x-slot name="trigger">
+            <x-filament::button data-testid="no-tabbable-content-trigger">
+                No tabbable content modal
+            </x-filament::button>
+        </x-slot>
+
+        <p>This modal contains no tabbable element.</p>
+    </x-filament::modal>
+
+    <x-filament::modal
         id="standalone-browser-test-no-focus-restore-modal"
         :restores-focus="false"
         :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'no-focus-restore-modal'])"
