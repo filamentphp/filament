@@ -798,10 +798,10 @@ it('can set `resizableImages()`', function (): void {
     expect($editor->hasResizableImages())->toBeTrue();
 });
 
-it('returns `null` for `getMinHeight()` and `getMaxHeight()` by default', function (): void {
+it('returns `3rem` for `getMinHeight()` and `null` for `getMaxHeight()` by default', function (): void {
     $editor = RichEditor::make('content');
 
-    expect($editor->getMinHeight())->toBeNull()
+    expect($editor->getMinHeight())->toBe('3rem')
         ->and($editor->getMaxHeight())->toBeNull();
 });
 
@@ -1485,11 +1485,13 @@ it('can render `RichEditor` in the browser', function (): void {
             ->assertNoSmoke()
             ->assertScript(<<<'JS'
                 (() => {
+                    const defaultContent = document.querySelector('[data-testid="default-rich-editor"] .fi-fo-rich-editor-content')
                     const content = document.querySelector('[data-testid="height-constrained-rich-editor"] .fi-fo-rich-editor-content')
                     const editor = content.querySelector('.tiptap')
                     const initialStyle = getComputedStyle(content)
 
                     if (
+                        getComputedStyle(defaultContent).minHeight !== '48px' ||
                         initialStyle.minHeight !== '192px' ||
                         initialStyle.maxHeight !== '224px' ||
                         initialStyle.overflowY !== 'auto' ||

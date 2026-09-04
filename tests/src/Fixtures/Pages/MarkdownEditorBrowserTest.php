@@ -28,7 +28,8 @@ class MarkdownEditorBrowserTest extends Page
         return $form
             ->schema([
                 MarkdownEditor::make('content')
-                    ->label('Content'),
+                    ->label('Content')
+                    ->extraAttributes(['data-testid' => 'default-markdown-editor']),
                 MarkdownEditor::make('nullMinHeightContent')
                     ->label('Null minimum height content')
                     ->minHeight('20rem')

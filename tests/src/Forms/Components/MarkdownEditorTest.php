@@ -418,10 +418,10 @@ describe('file attachment visibility', function (): void {
 });
 
 describe('height constraints', function (): void {
-    it('defaults `getMinHeight()` to `11.25rem`', function (): void {
+    it('defaults `getMinHeight()` to `3rem`', function (): void {
         $editor = MarkdownEditor::make('content');
 
-        expect($editor->getMinHeight())->toBe('11.25rem');
+        expect($editor->getMinHeight())->toBe('3rem');
     });
 
     it('can set `minHeight()`', function (): void {
@@ -656,6 +656,8 @@ it('can render `MarkdownEditor` in the browser', function (): void {
             ->assertNoSmoke()
             ->assertScript(<<<'JS'
                 (async () => {
+                    const defaultEditor = document.querySelector('[data-testid="default-markdown-editor"]')
+                    const defaultScroller = defaultEditor.querySelector('.CodeMirror-scroll')
                     const nullMinHeightEditor = document.querySelector('[data-testid="null-min-height-markdown-editor"]')
                     const nullMinHeightScroller = nullMinHeightEditor.querySelector('.CodeMirror-scroll')
                     const nullMinHeightStyle = getComputedStyle(nullMinHeightScroller)
@@ -665,16 +667,18 @@ it('can render `MarkdownEditor` in the browser', function (): void {
                     const nullMinHeightWithMaxHeightComponent = nullMinHeightWithMaxHeightEditor.querySelector('[x-data]')
 
                     if (
-                        nullMinHeightScroller.style.minHeight !== '11.25rem' ||
-                        nullMinHeightStyle.minHeight !== '180px' ||
+                        defaultScroller.style.minHeight !== '3rem' ||
+                        getComputedStyle(defaultScroller).minHeight !== '48px' ||
+                        nullMinHeightScroller.style.minHeight !== '3rem' ||
+                        nullMinHeightStyle.minHeight !== '48px' ||
                         nullMinHeightStyle.maxHeight !== 'none' ||
-                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '11.25rem' ||
+                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '3rem' ||
                         nullMinHeightWithMaxHeightScroller.style.maxHeight !== '12rem' ||
                         nullMinHeightWithMaxHeightScroller.style.height !== '' ||
                         nullMinHeightWithMaxHeightScroller.tabIndex !== 0 ||
-                        nullMinHeightWithMaxHeightStyle.minHeight !== '180px' ||
+                        nullMinHeightWithMaxHeightStyle.minHeight !== '48px' ||
                         nullMinHeightWithMaxHeightStyle.maxHeight !== '192px' ||
-                        nullMinHeightWithMaxHeightStyle.height !== '180px'
+                        nullMinHeightWithMaxHeightStyle.height !== '48px'
                     ) {
                         return false
                     }

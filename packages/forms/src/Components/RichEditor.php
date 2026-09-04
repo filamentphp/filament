@@ -146,8 +146,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     {
         parent::setUp();
 
-        $this->minHeight(null);
-
         $this->tools([
             RichEditorTool::make('bold')
                 ->label(__('filament-forms::components.rich_editor.tools.bold'))
