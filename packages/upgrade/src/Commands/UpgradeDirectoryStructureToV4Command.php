@@ -3,7 +3,6 @@
 namespace Filament\Upgrade\Commands;
 
 use Composer\InstalledVersions;
-use Exception;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -356,38 +355,38 @@ class UpgradeDirectoryStructureToV4Command extends Command
             return;
         }
 
-        try {
-            $process = Process::command([
-                PHP_BINARY,
-                $this->phpactorPath,
-                'class:move',
-                $sourcePath,
-                $destinationPath,
-            ]);
-            $process->timeout(60);
-            $processOutput = $process->run();
+        $process = Process::command([
+            PHP_BINARY,
+            $this->phpactorPath,
+            'class:move',
+            $sourcePath,
+            $destinationPath,
+            '--config-extra',
+            json_encode([
+                'composer.autoloader_path' => $this->getComposerVendorDirectory() . DIRECTORY_SEPARATOR . 'autoload.php',
+            ], JSON_THROW_ON_ERROR),
+        ]);
+        $process->timeout(60);
+        $processOutput = $process->run();
 
-            if ($processOutput->successful()) {
-                if ($this->currentResource && (! isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
-                    $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
-                    $this->movedFiles[$this->currentResource] = [];
-                } elseif (! $this->currentResource && (! isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
-                    $this->line('  <fg=yellow;options=bold>Other</>');
-                    $this->movedFiles['Other'] = [];
-                }
+        if (! $processOutput->successful()) {
+            throw new RuntimeException('Failed to move class: ' . $processOutput->errorOutput());
+        }
 
-                $this->line('    • ' . $this->formatPath($sourcePath) . ' → ' . $this->formatPath($destinationPath));
+        if ($this->currentResource && (! isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
+            $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
+            $this->movedFiles[$this->currentResource] = [];
+        } elseif (! $this->currentResource && (! isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
+            $this->line('  <fg=yellow;options=bold>Other</>');
+            $this->movedFiles['Other'] = [];
+        }
 
-                if ($this->currentResource) {
-                    $this->movedFiles[$this->currentResource][$sourcePath] = $destinationPath;
-                } else {
-                    $this->movedFiles['Other'][$sourcePath] = $destinationPath;
-                }
-            } else {
-                $this->components->error('Failed to move class: ' . $processOutput->errorOutput());
-            }
-        } catch (Exception $exception) {
-            $this->components->error('Exception occurred while moving class: ' . $exception->getMessage());
+        $this->line('    • ' . $this->formatPath($sourcePath) . ' → ' . $this->formatPath($destinationPath));
+
+        if ($this->currentResource) {
+            $this->movedFiles[$this->currentResource][$sourcePath] = $destinationPath;
+        } else {
+            $this->movedFiles['Other'][$sourcePath] = $destinationPath;
         }
     }
 }

@@ -105,7 +105,11 @@ foreach (explode(',', $directories) as $directory) {
         throw new RuntimeException('Unable to start Rector.');
     }
 
-    proc_close($rectorProcess);
+    $rectorExitCode = proc_close($rectorProcess);
+
+    if ($rectorExitCode !== 0) {
+        throw new RuntimeException("Rector failed while processing [{$directory}].");
+    }
 
     render(<<<HTML
         <p class="pt-2">
