@@ -22,6 +22,10 @@ trait HasExtraAlpineAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraAlpineAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraAlpineAttributes[] = $attributes;
         } else {
             $this->extraAlpineAttributes = [$attributes];

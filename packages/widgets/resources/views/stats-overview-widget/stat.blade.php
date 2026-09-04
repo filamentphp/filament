@@ -33,9 +33,15 @@
             </span>
         </div>
 
-        <div class="fi-wi-stats-overview-stat-value">
-            {{ $getValue() }}
-        </div>
+        @if (filled($value = $getValue()))
+            <div class="fi-wi-stats-overview-stat-value">
+                {{ $value }}
+            </div>
+        @else
+            <div class="fi-wi-stats-overview-stat-placeholder">
+                {{ $getPlaceholder() }}
+            </div>
+        @endif
 
         @if ($description = $getDescription())
             <div
