@@ -763,7 +763,7 @@ Action::make('viewAuthor')
     ->unsavedChangesAlert(false)
 ```
 
-<UtilityInjection set="actions" version="4.x">The `unsavedChangesAlert()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">The `unsavedChangesAlert()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, actions with a [disabled schema](#disabling-all-form-fields), such as `ViewAction`, do not trigger the alert, since their modals do not accept user input.
 
