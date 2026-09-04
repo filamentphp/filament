@@ -7,7 +7,6 @@ use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
-use Filament\Support\Facades\FilamentCsp;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -413,19 +412,5 @@ if (! function_exists('Filament\Support\get_color_css_variables')) {
         }
 
         return implode(';', $variables);
-    }
-}
-
-if (! function_exists('Filament\Support\csp_nonce')) {
-    function csp_nonce(): ?string
-    {
-        return FilamentCsp::getNonce();
-    }
-}
-
-if (! function_exists('Filament\Support\csp_nonce_html')) {
-    function csp_nonce_html(): HtmlString
-    {
-        return FilamentCsp::getNonceHtml();
     }
 }

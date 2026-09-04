@@ -20,7 +20,6 @@ use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
 use Filament\Support\Contracts\LoadingIndicator;
-use Filament\Support\Csp\CspManager;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
@@ -105,11 +104,6 @@ class SupportServiceProvider extends PackageServiceProvider
         $this->app->scoped(
             ViewManager::class,
             fn () => new ViewManager,
-        );
-
-        $this->app->scoped(
-            CspManager::class,
-            fn () => new CspManager,
         );
 
         $this->app->scoped(

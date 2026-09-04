@@ -418,14 +418,20 @@ This approach also works for TypeScript files or any other JavaScript that needs
 
 ## Content Security Policy nonces
 
-If your application sends a [Content Security Policy](security#content-security-policy-csp) header, Filament can add a `nonce` attribute to every `<script>` element it renders, including the ones registered through `FilamentAsset`:
+If your application sends a [Content Security Policy](security#content-security-policy-csp) header, Filament can add a `nonce` attribute to scripts rendered through `FilamentAsset`, including registered scripts and registered script data. Filament uses Laravel's `Vite` nonce, which is also used by Livewire:
 
 ```php
-use Filament\Support\Facades\FilamentCsp;
+use Illuminate\Support\Facades\Vite;
 
-FilamentCsp::useNonce(static fn (): string => csp_nonce());
+Vite::useCspNonce($nonce);
 ```
 
+You should call `Vite::useCspNonce()` for every request, before the response is rendered, using the same nonce that you add to the `Content-Security-Policy` header. You can usually do this in the middleware that creates the policy.
+
 <Aside variant="info">
-    Scripts registered with `Js::make()->html()`, where the HTML already contains a `<script>` element, are rendered exactly as you provide them. Filament does not modify that markup, so you should add the nonce yourself using `\Filament\Support\csp_nonce()`.
+    The `Vite` facade is only used to share the nonce between Laravel, Livewire, and Filament. Your application does not need to compile its assets with Vite or use the `@vite` Blade directive, so this also works in applications that use Laravel Mix.
+</Aside>
+
+<Aside variant="info">
+    Scripts registered with `Js::make()->html()`, where the HTML already contains a `<script>` element, are rendered exactly as you provide them. Filament does not modify that markup, so you should add the nonce yourself using `Vite::cspNonce()`.
 </Aside>
