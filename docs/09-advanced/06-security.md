@@ -332,11 +332,7 @@ class SetCspNonce
 ```
 
 <Aside variant="info">
-    The `Vite` facade is only used to share the nonce between Laravel, Livewire, and Filament. Your application does not need to compile its assets with Vite or use the `@vite` Blade directive, so this also works in applications that use Laravel Mix.
-</Aside>
-
-<Aside variant="info">
-    If your panel uses [SPA mode](../panel-configuration#spa-mode), use Livewire 4.2.2 or later. Earlier Livewire versions do not preserve the active document's nonce when scripts are processed during `wire:navigate` requests.
+    The `Vite` facade is only used to share the nonce between Laravel, Livewire, and Filament. Your application does not need to compile its assets with Vite or use the `@vite` Blade directive, so this also works in applications that use alternative frontend tooling.
 </Aside>
 
 ### Sending the policy header
