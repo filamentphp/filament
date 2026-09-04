@@ -392,6 +392,23 @@ class Actions extends Page
                     $action->getLivewire()->mountAction('childMountedDuringParentMount');
                 })
                 ->action(static fn () => null),
+            Action::make('unmountsDuringMount')
+                ->requiresConfirmation()
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->unmountAction();
+                })
+                ->action(static fn () => null),
+            Action::make('replacesDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert(false)
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->replaceMountedAction('replacementMountedDuringMount');
+                })
+                ->action(static fn () => null),
+            Action::make('replacementMountedDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert()
+                ->action(static fn () => null),
         ];
     }
 

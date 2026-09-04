@@ -275,6 +275,19 @@ describe('unsaved changes alerts', function (): void {
             ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false, strict: true)
             ->assertSet('mountedActions.1.hasUnsavedChangesAlert', true, strict: true);
     });
+
+    it('does not restore an action that unmounts itself during `mountUsing()`', function (): void {
+        livewire(Actions::class)
+            ->mountAction('unmountsDuringMount')
+            ->assertSet('mountedActions', [], strict: true);
+    });
+
+    it('does not overwrite the unsaved changes alert configuration of an action replaced during `mountUsing()`', function (): void {
+        livewire(Actions::class)
+            ->mountAction('replacesDuringMount')
+            ->assertSet('mountedActions.0.name', 'replacementMountedDuringMount', strict: true)
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', true, strict: true);
+    });
 });
 
 describe('arguments', function (): void {
