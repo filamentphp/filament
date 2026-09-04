@@ -868,9 +868,9 @@ describe('security', function (): void {
 
         $secret = $appAuthentication->getSecret($userToAuthenticate);
 
-        $this->travelTo(now()->addMinutes(2));
-        $futureCode = $appAuthentication->getCurrentCode($userToAuthenticate);
-        $this->travelBack();
+        $google2FA = app(Google2FA::class);
+
+        $futureCode = $google2FA->oathTotp($secret, $google2FA->getTimestamp() + 1);
 
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
