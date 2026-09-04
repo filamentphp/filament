@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.2",
+        "composer-runtime-api": "^2.1",
         "nunomaduro/termwind": "^2.0",
         "rector/rector": "^2.0"
     },
