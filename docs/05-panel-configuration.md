@@ -117,7 +117,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/configuration/content-width-full" alt="Panel with full content width" version="5.x" />
+<AutoScreenshot name="panels/configuration/content-width-full" alt="Panel with full content width" version="6.x" />
 
 If you'd like to set the max content width for pages of the type `SimplePage`, like login and registration pages, you may do so using the `simplePageMaxContentWidth()` method. The default is `Large`:
 
@@ -133,7 +133,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/configuration/simple-page-max-content-width" alt="Login page with small max content width" version="5.x" />
+<AutoScreenshot name="panels/configuration/simple-page-max-content-width" alt="Login page with small max content width" version="6.x" />
 
 ## Setting the default sub-navigation position
 
@@ -264,6 +264,8 @@ public function panel(Panel $panel): Panel
         ->unsavedChangesAlerts();
 }
 ```
+
+Action modals with a disabled schema, such as the read-only `ViewAction` modal, do not trigger the alert. You may also [disable the alert for another action that cannot contain unsaved changes](actions/modals#disabling-the-unsaved-changes-alert) using the `unsavedChangesAlert(false)` method.
 
 ## Enabling database transactions
 

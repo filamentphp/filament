@@ -40,6 +40,11 @@ trait CanBeRepeated
         return $this->cachedParentRepeaterItem ?: null;
     }
 
+    protected function flushCachedParentRepeaterItem(): void
+    {
+        $this->cachedParentRepeaterItem = null;
+    }
+
     public function getParentRepeaterItemIndex(): int
     {
         $item = $this->getParentRepeaterItem();

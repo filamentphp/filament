@@ -131,7 +131,7 @@ export default function markdownEditorFormComponent({
                 imageUploadFunction: uploadFileAttachmentUsing,
                 initialValue: this.state ?? '',
                 maxHeight,
-                minHeight,
+                minHeight: minHeight ?? '3rem',
                 placeholder,
                 previewImagesInEditor: true,
                 spellChecker: false,
@@ -289,7 +289,7 @@ export default function markdownEditorFormComponent({
             const isEditorVisible = this.isEditorVisible()
 
             if (isEditorVisible && !this.wasEditorVisible) {
-                this.editor?.codemirror?.refresh()
+                Alpine.raw(this.editor)?.codemirror?.refresh()
             }
 
             this.wasEditorVisible = isEditorVisible

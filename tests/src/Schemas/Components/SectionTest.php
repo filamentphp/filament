@@ -14,6 +14,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Livewire\Livewire as TestLivewire;
 use Filament\Tests\Fixtures\Models\Profile;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -94,16 +95,6 @@ it('can set `formBefore()`', function (): void {
     expect($section->isFormBefore())->toBeTrue();
 });
 
-it('returns `true` for `canConcealComponents()` when collapsible', function (): void {
-    $section = Section::make('Test');
-
-    expect($section->canConcealComponents())->toBeFalse();
-
-    $section->collapsible();
-
-    expect($section->canConcealComponents())->toBeTrue();
-});
-
 it('returns correct `getHeadingsCount()`', function (): void {
     $sectionWithHeading = Section::make('My Section');
 
@@ -112,6 +103,129 @@ it('returns correct `getHeadingsCount()`', function (): void {
     $sectionWithoutHeading = Section::make();
 
     expect($sectionWithoutHeading->getHeadingsCount())->toBe(0);
+});
+
+it('configures a supplied `Schema` as section content', function (): void {
+    $childSchema = Schema::make()
+        ->components([
+            TextInput::make('name'),
+        ])
+        ->extraAttributes([
+            'class' => 'custom-content',
+            'data-testid' => 'section-content',
+        ]);
+
+    $section = Section::make('Test')
+        ->schema($childSchema)
+        ->container(Schema::make(TestLivewire::make()));
+
+    $section->getChildSchema();
+    $childSchemaHtml = $childSchema->toEmbeddedHtml();
+
+    expect($section->getChildSchema())
+        ->toBe($childSchema)
+        ->and($childSchema->getExtraAttributes())
+        ->toHaveKey('data-testid', 'section-content')
+        ->and($childSchema->getExtraAttributes()['class'])
+        ->toContain('custom-content')
+        ->and($childSchemaHtml)
+        ->toContain('custom-content')
+        ->toContain('fi-section-content')
+        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
+        ->toBe(1);
+});
+
+it('does not evaluate schema `extraAttributes()` when configuring section content', function (): void {
+    $extraAttributesEvaluationCount = 0;
+    $childSchema = Schema::make()
+        ->components([
+            TextInput::make('name'),
+        ])
+        ->extraAttributes(static function () use (&$extraAttributesEvaluationCount): array {
+            $extraAttributesEvaluationCount++;
+
+            return ['class' => 'custom-content'];
+        });
+    $section = Section::make('Test')
+        ->schema($childSchema)
+        ->container(Schema::make(TestLivewire::make()));
+
+    $section->getChildSchema();
+
+    expect($extraAttributesEvaluationCount)->toBe(0);
+
+    $childSchemaHtml = $childSchema->toEmbeddedHtml();
+
+    expect($extraAttributesEvaluationCount)
+        ->toBe(1)
+        ->and($childSchemaHtml)
+        ->toContain('custom-content')
+        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
+        ->toBe(1);
+});
+
+it('does not duplicate content classes when a configured supplied `Schema` is cloned with `getClone()`', function (): void {
+    $container = Schema::make(TestLivewire::make());
+    $section = Section::make('Test')
+        ->schema(
+            Schema::make()
+                ->components([
+                    TextInput::make('name'),
+                ])
+                ->extraAttributes(['class' => 'custom-content']),
+        )
+        ->container($container);
+
+    $section->getChildSchema();
+
+    $clonedSection = $section
+        ->getClone()
+        ->container($container);
+    $clonedChildSchema = $clonedSection->getChildSchema();
+    $twiceClonedChildSchema = $clonedSection
+        ->getClone()
+        ->container($container)
+        ->getChildSchema();
+
+    expect(substr_count($clonedChildSchema->toEmbeddedHtml(), 'fi-section-content'))
+        ->toBe(1)
+        ->and(substr_count($twiceClonedChildSchema->toEmbeddedHtml(), 'fi-section-content'))
+        ->toBe(1);
+});
+
+it('renders section content classes on deferred loading placeholders', function (): void {
+    $extraAttributesEvaluationCount = 0;
+    $childSchema = Schema::make()
+        ->components([
+            TextInput::make('name'),
+        ])
+        ->extraAttributes(static function () use (&$extraAttributesEvaluationCount): array {
+            $extraAttributesEvaluationCount++;
+
+            return ['class' => 'custom-content'];
+        })
+        ->deferLoading();
+    $section = Section::make('Test')
+        ->key('details')
+        ->schema($childSchema)
+        ->container(
+            Schema::make(TestLivewire::make())
+                ->key('form'),
+        );
+
+    $section->getChildSchema();
+
+    expect($extraAttributesEvaluationCount)->toBe(0);
+
+    $childSchemaHtml = $childSchema->toEmbeddedHtml();
+
+    expect($extraAttributesEvaluationCount)
+        ->toBe(1)
+        ->and($childSchemaHtml)
+        ->toContain('fi-sc-loading')
+        ->toContain('custom-content')
+        ->and(substr_count($childSchemaHtml, 'fi-section-content'))
+        ->toBe(1);
 });
 
 it('can set `aside()` with a `Closure`', function (): void {

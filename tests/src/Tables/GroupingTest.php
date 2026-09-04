@@ -1,8 +1,10 @@
 <?php
 
 use Filament\Tables\Grouping\Group;
+use Filament\Tests\Fixtures\Livewire\DefaultGroupedPostsTable;
 use Filament\Tests\Fixtures\Livewire\GroupedCustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithGroupPersistedInSession;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithoutSummarizers;
 use Filament\Tests\Fixtures\Livewire\TicketMessagesTable;
 use Filament\Tests\Fixtures\Livewire\UsersTable;
@@ -18,6 +20,7 @@ use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -53,6 +56,43 @@ it('can group a table', function (): void {
                 ->and($table->getGrouping())
                 ->getLabel()->toBe('Dynamic label');
         });
+});
+
+it('can group records by a default group in descending order', function (): void {
+    Post::factory()->create(['title' => 'Apple Post']);
+    Post::factory()->create(['title' => 'Cherry Post']);
+    Post::factory()->create(['title' => 'Banana Post']);
+
+    $sortedPosts = Post::query()->orderByDesc('title')->orderBy('id')->get();
+
+    livewire(DefaultGroupedPostsTable::class)
+        ->assertSet('tableGrouping', null)
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
+
+    livewire(PostsTableWithGroupPersistedInSession::class)
+        ->assertSet('tableGrouping', 'title:desc')
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
+});
+
+it('can set a default group direction with `defaultGroup()`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $table = $livewire->getTable();
+
+    expect($table->defaultGroup('title', 'DESC')->getDefaultGroupDirection())->toBe('desc');
+});
+
+it('can set a `defaultGroup()` direction with a `Closure`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $table = $livewire->getTable();
+
+    expect($table->defaultGroup('title', static fn (): string => 'DESC')->getDefaultGroupDirection())->toBe('desc');
+});
+
+it('defaults the `defaultGroup()` direction to ascending', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $table = $livewire->getTable();
+
+    expect($table->defaultGroup('title')->getDefaultGroupDirection())->toBe('asc');
 });
 
 it('can group records by column', function (): void {
@@ -960,4 +1000,88 @@ it('can group records by `HasOneThrough` -> `BelongsTo` relationship that uses `
     livewire(UsersTable::class)
         ->set('tableGrouping', 'setting.languageWithTrashed.name')
         ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
+});
+
+it('resets pagination when `$tableGrouping` is updated', function (): void {
+    Post::factory()->count(20)->create();
+
+    livewire(PostsTable::class)
+        ->call('setPage', 2)
+        ->assertSet('paginators.page', 2)
+        ->set('tableGrouping', 'title')
+        ->assertSet('paginators.page', 1);
+});
+
+describe('session persistence', function (): void {
+    it('defaults `persistsGroupInSession()` to `false`', function (): void {
+        livewire(PostsTable::class)
+            ->tap(function (Testable $testable): void {
+                /** @var PostsTable $livewire */
+                $livewire = $testable->instance();
+
+                expect($livewire->getTable()->persistsGroupInSession())->toBeFalse();
+            });
+    });
+
+    it('can enable grouping persistence with `persistGroupInSession()`', function (): void {
+        livewire(PostsTableWithGroupPersistedInSession::class)
+            ->tap(function (Testable $testable): void {
+                /** @var PostsTableWithGroupPersistedInSession $livewire */
+                $livewire = $testable->instance();
+
+                expect($livewire->getTable()->persistsGroupInSession())->toBeTrue();
+            });
+    });
+
+    it('scopes `getTableGroupingSessionKey()` to the component class', function (): void {
+        /** @var PostsTableWithGroupPersistedInSession $livewire */
+        $livewire = livewire(PostsTableWithGroupPersistedInSession::class)->instance();
+
+        expect($livewire->getTableGroupingSessionKey())
+            ->toBe('tables.' . md5($livewire::class) . '_grouping');
+    });
+
+    it('can persist the grouping in the user\'s session', function (): void {
+        Post::factory()->count(10)->create();
+
+        livewire(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', 'title:desc')
+            ->set('tableGrouping', 'author.name:asc')
+            ->assertSet('tableGrouping', 'author.name:asc');
+
+        livewire(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', 'author.name:asc');
+    });
+
+    it('can clear the persisted grouping in the user\'s session', function (): void {
+        Post::factory()->count(10)->create();
+
+        livewire(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', 'title:desc')
+            ->set('tableGrouping', null)
+            ->assertSet('tableGrouping', null);
+
+        livewire(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', null);
+    });
+
+    it('does not override explicit `$tableGrouping` with the persisted grouping', function (): void {
+        livewire(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', 'title:desc');
+
+        Livewire::withQueryParams(['grouping' => 'author.name:asc'])
+            ->test(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', 'author.name:asc');
+    });
+
+    it('does not persist the grouping in the user\'s session by default', function (): void {
+        Post::factory()->count(10)->create();
+
+        livewire(PostsTable::class)
+            ->set('tableGrouping', 'title')
+            ->assertSet('tableGrouping', 'title');
+
+        livewire(PostsTable::class)
+            ->assertSet('tableGrouping', null);
+    });
 });

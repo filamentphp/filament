@@ -12,6 +12,10 @@ return [
                 'label' => 'Apply columns',
             ],
 
+            'reorder' => [
+                'label' => 'Column awmna thlak',
+            ],
+
             'reset' => [
                 'label' => 'Tihṭhatna',
             ],
@@ -24,6 +28,15 @@ return [
 
         'actions' => [
             'label' => 'Thiltihna|Thiltihnate',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Aw',
+                'false' => 'Aih',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +128,10 @@ return [
             'label' => 'Records awmna thlak',
         ],
 
+        'reorder_record' => [
+            'label' => 'Reorder item :key',
+        ],
+
         'filter' => [
             'label' => 'Thlit fîmna',
         ],
@@ -129,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Column manager',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Expand/collapse item :key',
         ],
 
     ],
@@ -150,12 +171,12 @@ return [
             ],
 
             'remove' => [
-                'label' => 'Thlit fîm hlihna',
+                'label' => 'Thlit fîm hlîhna',
             ],
 
             'remove_all' => [
-                'label' => 'Thlit fîm ho hlihna',
-                'tooltip' => 'Thlit fîm ho hlihna',
+                'label' => 'Thlit fîm ho hlîhna',
+                'tooltip' => 'Thlit fîm ho hlîhna',
             ],
 
             'reset' => [
@@ -219,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Loading...',
+
     'reorder_indicator' => 'A indawt dânin record dah kual rawh.',
+
+    'result_count' => '{0} A awm lo|{1} :count a awm|[2,*] :count an awm',
 
     'selection_indicator' => [
 

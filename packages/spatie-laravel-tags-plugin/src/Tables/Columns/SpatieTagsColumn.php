@@ -32,7 +32,7 @@ class SpatieTagsColumn extends TextColumn
             $state = parent::getState();
 
             if ($state && (! $state instanceof Collection) && (! is_array($state))) {
-                return $state;
+                return Arr::wrap($state);
             }
 
             $record = $this->getRecord();

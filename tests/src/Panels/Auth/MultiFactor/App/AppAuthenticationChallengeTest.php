@@ -6,9 +6,17 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Validated;
+use Illuminate\Cache\Repository;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use PragmaRX\Google2FAQRCode\Google2FA;
 
 use function Filament\Tests\livewire;
 
@@ -41,20 +49,26 @@ describe('authentication flow', function (): void {
     });
 
     it('will authenticate the user after a valid challenge code is used', function (): void {
+        Event::fake([Validated::class]);
+
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
             ->hasAppAuthentication()
             ->create();
 
-        livewire(Login::class)
+        $livewire = livewire(Login::class)
             ->fillForm([
                 'email' => $userToAuthenticate->email,
                 'password' => 'password',
             ])
             ->call('authenticate')
             ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
-            ->assertNoRedirect()
+            ->assertNoRedirect();
+
+        Event::assertNotDispatched(Validated::class);
+
+        $livewire
             ->fillForm([
                 $appAuthentication->getId() => [
                     'code' => $appAuthentication->getCurrentCode($userToAuthenticate),
@@ -65,6 +79,8 @@ describe('authentication flow', function (): void {
             ->assertRedirect(Filament::getUrl());
 
         $this->assertAuthenticatedAs($userToAuthenticate);
+
+        Event::assertDispatchedTimes(Validated::class, 1);
     });
 
     it('will make the recovery code field visible when the user requests it', function (): void {
@@ -123,6 +139,68 @@ describe('authentication flow', function (): void {
             ->assertRedirect(Filament::getUrl());
 
         $this->assertAuthenticatedAs($userToAuthenticate);
+    });
+
+    it('does not authenticate when the password changes during the multi-factor challenge', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+            ->create([
+                'password' => Hash::make('password', ['rounds' => 4]),
+            ]);
+
+        config()->set('hashing.bcrypt.rounds', 5);
+        Hash::forgetDrivers();
+
+        $livewire = livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate')
+            ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+            ->assertNoRedirect()
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+
+        $failedEvents = 0;
+        $passwordWasReset = false;
+        $userClass = $userToAuthenticate::class;
+
+        Event::listen(Failed::class, static function () use (&$failedEvents): void {
+            $failedEvents++;
+        });
+
+        Event::listen("eloquent.saved: {$userClass}", static function (User $savedUser) use (&$passwordWasReset, $userToAuthenticate): void {
+            if ($passwordWasReset || ($savedUser->getKey() !== $userToAuthenticate->getKey())) {
+                return;
+            }
+
+            $passwordWasReset = true;
+
+            $savedUser->newQuery()
+                ->whereKey($savedUser->getKey())
+                ->update(['password' => Hash::make('new-password')]);
+        });
+
+        $livewire
+            ->fillForm([
+                $appAuthentication->getId() => [
+                    'recoveryCode' => Arr::random($recoveryCodes),
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertHasFormErrors(['email'])
+            ->assertNoRedirect();
+
+        $this->assertGuest();
+
+        $freshUser = $userToAuthenticate->fresh();
+
+        expect(Hash::check('new-password', $freshUser->password))->toBeTrue()
+            ->and(Hash::check('password', $freshUser->password))->toBeFalse()
+            ->and($failedEvents)->toBe(1);
     });
 
     it('will authenticate the user with a one-time code after enabling the recovery code field', function (): void {
@@ -762,6 +840,25 @@ describe('security', function (): void {
         $this->assertGuest();
     });
 
+    it('will not allow a TOTP code from an earlier time window to be used after a newer code', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+
+        $google2FA = app(Google2FA::class);
+
+        $timestamp = $google2FA->getTimestamp();
+        $earlierCode = $google2FA->oathTotp($secret, $timestamp - 4);
+        $currentCode = $google2FA->oathTotp($secret, $timestamp);
+
+        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
+        expect($appAuthentication->verifyCode($earlierCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+    });
+
     it('will not allow a TOTP code from a future time window to be reused', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -778,4 +875,108 @@ describe('security', function (): void {
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
     });
+
+    it('can still verify TOTP codes when the cache store does not support locks', function (): void {
+        Cache::swap(new Repository(new NonLockingCacheStore));
+
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+
+        $google2FA = app(Google2FA::class);
+
+        $timestamp = $google2FA->getTimestamp();
+        $earlierCode = $google2FA->oathTotp($secret, $timestamp - 4);
+        $currentCode = $google2FA->oathTotp($secret, $timestamp);
+
+        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
+        expect($appAuthentication->verifyCode($currentCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+        expect($appAuthentication->verifyCode($earlierCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
+    });
 });
+
+/**
+ * A cache store that implements `Store` but not `LockProvider`, like `ApcStore`,
+ * `StorageStore`, `SessionStore` and many third-party cache drivers.
+ */
+class NonLockingCacheStore implements Store
+{
+    /** @var array<string, mixed> */
+    protected array $data = [];
+
+    public function get($key): mixed
+    {
+        return $this->data[$key] ?? null;
+    }
+
+    /**
+     * @param  array<string>  $keys
+     * @return array<string, mixed>
+     */
+    public function many(array $keys): array
+    {
+        return array_map(fn (string $key): mixed => $this->get($key), array_combine($keys, $keys));
+    }
+
+    public function put($key, $value, $seconds): bool
+    {
+        $this->data[$key] = $value;
+
+        return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     */
+    public function putMany(array $values, $seconds): bool
+    {
+        foreach ($values as $key => $value) {
+            $this->put($key, $value, $seconds);
+        }
+
+        return true;
+    }
+
+    public function increment($key, $value = 1): int
+    {
+        return $this->data[$key] = ((int) ($this->data[$key] ?? 0)) + $value;
+    }
+
+    public function decrement($key, $value = 1): int
+    {
+        return $this->increment($key, -$value);
+    }
+
+    public function forever($key, $value): bool
+    {
+        return $this->put($key, $value, 0);
+    }
+
+    public function forget($key): bool
+    {
+        unset($this->data[$key]);
+
+        return true;
+    }
+
+    public function flush(): bool
+    {
+        $this->data = [];
+
+        return true;
+    }
+
+    public function touch($key, $ttl): bool
+    {
+        return true;
+    }
+
+    public function getPrefix(): string
+    {
+        return '';
+    }
+}
