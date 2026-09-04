@@ -14,6 +14,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use function Filament\Support\is_path_within_vendor_directory;
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\text;
 
@@ -152,7 +153,7 @@ class MakeClusterCommand extends Command
         $namespaces = $this->panel->getClusterNamespaces();
 
         foreach ($directories as $index => $directory) {
-            if (str($directory)->startsWith(base_path('vendor'))) {
+            if (is_path_within_vendor_directory($directory, base_path())) {
                 unset($directories[$index]);
                 unset($namespaces[$index]);
             }

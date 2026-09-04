@@ -127,7 +127,9 @@ class InstallCommand extends Command
             $hasNotifications = true;
         }
 
+        $cssDirectory = resource_path('css');
         $packagesCssImports = collect([
+            'support',
             'actions',
             'forms',
             'infolists',
@@ -137,13 +139,27 @@ class InstallCommand extends Command
             'widgets',
         ])
             ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
-            ->implode('/resources/css/index.css\';' . PHP_EOL . '@import \'../../vendor/filament/');
+            ->map(function (string $package) use ($cssDirectory): string {
+                $packageCssPath = $this->getRelativePath(
+                    (string) InstalledVersions::getInstallPath("filament/{$package}") . '/resources/css/index.css',
+                    $cssDirectory,
+                );
+
+                return "@import '{$this->escapeCssString($packageCssPath)}';";
+            })
+            ->implode(PHP_EOL);
+
+        $paginationViewsPath = $this->escapeCssString(
+            $this->getRelativePath(
+                (string) InstalledVersions::getInstallPath('laravel/framework') . '/src/Illuminate/Pagination/resources/views',
+                $cssDirectory,
+            ),
+        );
 
         $css = $filesystem->get(resource_path('css/app.css'));
-        $css = (string) str($css)->replace(
-            '@import \'../../vendor/filament/support/resources/css/index.css\';',
-            '@import \'../../vendor/filament/support/resources/css/index.css\';' . PHP_EOL . "@import '../../vendor/filament/{$packagesCssImports}/resources/css/index.css';",
-        );
+        $css = (string) str($css)
+            ->replace('{{ filamentCssImports }}', $packagesCssImports)
+            ->replace('{{ laravelPaginationViewsPath }}', $paginationViewsPath);
         $filesystem->put(resource_path('css/app.css'), $css);
 
         $this->components->info('Scaffolding installed successfully.');
