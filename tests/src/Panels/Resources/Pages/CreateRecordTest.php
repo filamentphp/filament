@@ -5,17 +5,21 @@ use Filament\Forms\Components\Repeater;
 use Filament\Resources\Events\RecordCreated;
 use Filament\Resources\Events\RecordSaved;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingRepeaterPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingRepeaterWithDefaultPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePost;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePostWithTraitHooks;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\CreateTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 
 use function Filament\Tests\livewire;
@@ -409,6 +413,58 @@ it('re-authorizes create on Livewire updates after the initial mount', function 
     app()->bind(TicketPolicy::class . '::create', fn (): bool => true);
 });
 
+it('blocks duplicate creation attempts while `$isCreating` after a successful creation', function (): void {
+    $component = livewire(CreateTicket::class)
+        ->call('create')
+        ->assertRedirect();
+
+    expect(Ticket::count())->toBe(1);
+
+    $component->call('create');
+
+    expect(Ticket::count())->toBe(1);
+});
+
+it('can reset `$isCreating` from the client to release the duplicate creation guard when the page is restored from the browser history cache', function (): void {
+    $component = livewire(CreateTicket::class)
+        ->call('create')
+        ->assertRedirect();
+
+    expect(Ticket::count())->toBe(1);
+
+    $component
+        ->set('isCreating', false)
+        ->call('create')
+        ->assertRedirect();
+
+    expect(Ticket::count())->toBe(2);
+});
+
+it('can create a record again in the browser after navigating back to a create page restored from the history cache', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        Ticket::query()->delete();
+
+        $this->actingAs(User::factory()->create());
+
+        visit(TicketResource::getUrl('create', panel: 'spa'))
+            ->assertSee('Create Ticket')
+            ->click('.fi-sc-form button[type="submit"]')
+            ->waitForText('View Ticket')
+            ->assertPathIs('/spa/tickets/*')
+            ->back()
+            ->waitForText('Create Ticket')
+            ->assertPathIs('/spa/tickets/create')
+            ->wait(1)
+            ->click('.fi-sc-form button[type="submit"]')
+            ->waitForText('View Ticket')
+            ->assertPathIs('/spa/tickets/*');
+
+        expect(Ticket::count())->toBe(2);
+    });
+});
+
 it('re-authorizes viewAny on Livewire updates after the initial mount of a create page', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 
@@ -421,4 +477,26 @@ it('re-authorizes viewAny on Livewire updates after the initial mount of a creat
         ->assertStatus(403);
 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
+it('calls trait lifecycle hooks alongside `CreateRecord` hooks', function (): void {
+    $newData = Post::factory()->make();
+
+    $page = livewire(CreatePostWithTraitHooks::class)
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect($page->instance())
+        ->lifecycleHookInvocations->toBe([
+            'beforeCreateTracksLifecycleHooks',
+            'afterCreate',
+            'afterCreateTracksLifecycleHooks',
+        ]);
 });

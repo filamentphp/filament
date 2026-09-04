@@ -8,7 +8,8 @@
 
     &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
-        @apply hover:underline focus-visible:rounded-sm focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current;
+        /* `outline-solid` is load-bearing: the base `outline-none` above leaves `--tw-outline-style: none` on the element, which `outline-2` alone resolves to, so the focus outline never paints without it. */
+        @apply hover:underline focus-visible:rounded-sm focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current focus-visible:outline-solid;
     }
 
     &.fi-disabled:not(.fi-force-enabled),

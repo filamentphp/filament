@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Notifikácie',
 
+        'unread_label' => 'Neprečítaná notifikácia',
+
         'actions' => [
 
             'clear' => [

@@ -99,6 +99,13 @@ describe('searchable', function (): void {
 
         expect($column->isSearchable())->toBeTrue();
     });
+
+    it('is not searchable when the `searchable()` closure returns false', function (): void {
+        $column = TextColumn::make('title')
+            ->searchable(static fn (): bool => false);
+
+        expect($column->isSearchable())->toBeFalse();
+    });
 });
 
 describe('visibility', function (): void {
@@ -215,6 +222,14 @@ describe('rendering', function (): void {
     it('can render with `searchable()`', function (): void {
         Post::factory()->create();
         livewire(RenderColumnWithSearchable::class)->assertSuccessful();
+    });
+
+    it('can render with `searchable()` using a closure', function (): void {
+        $post = Post::factory()->create();
+
+        livewire(RenderColumnWithSearchableClosure::class)
+            ->searchTable($post->title)
+            ->assertCanSeeTableRecords([$post]);
     });
 
     it('can render with `toggleable()`', function (): void {
@@ -353,6 +368,25 @@ class RenderColumnWithSearchable extends Component implements HasActions, HasSch
     {
         return $table->query(Post::query())->columns([
             TextColumn::make('title')->searchable(),
+        ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class RenderColumnWithSearchableClosure extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table->query(Post::query())->columns([
+            TextColumn::make('title')->searchable(static fn (): bool => true),
         ]);
     }
 

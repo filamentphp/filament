@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Long-running preview services are supervised through `.amp/services.yaml`.

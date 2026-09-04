@@ -988,6 +988,35 @@ class ProductImporter extends Importer
 }
 ```
 
+### Defining lifecycle hooks in traits
+
+To define a lifecycle hook in a trait, suffix the hook name with the trait's name. This follows the `boot{TraitName}()` convention used by Eloquent and the `mount{TraitName}()` convention used by Livewire, allowing reusable traits to hook into an importer's lifecycle without colliding with hooks defined on the importer itself:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+trait LogsImports
+{
+    protected function afterSaveLogsImports(): void
+    {
+        // Runs after a record is saved to the database, in addition to the
+        // hook on the importer.
+    }
+}
+
+class ProductImporter extends Importer
+{
+    use LogsImports;
+
+    protected function afterSave(): void
+    {
+        // Both lifecycle hooks are called.
+    }
+}
+```
+
+The importer's own hook is called first, followed by each trait hook. Hooks from traits used by other traits are also called. Trait hooks are called automatically, so you should not also call them from the importer's own hook.
+
 Inside these hooks, you can access the current row's data using `$this->data`. You can also access the original row of data from the CSV, before it was [cast](#casting-state) or mapped, using `$this->originalData`.
 
 The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.

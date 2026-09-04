@@ -55,7 +55,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($panel->getId(), ['admin', 'slugs', 'app-authentication', 'email-authentication', 'required-multi-factor-authentication']);
+        return in_array($panel->getId(), ['admin', 'slugs', 'spa', 'app-authentication', 'email-authentication', 'required-multi-factor-authentication']);
     }
 
     public function posts(): HasMany
@@ -66,6 +66,16 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function publishedPost(): HasOne
     {
         return $this->hasOne(Post::class, 'author_id')->where('is_published', true);
+    }
+
+    public function latestPost(): HasOne
+    {
+        return $this->hasOne(Post::class, 'author_id')->latestOfMany();
+    }
+
+    public function publishedPosts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'author_id')->where('is_published', true);
     }
 
     protected static function newFactory()
@@ -91,6 +101,11 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
+    }
+
+    public function ownedTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)->wherePivot('role', 'owner');
     }
 
     public function profile(): HasOne

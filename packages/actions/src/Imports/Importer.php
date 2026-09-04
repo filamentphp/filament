@@ -10,6 +10,7 @@ use Filament\Actions\Imports\Downloaders\CsvDownloader;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
+use Filament\Support\Concerns\CanCallHooks;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Validator;
@@ -17,6 +18,8 @@ use Illuminate\Validation\ValidationException;
 
 abstract class Importer
 {
+    use CanCallHooks;
+
     // Security: Imports do not perform per-record authorization checks.
     // Each CSV row is processed by `resolveRecord()`, `fillRecord()`,
     // and `saveRecord()` without consulting Laravel policies. Add
@@ -431,15 +434,6 @@ abstract class Importer
     public function getOptions(): array
     {
         return $this->options;
-    }
-
-    protected function callHook(string $hook): void
-    {
-        if (! method_exists($this, $hook)) {
-            return;
-        }
-
-        $this->{$hook}();
     }
 
     public function getImport(): Import

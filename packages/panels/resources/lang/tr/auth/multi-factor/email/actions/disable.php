@@ -30,6 +30,10 @@ return [
                                 'title' => 'Size e-posta ile yeni bir kod gönderdik',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Çok fazla yeniden gönderme denemesi. Lütfen yeni bir kod istemeden önce bekleyin.',
+                            ],
+
                         ],
 
                     ],
@@ -39,6 +43,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Girdiğiniz kod geçersiz.',
+
+                    'rate_limited' => 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.',
 
                 ],
 
