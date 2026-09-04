@@ -16,7 +16,7 @@ class XlsxExportContent
         $directory = $export->getFileDirectory();
         $csvDelimiter = $export->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer): void {
+        $writeRowsFromFile = static function (string $file) use ($csvDelimiter, $disk, $writer): void {
             $csvReader = CsvReader::from($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = (new Statement)->process($csvReader);
