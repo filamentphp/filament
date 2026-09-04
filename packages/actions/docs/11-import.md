@@ -752,7 +752,7 @@ public static function getFailedRowsDownloader(): Downloader
 
 A downloader is an invokable class that accepts the `Import` model and returns a Symfony `Response`. This response may stream a download, return a file, or redirect the user to a temporary URL on a remote filesystem.
 
-If your custom downloader only changes how the generated content is delivered, you may use `CsvImportFailureContent` to write the failed rows to a League CSV `Writer`. Filament resolves this class from the container so that you can reuse the built-in content generation without duplicating it.
+If your custom downloader only changes how the generated content is delivered, you may use `CsvImportFailureContentGenerator` to write the failed rows to a League CSV `Writer`. Filament resolves this class from the container so that you can reuse the built-in content generation without duplicating it.
 
 ## Customizing the import job
 

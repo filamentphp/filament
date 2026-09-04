@@ -1,11 +1,11 @@
 <?php
 
-namespace Filament\Actions\Exports\Downloaders;
+namespace Filament\Actions\Exports\ContentGenerators;
 
 use Filament\Actions\Exports\Models\Export;
 use Generator;
 
-class CsvExportContent
+class CsvExportContentGenerator
 {
     /**
      * @return Generator<string>

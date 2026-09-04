@@ -435,7 +435,7 @@ A downloader is an invokable class that accepts the `Export` model and returns a
 
 Filament's built-in download route only resolves the `ExportFormat::Csv` and `ExportFormat::Xlsx` formats. If you use a custom `ExportFormatInterface` implementation, its `getDownloadNotificationAction()` method must link to a route that handles the custom format.
 
-If your custom downloader only changes how the generated content is delivered, you may use `CsvExportContent` to iterate over the generated CSV chunks, or `XlsxExportContent` to write the generated rows to an OpenSpout `Writer`. Filament resolves both classes from the container so that you can reuse the built-in content generation without duplicating it. You must open the `Writer` before passing it to `XlsxExportContent` and close it afterwards. `XlsxExportContent` mirrors Filament's on-demand XLSX download and does not apply the writer options, styles, custom row creation, or writer lifecycle hooks that are used when the queued XLSX file is generated.
+If your custom downloader only changes how the generated content is delivered, you may use `CsvExportContentGenerator` to iterate over the generated CSV chunks, or `XlsxExportContentGenerator` to write the generated rows to an OpenSpout `Writer`. Filament resolves both classes from the container so that you can reuse the built-in content generation without duplicating it. You must open the `Writer` before passing it to `XlsxExportContentGenerator` and close it afterwards. `XlsxExportContentGenerator` mirrors Filament's on-demand XLSX download and does not apply the writer options, styles, custom row creation, or writer lifecycle hooks that are used when the queued XLSX file is generated.
 
 ## Modifying the export query
 

@@ -2,6 +2,7 @@
 
 namespace Filament\Actions\Exports\Downloaders;
 
+use Filament\Actions\Exports\ContentGenerators\XlsxExportContentGenerator;
 use Filament\Actions\Exports\Downloaders\Contracts\Downloader;
 use Filament\Actions\Exports\Models\Export;
 use OpenSpout\Writer\XLSX\Writer;
@@ -37,7 +38,7 @@ class XlsxDownloader implements Downloader
         return response()->streamDownload(function () use ($export, $fileName, $writer): void {
             $writer->openToBrowser($fileName);
 
-            app(XlsxExportContent::class)($export, $writer);
+            app(XlsxExportContentGenerator::class)($export, $writer);
 
             $writer->close();
         }, $fileName, [

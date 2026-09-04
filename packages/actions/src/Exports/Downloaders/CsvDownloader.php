@@ -2,6 +2,7 @@
 
 namespace Filament\Actions\Exports\Downloaders;
 
+use Filament\Actions\Exports\ContentGenerators\CsvExportContentGenerator;
 use Filament\Actions\Exports\Downloaders\Contracts\Downloader;
 use Filament\Actions\Exports\Models\Export;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -18,7 +19,7 @@ class CsvDownloader implements Downloader
         }
 
         return response()->streamDownload(function () use ($export): void {
-            foreach (app(CsvExportContent::class)($export) as $chunk) {
+            foreach (app(CsvExportContentGenerator::class)($export) as $chunk) {
                 echo $chunk;
 
                 flush();

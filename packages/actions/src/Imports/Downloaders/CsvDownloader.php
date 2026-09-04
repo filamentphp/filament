@@ -2,6 +2,7 @@
 
 namespace Filament\Actions\Imports\Downloaders;
 
+use Filament\Actions\Imports\ContentGenerators\CsvImportFailureContentGenerator;
 use Filament\Actions\Imports\Downloaders\Contracts\Downloader;
 use Filament\Actions\Imports\Models\Import;
 use League\Csv\Writer;
@@ -14,7 +15,7 @@ class CsvDownloader implements Downloader
     {
         $csv = Writer::createFromFileObject(new SplTempFileObject);
 
-        app(CsvImportFailureContent::class)($import, $csv);
+        app(CsvImportFailureContentGenerator::class)($import, $csv);
 
         return response()->streamDownload(function () use ($csv): void {
             foreach ($csv->chunk(1000) as $offset => $chunk) {

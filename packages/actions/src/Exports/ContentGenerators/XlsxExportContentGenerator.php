@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Actions\Exports\Downloaders;
+namespace Filament\Actions\Exports\ContentGenerators;
 
 use Filament\Actions\Exports\Models\Export;
 use League\Csv\Reader as CsvReader;
@@ -8,7 +8,7 @@ use League\Csv\Statement;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\XLSX\Writer;
 
-class XlsxExportContent
+class XlsxExportContentGenerator
 {
     public function __invoke(Export $export, Writer $writer): void
     {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Filament\Actions\Imports\Downloaders;
+namespace Filament\Actions\Imports\ContentGenerators;
 
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
 use League\Csv\Bom;
 use League\Csv\Writer;
 
-class CsvImportFailureContent
+class CsvImportFailureContentGenerator
 {
     public function __invoke(Import $import, Writer $csv): void
     {
