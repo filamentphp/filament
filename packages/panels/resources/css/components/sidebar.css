@@ -189,7 +189,7 @@
     @apply relative flex items-center justify-center gap-x-3 rounded-lg p-2 outline-hidden transition duration-75;
 
     & > .fi-icon {
-        @apply text-gray-400 dark:text-gray-500;
+        @apply shrink-0 text-gray-400 dark:text-gray-500;
     }
 }
 

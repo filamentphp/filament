@@ -1,0 +1,1 @@
+<x-filament-panels::page />
