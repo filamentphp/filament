@@ -8,7 +8,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 The query builder allows you to define a complex set of conditions to filter the data in your table. It is able to handle unlimited nesting of conditions, which you can group together with "and" and "or" operations.
 
-<AutoScreenshot name="tables/filters/query-builder" alt="Query builder filter" version="5.x" />
+<AutoScreenshot name="tables/filters/query-builder" alt="Query builder filter" version="6.x" />
 
 To use it, you need to define a set of "constraints" that will be used to filter the data. Filament includes some built-in constraints, that follow common data types, but you can also define your own custom constraints.
 
@@ -68,53 +68,6 @@ public function table(Table $table): Table
         ], layout: FiltersLayout::AboveContent);
 }
 ```
-
-## Limiting the size of the rule tree
-
-The set of rules a user builds is stored in the Livewire component's state and submitted with each request. To protect against a request that contains an excessively large or deeply-nested set of rules consuming too much server memory or CPU, you can limit how many rules and how deeply nested they can be.
-
-By default, no limits are applied. You can set them using the `maxRules()` and `maxNestingDepth()` methods:
-
-```php
-use Filament\Tables\Filters\QueryBuilder;
-
-QueryBuilder::make()
-    ->maxRules(100)
-    ->maxNestingDepth(10)
-    ->constraints([
-        // ...
-    ])
-```
-
-Both methods also accept a function to compute the value dynamically:
-
-```php
-use Filament\Tables\Filters\QueryBuilder;
-
-QueryBuilder::make()
-    ->maxRules(fn (): int => auth()->user()->isAdmin() ? 200 : 50)
-    ->constraints([
-        // ...
-    ])
-```
-
-The `maxRules()` limit counts individual conditions only. "OR" groups are structural containers, so they do not count towards the limit themselves — nesting is bounded separately by `maxNestingDepth()`.
-
-When a limit is set, the UI enforces it: once the maximum number of rules is reached, the "add rule" and clone buttons are disabled with a tooltip explaining why, and the "OR" grouping option is hidden once the maximum nesting depth is reached. As a safeguard against a tampered request that bypasses the UI, a submitted rule tree that still exceeds either limit is safely ignored, applying no constraints instead of filtering the table.
-
-<Aside variant="tip">
-    Since these limits are the same for every query builder, you will usually want to apply them globally rather than repeating them on each filter. You can do this using `configureUsing()` in the `boot()` method of a service provider, so that every query builder in your app is bounded:
-
-    ```php
-    use Filament\Tables\Filters\QueryBuilder;
-
-    QueryBuilder::configureUsing(function (QueryBuilder $queryBuilder): void {
-        $queryBuilder
-            ->maxRules(100)
-            ->maxNestingDepth(10);
-    });
-    ```
-</Aside>
 
 ## Available constraints
 
@@ -380,6 +333,53 @@ Now, the following operators are also available:
 
 - Is filled - filters a column to not be empty
 - Is blank - filters a column to be empty
+
+## Limiting the size of the rule tree
+
+The set of rules a user builds is stored in the Livewire component's state and submitted with each request. To protect against a request that contains an excessively large or deeply-nested set of rules consuming too much server memory or CPU, you can limit how many rules and how deeply nested they can be.
+
+By default, no limits are applied. You can set them using the `maxRules()` and `maxNestingDepth()` methods:
+
+```php
+use Filament\Tables\Filters\QueryBuilder;
+
+QueryBuilder::make()
+    ->maxRules(100)
+    ->maxNestingDepth(10)
+    ->constraints([
+        // ...
+    ])
+```
+
+Both methods also accept a function to compute the value dynamically:
+
+```php
+use Filament\Tables\Filters\QueryBuilder;
+
+QueryBuilder::make()
+    ->maxRules(fn (): int => auth()->user()->isAdmin() ? 200 : 50)
+    ->constraints([
+        // ...
+    ])
+```
+
+The `maxRules()` limit counts individual conditions only. "OR" groups are structural containers, so they do not count towards the limit themselves — nesting is bounded separately by `maxNestingDepth()`.
+
+When a limit is set, the UI enforces it: once the maximum number of rules is reached, the "add rule" and clone buttons are disabled with a tooltip explaining why, and the "OR" grouping option is hidden once the maximum nesting depth is reached. As a safeguard against a tampered request that bypasses the UI, a submitted rule tree that still exceeds either limit is safely ignored, applying no constraints instead of filtering the table.
+
+<Aside variant="tip">
+    Since these limits are the same for every query builder, you will usually want to apply them globally rather than repeating them on each filter. You can do this using `configureUsing()` in the `boot()` method of a service provider, so that every query builder in your app is bounded:
+
+    ```php
+    use Filament\Tables\Filters\QueryBuilder;
+
+    QueryBuilder::configureUsing(function (QueryBuilder $queryBuilder): void {
+        $queryBuilder
+            ->maxRules(100)
+            ->maxNestingDepth(10);
+    });
+    ```
+</Aside>
 
 ## Scoping relationships
 

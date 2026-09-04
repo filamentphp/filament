@@ -1,6 +1,12 @@
 .fi-in-text {
     @apply w-full;
 
+    &.fi-numeric {
+        /* Numeric and money entries use tabular figures, so digits line up
+           down a column of entries. */
+        @apply tabular-nums;
+    }
+
     &.fi-in-text-affixed {
         @apply flex gap-3;
     }

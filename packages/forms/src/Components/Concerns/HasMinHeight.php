@@ -6,7 +6,7 @@ use Closure;
 
 trait HasMinHeight
 {
-    protected string | Closure | null $minHeight = '11.25rem';
+    protected string | Closure | null $minHeight = '10rem';
 
     public function minHeight(string | Closure | null $height): static
     {

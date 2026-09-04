@@ -91,6 +91,10 @@ trait HasRecordUrl
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraRecordLinkAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraRecordLinkAttributes[] = $attributes;
         } else {
             $this->extraRecordLinkAttributes = [$attributes];

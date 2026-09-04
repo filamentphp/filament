@@ -1,4 +1,8 @@
-@if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
+@php
+    use Filament\Actions\Contracts\HasActions;
+@endphp
+
+@if ($this instanceof HasActions && (! $this->hasActionsModalRendered))
     <div
         wire:partial="action-modals"
         x-data="filamentActionModals({

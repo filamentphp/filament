@@ -41,81 +41,183 @@ const findClosestLivewireComponent = (el) => {
     return closestRoot.__livewire
 }
 
+let isRetryingConcealedValidation = false
+
+// `invalid` events do not bubble, so they are only observable at the document
+// level in the capture phase.
+document.addEventListener(
+    'invalid',
+    (event) => {
+        const control = event.target
+
+        // Only controls that belong to a Filament field are handled, so that
+        // other forms on the page keep their own validation behavior.
+        if (!control.closest('[data-field-wrapper]')) {
+            return
+        }
+
+        // Visible controls use the default native validation UI.
+        if (
+            control.offsetParent !== null &&
+            getComputedStyle(control).visibility !== 'hidden'
+        ) {
+            return
+        }
+
+        // The browser cannot focus a concealed control or anchor a validation
+        // bubble to it, so suppress the native UI for it.
+        event.preventDefault()
+
+        // Only attempt one reveal per validation burst, so a control that
+        // stays concealed cannot cause an infinite retry loop.
+        if (isRetryingConcealedValidation) {
+            return
+        }
+
+        isRetryingConcealedValidation = true
+
+        // Reveal the concealing containers, using the same `expand` event
+        // contract as `handleFormValidationError()` below.
+        let elementToExpand = control
+
+        while (elementToExpand) {
+            elementToExpand.dispatchEvent(new CustomEvent('expand'))
+
+            elementToExpand = elementToExpand.parentNode
+        }
+
+        // Re-run native validation once Alpine has applied the reveal, so the
+        // browser can focus the control and show its validation bubble.
+        requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+                control.form?.reportValidity()
+
+                setTimeout(() => (isRetryingConcealedValidation = false), 100)
+            }),
+        )
+    },
+    true,
+)
+
 document.addEventListener('alpine:init', () => {
-    window.Alpine.data('filamentSchema', ({ livewireId, schemaKey }) => ({
-        handleFormValidationError(event) {
-            if (event.detail.livewireId !== livewireId) {
-                return
-            }
+    window.Alpine.data(
+        'filamentSchema',
+        ({ livewireId, schemaKey, isLoadingDeferred = false }) => ({
+            intersectionObserver: null,
+            isLoadingDeferredSchema: false,
 
-            this.$nextTick(() => {
-                let error = this.$el.querySelector('[data-validation-error]')
-
-                if (!error) {
+            init() {
+                if (!isLoadingDeferred) {
                     return
                 }
 
-                let elementToExpand = error
+                this.intersectionObserver = new IntersectionObserver(
+                    async (entries) => {
+                        if (
+                            !entries[0]?.isIntersecting ||
+                            this.isLoadingDeferredSchema
+                        ) {
+                            return
+                        }
 
-                while (elementToExpand) {
-                    elementToExpand.dispatchEvent(new CustomEvent('expand'))
+                        this.isLoadingDeferredSchema = true
 
-                    elementToExpand = elementToExpand.parentNode
-                }
-
-                setTimeout(
-                    () =>
-                        error.closest('[data-field-wrapper]').scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                            inline: 'start',
-                        }),
-                    200,
+                        try {
+                            await this.$wire.loadDeferredSchema(schemaKey)
+                            this.intersectionObserver?.disconnect()
+                        } catch {
+                            // Keep observing so leaving and re-entering the viewport retries the request.
+                        } finally {
+                            this.isLoadingDeferredSchema = false
+                        }
+                    },
                 )
-            })
-        },
 
-        handleClientSideStateReset(event) {
-            if (
-                event.detail.livewireId !== livewireId ||
-                event.detail.schemaKey !== schemaKey
-            ) {
-                return
-            }
+                this.intersectionObserver.observe(this.$el)
+            },
 
-            this.$nextTick(() => {
-                const fields = this.$el.querySelectorAll('[autofocus]')
+            destroy() {
+                this.intersectionObserver?.disconnect()
+            },
 
-                for (const field of fields) {
-                    // Skip fields hidden by an ancestor (e.g. an inactive
-                    // wizard step or tab) — the wizard/tab Alpine scope owns
-                    // its own `$watch` that refocuses once the active step
-                    // or tab is restored.
-                    if (field.offsetParent === null) {
-                        continue
-                    }
-
-                    field.focus()
-
-                    if (document.activeElement === field) {
-                        break
-                    }
+            handleFormValidationError(event) {
+                if (event.detail.livewireId !== livewireId) {
+                    return
                 }
-            })
-        },
 
-        isStateChanged(state, old) {
-            if (state === undefined) {
-                return false
-            }
+                this.$nextTick(() => {
+                    let error = this.$el.querySelector(
+                        '[data-validation-error]',
+                    )
 
-            try {
-                return JSON.stringify(state) !== JSON.stringify(old)
-            } catch {
-                return state !== old
-            }
-        },
-    }))
+                    if (!error) {
+                        return
+                    }
+
+                    let elementToExpand = error
+
+                    while (elementToExpand) {
+                        elementToExpand.dispatchEvent(new CustomEvent('expand'))
+
+                        elementToExpand = elementToExpand.parentNode
+                    }
+
+                    setTimeout(
+                        () =>
+                            error
+                                .closest('[data-field-wrapper]')
+                                .scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start',
+                                    inline: 'start',
+                                }),
+                        200,
+                    )
+                })
+            },
+
+            handleClientSideStateReset(event) {
+                if (
+                    event.detail.livewireId !== livewireId ||
+                    event.detail.schemaKey !== schemaKey
+                ) {
+                    return
+                }
+
+                this.$nextTick(() => {
+                    const fields = this.$el.querySelectorAll('[autofocus]')
+
+                    for (const field of fields) {
+                        // Skip fields hidden by an ancestor (e.g. an inactive
+                        // wizard step or tab) — the wizard/tab Alpine scope owns
+                        // its own `$watch` that refocuses once the active step
+                        // or tab is restored.
+                        if (field.offsetParent === null) {
+                            continue
+                        }
+
+                        field.focus()
+
+                        if (document.activeElement === field) {
+                            break
+                        }
+                    }
+                })
+            },
+
+            isStateChanged(state, old) {
+                if (state === undefined) {
+                    return false
+                }
+
+                try {
+                    return JSON.stringify(state) !== JSON.stringify(old)
+                } catch {
+                    return state !== old
+                }
+            },
+        }),
+    )
 
     window.Alpine.data(
         'filamentSchemaComponent',

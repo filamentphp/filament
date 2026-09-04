@@ -118,7 +118,7 @@ $schema
     ])
 ```
 
-<AutoScreenshot name="schemas/overview/example" alt="Example schema" version="5.x" />
+<AutoScreenshot name="schemas/overview/example" alt="Example schema" version="6.x" />
 
 [Grid](layouts#grid-component) is a layout component that renders multiple components together in a responsive grid. The number of columns in the grid is specified in the `make()` method. The `schema()` method is used to nest components within the grid.
 
@@ -250,6 +250,53 @@ function (Request $request, Set $set) {
     // ...
 }
 ```
+
+## Deferring the loading of a child schema
+
+By default, a schema's components are rendered when the page loads. If a child schema is expensive to render, you can defer its loading until it enters the viewport using the `deferLoading()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+Section::make('Customer details')
+    ->key('customerDetails')
+    ->schema(
+        Schema::make()
+            ->components([
+                TextInput::make('name'),
+                TextInput::make('email')
+                    ->email(),
+            ])
+            ->deferLoading(),
+    )
+```
+
+The deferred schema initially renders a loading indicator. When the loading indicator enters the viewport, only that schema is rendered in a new request. If the schema contains a validation error before it has loaded, it is loaded automatically so the validation error can be revealed.
+
+If a deferred schema is inside a concealed component, such as a collapsed section or an inactive tab, it will not load until its parent is revealed and it enters the viewport. Once a schema has loaded, it remains loaded for the lifetime of the Livewire component.
+
+Every deferred schema needs a unique key. In this example, the child schema inherits the `customerDetails` key from the section. You can instead call `key()` on the child schema itself. If multiple child schemas of the same component are deferred, such as a section's content and footer schemas, you must call `key()` on each additional schema so that they do not inherit the same key. If you defer the schema for a repeater item or builder block, each item schema automatically receives a unique key from its state path:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+Repeater::make('members')
+    ->schema(
+        Schema::make()
+            ->components([
+                TextInput::make('name'),
+                TextInput::make('email')
+                    ->email(),
+            ])
+            ->deferLoading(),
+    )
+```
+
+You may also pass a boolean or function to `deferLoading()` to control it conditionally.
 
 ## Global settings
 

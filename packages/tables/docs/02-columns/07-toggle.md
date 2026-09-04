@@ -13,7 +13,7 @@ use Filament\Tables\Columns\ToggleColumn;
 ToggleColumn::make('is_admin')
 ```
 
-<AutoScreenshot name="tables/columns/toggle/simple" alt="Toggle column" version="5.x" />
+<AutoScreenshot name="tables/columns/toggle/simple" alt="Toggle column" version="6.x" />
 
 ## Lifecycle hooks
 

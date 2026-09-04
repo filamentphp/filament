@@ -3,7 +3,7 @@ title: Viewing records
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-<AutoScreenshot name="panels/resources/viewing" alt="Resource view page" version="5.x" />
+<AutoScreenshot name="panels/resources/viewing" alt="Resource view page" version="6.x" />
 
 ## Creating a resource with a View page
 
@@ -119,6 +119,35 @@ class ViewUser extends ViewRecord
     }
 }
 ```
+
+### Defining lifecycle hooks in traits
+
+To define a lifecycle hook in a trait, suffix the hook name with the trait's name. This follows the `boot{TraitName}()` convention used by Eloquent and the `mount{TraitName}()` convention used by Livewire, allowing reusable traits to hook into the page lifecycle without colliding with hooks defined on the page itself:
+
+```php
+use Filament\Resources\Pages\ViewRecord;
+
+trait LoadsAuditData
+{
+    protected function afterFillLoadsAuditData(): void
+    {
+        // Runs after the form fields are populated from the database, in
+        // addition to the hook on the page.
+    }
+}
+
+class ViewUser extends ViewRecord
+{
+    use LoadsAuditData;
+
+    protected function afterFill(): void
+    {
+        // Both lifecycle hooks are called.
+    }
+}
+```
+
+The page's own hook is called first, followed by each trait hook. Hooks from traits used by other traits are also called. Trait hooks are called automatically, so you should not also call them from the page's own hook.
 
 ## Authorization
 

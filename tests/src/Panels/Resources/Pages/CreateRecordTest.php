@@ -12,6 +12,7 @@ use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPos
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingRepeaterPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingRepeaterWithDefaultPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePost;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePostWithTraitHooks;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\CreateTicket;
@@ -476,4 +477,26 @@ it('re-authorizes viewAny on Livewire updates after the initial mount of a creat
         ->assertStatus(403);
 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
+});
+
+it('calls trait lifecycle hooks alongside `CreateRecord` hooks', function (): void {
+    $newData = Post::factory()->make();
+
+    $page = livewire(CreatePostWithTraitHooks::class)
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect($page->instance())
+        ->lifecycleHookInvocations->toBe([
+            'beforeCreateTracksLifecycleHooks',
+            'afterCreate',
+            'afterCreateTracksLifecycleHooks',
+        ]);
 });

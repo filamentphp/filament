@@ -15,7 +15,28 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="6.x" />
+
+## Configuring Livewire's maximum nesting depth
+
+The rich editor synchronizes its TipTap document with Livewire as nested data. Livewire limits nested property paths to 10 levels by default, which may not be enough for structures such as lists and tables. If you encounter a `Livewire\Exceptions\MaxNestingDepthExceededException` and your application does not already have a `config/livewire.php` file, publish Livewire's configuration file:
+
+```bash
+php artisan livewire:publish --config
+```
+
+The command overwrites an existing `config/livewire.php` file, so skip it if you have already published the configuration.
+
+Then, increase the existing `max_nesting_depth` setting in `config/livewire.php`. For example, a depth of 32 allows room for deeply nested rich content:
+
+```php
+'payload' => [
+    // ...
+    'max_nesting_depth' => 32,
+],
+```
+
+Only change the `max_nesting_depth` value in the existing `payload` array, so that you preserve Livewire's other version-specific payload settings.
 
 ## Storing content as JSON
 
@@ -71,7 +92,7 @@ RichEditor::make('content')
 
 Each nested array in the main array represents a group of buttons in the toolbar.
 
-<AutoScreenshot name="forms/fields/rich-editor/custom-toolbar" alt="Rich editor with customized toolbar buttons" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/custom-toolbar" alt="Rich editor with customized toolbar buttons" version="6.x" />
 
 Additional tools available in the toolbar include:
 
@@ -104,7 +125,7 @@ Additional tools available in the toolbar include:
 - `tableToggleHeaderCell` - Toggles the header cell of the table.
 - `tableDelete` - Deletes the table.
 
-<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing floating toolbars
 
@@ -135,7 +156,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/floating-toolbar" alt="Rich editor with floating toolbar below selected text" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/floating-toolbar" alt="Rich editor with floating toolbar below selected text" version="6.x" />
 
 ### Grouping toolbar buttons into dropdowns
 
@@ -173,7 +194,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/toolbar-button-group-open" alt="Rich editor with an open toolbar button group dropdown" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/toolbar-button-group-open" alt="Rich editor with an open toolbar button group dropdown" version="6.x" />
 
 ### Using textual dropdown toolbar buttons
 
@@ -193,9 +214,25 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/textual-toolbar-button-group-open" alt="Rich editor with an open textual toolbar button group dropdown" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/textual-toolbar-button-group-open" alt="Rich editor with an open textual toolbar button group dropdown" version="6.x" />
 
 In this example, the `Paragraph` dropdown items display their icon alongside a text label (e.g., "Paragraph", "Heading 1"). The `Alignment` dropdown remains icon-only.
+
+## Setting the height
+
+You may control the editor's height by defining the `minHeight()` and `maxHeight()` methods, which accept any CSS length value:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->minHeight('12rem')
+    ->maxHeight('24rem')
+```
+
+The editor has a minimum height of `10rem` by default. Once the content exceeds `maxHeight()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minHeight()` sets a starting height while still allowing the editor to grow, and `maxHeight()` caps how tall it may become. Pass `null` to `minHeight()` to use the editor's intrinsic `3rem` minimum height, or to `maxHeight()` to remove the cap. These constraints also apply when the editor is disabled.
+
+<UtilityInjection set="formFields" version="6.x">As well as allowing static values, the `minHeight()` and `maxHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Customizing text colors
 
@@ -214,7 +251,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/text-colors" alt="Rich editor text color picker modal" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/text-colors" alt="Rich editor text color picker modal" version="6.x" />
 
 If you would like to define different colors for light and dark mode, you can use the a `TextColor` object to define the color:
 
@@ -378,7 +415,7 @@ RichEditor::make('content')
     ->fileAttachmentsVisibility('private')
 ```
 
-<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="6.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) for more information.
@@ -449,7 +486,7 @@ RichEditor::make('content')
     )
 ```
 
-<UtilityInjection set="formFields" version="5.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="6.x" extras="File;;string;;$file;;The submitted `data-id` value being authorized.">You can inject various utilities into the function passed to `allowFilePathUsing` as parameters.</UtilityInjection>
 
 The validation error message can be customized via [`validationMessages()`](validation#customizing-validation-messages) using the `tampered` key:
 
@@ -495,7 +532,7 @@ RichEditor::make('content')
 
 When enabled, users can resize images by clicking on them and dragging the resize handles. The aspect ratio is always preserved when resizing.
 
-<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `resizableImages()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="6.x">As well as allowing a static value, the `resizableImages()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Using custom blocks
 
@@ -511,7 +548,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/custom-blocks" alt="Rich editor with custom blocks panel open" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/custom-blocks" alt="Rich editor with custom blocks panel open" version="6.x" />
 
 To create a custom block, you can use the following command:
 
@@ -684,7 +721,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="6.x" />
 
 Groups are displayed in the order they are defined in the array, with sticky headings in the side panel.
 
@@ -768,7 +805,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/merge-tags" alt="Rich editor with merge tags panel" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/merge-tags" alt="Rich editor with merge tags panel" version="6.x" />
 
 Merge tags are surrounded by double curly braces, like `{{ name }}`. When the content is rendered, these tags will be replaced with the corresponding values.
 
@@ -871,7 +908,7 @@ RichEditor::make('content')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/mentions" alt="Rich editor with mention suggestions" version="5.x" />
+<AutoScreenshot name="forms/fields/rich-editor/mentions" alt="Rich editor with mention suggestions" version="6.x" />
 
 Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
 
