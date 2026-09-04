@@ -6,6 +6,9 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\View\FileViewFinder;
 
+use function Filament\Support\get_composer_vendor_directory;
+use function Filament\Support\is_path_within_directory;
+use function Filament\Support\is_path_within_vendor_directory;
 use function Laravel\Prompts\select;
 
 trait CanAskForViewLocation
@@ -24,9 +27,19 @@ trait CanAskForViewLocation
 
         /** @var array<string> $viewPaths */
         $viewPaths = config('view.paths') ?? [];
+        $defaultViewPath = Arr::first($viewPaths);
+        $publishedVendorViewPath = resource_path('views/vendor');
 
-        if (str(Arr::first($viewPaths))->startsWith(base_path())) {
-            $paths[''] = Arr::first($viewPaths);
+        if (
+            ($defaultViewPath !== null) &&
+            is_path_within_directory($defaultViewPath, base_path()) &&
+            (! is_path_within_directory($defaultViewPath, get_composer_vendor_directory())) &&
+            (
+                (! is_path_within_vendor_directory($defaultViewPath, base_path())) ||
+                is_path_within_directory($defaultViewPath, $publishedVendorViewPath)
+            )
+        ) {
+            $paths[''] = $defaultViewPath;
         }
 
         /** @var FileViewFinder $viewFinder */
@@ -34,11 +47,15 @@ trait CanAskForViewLocation
 
         foreach ($viewFinder->getHints() as $namespace => $hintPaths) {
             foreach ($hintPaths as $path) {
-                if (! str($path)->startsWith(base_path())) {
+                if (! is_path_within_directory($path, base_path())) {
                     continue;
                 }
 
-                if (str($path)->startsWith(base_path('vendor'))) {
+                if (is_path_within_directory($path, get_composer_vendor_directory())) {
+                    continue;
+                }
+
+                if (is_path_within_vendor_directory($path, base_path()) && (! is_path_within_directory($path, $publishedVendorViewPath))) {
                     continue;
                 }
 

@@ -13,7 +13,7 @@ use Filament\Tables\Columns\CheckboxColumn;
 CheckboxColumn::make('is_admin')
 ```
 
-<AutoScreenshot name="tables/columns/checkbox/simple" alt="Checkbox column" version="5.x" />
+<AutoScreenshot name="tables/columns/checkbox/simple" alt="Checkbox column" version="6.x" />
 
 ## Lifecycle hooks
 

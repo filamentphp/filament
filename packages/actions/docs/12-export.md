@@ -36,7 +36,7 @@ ExportAction::make()
     ->exporter(ProductExporter::class)
 ```
 
-<AutoScreenshot name="actions/export-action/modal" alt="Export action modal" version="5.x" />
+<AutoScreenshot name="actions/export-action/modal" alt="Export action modal" version="6.x" />
 
 If you want to add this action to the header of a table, you may do so like this:
 
@@ -219,7 +219,7 @@ ExportColumn::make('amount_including_vat')
     })
 ```
 
-<UtilityInjection set="exportColumns" version="5.x">As well as `$record`, the `state()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="6.x">As well as `$record`, the `state()` function can inject various utilities as parameters.</UtilityInjection>
 
 ### Formatting the value of an export column
 
@@ -232,7 +232,7 @@ ExportColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
-<UtilityInjection set="exportColumns" version="5.x" extras="State;;mixed;;$state;;The state to format.">As well as `$state`, the `formatStateUsing()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="6.x" extras="State;;mixed;;$state;;The state to format.">As well as `$state`, the `formatStateUsing()` function can inject various utilities as parameters.</UtilityInjection>
 
 If there are [multiple values](#exporting-multiple-values-in-a-cell) in the column, the function will be called for each value.
 
@@ -247,7 +247,7 @@ ExportColumn::make('description')
     ->limit(50)
 ```
 
-<UtilityInjection set="exportColumns" version="5.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="6.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Limiting word count
 
@@ -260,7 +260,7 @@ ExportColumn::make('description')
     ->words(10)
 ```
 
-<UtilityInjection set="exportColumns" version="5.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="6.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Adding a prefix or suffix
 
@@ -274,7 +274,7 @@ ExportColumn::make('domain')
     ->suffix('.com')
 ```
 
-<UtilityInjection set="exportColumns" version="5.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="6.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Exporting multiple values in a cell
 
@@ -409,6 +409,33 @@ public function getFormats(): array
     ];
 }
 ```
+
+### Customizing how export files are downloaded
+
+By default, each export format uses its own downloader to return a streamed response. You may customize the downloader for an exporter by overriding the `getDownloader()` method:
+
+```php
+use App\Filament\Exports\Downloaders\CustomCsvDownloader;
+use App\Filament\Exports\Downloaders\CustomXlsxDownloader;
+use Filament\Actions\Exports\Downloaders\Contracts\Downloader;
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
+use Filament\Actions\Exports\Enums\ExportFormat;
+
+public static function getDownloader(ExportFormatInterface $format): Downloader
+{
+    return match ($format) {
+        ExportFormat::Csv => app(CustomCsvDownloader::class),
+        ExportFormat::Xlsx => app(CustomXlsxDownloader::class),
+        default => $format->getDownloader(),
+    };
+}
+```
+
+A downloader is an invokable class that accepts the `Export` model and returns a Symfony `Response`. This response may stream a download, return a file, or redirect the user to a temporary URL on a remote filesystem.
+
+Filament's built-in download route only resolves the `ExportFormat::Csv` and `ExportFormat::Xlsx` formats. If you use a custom `ExportFormatInterface` implementation, its `getDownloadNotificationAction()` method must link to a route that handles the custom format.
+
+If your custom downloader only changes how the generated content is delivered, you may use `CsvExportContentGenerator` to iterate over the generated CSV chunks, or `XlsxExportContentGenerator` to write the generated rows to an OpenSpout `Writer`. Filament resolves both classes from the container so that you can reuse the built-in content generation without duplicating it. You must open the `Writer` before passing it to `XlsxExportContentGenerator` and close it afterwards. `XlsxExportContentGenerator` mirrors Filament's on-demand XLSX download and does not apply the writer options, styles, custom row creation, or writer lifecycle hooks that are used when the queued XLSX file is generated.
 
 ## Modifying the export query
 
@@ -546,7 +573,7 @@ ExportAction::make()
     ])
 ```
 
-<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="6.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Now, you can access the data from these options inside the exporter class, by injecting the `$options` argument into any closure function. For example, you might want to use it inside `formatStateUsing()` to [format a column's value](#formatting-the-value-of-an-export-column):
 
@@ -633,7 +660,7 @@ ExportAction::make()
     ->chunkSize(250)
 ```
 
-<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="6.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
@@ -650,7 +677,7 @@ public static function getCsvDelimiter(): string
 }
 ```
 
-<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="6.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can only specify a single character, otherwise an exception will be thrown.
 

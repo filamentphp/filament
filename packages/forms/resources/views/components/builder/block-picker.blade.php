@@ -1,9 +1,3 @@
-@php
-    use Filament\Support\Enums\Alignment;
-    use Filament\Support\Enums\GridDirection;
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-@endphp
-
 @props([
     'action',
     'actionAlignment' => null,
@@ -14,6 +8,13 @@
     'trigger',
     'width' => null,
 ])
+
+@php
+    use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\GridDirection;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Illuminate\Support\Js;
+@endphp
 
 <x-filament::dropdown
     :placement="
@@ -52,7 +53,7 @@
                         $wireClickActionArguments['afterItem'] = $afterItem;
                     }
 
-                    $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
+                    $wireClickActionArguments = Js::from($wireClickActionArguments);
 
                     $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
                 @endphp

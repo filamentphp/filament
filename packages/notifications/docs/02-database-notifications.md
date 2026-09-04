@@ -4,7 +4,7 @@ title: Database notifications
 import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-<AutoScreenshot name="notifications/database" alt="Database notifications" version="5.x" />
+<AutoScreenshot name="notifications/database" alt="Database notifications" version="6.x" />
 
 ## Setting up the notifications database table
 

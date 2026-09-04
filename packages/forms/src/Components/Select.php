@@ -1833,7 +1833,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $hasInitialNoOptionsMessage = $this->hasInitialNoOptionsMessage();
         $canOptionLabelsWrap = $this->canOptionLabelsWrap();
         $isRequired = $this->isRequired();
-        $isConcealed = $this->isConcealed();
         $isHtmlAllowed = $this->isHtmlAllowed();
         $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $this->isNative());
         $isPrefixInline = $this->isPrefixInline();
@@ -1889,7 +1888,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                 'autofocus' => $isAutofocused,
                                 'disabled' => $isDisabled,
                                 'id' => $id,
-                                'required' => $isRequired && (! $isConcealed),
+                                'required' => $isRequired,
                                 'wire:key' => $hasDynamicOptions ? ($livewireKey . '.' . substr(md5(serialize($options)), 0, 64)) : null,
                                 $this->applyStateBindingModifiers('wire:model') => $statePath,
                             ], escape: false)
@@ -1952,6 +1951,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                         x-data="selectFormComponent({
                                     canOptionLabelsWrap: <?= Js::from($canOptionLabelsWrap) ?>,
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
+                                    clearButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.clear.label')) ?>,
                                     getOptionLabelUsing: async () => {
                                         return await Livewire.fireAction(
                                             $wire.__instance,
@@ -2007,8 +2007,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     optionsLimit: <?= Js::from($this->getOptionsLimit()) ?>,
                                     placeholder: <?= Js::from($this->getPlaceholder()) ?>,
                                     position: <?= Js::from($this->getPosition()) ?>,
+                                    removeButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.remove_option.label')) ?>,
                                     searchDebounce: <?= Js::from($this->getSearchDebounce()) ?>,
                                     searchingMessage: <?= Js::from($this->getSearchingMessage()) ?>,
+                                    searchLabel: <?= Js::from(__('filament-forms::components.select.search_label')) ?>,
                                     searchPrompt: <?= Js::from($this->getSearchPrompt()) ?>,
                                     searchableOptionFields: <?= Js::from($this->getSearchableOptionFields()) ?>,
                                     state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,

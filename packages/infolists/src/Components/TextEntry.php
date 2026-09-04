@@ -185,6 +185,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
         $attributes = $this->getExtraAttributeBag()
             ->class([
                 'fi-in-text',
+                'fi-numeric' => $this->isNumeric() || $this->isMoney(),
             ]);
 
         if (blank($state instanceof Htmlable ? $state->toHtml() : $state)) {

@@ -22,6 +22,10 @@ trait HasExtraModalWindowAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraModalWindowAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraModalWindowAttributes[] = $attributes;
         } else {
             $this->extraModalWindowAttributes = [$attributes];

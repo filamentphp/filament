@@ -8,7 +8,7 @@ import Aside from "@components/Aside.astro"
 
 Global search allows you to search across all of your resource records, from anywhere in the app.
 
-<AutoScreenshot name="panels/resources/global-search" alt="Global search" version="5.x" />
+<AutoScreenshot name="panels/resources/global-search" alt="Global search" version="6.x" />
 
 ## Setting global search result titles
 
@@ -62,7 +62,7 @@ public static function getGlobalSearchResultDetails(Model $record): array
 
 In this example, the category and author of the record will be displayed below its title in the search result.
 
-<AutoScreenshot name="panels/resources/global-search-details" alt="Global search with extra details" version="5.x" />
+<AutoScreenshot name="panels/resources/global-search-details" alt="Global search with extra details" version="6.x" />
 
 However, the `category` and `author` relationships will be lazy-loaded, which will result in poor results performance. To [eager-load](https://laravel.com/docs/eloquent-relationships#eager-loading) these relationships, we must override the `getGlobalSearchEloquentQuery()` method:
 
@@ -104,7 +104,7 @@ public static function getGlobalSearchResultActions(Model $record): array
 
 You can learn more about how to style action buttons [here](../actions/overview).
 
-<AutoScreenshot name="panels/resources/global-search-actions" alt="Global search with actions" version="5.x" />
+<AutoScreenshot name="panels/resources/global-search-actions" alt="Global search with actions" version="6.x" />
 
 ### Opening URLs from global search actions
 
@@ -134,24 +134,6 @@ By default, global search will return up to 50 results per resource. You can cus
 
 ```php
 protected static int $globalSearchResultsLimit = 20;
-```
-
-## Moving the global search to the sidebar
-
-By default, the global search field is positioned in the topbar. If the topbar is disabled, it is added to the sidebar.
-
-You can choose to always move it to the sidebar by passing a `position` argument to the `globalSearch()` method in the [configuration](../panel-configuration):
-
-```php
-use Filament\Enums\GlobalSearchPosition;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->globalSearch(position: GlobalSearchPosition::Sidebar);
-}
 ```
 
 ## Sorting global search results
@@ -204,6 +186,24 @@ protected static bool $isGloballySearchable = true;
 
 Resources that do not declare this property will be excluded from global search, even if they have a title attribute set.
 
+## Moving the global search to the sidebar
+
+By default, the global search field is positioned in the topbar. If the topbar is disabled, it is added to the sidebar.
+
+You can choose to always move it to the sidebar by passing a `position` argument to the `globalSearch()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Enums\GlobalSearchPosition;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearch(position: GlobalSearchPosition::Sidebar);
+}
+```
+
 ## Registering global search key bindings
 
 The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](../panel-configuration):
@@ -251,7 +251,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/resources/global-search-key-binding" alt="Global search field with key binding suffix" version="5.x" />
+<AutoScreenshot name="panels/resources/global-search-key-binding" alt="Global search field with key binding suffix" version="6.x" />
 
 To customize the suffix yourself, you can pass a string or function to the `globalSearchFieldSuffix()` method. For example, to provide a custom key binding suffix for each platform manually:
 

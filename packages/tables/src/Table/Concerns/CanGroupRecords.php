@@ -8,10 +8,13 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\View\TablesIconAlias;
+use Illuminate\Support\Str;
 
 trait CanGroupRecords
 {
     protected string | Group | Closure | null $defaultGroup = null;
+
+    protected string | Closure | null $defaultGroupDirection = null;
 
     /**
      * @var array<string, Group>
@@ -24,6 +27,8 @@ trait CanGroupRecords
     protected array | Closure $groups = [];
 
     protected bool | Closure $isGroupsOnly = false;
+
+    protected bool | Closure | null $persistsGroupInSession = false;
 
     protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
 
@@ -80,9 +85,10 @@ trait CanGroupRecords
         return $this;
     }
 
-    public function defaultGroup(string | Group | Closure | null $group): static
+    public function defaultGroup(string | Group | Closure | null $group, string | Closure | null $direction = 'asc'): static
     {
         $this->defaultGroup = $group;
+        $this->defaultGroupDirection = $direction;
 
         return $this;
     }
@@ -100,6 +106,13 @@ trait CanGroupRecords
     public function groupsOnly(bool | Closure $condition = true): static
     {
         $this->isGroupsOnly = $condition;
+
+        return $this;
+    }
+
+    public function persistGroupInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsGroupInSession = $condition;
 
         return $this;
     }
@@ -179,6 +192,11 @@ trait CanGroupRecords
             ->table($this);
     }
 
+    public function getDefaultGroupDirection(): string
+    {
+        return Str::lower($this->evaluate($this->defaultGroupDirection) ?? 'asc');
+    }
+
     /**
      * @return array<string, Group>
      */
@@ -212,5 +230,10 @@ trait CanGroupRecords
     public function isGroupsOnly(): bool
     {
         return (bool) $this->evaluate($this->isGroupsOnly);
+    }
+
+    public function persistsGroupInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsGroupInSession);
     }
 }

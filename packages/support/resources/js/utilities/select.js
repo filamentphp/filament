@@ -21,6 +21,7 @@ export class Select {
         ariaLabel = null,
         canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
+        clearButtonLabel = 'Clear selection',
         element,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
@@ -50,9 +51,11 @@ export class Select {
         optionsLimit = null,
         placeholder,
         position = null,
+        removeButtonLabel = 'Remove :label',
         searchableOptionFields = ['label'],
         searchDebounce = 1000,
         searchingMessage = 'Searching...',
+        searchLabel = 'Search',
         searchPrompt = 'Search...',
         state,
         statePath = null,
@@ -60,6 +63,7 @@ export class Select {
         this.ariaLabel = ariaLabel
         this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
+        this.clearButtonLabel = clearButtonLabel
         this.element = element
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
@@ -90,11 +94,13 @@ export class Select {
         this.originalOptions = JSON.parse(JSON.stringify(options))
         this.placeholder = placeholder
         this.position = position
+        this.removeButtonLabel = removeButtonLabel
         this.searchableOptionFields = Array.isArray(searchableOptionFields)
             ? searchableOptionFields
             : ['label']
         this.searchDebounce = searchDebounce
         this.searchingMessage = searchingMessage
+        this.searchLabel = searchLabel
         this.searchPrompt = searchPrompt
         this.state = state
         this.statePath = statePath
@@ -208,7 +214,7 @@ export class Select {
             this.searchInput.className = 'fi-input'
             this.searchInput.type = 'text'
             this.searchInput.placeholder = this.searchPrompt
-            this.searchInput.setAttribute('aria-label', 'Search')
+            this.searchInput.setAttribute('aria-label', this.searchLabel)
 
             this.searchContainer.appendChild(this.searchInput)
             this.dropdown.appendChild(this.searchContainer)
@@ -812,13 +818,23 @@ export class Select {
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
         removeButton.className = 'fi-badge-delete-btn'
-        removeButton.innerHTML =
-            '<svg class="fi-icon fi-size-xs" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path></svg>'
         removeButton.setAttribute(
             'aria-label',
-            'Remove ' +
-                (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
+            this.removeButtonLabel.replace(
+                ':label',
+                this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label,
+            ),
         )
+
+        const removeButtonIcon = document.createElement('span')
+        removeButtonIcon.className = 'fi-badge-delete-btn-icon'
+        removeButtonIcon.setAttribute('aria-hidden', 'true')
+        removeButton.appendChild(removeButtonIcon)
+
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
 
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
@@ -954,9 +970,12 @@ export class Select {
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
         removeButton.className = 'fi-select-input-value-remove-btn'
-        removeButton.innerHTML =
-            '<svg class="fi-icon fi-size-sm" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>'
-        removeButton.setAttribute('aria-label', 'Clear selection')
+        removeButton.setAttribute('aria-label', this.clearButtonLabel)
+
+        if (this.isDisabled) {
+            removeButton.setAttribute('disabled', 'disabled')
+            removeButton.classList.add('fi-disabled')
+        }
 
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
@@ -2289,7 +2308,7 @@ export class Select {
             // If there are remove buttons in multiple mode, disable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.setAttribute('disabled', 'disabled')
@@ -2322,7 +2341,7 @@ export class Select {
             // If there are remove buttons in multiple mode, enable them
             if (this.isMultiple) {
                 const removeButtons = this.container.querySelectorAll(
-                    '.fi-select-input-badge-remove',
+                    '.fi-badge-delete-btn',
                 )
                 removeButtons.forEach((button) => {
                     button.removeAttribute('disabled')
@@ -2337,7 +2356,7 @@ export class Select {
                 )
                 if (removeButton) {
                     removeButton.removeAttribute('disabled')
-                    removeButton.classList.add('fi-disabled')
+                    removeButton.classList.remove('fi-disabled')
                 }
             }
 

@@ -1,5 +1,5 @@
 .fi-ta-range-summary {
-    @apply grid gap-y-1 px-3 py-4 text-sm text-gray-500 dark:text-gray-400;
+    @apply grid gap-y-1 px-3 py-4 text-sm text-gray-500 tabular-nums dark:text-gray-400;
 
     .fi-ta-table-stacked-on-mobile & {
         @apply px-0 py-2 sm:px-3 sm:py-4;

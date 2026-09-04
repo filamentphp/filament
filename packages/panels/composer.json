@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.3",
+        "composer-runtime-api": "^2.1",
         "chillerlan/php-qrcode": "^5.0",
         "filament/actions": "self.version",
         "filament/forms": "self.version",

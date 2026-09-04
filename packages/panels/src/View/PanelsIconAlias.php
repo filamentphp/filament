@@ -4,6 +4,36 @@ namespace Filament\View;
 
 class PanelsIconAlias
 {
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE = 'panels::auth.multi-factor.app.actions.disable';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_MODAL = 'panels::auth.multi-factor.app.actions.disable.modal';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_DISABLE_NOTIFICATION = 'panels::auth.multi-factor.app.actions.disable.notification';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES = 'panels::auth.multi-factor.app.actions.regenerate-recovery-codes';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_MODAL = 'panels::auth.multi-factor.app.actions.regenerate-recovery-codes.modal';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_NOTIFICATION = 'panels::auth.multi-factor.app.actions.regenerate-recovery-codes.notification';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP = 'panels::auth.multi-factor.app.actions.set-up';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_MODAL = 'panels::auth.multi-factor.app.actions.set-up.modal';
+
+    const AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_NOTIFICATION = 'panels::auth.multi-factor.app.actions.set-up.notification';
+
+    const AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE = 'panels::auth.multi-factor.email.actions.disable';
+
+    const AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_MODAL = 'panels::auth.multi-factor.email.actions.disable.modal';
+
+    const AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_NOTIFICATION = 'panels::auth.multi-factor.email.actions.disable.notification';
+
+    const AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP = 'panels::auth.multi-factor.email.actions.set-up';
+
+    const AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_MODAL = 'panels::auth.multi-factor.email.actions.set-up.modal';
+
+    const AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_NOTIFICATION = 'panels::auth.multi-factor.email.actions.set-up.notification';
+
     const GLOBAL_SEARCH_FIELD = 'panels::global-search.field';
 
     const PAGES_DASHBOARD_ACTIONS_FILTER = 'panels::pages.dashboard.actions.filter';

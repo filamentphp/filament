@@ -8,7 +8,7 @@ import Aside from "@components/Aside.astro"
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app using tables and forms.
 
-<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="5.x" />
+<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="6.x" />
 
 ## Creating a resource
 
@@ -56,9 +56,9 @@ Your resource will have a "Manage" page, which is a List page with modals added.
 
 Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
-<AutoScreenshot name="panels/resources/simple-modal-create" alt="Simple (modal) resource create modal" version="5.x" />
+<AutoScreenshot name="panels/resources/simple-modal-create" alt="Simple (modal) resource create modal" version="6.x" />
 
-<AutoScreenshot name="panels/resources/simple-modal-edit" alt="Simple (modal) resource edit modal" version="5.x" />
+<AutoScreenshot name="panels/resources/simple-modal-edit" alt="Simple (modal) resource edit modal" version="6.x" />
 
 ### Automatically generating forms and tables
 
@@ -611,7 +611,7 @@ public static function getRecordSubNavigation(Page $page): array
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
-<AutoScreenshot name="panels/resources/sub-navigation" alt="Resource with sub-navigation" version="5.x" />
+<AutoScreenshot name="panels/resources/sub-navigation" alt="Resource with sub-navigation" version="6.x" />
 
 <Aside variant="tip">
     If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../navigation/custom-pages), you might be looking for [clusters](../navigation/clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
@@ -627,11 +627,11 @@ use Filament\Pages\Enums\SubNavigationPosition;
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
 
-<AutoScreenshot name="panels/resources/sub-navigation-end" alt="Resource with end sub-navigation position" version="5.x" />
+<AutoScreenshot name="panels/resources/sub-navigation-end" alt="Resource with end sub-navigation position" version="6.x" />
 
 The `SubNavigationPosition::Top` option renders the sub-navigation as tabs above the page content:
 
-<AutoScreenshot name="panels/resources/sub-navigation-top" alt="Resource with top sub-navigation position" version="5.x" />
+<AutoScreenshot name="panels/resources/sub-navigation-top" alt="Resource with top sub-navigation position" version="6.x" />
 
 ## Deleting resource pages
 
@@ -653,7 +653,7 @@ Deleting a page will not delete any actions that link to that page. Any actions 
 
 ## Security
 
-## Authorization
+### Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
 
@@ -666,7 +666,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
 - `reorder()` is used to control [reordering records in a table](listing-records#reordering-records).
 
-### Skipping authorization
+#### Skipping authorization
 
 If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
 
