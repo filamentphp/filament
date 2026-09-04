@@ -1,0 +1,309 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export DEBIAN_FRONTEND=noninteractive
+
+repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+workspace_root="$(dirname "$repository_root")"
+demo_root="$workspace_root/repos/demo"
+demo_state_branch_file="$demo_root/.orb-demo-state-branch"
+
+run_step() {
+    local description="$1"
+
+    shift
+    printf '\n==> %s\n' "$description"
+    time "$@"
+}
+
+install_php() {
+    local php_packages=(
+        php8.4-bcmath
+        php8.4-cli
+        php8.4-curl
+        php8.4-gd
+        php8.4-intl
+        php8.4-mbstring
+        php8.4-mysql
+        php8.4-pgsql
+        php8.4-sqlite3
+        php8.4-xml
+        php8.4-zip
+    )
+    local missing_php_packages=()
+    local php_package
+
+    for php_package in "${php_packages[@]}"; do
+        if ! dpkg-query -W -f='${Status}' "$php_package" 2>/dev/null | grep -Fq 'install ok installed'; then
+            missing_php_packages+=("$php_package")
+        fi
+    done
+
+    if (( ${#missing_php_packages[@]} > 0 )); then
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl lsb-release
+
+        if ! dpkg-query -W -f='${Status}' debsuryorg-archive-keyring 2>/dev/null | grep -Fq 'install ok installed'; then
+            curl -fsSL https://packages.sury.org/debsuryorg-archive-keyring.deb -o /tmp/debsuryorg-archive-keyring.deb
+            sudo dpkg -i /tmp/debsuryorg-archive-keyring.deb
+            rm /tmp/debsuryorg-archive-keyring.deb
+        fi
+
+        if [[ ! -f /etc/apt/sources.list.d/php.sources ]]; then
+            sudo tee /etc/apt/sources.list.d/php.sources >/dev/null <<EOF
+Types: deb
+URIs: https://packages.sury.org/php/
+Suites: $(lsb_release -sc)
+Components: main
+Signed-By: /usr/share/keyrings/debsuryorg-archive-keyring.gpg
+EOF
+        fi
+
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends "${missing_php_packages[@]}"
+    fi
+
+    sudo update-alternatives --set php /usr/bin/php8.4
+}
+
+install_composer() {
+    if command -v composer >/dev/null; then
+        local composer_version
+
+        composer_version="$(composer --version 2>/dev/null | sed -nE 's/^Composer version ([^ ]+).*/\1/p')"
+
+        if php -r 'exit(version_compare($argv[1], "2.8.0", ">=") ? 0 : 1);' "$composer_version"; then
+            return
+        fi
+    fi
+
+    local expected_checksum
+    local actual_checksum
+
+    expected_checksum="$(curl -fsSL https://composer.github.io/installer.sig)"
+    curl -fsSL https://getcomposer.org/installer -o /tmp/composer-setup.php
+    actual_checksum="$(php -r "echo hash_file('sha384', '/tmp/composer-setup.php');")"
+
+    if [[ "$expected_checksum" != "$actual_checksum" ]]; then
+        echo 'Composer installer checksum verification failed.' >&2
+        rm /tmp/composer-setup.php
+        return 1
+    fi
+
+    sudo php /tmp/composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
+    rm /tmp/composer-setup.php
+}
+
+prepare_demo_checkout() {
+    local current_demo_branch
+    local demo_branch
+    local demo_filament_constraint
+    local filament_major_version
+    local locked_filament_version
+
+    locked_filament_version="$(php -r '
+        $lock = json_decode(file_get_contents($argv[1]), true, flags: JSON_THROW_ON_ERROR);
+
+        foreach (array_merge($lock["packages"], $lock["packages-dev"]) as $package) {
+            if ($package["name"] === "filament/support") {
+                echo $package["version"];
+                break;
+            }
+        }
+    ' "$repository_root/composer.lock")"
+    filament_major_version="$(sed -E 's/^([0-9]+)\.x-dev$/\1/' <<< "$locked_filament_version")"
+    demo_branch="$filament_major_version.x"
+
+    if ! git ls-remote --exit-code --heads https://github.com/filamentphp/demo.git "$demo_branch" >/dev/null 2>&1; then
+        echo "The preferred filamentphp/demo branch $demo_branch was not found for Filament $locked_filament_version." >&2
+        return 1
+    fi
+
+    if [[ ! -d "$demo_root/.git" ]]; then
+        echo 'The filamentphp/demo additional repository was not found at ../repos/demo.' >&2
+        echo 'Add it under “Additional Repositories to Clone” in the Amp project settings.' >&2
+        return 1
+    fi
+
+    current_demo_branch="$(git -C "$demo_root" branch --show-current)"
+    demo_filament_constraint="$(php -r '
+        $manifest = json_decode(file_get_contents($argv[1]), true, flags: JSON_THROW_ON_ERROR);
+        echo $manifest["require"]["filament/filament"] ?? "";
+    ' "$demo_root/composer.json")"
+
+    if [[ ! "$demo_filament_constraint" =~ (^|[^0-9])$filament_major_version([^0-9]|$) ]]; then
+        if [[ -n "$(git -C "$demo_root" status --porcelain)" ]]; then
+            echo "The existing demo checkout requires Filament $demo_filament_constraint and has changes." >&2
+            echo "Preserve or remove those changes before switching it to $demo_branch." >&2
+            return 1
+        fi
+
+        if [[ ! -f "$demo_state_branch_file" ]]; then
+            printf '%s\n' "${current_demo_branch:-detached HEAD}" > "$demo_state_branch_file"
+        fi
+
+        git -C "$demo_root" fetch --depth=1 origin "$demo_branch"
+        git -C "$demo_root" checkout -B "$demo_branch" FETCH_HEAD
+    fi
+
+    current_demo_branch="$(git -C "$demo_root" branch --show-current)"
+    printf 'Using filamentphp/demo %s at %s.\n' "${current_demo_branch:-detached HEAD}" "$(git -C "$demo_root" rev-parse --short HEAD)"
+
+    mkdir -p "$demo_root/.git/info"
+    for excluded_path in composer.orb.json composer.orb.lock .composer-orb-hash .orb-demo-state-branch config/trustedproxy.php; do
+        if ! grep -Fqx "/$excluded_path" "$demo_root/.git/info/exclude" 2>/dev/null; then
+            printf '/%s\n' "$excluded_path" >> "$demo_root/.git/info/exclude"
+        fi
+    done
+}
+
+write_demo_proxy_configuration() {
+    if [[ -e "$demo_root/config/trustedproxy.php" ]]; then
+        return
+    fi
+
+    cat > "$demo_root/config/trustedproxy.php" <<'PHP'
+<?php
+
+return [
+    'proxies' => 'REMOTE_ADDR',
+];
+PHP
+}
+
+write_demo_composer_manifest() {
+    php -r '
+        $manifest = json_decode(file_get_contents($argv[1]), true, flags: JSON_THROW_ON_ERROR);
+
+        foreach (array_keys($manifest["require"]) as $package) {
+            if (str_starts_with($package, "filament/")) {
+                $manifest["require"][$package] = "*";
+            }
+        }
+
+        $manifest["repositories"] = [[
+            "type" => "path",
+            "url" => $argv[3] . "/packages/*",
+            "options" => ["symlink" => true],
+        ]];
+        $manifest["minimum-stability"] = "dev";
+        $manifest["prefer-stable"] = true;
+
+        file_put_contents(
+            $argv[2],
+            json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL,
+        );
+    ' "$demo_root/composer.json" "$demo_root/composer.orb.json" "$repository_root"
+}
+
+install_demo_dependencies() {
+    local composer_hash
+    local previous_composer_hash=''
+
+    write_demo_composer_manifest
+    composer_hash="$({ sha256sum "$demo_root/composer.json" "$demo_root/composer.lock"; find "$repository_root/packages" -mindepth 2 -maxdepth 2 -name composer.json -print0 | sort -z | xargs -0 sha256sum; } | sha256sum | cut -d ' ' -f 1)"
+
+    if [[ -f "$demo_root/.composer-orb-hash" ]]; then
+        previous_composer_hash="$(cat "$demo_root/.composer-orb-hash")"
+    fi
+
+    if [[ ! -f "$demo_root/composer.orb.lock" ]] || [[ "$composer_hash" != "$previous_composer_hash" ]]; then
+        cp "$demo_root/composer.lock" "$demo_root/composer.orb.lock"
+        COMPOSER=composer.orb.json composer --working-dir="$demo_root" update 'filament/*' --with-dependencies --minimal-changes --prefer-dist --no-interaction
+        printf '%s\n' "$composer_hash" > "$demo_root/.composer-orb-hash"
+    else
+        COMPOSER=composer.orb.json composer --working-dir="$demo_root" install --prefer-dist --no-interaction
+    fi
+
+    npm --prefix "$demo_root" ci --ignore-scripts
+    npm --prefix "$demo_root" run build
+}
+
+initialize_demo_application() {
+    local current_demo_branch
+    local database_was_created=false
+    local previous_demo_branch=''
+    local preserved_database_path
+
+    if [[ ! -f "$demo_root/.env" ]]; then
+        cp "$demo_root/.env.example" "$demo_root/.env"
+    fi
+
+    current_demo_branch="$(git -C "$demo_root" branch --show-current)"
+
+    if [[ -f "$demo_state_branch_file" ]]; then
+        previous_demo_branch="$(cat "$demo_state_branch_file")"
+    fi
+
+    if [[ -s "$demo_root/database/database.sqlite" ]] && [[ -n "$previous_demo_branch" ]] && [[ "$previous_demo_branch" != "${current_demo_branch:-detached HEAD}" ]]; then
+        preserved_database_path="$demo_root/database/database.sqlite.before-${previous_demo_branch//\//-}-$(date +%s).bak"
+        mv "$demo_root/database/database.sqlite" "$preserved_database_path"
+        printf 'Preserved the %s demo database at %s.\n' "$previous_demo_branch" "$preserved_database_path"
+    fi
+
+    if [[ ! -s "$demo_root/database/database.sqlite" ]]; then
+        mkdir -p "$demo_root/database"
+        touch "$demo_root/database/database.sqlite"
+        database_was_created=true
+    fi
+
+    if ! grep -Eq '^APP_KEY=base64:.+' "$demo_root/.env"; then
+        php "$demo_root/artisan" key:generate --force
+    fi
+
+    if [[ "$database_was_created" == true ]]; then
+        php "$demo_root/artisan" migrate --force
+        php "$demo_root/artisan" db:seed --force
+    else
+        php "$demo_root/artisan" migrate --force
+    fi
+
+    if [[ ! -L "$demo_root/public/storage" ]]; then
+        php "$demo_root/artisan" storage:link
+    fi
+
+    printf '%s\n' "${current_demo_branch:-detached HEAD}" > "$demo_state_branch_file"
+}
+
+initialize_docs_screenshot_application() {
+    local docs_application_root="$repository_root/docs-assets/app"
+
+    if [[ ! -f "$docs_application_root/.env" ]]; then
+        cp "$docs_application_root/.env.example" "$docs_application_root/.env"
+    fi
+
+    mkdir -p "$docs_application_root/database"
+
+    if [[ ! -f "$docs_application_root/database/database.sqlite" ]]; then
+        touch "$docs_application_root/database/database.sqlite"
+    fi
+
+    if ! grep -Eq '^APP_KEY=base64:.+' "$docs_application_root/.env"; then
+        php "$docs_application_root/artisan" key:generate --force
+    fi
+
+    php "$docs_application_root/artisan" migrate:fresh --seed --force
+    php "$docs_application_root/artisan" storage:link --force
+}
+
+cd "$repository_root"
+
+run_step 'Installing PHP 8.4 and extensions' install_php
+run_step 'Installing Composer' install_composer
+run_step 'Installing Filament Composer dependencies' composer install --prefer-dist --no-interaction --no-scripts
+run_step 'Installing Filament Node.js dependencies' npm ci --ignore-scripts
+run_step 'Installing Playwright Chromium' npx playwright install --with-deps chromium
+run_step 'Building Filament assets' npm run build
+run_step 'Installing docs screenshot application Composer dependencies' composer --working-dir="$repository_root/docs-assets/app" install --prefer-dist --no-interaction
+run_step 'Installing docs screenshot application Node.js dependencies' npm --prefix "$repository_root/docs-assets/app" ci --ignore-scripts
+run_step 'Installing docs screenshot generator dependencies' npm --prefix "$repository_root/docs-assets/screenshots" ci
+run_step 'Initializing the docs screenshot application' initialize_docs_screenshot_application
+run_step 'Building the docs screenshot application assets' npm --prefix "$repository_root/docs-assets/app" run build
+run_step 'Preparing the matching Filament demo checkout' prepare_demo_checkout
+run_step 'Configuring the demo portal proxy' write_demo_proxy_configuration
+run_step 'Installing locally linked demo dependencies' install_demo_dependencies
+run_step 'Initializing the demo Laravel application' initialize_demo_application
+
+printf '\nOrb setup complete. The demo checkout is at %s.\n' "$demo_root"
+printf 'Docs screenshot generation is ready in %s.\n' "$repository_root/docs-assets/screenshots"

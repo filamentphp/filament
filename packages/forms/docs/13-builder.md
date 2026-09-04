@@ -429,6 +429,37 @@ Builder::make('content')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `collapsible()` and `collapsed()` methods also accept functions to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+If collapsed items contain components that are expensive to render, you can [defer the loading of their block schemas](#deferring-the-loading-of-block-schemas) until they are expanded.
+
+## Deferring the loading of block schemas
+
+If a block's schema is expensive to render, you can pass a `Schema` object to `schema()` and use `deferLoading()`. This is particularly useful when items are [collapsed](#collapsing-items) by default. Each block item schema will be loaded independently when its item is expanded and enters the viewport:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+
+Builder::make('content')
+    ->blocks([
+        Block::make('heading')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        TextInput::make('content')
+                            ->label('Heading')
+                            ->required(),
+                    ])
+                    ->deferLoading(),
+            ),
+        // ...
+    ])
+    ->collapsed()
+```
+
+Builder block item schemas automatically receive unique keys from their item state paths. You can learn more about deferred schemas in the [schema overview](../schemas/overview#deferring-the-loading-of-a-child-schema).
+
 ## Cloning items
 
 You may allow builder items to be duplicated using the `cloneable()` method:

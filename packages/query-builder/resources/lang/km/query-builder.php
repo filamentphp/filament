@@ -14,6 +14,10 @@ return [
 
             'label' => 'ក្រុម',
 
+            'group' => [
+                'label' => 'ក្រុម',
+            ],
+
             'block' => [
                 'label' => 'ការផ្តាច់ខ្លួន (ឬ)',
                 'or' => 'ឬ',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(មិន​មាន​ច្បាប់)',
+
+    'max_rules_reached_tooltip' => 'អ្នកបានឈានដល់ចំនួនច្បាប់អតិបរមា :count ហើយ។',
 
     'item_separators' => [
         'and' => 'និង',

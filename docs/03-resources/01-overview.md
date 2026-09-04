@@ -653,7 +653,7 @@ Deleting a page will not delete any actions that link to that page. Any actions 
 
 ## Security
 
-## Authorization
+### Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
 
@@ -666,7 +666,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant. When using a `RestoreBulkAction`, if you want to call the `restore()` method for each record anyway, you should use the `RestoreBulkAction::make()->authorizeIndividualRecords()` method. Any records that fail the authorization check will not be processed.
 - `reorder()` is used to control [reordering records in a table](listing-records#reordering-records).
 
-### Skipping authorization
+#### Skipping authorization
 
 If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
 

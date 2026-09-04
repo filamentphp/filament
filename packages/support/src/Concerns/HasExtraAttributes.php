@@ -22,6 +22,10 @@ trait HasExtraAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraAttributes[] = $attributes;
         } else {
             $this->extraAttributes = [$attributes];

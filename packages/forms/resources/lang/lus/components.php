@@ -122,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Rawng thlanna',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Thla',
+        ],
+
+        'year_input' => [
+            'label' => 'Kum',
+        ],
+
+        'hour_input' => [
+            'label' => 'Dârkâr',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minute',
+        ],
+
+        'second_input' => [
+            'label' => 'Second',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Download',
+            ],
+
+            'open' => [
+                'label' => 'Tab thar-a hawnna',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Thlâlak siamna',
 
             'actions' => [
 
@@ -268,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Thiltihna',
+            ],
+
+            'reorder' => [
+                'label' => 'Awmna thlak',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Thiltihna',
+            ],
+
+            'reorder' => [
+                'label' => 'Awmna thlak',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -548,6 +616,35 @@ return [
 
                         'color' => [
                             'label' => 'Color',
+
+                            'options' => [
+                                'slate' => 'Slate',
+                                'gray' => 'Vutbuak',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Neutral',
+                                'stone' => 'Stone',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Ṭiauchhûm',
+                                'taupe' => 'Taupe',
+                                'red' => 'Sen',
+                                'orange' => 'Serthlum rawng',
+                                'amber' => 'Amber',
+                                'yellow' => 'Eng',
+                                'lime' => 'Lime',
+                                'green' => 'Hring',
+                                'emerald' => 'Emerald',
+                                'teal' => 'Teal',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Vân rawng',
+                                'blue' => 'Pâwl',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violet',
+                                'purple' => 'Purple',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Sendâng',
+                                'rose' => 'Rose',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -575,6 +672,10 @@ return [
             'searching_message' => 'Zawn mek ani...',
         ],
 
+        'toolbar' => [
+            'label' => 'Editor toolbar',
+        ],
+
         'tools' => [
             'align_center' => 'Align center',
             'align_end' => 'Align end',
@@ -592,6 +693,9 @@ return [
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
+            'h4' => 'Heading 4',
+            'h5' => 'Heading 5',
+            'h6' => 'Heading 6',
             'grid' => 'Grid',
             'grid_delete' => 'Delete grid',
             'highlight' => 'Highlight',
@@ -601,6 +705,7 @@ return [
             'link' => 'Link',
             'merge_tags' => 'Merge tags',
             'ordered_list' => 'Numbered list',
+            'paragraph' => 'Paragraph',
             'redo' => 'Redo',
             'small' => 'Small text',
             'strike' => 'Strikethrough',
@@ -630,6 +735,10 @@ return [
     'select' => [
 
         'actions' => [
+
+            'clear' => [
+                'label' => 'Thlan sa paihna',
+            ],
 
             'create_option' => [
 
@@ -675,6 +784,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => ':label hlîhna',
+            ],
+
         ],
 
         'boolean' => [
@@ -694,6 +807,8 @@ return [
 
         'searching_message' => 'Zawn mek ani...',
 
+        'search_label' => 'Zawnna',
+
         'search_prompt' => 'Zawng turin thil chhu rawh...',
 
     ],
@@ -709,6 +824,11 @@ return [
         ],
 
         'placeholder' => 'Tag thar',
+
+        'tag_added' => ':tag belh a ni',
+
+        'tag_removed' => ':tag paih a ni',
+
     ],
 
     'text_input' => [

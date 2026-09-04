@@ -3,7 +3,9 @@
 ])
 
 @php
-    $inputAttributes = $input?->attributes ?? new \Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag;
+
+    $inputAttributes = $input?->attributes ?? new ComponentAttributeBag;
     $isDisabled = filter_var($inputAttributes->get('disabled'), FILTER_VALIDATE_BOOLEAN);
     $isReadOnly = filter_var($inputAttributes->get('readonly'), FILTER_VALIDATE_BOOLEAN);
 @endphp

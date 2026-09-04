@@ -188,6 +188,42 @@ Tabs::make('Tabs')
 
 While the badges are loading, a small loading indicator will appear in place of each deferred badge. Once the data is fetched, the loading indicators will be replaced with the actual badge values.
 
+## Deferring the loading of tab content
+
+If the content of a tab is expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The content of the active tab will be loaded when it enters the viewport. The content of an inactive tab will not be loaded until the tab is selected:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+
+Tabs::make('Settings')
+    ->key('settingsTabs')
+    ->tabs([
+        Tab::make('Profile')
+            ->key('profileTab')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        TextInput::make('name'),
+                    ])
+                    ->deferLoading(),
+            ),
+        Tab::make('Notifications')
+            ->key('notificationsTab')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        // ...
+                    ])
+                    ->deferLoading(),
+            ),
+    ])
+```
+
+Every deferred schema must have a unique key. In this example, the keys on the tabs are inherited by their child schemas, while the key on the `Tabs` component namespaces them from other tabs in the same schema. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
+
 ## Using grid columns within a tab
 
 You may use the `columns()` method to customize the [grid](layouts#grid-system) within the tab:
@@ -331,7 +367,7 @@ Tabs::make('Tabs')
 
 <UtilityInjection set="schemaComponents" version="5.x">As well as allowing static values, the `persistTab()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Persisting the current tab in the URL's query string
+## Persisting the current tab in the URL's query string
 
 By default, the current tab is not persisted in the URL's query string. You can change this behavior using the `persistTabInQueryString()` method:
 

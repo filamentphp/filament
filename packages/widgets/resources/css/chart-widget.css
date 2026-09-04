@@ -65,6 +65,23 @@
         @apply text-gray-500 dark:text-gray-400;
     }
 
+    /* Tooltips are painted onto the canvas, so these three elements are the only way to
+       color them. Their values are Chart.js' own tooltip colors rather than Filament
+       palette values, which is why they are written out longhand instead of `@apply`.
+       The border only appears once `--chart-tooltip-border-width` is set, so its
+       color defaults to a hairline that suits the background above it. */
+    & .fi-wi-chart-tooltip-bg-color {
+        color: rgb(0 0 0 / 0.8);
+    }
+
+    & .fi-wi-chart-tooltip-text-color {
+        color: rgb(255 255 255);
+    }
+
+    & .fi-wi-chart-tooltip-border-color {
+        color: rgb(255 255 255 / 0.2);
+    }
+
     & .fi-empty-state {
         @apply p-0;
     }

@@ -280,6 +280,40 @@ Fieldset::make('Label')
 
 <AutoScreenshot name="schemas/layout/fieldset/not-contained" alt="Fieldset without a container border" version="5.x" />
 
+## Controlling spacing between components
+
+### Reducing space between components
+
+The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
+
+```php
+use Filament\Schemas\Components\Fieldset;
+
+Fieldset::make('Dense')
+    ->dense()
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/dense" alt="A layout with dense spacing" version="5.x" />
+
+### Removing space between components
+
+The `gap(false)` method removes space between components:
+
+```php
+use Filament\Schemas\Components\Fieldset;
+
+Fieldset::make('No gap')
+    ->gap(false)
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/no-gap" alt="A layout with no gap" version="5.x" />
+
 ## Using container queries
 
 In addition to traditional breakpoints based on the size of the viewport, you can also use [container queries](https://tailwindcss.com/docs/responsive-design#container-queries) to create responsive layouts based on the size of a parent container. This is particularly useful when the size of the parent container is not directly tied to the size of the viewport. For example, when using a collapsible sidebar alongside the content, the content area dynamically adjusts its size depending on the collapse state of the sidebar.
@@ -413,39 +447,29 @@ Grid::make()
 
 In this example, the fallback breakpoints ensure that even in browsers that don't support container queries, the layout will still respond to viewport size changes, with the name field appearing first and the email field second on larger screens.
 
-## Controlling spacing between components
+## Deferring the loading of a layout's child schema
 
-### Reducing space between components
-
-The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
+If a layout contains components that are expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The child schema will initially render a loading indicator and will be loaded when it enters the viewport:
 
 ```php
-use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 
-Fieldset::make('Dense')
-    ->dense()
-    ->schema([
-        // ...
-    ])
+Group::make()
+    ->key('customerDetails')
+    ->schema(
+        Schema::make()
+            ->components([
+                TextInput::make('name'),
+                TextInput::make('email')
+                    ->email(),
+            ])
+            ->deferLoading(),
+    )
 ```
 
-<AutoScreenshot name="schemas/layout/dense" alt="A layout with dense spacing" version="5.x" />
-
-### Removing space between components
-
-The `gap(false)` method removes space between components:
-
-```php
-use Filament\Schemas\Components\Fieldset;
-
-Fieldset::make('No gap')
-    ->gap(false)
-    ->schema([
-        // ...
-    ])
-```
-
-<AutoScreenshot name="schemas/layout/no-gap" alt="A layout with no gap" version="5.x" />
+In this example, a `Group` is used because it has no visual styling of its own. You can use the same approach with other layout components that accept a child schema. Every deferred schema must have a unique key, which it can inherit from a keyed parent component as in this example. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
 
 ## Adding extra HTML attributes to a layout component
 

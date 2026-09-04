@@ -54,6 +54,22 @@ Each nested array in the main array represents a group of buttons in the toolbar
 
 <AutoScreenshot name="forms/fields/markdown-editor/custom-toolbar" alt="Markdown editor with customized toolbar buttons" version="5.x" />
 
+## Setting the height
+
+You may control the editor's height by defining the `minHeight()` and `maxHeight()` methods, which accept any CSS length value:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->minHeight('12rem')
+    ->maxHeight('24rem')
+```
+
+The editor has a minimum height of `10rem` by default. Once the content exceeds `maxHeight()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minHeight()` sets a starting height while still allowing the editor to grow, and `maxHeight()` caps how tall it may become. Pass `null` to `minHeight()` to use a `3rem` minimum height for the interactive editor, or to `maxHeight()` to remove the cap. Disabled content uses its natural height when `minHeight()` is `null`. These constraints also apply when the editor is disabled.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minHeight()` and `maxHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ## Uploading images to the editor
 
 Images may be uploaded to the editor. They will always be uploaded to a publicly available URL with public storage permissions, since generating temporary file upload URLs is not supported in static content. You may customize where images are uploaded using configuration methods:

@@ -82,6 +82,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="5.x" />
+
 ### Global record action settings
 
 To customize the default configuration used for ungrouped record actions, you can use `modifyUngroupedRecordActionsUsing()` from a [`Table::configureUsing()` function](overview#global-settings) in the `boot()` method of a service provider:
@@ -95,8 +97,6 @@ Table::configureUsing(function (Table $table): void {
         ->modifyUngroupedRecordActionsUsing(fn (Action $action) => $action->iconButton());
 });
 ```
-
-<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="5.x" />
 
 ### Accessing the selected table rows
 
