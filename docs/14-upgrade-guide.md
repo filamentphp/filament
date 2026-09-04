@@ -113,6 +113,31 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 
 ### Medium-impact changes
 
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">App authentication now checks one adjacent TOTP period by default</span>
+
+To reduce the time for which a time-based one-time password (TOTP) is accepted, app authentication now checks the code for the current 30-second period and the periods immediately before and after it. Previously, it checked eight periods in each direction.
+
+Most applications do not need to make any changes. However, if a user's device and your server resolve to time periods that are not immediately adjacent, their app authentication code may now be rejected. You should ensure that the clocks are synchronized. If you need to temporarily restore the previous tolerance, you can pass `8` to the `codeWindow()` method:
+
+```php
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->multiFactorAuthentication([
+            AppAuthentication::make()
+                ->codeWindow(8),
+        ]);
+}
+```
+
+See the [multi-factor authentication documentation](../users/multi-factor-authentication#changing-the-app-code-expiration-time) for more details.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('forms')">
 <span slot="summary">`FileUpload` now prevents file path tampering by default</span>
 

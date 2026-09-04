@@ -43,9 +43,9 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     protected ?string $brandName = null;
 
     /**
-     * 8 keys (respectively 4 minutes) past and future
+     * The number of 30-second periods to check before and after the current period.
      */
-    protected int $codeWindow = 8;
+    protected int $codeWindow = 1;
 
     public function __construct(
         protected Google2FA $google2FA,
@@ -186,14 +186,15 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         $cacheKey = 'filament.app_authentication_codes.' . md5($secret);
 
         $verifyCode = function () use ($cacheKey, $code, $secret): bool {
-            $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, Cache::get($cacheKey), $this->getCodeWindow());
+            // Passing an initial `$lastAcceptedTimestamp` makes `verifyKeyNewer()` return the
+            // matched period instead of `true`, so future codes are cached correctly.
+            $lastAcceptedTimestamp = Cache::get($cacheKey)
+                ?? ($this->google2FA->getTimestamp() - $this->getCodeWindow() - 1);
+
+            $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, $lastAcceptedTimestamp, $this->getCodeWindow());
 
             if ($timestamp === false) {
                 return false;
-            }
-
-            if ($timestamp === true) {
-                $timestamp = $this->google2FA->getTimestamp();
             }
 
             Cache::put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 60);
