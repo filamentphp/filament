@@ -8,7 +8,7 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "filament/actions": "self.version",
         "filament/schemas": "self.version",
         "filament/support": "self.version"

@@ -7,6 +7,10 @@ import Aside from "@components/Aside.astro"
     If you see anything missing from this guide, please don’t hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/6.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
 </Aside>
 
+## New requirements
+
+- PHP 8.3+
+
 ## Running the automated upgrade script
 
 <Aside variant="info">
@@ -311,6 +315,14 @@ Importer::preventFormulaInjection(false);
 ```
 
 See the [import documentation](../actions/import#csv-formula-injection) for more details.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('actions')">
+<span slot="summary">OpenSpout has been upgraded to v5</span>
+
+The Actions package now depends on OpenSpout v5. If you customize XLSX exports using the OpenSpout API, you should update your code for its breaking changes. In particular, most OpenSpout objects are now immutable, so you should configure them using constructor arguments or `with*()` methods instead of setter methods. Rows no longer accept a default `Style`; apply styles to individual cells using `Cell::fromValue()` or `Row::fromValuesWithStyles()` instead.
+
+See the [XLSX export customization documentation](../actions/export#customizing-xlsx-files) for updated examples and the [OpenSpout v5 upgrade guide](https://github.com/openspout/openspout/blob/5.x/UPGRADE.md#upgrading-from-4x-to-50) for a complete list of changes.
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('support')">

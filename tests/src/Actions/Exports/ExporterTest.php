@@ -5,6 +5,7 @@ use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Tests\TestCase;
+use OpenSpout\Common\Entity\Style\Style;
 
 uses(TestCase::class);
 
@@ -104,6 +105,34 @@ describe('`getOptions()`', function (): void {
         $exporter = new TestPostExporter($export, [], ['key' => 'value']);
 
         expect($exporter->getOptions())->toBe(['key' => 'value']);
+    });
+});
+
+describe('`makeXlsxRow()`', function (): void {
+    it('creates cells without styles by default', function (): void {
+        $export = Mockery::mock(Export::class);
+        $exporter = new TestPostExporter($export, [], []);
+
+        $row = $exporter->makeXlsxRow(['Title', 'Content']);
+
+        expect($row->toArray())->toBe(['Title', 'Content'])
+            ->and($row->cells[0]->style)->toBeNull()
+            ->and($row->cells[1]->style)->toBeNull();
+    });
+
+    it('applies the given style to every cell', function (): void {
+        $export = Mockery::mock(Export::class);
+        $exporter = new TestPostExporter($export, [], []);
+        $style = new Style(fontBold: true);
+
+        $row = $exporter->makeXlsxRow([
+            'title' => 'Title',
+            'content' => 'Content',
+        ], $style);
+
+        expect($row->toArray())->toBe(['Title', 'Content'])
+            ->and($row->cells[0]->style)->toBe($style)
+            ->and($row->cells[1]->style)->toBe($style);
     });
 });
 
