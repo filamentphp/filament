@@ -991,11 +991,11 @@
         },
         {
             "name": "filament/actions",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/actions",
-                "reference": "751db0516d4050793657c150439bb13c66d9a4a7"
+                "reference": "697c1aa1b39f967ecb84b7b64ec30745ab286abd"
             },
             "require": {
                 "anourvalar/eloquent-serialize": "^1.3.6",
@@ -1004,8 +1004,8 @@
                 "filament/notifications": "self.version",
                 "filament/support": "self.version",
                 "league/csv": "^9.27",
-                "openspout/openspout": "^4.23",
-                "php": "^8.2"
+                "openspout/openspout": "^5.0",
+                "php": "^8.3"
             },
             "type": "library",
             "extra": {
@@ -1035,14 +1035,15 @@
         },
         {
             "name": "filament/filament",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/panels",
-                "reference": "c239419d87c35430ac7cb17a8859c21e22776b7e"
+                "reference": "c4e0b85a49bc5337fb7020376766f8f225857492"
             },
             "require": {
                 "chillerlan/php-qrcode": "^5.0",
+                "composer-runtime-api": "^2.1",
                 "filament/actions": "self.version",
                 "filament/forms": "self.version",
                 "filament/infolists": "self.version",
@@ -1051,7 +1052,7 @@
                 "filament/support": "self.version",
                 "filament/tables": "self.version",
                 "filament/widgets": "self.version",
-                "php": "^8.2",
+                "php": "^8.3",
                 "pragmarx/google2fa": "^8.0|^9.0",
                 "pragmarx/google2fa-qrcode": "^3.0|^4.0"
             },
@@ -1087,18 +1088,18 @@
         },
         {
             "name": "filament/forms",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/forms",
-                "reference": "417ca0cea85db0e7a39bcad58115461c85b0198e"
+                "reference": "fab71ae01f9ccc41d1be3763fc4905dccc263b5e"
             },
             "require": {
                 "danharrin/date-format-converter": "^0.3",
                 "filament/actions": "self.version",
                 "filament/schemas": "self.version",
                 "filament/support": "self.version",
-                "php": "^8.2",
+                "php": "^8.3",
                 "ueberdosis/tiptap-php": "^2.0"
             },
             "type": "library",
@@ -1132,17 +1133,17 @@
         },
         {
             "name": "filament/infolists",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/infolists",
-                "reference": "e3ee63d9fff03d8f01574c8825f759a4d80ff2c4"
+                "reference": "ab39f2a262666d7314071fd01e44c035e93a64ed"
             },
             "require": {
                 "filament/actions": "self.version",
                 "filament/schemas": "self.version",
                 "filament/support": "self.version",
-                "php": "^8.2"
+                "php": "^8.3"
             },
             "type": "library",
             "extra": {
@@ -1172,16 +1173,16 @@
         },
         {
             "name": "filament/notifications",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/notifications",
-                "reference": "c8d55cbc130ea9312a86e1e7c949d1c8509eb149"
+                "reference": "55266b12215da3bdb5d663fec7d4fd1948368b0a"
             },
             "require": {
                 "filament/actions": "self.version",
                 "filament/support": "self.version",
-                "php": "^8.2"
+                "php": "^8.3"
             },
             "type": "library",
             "extra": {
@@ -1214,18 +1215,18 @@
         },
         {
             "name": "filament/query-builder",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/query-builder",
-                "reference": "3712bad0234b9921c0da8643bf22a6d40cf4c3a4"
+                "reference": "d292dba7a0529a766df30bf09fb616ada69f972a"
             },
             "require": {
                 "filament/actions": "self.version",
                 "filament/forms": "self.version",
                 "filament/schemas": "self.version",
                 "filament/support": "self.version",
-                "php": "^8.2"
+                "php": "^8.3"
             },
             "type": "library",
             "extra": {
@@ -1255,17 +1256,17 @@
         },
         {
             "name": "filament/schemas",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/schemas",
-                "reference": "5569ca5a405f948d591275ced13e0e1ecf665254"
+                "reference": "c44a216685f06d3f51c35293e60a3485b201b1a8"
             },
             "require": {
                 "danharrin/date-format-converter": "^0.3",
                 "filament/actions": "self.version",
                 "filament/support": "self.version",
-                "php": "^8.2"
+                "php": "^8.3"
             },
             "type": "library",
             "extra": {
@@ -1295,14 +1296,15 @@
         },
         {
             "name": "filament/support",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/support",
-                "reference": "3d327e9683c1900792db64dfd884084ababa2f30"
+                "reference": "71d92134865ae07df936daa457d2292f5651e033"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
+                "composer-runtime-api": "^2.1",
                 "danharrin/livewire-rate-limiting": "^2.0",
                 "ext-intl": "*",
                 "illuminate/contracts": "^11.28|^12.0|^13.0",
@@ -1310,8 +1312,7 @@
                 "league/uri-components": "^7.0",
                 "livewire/livewire": "^4.1",
                 "nette/php-generator": "^4.0",
-                "php": "^8.2",
-                "ryangjchandler/blade-capture-directive": "^1.0",
+                "php": "^8.3",
                 "spatie/invade": "^2.0",
                 "spatie/laravel-package-tools": "^1.9",
                 "symfony/console": "^7.0|^8.0",
@@ -1348,18 +1349,18 @@
         },
         {
             "name": "filament/tables",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/tables",
-                "reference": "e8991e3a6b0887a073962d68024cce5d3f955b69"
+                "reference": "0bfddbf5928340670169ee61d85c165ec2c9ea43"
             },
             "require": {
                 "filament/actions": "self.version",
                 "filament/forms": "self.version",
                 "filament/query-builder": "self.version",
                 "filament/support": "self.version",
-                "php": "^8.2"
+                "php": "^8.3"
             },
             "type": "library",
             "extra": {
@@ -1389,16 +1390,16 @@
         },
         {
             "name": "filament/widgets",
-            "version": "5.x-dev",
+            "version": "6.x-dev",
             "dist": {
                 "type": "path",
                 "url": "../../packages/widgets",
-                "reference": "090e314e0f6b5408a0b39fe3650928053e90ecb7"
+                "reference": "e978cf9600553878c351f0d1b5a3f89f4065e4f4"
             },
             "require": {
                 "filament/schemas": "self.version",
                 "filament/support": "self.version",
-                "php": "^8.2"
+                "php": "^8.3"
             },
             "type": "library",
             "extra": {
@@ -3851,36 +3852,36 @@
         },
         {
             "name": "openspout/openspout",
-            "version": "v4.32.0",
+            "version": "v5.11.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/openspout/openspout.git",
-                "reference": "41f045c1f632e1474e15d4c7bc3abcb4a153563d"
+                "reference": "b87edb8617354be52b0b5addfccdba97c4fc6c5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openspout/openspout/zipball/41f045c1f632e1474e15d4c7bc3abcb4a153563d",
-                "reference": "41f045c1f632e1474e15d4c7bc3abcb4a153563d",
+                "url": "https://api.github.com/repos/openspout/openspout/zipball/b87edb8617354be52b0b5addfccdba97c4fc6c5e",
+                "reference": "b87edb8617354be52b0b5addfccdba97c4fc6c5e",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
-                "ext-fileinfo": "*",
                 "ext-filter": "*",
                 "ext-libxml": "*",
                 "ext-xmlreader": "*",
                 "ext-zip": "*",
-                "php": "~8.3.0 || ~8.4.0 || ~8.5.0"
+                "php": "~8.4.0 || ~8.5.0"
             },
             "require-dev": {
+                "ext-fileinfo": "*",
                 "ext-zlib": "*",
-                "friendsofphp/php-cs-fixer": "^3.86.0",
-                "infection/infection": "^0.31.2",
-                "phpbench/phpbench": "^1.4.1",
-                "phpstan/phpstan": "^2.1.22",
-                "phpstan/phpstan-phpunit": "^2.0.7",
-                "phpstan/phpstan-strict-rules": "^2.0.6",
-                "phpunit/phpunit": "^12.3.7"
+                "friendsofphp/php-cs-fixer": "^3.95.24",
+                "infection/infection": "^0.35",
+                "phpbench/phpbench": "^1.7.0",
+                "phpstan/phpstan": "^2.2.12",
+                "phpstan/phpstan-phpunit": "^2.0.18",
+                "phpstan/phpstan-strict-rules": "^2.0.12",
+                "phpunit/phpunit": "^13.3.2"
             },
             "suggest": {
                 "ext-iconv": "To handle non UTF-8 CSV files (if \"php-mbstring\" is not already installed or is too limited)",
@@ -3928,7 +3929,7 @@
             ],
             "support": {
                 "issues": "https://github.com/openspout/openspout/issues",
-                "source": "https://github.com/openspout/openspout/tree/v4.32.0"
+                "source": "https://github.com/openspout/openspout/tree/v5.11.3"
             },
             "funding": [
                 {
@@ -3940,7 +3941,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-03T16:03:54+00:00"
+            "time": "2026-09-02T15:27:53+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -4968,84 +4969,6 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.3"
             },
             "time": "2026-06-18T03:57:49+00:00"
-        },
-        {
-            "name": "ryangjchandler/blade-capture-directive",
-            "version": "v1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ryangjchandler/blade-capture-directive.git",
-                "reference": "3f9e80b56ff60b78755ef320e3e16d88850101d6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ryangjchandler/blade-capture-directive/zipball/3f9e80b56ff60b78755ef320e3e16d88850101d6",
-                "reference": "3f9e80b56ff60b78755ef320e3e16d88850101d6",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
-                "php": "^8.1",
-                "spatie/laravel-package-tools": "^1.9.2"
-            },
-            "require-dev": {
-                "nunomaduro/collision": "^7.0|^8.0",
-                "nunomaduro/larastan": "^2.0|^3.0",
-                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
-                "pestphp/pest": "^2.0|^3.7|^4.1",
-                "pestphp/pest-plugin-laravel": "^2.0|^3.1|^v4.1.0",
-                "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
-                "phpstan/phpstan-phpunit": "^1.0|^2.0",
-                "phpunit/phpunit": "^10.0|^11.5.3|^12.0",
-                "spatie/laravel-ray": "^1.26"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "BladeCaptureDirective": "RyanChandler\\BladeCaptureDirective\\Facades\\BladeCaptureDirective"
-                    },
-                    "providers": [
-                        "RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "RyanChandler\\BladeCaptureDirective\\": "src",
-                    "RyanChandler\\BladeCaptureDirective\\Database\\Factories\\": "database/factories"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ryan Chandler",
-                    "email": "support@ryangjchandler.co.uk",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Create inline partials in your Blade templates with ease.",
-            "homepage": "https://github.com/ryangjchandler/blade-capture-directive",
-            "keywords": [
-                "blade-capture-directive",
-                "laravel",
-                "ryangjchandler"
-            ],
-            "support": {
-                "issues": "https://github.com/ryangjchandler/blade-capture-directive/issues",
-                "source": "https://github.com/ryangjchandler/blade-capture-directive/tree/v1.1.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/ryangjchandler",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-03-19T10:36:26+00:00"
         },
         {
             "name": "scrivo/highlight.php",

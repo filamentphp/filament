@@ -25,14 +25,14 @@ ConfirmPrompt::fallbackUsing(function (ConfirmPrompt $prompt) {
 
 render('<p class="text-blue font-bold">Checking PHP version compatibility with v6...</p>');
 
-if (version_compare(PHP_VERSION, '8.2.0', '<')) {
+if (version_compare(PHP_VERSION, '8.3.0', '<')) {
     $detected = PHP_VERSION;
 
     render('<p class="text-red font-bold">Incompatible PHP version detected</p>');
-    render("<p>Detected PHP {$detected}. Filament v6 and Laravel 11 require PHP 8.2+ for language features, performance improvements, and security fixes. Please upgrade your PHP runtime to 8.2 or higher before proceeding.</p>");
+    render("<p>Detected PHP {$detected}. Filament v6 requires PHP 8.3+. Please upgrade your PHP runtime to 8.3 or higher before proceeding.</p>");
     render(<<<'HTML'
         <p class="bg-red-600 text-red-50 mt-1">
-            <strong>Upgrade aborted because PHP version is below 8.2</strong>
+            <strong>Upgrade aborted because PHP version is below 8.3</strong>
         </p>
     HTML);
 
