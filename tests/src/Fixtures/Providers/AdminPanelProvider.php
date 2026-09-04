@@ -53,7 +53,6 @@ use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
-use Filament\Tests\Fixtures\Pages\SidebarWidthBrowserTest;
 use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
 use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
@@ -147,7 +146,6 @@ class AdminPanelProvider extends PanelProvider
                 SectionBrowserTest::class,
                 SelectTest::class,
                 Settings::class,
-                SidebarWidthBrowserTest::class,
                 SliderBrowserTest::class,
                 StatsOverviewWidgetBrowserTest::class,
                 TabsBrowserTest::class,

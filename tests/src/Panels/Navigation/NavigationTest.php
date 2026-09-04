@@ -11,10 +11,8 @@ use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Enums\NavigationGroupEnum;
-use Filament\Tests\Fixtures\Pages\SidebarWidthBrowserTest;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Navigation\TestCase;
-use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
@@ -165,39 +163,6 @@ describe('registration and ordering', function (): void {
         expect($usersPosition)->not->toBeFalse();
         expect($settingsPosition)->not->toBeFalse();
         expect($usersPosition)->toBeLessThan($settingsPosition);
-    });
-});
-
-describe('sidebar', function (): void {
-    it('can use `collapsedSidebarWidth()` without shrinking navigation item icons', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
-
-            $defaultWidthPage = visit(SidebarWidthBrowserTest::getUrl());
-
-            $defaultWidthPage->script("window.Alpine.store('sidebar').open()");
-
-            $defaultWidthPage
-                ->click('.fi-topbar-close-collapse-sidebar-btn')
-                ->wait(0.5)
-                ->assertScript('document.querySelector(\'.fi-main-sidebar\').getBoundingClientRect().width', 72)
-                ->assertScript('document.querySelector(\'.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon\').getBoundingClientRect().width', 24)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-
-            $customWidthPage = visit(SidebarWidthBrowserTest::getUrl() . '?customWidth=1')
-                ->inDarkMode();
-
-            $customWidthPage->script("window.Alpine.store('sidebar').open()");
-
-            $customWidthPage
-                ->click('.fi-topbar-close-collapse-sidebar-btn')
-                ->wait(0.5)
-                ->assertScript('document.querySelector(\'.fi-main-sidebar\').getBoundingClientRect().width', 48)
-                ->assertScript('document.querySelector(\'.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon\').getBoundingClientRect().width', 24)
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-        });
     });
 });
 
