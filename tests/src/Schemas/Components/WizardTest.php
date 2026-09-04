@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -422,6 +423,11 @@ describe('rendering', function (): void {
     it('can render with `submitAction()`', function (): void {
         livewire(RenderWizardWithSubmitAction::class)->assertSuccessful();
     });
+
+    it('preserves a custom `livewireTarget()` on the next action', function (): void {
+        livewire(RenderWizardWithCustomNextActionLivewireTarget::class)
+            ->assertSeeHtml('wire:target="customTarget"');
+    });
 });
 
 it('can render `Wizard` in the browser', function (): void {
@@ -436,6 +442,29 @@ it('can render `Wizard` in the browser', function (): void {
         visit('/wizard-browser-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
+    });
+});
+
+it('only shows the next action loading indicator for its own request', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $nextAction = '[data-testid="wizard-next-action"]';
+        $nextActionLoadingIndicator = "{$nextAction} .fi-loading-indicator";
+
+        $browser = visit('/wizard-browser-test')
+            ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
+            ->wait(0.3);
+
+        expect($browser->script(
+            "Boolean(document.querySelector('{$nextActionLoadingIndicator}')?.getClientRects().length)",
+        ))->toBeFalse();
+
+        $browser
+            ->click('Draft')
+            ->click($nextAction)
+            ->assertVisible($nextActionLoadingIndicator)
+            ->assertNoSmoke();
     });
 });
 
@@ -581,6 +610,30 @@ class RenderWizardWithSubmitAction extends Component implements HasSchemas
     public function infolist(Schema $schema): Schema
     {
         return $schema->state([])->components([Wizard::make()->steps([Step::make('Step 1')])->submitAction(new HtmlString('<button>Submit</button>'))]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderWizardWithCustomNextActionLivewireTarget extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->state([])
+            ->components([
+                Wizard::make([
+                    Step::make('Step 1'),
+                    Step::make('Step 2'),
+                ])->nextAction(
+                    static fn (Action $action): Action => $action->livewireTarget('customTarget'),
+                ),
+            ]);
     }
 
     public function render(): string

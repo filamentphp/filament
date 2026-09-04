@@ -357,7 +357,10 @@ class Wizard extends Component implements HasEmbeddedView
             static fn ($component): bool => $component instanceof Step,
         );
 
-        if (count($steps) > 1) {
+        if (
+            (count($steps) > 1) &&
+            ($nextAction->getLivewireTarget() === 'callSchemaComponentMethod')
+        ) {
             $nextActionLivewireTargetKey = Js::from($key)->toHtml();
 
             $nextAction->livewireTarget(
