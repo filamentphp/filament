@@ -33,7 +33,7 @@
             </span>
         </div>
 
-        @if ($value = $getValue())
+        @if (filled($value = $getValue()))
             <div class="fi-wi-stats-overview-stat-value">
                 {{ $value }}
             </div>

@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Concerns\CanOpenUrl;
 use Filament\Schemas\Components\Concerns\HasDescription;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Support\Concerns\HasColor;
+use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -19,6 +20,7 @@ class Stat extends Component
     use HasColor;
     use HasDescription;
     use HasLabel;
+    use HasPlaceholder;
 
     protected string $view = 'filament-widgets::stats-overview-widget.stat';
 
@@ -43,15 +45,13 @@ class Stat extends Component
      */
     protected string | array | null $descriptionColor = null;
 
-    protected string | Htmlable | Closure | null $placeholder = null;
-
     /**
-     * @var scalar | Htmlable | Closure
+     * @var scalar | Htmlable | Closure | null
      */
     protected $value;
 
     /**
-     * @param  scalar | Htmlable | Closure  $value
+     * @param  scalar | Htmlable | Closure | null  $value
      */
     final public function __construct(string | Htmlable $label, $value)
     {
@@ -60,11 +60,14 @@ class Stat extends Component
     }
 
     /**
-     * @param  scalar | Htmlable | Closure  $value
+     * @param  scalar | Htmlable | Closure | null  $value
      */
     public static function make(string | Htmlable $label, $value): static
     {
-        return app(static::class, ['label' => $label, 'value' => $value]);
+        $static = app(static::class, ['label' => $label, 'value' => $value]);
+        $static->configure();
+
+        return $static;
     }
 
     /**
@@ -102,13 +105,6 @@ class Stat extends Component
         return $this;
     }
 
-    public function placeholder(string | Htmlable | Closure | null $placeholder): static
-    {
-        $this->placeholder = $placeholder;
-
-        return $this;
-    }
-
     /**
      * @param  array<float> | Arrayable | null  $chart
      */
@@ -128,7 +124,7 @@ class Stat extends Component
     }
 
     /**
-     * @param  scalar | Htmlable | Closure  $value
+     * @param  scalar | Htmlable | Closure | null  $value
      */
     public function value($value): static
     {
@@ -176,13 +172,8 @@ class Stat extends Component
         return $this->descriptionIconPosition ?? IconPosition::After;
     }
 
-    public function getPlaceholder(): string | Htmlable | null
-    {
-        return $this->evaluate($this->placeholder);
-    }
-
     /**
-     * @return scalar | Htmlable
+     * @return scalar | Htmlable | null
      */
     public function getValue(): mixed
     {

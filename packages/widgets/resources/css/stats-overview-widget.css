@@ -24,7 +24,7 @@
     }
 
     & .fi-wi-stats-overview-stat-placeholder {
-        @apply text-3xl font-medium text-gray-400 dark:text-gray-500;
+        @apply text-3xl font-medium text-gray-500 dark:text-gray-400;
     }
 
     & .fi-wi-stats-overview-stat-description {

@@ -129,7 +129,7 @@ In this example, we are deliberately escaping the `$` in `$dispatch()` since thi
 
 ## Setting a placeholder for a stat
 
-Sometimes a stat's value may not be available — for example, when a dashboard has nothing to show for a specific period. You can use `placeholder()` to define what should be displayed instead, whenever the value is `null`.
+Sometimes a stat's value may not be available — for example, when a dashboard has nothing to show for a specific period. You can use `placeholder()` to define what should be displayed instead when the value is blank:
 
 ```php
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -137,6 +137,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 Stat::make('Unique views', $uniqueViews)
     ->placeholder('-')
 ```
+
+A value is considered blank according to Laravel's `blank()` helper. For example, `null` and empty strings are blank, while `0` and `'0'` are not.
 
 ### Setting a default placeholder globally
 
