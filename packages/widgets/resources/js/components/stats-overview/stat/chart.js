@@ -8,6 +8,8 @@ import {
     PointElement,
 } from 'chart.js'
 
+import readCustomProperties from '../../../custom-properties'
+
 Chart.register(
     CategoryScale,
     Filler,
@@ -69,6 +71,8 @@ export default function statsOverviewStatChart({ key, labels, values }) {
             this.getChart()?.destroy()
 
             const { backgroundColor, borderColor } = this.getChartColors()
+            const { borderWidth, fill, lineTension } =
+                this.getChartCustomProperties()
 
             new Chart(this.$refs.canvas, {
                 type: 'line',
@@ -77,9 +81,9 @@ export default function statsOverviewStatChart({ key, labels, values }) {
                     datasets: [
                         {
                             data: values,
-                            borderWidth: 2,
-                            fill: 'start',
-                            tension: 0.5,
+                            borderWidth,
+                            fill,
+                            tension: lineTension,
                             backgroundColor,
                             borderColor,
                         },
@@ -136,9 +140,19 @@ export default function statsOverviewStatChart({ key, labels, values }) {
 
             const { backgroundColor, borderColor } = this.getChartColors()
 
+            // The custom properties are re-read too: a theme may legitimately give light
+            // and dark mode a different line.
+            const { borderWidth, fill, lineTension } =
+                this.getChartCustomProperties()
+
             chart.data.datasets[0].backgroundColor = backgroundColor
             chart.data.datasets[0].borderColor = borderColor
-            chart.update('none')
+            chart.data.datasets[0].borderWidth = borderWidth
+            chart.data.datasets[0].fill = fill
+            chart.data.datasets[0].tension = lineTension
+
+            // `'resize'` rather than `'none'`, for the reason given in the chart widget.
+            chart.update('resize')
         },
 
         getChart() {
@@ -156,6 +170,19 @@ export default function statsOverviewStatChart({ key, labels, values }) {
                 ).color,
                 borderColor: getComputedStyle(this.$refs.borderColorElement)
                     .color,
+            }
+        },
+
+        // The parts of the sparkline that a stylesheet cannot otherwise reach, since
+        // Chart.js paints them onto a bare `<canvas>`. Each fallback is the value the
+        // sparkline has always used.
+        getChartCustomProperties() {
+            const { number, keyword } = readCustomProperties(this.$el)
+
+            return {
+                borderWidth: number('--stat-chart-border-width', 2),
+                fill: keyword('--stat-chart-fill', 'start'),
+                lineTension: number('--stat-chart-line-tension', 0.5),
             }
         },
 

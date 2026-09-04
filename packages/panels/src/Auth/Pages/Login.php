@@ -102,6 +102,17 @@ class Login extends SimplePage
                 $this->throwFailureValidationException();
             }
 
+            // This must run before the multi-factor challenge is presented, otherwise
+            // the challenge confirms that the password was valid for an account that
+            // can never sign in. It must also stay inside the `Timebox`, so that the
+            // failure is padded to the same duration as an invalid password.
+            if (! $this->isUserAllowedToAccessPanel($user)) {
+                $this->userUndertakingMultiFactorAuthentication = null;
+
+                $this->fireFailedEvent($authGuard, $user, $credentials);
+                $this->throwFailureValidationException();
+            }
+
             $timebox->returnEarly();
 
             return $user;
@@ -141,6 +152,10 @@ class Login extends SimplePage
                 return true;
             }
 
+            if (Filament::getMultiFactorAuthenticationProviders() === []) {
+                $timebox->returnEarly();
+            }
+
             return false;
         }, $timeboxDuration);
 
@@ -148,20 +163,25 @@ class Login extends SimplePage
             return null;
         }
 
-        if (! $authGuard->attemptWhen($credentials, function (Authenticatable $user): bool {
-            if (! ($user instanceof FilamentUser)) {
-                return true;
-            }
-
-            return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
-        }, $remember)) {
-            $this->fireFailedEvent($authGuard, $user, $credentials);
+        // Credentials are deliberately validated again after the multi-factor challenge so that
+        // password and panel access changes made during the challenge are observed before login.
+        // The corresponding second `Attempting` event is intentional.
+        if (! $authGuard->attemptWhen($credentials, fn (Authenticatable $user): bool => $this->isUserAllowedToAccessPanel($user), $remember)) {
             $this->throwFailureValidationException();
         }
 
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    protected function isUserAllowedToAccessPanel(Authenticatable $user): bool
+    {
+        if (! ($user instanceof FilamentUser)) {
+            return true;
+        }
+
+        return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
     }
 
     protected function isMultiFactorChallengeRateLimited(Authenticatable $user): bool

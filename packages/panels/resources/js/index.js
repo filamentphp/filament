@@ -3,6 +3,7 @@ import sidebar from './stores/sidebar.js'
 import './dark-mode.js'
 import './error-notifications.js'
 import './history-state.js'
+import './reset-restored-resource-create-record-pages.js'
 import './scroll-sidebar.js'
 import './unsaved-changes-alert.js'
 

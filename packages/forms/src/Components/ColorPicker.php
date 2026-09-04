@@ -66,7 +66,6 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         $extraAttributeBag = $this->getExtraAttributeBag();
         $id = $this->getId();
         $isAutofocused = $this->isAutofocused();
-        $isConcealed = $this->isConcealed();
         $isDisabled = $this->isDisabled();
         $isLive = $this->isLive();
         $isLiveOnBlur = $this->isLiveOnBlur();
@@ -116,7 +115,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
                 'disabled' => $isDisabled,
                 'id' => $id,
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                'required' => $this->isRequired() && (! $isConcealed),
+                'required' => $this->isRequired(),
                 'type' => 'text',
                 'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
                 'x-on:blur' => $isLiveOnBlur ? 'isOpen() ? null : commitState()' : null,

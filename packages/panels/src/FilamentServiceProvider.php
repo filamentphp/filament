@@ -18,6 +18,7 @@ use Filament\Auth\Http\Responses\PasswordResetResponse;
 use Filament\Auth\Http\Responses\RegistrationResponse;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\IdentifyPageConfiguration;
@@ -104,6 +105,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
         Livewire::addPersistentMiddleware([
             Authenticate::class,
+            AuthenticateSession::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
             DisableBladeIconComponents::class,
             DispatchServingFilamentEvent::class,
             IdentifyPageConfiguration::class,
