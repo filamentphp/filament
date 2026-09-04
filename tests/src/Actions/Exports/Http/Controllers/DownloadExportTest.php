@@ -204,7 +204,7 @@ it('uses the exporter\'s `getDownloader()` override for the requested format', f
     'XLSX' => 'xlsx',
 ]);
 
-it('uses the format downloader when the stored `Exporter` class does not exist', function (): void {
+it('uses the CSV format downloader when the stored `Exporter` class does not exist', function (): void {
     $owner = User::factory()->create();
 
     $export = createExportForOwner($owner, exporter: 'App\\Filament\\Exports\\MissingExporter');
