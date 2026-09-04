@@ -180,9 +180,9 @@ public function panel(Panel $panel): Panel
 
 ### Changing the app code expiration time
 
-App codes are issued using a time-based one-time password (TOTP) algorithm, which means that they are only valid for a short period of time before and after the time they are generated. The time is defined in a "window" of time. By default, Filament uses an expiration window of `2`, which creates a 1-minute validity period on either side of the generation time (2 minutes in total).
+App codes are issued using a time-based one-time password (TOTP) algorithm, which means that they are only valid for a short period of time. By default, Filament checks the two 30-second periods before and after the current period, accepting codes generated up to about 1 minute before or after verification.
 
-To change the window, for example to only be valid for 2 minutes after it is generated, you can use the `codeWindow()` method on the `AppAuthentication` instance, set to `4`:
+To change the window, for example to accept codes generated up to about 2 minutes before or after verification, you can use the `codeWindow()` method on the `AppAuthentication` instance, set to `4`:
 
 ```php
 use Filament\Auth\MultiFactor\App\AppAuthentication;
