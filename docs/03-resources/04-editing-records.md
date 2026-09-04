@@ -195,6 +195,35 @@ class EditUser extends EditRecord
 
 Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#lifecycle-hooks).
 
+### Defining lifecycle hooks in traits
+
+To define a lifecycle hook in a trait, suffix the hook name with the trait's name. This follows the `boot{TraitName}()` convention used by Eloquent and the `mount{TraitName}()` convention used by Livewire, allowing reusable traits to hook into the page lifecycle without colliding with hooks defined on the page itself:
+
+```php
+use Filament\Resources\Pages\EditRecord;
+
+trait HandlesDrafts
+{
+    protected function afterSaveHandlesDrafts(): void
+    {
+        // Runs after the form fields are saved to the database, in addition
+        // to the hook on the page.
+    }
+}
+
+class EditUser extends EditRecord
+{
+    use HandlesDrafts;
+
+    protected function afterSave(): void
+    {
+        // Both lifecycle hooks are called.
+    }
+}
+```
+
+The page's own hook is called first, followed by each trait hook. Hooks from traits used by other traits are also called. Trait hooks are called automatically, so you should not also call them from the page's own hook.
+
 ## Saving a part of the form independently
 
 You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../schemas/sections#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:

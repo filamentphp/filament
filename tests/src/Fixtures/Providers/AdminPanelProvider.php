@@ -36,6 +36,7 @@ use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
+use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
@@ -53,6 +54,7 @@ use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
+use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
 use Filament\Tests\Fixtures\Pages\TextareaTest;
@@ -127,6 +129,7 @@ class AdminPanelProvider extends PanelProvider
                 DatabaseNotificationsBrowserTest::class,
                 DatePickerBrowserTest::class,
                 DateTimePickerTest::class,
+                DeferredSchemaLoadingBrowserTest::class,
                 FileUploadBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
@@ -144,6 +147,7 @@ class AdminPanelProvider extends PanelProvider
                 SelectTest::class,
                 Settings::class,
                 SliderBrowserTest::class,
+                StatsOverviewWidgetBrowserTest::class,
                 TabsBrowserTest::class,
                 TagsInputTest::class,
                 TextareaTest::class,
