@@ -212,7 +212,7 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 throw $exception;
             }
 
-            $this->mountedActions[array_key_last($this->mountedActions)]['hasUnsavedChangesAlert'] = $action->hasUnsavedChangesAlert();
+            $this->mountedActions[$action->getNestingIndex()]['hasUnsavedChangesAlert'] = $action->hasUnsavedChangesAlert();
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 if ($context['mountedFromUrl'] ?? false) {

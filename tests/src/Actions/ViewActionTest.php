@@ -70,7 +70,7 @@ it('does not flag a mounted `ViewAction` for the unsaved changes alert', functio
 
     livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
         ->mountAction(TestAction::make(ViewAction::class)->table($department))
-        ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false);
+        ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false, strict: true);
 });
 
 it('returns `view` from `getDefaultName()`', function (): void {

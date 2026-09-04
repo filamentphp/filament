@@ -265,7 +265,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Action modals that cannot contain unsaved changes, such as the read-only `ViewAction` modal, do not trigger the alert. You may also [disable the alert for a specific action](actions/modals#disabling-the-unsaved-changes-alert) using the `unsavedChangesAlert(false)` method.
+Action modals with a disabled schema, such as the read-only `ViewAction` modal, do not trigger the alert. You may also [disable the alert for another action that cannot contain unsaved changes](actions/modals#disabling-the-unsaved-changes-alert) using the `unsavedChangesAlert(false)` method.
 
 ## Enabling database transactions
 

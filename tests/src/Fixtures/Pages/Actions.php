@@ -379,6 +379,19 @@ class Actions extends Page
                 ->action(function (): void {
                     $this->dispatch('without-unsaved-changes-alert-called');
                 }),
+            Action::make('mountsChildDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert(false)
+                ->registerModalActions([
+                    Action::make('childMountedDuringParentMount')
+                        ->requiresConfirmation()
+                        ->unsavedChangesAlert()
+                        ->action(static fn () => null),
+                ])
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childMountedDuringParentMount');
+                })
+                ->action(static fn () => null),
         ];
     }
 
