@@ -172,6 +172,9 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
                 }
             }
 
+            // Keep a reference to this entry since the action's mount lifecycle may replace it.
+            $mountedActionState = &$this->mountedActions[$action->getNestingIndex()];
+
             try {
                 if (
                     $action->hasAuthorizationNotification() &&
@@ -211,6 +214,9 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
 
                 throw $exception;
             }
+
+            $mountedActionState['hasUnsavedChangesAlert'] = $action->hasUnsavedChangesAlert();
+            unset($mountedActionState);
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 if ($context['mountedFromUrl'] ?? false) {

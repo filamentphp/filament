@@ -189,14 +189,14 @@ class FusedGroup extends Component implements CanEntangleWithSingularRelationshi
             $schema->alignEnd();
         }
 
-        $schema->fieldWrapperView('filament-forms::plain-field-wrapper');
-
         return $schema;
     }
 
     protected function configureChildSchema(Schema $schema, string $key): Schema
     {
         $schema = parent::configureChildSchema($schema, $key);
+
+        $schema->fieldWrapperView('filament-forms::plain-field-wrapper');
 
         if (in_array($key, [
             static::BEFORE_LABEL_SCHEMA_KEY,

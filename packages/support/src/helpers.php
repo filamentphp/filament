@@ -3,6 +3,8 @@
 namespace Filament\Support;
 
 use BackedEnum;
+use Composer\Autoload\ClassLoader;
+use Composer\InstalledVersions;
 use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
@@ -22,6 +24,7 @@ use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
+use ReflectionClass;
 use Throwable;
 
 if (! function_exists('Filament\Support\format_money')) {
@@ -355,17 +358,91 @@ if (! function_exists('Filament\Support\original_request')) {
     }
 }
 
+if (! function_exists('Filament\Support\get_composer_vendor_directory')) {
+    /** @internal */
+    function get_composer_vendor_directory(): string
+    {
+        static $directory;
+
+        return $directory ??= dirname((new ReflectionClass(InstalledVersions::class))->getFileName(), 2);
+    }
+}
+
+if (! function_exists('Filament\Support\is_path_within_directory')) {
+    /** @internal */
+    function is_path_within_directory(string $path, string $directory): bool
+    {
+        /** @var array<string, array{string, string, bool}> $directoryConfigurations */
+        static $directoryConfigurations = [];
+
+        $path = str_replace('\\', '/', $path);
+
+        if (! isset($directoryConfigurations[$directory])) {
+            $normalizedDirectory = rtrim(str_replace('\\', '/', $directory), '/');
+            $directoryPrefix = $normalizedDirectory . '/';
+
+            $directoryConfigurations[$directory] = [
+                $normalizedDirectory,
+                $directoryPrefix,
+                preg_match('/^(?:[a-z]:\/|\/\/)/i', $directoryPrefix) === 1,
+            ];
+        }
+
+        [$directory, $directoryPrefix, $isCaseInsensitive] = $directoryConfigurations[$directory];
+
+        if ($isCaseInsensitive) {
+            return (strcasecmp($path, $directory) === 0) || (strncasecmp($path, $directoryPrefix, strlen($directoryPrefix)) === 0);
+        }
+
+        return ($path === $directory) || str_starts_with($path, $directoryPrefix);
+    }
+}
+
+if (! function_exists('Filament\Support\is_path_within_vendor_directory')) {
+    /** @internal */
+    function is_path_within_vendor_directory(string $path, string $applicationDirectory): bool
+    {
+        $composerVendorDirectory = get_composer_vendor_directory();
+
+        if (
+            (! is_path_within_directory($applicationDirectory, $composerVendorDirectory)) &&
+            is_path_within_directory($path, $composerVendorDirectory)
+        ) {
+            return true;
+        }
+
+        if (! is_path_within_directory($path, $applicationDirectory)) {
+            return false;
+        }
+
+        $path = str_replace('\\', '/', $path);
+        $applicationDirectory = rtrim(str_replace('\\', '/', $applicationDirectory), '/');
+        $relativePath = ltrim(substr($path, strlen($applicationDirectory)), '/');
+        $isCaseInsensitive = preg_match('/^(?:[a-z]:\/|\/\/)/i', $applicationDirectory . '/') === 1;
+        $vendorDirectoryPattern = $isCaseInsensitive
+            ? '~(?:^|/)vendor(?:/|$)~i'
+            : '~(?:^|/)vendor(?:/|$)~';
+
+        return preg_match($vendorDirectoryPattern, $relativePath) === 1;
+    }
+}
+
 if (! function_exists('Filament\Support\discover_app_classes')) {
     /**
      * @return array<class-string>
      */
     function discover_app_classes(?string $parentClass = null): array
     {
-        $classLoader = require 'vendor/autoload.php';
+        $vendorDirectory = get_composer_vendor_directory();
+        $classLoader = ClassLoader::getRegisteredLoaders()[$vendorDirectory];
+        $applicationPath = (string) InstalledVersions::getRootPackage()['install_path'];
 
         return collect($classLoader->getClassMap())
-            ->filter(function (string $file, string $class) use ($parentClass): bool {
-                if (! str($file)->startsWith(base_path('vendor' . DIRECTORY_SEPARATOR . 'composer/../../'))) {
+            ->filter(function (string $file, string $class) use ($applicationPath, $parentClass): bool {
+                if (
+                    (! is_path_within_directory($file, $applicationPath)) ||
+                    is_path_within_vendor_directory($file, $applicationPath)
+                ) {
                     return false;
                 }
 

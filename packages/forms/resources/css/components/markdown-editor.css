@@ -26,10 +26,23 @@
 
     &.fi-disabled {
         @apply block w-full rounded-lg bg-gray-50 px-3 py-3 text-sm text-gray-500 shadow-xs ring-1 ring-gray-950/10 dark:bg-transparent dark:text-gray-400 dark:ring-white/10;
+
+        &[style*='--min-height'] {
+            min-height: var(--min-height);
+        }
+
+        &[style*='--max-height'] {
+            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 scrollbar-gutter-stable overflow-y-auto outline-none focus-visible:ring-2 focus-visible:ring-inset;
+            max-height: var(--max-height);
+        }
     }
 
     & .EasyMDEContainer .CodeMirror {
-        @apply px-4! py-3!;
+        @apply px-4! py-0!;
+    }
+
+    & .EasyMDEContainer .CodeMirror-lines {
+        @apply py-3!;
     }
 
     & .cm-s-easymde .cm-comment {

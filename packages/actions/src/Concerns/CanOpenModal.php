@@ -93,6 +93,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalAutofocused = null;
 
+    protected bool | Closure | null $hasUnsavedChangesAlert = null;
+
     protected string | BackedEnum | Htmlable | Closure | null $modalIcon = null;
 
     /**
@@ -117,6 +119,13 @@ trait CanOpenModal
     public function closeModalByEscaping(bool | Closure | null $condition = true): static
     {
         $this->isModalClosedByEscaping = $condition;
+
+        return $this;
+    }
+
+    public function unsavedChangesAlert(bool | Closure | null $condition = true): static
+    {
+        $this->hasUnsavedChangesAlert = $condition;
 
         return $this;
     }
@@ -728,6 +737,11 @@ trait CanOpenModal
     public function isModalAutofocused(): bool
     {
         return $this->evaluate($this->isModalAutofocused) ?? ModalComponent::$isAutofocused;
+    }
+
+    public function hasUnsavedChangesAlert(): bool
+    {
+        return (bool) ($this->evaluate($this->hasUnsavedChangesAlert) ?? (! $this->isSchemaDisabled()));
     }
 
     /**

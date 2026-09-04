@@ -2,6 +2,7 @@
 
 namespace Filament\Commands;
 
+use Composer\InstalledVersions;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\HasPanel;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
@@ -194,6 +195,12 @@ class MakeThemeCommand extends Command
 
         $this->copyStubToApp('ThemeCss', $cssFilePath, [
             'classDirectory' => filled($classDirectory) ? $classDirectory : '',
+            'filamentThemeCssPath' => $this->escapeCssString(
+                $this->getRelativePath(
+                    (string) InstalledVersions::getInstallPath('filament/filament') . '/resources/css/theme.css',
+                    dirname($cssFilePath),
+                ),
+            ),
             'panel' => $this->panel->getId(),
             'viewDirectory' => filled($viewDirectory) ? $viewDirectory : '',
         ]);
