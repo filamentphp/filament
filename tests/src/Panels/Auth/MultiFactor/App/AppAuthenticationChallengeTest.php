@@ -703,6 +703,23 @@ describe('recovery codes', function (): void {
 });
 
 describe('security', function (): void {
+    it('uses a TOTP code window of ±1 minute by default', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $userToAuthenticate = User::factory()
+            ->hasAppAuthentication()
+            ->create();
+
+        $secret = $appAuthentication->getSecret($userToAuthenticate);
+
+        $google2FA = app(Google2FA::class);
+
+        $expiredCode = $google2FA->oathTotp($secret, $google2FA->getTimestamp() - 3);
+
+        expect($appAuthentication->getCodeWindow())->toBe(2)
+            ->and($appAuthentication->verifyCode($expiredCode, $secret))->toBeFalse();
+    });
+
     it('can throttle multi-factor challenge attempts per user', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -868,9 +885,9 @@ describe('security', function (): void {
 
         $secret = $appAuthentication->getSecret($userToAuthenticate);
 
-        $this->travelTo(now()->addMinutes(1));
-        $futureCode = $appAuthentication->getCurrentCode($userToAuthenticate);
-        $this->travelBack();
+        $google2FA = app(Google2FA::class);
+
+        $futureCode = $google2FA->oathTotp($secret, $google2FA->getTimestamp() + 2);
 
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();
