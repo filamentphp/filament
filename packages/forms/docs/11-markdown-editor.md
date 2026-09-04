@@ -66,7 +66,7 @@ MarkdownEditor::make('content')
     ->maxHeight('24rem')
 ```
 
-Once the content exceeds `maxHeight()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minHeight()` sets a starting height while still allowing the editor to grow, and `maxHeight()` caps how tall it may become. Pass `null` to `minHeight()` to restore the editor's default `11.25rem` minimum height.
+Once the content exceeds `maxHeight()`, the editor stops growing and becomes scrollable. Each method may be used on its own — `minHeight()` sets a starting height while still allowing the editor to grow, and `maxHeight()` caps how tall it may become. Pass `null` to `minHeight()` to restore the editor's default `11.25rem` minimum height, or to `maxHeight()` to remove the cap.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minHeight()` and `maxHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 

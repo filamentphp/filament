@@ -438,12 +438,15 @@ describe('height constraints', function (): void {
         expect($editor->getMinHeight())->toBe('15rem');
     });
 
-    it('can clear `minHeight()` with `null`', function (): void {
+    it('can clear `minHeight()` and `maxHeight()` with `null`', function (): void {
         $editor = MarkdownEditor::make('content')
             ->minHeight('20rem')
-            ->minHeight(null);
+            ->maxHeight('40rem')
+            ->minHeight(null)
+            ->maxHeight(null);
 
-        expect($editor->getMinHeight())->toBeNull();
+        expect($editor->getMinHeight())->toBeNull()
+            ->and($editor->getMaxHeight())->toBeNull();
     });
 
     it('returns `null` for `getMaxHeight()` by default', function (): void {

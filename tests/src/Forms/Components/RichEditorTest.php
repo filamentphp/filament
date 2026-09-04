@@ -823,12 +823,15 @@ it('can set `minHeight()` and `maxHeight()` with a `Closure`', function (): void
         ->and($editor->getMaxHeight())->toBe('50rem');
 });
 
-it('can clear `minHeight()` with `null`', function (): void {
+it('can clear `minHeight()` and `maxHeight()` with `null`', function (): void {
     $editor = RichEditor::make('content')
         ->minHeight('20rem')
-        ->minHeight(null);
+        ->maxHeight('40rem')
+        ->minHeight(null)
+        ->maxHeight(null);
 
-    expect($editor->getMinHeight())->toBeNull();
+    expect($editor->getMinHeight())->toBeNull()
+        ->and($editor->getMaxHeight())->toBeNull();
 });
 
 it('renders the `--min-height` and `--max-height` custom properties when set', function (): void {
