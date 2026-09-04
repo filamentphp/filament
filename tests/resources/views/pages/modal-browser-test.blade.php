@@ -56,6 +56,7 @@
         id="standalone-browser-test-no-tabbable-content-modal"
         :close-button="false"
         :extra-modal-window-attribute-bag="new ComponentAttributeBag(['data-testid' => 'no-tabbable-content-modal'])"
+        heading="No tabbable content modal"
     >
         <x-slot name="trigger">
             <x-filament::button data-testid="no-tabbable-content-trigger">
