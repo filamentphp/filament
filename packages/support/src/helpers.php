@@ -15,6 +15,8 @@ use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag
 use Filament\Support\View\Components\Contracts\HasColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -254,7 +256,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
      */
-    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
+    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection, bool $shouldApplySearchCollation = true): string | Expression
     {
         $driverName = $databaseConnection->getDriverName();
 
@@ -315,7 +317,9 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             $column = "lower({$column})";
         }
 
-        $collation = $databaseConnection->getConfig('search_collation');
+        $collation = $shouldApplySearchCollation
+            ? $databaseConnection->getConfig('search_collation')
+            : null;
 
         if (filled($collation)) {
             $column = "{$column} collate {$collation}";
@@ -348,6 +352,42 @@ if (! function_exists('Filament\Support\generate_search_term_expression')) {
         }
 
         return Str::lower($search);
+    }
+}
+
+if (! function_exists('Filament\Support\is_database_driver_supported')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function is_database_driver_supported(ConnectionInterface $databaseConnection): bool
+    {
+        return method_exists($databaseConnection, 'getDriverName') && in_array($databaseConnection->getDriverName(), ['mariadb', 'mysql', 'pgsql', 'sqlite', 'sqlsrv'], true);
+    }
+}
+
+if (! function_exists('Filament\Support\apply_search_constraint')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function apply_search_constraint(Builder $query, string $column, string $search, ?bool $isSearchForcedCaseInsensitive = null, string $boolean = 'and', bool $isInverse = false, bool $shouldApplySearchCollation = true): Builder
+    {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        if (! is_database_driver_supported($databaseConnection)) {
+            $query->whereLike($column, $search, false, $boolean, $isInverse);
+
+            return $query;
+        }
+
+        $query->{$isInverse ? 'whereNot' : 'where'}(
+            generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection, $shouldApplySearchCollation),
+            'like',
+            generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection),
+            $boolean,
+        );
+
+        return $query;
     }
 }
 

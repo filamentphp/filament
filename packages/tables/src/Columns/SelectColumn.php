@@ -17,7 +17,6 @@ use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -34,8 +33,7 @@ use LogicException;
 use Stringable;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\apply_search_constraint;
 
 class SelectColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -612,10 +610,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             ]) ?? $relationshipQuery;
         }
 
-        $this->applyOptionsSearchConstraint(
-            $relationshipQuery,
-            generate_search_term_expression($search, $this->isOptionsSearchForcedCaseInsensitive(), $relationshipQuery->getConnection()),
-        );
+        $this->applyOptionsSearchConstraint($relationshipQuery, $search);
 
         $baseRelationshipQuery = $relationshipQuery->getQuery();
 
@@ -792,21 +787,18 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
      */
     public function applyOptionsSearchConstraint(Builder $query, string $search): Builder
     {
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
         $isForcedCaseInsensitive = $this->isOptionsSearchForcedCaseInsensitive();
 
-        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
+        $query->where(function (Builder $query) use ($isForcedCaseInsensitive, $search): Builder {
             $isFirst = true;
 
             foreach ($this->getOptionsSearchColumns() ?? [] as $searchColumn) {
-                $whereClause = $isFirst ? 'where' : 'orWhere';
-
-                $query->{$whereClause}(
-                    generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
-                    'like',
+                apply_search_constraint(
+                    $query,
+                    $searchColumn,
                     "%{$search}%",
+                    $isForcedCaseInsensitive,
+                    $isFirst ? 'and' : 'or',
                 );
 
                 $isFirst = false;

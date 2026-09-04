@@ -4,14 +4,20 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
+use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\ComponentAttributeBag;
 use Symfony\Component\Process\Process;
 
 use function Filament\get_authorization_response;
+use function Filament\Support\apply_search_constraint;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\is_database_driver_supported;
 use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
@@ -338,4 +344,109 @@ it('will generate a JSON search column expression for Postgres with explicit ->>
 
     expect($expression->getValue($grammar))
         ->toBe("lower(\"name\"->>'en'::text)");
+});
+
+it('uses Filament search expressions for recognized database drivers', function (): void {
+    $query = Ticket::query();
+
+    $expectedSearchColumnExpression = match ($query->getConnection()->getDriverName()) {
+        'pgsql' => 'lower("name"::text)',
+        default => 'lower(name)',
+    };
+
+    $returnedQuery = apply_search_constraint(
+        $query,
+        'name',
+        '%TeSt%',
+        isSearchForcedCaseInsensitive: true,
+        boolean: 'or',
+        isInverse: true,
+    );
+
+    $where = $query->getQuery()->wheres[0];
+
+    expect($returnedQuery)
+        ->toBe($query)
+        ->and($where['type'])
+        ->toBe('Basic')
+        ->and($where['column']->getValue($query->getQuery()->getGrammar()))
+        ->toBe($expectedSearchColumnExpression)
+        ->and($where['operator'])
+        ->toBe('like')
+        ->and($where['value'])
+        ->toBe('%test%')
+        ->and($where['boolean'])
+        ->toBe('or not');
+});
+
+it('recognizes supported drivers with `is_database_driver_supported()`', function (string $driver, bool $isSupported): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn($driver);
+
+    expect(is_database_driver_supported($databaseConnection))->toBe($isSupported);
+})->with([
+    'MariaDB' => ['mariadb', true],
+    'MySQL' => ['mysql', true],
+    'PostgreSQL' => ['pgsql', true],
+    'SQLite' => ['sqlite', true],
+    'SQL Server' => ['sqlsrv', true],
+    'MongoDB' => ['mongodb', false],
+]);
+
+it('can use `apply_search_constraint()` without applying a search collation', function (): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getTablePrefix')->andReturn('');
+    $databaseConnection->shouldNotReceive('getConfig');
+
+    $grammar = new PostgresGrammar($databaseConnection);
+    $baseQuery = new QueryBuilder($databaseConnection, $grammar, new Processor);
+    $query = (new EloquentBuilder($baseQuery))->setModel(new Ticket);
+
+    apply_search_constraint(
+        $query,
+        'tickets.Name',
+        '%TeSt%',
+        shouldApplySearchCollation: false,
+    );
+
+    $where = $query->getQuery()->wheres[0];
+
+    expect($where['column']->getValue($grammar))
+        ->toBe('lower("tickets"."Name"::text)')
+        ->and($where['value'])
+        ->toBe('%test%');
+});
+
+it('uses `whereLike()` for unrecognized database drivers', function (): void {
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->once()->andReturn('mongodb');
+
+    $baseQuery = new class($databaseConnection, new Grammar($databaseConnection), new Processor) extends QueryBuilder
+    {
+        /** @var array<mixed> */
+        public array $whereLikeArguments = [];
+
+        public function whereLike($column, $value, $caseSensitive = false, $boolean = 'and', $not = false)
+        {
+            $this->whereLikeArguments = [$column, $value, $caseSensitive, $boolean, $not];
+
+            return $this;
+        }
+    };
+
+    $query = (new EloquentBuilder($baseQuery))->setModel(new Ticket);
+
+    $returnedQuery = apply_search_constraint(
+        $query,
+        'profile.name',
+        '%Te_st%',
+        boolean: 'or',
+        isInverse: true,
+    );
+
+    expect($returnedQuery)
+        ->toBe($query)
+        ->and($baseQuery->whereLikeArguments)
+        ->toBe(['profile.name', '%Te_st%', false, 'or', true]);
 });
