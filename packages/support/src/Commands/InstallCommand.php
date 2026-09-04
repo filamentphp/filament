@@ -199,10 +199,14 @@ class InstallCommand extends Command
             return;
         }
 
-        $contents = str_replace("\r\n", PHP_EOL, file_get_contents($path));
+        $contents = file_get_contents($path);
 
-        $existingRules = collect(explode(PHP_EOL, $contents))
-            ->map(fn (string $rule): string => ltrim(trim($rule), '/'))
+        preg_match('/\r\n|\n|\r/', $contents, $lineEndingMatches);
+
+        $lineEnding = $lineEndingMatches[0] ?? PHP_EOL;
+
+        $existingRules = collect(preg_split('/\r\n|\n|\r/', $contents))
+            ->map(fn (string $rule): string => trim(trim($rule), '/'))
             ->all();
 
         $assetsPath = trim((string) config('filament.assets_path'), '/');
@@ -213,17 +217,17 @@ class InstallCommand extends Command
                 ->implode('/'))
             ->reject(fn (string $rule): bool => in_array($rule, $existingRules))
             ->map(fn (string $rule): string => "/{$rule}")
-            ->implode(PHP_EOL);
+            ->implode($lineEnding);
 
         if (blank($newRules)) {
             return;
         }
 
-        $contents = rtrim($contents, PHP_EOL);
+        $contents = rtrim($contents, "\r\n");
 
         file_put_contents(
             $path,
-            (filled($contents) ? ($contents . PHP_EOL . PHP_EOL) : '') . $newRules . PHP_EOL,
+            (filled($contents) ? ($contents . $lineEnding . $lineEnding) : '') . $newRules . $lineEnding,
         );
 
         $this->components->info('Added the published Filament assets to [.gitignore].');

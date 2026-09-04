@@ -46,11 +46,11 @@ it('adds the published assets to `.gitignore`', function (): void {
         ]));
 });
 
-it('does not add rules to `.gitignore` that are already ignored', function (): void {
+it('does not duplicate `.gitignore` rules with leading or trailing slashes', function (): void {
     file_put_contents($this->gitIgnorePath, implode(PHP_EOL, [
         '/vendor',
-        'public/css/filament',
-        '/public/js/filament',
+        'public/css/filament/',
+        '/public/js/filament/',
         '',
     ]));
 
@@ -59,9 +59,25 @@ it('does not add rules to `.gitignore` that are already ignored', function (): v
     expect(file_get_contents($this->gitIgnorePath))
         ->toBe(implode(PHP_EOL, [
             '/vendor',
-            'public/css/filament',
-            '/public/js/filament',
+            'public/css/filament/',
+            '/public/js/filament/',
             '',
+            '/public/fonts/filament',
+            '',
+        ]));
+});
+
+it('preserves CRLF line endings when adding rules to `.gitignore`', function (): void {
+    file_put_contents($this->gitIgnorePath, "/vendor\r\n");
+
+    $this->artisan('filament:install', ['--no-interaction' => true]);
+
+    expect(file_get_contents($this->gitIgnorePath))
+        ->toBe(implode("\r\n", [
+            '/vendor',
+            '',
+            '/public/css/filament',
+            '/public/js/filament',
             '/public/fonts/filament',
             '',
         ]));
