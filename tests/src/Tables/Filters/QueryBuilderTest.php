@@ -4745,14 +4745,19 @@ describe('properties', function (): void {
 });
 
 describe('rule limits', function (): void {
-    it('has no rule limits by default', function (): void {
+    it('has default rule limits on `QueryBuilder` and `RuleBuilder`', function (): void {
         $queryBuilder = QueryBuilder::make();
+        $ruleBuilder = RuleBuilder::make('rules');
 
-        expect($queryBuilder->getMaxRules())->toBeNull()
-            ->and($queryBuilder->getMaxNestingDepth())->toBeNull();
+        expect($queryBuilder->getMaxRules())->toBe(100)
+            ->and($queryBuilder->getMaxNestingDepth())->toBe(5)
+            ->and($ruleBuilder->getMaxRules())->toBe(100)
+            ->and($ruleBuilder->getMaxNestingDepth())->toBe(5);
     });
 
-    it('reports no rule tree as exceeding via `exceedsRuleLimits()` when no limits are set', function (): void {
+    it('enforces the default `maxRules()` and `maxNestingDepth()` boundaries', function (): void {
+        $queryBuilder = QueryBuilder::make();
+
         $rule = [
             'type' => 'title',
             'data' => [
@@ -4761,7 +4766,47 @@ describe('rule limits', function (): void {
             ],
         ];
 
-        $queryBuilder = QueryBuilder::make();
+        expect($queryBuilder->exceedsRuleLimits(array_fill(0, 100, $rule)))->toBeFalse()
+            ->and($queryBuilder->exceedsRuleLimits(array_fill(0, 101, $rule)))->toBeTrue();
+
+        // The top-level rule list has a nesting depth of 1, so four nested "or" blocks place the leaf rule at the default limit of 5.
+        for ($iteration = 0; $iteration < 4; $iteration++) {
+            $rule = [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        ['rules' => [$rule]],
+                    ],
+                ],
+            ];
+        }
+
+        expect($queryBuilder->exceedsRuleLimits([$rule]))->toBeFalse();
+
+        $rule = [
+            'type' => 'or',
+            'data' => [
+                'groups' => [
+                    ['rules' => [$rule]],
+                ],
+            ],
+        ];
+
+        expect($queryBuilder->exceedsRuleLimits([$rule]))->toBeTrue();
+    });
+
+    it('reports no rule tree as exceeding via `exceedsRuleLimits()` when limits are disabled', function (): void {
+        $rule = [
+            'type' => 'title',
+            'data' => [
+                'operator' => 'contains',
+                'settings' => ['text' => 'Test Post'],
+            ],
+        ];
+
+        $queryBuilder = QueryBuilder::make()
+            ->maxRules(null)
+            ->maxNestingDepth(null);
 
         expect($queryBuilder->exceedsRuleLimits(array_fill(0, 500, $rule)))->toBeFalse();
     });
