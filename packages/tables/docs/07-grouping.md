@@ -381,3 +381,21 @@ public function table(Table $table): Table
         ->groupingDirectionSettingHidden();
 }
 ```
+
+## Persisting the grouping in the user's session
+
+To persist the grouping in the user's session, use the `persistGroupInSession()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            'status',
+            'category',
+        ])
+        ->persistGroupInSession();
+}
+```
