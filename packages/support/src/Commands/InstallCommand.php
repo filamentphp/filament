@@ -74,6 +74,7 @@ class InstallCommand extends Command
             $this->installAdminPanel();
             $this->installScaffolding();
             $this->installUpgradeCommand();
+            $this->ignorePublishedAssets();
         } catch (FailureCommandOutput) {
             return static::FAILURE;
         }
@@ -204,6 +205,87 @@ class InstallCommand extends Command
                     replace: '    "keywords": ["framework", "laravel"],',
                 ),
         );
+    }
+
+    protected function ignorePublishedAssets(): void
+    {
+        $path = base_path('.gitignore');
+
+        if (! file_exists($path)) {
+            return;
+        }
+
+        $contents = file_get_contents($path);
+
+        preg_match('/\r\n|\n|\r/', $contents, $lineEndingMatches);
+
+        $lineEnding = $lineEndingMatches[0] ?? PHP_EOL;
+
+        $lines = preg_split('/\r\n|\n|\r/', $contents);
+
+        $existingRules = collect($lines)
+            ->map(fn (string $rule): string => trim(rtrim($rule), '/'))
+            ->all();
+
+        $assetsPath = trim((string) config('filament.assets_path'), '/');
+
+        $newRules = collect(['css', 'fonts', 'js'])
+            ->map(fn (string $directory): string => collect(['public', $assetsPath, $directory, 'filament'])
+                ->filter()
+                ->implode('/'))
+            ->reject(fn (string $rule): bool => in_array($rule, $existingRules))
+            ->all();
+
+        if (blank($newRules)) {
+            return;
+        }
+
+        foreach ($newRules as $newRule) {
+            $previousRule = null;
+            $previousRuleIndex = null;
+
+            foreach ($lines as $lineIndex => $line) {
+                $rule = trim(rtrim($line), '/');
+
+                if (
+                    (! str_starts_with($rule, 'public/')) ||
+                    (strcmp($rule, $newRule) >= 0) ||
+                    (($previousRule !== null) && (strcmp($rule, $previousRule) <= 0))
+                ) {
+                    continue;
+                }
+
+                $previousRule = $rule;
+                $previousRuleIndex = $lineIndex;
+            }
+
+            if ($previousRuleIndex !== null) {
+                array_splice($lines, $previousRuleIndex + 1, 0, ["/{$newRule}"]);
+
+                continue;
+            }
+
+            while (($lines !== []) && (end($lines) === '')) {
+                array_pop($lines);
+            }
+
+            if ($lines !== []) {
+                $lines[] = '';
+            }
+
+            $lines[] = "/{$newRule}";
+        }
+
+        if (end($lines) !== '') {
+            $lines[] = '';
+        }
+
+        file_put_contents(
+            $path,
+            implode($lineEnding, $lines),
+        );
+
+        $this->components->info('Added the published Filament assets to [.gitignore].');
     }
 
     protected function askToStar(): void
