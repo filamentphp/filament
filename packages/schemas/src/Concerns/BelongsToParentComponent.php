@@ -8,9 +8,17 @@ trait BelongsToParentComponent
 {
     protected ?Component $parentComponent = null;
 
-    public function parentComponent(Component $component): static
+    public function parentComponent(Component $component, bool $shouldFlushCachedHierarchy = true): static
     {
+        if ($this->parentComponent === $component) {
+            return $this;
+        }
+
         $this->parentComponent = $component;
+
+        if ($shouldFlushCachedHierarchy) {
+            $this->flushCachedHierarchy();
+        }
 
         return $this;
     }

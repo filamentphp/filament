@@ -234,6 +234,62 @@ describe('validation', function (): void {
     });
 });
 
+describe('unsaved changes alerts', function (): void {
+    it('flags a mounted action with an editable schema for the unsaved changes alert', function (): void {
+        livewire(Actions::class)
+            ->mountAction('data')
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', true, strict: true);
+    });
+
+    it('does not flag a mounted action with a disabled schema for the unsaved changes alert', function (): void {
+        livewire(Actions::class)
+            ->mountAction('disabledSchema')
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false, strict: true);
+    });
+
+    it('does not flag a mounted action that opts out of the unsaved changes alert', function (): void {
+        livewire(Actions::class)
+            ->mountAction('withoutUnsavedChangesAlert')
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false, strict: true);
+    });
+
+    it('returns `true` from `hasUnsavedChangesAlert()` by default', function (): void {
+        expect(Action::make('test')->hasUnsavedChangesAlert())
+            ->toBeTrue();
+    });
+
+    it('can use `unsavedChangesAlert()` to opt an action with a disabled schema back in to the unsaved changes alert', function (): void {
+        expect(Action::make('test')->disabledSchema()->unsavedChangesAlert()->hasUnsavedChangesAlert())
+            ->toBeTrue();
+    });
+
+    it('can use `unsavedChangesAlert()` with a `Closure`', function (): void {
+        expect(Action::make('test')->unsavedChangesAlert(static fn (): bool => false)->hasUnsavedChangesAlert())
+            ->toBeFalse();
+    });
+
+    it('preserves each `unsavedChangesAlert()` configuration when an action mounts a child during its mount lifecycle', function (): void {
+        livewire(Actions::class)
+            ->mountAction('mountsChildDuringMount')
+            ->assertCount('mountedActions', 2)
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', false, strict: true)
+            ->assertSet('mountedActions.1.hasUnsavedChangesAlert', true, strict: true);
+    });
+
+    it('does not restore an action that unmounts itself during `mountUsing()`', function (): void {
+        livewire(Actions::class)
+            ->mountAction('unmountsDuringMount')
+            ->assertSet('mountedActions', [], strict: true);
+    });
+
+    it('does not overwrite the unsaved changes alert configuration of an action replaced during `mountUsing()`', function (): void {
+        livewire(Actions::class)
+            ->mountAction('replacesDuringMount')
+            ->assertSet('mountedActions.0.name', 'replacementMountedDuringMount', strict: true)
+            ->assertSet('mountedActions.0.hasUnsavedChangesAlert', true, strict: true);
+    });
+});
+
 describe('arguments', function (): void {
     it('can mount an action with arguments', function (): void {
         livewire(Actions::class)

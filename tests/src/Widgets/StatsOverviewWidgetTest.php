@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Widgets;
 
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -103,6 +104,55 @@ it('dispatches `updateStatsOverviewChartData` when chart data changes via `rende
         ->assertDispatched('updateStatsOverviewChartData', key: 'stats-overview-stat-0', data: [4, 5, 6]);
 });
 
+it('renders values considered filled by `filled()` instead of the placeholder', function (mixed $value): void {
+    TestStatsOverviewWidgetWithPlaceholder::$value = $value;
+
+    Livewire::test(TestStatsOverviewWidgetWithPlaceholder::class)
+        ->assertSeeHtml('class="fi-wi-stats-overview-stat-value"')
+        ->assertDontSeeHtml('class="fi-wi-stats-overview-stat-placeholder"')
+        ->assertDontSee('Not available');
+})->with([
+    'integer zero' => [0],
+    'string zero' => ['0'],
+    'false' => [false],
+]);
+
+it('renders `placeholder()` for values considered blank by `blank()`', function (mixed $value): void {
+    TestStatsOverviewWidgetWithPlaceholder::$value = $value;
+
+    Livewire::test(TestStatsOverviewWidgetWithPlaceholder::class)
+        ->assertSeeHtml('class="fi-wi-stats-overview-stat-placeholder"')
+        ->assertDontSeeHtml('class="fi-wi-stats-overview-stat-value"')
+        ->assertSee('Not available');
+})->with([
+    'null' => [null],
+    'empty string' => [''],
+    'whitespace-only string' => ['   '],
+]);
+
+it('has no accessibility issues in light mode', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/stats-overview-widget-browser-test')
+            ->assertSee('Total orders')
+            ->assertSee('Not available')
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('has no accessibility issues in dark mode', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/stats-overview-widget-browser-test')
+            ->inDarkMode()
+            ->assertSee('Total orders')
+            ->assertSee('Not available')
+            ->assertNoAccessibilityIssues();
+    });
+});
+
 class TestStatsOverviewWidgetDefault extends StatsOverviewWidget
 {
     protected function getStats(): array
@@ -143,6 +193,19 @@ class TestStatsOverviewWidgetWithChart extends StatsOverviewWidget
         return [
             Stat::make('Users', 100)
                 ->chart(static::$chartData),
+        ];
+    }
+}
+
+class TestStatsOverviewWidgetWithPlaceholder extends StatsOverviewWidget
+{
+    public static mixed $value = null;
+
+    protected function getStats(): array
+    {
+        return [
+            Stat::make('Value', static::$value)
+                ->placeholder('Not available'),
         ];
     }
 }
