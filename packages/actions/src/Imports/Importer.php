@@ -5,6 +5,8 @@ namespace Filament\Actions\Imports;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\Imports\Downloaders\Contracts\Downloader;
+use Filament\Actions\Imports\Downloaders\CsvDownloader;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
@@ -329,6 +331,11 @@ abstract class Importer
         // by redeclaring `$shouldPreventFormulaInjection`, or globally by
         // calling `Importer::preventFormulaInjection()` in a service provider.
         return static::$shouldPreventFormulaInjection;
+    }
+
+    public static function getFailedRowsDownloader(): Downloader
+    {
+        return app(CsvDownloader::class);
     }
 
     abstract public static function getCompletedNotificationBody(Import $import): string;

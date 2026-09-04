@@ -151,9 +151,6 @@
     }"
     x-cloak
     x-show="isOpen"
-    @if (! $isClickThrough)
-        x-trap.noreturn{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
-    @endif
     {{
         $attributes->class([
             'fi-modal',
@@ -182,8 +179,12 @@
     @endif
 
     <div
+        tabindex="-1"
         @if ($closeByClickingAway)
             x-on:click.self="{{ $closeEventHandler }}"
+        @endif
+        @if (! $isClickThrough)
+            x-trap.noreturn{{ $autofocus ? '' : '.noautofocus' }}="isTrapActive"
         @endif
         @class([
             'fi-modal-window-ctn',

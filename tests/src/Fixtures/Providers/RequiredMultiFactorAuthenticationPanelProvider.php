@@ -11,6 +11,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Tests\Fixtures\Pages\MultiFactorChallengeBrowserTest;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -35,6 +36,7 @@ class RequiredMultiFactorAuthenticationPanelProvider extends PanelProvider
             ->resources([])
             ->pages([
                 Dashboard::class,
+                MultiFactorChallengeBrowserTest::class,
             ])
             ->middleware([
                 EncryptCookies::class,
