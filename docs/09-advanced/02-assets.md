@@ -428,4 +428,6 @@ The files that the `php artisan filament:assets` command copies into the `/publi
 
 If you have customized the `assets_path` in the `config/filament.php` file, the rules use that path instead, for example `/public/filament/css/filament`.
 
-Since these files are not committed, you should run `php artisan filament:assets` when you deploy your app. The `php artisan filament:install` command adds `@php artisan filament:upgrade` to the `post-autoload-dump` scripts in your app's `composer.json` file, which runs the `filament:assets` command for you each time Composer dumps the autoloader.
+The `/public/css/filament` rule also ignores any custom themes that you compile directly into that directory instead of through Vite. You should compile those themes as part of your deployment process, since the `filament:assets` command does not build them.
+
+Since Filament's published package assets are not committed, you should run `php artisan filament:assets` when you deploy your app. The `php artisan filament:install` command adds `@php artisan filament:upgrade` to the `post-autoload-dump` scripts in your app's `composer.json` file, which runs the `filament:assets` command for you each time Composer dumps the autoloader.
