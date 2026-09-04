@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\RateLimiter;
+use LogicException;
 
 class MultiFactorChallenge
 {
@@ -30,7 +31,7 @@ class MultiFactorChallenge
     {
         return array_filter(
             Filament::getMultiFactorAuthenticationProviders(),
-            fn (MultiFactorAuthenticationProvider $provider): bool => $provider->isEnabled($user),
+            static fn (MultiFactorAuthenticationProvider $provider): bool => $provider->isEnabled($user),
         );
     }
 
@@ -66,9 +67,11 @@ class MultiFactorChallenge
      */
     public function getSchemaComponents(Authenticatable $user): array
     {
+        $enabledProviders = $this->getEnabledProviders($user);
+
         return [
-            ...Arr::wrap($this->getProviderSchemaComponent($user)),
-            ...$this->getChallengeSchemaComponents($user),
+            ...Arr::wrap($this->getProviderPickerSchemaComponentForEnabledProviders($user, $enabledProviders)),
+            ...$this->getChallengeSchemaComponentsForEnabledProviders($user, $enabledProviders),
         ];
     }
 
@@ -76,10 +79,16 @@ class MultiFactorChallenge
      * The component that lets the user choose which of their enabled providers to
      * be challenged with. Returns `null` when there is nothing to choose between.
      */
-    public function getProviderSchemaComponent(Authenticatable $user): ?Component
+    public function getProviderPickerSchemaComponent(Authenticatable $user): ?Component
     {
-        $enabledProviders = $this->getEnabledProviders($user);
+        return $this->getProviderPickerSchemaComponentForEnabledProviders($user, $this->getEnabledProviders($user));
+    }
 
+    /**
+     * @param  array<string, MultiFactorAuthenticationProvider>  $enabledProviders
+     */
+    protected function getProviderPickerSchemaComponentForEnabledProviders(Authenticatable $user, array $enabledProviders): ?Component
+    {
         if (count($enabledProviders) <= 1) {
             return null;
         }
@@ -102,9 +111,15 @@ class MultiFactorChallenge
                             return;
                         }
 
-                        $section
-                            ->getContainer()
-                            ->getComponent($provider->getId())
+                        $providerChallengeSchemaComponent = $section
+                            ->getRootContainer()
+                            ->getComponent($provider->getId(), withActions: false, withHidden: true);
+
+                        if (! ($providerChallengeSchemaComponent instanceof Group)) {
+                            throw new LogicException("The multi-factor challenge schema component for provider [{$provider->getId()}] could not be found in the root schema.");
+                        }
+
+                        $providerChallengeSchemaComponent
                             ->getChildSchema()
                             ->fill();
 
@@ -121,14 +136,21 @@ class MultiFactorChallenge
      */
     public function getChallengeSchemaComponents(Authenticatable $user): array
     {
-        $enabledProviders = $this->getEnabledProviders($user);
+        return $this->getChallengeSchemaComponentsForEnabledProviders($user, $this->getEnabledProviders($user));
+    }
 
+    /**
+     * @param  array<string, MultiFactorAuthenticationProvider>  $enabledProviders
+     * @return array<string, Component>
+     */
+    protected function getChallengeSchemaComponentsForEnabledProviders(Authenticatable $user, array $enabledProviders): array
+    {
         return collect($enabledProviders)
             ->map(fn (MultiFactorAuthenticationProvider $provider): Component => Group::make($provider->getChallengeFormComponents($user))
                 ->statePath($provider->getId())
                 ->when(
                     count($enabledProviders) > 1,
-                    fn (Group $group) => $group->visible(fn (Get $get): bool => $get('provider') === $provider->getId()),
+                    fn (Group $group) => $group->visible(static fn (Get $get): bool => $get('provider') === $provider->getId()),
                 ))
             ->all();
     }
@@ -150,7 +172,7 @@ class MultiFactorChallenge
 
     protected function getRateLimiterKey(Authenticatable $user): string
     {
-        return "filament-multi-factor-challenge:{$user->getAuthIdentifier()}";
+        return 'filament-multi-factor-challenge:' . sha1(Filament::getAuthGuard() . '|' . $user::class . '|' . $user->getAuthIdentifier());
     }
 
     public function getMaxRateLimiterAttempts(): int

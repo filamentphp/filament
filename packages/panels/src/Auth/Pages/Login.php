@@ -319,7 +319,7 @@ class Login extends SimplePage
             return null;
         }
 
-        return $this->getMultiFactorChallenge()->getProviderSchemaComponent($user);
+        return $this->getMultiFactorChallenge()->getProviderPickerSchemaComponent($user);
     }
 
     public function registerAction(): Action
