@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
 
 use function Filament\Tests\livewire;
 
@@ -963,6 +964,16 @@ it('can group records by `HasOneThrough` -> `BelongsTo` relationship that uses `
         ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
 });
 
+it('resets pagination when `$tableGrouping` is updated', function (): void {
+    Post::factory()->count(20)->create();
+
+    livewire(PostsTable::class)
+        ->call('setPage', 2)
+        ->assertSet('paginators.page', 2)
+        ->set('tableGrouping', 'title')
+        ->assertSet('paginators.page', 1);
+});
+
 describe('session persistence', function (): void {
     it('defaults `persistsGroupInSession()` to `false`', function (): void {
         livewire(PostsTable::class)
@@ -996,24 +1007,33 @@ describe('session persistence', function (): void {
         Post::factory()->count(10)->create();
 
         livewire(PostsTableWithGroupPersistedInSession::class)
-            ->assertSet('tableGrouping', null)
-            ->set('tableGrouping', 'title')
-            ->assertSet('tableGrouping', 'title');
+            ->assertSet('tableGrouping', 'title:asc')
+            ->set('tableGrouping', 'author.name:desc')
+            ->assertSet('tableGrouping', 'author.name:desc');
 
         livewire(PostsTableWithGroupPersistedInSession::class)
-            ->assertSet('tableGrouping', 'title');
+            ->assertSet('tableGrouping', 'author.name:desc');
     });
 
     it('can clear the persisted grouping in the user\'s session', function (): void {
         Post::factory()->count(10)->create();
 
         livewire(PostsTableWithGroupPersistedInSession::class)
-            ->set('tableGrouping', 'title')
+            ->assertSet('tableGrouping', 'title:asc')
             ->set('tableGrouping', null)
             ->assertSet('tableGrouping', null);
 
         livewire(PostsTableWithGroupPersistedInSession::class)
             ->assertSet('tableGrouping', null);
+    });
+
+    it('does not override explicit `$tableGrouping` with the persisted grouping', function (): void {
+        livewire(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', 'title:asc');
+
+        Livewire::withQueryParams(['grouping' => 'author.name:desc'])
+            ->test(PostsTableWithGroupPersistedInSession::class)
+            ->assertSet('tableGrouping', 'author.name:desc');
     });
 
     it('does not persist the grouping in the user\'s session by default', function (): void {

@@ -41,6 +41,14 @@ trait CanGroupRecords
         $this->resetPage();
     }
 
+    /**
+     * @deprecated Use `updatedTableGrouping()` instead.
+     */
+    public function updatedTableGroupColumn(): void
+    {
+        $this->updatedTableGrouping();
+    }
+
     public function getTableGroupingDirection(): ?string
     {
         if (blank($this->tableGrouping)) {

@@ -91,19 +91,17 @@ trait InteractsWithTable
             );
         }
 
-        if ($this->getTable()->isDefaultGroupSelectable()) {
-            $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:asc";
-        }
-
         $shouldPersistGroupInSession = $this->getTable()->persistsGroupInSession();
         $groupingSessionKey = $this->getTableGroupingSessionKey();
+        $hasPersistedGroupInSession = $shouldPersistGroupInSession && session()->exists($groupingSessionKey);
 
-        if (
-            $shouldPersistGroupInSession &&
-            session()->has($groupingSessionKey)
-        ) {
-            $sessionGrouping = session()->get($groupingSessionKey);
-            $this->tableGrouping = is_string($sessionGrouping) ? $sessionGrouping : null;
+        if (blank($this->tableGrouping)) {
+            if ($hasPersistedGroupInSession) {
+                $sessionGrouping = session()->get($groupingSessionKey);
+                $this->tableGrouping = is_string($sessionGrouping) ? $sessionGrouping : null;
+            } elseif ($this->getTable()->isDefaultGroupSelectable()) {
+                $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:asc";
+            }
         }
 
         if ($shouldPersistGroupInSession) {

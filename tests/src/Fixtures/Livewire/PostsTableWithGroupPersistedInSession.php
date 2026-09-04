@@ -10,6 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class PostsTableWithGroupPersistedInSession extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
@@ -18,14 +19,18 @@ class PostsTableWithGroupPersistedInSession extends Component implements HasActi
     use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
 
+    #[Url(as: 'grouping')]
+    public ?string $tableGrouping = null;
+
     public function table(Table $table): Table
     {
         return $table
             ->query(Post::query())
-            ->groups(fn () => [
+            ->groups(static fn () => [
                 Tables\Grouping\Group::make('title'),
                 Tables\Grouping\Group::make('author.name'),
             ])
+            ->defaultGroup('title')
             ->persistGroupInSession()
             ->columns([
                 Tables\Columns\TextColumn::make('title')->sortable(),
