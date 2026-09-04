@@ -12,6 +12,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\ButtonComponent;
+use Filament\Support\View\Components\LinkComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use InvalidArgumentException;
@@ -1139,12 +1140,18 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                                             <?php } ?>
                                         </div>
                                     <?php } ?>
-                                    <div class="fi-fo-file-upload-editor-control-panel-reset-wrapper">
+                                    <div class="fi-fo-file-upload-editor-control-panel-reset-action-ctn">
                                         <button
+                                            type="button"
                                             x-on:click.prevent.stop="editor.reset()"
-                                            class="fi-ac-link-action fi-link fi-size-sm fi-color fi-color-danger fi-text-color-600 dark:fi-text-color-300"
+                                            <?= (new FilamentComponentAttributeBag)
+                                                ->color(LinkComponent::class, 'danger')
+                                                ->class(['fi-link fi-size-sm fi-fo-file-upload-editor-control-panel-reset-action'])
+                                                ->toHtml() ?>
                                         >
-                                            <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
+                                            <span class="fi-link-label">
+                                                <?= e(__('filament-forms::components.file_upload.editor.actions.reset.label')) ?>
+                                            </span>
                                         </button>
                                     </div>
                                 </div>

@@ -148,12 +148,8 @@
                 @apply flex items-center justify-end gap-3 px-4 py-3;
             }
 
-            & .fi-fo-file-upload-editor-control-panel-reset-wrapper {
+            & .fi-fo-file-upload-editor-control-panel-reset-action-ctn {
                 @apply flex justify-end;
-            }
-
-            & .fi-fo-file-upload-editor-control-panel-reset-action {
-                @apply ml-auto;
             }
         }
 
