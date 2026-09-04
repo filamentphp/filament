@@ -739,7 +739,7 @@ public function makeXlsxRow(array $values, ?Style $style = null): Row
         return Row::fromValues($values);
     }
 
-    return Row::fromValuesWithStyles($values, array_fill(0, count($values), $style));
+    return Row::fromValuesWithStyles($values, array_fill_keys(array_keys($values), $style));
 }
 ```
 
