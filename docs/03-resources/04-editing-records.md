@@ -197,7 +197,7 @@ Alternatively, if you're editing records in a modal action, check out the [Actio
 
 ### Defining lifecycle hooks in traits
 
-Lifecycle hooks may also be defined in traits used by the page class, by suffixing the hook name with the trait's name. This works the same way as `boot()` methods in Eloquent model traits, and allows reusable traits to hook into the page lifecycle without colliding with hooks defined on the page itself:
+To define a lifecycle hook in a trait, suffix the hook name with the trait's name. This follows the `boot{TraitName}()` convention used by Eloquent and the `mount{TraitName}()` convention used by Livewire, allowing reusable traits to hook into the page lifecycle without colliding with hooks defined on the page itself:
 
 ```php
 use Filament\Resources\Pages\EditRecord;
@@ -207,7 +207,7 @@ trait HandlesDrafts
     protected function afterSaveHandlesDrafts(): void
     {
         // Runs after the form fields are saved to the database, in addition
-        // to the page's own afterSave() hook.
+        // to the hook on the page.
     }
 }
 
@@ -217,12 +217,12 @@ class EditUser extends EditRecord
 
     protected function afterSave(): void
     {
-        // Both this hook and afterSaveHandlesDrafts() are called.
+        // Both lifecycle hooks are called.
     }
 }
 ```
 
-The page's own hook is called first, followed by each trait hook.
+The page's own hook is called first, followed by each trait hook. Hooks from traits used by other traits are also called. Trait hooks are called automatically, so you should not also call them from the page's own hook.
 
 ## Saving a part of the form independently
 

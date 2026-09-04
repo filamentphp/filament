@@ -424,7 +424,7 @@ it('re-authorizes viewAny on Livewire updates after the initial mount of a creat
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('calls trait lifecycle hooks alongside the page hooks', function (): void {
+it('calls trait lifecycle hooks alongside `CreateRecord` hooks', function (): void {
     $newData = Post::factory()->make();
 
     $page = livewire(CreatePostWithTraitHooks::class)
@@ -439,9 +439,9 @@ it('calls trait lifecycle hooks alongside the page hooks', function (): void {
         ->assertHasNoFormErrors();
 
     expect($page->instance())
-        ->pageHookInvocations->toContain('afterCreate')
-        ->traitHookInvocations->toBe([
+        ->lifecycleHookInvocations->toBe([
             'beforeCreateTracksLifecycleHooks',
+            'afterCreate',
             'afterCreateTracksLifecycleHooks',
         ]);
 });

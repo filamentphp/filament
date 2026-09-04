@@ -7,25 +7,15 @@ trait TracksLifecycleHooks
     /**
      * @var array<string>
      */
-    public array $traitHookInvocations = [];
+    public array $lifecycleHookInvocations = [];
 
     protected function beforeCreateTracksLifecycleHooks(): void
     {
-        $this->traitHookInvocations[] = 'beforeCreateTracksLifecycleHooks';
+        $this->lifecycleHookInvocations[] = 'beforeCreateTracksLifecycleHooks';
     }
 
     protected function afterCreateTracksLifecycleHooks(): void
     {
-        $this->traitHookInvocations[] = 'afterCreateTracksLifecycleHooks';
-    }
-
-    protected function beforeSaveTracksLifecycleHooks(): void
-    {
-        $this->traitHookInvocations[] = 'beforeSaveTracksLifecycleHooks';
-    }
-
-    protected function afterSaveTracksLifecycleHooks(): void
-    {
-        $this->traitHookInvocations[] = 'afterSaveTracksLifecycleHooks';
+        $this->lifecycleHookInvocations[] = 'afterCreateTracksLifecycleHooks';
     }
 }

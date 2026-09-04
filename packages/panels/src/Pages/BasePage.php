@@ -8,7 +8,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Support\Concerns\CallsHooks;
+use Filament\Support\Concerns\CanCallHooks;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
 use Filament\Support\Exceptions\Halt;
@@ -20,7 +20,7 @@ use Livewire\Component;
 
 abstract class BasePage extends Component implements HasActions, HasRenderHookScopes, HasSchemas
 {
-    use CallsHooks;
+    use CanCallHooks;
     use InteractsWithActions;
     use InteractsWithSchemas;
 

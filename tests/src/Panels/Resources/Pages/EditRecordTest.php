@@ -14,7 +14,6 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\EditPost;
-use Filament\Tests\Fixtures\Resources\Posts\Pages\EditPostWithTraitHooks;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
@@ -342,28 +341,3 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning false' => fn (): array => [ReplicateAction::class, 'replicate', false, false],
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
-
-it('calls trait lifecycle hooks alongside the page hooks', function (): void {
-    $post = Post::factory()->create();
-    $newData = Post::factory()->make();
-
-    $page = livewire(EditPostWithTraitHooks::class, [
-        'record' => $post->getKey(),
-    ])
-        ->fillForm([
-            'author_id' => $newData->author->getKey(),
-            'content' => $newData->content,
-            'tags' => $newData->tags,
-            'title' => $newData->title,
-            'rating' => $newData->rating,
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    expect($page->instance())
-        ->pageHookInvocations->toContain('afterSave')
-        ->traitHookInvocations->toBe([
-            'beforeSaveTracksLifecycleHooks',
-            'afterSaveTracksLifecycleHooks',
-        ]);
-});

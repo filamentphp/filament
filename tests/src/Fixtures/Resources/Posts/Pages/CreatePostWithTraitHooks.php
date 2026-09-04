@@ -12,13 +12,8 @@ class CreatePostWithTraitHooks extends CreateRecord
 
     protected static string $resource = PostResource::class;
 
-    /**
-     * @var array<string>
-     */
-    public array $pageHookInvocations = [];
-
     protected function afterCreate(): void
     {
-        $this->pageHookInvocations[] = 'afterCreate';
+        $this->lifecycleHookInvocations[] = 'afterCreate';
     }
 }
