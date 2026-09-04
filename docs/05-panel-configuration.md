@@ -265,6 +265,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+Action modals with a disabled schema, such as the read-only `ViewAction` modal, do not trigger the alert. You may also [disable the alert for another action that cannot contain unsaved changes](actions/modals#disabling-the-unsaved-changes-alert) using the `unsavedChangesAlert(false)` method.
+
 ## Enabling database transactions
 
 By default, Filament does not wrap operations in database transactions, and allows the user to enable this themselves when they have tested to ensure that their operations are safe to be wrapped in a transaction. However, you can enable database transactions at once for all operations by using the `databaseTransactions()` method:
