@@ -16,7 +16,6 @@
     use Filament\Tables\Enums\ColumnManagerLayout;
     use Filament\Tables\Enums\ColumnManagerResetActionPosition;
     use Filament\Tables\Enums\FiltersLayout;
-    use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\Filters\Indicator;
@@ -52,8 +51,6 @@
     $contentFooter = $getContentFooter();
     $filterIndicators = $getFilterIndicators();
     $filtersApplyAction = $getFiltersApplyAction();
-    $filtersFormWidth = $getFiltersFormWidth();
-    $filtersResetActionPosition = $getFiltersResetActionPosition();
     $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
@@ -118,7 +115,6 @@
     $isStackedOnMobile = $isStackedOnMobile();
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
-    $filtersLayout = $getFiltersLayout();
     $filterPanels = $hasFilters ? $getFilterPanels() : [];
     $filterPanelsByLocation = [];
 
@@ -127,13 +123,10 @@
     }
 
     $filterPanelLocationNames = array_keys($filterPanelsByLocation);
-    $filtersTriggerAction = $getFiltersTriggerAction();
     $hasFiltersDialog = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::Dropdown->name, FiltersLayout::Modal->name]);
-    $hasFiltersAboveContent = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::AboveContent->name, FiltersLayout::AboveContentCollapsible->name]);
     $hasFiltersBelowContent = in_array(FiltersLayout::BelowContent->name, $filterPanelLocationNames, strict: true);
     $hasFiltersBeforeContent = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::BeforeContent->name, FiltersLayout::BeforeContentCollapsible->name]);
     $hasFiltersAfterContent = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::AfterContent->name, FiltersLayout::AfterContentCollapsible->name]);
-    $hasCollapsibleFilters = (bool) array_intersect($filterPanelLocationNames, [FiltersLayout::AboveContentCollapsible->name, FiltersLayout::BeforeContentCollapsible->name, FiltersLayout::AfterContentCollapsible->name]);
     $hasFiltersTrigger = $hasFilters && ($hasFiltersDialog || $hasFiltersBeforeContent || $hasFiltersAfterContent);
     $aboveContentPanel = $filterPanelsByLocation[FiltersLayout::AboveContent->name] ?? $filterPanelsByLocation[FiltersLayout::AboveContentCollapsible->name] ?? null;
     $beforeContentPanel = $filterPanelsByLocation[FiltersLayout::BeforeContent->name] ?? $filterPanelsByLocation[FiltersLayout::BeforeContentCollapsible->name] ?? null;
@@ -144,10 +137,15 @@
     $afterContentFiltersForm = $afterContentPanel ? $getFiltersFormForPanel($afterContentPanel) : null;
     $belowContentFiltersForm = $belowContentPanel ? $getFiltersFormForPanel($belowContentPanel) : null;
     $aboveContentActiveFiltersCount = $aboveContentPanel ? $getActiveFiltersCountForPanel($aboveContentPanel) : 0;
+    $aboveContentPanelIsCollapsible = (bool) $aboveContentPanel?->isCollapsible();
+    $aboveContentFiltersTriggerAction = $aboveContentPanel ? $getFiltersTriggerAction($aboveContentPanel) : null;
     $beforeContentActiveFiltersCount = $beforeContentPanel ? $getActiveFiltersCountForPanel($beforeContentPanel) : 0;
     $afterContentActiveFiltersCount = $afterContentPanel ? $getActiveFiltersCountForPanel($afterContentPanel) : 0;
+    $beforeContentFiltersFormWidth = $beforeContentPanel ? $getFiltersFormWidthForPanel($beforeContentPanel) : null;
+    $afterContentFiltersFormWidth = $afterContentPanel ? $getFiltersFormWidthForPanel($afterContentPanel) : null;
+    $sideFiltersTriggerAction = ($beforeContentPanel || $afterContentPanel) ? $getFiltersTriggerAction($beforeContentPanel ?? $afterContentPanel) : null;
+    $hasCollapsibleSideFilters = (bool) ($beforeContentPanel?->isCollapsible() || $afterContentPanel?->isCollapsible());
     $dialogPanels = array_values(array_filter($filterPanels, fn ($filterPanel): bool => in_array($filterPanel->getLocation()->name, [FiltersLayout::Dropdown->name, FiltersLayout::Modal->name], strict: true)));
-    $filtersFormMaxHeight = $getFiltersFormMaxHeight();
     $hasColumnManager = $hasColumnManager();
     $columnManagerLayout = $getColumnManagerLayout();
     $hasReorderableColumns = $hasReorderableColumns();
@@ -231,8 +229,12 @@
         $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
     }
 
-    if (is_string($filtersFormWidth)) {
-        $filtersFormWidth = Width::tryFrom($filtersFormWidth) ?? $filtersFormWidth;
+    if (is_string($beforeContentFiltersFormWidth)) {
+        $beforeContentFiltersFormWidth = Width::tryFrom($beforeContentFiltersFormWidth) ?? $beforeContentFiltersFormWidth;
+    }
+
+    if (is_string($afterContentFiltersFormWidth)) {
+        $afterContentFiltersFormWidth = Width::tryFrom($afterContentFiltersFormWidth) ?? $afterContentFiltersFormWidth;
     }
 
     $loadingTargetsWireTarget = implode(',', Table::LOADING_TARGETS);
@@ -280,8 +282,8 @@
                 x-bind:class="{ 'fi-open': areFiltersOpen }"
                 @class([
                     'fi-ta-filters-before-content-ctn',
-                    'lg:fi-open' => ! $hasCollapsibleFilters,
-                    (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
+                    'lg:fi-open' => ! $beforeContentPanel->isCollapsible(),
+                    (($beforeContentFiltersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$beforeContentFiltersFormWidth->value}" : (is_string($beforeContentFiltersFormWidth) ? $beforeContentFiltersFormWidth : null),
                 ])
             >
                 <x-filament-tables::filters
@@ -290,7 +292,7 @@
                     :location="(count($filterPanels) > 1) ? $beforeContentPanel->getLocation()->name : null"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
-                    :reset-action-position="$filtersResetActionPosition"
+                    :reset-action-position="$getResetActionPositionForPanel($beforeContentPanel)"
                 />
             </div>
         @endif
@@ -345,9 +347,9 @@
 
                 {{ FilamentView::renderHook(TablesRenderHook::HEADER_AFTER, scopes: static::class) }}
 
-                @if ($hasFiltersAboveContent)
+                @if ($aboveContentPanel)
                     <div
-                        @if ($hasCollapsibleFilters)
+                        @if ($aboveContentPanelIsCollapsible)
                             x-bind:class="{ 'fi-open': areFiltersOpen }"
                         @endif
                         @class([
@@ -360,16 +362,16 @@
                             :location="(count($filterPanels) > 1) ? $aboveContentPanel->getLocation()->name : null"
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
-                            :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
-                            :reset-action-position="$filtersResetActionPosition"
+                            :x-show="$aboveContentPanelIsCollapsible ? 'areFiltersOpen' : null"
+                            :reset-action-position="$getResetActionPositionForPanel($aboveContentPanel)"
                         />
 
-                        @if ($hasCollapsibleFilters)
+                        @if ($aboveContentPanelIsCollapsible)
                             <span
                                 x-on:click="areFiltersOpen = ! areFiltersOpen"
                                 class="fi-ta-filters-trigger-action-ctn"
                             >
-                                {{ $filtersTriggerAction->badge($aboveContentActiveFiltersCount) }}
+                                {{ $aboveContentFiltersTriggerAction->badge($aboveContentActiveFiltersCount) }}
                             </span>
                         @endif
                     </div>
@@ -586,7 +588,7 @@
                                 @if ($hasFiltersDialog)
                                     @foreach ($dialogPanels as $dialogPanel)
                                         @php
-                                            $filtersTriggerAction = $getFiltersTriggerAction((count($filterPanels) > 1) ? $dialogPanel->getLocation() : null);
+                                            $filtersTriggerAction = $getFiltersTriggerAction($dialogPanel);
                                             $dialogFiltersForm = $getFiltersFormForPanel($dialogPanel);
                                             $dialogActiveFiltersCount = $getActiveFiltersCountForPanel($dialogPanel);
                                             $dialogFiltersFormWidth = $getFiltersFormWidthForPanel($dialogPanel);
@@ -667,7 +669,7 @@
                                                     :form="$dialogFiltersForm"
                                                     :location="(count($filterPanels) > 1) ? $dialogPanel->getLocation()->name : null"
                                                     :heading-tag="$secondLevelHeadingTag"
-                                                    :reset-action-position="$filtersResetActionPosition"
+                                                    :reset-action-position="$getResetActionPositionForPanel($dialogPanel)"
                                                 />
                                             </x-filament::dropdown>
                                         @endif
@@ -678,10 +680,10 @@
                                         x-on:click="toggleFiltersDropdown"
                                         @class([
                                             'fi-ta-filters-trigger-action-ctn',
-                                            'lg:fi-hidden' => ! $hasCollapsibleFilters,
+                                            'lg:fi-hidden' => ! $hasCollapsibleSideFilters,
                                         ])
                                     >
-                                        {{ $filtersTriggerAction->badge($beforeContentActiveFiltersCount + $afterContentActiveFiltersCount) }}
+                                        {{ $sideFiltersTriggerAction->badge($beforeContentActiveFiltersCount + $afterContentActiveFiltersCount) }}
                                     </span>
                                 @endif
 
@@ -2624,7 +2626,7 @@
                     :location="(count($filterPanels) > 1) ? $belowContentPanel->getLocation()->name : null"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
-                    :reset-action-position="$filtersResetActionPosition"
+                    :reset-action-position="$getResetActionPositionForPanel($belowContentPanel)"
                 />
             @endif
         </div>
@@ -2638,8 +2640,8 @@
                 x-bind:class="{ 'fi-open': areFiltersOpen }"
                 @class([
                     'fi-ta-filters-after-content-ctn',
-                    'lg:fi-open' => ! $hasCollapsibleFilters,
-                    (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
+                    'lg:fi-open' => ! $afterContentPanel->isCollapsible(),
+                    (($afterContentFiltersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$afterContentFiltersFormWidth->value}" : (is_string($afterContentFiltersFormWidth) ? $afterContentFiltersFormWidth : null),
                 ])
             >
                 <x-filament-tables::filters
@@ -2648,7 +2650,7 @@
                     :location="(count($filterPanels) > 1) ? $afterContentPanel->getLocation()->name : null"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
-                    :reset-action-position="$filtersResetActionPosition"
+                    :reset-action-position="$getResetActionPositionForPanel($afterContentPanel)"
                 />
             </div>
         @endif

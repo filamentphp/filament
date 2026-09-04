@@ -38,12 +38,12 @@ class FilterPanelBrowserTest extends Page implements HasTable
                     Filter::make('is_published')
                         ->query(fn (EloquentBuilder $query) => $query->where('is_published', true)),
                 ])->columns(2),
-                FilterPanel::make(FiltersLayout::Dropdown, [
-                    SelectFilter::make('author')->relationship('author', 'name'),
-                ]),
-                FilterPanel::make(FiltersLayout::Modal, [
+                FilterPanel::make(FiltersLayout::BelowContent, [
                     Filter::make('recent')
                         ->query(fn (EloquentBuilder $query) => $query->where('created_at', '>=', now()->subYear())),
+                ]),
+                FilterPanel::make(FiltersLayout::Dropdown, [
+                    SelectFilter::make('author')->relationship('author', 'name'),
                 ]),
             ]);
     }

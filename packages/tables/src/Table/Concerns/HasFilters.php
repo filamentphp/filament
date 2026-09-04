@@ -148,6 +148,8 @@ trait HasFilters
         foreach ($filters as $panel) {
             $locationName = $panel->getLocation()->name;
 
+            $panel->table($this);
+
             if (array_key_exists($locationName, $this->filterPanels)) {
                 $this->filterPanels[$locationName]->pushFilters($panel->getFilters());
             } else {
@@ -161,12 +163,55 @@ trait HasFilters
             }
         }
 
+        $this->validateFilterPanelLocations();
+
         return $this;
+    }
+
+    /**
+     * A table may only have one panel that owns a trigger, since there is a single filter trigger
+     * to open it. `AboveContent`, `BelowContent` and `Hidden` have no trigger of their own, so they
+     * may accompany it - except that `AboveContent` and `AboveContentCollapsible` occupy the same
+     * physical location and cannot both be used.
+     */
+    protected function validateFilterPanelLocations(): void
+    {
+        $interactiveLocationNames = [];
+
+        foreach ($this->filterPanels as $locationName => $panel) {
+            if (! $panel->isInteractive()) {
+                continue;
+            }
+
+            $interactiveLocationNames[] = $locationName;
+        }
+
+        if (count($interactiveLocationNames) > 1) {
+            throw new LogicException('A table may only have one interactive filter panel, but [' . implode('] and [', $interactiveLocationNames) . '] were used together. Only one of [Dropdown], [Modal], [AboveContentCollapsible], [BeforeContent], [BeforeContentCollapsible], [AfterContent] or [AfterContentCollapsible] may be used at a time, optionally alongside [AboveContent], [BelowContent] and [Hidden].');
+        }
+
+        if (
+            array_key_exists(FiltersLayout::AboveContent->name, $this->filterPanels) &&
+            array_key_exists(FiltersLayout::AboveContentCollapsible->name, $this->filterPanels)
+        ) {
+            throw new LogicException('A table cannot use [AboveContent] and [AboveContentCollapsible] filter panels together, as they occupy the same location above the table.');
+        }
     }
 
     public function hasFilterPanels(): bool
     {
         return $this->hasFilterPanels;
+    }
+
+    public function getFilterPanel(string $locationName): ?FilterPanel
+    {
+        foreach ($this->getFilterPanels() as $panel) {
+            if ($panel->getLocation()->name === $locationName) {
+                return $panel;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -176,7 +221,8 @@ trait HasFilters
     {
         if (! $this->hasFilterPanels) {
             return [
-                FilterPanel::make($this->getFiltersLayout(), array_values($this->getFilters())),
+                FilterPanel::make($this->getFiltersLayout(), array_values($this->getFilters()))
+                    ->table($this),
             ];
         }
 
@@ -359,8 +405,10 @@ trait HasFilters
         return $containers;
     }
 
-    public function getFiltersTriggerAction(?FiltersLayout $location = null): Action
+    public function getFiltersTriggerAction(?FilterPanel $panel = null): Action
     {
+        $location = $panel?->getLocation();
+
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
@@ -387,6 +435,12 @@ trait HasFilters
 
         if ($this->modifyFiltersTriggerActionUsing) {
             $action = $this->evaluate($this->modifyFiltersTriggerActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        if ($modifyTriggerActionUsing = $panel?->getModifyTriggerActionUsing()) {
+            $action = $panel->evaluate($modifyTriggerActionUsing, [
                 'action' => $action,
             ]) ?? $action;
         }
@@ -441,12 +495,15 @@ trait HasFilters
     /**
      * @return int | array<string, int | null>
      */
-    /**
-     * @return int | array<string, int | null>
-     */
     public function getFiltersFormColumns(): int | array
     {
-        return $this->getFiltersFormColumnsForPanel($this->getFilterPanels()[0]);
+        $panel = $this->getFilterPanels()[0] ?? null;
+
+        if (! $panel) {
+            return $this->getFiltersFormColumnsForLocation($this->getFiltersLayout());
+        }
+
+        return $this->getFiltersFormColumnsForPanel($panel);
     }
 
     /**
@@ -485,12 +542,26 @@ trait HasFilters
 
     public function getFiltersFormWidth(): Width | string | null
     {
-        return $this->getFiltersFormWidthForPanel($this->getFilterPanels()[0]);
+        $panel = $this->getFilterPanels()[0] ?? null;
+
+        if (! $panel) {
+            return $this->getFiltersFormWidthForColumns($this->getFiltersFormColumns());
+        }
+
+        return $this->getFiltersFormWidthForPanel($panel);
     }
 
     public function getFiltersFormWidthForPanel(FilterPanel $panel): Width | string | null
     {
-        return $panel->getWidth() ?? $this->evaluate($this->filtersFormWidth) ?? match ($this->getFiltersFormColumnsForPanel($panel)) {
+        return $panel->getWidth() ?? $this->getFiltersFormWidthForColumns($this->getFiltersFormColumnsForPanel($panel));
+    }
+
+    /**
+     * @param  int | array<string, int | null>  $columns
+     */
+    protected function getFiltersFormWidthForColumns(int | array $columns): Width | string | null
+    {
+        return $this->evaluate($this->filtersFormWidth) ?? match ($columns) {
             2 => Width::TwoExtraLarge,
             3 => Width::FourExtraLarge,
             4 => Width::SixExtraLarge,
@@ -530,7 +601,7 @@ trait HasFilters
     public function getActiveFiltersCountForPanel(FilterPanel $panel): int
     {
         return array_reduce(
-            $panel->getFilters(),
+            $panel->getVisibleFilters(),
             fn (int $carry, BaseFilter $filter): int => $carry + $filter->getActiveCount(),
             0,
         );

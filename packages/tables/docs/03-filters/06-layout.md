@@ -226,24 +226,67 @@ FilterPanel::make(FiltersLayout::Dropdown, [
     ->triggerAction(fn (Action $action): Action => $action->label('Filter'));
 ```
 
-### Using the dropdown and a modal together
-
-The `Dropdown` and `Modal` locations each render their own trigger, so a table with a panel in both shows two filter icons — one opening a dropdown, the other opening a modal:
+Each option also accepts a closure, which can inject `$table` and `$livewire` like anywhere else in Filament:
 
 ```php
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+
+FilterPanel::make(FiltersLayout::AboveContent, [
+    // ...
+])->columns(fn (HasTable $livewire): int => $livewire->isTableReordering() ? 1 : 3);
+```
+
+<Aside variant="info">
+    `triggerAction()`, `width()` and `maxHeight()` only apply to a panel that opens - see [supported location combinations](#supported-location-combinations). A panel that is always visible, such as `AboveContent`, ignores them.
+</Aside>
+
+### Supported location combinations
+
+A table has a single filter trigger, so only one panel may be in a location that opens. These locations are **interactive**, and a table may use **at most one** of them:
+
+- `Dropdown`
+- `Modal`
+- `AboveContentCollapsible`
+- `BeforeContent`
+- `BeforeContentCollapsible`
+- `AfterContent`
+- `AfterContentCollapsible`
+
+`BeforeContent` and `AfterContent` are interactive even though they are not collapsible, because below the `lg` breakpoint they are hidden and open from the filter trigger as floating panels.
+
+That panel may be combined with any of the locations that are always rendered in place and have no trigger of their own:
+
+- `AboveContent`
+- `BelowContent`
+- `Hidden`
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+use Filament\Tables\Filters\SelectFilter;
+
 ->filters([
-    FilterPanel::make(FiltersLayout::Dropdown, [
-        // ...
+    FilterPanel::make(FiltersLayout::AboveContent, [
+        SelectFilter::make('status'),
     ]),
-    FilterPanel::make(FiltersLayout::Modal, [
-        // ...
+
+    FilterPanel::make(FiltersLayout::Dropdown, [
+        SelectFilter::make('author'),
     ]),
 ])
 ```
 
+`AboveContent` additionally cannot be combined with `AboveContentCollapsible`, since both render in the same place above the table.
+
+Any unsupported combination - such as `Dropdown` with `Modal`, or `BeforeContent` with `AfterContent` - throws a `LogicException` rather than silently dropping a panel.
+
 ### Resetting and applying filters across panels
 
-Each panel has its own reset action that clears only the filters shown in that panel. To clear every filter at once, use the "remove all" button in the active filter indicators above the table. The apply button (when deferring filters) and the indicators are always global - filter state is a single value, so applying always submits every panel's filters.
+Each panel has its own reset action that clears only the filters shown in that panel. When filters are deferred (the [default](overview#live-filters)), resetting a panel applies that panel's cleared filters without submitting changes still pending in any other panel. To clear every filter at once, use the "remove all" button in the active filter indicators above the table.
+
+The apply button and the indicators are always global - the apply button submits every panel's pending filters, whichever panel it was clicked in.
 
 ### Merging panels that share a location
 

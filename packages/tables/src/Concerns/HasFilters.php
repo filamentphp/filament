@@ -6,7 +6,6 @@ use Filament\Facades\Filament;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
-use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\QueryBuilder;
@@ -149,20 +148,38 @@ trait HasFilters
 
     public function resetTableFiltersForm(?string $location = null): void
     {
-        $locationCase = filled($location)
-            ? constant(FiltersLayout::class . '::' . $location)
+        $table = $this->getTable();
+
+        $panel = filled($location)
+            ? $table->getFilterPanel($location)
             : null;
 
-        $form = $locationCase
-            ? ($this->getTable()->getFiltersFormForLocation($locationCase) ?? $this->getTableFiltersForm())
-            : $this->getTableFiltersForm();
+        if (! $panel) {
+            $this->getTableFiltersForm()->fill();
 
-        $form->fill();
+            if ($table->hasDeferredFilters()) {
+                $this->applyTableFilters();
 
-        if ($this->getTable()->hasDeferredFilters()) {
-            $this->applyTableFilters();
+                return;
+            }
+
+            $this->handleTableFilterUpdates();
 
             return;
+        }
+
+        ($table->getFiltersFormForPanel($panel) ?? $this->getTableFiltersForm())->fill();
+
+        if ($table->hasDeferredFilters()) {
+            // Only this panel's filters are applied, so that pending changes made in
+            // another panel are not committed by resetting this one.
+            $this->tableFilters ??= [];
+
+            foreach ($panel->getVisibleFilters() as $filter) {
+                $filterName = $filter->getName();
+
+                $this->tableFilters[$filterName] = Arr::get($this->tableDeferredFilters, $filterName);
+            }
         }
 
         $this->handleTableFilterUpdates();

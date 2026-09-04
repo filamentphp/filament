@@ -16,9 +16,10 @@ it('renders filter panels in the browser with dialog triggers and no accessibili
         Post::factory()->count(3)->create();
 
         visit('/filter-panel-browser-test')
-            // The AboveContent panel renders above the table...
+            // The AboveContent panel renders above the table, the BelowContent panel below it...
             ->assertPresent('.fi-ta-filters-above-content-ctn')
-            // ...and the Dropdown + Modal panels render as toolbar triggers.
+            ->assertPresent('.fi-ta-filters-below-content')
+            // ...and the Dropdown panel renders as a toolbar trigger.
             ->assertPresent('button[title="Filter"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();

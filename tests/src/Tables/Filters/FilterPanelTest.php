@@ -9,13 +9,19 @@ use Filament\Tables\Filters\FilterPanel;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithConfigurableFilterPanels;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithFilterPanels;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    PostsTableWithConfigurableFilterPanels::$configureUsing = null;
+});
 
 it('holds a location and its filters', function (): void {
     $panel = FilterPanel::make(FiltersLayout::AboveContent, [
@@ -202,7 +208,7 @@ it('resets only the filters belonging to the given panel', function (): void {
 it('scopes the filter trigger reset action to its panel location', function (): void {
     $table = livewire(PostsTableWithFilterPanels::class)->instance()->getTable();
 
-    $resetAction = collect($table->getFiltersTriggerAction(FiltersLayout::Dropdown)->getExtraModalFooterActions())
+    $resetAction = collect($table->getFiltersTriggerAction($table->getFilterPanel('Dropdown'))->getExtraModalFooterActions())
         ->first(fn ($action): bool => $action->getName() === 'resetFilters');
 
     expect($resetAction?->getLivewireClickHandler())->toBe("resetTableFiltersForm('Dropdown')");
@@ -281,4 +287,154 @@ it('resolves per-panel `width()`, `maxHeight()` and `resetActionPosition()` with
     // Unset falls through to the table-level default, then the per-layout default.
     expect($table->getFiltersFormMaxHeightForPanel($dropdownPanel))->toBe('300px');
     expect($table->getResetActionPositionForPanel($dropdownPanel))->toBe(FiltersResetActionPosition::Header);
+});
+
+it('accepts a supported filter panel layout combination', function (array $locations): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters(array_map(
+            fn (FiltersLayout $location, int $index): FilterPanel => FilterPanel::make($location, [Filter::make("filter{$index}")]),
+            $locations,
+            array_keys($locations),
+        ));
+
+    expect($table->getFilterPanels())->toHaveCount(count($locations));
+})->with([
+    'an interactive panel on its own' => [[FiltersLayout::Dropdown]],
+    '`Dropdown` with `AboveContent`' => [[FiltersLayout::AboveContent, FiltersLayout::Dropdown]],
+    '`Modal` with `AboveContent`, `BelowContent` and `Hidden`' => [[FiltersLayout::AboveContent, FiltersLayout::Modal, FiltersLayout::BelowContent, FiltersLayout::Hidden]],
+    '`AboveContentCollapsible` with `BelowContent`' => [[FiltersLayout::AboveContentCollapsible, FiltersLayout::BelowContent]],
+    '`BeforeContent` with `AboveContent`' => [[FiltersLayout::BeforeContent, FiltersLayout::AboveContent]],
+    '`AfterContentCollapsible` with `BelowContent`' => [[FiltersLayout::AfterContentCollapsible, FiltersLayout::BelowContent]],
+    'no interactive panel at all' => [[FiltersLayout::AboveContent, FiltersLayout::BelowContent]],
+]);
+
+it('rejects an unsupported filter panel layout combination', function (array $locations): void {
+    $panels = array_map(
+        fn (FiltersLayout $location, int $index): FilterPanel => FilterPanel::make($location, [Filter::make("filter{$index}")]),
+        $locations,
+        array_keys($locations),
+    );
+
+    expect(fn (): Table => Table::make(livewire(PostsTable::class)->instance())->filters($panels))
+        ->toThrow(LogicException::class);
+})->with([
+    '`Dropdown` and `Modal`' => [[FiltersLayout::Dropdown, FiltersLayout::Modal]],
+    '`BeforeContent` and `AfterContent`' => [[FiltersLayout::BeforeContent, FiltersLayout::AfterContent]],
+    '`BeforeContentCollapsible` and `AfterContentCollapsible`' => [[FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]],
+    '`Dropdown` and `BeforeContent`' => [[FiltersLayout::Dropdown, FiltersLayout::BeforeContent]],
+    '`Modal` and `AfterContentCollapsible`' => [[FiltersLayout::Modal, FiltersLayout::AfterContentCollapsible]],
+    '`Dropdown` and `AboveContentCollapsible`' => [[FiltersLayout::Dropdown, FiltersLayout::AboveContentCollapsible]],
+    '`AboveContent` and `AboveContentCollapsible`' => [[FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]],
+]);
+
+it('rejects an unsupported combination introduced by `pushFilters()`', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters([FilterPanel::make(FiltersLayout::Dropdown, [Filter::make('a')])]);
+
+    expect(fn (): Table => $table->pushFilters([FilterPanel::make(FiltersLayout::Modal, [Filter::make('b')])]))
+        ->toThrow(LogicException::class);
+});
+
+it('names the conflicting locations in the `LogicException`', function (): void {
+    expect(fn (): Table => Table::make(livewire(PostsTable::class)->instance())->filters([
+        FilterPanel::make(FiltersLayout::Dropdown, [Filter::make('a')]),
+        FilterPanel::make(FiltersLayout::Modal, [Filter::make('b')]),
+    ]))->toThrow(LogicException::class, 'but [Dropdown] and [Modal] were used together');
+
+    expect(fn (): Table => Table::make(livewire(PostsTable::class)->instance())->filters([
+        FilterPanel::make(FiltersLayout::AboveContent, [Filter::make('a')]),
+        FilterPanel::make(FiltersLayout::AboveContentCollapsible, [Filter::make('b')]),
+    ]))->toThrow(LogicException::class, 'occupy the same location above the table');
+});
+
+it('still merges panels that share a location without tripping the layout contract', function (): void {
+    $table = Table::make(livewire(PostsTable::class)->instance())
+        ->filters([
+            FilterPanel::make(FiltersLayout::Dropdown, [Filter::make('a')]),
+            FilterPanel::make(FiltersLayout::Dropdown, [Filter::make('b')]),
+        ]);
+
+    expect($table->getFilterPanels())->toHaveCount(1);
+    expect($table->getFilterPanels()[0]->getFilters())->toHaveCount(2);
+});
+
+it('renders a table whose panel filters are all hidden', function (): void {
+    $posts = Post::factory()->count(3)->create();
+
+    PostsTableWithConfigurableFilterPanels::$configureUsing = fn (Table $table): Table => $table
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [
+                Filter::make('is_published')->hidden(),
+            ]),
+            FilterPanel::make(FiltersLayout::Dropdown, [
+                Filter::make('is_recent')->hidden(),
+            ]),
+        ]);
+
+    $livewire = livewire(PostsTableWithConfigurableFilterPanels::class)
+        ->assertCanSeeTableRecords($posts);
+
+    $table = $livewire->instance()->getTable();
+
+    // Every panel drops out once its filters are hidden, so the form configuration must not
+    // assume that a first panel exists.
+    expect($table->getFilterPanels())->toBeEmpty();
+    expect($table->getFiltersFormColumns())->not->toBeNull();
+    expect(fn (): mixed => $table->getFiltersFormWidth())->not->toThrow(Throwable::class);
+});
+
+it('excludes hidden filters from a panel\'s active filter count', function (): void {
+    Post::factory()->count(3)->create();
+
+    PostsTableWithConfigurableFilterPanels::$configureUsing = fn (Table $table): Table => $table
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [
+                Filter::make('is_published'),
+                Filter::make('is_recent')->hidden(),
+            ]),
+        ]);
+
+    $livewire = livewire(PostsTableWithConfigurableFilterPanels::class)
+        ->set('tableFilters.is_published', ['isActive' => true])
+        ->set('tableFilters.is_recent', ['isActive' => true]);
+
+    $table = $livewire->instance()->getTable();
+
+    // The table never applies `is_recent`, so the panel badge must not advertise it.
+    expect($table->getActiveFiltersCountForPanel($table->getFilterPanels()[0]))->toBe(1);
+});
+
+it('resets one deferred panel without applying another panel\'s pending changes', function (): void {
+    $posts = Post::factory()->count(5)->create();
+
+    PostsTableWithConfigurableFilterPanels::$configureUsing = fn (Table $table): Table => $table
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [
+                Filter::make('is_published')
+                    ->query(fn (EloquentBuilder $query): EloquentBuilder => $query->where('is_published', true)),
+            ]),
+            FilterPanel::make(FiltersLayout::Dropdown, [
+                Filter::make('hides_everything')
+                    ->query(fn (EloquentBuilder $query): EloquentBuilder => $query->whereRaw('1 = 0')),
+            ]),
+        ]);
+
+    $livewire = livewire(PostsTableWithConfigurableFilterPanels::class)
+        // Applied in the above-content panel...
+        ->set('tableFilters.is_published', ['isActive' => true])
+        // ...while the dropdown panel only holds a pending change, as a deferred filters form
+        // writes to `tableDeferredFilters` until its apply action is used.
+        ->set('tableDeferredFilters.hides_everything', ['isActive' => true]);
+
+    $livewire->call('resetTableFiltersForm', 'AboveContent');
+
+    // The reset panel is cleared...
+    expect($livewire->get('tableFilters.is_published.isActive'))->toBeFalsy();
+    // ...the other panel's pending change is neither applied...
+    expect($livewire->get('tableFilters.hides_everything.isActive'))->toBeFalsy();
+    // ...nor discarded.
+    expect($livewire->get('tableDeferredFilters.hides_everything.isActive'))->toBeTrue();
+
+    // Had the pending change been applied, no records would remain.
+    $livewire->assertCanSeeTableRecords($posts);
 });
