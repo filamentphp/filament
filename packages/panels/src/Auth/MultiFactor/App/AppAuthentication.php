@@ -45,7 +45,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     /**
      * The number of 30-second periods to check before and after the current period.
      */
-    protected int $codeWindow = 2;
+    protected int $codeWindow = 1;
 
     public function __construct(
         protected Google2FA $google2FA,

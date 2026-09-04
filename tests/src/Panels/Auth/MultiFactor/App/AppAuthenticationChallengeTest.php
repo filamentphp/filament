@@ -703,7 +703,7 @@ describe('recovery codes', function (): void {
 });
 
 describe('security', function (): void {
-    it('uses a TOTP code window of ±1 minute by default', function (): void {
+    it('uses one adjacent TOTP period in either direction by default', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
         $userToAuthenticate = User::factory()
@@ -714,9 +714,9 @@ describe('security', function (): void {
 
         $google2FA = app(Google2FA::class);
 
-        $expiredCode = $google2FA->oathTotp($secret, $google2FA->getTimestamp() - 3);
+        $expiredCode = $google2FA->oathTotp($secret, $google2FA->getTimestamp() - 2);
 
-        expect($appAuthentication->getCodeWindow())->toBe(2)
+        expect($appAuthentication->getCodeWindow())->toBe(1)
             ->and($appAuthentication->verifyCode($expiredCode, $secret))->toBeFalse();
     });
 
@@ -887,7 +887,7 @@ describe('security', function (): void {
 
         $google2FA = app(Google2FA::class);
 
-        $futureCode = $google2FA->oathTotp($secret, $google2FA->getTimestamp() + 2);
+        $futureCode = $google2FA->oathTotp($secret, $google2FA->getTimestamp() + 1);
 
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeTrue();
         expect($appAuthentication->verifyCode($futureCode, $secret, shouldPreventCodeReuse: true))->toBeFalse();

@@ -110,11 +110,11 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 ### Medium-impact changes
 
 <Disclosure open x-show="packages.includes('panels')">
-<span slot="summary">App authentication now uses a ±1-minute TOTP code window by default</span>
+<span slot="summary">App authentication now checks one adjacent TOTP period by default</span>
 
-To reduce the time for which a time-based one-time password (TOTP) is accepted, app authentication now checks the two 30-second periods before and after the current period by default. Previously, it checked eight periods in each direction, accepting codes generated up to about 4 minutes before or after verification.
+To reduce the time for which a time-based one-time password (TOTP) is accepted, app authentication now checks the code for the current 30-second period and the periods immediately before and after it. Previously, it checked eight periods in each direction.
 
-Most applications do not need to make any changes. However, if a user's device clock differs from your server clock by more than about 1 minute, their app authentication code may now be rejected. You should ensure that the clocks are synchronized. If you need to temporarily restore the previous tolerance, you can pass `8` to the `codeWindow()` method:
+Most applications do not need to make any changes. However, if a user's device and your server resolve to time periods that are not immediately adjacent, their app authentication code may now be rejected. You should ensure that the clocks are synchronized. If you need to temporarily restore the previous tolerance, you can pass `8` to the `codeWindow()` method:
 
 ```php
 use Filament\Auth\MultiFactor\App\AppAuthentication;
