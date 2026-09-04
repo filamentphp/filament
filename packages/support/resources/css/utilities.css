@@ -565,9 +565,13 @@
     }
 
     :is(h2, h3, h4, h5, h6):where(:not(.fi-not-prose, .fi-not-prose *)) {
-        scroll-margin-top: calc(var(--spacing) * 32);
+        scroll-margin-top: calc(
+            var(--topbar-height, 4rem) + var(--spacing) * 16
+        );
         @variant lg {
-            scroll-margin-top: calc(var(--spacing) * 18);
+            scroll-margin-top: calc(
+                var(--topbar-height, 4rem) + var(--spacing) * 2
+            );
         }
     }
 

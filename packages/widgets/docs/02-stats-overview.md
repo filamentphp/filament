@@ -38,7 +38,7 @@ class StatsOverview extends BaseWidget
 
 Now, check out your widget in the dashboard.
 
-<AutoScreenshot name="widgets/stats-overview/simple" alt="Stats overview" version="5.x" />
+<AutoScreenshot name="widgets/stats-overview/simple" alt="Stats overview" version="6.x" />
 
 ## Adding a description and icon to a stat
 
@@ -74,7 +74,7 @@ Stat::make('Unique views', '192.1k')
     ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before)
 ```
 
-<AutoScreenshot name="widgets/stats-overview/description" alt="Stats overview with descriptions" version="5.x" />
+<AutoScreenshot name="widgets/stats-overview/description" alt="Stats overview with descriptions" version="6.x" />
 
 ## Changing the color of the stat
 
@@ -102,7 +102,7 @@ protected function getStats(): array
 }
 ```
 
-<AutoScreenshot name="widgets/stats-overview/color" alt="Stats overview with colors" version="5.x" />
+<AutoScreenshot name="widgets/stats-overview/color" alt="Stats overview with colors" version="6.x" />
 
 ## Adding extra HTML attributes to a stat
 
@@ -127,6 +127,33 @@ protected function getStats(): array
 
 In this example, we are deliberately escaping the `$` in `$dispatch()` since this needs to be passed directly to the HTML, it is not a PHP variable.
 
+## Setting a placeholder for a stat
+
+Sometimes a stat's value may not be available — for example, when a dashboard has nothing to show for a specific period. You can use `placeholder()` to define what should be displayed instead when the value is blank:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+Stat::make('Unique views', $uniqueViews)
+    ->placeholder('-')
+```
+
+A value is considered blank according to Laravel's `blank()` helper. For example, `null` and empty strings are blank, while `0` and `'0'` are not.
+
+### Setting a default placeholder globally
+
+If you'd like every stat in your app to fall back to the same placeholder by default, you can use the static `configureUsing()` method in a service provider's `boot()` method:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+Stat::configureUsing(function (Stat $component): void {
+    $component->placeholder('-');
+});
+```
+
+Individual stats can still override this by calling `placeholder()` themselves.
+
 ## Adding a chart to a stat
 
 You may also add or chain a `chart()` to each stat to provide historical data. The `chart()` method accepts an array of data points to plot:
@@ -147,7 +174,37 @@ protected function getStats(): array
 }
 ```
 
-<AutoScreenshot name="widgets/stats-overview/chart" alt="Stats overview with charts" version="5.x" />
+<AutoScreenshot name="widgets/stats-overview/chart" alt="Stats overview with charts" version="6.x" />
+
+## Styling stat charts in a theme
+
+Chart.js paints a stat's chart onto a `<canvas>`, so its line cannot be reached from a stylesheet. A [custom theme](../styling/overview) is CSS only, so Filament exposes the shape of that line as CSS custom properties, which you may set on `.fi-wi-stats-overview-stat`, or on any element above it to cover every stat in the panel at once:
+
+```css
+.fi-wi-stats-overview-stat {
+    --stat-chart-border-width: 1;
+    --stat-chart-line-tension: 0;
+    --stat-chart-fill: none;
+}
+```
+
+`--stat-chart-border-width` thickens the line, `--stat-chart-line-tension` curves it, from `0` for straight segments up to `1`, and `--stat-chart-fill` shades the area beneath it, accepting `start`, `end`, `origin` or `stack`, as well as `none` to leave the line bare.
+
+These values are handed to Chart.js rather than used by the browser, so they are plain numbers and keywords, without units. If you set one to something Chart.js cannot use, it is ignored and the chart keeps its default. They are also read again whenever the color scheme changes, so you may give light and dark mode different values.
+
+The chart takes its colors from the [color of the stat](#changing-the-color-of-the-stat). To change them in a theme, style the `.fi-wi-stats-overview-stat-chart-bg-color` and `.fi-wi-stats-overview-stat-chart-border-color` elements with an ordinary `color` declaration:
+
+```css
+.fi-wi-stats-overview-stat {
+    & .fi-wi-stats-overview-stat-chart-border-color {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+```
+
+<Aside variant="info">
+    These properties only affect the charts inside stats. [Chart widgets](charts#styling-charts-in-a-theme) are styled with their own set, prefixed `--chart-`.
+</Aside>
 
 ## Live updating stats (polling)
 
@@ -199,4 +256,4 @@ protected function getDescription(): ?string
 }
 ```
 
-<AutoScreenshot name="widgets/stats-overview/heading" alt="Stats overview with heading and description" version="5.x" />
+<AutoScreenshot name="widgets/stats-overview/heading" alt="Stats overview with heading and description" version="6.x" />

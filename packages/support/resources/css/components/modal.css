@@ -134,8 +134,9 @@
         }
     }
 
+    /* Like the modal itself, the window container does not show a focus outline when it receives focus from the focus trap, such as when the modal has no tabbable content. */
     & > .fi-modal-window-ctn {
-        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
+        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center outline-none sm:grid-rows-[1fr_auto_3fr];
 
         &.fi-clickable {
             @apply cursor-pointer;

@@ -29,7 +29,7 @@ class ColorSchema
                         ->state('#3490dc')
                         ->copyable()
                         ->copyMessage('Copied!')
-                        ->copyMessageDuration(1500),
+                        ->copyMessageDuration(30000),
                 ]),
         ];
     }

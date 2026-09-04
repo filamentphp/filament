@@ -89,6 +89,19 @@
         @apply relative min-h-12 w-full flex-1 px-5 py-3;
     }
 
+    &[style*='--min-height'] .fi-fo-rich-editor-content {
+        min-height: var(--min-height);
+    }
+
+    &[style*='--max-height'] .fi-fo-rich-editor-content {
+        @apply scrollbar-gutter-stable overflow-y-auto;
+        max-height: var(--max-height);
+    }
+
+    &[style*='--max-height'] .fi-fo-rich-editor-content[role='region'] {
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 outline-none focus-visible:ring-2 focus-visible:ring-inset;
+    }
+
     & span[data-type='mergeTag'] {
         @apply my-0 inline-block whitespace-nowrap;
 
@@ -353,11 +366,6 @@
             @apply relative;
             outline: 1px solid rgba(0, 0, 0, 0.25);
             border-radius: 0.125rem;
-        }
-
-        /* Workaround for TipTap bug: https://github.com/filamentphp/filament/issues/18997 */
-        [data-resize-container] {
-            @apply !inline-block;
         }
     }
 

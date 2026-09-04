@@ -11,6 +11,103 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
+    it('prevents `beforeunload` only while actions that can contain unsaved changes are mounted', function (bool $isDarkMode): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/unsaved-changes-alert-browser-test');
+
+        if ($isDarkMode) {
+            $browser->inDarkMode();
+        }
+
+        $dispatchBeforeUnloadEvent = <<<'JS'
+            (() => {
+                const event = new Event('beforeunload', { cancelable: true })
+
+                window.dispatchEvent(event)
+
+                return event.defaultPrevented
+            })()
+            JS;
+
+        $browser
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->click('[data-testid="read-only-unsaved-changes-alert-trigger"]')
+            ->assertVisible('[data-testid="read-only-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="read-only-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertMissing('[data-testid="read-only-unsaved-changes-alert-modal"]')
+            ->click('[data-testid="editable-unsaved-changes-alert-trigger"]')
+            ->assertVisible('[data-testid="editable-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, true)
+            ->click('[data-testid="editable-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertMissing('[data-testid="editable-unsaved-changes-alert-modal"]')
+            ->click('[data-testid="nested-unsaved-changes-alert-trigger"]')
+            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->click('[data-testid="nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Open editable nested action')
+            ->assertVisible('[data-testid="editable-nested-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, true)
+            ->wait(0.5)
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="editable-nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->assertNoSmoke();
+    })->with([
+        'light mode' => false,
+        'dark mode' => true,
+    ]);
+
+    it('preserves the `beforeunload` alert for mounted action state without a `hasUnsavedChangesAlert` key', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/unsaved-changes-alert-browser-test')
+            ->assertScript(<<<'JS'
+                (() => {
+                    setUpUnsavedActionChangesAlert({
+                        resolveLivewireComponentUsing: () => ({}),
+                        $wire: {
+                            mountedActions: [{}],
+                            __instance: { effects: {} },
+                        },
+                    })
+
+                    const event = new Event('beforeunload', { cancelable: true })
+
+                    window.dispatchEvent(event)
+
+                    return event.defaultPrevented
+                })()
+                JS, true)
+            ->assertNoSmoke();
+    });
+
+    it('can run another action after closing a child opened by an action without a modal', function (bool $isDarkMode): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/modal-browser-test');
+
+        if ($isDarkMode) {
+            $browser->inDarkMode();
+        }
+
+        $browser
+            ->click('[data-testid="modal-less-parent-trigger"]')
+            ->assertVisible('[data-testid="modal-less-parent-child-modal"]')
+            ->click('[data-testid="modal-less-parent-child-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertMissing('[data-testid="modal-less-parent-child-modal"]')
+            ->wait(0.5)
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="action-after-child-trigger"]')
+            ->assertSeeIn('[data-testid="action-after-child-result"]', 'ran')
+            ->assertNoSmoke();
+    })->with([
+        'light mode' => false,
+        'dark mode' => true,
+    ]);
+
     it('restores focus to the trigger after closing a standalone modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
@@ -92,6 +189,32 @@ describe('browser interactions', function (): void {
                 ->assertNoSmoke();
         });
     });
+
+    it('does not change the page scroll position when opening a standalone modal with no tabbable content', function (bool $isDarkMode): void {
+        retry(10, function () use ($isDarkMode): void {
+            $this->actingAs(User::factory()->create());
+
+            $browser = visit('/modal-browser-test');
+
+            if ($isDarkMode) {
+                $browser->inDarkMode();
+            }
+
+            $browser
+                ->assertSee('Modal Browser Test')
+                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="no-tabbable-content-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+                ->assertVisible('[data-testid="no-tabbable-content-modal"]')
+                // Let the focus trap activate (it is deferred after opening) before checking where it put focus.
+                ->wait(0.5)
+                ->assertPresent('.fi-modal-window-ctn:focus')
+                ->assertScript('window.scrollY === window.modalTestScrollY', true)
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+        });
+    })->with([
+        'light mode' => false,
+        'dark mode' => true,
+    ]);
 
     it('does not restore focus to the trigger after closing a standalone modal using `:restores-focus="false"`', function (): void {
         retry(10, function (): void {
@@ -235,8 +358,8 @@ describe('browser interactions', function (): void {
                 ->assertVisible('[data-testid="scroll-modal"]')
                 // Let the modal's fields lay out so the window is scrollable.
                 ->wait(1)
-                // Scroll the parent modal window to the bottom (~1264px).
-                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); el.scrollTop = el.scrollHeight; return el.scrollTop > 600 })()', true)
+                // Scroll the parent modal's `.fi-modal-window-scroll` container to the bottom (~1264px), since a sticky footer moves scrolling from the window to it.
+                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"] .fi-modal-window-scroll\'); el.scrollTop = el.scrollHeight; return el.scrollTop > 600 })()', true)
                 ->click('[data-testid="scroll-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
                 ->assertVisible('[data-testid="scroll-nested-modal"]')
                 // The parent is now hidden behind the child, but its trap must
@@ -248,7 +371,7 @@ describe('browser interactions', function (): void {
                 ->assertVisible('[data-testid="scroll-modal"]')
                 // The parent modal's scroll position is preserved, not reset to top.
                 ->wait(1)
-                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"]\'); return el.scrollTop > 600 })()', true)
+                ->assertScript('(() => { const el = document.querySelector(\'[data-testid="scroll-modal"] .fi-modal-window-scroll\'); return el.scrollTop > 600 })()', true)
                 ->assertNoSmoke();
         });
     });

@@ -113,15 +113,15 @@ class MorphToSelect extends Component
                     });
 
             $keySelect = Select::make($keyColumn)
-                ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
+                ->label(fn (Get $get): ?string => ($types[$get($typeColumn) ?? ''] ?? null)?->getLabel())
                 ->hiddenLabel()
-                ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
+                ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn) ?? ''] ?? null)?->getOptionsUsing))
                 ->dynamicOptions(fn (Select $component): ?bool => $component->isPreloaded() ? null : false)
-                ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
-                ->getOptionLabelUsing(fn (Select $component, Get $get, $value): ?string => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionLabelUsing, ['value' => $value]))
+                ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn) ?? ''] ?? null)?->getSearchResultsUsing, ['search' => $search]))
+                ->getOptionLabelUsing(fn (Select $component, Get $get, $value): ?string => $component->evaluate(($types[$get($typeColumn) ?? ''] ?? null)?->getOptionLabelUsing, ['value' => $value]))
                 ->native($component->isNative())
-                ->required(fn (Get $get): bool => filled(($types[$get($typeColumn)] ?? null)))
-                ->hidden(fn (Get $get): bool => blank(($types[$get($typeColumn)] ?? null)))
+                ->required(fn (Get $get): bool => filled(($types[$get($typeColumn) ?? ''] ?? null)))
+                ->hidden(fn (Get $get): bool => blank(($types[$get($typeColumn) ?? ''] ?? null)))
                 ->dehydratedWhenHidden()
                 ->searchable($component->isSearchable())
                 ->searchDebounce($component->getSearchDebounce())
@@ -140,7 +140,7 @@ class MorphToSelect extends Component
                 ->afterStateUpdated(function () use ($component): void {
                     $component->callAfterStateUpdatedForChildComponent();
                 })
-                ->actionSchemaModel(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getModel());
+                ->actionSchemaModel(fn (Get $get): ?string => ($types[$get($typeColumn) ?? ''] ?? null)?->getModel());
 
             if ($callback = $component->getModifyTypeSelectUsingCallback()) {
                 $typeSelect = $component->evaluate($callback, [

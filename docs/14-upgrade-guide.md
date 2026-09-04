@@ -195,6 +195,41 @@ RichEditor::configureUsing(function (RichEditor $component): void {
 See the [rich editor documentation](../forms/rich-editor#securing-file-attachment-ids) for more details.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('tables')">
+<span slot="summary">`QueryBuilder` filters now limit rule-tree complexity by default</span>
+
+To protect against requests containing excessively large or deeply nested rule trees consuming too much server memory or CPU, `QueryBuilder` filters now limit each rule tree to 100 rules with a maximum nesting depth of 5 by default. Previously, both limits were disabled by default.
+
+The `maxRules()` limit counts individual conditions, while the top-level list of rules has a nesting depth of 1 and each nested "OR" group adds 1 to the depth. The UI disables new-rule and clone actions once the maximum number of rules is reached, and it stops offering deeper "OR" groups at the maximum nesting depth. If existing or submitted filter state exceeds either limit, the filter is ignored and no constraints are applied to the query.
+
+If your users need to build larger rule trees, you can customize the limits for an individual filter:
+
+```php
+use Filament\Tables\Filters\QueryBuilder;
+
+QueryBuilder::make()
+    ->maxRules(200)
+    ->maxNestingDepth(8)
+    ->constraints([
+        // ...
+    ])
+```
+
+To restore the previous behavior for every `QueryBuilder` filter in your application, call `configureUsing()` in a service provider's `boot()` method. Disabling the limits reintroduces the risk of excessive resource consumption, so prefer setting higher limits where possible:
+
+```php
+use Filament\Tables\Filters\QueryBuilder;
+
+QueryBuilder::configureUsing(function (QueryBuilder $queryBuilder): void {
+    $queryBuilder
+        ->maxRules(null)
+        ->maxNestingDepth(null);
+});
+```
+
+See the [query builder documentation](../tables/filters/query-builder#limiting-the-size-of-the-rule-tree) for more details.
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('actions')">
 <span slot="summary">Exports now prevent CSV/XLSX formula injection by default</span>
 

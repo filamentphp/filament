@@ -116,7 +116,7 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
-<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="5.x" />
+<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="6.x" />
 
 ### Customizing the relation manager's URL parameter
 
@@ -305,7 +305,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="5.x" />
+<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="6.x" />
 
 <Aside variant="danger">
     `AssociateAction`, `AttachAction`, `DetachAction`, and `DissociateAction` (and their bulk variants) only check the relation manager's `isReadOnly()` state — they do not consult any model policy method by default. Bulk delete, force-delete, and restore actions use the `deleteAny()`, `forceDeleteAny()`, and `restoreAny()` policy methods (one call for the whole batch) for performance. If you need per-record authorization on a bulk action, call [`authorizeIndividualRecords('ability')`](../actions/overview#authorizing-individual-records-of-a-bulk-action) on it, accepting the extra query cost.
@@ -778,7 +778,7 @@ public static function getRelations(): array
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="5.x" />
+<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="6.x" />
 
 ## Conditionally showing relation managers
 
@@ -806,7 +806,7 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 }
 ```
 
-<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="5.x" />
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="6.x" />
 
 ### Customizing the content tab
 
@@ -853,7 +853,7 @@ public static function getTabComponent(Model $ownerRecord, string $pageClass): T
 }
 ```
 
-<UtilityInjection set="schemaComponents" version="5.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 If you are using a [relation group](#grouping-relation-managers), you can use the `tab()` method:
 
@@ -872,7 +872,7 @@ RelationGroup::make('Contacts', [
         ->icon('heroicon-m-document-text'));
 ```
 
-<UtilityInjection set="schemaComponents" version="5.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x" extras="Badge;;?string;;$badge;;The evaluated value of the badge.">As well as allowing static values, the `badgeColor()` and `badgeTooltip()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Deferring the loading of relation manager tab badges
 
@@ -1022,6 +1022,22 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+<Aside variant="danger">
+    `modifyQueryUsing()` scopes the query for records that already belong to the relationship — the table listing, and actions that operate on its rows, such as `DetachAction`, `DissociateAction`, and bulk actions. It is **not** applied to the records available to `AttachAction` or `AssociateAction`, since those records are outside the relationship by definition.
+
+    To restrict which records may be attached or associated, scope the options using the `recordSelectOptionsQuery()` method on the action. Filament resolves the submitted record against that query, so records outside it are rejected, even if a user tampers with the submitted modal state:
+
+    ```php
+    use Filament\Actions\AttachAction;
+    use Illuminate\Database\Eloquent\Builder;
+
+    AttachAction::make()
+        ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('is_active', true))
+    ```
+
+    Learn more about scoping the options to [attach](#scoping-the-options-to-attach) or [associate](#scoping-the-options-to-associate).
+</Aside>
 
 ## Customizing the relation manager title
 

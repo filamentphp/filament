@@ -4,7 +4,6 @@ namespace Filament\Schemas\Components;
 
 use Filament\Schemas\Components\Concerns\BelongsToContainer;
 use Filament\Schemas\Components\Concerns\BelongsToModel;
-use Filament\Schemas\Components\Concerns\CanBeConcealed;
 use Filament\Schemas\Components\Concerns\CanBeDisabled;
 use Filament\Schemas\Components\Concerns\CanBeGridContainer;
 use Filament\Schemas\Components\Concerns\CanBeHidden;
@@ -47,7 +46,6 @@ class Component extends ViewComponent
 {
     use BelongsToContainer;
     use BelongsToModel;
-    use CanBeConcealed;
     use CanBeDisabled;
     use CanBeGridContainer;
     use CanBeHidden;
@@ -161,6 +159,23 @@ class Component extends ViewComponent
         $hiddenJs = $this->getHiddenJs();
         $visibleJs = $this->getVisibleJs();
 
+        $visibilityJs = match ([filled($hiddenJs), filled($visibleJs)]) {
+            [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
+            [true, false] => "! ({$hiddenJs})",
+            [false, true] => $visibleJs,
+            default => null,
+        };
+
+        // A component with a client-side visibility condition is wrapped in a `<fieldset>`
+        // that is `disabled` while hidden, which bars its controls from native browser
+        // validation. Otherwise, the browser would silently block form submission over an
+        // invalid control that it cannot focus or anchor a validation bubble to. Unlike
+        // concealing containers such as collapsed sections, these components cannot be
+        // revealed on demand when they contain an invalid control. The `disabled` attribute
+        // is rendered so that the controls are also barred before Alpine.js applies
+        // `x-bind:disabled`.
+        $wrapperTag = ($isVisible && filled($visibilityJs)) ? 'fieldset' : 'div';
+
         $maxWidth = $this->getMaxWidth();
 
         $statePath = $isContainerEmbeddedInParentComponent
@@ -181,11 +196,16 @@ class Component extends ViewComponent
             ->class([
                 ($maxWidth instanceof Width) ? "fi-width-{$maxWidth->value}" : $maxWidth,
                 'fi-growable' => $container->isInline() && $this->canGrow(default: false),
+                'fi-sc-visibility-fieldset' => $wrapperTag === 'fieldset',
             ]);
 
         ob_start(); ?>
 
-        <div
+        <<?= $wrapperTag ?>
+            <?php if ($wrapperTag === 'fieldset') { ?>
+                disabled
+                role="none"
+            <?php } ?>
             <?php if (filled($key)) { ?>
                 wire:partial="schema-component::<?= $key ?>"
             <?php } ?>
@@ -201,13 +221,9 @@ class Component extends ViewComponent
                         $afterStateUpdatedJs,
                     )) ?>"
                 <?php } ?>
-                <?php if (filled($visibilityJs = match ([filled($hiddenJs), filled($visibleJs)]) {
-                    [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
-                    [true, false] => "! ({$hiddenJs})",
-                    [false, true] => $visibleJs,
-                    default => null,
-                })) { ?>
+                <?php if (filled($visibilityJs)) { ?>
                     x-bind:class="{ 'fi-hidden': ! (<?= $visibilityJs ?>) }"
+                    x-bind:disabled="! (<?= $visibilityJs ?>)"
                     x-cloak
                 <?php } ?>
             <?php } ?>
@@ -223,7 +239,7 @@ class Component extends ViewComponent
                     <?= $this->toHtml() ?>
                 </div>
             <?php } ?>
-        </div>
+        </<?= $wrapperTag ?>>
 
         <?php return ob_get_clean();
     }
@@ -244,5 +260,13 @@ class Component extends ViewComponent
                 'slot' => $slot,
             ],
         );
+    }
+
+    /**
+     * @deprecated Fields no longer strip their native validation attributes when concealed. Concealing containers reveal themselves around an invalid control, using the `invalid` event listener in the `filament/schemas` package, and components with a client-side visibility condition are wrapped in a `<fieldset>` that is `disabled` while hidden.
+     */
+    public function isConcealed(): bool
+    {
+        return false;
     }
 }

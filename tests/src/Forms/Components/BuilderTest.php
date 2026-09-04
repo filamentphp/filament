@@ -690,19 +690,6 @@ it('can add and delete blocks in the browser', function (): void {
     });
 });
 
-it('returns `false` for `canConcealComponents()` when not collapsible', function (): void {
-    $builder = Builder::make('content');
-
-    expect($builder->canConcealComponents())->toBeFalse();
-});
-
-it('returns `true` for `canConcealComponents()` when collapsible', function (): void {
-    $builder = Builder::make('content')
-        ->collapsible();
-
-    expect($builder->canConcealComponents())->toBeTrue();
-});
-
 it('returns `1` for `getHeadingsCount()` when block labels are enabled (default)', function (): void {
     $builder = Builder::make('content');
 

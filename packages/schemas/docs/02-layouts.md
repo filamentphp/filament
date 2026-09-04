@@ -29,7 +29,7 @@ All layout components have a `columns()` method that you can use in a couple of 
 
 Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be found in the [Tailwind documentation](https://tailwindcss.com/docs/responsive-design#overview).
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Grid column spans
 
@@ -40,9 +40,9 @@ In addition to specifying how many columns a layout component should have, you m
 - `columnSpan('full')` will make the component fill the full width of the parent grid on the `lg` breakpoint and higher, regardless of how many columns there are. All smaller devices span just 1 column.
 - `columnSpanFull()` will make the component fill the full width of the parent grid on all devices, regardless of how many columns it has.
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/grid/column-span" alt="Grid with column spans" version="5.x" />
+<AutoScreenshot name="schemas/layout/grid/column-span" alt="Grid with column spans" version="6.x" />
 
 ### Grid column starts
 
@@ -74,9 +74,9 @@ Grid::make()
 
 In this example, the grid has 3 columns on small devices, 6 columns on extra large devices, and 8 columns on extra extra large devices. The text input will start at column 2 on small devices, column 3 on extra large devices, and column 4 on extra extra large devices. This is essentially producing a layout whereby the text input always starts halfway through the grid, regardless of how many columns the grid has.
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columnStart()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing a static value, the `columnStart()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/grid/column-start" alt="Grid with column start" version="5.x" />
+<AutoScreenshot name="schemas/layout/grid/column-start" alt="Grid with column start" version="6.x" />
 
 ### Grid column ordering
 
@@ -102,7 +102,7 @@ Grid::make()
     ])
 ```
 
-<AutoScreenshot name="schemas/layout/grid/column-order" alt="Grid with reordered columns" version="5.x" />
+<AutoScreenshot name="schemas/layout/grid/column-order" alt="Grid with reordered columns" version="6.x" />
 
 You can also use responsive ordering to change the visual order of components based on the screen size:
 
@@ -136,7 +136,7 @@ Grid::make()
 
 In this example, on small screens the order will be: title, description, category. On large screens, the order will be: description, category, title.
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columnOrder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing a static value, the `columnOrder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### An example of a responsive grid layout
 
@@ -207,7 +207,7 @@ Grid::make([
     ])
 ```
 
-<AutoScreenshot name="schemas/layout/grid/simple" alt="Grid" version="5.x" />
+<AutoScreenshot name="schemas/layout/grid/simple" alt="Grid" version="6.x" />
 
 ### Flex component
 
@@ -236,9 +236,9 @@ In this example, the first section will `grow()` to consume available horizontal
 
 The `from()` method is used to control the [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview) (`sm`, `md`, `lg`, `xl`, `2xl`) at which the horizontally-split layout should be used. In this example, the horizontally-split layout will be used on medium devices and larger. On smaller devices, the sections will stack on top of each other.
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing static values, the `grow()` and `from()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing static values, the `grow()` and `from()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/flex/simple" alt="Flex" version="5.x" />
+<AutoScreenshot name="schemas/layout/flex/simple" alt="Flex" version="6.x" />
 
 ### Fieldset component
 
@@ -258,9 +258,9 @@ Fieldset::make('Label')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static label, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing a static label, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/fieldset/simple" alt="Fieldset" version="5.x" />
+<AutoScreenshot name="schemas/layout/fieldset/simple" alt="Fieldset" version="6.x" />
 
 ### Removing the border from a fieldset
 
@@ -276,9 +276,43 @@ Fieldset::make('Label')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/fieldset/not-contained" alt="Fieldset without a container border" version="5.x" />
+<AutoScreenshot name="schemas/layout/fieldset/not-contained" alt="Fieldset without a container border" version="6.x" />
+
+## Controlling spacing between components
+
+### Reducing space between components
+
+The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
+
+```php
+use Filament\Schemas\Components\Fieldset;
+
+Fieldset::make('Dense')
+    ->dense()
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/dense" alt="A layout with dense spacing" version="6.x" />
+
+### Removing space between components
+
+The `gap(false)` method removes space between components:
+
+```php
+use Filament\Schemas\Components\Fieldset;
+
+Fieldset::make('No gap')
+    ->gap(false)
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/no-gap" alt="A layout with no gap" version="6.x" />
 
 ## Using container queries
 
@@ -413,39 +447,29 @@ Grid::make()
 
 In this example, the fallback breakpoints ensure that even in browsers that don't support container queries, the layout will still respond to viewport size changes, with the name field appearing first and the email field second on larger screens.
 
-## Controlling spacing between components
+## Deferring the loading of a layout's child schema
 
-### Reducing space between components
-
-The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
+If a layout contains components that are expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The child schema will initially render a loading indicator and will be loaded when it enters the viewport:
 
 ```php
-use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 
-Fieldset::make('Dense')
-    ->dense()
-    ->schema([
-        // ...
-    ])
+Group::make()
+    ->key('customerDetails')
+    ->schema(
+        Schema::make()
+            ->components([
+                TextInput::make('name'),
+                TextInput::make('email')
+                    ->email(),
+            ])
+            ->deferLoading(),
+    )
 ```
 
-<AutoScreenshot name="schemas/layout/dense" alt="A layout with dense spacing" version="5.x" />
-
-### Removing space between components
-
-The `gap(false)` method removes space between components:
-
-```php
-use Filament\Schemas\Components\Fieldset;
-
-Fieldset::make('No gap')
-    ->gap(false)
-    ->schema([
-        // ...
-    ])
-```
-
-<AutoScreenshot name="schemas/layout/no-gap" alt="A layout with no gap" version="5.x" />
+In this example, a `Group` is used because it has no visual styling of its own. You can use the same approach with other layout components that accept a child schema. Every deferred schema must have a unique key, which it can inherit from a keyed parent component as in this example. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
 
 ## Adding extra HTML attributes to a layout component
 
@@ -458,6 +482,6 @@ Section::make()
     ->extraAttributes(['class' => 'custom-section-style'])
 ```
 
-<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="6.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.

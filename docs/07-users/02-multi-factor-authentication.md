@@ -10,7 +10,7 @@ Users in Filament can sign in with their email address and password by default. 
 
 When MFA is enabled, users must perform an extra step before they are authenticated and have access to the application.
 
-<AutoScreenshot name="panels/mfa-challenge" alt="The multi-factor authentication challenge page" version="5.x" />
+<AutoScreenshot name="panels/mfa-challenge" alt="The multi-factor authentication challenge page" version="6.x" />
 
 Filament includes two methods of MFA which you can enable out of the box:
 
@@ -30,7 +30,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/mfa" alt="Multi-factor authentication options on the profile page" version="5.x" />
+<AutoScreenshot name="panels/mfa" alt="Multi-factor authentication options on the profile page" version="6.x" />
 
 ## App authentication
 
@@ -310,6 +310,268 @@ public function panel(Panel $panel): Panel
 ```
 
 When this is enabled, users will be prompted to set up multi-factor authentication after they sign in, if they have not already done so.
+
+## Creating a custom multi-factor authentication provider
+
+You can add another MFA method by creating an object that implements the `MultiFactorAuthenticationProvider` interface. The provider tells Filament how to identify the method, determine whether it is enabled for a user, manage it, and validate its login challenge.
+
+The following sections use an SMS authentication provider as an example. The provider delegates code generation, storage, delivery, and verification to an `SmsAuthenticationService` in your app. This keeps the provider focused on integrating your authentication method with Filament:
+
+```php
+<?php
+
+namespace App\Filament\Auth\MultiFactor;
+
+use App\Services\SmsAuthenticationService;
+use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
+
+class SmsAuthentication implements MultiFactorAuthenticationProvider
+{
+    public function __construct(
+        protected SmsAuthenticationService $service,
+    ) {}
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    // ...
+}
+```
+
+The service should generate codes using a cryptographically secure random source, store only a hash of each code, scope codes to the user they were issued for, expire and consume codes, and rate-limit both delivery and verification attempts. It may deliver codes using any [SMS notification channel supported by Laravel](https://laravel.com/docs/notifications#sms-notifications).
+
+### Identifying the provider
+
+The `getId()` method must return a stable identifier that is unique among the panel's MFA providers. Filament uses it to identify the provider and scope its form state. The `getLoginFormLabel()` method returns the option shown when a user has more than one MFA method enabled:
+
+```php
+// ...
+
+public function getId(): string
+{
+    return 'sms';
+}
+
+public function getLoginFormLabel(): string
+{
+    return 'SMS';
+}
+
+// ...
+```
+
+### Checking whether the provider is enabled
+
+The `isEnabled()` method determines whether a user should be challenged by the provider. For example, you could store a `has_sms_authentication` boolean and a `phone_number` on the `User` model:
+
+```php
+use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+// ...
+
+public function isEnabled(Authenticatable $user): bool
+{
+    if (! ($user instanceof User)) {
+        return false;
+    }
+
+    return filled($user->phone_number) && ((bool) $user->has_sms_authentication);
+}
+
+// ...
+```
+
+The user passed to `isEnabled()` is not authenticated yet when Filament is preparing a login challenge, so you should always use the method's `$user` argument instead of the currently authenticated user.
+
+### Rendering the management schema
+
+The `getManagementSchemaComponents()` method returns the [schema components](../schemas) and [actions](../actions) used to manage the provider. Filament renders them on the user's profile page and, when MFA is required, on the required MFA setup page:
+
+```php
+use App\Filament\Auth\MultiFactor\Actions\DisableSmsAuthenticationAction;
+use App\Filament\Auth\MultiFactor\Actions\SetUpSmsAuthenticationAction;
+use Filament\Schemas\Components\Actions;
+
+// ...
+
+public function getManagementSchemaComponents(): array
+{
+    return [
+        Actions::make([
+            SetUpSmsAuthenticationAction::make($this->service),
+            DisableSmsAuthenticationAction::make($this->service),
+        ]),
+    ];
+}
+
+// ...
+```
+
+In this example, the setup and disable actions should send an SMS code, display a `OneTimeCodeInput`, verify the code using the service, and then persist the new enabled state. Keeping these workflows in separate action classes prevents the provider from becoming difficult to read. If your integration manages enrollment elsewhere, the management schema could instead contain an action that links to that page.
+
+### Rendering the challenge form
+
+The `getChallengeFormComponents()` method returns the fields shown after the user's password has been verified. Filament completes authentication only when the components pass validation, so the SMS code field uses the service to reject an invalid challenge:
+
+```php
+use Closure;
+use Filament\Forms\Components\OneTimeCodeInput;
+use Illuminate\Contracts\Auth\Authenticatable;
+use SensitiveParameter;
+
+// ...
+
+public function getChallengeFormComponents(Authenticatable $user): array
+{
+    return [
+        OneTimeCodeInput::make('code')
+            ->label('SMS code')
+            ->required()
+            ->rule(fn (): Closure => function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
+                if (is_string($value) && $this->service->verifyCode($user, $value)) {
+                    return;
+                }
+
+                $fail('The SMS code is invalid or has expired.');
+            }),
+    ];
+}
+
+// ...
+```
+
+The verification operation should consume a valid code so that it cannot be used successfully again.
+
+### Running logic before the challenge
+
+SMS providers need to send a code before displaying the challenge. To run logic at that point, also implement the `HasBeforeChallengeHook` interface and add the `beforeChallenge()` method:
+
+```php
+use Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+class SmsAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenticationProvider
+{
+    // ...
+
+    public function beforeChallenge(Authenticatable $user): void
+    {
+        $this->service->sendCode($user);
+    }
+
+    // ...
+}
+```
+
+The `beforeChallenge()` method may be called more than once if the user switches between enabled providers. The service should rate-limit code delivery and avoid invalidating an existing code when another code cannot be sent yet.
+
+<Aside variant="danger">
+    Store phone numbers in a consistent format such as E.164, and disable SMS authentication whenever a user's phone number changes so that they must verify the new number. You should also provide a secure account recovery process for users who lose access to their phone. SMS authentication is vulnerable to risks such as SIM swapping, so consider offering app authentication or security keys as stronger alternatives.
+</Aside>
+
+### Registering the provider
+
+Finally, register the provider with the panel's `multiFactorAuthentication()` method:
+
+```php
+use App\Filament\Auth\MultiFactor\SmsAuthentication;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->multiFactorAuthentication([
+            SmsAuthentication::make(),
+        ]);
+}
+```
+
+## Challenging a user outside of the login page
+
+The multi-factor challenge that the login page presents is also available on its own, so that you can ask a signed-in user to verify a configured factor before they perform a sensitive action.
+
+The `MultiFactorChallenge` class builds the challenge for a user. Its schema components carry the validation rules that verify the code that the user enters.
+
+<Aside variant="info">
+    The examples below assume that `$user` is the signed-in user and is an instance of `Authenticatable`. Your Livewire component must also be [set up to use schemas](../components/schema) and use the `RestrictsFileUploadsToSchemaComponents` trait described in the [security documentation](../advanced/security#restricting-livewire-file-uploads-to-schema-components).
+</Aside>
+
+### Checking whether a user can be challenged
+
+You should use `hasEnabledProviders()` to check that the user has at least one enabled provider before presenting a challenge:
+
+```php
+use Filament\Auth\MultiFactor\MultiFactorChallenge;
+
+$multiFactorChallenge = MultiFactorChallenge::make();
+
+abort_unless($multiFactorChallenge->hasEnabledProviders($user), 403);
+```
+
+Always repeat this check immediately before validating the challenge. When no provider is enabled, `getSchemaComponents()` returns an empty schema, and validating an empty schema succeeds. Your application must treat that state as a failed challenge.
+
+You can use `getEnabledProviders()` to retrieve all enabled provider instances, or `getFirstEnabledProvider()` to retrieve the first one. `getFirstEnabledProvider()` returns `null` when none are enabled.
+
+### Building the challenge schema
+
+Use `getSchemaComponents()` to get the provider picker and challenge fields for every enabled provider:
+
+```php
+use Filament\Auth\MultiFactor\MultiFactorChallenge;
+
+$schema
+    ->components(MultiFactorChallenge::make()->getSchemaComponents($user))
+    ->statePath('multiFactorData');
+```
+
+When more than one provider is enabled, the generated provider picker controls which provider's fields are visible. If you need to place the picker and fields separately, use `getProviderPickerSchemaComponent()` and `getChallengeSchemaComponents()` instead. Both components must belong to the same root schema so that the picker can find the selected provider's fields.
+
+Render and submit the schema like any other Livewire schema.
+
+### Running logic before the challenge
+
+Some providers need to do work before their challenge is presented, such as emailing the user a code. Use `beforeChallenge()` before filling and presenting the schema:
+
+```php
+$multiFactorChallenge->beforeChallenge($user);
+
+$this->multiFactorChallengeForm->fill();
+```
+
+This runs the hook for the first enabled provider. When the generated provider picker is used, it runs the appropriate hook whenever the user switches provider.
+
+### Rate limiting challenge attempts
+
+Challenges should be rate limited so that a user's second factor cannot be brute forced. Check `isRateLimited()` before each validation attempt, then call `hitRateLimiter()` immediately before validation:
+
+```php
+abort_if($multiFactorChallenge->isRateLimited($user), 429);
+
+$multiFactorChallenge->hitRateLimiter($user);
+```
+
+The rate limiter is shared with the login page's challenge and is scoped to the authentication guard and user. You can use `getMaxRateLimiterAttempts()` to retrieve the maximum number of attempts, and `getRateLimiterAvailableInSeconds()` to determine how long remains before another attempt may be made.
+
+### Validating the challenge
+
+Call `getState()` on the schema to validate the selected provider's fields. Immediately before doing so, check that the user still has an enabled provider and record a rate-limited attempt:
+
+```php
+abort_unless($multiFactorChallenge->hasEnabledProviders($user), 403);
+abort_if($multiFactorChallenge->isRateLimited($user), 429);
+
+$multiFactorChallenge->hitRateLimiter($user);
+
+$this->multiFactorChallengeForm->getState();
+```
+
+<Aside variant="danger">
+    Verifying a challenge does not authenticate anyone or authorize the protected operation. It only proves that the signed-in user holds a factor currently registered against their account. After validation succeeds, reload any security-sensitive state and reauthorize the protected operation immediately before performing it.
+</Aside>
 
 ## Security notes about multi-factor authentication
 

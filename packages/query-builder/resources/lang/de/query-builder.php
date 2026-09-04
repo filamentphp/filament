@@ -14,6 +14,10 @@ return [
 
             'label' => 'Gruppen',
 
+            'group' => [
+                'label' => 'Gruppe',
+            ],
+
             'block' => [
                 'label' => '(ODER) Trennung',
                 'or' => 'ODER',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(Keine Bedingungen)',
+
+    'max_rules_reached_tooltip' => 'Sie haben das Maximum von :count Regeln erreicht.',
 
     'item_separators' => [
         'and' => 'UND',
@@ -146,6 +152,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Sekunden',
+                'minute' => 'Minuten',
+                'hour' => 'Stunden',
+                'day' => 'Tage',
+                'week' => 'Wochen',
+                'month' => 'Monate',
+                'quarter' => 'Quartale',
+                'year' => 'Jahre',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Letztes Jahrzehnt',
+                'past_5_years' => 'Letzte 5 Jahre',
+                'past_2_years' => 'Letzte 2 Jahre',
+                'past_year' => 'Letztes Jahr',
+                'past_6_months' => 'Letzte 6 Monate',
+                'past_quarter' => 'Letztes Quartal',
+                'past_month' => 'Letzter Monat',
+                'past_2_weeks' => 'Letzte 2 Wochen',
+                'past_week' => 'Letzte Woche',
+                'past_hour' => 'Letzte Stunde',
+                'past_minute' => 'Letzte Minute',
+                'this_decade' => 'Dieses Jahrzehnt',
+                'this_year' => 'Dieses Jahr',
+                'this_quarter' => 'Dieses Quartal',
+                'this_month' => 'Dieser Monat',
+                'today' => 'Heute',
+                'this_hour' => 'Diese Stunde',
+                'this_minute' => 'Diese Minute',
+                'next_minute' => 'Nächste Minute',
+                'next_hour' => 'Nächste Stunde',
+                'next_week' => 'Nächste Woche',
+                'next_2_weeks' => 'Nächste 2 Wochen',
+                'next_month' => 'Nächster Monat',
+                'next_quarter' => 'Nächstes Quartal',
+                'next_6_months' => 'Nächste 6 Monate',
+                'next_year' => 'Nächstes Jahr',
+                'next_2_years' => 'Nächste 2 Jahre',
+                'next_5_years' => 'Nächste 5 Jahre',
+                'next_decade' => 'Nächstes Jahrzehnt',
+                'custom' => 'Benutzerdefiniert',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +208,40 @@ return [
 
                 'year' => [
                     'label' => 'Jahr',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Datumstyp',
+
+                    'options' => [
+                        'absolute' => 'Bestimmtes Datum',
+                        'relative' => 'Gleitendes Fenster',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Zeitraum',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Wie viele',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Zeiteinheit',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Zeitform',
+
+                    'options' => [
+                        'past' => 'Vergangenheit',
+                        'future' => 'Zukunft',
+                    ],
+
                 ],
 
             ],

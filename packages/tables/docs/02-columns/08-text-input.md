@@ -14,7 +14,7 @@ use Filament\Tables\Columns\TextInputColumn;
 TextInputColumn::make('email')
 ```
 
-<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" version="5.x" />
+<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" version="6.x" />
 
 ## Validation
 
@@ -62,20 +62,6 @@ TextInputColumn::make('quantity')
     ->step('1')
 ```
 
-## Lifecycle hooks
-
-Hooks may be used to execute code at various points within the input's lifecycle:
-
-```php
-TextInputColumn::make()
-    ->beforeStateUpdated(function ($record, $state) {
-        // Runs before the state is saved to the database.
-    })
-    ->afterStateUpdated(function ($record, $state) {
-        // Runs after the state is saved to the database.
-    })
-```
-
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
@@ -88,9 +74,9 @@ TextInputColumn::make('domain')
     ->suffix('.com')
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="6.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text-input/affix" alt="Text input column with affixes" version="5.x" />
+<AutoScreenshot name="tables/columns/text-input/affix" alt="Text input column with affixes" version="6.x" />
 
 ### Using icons as affixes
 
@@ -105,9 +91,9 @@ TextInputColumn::make('domain')
     ->suffixIcon(Heroicon::CheckCircle)
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="6.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text-input/prefix-icon" alt="Text input column with prefix icon" version="5.x" />
+<AutoScreenshot name="tables/columns/text-input/prefix-icon" alt="Text input column with prefix icon" version="6.x" />
 
 #### Setting the affix icon's color
 
@@ -122,9 +108,23 @@ TextInputColumn::make('status')
     ->suffixIconColor('success')
 ```
 
-<UtilityInjection set="tableColumns" version="5.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="6.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text-input/suffix-icon-color" alt="Text input column with suffix icon in color" version="5.x" />
+<AutoScreenshot name="tables/columns/text-input/suffix-icon-color" alt="Text input column with suffix icon in color" version="6.x" />
+
+## Lifecycle hooks
+
+Hooks may be used to execute code at various points within the input's lifecycle:
+
+```php
+TextInputColumn::make()
+    ->beforeStateUpdated(function ($record, $state) {
+        // Runs before the state is saved to the database.
+    })
+    ->afterStateUpdated(function ($record, $state) {
+        // Runs after the state is saved to the database.
+    })
+```
 
 ## Security
 
