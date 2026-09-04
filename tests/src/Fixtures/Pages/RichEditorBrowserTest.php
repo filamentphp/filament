@@ -29,6 +29,11 @@ class RichEditorBrowserTest extends Page
             ->schema([
                 RichEditor::make('content')
                     ->label('Content'),
+                RichEditor::make('heightConstrainedContent')
+                    ->label('Height constrained content')
+                    ->minHeight('12rem')
+                    ->maxHeight('14rem')
+                    ->extraAttributes(['data-testid' => 'height-constrained-rich-editor']),
             ])
             ->statePath('data');
     }

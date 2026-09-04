@@ -825,6 +825,7 @@ it('can set `minHeight()` and `maxHeight()` with a `Closure`', function (): void
 
 it('can clear `minHeight()` with `null`', function (): void {
     $editor = RichEditor::make('content')
+        ->minHeight('20rem')
         ->minHeight(null);
 
     expect($editor->getMinHeight())->toBeNull();
@@ -1479,6 +1480,26 @@ it('can render `RichEditor` in the browser', function (): void {
         visit('/rich-editor-browser-test')
             ->assertSee('Content')
             ->assertNoSmoke()
+            ->assertScript(<<<'JS'
+                (() => {
+                    const content = document.querySelector('[data-testid="height-constrained-rich-editor"] .fi-fo-rich-editor-content')
+                    const editor = content.querySelector('.tiptap')
+                    const initialStyle = getComputedStyle(content)
+
+                    if (
+                        initialStyle.minHeight !== '192px' ||
+                        initialStyle.maxHeight !== '224px' ||
+                        initialStyle.overflowY !== 'auto' ||
+                        content.clientHeight !== 192
+                    ) {
+                        return false
+                    }
+
+                    editor.innerHTML = '<p>Content</p>'.repeat(100)
+
+                    return content.clientHeight === 224 && content.scrollHeight > content.clientHeight
+                })()
+                JS)
             ->assertNoAccessibilityIssues();
 
         visit('/rich-editor-browser-test')
