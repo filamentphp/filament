@@ -6,13 +6,142 @@ use Filament\Tests\TestCase;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\ComponentAttributeBag;
+use Symfony\Component\Process\Process;
 
 use function Filament\get_authorization_response;
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\is_path_within_directory;
 use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
+
+it('discovers application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
+    $filesystem = app(Filesystem::class);
+    $repositoryDirectory = dirname(__DIR__, 3);
+    $temporaryDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-' . bin2hex(random_bytes(8));
+    $vendorDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-vendor-' . bin2hex(random_bytes(8));
+    $composerDirectory = $vendorDirectory . DIRECTORY_SEPARATOR . 'composer';
+    $dependencySourceDirectory = $temporaryDirectory . DIRECTORY_SEPARATOR . 'packages/dependency';
+    $linkedDependencyDirectory = $vendorDirectory . DIRECTORY_SEPARATOR . 'fixture/dependency';
+    $applicationPathPrefix = $composerDirectory . DIRECTORY_SEPARATOR . '../../' . basename($temporaryDirectory) . DIRECTORY_SEPARATOR;
+
+    try {
+        $filesystem->ensureDirectoryExists($composerDirectory);
+        $filesystem->ensureDirectoryExists($temporaryDirectory . DIRECTORY_SEPARATOR . 'app');
+        $filesystem->ensureDirectoryExists($dependencySourceDirectory . DIRECTORY_SEPARATOR . 'src');
+        $filesystem->ensureDirectoryExists(dirname($linkedDependencyDirectory));
+
+        $filesystem->put($composerDirectory . DIRECTORY_SEPARATOR . 'InstalledVersions.php', <<<'PHP'
+            <?php
+
+            namespace Composer;
+
+            class InstalledVersions
+            {
+                public static string $rootInstallPath;
+
+                public static function getRootPackage(): array
+                {
+                    return ['install_path' => self::$rootInstallPath];
+                }
+            }
+            PHP);
+        $filesystem->put($vendorDirectory . DIRECTORY_SEPARATOR . 'autoload.php', <<<'PHP'
+            <?php
+
+            use Composer\Autoload\ClassLoader;
+
+            return ClassLoader::getRegisteredLoaders()[__DIR__];
+            PHP);
+        $filesystem->put($temporaryDirectory . DIRECTORY_SEPARATOR . 'app/ApplicationClass.php', '<?php namespace Fixture; class ApplicationClass {}');
+        $filesystem->put($dependencySourceDirectory . DIRECTORY_SEPARATOR . 'src/DependencyClass.php', '<?php namespace Fixture; class DependencyClass {}');
+        $filesystem->link($dependencySourceDirectory, $linkedDependencyDirectory);
+
+        $scriptPath = $temporaryDirectory . DIRECTORY_SEPARATOR . 'discover.php';
+
+        $filesystem->put($scriptPath, sprintf(
+            <<<'PHP'
+                <?php
+
+                require %s;
+                require %s;
+
+                $vendorDirectory = %s;
+                $applicationPathPrefix = %s;
+                $classLoader = new Composer\Autoload\ClassLoader($vendorDirectory);
+                Composer\InstalledVersions::$rootInstallPath = $applicationPathPrefix;
+                $classLoader->addClassMap([
+                    'Fixture\\ApplicationClass' => $applicationPathPrefix . 'app/ApplicationClass.php',
+                    'Fixture\\DependencyClass' => $vendorDirectory . DIRECTORY_SEPARATOR . 'composer/../fixture/dependency/src/DependencyClass.php',
+                ]);
+                $classLoader->register();
+
+                $classes = Filament\Support\discover_app_classes();
+
+                Composer\InstalledVersions::$rootInstallPath = 'C:\\Application';
+                $classLoader->addClassMap([
+                    'Fixture\\WindowsApplicationClass' => 'c:/application/app/WindowsApplicationClass.php',
+                    'Fixture\\WindowsSiblingClass' => 'C:/ApplicationBackup/app/WindowsSiblingClass.php',
+                ]);
+
+                echo json_encode([
+                    'classes' => $classes,
+                    'windowsClasses' => Filament\Support\discover_app_classes(),
+                    'vendorDirectory' => Filament\Support\get_composer_vendor_directory(),
+                ], JSON_THROW_ON_ERROR);
+                PHP,
+            var_export($composerDirectory . DIRECTORY_SEPARATOR . 'InstalledVersions.php', return: true),
+            var_export($repositoryDirectory . DIRECTORY_SEPARATOR . 'vendor/autoload.php', return: true),
+            var_export($vendorDirectory, return: true),
+            var_export($applicationPathPrefix, return: true),
+        ));
+
+        $process = new Process([PHP_BINARY, $scriptPath]);
+        $process->mustRun();
+
+        expect(json_decode($process->getOutput(), associative: true, flags: JSON_THROW_ON_ERROR))
+            ->toBe([
+                'classes' => ['Fixture\\ApplicationClass'],
+                'windowsClasses' => ['Fixture\\WindowsApplicationClass'],
+                'vendorDirectory' => $vendorDirectory,
+            ]);
+    } finally {
+        $filesystem->deleteDirectory($temporaryDirectory);
+        $filesystem->deleteDirectory($vendorDirectory);
+    }
+});
+
+it('checks lexical directory boundaries with `is_path_within_directory()`', function (string $path, string $directory, bool $expectedResult): void {
+    expect(is_path_within_directory($path, $directory))->toBe($expectedResult);
+})->with([
+    'Unix path' => [
+        '/app/dependencies/composer/../../app/Filament/Page.php',
+        '/app/dependencies/composer/../..',
+        true,
+    ],
+    'Unix sibling path' => [
+        '/app-backup/Filament/Page.php',
+        '/app',
+        false,
+    ],
+    'Windows path with different separators and casing' => [
+        'C:\\APP\\dependencies\\composer\\..\\..\\app\\Filament\\Page.php',
+        'c:/app/dependencies/composer/../..',
+        true,
+    ],
+    'Windows sibling path' => [
+        'C:\\ApplicationBackup\\Filament\\Page.php',
+        'c:/application',
+        false,
+    ],
+    'Windows network path with different separators and casing' => [
+        '\\\\SERVER\\SHARE\\app\\Filament\\Page.php',
+        '//server/share/app',
+        true,
+    ],
+]);
 
 it('will prepare attributes', function (): void {
     $bag = new ComponentAttributeBag([

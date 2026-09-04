@@ -1,9 +1,26 @@
 #!/usr/bin/env php
 <?php
 
-use function Termwind\{ask, render};
+use Composer\InstalledVersions;
 
-require 'vendor/autoload.php';
+use function Termwind\ask;
+use function Termwind\render;
+
+$autoloadPath = $GLOBALS['_composer_autoload_path'] ?? (dirname(__DIR__, 3) . '/autoload.php');
+
+if (! file_exists($autoloadPath)) {
+    $autoloadPath = dirname($argv[0], 2) . '/autoload.php';
+}
+
+if (! file_exists($autoloadPath)) {
+    $autoloadPath = getcwd() . '/vendor/autoload.php';
+}
+
+$composerBinDirectory = $GLOBALS['_composer_bin_dir'] ?? (dirname($autoloadPath) . '/bin');
+
+require $autoloadPath;
+
+$upgradePackagePath = (string) InstalledVersions::getInstallPath('filament/upgrade');
 
 render(<<<'HTML'
     <div>
@@ -43,7 +60,7 @@ HTML);
 
 require __DIR__ . '/../src/check-compatibility.php';
 
-$directories = $argv[1] ?? ask(<<<HTML
+$directories = $argv[1] ?? ask(<<<'HTML'
     <div>
         Please provide a comma-separated list of directories containing Filament code to upgrade (e.g. <strong>app</strong>, <strong>app-modules</strong>, <strong>src</strong>).
 
@@ -55,13 +72,14 @@ $directories = $argv[1] ?? ask(<<<HTML
     </div>
     HTML) ?: 'app';
 
-render(<<<HTML
+render(<<<'HTML'
     <p class="bg-green-600 text-green-50">
         Starting upgrade...
     </p>
 HTML);
 
-$rectorScriptPath = implode(DIRECTORY_SEPARATOR, ['vendor', 'bin', 'rector']);
+$rectorScriptPath = $composerBinDirectory . DIRECTORY_SEPARATOR . 'rector';
+$rectorConfigurationPath = $upgradePackagePath . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'rector.php';
 
 foreach (explode(',', $directories) as $directory) {
     $directory = trim($directory);
@@ -73,7 +91,21 @@ foreach (explode(',', $directories) as $directory) {
         </p>
         HTML);
 
-    exec("{$rectorScriptPath} process {$directory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
+    $rectorProcess = proc_open([
+        PHP_BINARY,
+        $rectorScriptPath,
+        'process',
+        $directory,
+        '--config',
+        $rectorConfigurationPath,
+        '--clear-cache',
+    ], [STDIN, STDOUT, STDERR], $pipes);
+
+    if (! is_resource($rectorProcess)) {
+        throw new RuntimeException('Unable to start Rector.');
+    }
+
+    proc_close($rectorProcess);
 
     render(<<<HTML
         <p class="pt-2">
@@ -94,8 +126,8 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
     }
 
     if ($package === 'filament/spatie-laravel-translatable-plugin') {
-        $requireCommands[] = "composer remove filament/spatie-laravel-translatable-plugin -W --no-update";
-        $requireCommands[] = "composer require lara-zeus/spatie-translatable -W --no-update";
+        $requireCommands[] = 'composer remove filament/spatie-laravel-translatable-plugin -W --no-update';
+        $requireCommands[] = 'composer require lara-zeus/spatie-translatable -W --no-update';
 
         continue;
     }
@@ -109,7 +141,7 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
     }
 }
 
-$requireCommandsHtml = implode("</strong><br /><strong>", $requireCommands);
+$requireCommandsHtml = implode('</strong><br /><strong>', $requireCommands);
 
 // Suggest commands for third-party Filament plugins that have v4-compatible releases
 $thirdPartyCommands = [];
@@ -130,7 +162,12 @@ try {
             }
 
             try {
-                $composerPath = "vendor/{$plugin}/composer.json";
+                if (! InstalledVersions::isInstalled($plugin)) {
+                    return false;
+                }
+
+                $composerPath = (string) InstalledVersions::getInstallPath($plugin) . '/composer.json';
+
                 if (! file_exists($composerPath)) {
                     return false;
                 }
@@ -147,7 +184,8 @@ try {
                         return true;
                     }
                 }
-            } catch (Throwable $exception) {}
+            } catch (Throwable $exception) {
+            }
 
             return false;
         });
@@ -173,7 +211,7 @@ try {
             foreach ($stableVersions as $checkingVersion) {
                 $requires = $checkingVersion['require'] ?? [];
                 foreach ($requires as $dep => $constraint) {
-                    if (!str_starts_with($dep, 'filament/')) {
+                    if (! str_starts_with($dep, 'filament/')) {
                         continue;
                     }
                     if (preg_match("/\^\s*v?4(?:\.|$)|~\s*v?4(?:\.|$)|>=\s*v?4(?:\.|$)/", (string) $constraint)) {
@@ -181,6 +219,7 @@ try {
                             'version' => (string) ($checkingVersion['version'] ?? ''),
                             'isPrerelease' => false,
                         ];
+
                         break;
                     }
                 }
@@ -193,7 +232,7 @@ try {
                     $requires = $checkingVersion['require'] ?? [];
 
                     foreach ($requires as $dep => $constraint) {
-                        if (!str_starts_with($dep, 'filament/')) {
+                        if (! str_starts_with($dep, 'filament/')) {
                             continue;
                         }
 
@@ -202,6 +241,7 @@ try {
                                 'version' => (string) ($checkingVersion['version'] ?? ''),
                                 'isPrerelease' => true,
                             ];
+
                             break;
                         }
                     }
@@ -224,7 +264,7 @@ try {
                         $requires = $checkingVersion['require'] ?? [];
 
                         foreach ($requires as $dep => $constraint) {
-                            if (!str_starts_with($dep, 'filament/')) {
+                            if (! str_starts_with($dep, 'filament/')) {
                                 continue;
                             }
 
@@ -253,7 +293,7 @@ try {
                             $requires = $checkingVersion['require'] ?? [];
 
                             foreach ($requires as $dep => $constraint) {
-                                if (!str_starts_with($dep, 'filament/')) {
+                                if (! str_starts_with($dep, 'filament/')) {
                                     continue;
                                 }
 
@@ -318,7 +358,7 @@ try {
     // If anything goes wrong, we just won't print third-party suggestions
 }
 
-$thirdPartyCommandsHtml = $thirdPartyCommands ? '<br />' . implode("</strong><br /><strong>", $thirdPartyCommands) : '';
+$thirdPartyCommandsHtml = $thirdPartyCommands ? '<br />' . implode('</strong><br /><strong>', $thirdPartyCommands) : '';
 
 render(<<<HTML
     <div>
