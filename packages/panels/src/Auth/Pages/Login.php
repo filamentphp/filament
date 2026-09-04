@@ -140,6 +140,10 @@ class Login extends SimplePage
                 return true;
             }
 
+            if (Filament::getMultiFactorAuthenticationProviders() === []) {
+                $timebox->returnEarly();
+            }
+
             return false;
         }, $timeboxDuration);
 
@@ -147,8 +151,10 @@ class Login extends SimplePage
             return null;
         }
 
+        // Credentials are deliberately validated again after the multi-factor challenge so that
+        // password and panel access changes made during the challenge are observed before login.
+        // The corresponding second `Attempting` event is intentional.
         if (! $authGuard->attemptWhen($credentials, fn (Authenticatable $user): bool => $this->isUserAllowedToAccessPanel($user), $remember)) {
-            $this->fireFailedEvent($authGuard, $user, $credentials);
             $this->throwFailureValidationException();
         }
 

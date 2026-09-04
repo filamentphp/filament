@@ -45,7 +45,7 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 
 If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../advanced/assets#asynchronous-alpinejs-components).
 
-### Custom field classes
+## Custom field classes
 
 You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
 

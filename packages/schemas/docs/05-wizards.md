@@ -169,6 +169,41 @@ Wizard::make([
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `skippable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Deferring the loading of step content
+
+If the content of a wizard step is expensive to render, you can pass a `Schema` object to its `schema()` method and use `deferLoading()`. The content of the active step will be loaded when it enters the viewport. The content of a later step will not be loaded until the user reaches it:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
+
+Wizard::make([
+    Step::make('Account')
+        ->key('accountStep')
+        ->schema(
+            Schema::make()
+                ->components([
+                    TextInput::make('name'),
+                ])
+                ->deferLoading(),
+        ),
+    Step::make('Confirmation')
+        ->key('confirmationStep')
+        ->schema(
+            Schema::make()
+                ->components([
+                    // ...
+                ])
+                ->deferLoading(),
+        ),
+])
+    ->key('accountWizard')
+```
+
+Every deferred schema must have a unique key. In this example, the keys on the steps are inherited by their child schemas, while the key on the `Wizard` component namespaces them from other steps in the same schema. You can learn more in the [schema overview](overview#deferring-the-loading-of-a-child-schema).
+
 ## Persisting the current step in the URL's query string
 
 By default, the current step is not persisted in the URL's query string. You can change this behavior using the `persistStepInQueryString()` method:
