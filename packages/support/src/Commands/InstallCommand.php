@@ -205,29 +205,68 @@ class InstallCommand extends Command
 
         $lineEnding = $lineEndingMatches[0] ?? PHP_EOL;
 
-        $existingRules = collect(preg_split('/\r\n|\n|\r/', $contents))
+        $lines = preg_split('/\r\n|\n|\r/', $contents);
+
+        $existingRules = collect($lines)
             ->map(fn (string $rule): string => trim(trim($rule), '/'))
             ->all();
 
         $assetsPath = trim((string) config('filament.assets_path'), '/');
 
-        $newRules = collect(['css', 'js', 'fonts'])
+        $newRules = collect(['css', 'fonts', 'js'])
             ->map(fn (string $directory): string => collect(['public', $assetsPath, $directory, 'filament'])
                 ->filter()
                 ->implode('/'))
             ->reject(fn (string $rule): bool => in_array($rule, $existingRules))
-            ->map(fn (string $rule): string => "/{$rule}")
-            ->implode($lineEnding);
+            ->all();
 
         if (blank($newRules)) {
             return;
         }
 
-        $contents = rtrim($contents, "\r\n");
+        foreach ($newRules as $newRule) {
+            $previousRule = null;
+            $previousRuleIndex = null;
+
+            foreach ($lines as $lineIndex => $line) {
+                $rule = trim(trim($line), '/');
+
+                if (
+                    (! str_starts_with($rule, 'public/')) ||
+                    (strcmp($rule, $newRule) >= 0) ||
+                    (($previousRule !== null) && (strcmp($rule, $previousRule) <= 0))
+                ) {
+                    continue;
+                }
+
+                $previousRule = $rule;
+                $previousRuleIndex = $lineIndex;
+            }
+
+            if ($previousRuleIndex !== null) {
+                array_splice($lines, $previousRuleIndex + 1, 0, ["/{$newRule}"]);
+
+                continue;
+            }
+
+            while (($lines !== []) && (end($lines) === '')) {
+                array_pop($lines);
+            }
+
+            if ($lines !== []) {
+                $lines[] = '';
+            }
+
+            $lines[] = "/{$newRule}";
+        }
+
+        if (end($lines) !== '') {
+            $lines[] = '';
+        }
 
         file_put_contents(
             $path,
-            (filled($contents) ? ($contents . $lineEnding . $lineEnding) : '') . $newRules . $lineEnding,
+            implode($lineEnding, $lines),
         );
 
         $this->components->info('Added the published Filament assets to [.gitignore].');

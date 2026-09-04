@@ -418,15 +418,17 @@ This approach also works for TypeScript files or any other JavaScript that needs
 
 ## Ignoring published assets in version control
 
-The files that the `php artisan filament:assets` command copies into the `/public` directory are generated from the packages you have installed, so there is no need to commit them to version control. When you run `php artisan filament:install`, Filament adds the following rules to your app's `.gitignore` file, if they are not already there:
+The files that the `php artisan filament:assets` command copies into the `/public` directory for Filament's own packages are generated, so there is no need to commit them to version control. When you run `php artisan filament:install`, Filament adds the following rules to your app's `.gitignore` file, if they are not already there:
 
 ```
 /public/css/filament
-/public/js/filament
 /public/fonts/filament
+/public/js/filament
 ```
 
 If you have customized the `assets_path` in the `config/filament.php` file, the rules use that path instead, for example `/public/filament/css/filament`.
+
+Assets registered by your app or third-party plugins may be published outside these `filament` directories. You should add their generated paths to `.gitignore` separately if needed.
 
 The `/public/css/filament` rule also ignores any custom themes that you compile directly into that directory instead of through Vite. You should compile those themes as part of your deployment process, since the `filament:assets` command does not build them.
 

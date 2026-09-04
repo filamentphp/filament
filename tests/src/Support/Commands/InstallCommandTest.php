@@ -40,8 +40,8 @@ it('adds the published assets to `.gitignore`', function (): void {
             '/vendor',
             '',
             '/public/css/filament',
-            '/public/js/filament',
             '/public/fonts/filament',
+            '/public/js/filament',
             '',
         ]));
 });
@@ -60,9 +60,54 @@ it('does not duplicate `.gitignore` rules with leading or trailing slashes', fun
         ->toBe(implode(PHP_EOL, [
             '/vendor',
             'public/css/filament/',
+            '/public/fonts/filament',
             '/public/js/filament/',
             '',
+        ]));
+});
+
+it('inserts `.gitignore` rules after the nearest previous public path', function (): void {
+    file_put_contents($this->gitIgnorePath, implode(PHP_EOL, [
+        '/node_modules',
+        '/public/build',
+        '/public/fonts-manifest.dev.json',
+        '/public/hot',
+        '/public/storage',
+        '',
+    ]));
+
+    $this->artisan('filament:install', ['--no-interaction' => true]);
+
+    expect(file_get_contents($this->gitIgnorePath))
+        ->toBe(implode(PHP_EOL, [
+            '/node_modules',
+            '/public/build',
+            '/public/css/filament',
+            '/public/fonts-manifest.dev.json',
             '/public/fonts/filament',
+            '/public/hot',
+            '/public/js/filament',
+            '/public/storage',
+            '',
+        ]));
+});
+
+it('uses the previous inserted `.gitignore` rule when an anchor is missing', function (): void {
+    file_put_contents($this->gitIgnorePath, implode(PHP_EOL, [
+        '/public/build',
+        '/public/storage',
+        '',
+    ]));
+
+    $this->artisan('filament:install', ['--no-interaction' => true]);
+
+    expect(file_get_contents($this->gitIgnorePath))
+        ->toBe(implode(PHP_EOL, [
+            '/public/build',
+            '/public/css/filament',
+            '/public/fonts/filament',
+            '/public/js/filament',
+            '/public/storage',
             '',
         ]));
 });
@@ -77,8 +122,8 @@ it('preserves CRLF line endings when adding rules to `.gitignore`', function ():
             '/vendor',
             '',
             '/public/css/filament',
-            '/public/js/filament',
             '/public/fonts/filament',
+            '/public/js/filament',
             '',
         ]));
 });
@@ -95,8 +140,8 @@ it('uses `assets_path` from the configuration when ignoring the published assets
             '/vendor',
             '',
             '/public/filament/css/filament',
-            '/public/filament/js/filament',
             '/public/filament/fonts/filament',
+            '/public/filament/js/filament',
             '',
         ]));
 });
