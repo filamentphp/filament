@@ -11,6 +11,79 @@ beforeEach(function (): void {
 });
 
 describe('browser interactions', function (): void {
+    it('prevents `beforeunload` only while actions that can contain unsaved changes are mounted', function (bool $isDarkMode): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/unsaved-changes-alert-browser-test');
+
+        if ($isDarkMode) {
+            $browser->inDarkMode();
+        }
+
+        $dispatchBeforeUnloadEvent = <<<'JS'
+            (() => {
+                const event = new Event('beforeunload', { cancelable: true })
+
+                window.dispatchEvent(event)
+
+                return event.defaultPrevented
+            })()
+            JS;
+
+        $browser
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->click('[data-testid="read-only-unsaved-changes-alert-trigger"]')
+            ->assertVisible('[data-testid="read-only-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="read-only-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertMissing('[data-testid="read-only-unsaved-changes-alert-modal"]')
+            ->click('[data-testid="editable-unsaved-changes-alert-trigger"]')
+            ->assertVisible('[data-testid="editable-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, true)
+            ->click('[data-testid="editable-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertMissing('[data-testid="editable-unsaved-changes-alert-modal"]')
+            ->click('[data-testid="nested-unsaved-changes-alert-trigger"]')
+            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->click('[data-testid="nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Open editable nested action')
+            ->assertVisible('[data-testid="editable-nested-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, true)
+            ->wait(0.5)
+            ->assertNoAccessibilityIssues()
+            ->click('[data-testid="editable-nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
+            ->assertScript($dispatchBeforeUnloadEvent, false)
+            ->assertNoSmoke();
+    })->with([
+        'light mode' => false,
+        'dark mode' => true,
+    ]);
+
+    it('preserves the `beforeunload` alert for mounted action state without a `hasUnsavedChangesAlert` key', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/unsaved-changes-alert-browser-test')
+            ->assertScript(<<<'JS'
+                (() => {
+                    setUpUnsavedActionChangesAlert({
+                        resolveLivewireComponentUsing: () => ({}),
+                        $wire: {
+                            mountedActions: [{}],
+                            __instance: { effects: {} },
+                        },
+                    })
+
+                    const event = new Event('beforeunload', { cancelable: true })
+
+                    window.dispatchEvent(event)
+
+                    return event.defaultPrevented
+                })()
+                JS, true)
+            ->assertNoSmoke();
+    });
+
     it('can run another action after closing a child opened by an action without a modal', function (bool $isDarkMode): void {
         $this->actingAs(User::factory()->create());
 
