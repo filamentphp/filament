@@ -657,16 +657,19 @@ it('can render `MarkdownEditor` in the browser', function (): void {
             ->assertScript(<<<'JS'
                 (async () => {
                     const defaultEditor = document.querySelector('[data-testid="default-markdown-editor"]')
+                    const defaultCodeMirror = defaultEditor.querySelector('.CodeMirror')
                     const defaultScroller = defaultEditor.querySelector('.CodeMirror-scroll')
                     const nullMinHeightEditor = document.querySelector('[data-testid="null-min-height-markdown-editor"]')
                     const nullMinHeightScroller = nullMinHeightEditor.querySelector('.CodeMirror-scroll')
                     const nullMinHeightStyle = getComputedStyle(nullMinHeightScroller)
                     const nullMinHeightWithMaxHeightEditor = document.querySelector('[data-testid="null-min-height-with-max-height-markdown-editor"]')
+                    const nullMinHeightWithMaxHeightCodeMirror = nullMinHeightWithMaxHeightEditor.querySelector('.CodeMirror')
                     const nullMinHeightWithMaxHeightScroller = nullMinHeightWithMaxHeightEditor.querySelector('.CodeMirror-scroll')
                     const nullMinHeightWithMaxHeightStyle = getComputedStyle(nullMinHeightWithMaxHeightScroller)
                     const nullMinHeightWithMaxHeightComponent = nullMinHeightWithMaxHeightEditor.querySelector('[x-data]')
 
                     if (
+                        defaultCodeMirror.clientHeight !== 48 ||
                         defaultScroller.style.minHeight !== '3rem' ||
                         getComputedStyle(defaultScroller).minHeight !== '48px' ||
                         nullMinHeightScroller.style.minHeight !== '3rem' ||
@@ -678,7 +681,8 @@ it('can render `MarkdownEditor` in the browser', function (): void {
                         nullMinHeightWithMaxHeightScroller.tabIndex !== 0 ||
                         nullMinHeightWithMaxHeightStyle.minHeight !== '48px' ||
                         nullMinHeightWithMaxHeightStyle.maxHeight !== '192px' ||
-                        nullMinHeightWithMaxHeightStyle.height !== '48px'
+                        nullMinHeightWithMaxHeightStyle.height !== '48px' ||
+                        nullMinHeightWithMaxHeightCodeMirror.clientHeight !== 48
                     ) {
                         return false
                     }
@@ -688,7 +692,7 @@ it('can render `MarkdownEditor` in the browser', function (): void {
 
                     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
 
-                    return getComputedStyle(nullMinHeightWithMaxHeightScroller).height === '192px' && nullMinHeightWithMaxHeightScroller.scrollHeight > nullMinHeightWithMaxHeightScroller.clientHeight
+                    return nullMinHeightWithMaxHeightCodeMirror.clientHeight === 192 && getComputedStyle(nullMinHeightWithMaxHeightScroller).height === '192px' && nullMinHeightWithMaxHeightScroller.scrollHeight > nullMinHeightWithMaxHeightScroller.clientHeight
                 })()
                 JS)
             ->assertNoAccessibilityIssues();
