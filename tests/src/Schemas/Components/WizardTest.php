@@ -457,6 +457,10 @@ it('only shows the next action loading indicator for its own request', function 
             ->wait(0.3);
 
         expect($browser->script(
+            "document.querySelector('{$nextAction}').parentElement.hasAttribute('inert')",
+        ))->toBeTrue();
+
+        expect($browser->script(
             "Boolean(document.querySelector('{$nextActionLoadingIndicator}')?.getClientRects().length)",
         ))->toBeFalse();
 
