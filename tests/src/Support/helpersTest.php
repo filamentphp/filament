@@ -220,6 +220,11 @@ it('will generate a JSON search column expression for Postgres with explicit ->>
 it('uses Filament search expressions for recognized database drivers', function (): void {
     $query = Ticket::query();
 
+    $expectedSearchColumnExpression = match ($query->getConnection()->getDriverName()) {
+        'pgsql' => 'lower("name"::text)',
+        default => 'lower(name)',
+    };
+
     $returnedQuery = apply_search_constraint(
         $query,
         'name',
@@ -236,7 +241,7 @@ it('uses Filament search expressions for recognized database drivers', function 
         ->and($where['type'])
         ->toBe('Basic')
         ->and($where['column']->getValue($query->getQuery()->getGrammar()))
-        ->toBe('lower(name)')
+        ->toBe($expectedSearchColumnExpression)
         ->and($where['operator'])
         ->toBe('like')
         ->and($where['value'])
