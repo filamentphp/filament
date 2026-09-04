@@ -66,6 +66,27 @@ it('does not duplicate `.gitignore` rules with leading or trailing slashes', fun
         ]));
 });
 
+it('adds a `.gitignore` rule when an existing line has leading whitespace', function (): void {
+    file_put_contents($this->gitIgnorePath, implode(PHP_EOL, [
+        ' /public/css/filament',
+        '/public/fonts/filament',
+        '/public/js/filament',
+        '',
+    ]));
+
+    $this->artisan('filament:install', ['--no-interaction' => true]);
+
+    expect(file_get_contents($this->gitIgnorePath))
+        ->toBe(implode(PHP_EOL, [
+            ' /public/css/filament',
+            '/public/fonts/filament',
+            '/public/js/filament',
+            '',
+            '/public/css/filament',
+            '',
+        ]));
+});
+
 it('inserts `.gitignore` rules after the nearest previous public path', function (): void {
     file_put_contents($this->gitIgnorePath, implode(PHP_EOL, [
         '/node_modules',

@@ -208,7 +208,7 @@ class InstallCommand extends Command
         $lines = preg_split('/\r\n|\n|\r/', $contents);
 
         $existingRules = collect($lines)
-            ->map(fn (string $rule): string => trim(trim($rule), '/'))
+            ->map(fn (string $rule): string => trim(rtrim($rule), '/'))
             ->all();
 
         $assetsPath = trim((string) config('filament.assets_path'), '/');
@@ -229,7 +229,7 @@ class InstallCommand extends Command
             $previousRuleIndex = null;
 
             foreach ($lines as $lineIndex => $line) {
-                $rule = trim(trim($line), '/');
+                $rule = trim(rtrim($line), '/');
 
                 if (
                     (! str_starts_with($rule, 'public/')) ||
