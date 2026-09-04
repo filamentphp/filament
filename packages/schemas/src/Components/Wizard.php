@@ -531,7 +531,7 @@ class Wizard extends Component implements HasEmbeddedView
                         x-on:click="requestNextStep()"
                     <?php } ?>
                     x-bind:class="{ 'fi-hidden': isLastStep() }"
-                    wire:loading.class="fi-disabled"
+                    wire:loading.attr="inert"
                 >
                     <?= $nextAction->toHtml() ?>
                 </div>

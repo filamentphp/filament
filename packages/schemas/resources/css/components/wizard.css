@@ -145,10 +145,6 @@
         & > .fi-hidden {
             @apply hidden;
         }
-
-        & > .fi-disabled {
-            @apply pointer-events-none;
-        }
     }
 
     &.fi-contained {
