@@ -706,17 +706,17 @@ it('can render `MarkdownEditor` in the browser', function (): void {
                         defaultCodeMirror.clientHeight !== 160 ||
                         defaultScroller.style.minHeight !== '10rem' ||
                         getComputedStyle(defaultScroller).minHeight !== '160px' ||
-                        nullMinHeightScroller.style.minHeight !== '11.25rem' ||
-                        nullMinHeightStyle.minHeight !== '180px' ||
+                        nullMinHeightScroller.style.minHeight !== '3rem' ||
+                        nullMinHeightStyle.minHeight !== '48px' ||
                         nullMinHeightStyle.maxHeight !== 'none' ||
-                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '11.25rem' ||
+                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '3rem' ||
                         nullMinHeightWithMaxHeightScroller.style.maxHeight !== '12rem' ||
                         nullMinHeightWithMaxHeightScroller.style.height !== '' ||
                         nullMinHeightWithMaxHeightScroller.tabIndex !== 0 ||
-                        nullMinHeightWithMaxHeightStyle.minHeight !== '180px' ||
+                        nullMinHeightWithMaxHeightStyle.minHeight !== '48px' ||
                         nullMinHeightWithMaxHeightStyle.maxHeight !== '192px' ||
-                        nullMinHeightWithMaxHeightStyle.height !== '180px' ||
-                        nullMinHeightWithMaxHeightCodeMirror.clientHeight !== 180
+                        nullMinHeightWithMaxHeightStyle.height !== '48px' ||
+                        nullMinHeightWithMaxHeightCodeMirror.clientHeight !== 48
                     ) {
                         return false
                     }
