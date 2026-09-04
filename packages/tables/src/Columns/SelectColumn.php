@@ -947,6 +947,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     ariaLabel: ' . Js::from(trim(strip_tags((string) $this->getLabel()))) . ',
                     canOptionLabelsWrap: ' . Js::from($this->canOptionLabelsWrap()) . ',
                     canSelectPlaceholder: ' . Js::from($canSelectPlaceholder) . ',
+                    clearButtonLabel: ' . Js::from(__('filament-forms::components.select.actions.clear.label')) . ',
                     getOptionLabelUsing: async () => {
                         return await $wire.callTableColumnMethod(' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionLabel\')
                     },
@@ -985,6 +986,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     searchableOptionFields: ' . Js::from($this->getSearchableOptionFields()) . ',
                     searchDebounce: ' . Js::from($this->getOptionsSearchDebounce()) . ',
                     searchingMessage: ' . Js::from($this->getOptionsSearchingMessage()) . ',
+                    searchLabel: ' . Js::from(__('filament-forms::components.select.search_label')) . ',
                     searchPrompt: ' . Js::from($this->getOptionsSearchPrompt()) . ',
                     state: ' . Js::from($state) . ',
                 })',

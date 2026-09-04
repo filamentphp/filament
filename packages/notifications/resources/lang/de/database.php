@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Benachrichtigungen',
 
+        'unread_label' => 'Ungelesene Benachrichtigung',
+
         'actions' => [
 
             'clear' => [

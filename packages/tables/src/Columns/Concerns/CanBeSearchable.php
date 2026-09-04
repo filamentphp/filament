@@ -34,7 +34,7 @@ trait CanBeSearchable
         bool $isIndividual = false,
         bool $isGlobal = true,
     ): static {
-        if (is_bool($condition)) {
+        if (is_bool($condition) || ($condition instanceof Closure)) {
             $this->isSearchable = $condition;
             $this->searchColumns = null;
         } else {

@@ -10,6 +10,8 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
@@ -150,6 +152,55 @@ describe('authorization enforcement', function (): void {
         livewire(Actions::class)
             ->callAction('enforcementAuthorized')
             ->assertDispatched('enforcement-authorized-called');
+    });
+});
+
+describe('actions mounted from a URL query parameter', function (): void {
+    // The `?action=` / `?tableAction=` query string parameters open an action on page
+    // load via a `wire:init="mountAction(...)"` call carrying a `mountedFromUrl` context
+    // flag. An action mounted this way may only open its modal — it must never run its
+    // `action()` closure with no interaction, or a crafted link could trigger it.
+
+    it('opens the modal for an action mounted from the URL when it has a modal', function (): void {
+        livewire(Actions::class)
+            ->call('mountAction', 'arguments', [], ['mountedFromUrl' => true])
+            ->assertSet('mountedActions.0.name', 'arguments') // Still mounted, so the modal opened rather than the action running.
+            ->assertNotDispatched('arguments-called');
+    });
+
+    it('does not run an action mounted from the URL when it has no modal', function (): void {
+        livewire(Actions::class)
+            ->call('mountAction', 'simple', [], ['mountedFromUrl' => true])
+            ->assertNotDispatched('simple-called');
+    });
+
+    it('still runs a modal-less action when it is triggered by a user click', function (): void {
+        // A real click carries no `mountedFromUrl` flag, so it must keep running immediately.
+        livewire(Actions::class)
+            ->mountAction('simple')
+            ->assertDispatched('simple-called');
+    });
+
+    it('forces `mountedFromUrl` on even when the `actionContext` query string tries to unset it', function (): void {
+        // `$defaultActionContext` is populated from the `?actionContext=` query string, so
+        // an attacker controls it. The context builder must always win, keeping any other
+        // keys but forcing `mountedFromUrl` to `true`.
+        $context = livewire(Actions::class)
+            ->set('defaultActionContext', ['mountedFromUrl' => false, 'schemaComponent' => 'foo'])
+            ->instance()
+            ->getDefaultActionUrlContext();
+
+        expect($context['mountedFromUrl'])->toBeTrue()
+            ->and($context['schemaComponent'])->toBe('foo');
+    });
+
+    it('does not run a modal-less action even when the `actionContext` query string tries to unset `mountedFromUrl`', function (): void {
+        $component = livewire(Actions::class)
+            ->set('defaultActionContext', ['mountedFromUrl' => false]);
+
+        $component
+            ->call('mountAction', 'simple', [], $component->instance()->getDefaultActionUrlContext())
+            ->assertNotDispatched('simple-called');
     });
 });
 
@@ -429,6 +480,48 @@ describe('nested actions', function (): void {
                 ]),
             ])
             ->assertDispatched('arguments-test-called', foo: $foo, bar: $bar, baz: $baz);
+    });
+});
+
+describe('unmounting actions', function (): void {
+    it('forgets a nested action schema before another action is mounted at the same index', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent')
+            ->mountAction('first');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['alpha']);
+
+        $livewire->call('unmountThenMountAction', 'second');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema1')->getFlatFields()))
+            ->toBe(['beta']);
+    });
+
+    it('forgets a root action schema before another action is mounted at the same index', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField']);
+
+        $livewire->call('unmountThenMountAction', 'staleSchemaOther');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['otherField']);
+    });
+
+    it('preserves the schema of an action that remains mounted', function (): void {
+        $livewire = livewire(Actions::class)
+            ->mountAction('staleSchemaParent')
+            ->mountAction('first');
+
+        $livewire->call('unmountAction');
+
+        expect(array_keys($livewire->instance()->getSchema('mountedActionSchema0')->getFlatFields()))
+            ->toBe(['parentField'])
+            ->and($livewire->instance()->getSchema('mountedActionSchema1'))
+            ->toBeNull();
     });
 });
 
@@ -1896,7 +1989,7 @@ describe('rendering', function (): void {
     it('renders an `iconPosition(After)` icon after the label', function (): void {
         $html = Action::make('test')
             ->icon('heroicon-o-arrow-right')
-            ->iconPosition(\Filament\Support\Enums\IconPosition::After)
+            ->iconPosition(IconPosition::After)
             ->label('Next')
             ->toHtml();
 
@@ -1930,7 +2023,7 @@ describe('rendering', function (): void {
     it('renders an `iconSize()` as a `fi-size-*` class on the icon', function (): void {
         $html = Action::make('test')
             ->icon('heroicon-o-trash')
-            ->iconSize(\Filament\Support\Enums\IconSize::Large)
+            ->iconSize(IconSize::Large)
             ->toHtml();
 
         expect($html)->toContain('fi-size-lg');

@@ -13,6 +13,8 @@ class ModalBrowserTest extends Page
 {
     protected string $view = 'pages.modal-browser-test';
 
+    public bool $didRunActionAfterClosingChild = false;
+
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedBolt;
 
     protected static ?int $navigationSort = 5;
@@ -130,5 +132,30 @@ class ModalBrowserTest extends Page
                         ]),
                 ]),
         ];
+    }
+
+    public function modalLessParentWithChildAction(): Action
+    {
+        return Action::make('modalLessParentWithChild')
+            ->registerModalActions([
+                Action::make('modalLessParentChild')
+                    ->requiresConfirmation()
+                    ->color('gray')
+                    ->action(static fn () => null)
+                    ->extraModalWindowAttributes(['data-testid' => 'modal-less-parent-child-modal']),
+            ])
+            ->action(function (Action $action): void {
+                $action->getLivewire()->mountAction('modalLessParentChild');
+
+                $action->halt();
+            });
+    }
+
+    public function runAfterClosingChildAction(): Action
+    {
+        return Action::make('runAfterClosingChild')
+            ->action(function (): void {
+                $this->didRunActionAfterClosingChild = true;
+            });
     }
 }

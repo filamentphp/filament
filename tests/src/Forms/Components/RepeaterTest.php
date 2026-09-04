@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -255,6 +256,26 @@ it('can remove items from a repeater', function (): void {
     $undoRepeaterFake();
 });
 
+it('can evaluate a `setUp()` closure bound to the original component with a `$get` injection inside a repeater item', function (): void {
+    $repeater = Repeater::make('items')
+        ->schema([
+            TextInput::make('name'),
+            SelectWithOptionsEvaluatedInSetUp::make('option'),
+        ])
+        ->default([
+            ['name' => 'First', 'option' => null],
+        ]);
+
+    Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([$repeater])
+        ->fill();
+
+    $select = Arr::first($repeater->getItems())->getComponents()[1];
+
+    expect($select->getOptions())->toBe(['First' => 'First']);
+});
+
 describe('`getItems()` memoization', function (): void {
     it('builds one schema per item keyed by the item key', function (): void {
         $repeater = Repeater::make('items')
@@ -277,6 +298,40 @@ describe('`getItems()` memoization', function (): void {
         expect($items)->toHaveCount(3)
             ->and(array_keys($items))->toBe(array_keys($repeater->getRawState()))
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
+    });
+
+    it('clones components from a warmed closure-backed `Schema` for each item', function (): void {
+        $livewire = Livewire::make();
+        $itemSchema = Schema::make($livewire)
+            ->components(static fn (): array => [
+                TextInput::make('name'),
+            ]);
+
+        $itemSchema->getComponents();
+
+        $repeater = Repeater::make('items')
+            ->schema($itemSchema)
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        [$firstItem, $secondItem] = array_values($repeater->getItems());
+        $firstComponent = $firstItem->getComponents()[0];
+        $secondComponent = $secondItem->getComponents()[0];
+
+        expect($firstComponent)
+            ->not->toBe($secondComponent)
+            ->getContainer()->toBe($firstItem)
+            ->getParentRepeaterItem()->toBe($firstItem)
+            ->getStatePath()->not->toBe($secondComponent->getStatePath())
+            ->and($secondComponent->getContainer())->toBe($secondItem)
+            ->and($secondComponent->getParentRepeaterItem())->toBe($secondItem);
     });
 
     it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
@@ -2410,19 +2465,6 @@ it('can set `table()` columns and check `isTable()`', function (): void {
     expect($repeater->getTableColumns())->toHaveCount(2);
 });
 
-it('returns `false` for `canConcealComponents()` when not collapsible', function (): void {
-    $repeater = Repeater::make('items');
-
-    expect($repeater->canConcealComponents())->toBeFalse();
-});
-
-it('returns `true` for `canConcealComponents()` when collapsible', function (): void {
-    $repeater = Repeater::make('items')
-        ->collapsible();
-
-    expect($repeater->canConcealComponents())->toBeTrue();
-});
-
 it('returns `0` for `getHeadingsCount()` by default', function (): void {
     $repeater = Repeater::make('items');
 
@@ -3184,5 +3226,19 @@ class RepeaterWithTranslatableContentDriver extends Component implements HasActi
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class SelectWithOptionsEvaluatedInSetUp extends Select
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->options(function (): array {
+            $name = $this->evaluate(fn (Get $get): ?string => $get('name'));
+
+            return [$name => $name];
+        });
     }
 }

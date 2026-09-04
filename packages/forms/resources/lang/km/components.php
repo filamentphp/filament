@@ -118,9 +118,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'ឧបករណ៍ជ្រើសរើសពណ៌',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'ខែ',
+        ],
+
+        'year_input' => [
+            'label' => 'ឆ្នាំ',
+        ],
+
+        'hour_input' => [
+            'label' => 'ម៉ោង',
+        ],
+
+        'minute_input' => [
+            'label' => 'នាទី',
+        ],
+
+        'second_input' => [
+            'label' => 'វិនាទី',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'ទាញយក',
+            ],
+
+            'open' => [
+                'label' => 'បើកក្នុងផ្ទាំងថ្មី',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'កម្មវិធីកែសម្រួលរូបភាព',
 
             'actions' => [
 
@@ -264,6 +308,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'សកម្មភាព',
+            ],
+
+            'reorder' => [
+                'label' => 'តម្រៀបឡើងវិញ',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -325,6 +381,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'សកម្មភាព',
+            ],
+
+            'reorder' => [
+                'label' => 'តម្រៀបឡើងវិញ',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -579,6 +647,10 @@ return [
             'searching_message' => 'កំពុងស្វែងរក...',
         ],
 
+        'toolbar' => [
+            'label' => 'របារឧបករណ៍កម្មវិធីនិពន្ធ',
+        ],
+
         'tools' => [
             'align_center' => 'តម្រឹមចំកណ្តាល',
             'align_end' => 'តម្រឹមខាងចុង',
@@ -713,6 +785,8 @@ return [
                 'label' => 'លុប',
             ],
         ],
+        'tag_added' => 'បានបន្ថែម៖ :tag',
+        'tag_removed' => 'បានយកចេញ៖ :tag',
     ],
 
     'text_input' => [

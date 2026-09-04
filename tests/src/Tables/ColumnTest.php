@@ -3,6 +3,7 @@
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\CustomDataTable;
+use Filament\Tests\Fixtures\Livewire\ImagesTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingDisabled;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithColumnIndividualSearchTermSplittingEnabled;
@@ -756,6 +757,57 @@ describe('column properties and assertions', function (): void {
 });
 
 describe('relationship columns', function (): void {
+    it('can output the state of a nested relationship through a `MorphTo` relationship', function (): void {
+        $team = Team::factory()->create(['name' => 'Team Alpha']);
+        $user = User::factory()->create([
+            'name' => 'Alice',
+            'team_id' => $team->id,
+        ]);
+        $image = Image::factory()->for($user, 'imageable')->create();
+
+        livewire(ImagesTable::class)
+            ->assertTableColumnStateSet('imageable.team.name', 'Team Alpha', $image)
+            ->assertTableColumnStateNotSet('imageable.team.name', 'Alice', $image);
+    });
+
+    it('can output the state of multiple nested relationships through the same `MorphTo` relationship', function (): void {
+        $company = Company::factory()->create(['name' => 'Acme Corporation']);
+        $team = Team::factory()->create([
+            'name' => 'Team Alpha',
+            'company_id' => $company->id,
+        ]);
+        $user = User::factory()->create([
+            'name' => 'Alice',
+            'team_id' => $team->id,
+        ]);
+        $image = Image::factory()->for($user, 'imageable')->create();
+
+        livewire(ImagesTable::class)
+            ->assertTableColumnStateSet('imageable.team.name', 'Team Alpha', $image)
+            ->assertTableColumnStateSet('imageable.company.name', 'Acme Corporation', $image);
+    });
+
+    it('can output the state of nested relationships through a `MorphTo` relationship with mixed related model types', function (): void {
+        $userCompany = Company::factory()->create(['name' => 'Acme Corporation']);
+        $team = Team::factory()->create(['company_id' => $userCompany->id]);
+        $user = User::factory()->create([
+            'name' => 'Alice',
+            'team_id' => $team->id,
+        ]);
+        $userImage = Image::factory()->for($user, 'imageable')->create();
+
+        $profileCompany = Company::factory()->create(['name' => 'Globex Corporation']);
+        $profile = Profile::factory()->create([
+            'user_id' => $user->id,
+            'company_id' => $profileCompany->id,
+        ]);
+        $profileImage = Image::factory()->for($profile, 'imageable')->create();
+
+        livewire(ImagesTable::class)
+            ->assertTableColumnStateSet('imageable.company.name', 'Acme Corporation', $userImage)
+            ->assertTableColumnStateSet('imageable.company.name', 'Globex Corporation', $profileImage);
+    });
+
     it('can search and sort by relationship column when both tables have the same column name', function (): void {
         $teamAlpha = Team::factory()->create(['name' => 'Team Alpha']);
         $teamBeta = Team::factory()->create(['name' => 'Team Beta']);

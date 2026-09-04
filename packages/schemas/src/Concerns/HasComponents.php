@@ -381,20 +381,48 @@ trait HasComponents
                     $component instanceof Action, $component instanceof ActionGroup => (clone $component)
                         ->schemaContainer($this),
                     $component instanceof Component => $component
-                        ->getClone()
-                        ->container($this),
+                        ->container($this)
+                        ->getClone(),
                     default => $component,
                 },
                 Arr::wrap($this->components),
             );
-
-            $this->cachedComponents = null;
-            $this->cachedComponentsWithHidden = [];
-            $this->cachedFlatComponents = [];
-            $this->cachedComponentsByStatePath = [];
         }
 
+        $this->cachedComponents = null;
+        $this->cachedComponentsWithHidden = [];
+        $this->cachedFlatComponents = [];
+        $this->cachedComponentsByStatePath = [];
+
         return $this;
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function flushCachedHierarchy(): void
+    {
+        $this->flushCachedAbsoluteKey();
+        $this->flushCachedInheritanceKey();
+        $this->flushCachedAbsoluteStatePath();
+        $this->cachedFlatComponents = [];
+        $this->cachedComponentsByStatePath = [];
+
+        $components = $this->cachedComponents;
+
+        if ($components === null) {
+            if ($this->components instanceof Closure) {
+                return;
+            }
+
+            $components = Arr::wrap($this->components);
+        }
+
+        foreach ($components as $component) {
+            if ($component instanceof Component) {
+                $component->flushCachedHierarchy();
+            }
+        }
     }
 
     public function clearCachedChildSchemas(): void
