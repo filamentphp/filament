@@ -100,7 +100,7 @@ trait InteractsWithTable
                 $sessionGrouping = session()->get($groupingSessionKey);
                 $this->tableGrouping = is_string($sessionGrouping) ? $sessionGrouping : null;
             } elseif ($this->getTable()->isDefaultGroupSelectable()) {
-                $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:asc";
+                $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:{$this->getTable()->getDefaultGroupDirection()}";
             }
         }
 
