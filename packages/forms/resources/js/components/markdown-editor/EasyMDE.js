@@ -5,6 +5,7 @@
  * - Added `moveToNextField()` and `moveToPreviousField()` functions, and changed `Tab` and `Shift-Tab` key bindings to only indent the content when there is a selection in the editor. See https://github.com/filamentphp/filament/pull/16144.
  * - Wrapped the indent/outdent operations in `toggleCodeBlock()` in `cm.operation()` so they group into a single CodeMirror undo step. See https://github.com/filamentphp/filament/pull/19890.
  * - Changed `minHeight` and `maxHeight` to apply independently when both options are set. See https://github.com/Ionaru/easy-markdown-editor/issues/413.
+ * - Made the `CodeMirror` scroller keyboard-focusable when `maxHeight` is set so overflowing content can be scrolled with a keyboard. See https://github.com/filamentphp/filament/pull/20258.
  */
 
 // Some variables
