@@ -30,7 +30,7 @@ class PostsTableWithGroupPersistedInSession extends Component implements HasActi
                 Tables\Grouping\Group::make('title'),
                 Tables\Grouping\Group::make('author.name'),
             ])
-            ->defaultGroup('title')
+            ->defaultGroup('title', 'desc')
             ->persistGroupInSession()
             ->columns([
                 Tables\Columns\TextColumn::make('title')->sortable(),

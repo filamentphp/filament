@@ -22,9 +22,6 @@ class DefaultGroupedPostsTable extends Component implements HasActions, HasSchem
     {
         return $table
             ->query(Post::query())
-            ->groups([
-                Tables\Grouping\Group::make('title'),
-            ])
             ->defaultGroup('title', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('title'),

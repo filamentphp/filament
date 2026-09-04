@@ -66,15 +66,26 @@ it('can group records by a default group in descending order', function (): void
     $sortedPosts = Post::query()->orderByDesc('title')->orderBy('id')->get();
 
     livewire(DefaultGroupedPostsTable::class)
+        ->assertSet('tableGrouping', null)
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
+
+    livewire(PostsTableWithGroupPersistedInSession::class)
         ->assertSet('tableGrouping', 'title:desc')
         ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
 });
 
-it('can set a `defaultGroup()` direction and get with `getDefaultGroupDirection()`', function (): void {
+it('can set a default group direction with `defaultGroup()`', function (): void {
     $livewire = livewire(PostsTable::class)->instance();
     $table = $livewire->getTable();
 
     expect($table->defaultGroup('title', 'DESC')->getDefaultGroupDirection())->toBe('desc');
+});
+
+it('can set a `defaultGroup()` direction with a `Closure`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $table = $livewire->getTable();
+
+    expect($table->defaultGroup('title', static fn (): string => 'DESC')->getDefaultGroupDirection())->toBe('desc');
 });
 
 it('defaults the `defaultGroup()` direction to ascending', function (): void {
@@ -1034,19 +1045,19 @@ describe('session persistence', function (): void {
         Post::factory()->count(10)->create();
 
         livewire(PostsTableWithGroupPersistedInSession::class)
-            ->assertSet('tableGrouping', 'title:asc')
-            ->set('tableGrouping', 'author.name:desc')
-            ->assertSet('tableGrouping', 'author.name:desc');
+            ->assertSet('tableGrouping', 'title:desc')
+            ->set('tableGrouping', 'author.name:asc')
+            ->assertSet('tableGrouping', 'author.name:asc');
 
         livewire(PostsTableWithGroupPersistedInSession::class)
-            ->assertSet('tableGrouping', 'author.name:desc');
+            ->assertSet('tableGrouping', 'author.name:asc');
     });
 
     it('can clear the persisted grouping in the user\'s session', function (): void {
         Post::factory()->count(10)->create();
 
         livewire(PostsTableWithGroupPersistedInSession::class)
-            ->assertSet('tableGrouping', 'title:asc')
+            ->assertSet('tableGrouping', 'title:desc')
             ->set('tableGrouping', null)
             ->assertSet('tableGrouping', null);
 
@@ -1056,11 +1067,11 @@ describe('session persistence', function (): void {
 
     it('does not override explicit `$tableGrouping` with the persisted grouping', function (): void {
         livewire(PostsTableWithGroupPersistedInSession::class)
-            ->assertSet('tableGrouping', 'title:asc');
+            ->assertSet('tableGrouping', 'title:desc');
 
-        Livewire::withQueryParams(['grouping' => 'author.name:desc'])
+        Livewire::withQueryParams(['grouping' => 'author.name:asc'])
             ->test(PostsTableWithGroupPersistedInSession::class)
-            ->assertSet('tableGrouping', 'author.name:desc');
+            ->assertSet('tableGrouping', 'author.name:asc');
     });
 
     it('does not persist the grouping in the user\'s session by default', function (): void {

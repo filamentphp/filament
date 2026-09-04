@@ -25,7 +25,9 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/grouping" alt="Table with grouping" version="4.x" />
 
-You may also pass a sort direction to the `defaultGroup()` method:
+### Setting the default grouping direction
+
+By default, groups are ordered in ascending order. To use descending order by default, pass the `direction` argument to the `defaultGroup()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -36,8 +38,6 @@ public function table(Table $table): Table
         ->defaultGroup('status', direction: 'desc');
 }
 ```
-
-The second parameter is optional and defaults to `'asc'`.
 
 ## Allowing users to choose between groupings
 
