@@ -98,6 +98,10 @@
         max-height: var(--max-height);
     }
 
+    &[style*='--max-height'] .fi-fo-rich-editor-content[role='region'] {
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 outline-none focus-visible:ring-2 focus-visible:ring-inset;
+    }
+
     & span[data-type='mergeTag'] {
         @apply my-0 inline-block whitespace-nowrap;
 

@@ -418,10 +418,10 @@ describe('file attachment visibility', function (): void {
 });
 
 describe('height constraints', function (): void {
-    it('defaults `getMinHeight()` to `3rem`', function (): void {
+    it('defaults `getMinHeight()` to `10rem`', function (): void {
         $editor = MarkdownEditor::make('content');
 
-        expect($editor->getMinHeight())->toBe('3rem');
+        expect($editor->getMinHeight())->toBe('10rem');
     });
 
     it('can set `minHeight()`', function (): void {
@@ -467,6 +467,40 @@ describe('height constraints', function (): void {
             ->maxHeight(static fn (): string => '50rem');
 
         expect($editor->getMaxHeight())->toBe('50rem');
+    });
+
+    it('applies `minHeight()` and `maxHeight()` to disabled content', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight('8rem')
+                    ->maxHeight('12rem'),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->toContain('--min-height: 8rem')
+            ->and($html)->toContain('--max-height: 12rem')
+            ->and($html)->toContain('tabindex="0"');
+    });
+
+    it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight(null)
+                    ->maxHeight(null),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->not->toContain('--min-height')
+            ->and($html)->not->toContain('--max-height')
+            ->and($html)->not->toContain('tabindex="0"');
     });
 });
 
@@ -669,20 +703,20 @@ it('can render `MarkdownEditor` in the browser', function (): void {
                     const nullMinHeightWithMaxHeightComponent = nullMinHeightWithMaxHeightEditor.querySelector('[x-data]')
 
                     if (
-                        defaultCodeMirror.clientHeight !== 48 ||
-                        defaultScroller.style.minHeight !== '3rem' ||
-                        getComputedStyle(defaultScroller).minHeight !== '48px' ||
-                        nullMinHeightScroller.style.minHeight !== '3rem' ||
-                        nullMinHeightStyle.minHeight !== '48px' ||
+                        defaultCodeMirror.clientHeight !== 160 ||
+                        defaultScroller.style.minHeight !== '10rem' ||
+                        getComputedStyle(defaultScroller).minHeight !== '160px' ||
+                        nullMinHeightScroller.style.minHeight !== '11.25rem' ||
+                        nullMinHeightStyle.minHeight !== '180px' ||
                         nullMinHeightStyle.maxHeight !== 'none' ||
-                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '3rem' ||
+                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '11.25rem' ||
                         nullMinHeightWithMaxHeightScroller.style.maxHeight !== '12rem' ||
                         nullMinHeightWithMaxHeightScroller.style.height !== '' ||
                         nullMinHeightWithMaxHeightScroller.tabIndex !== 0 ||
-                        nullMinHeightWithMaxHeightStyle.minHeight !== '48px' ||
+                        nullMinHeightWithMaxHeightStyle.minHeight !== '180px' ||
                         nullMinHeightWithMaxHeightStyle.maxHeight !== '192px' ||
-                        nullMinHeightWithMaxHeightStyle.height !== '48px' ||
-                        nullMinHeightWithMaxHeightCodeMirror.clientHeight !== 48
+                        nullMinHeightWithMaxHeightStyle.height !== '180px' ||
+                        nullMinHeightWithMaxHeightCodeMirror.clientHeight !== 180
                     ) {
                         return false
                     }

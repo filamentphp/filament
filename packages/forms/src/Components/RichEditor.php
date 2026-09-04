@@ -1546,6 +1546,18 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             ]))
             ->class(['fi-fo-rich-editor']);
 
+        $contentAttributes = (new FilamentComponentAttributeBag)
+            ->merge(['x-ref' => 'editor'], escape: false)
+            ->class(['fi-fo-rich-editor-content', 'fi-prose']);
+
+        if ($isDisabled && filled($maxHeight)) {
+            $contentAttributes = $contentAttributes->merge([
+                'aria-labelledby' => "{$id}-label",
+                'role' => 'region',
+                'tabindex' => '0',
+            ], escape: false);
+        }
+
         $deleteIconHtml = generate_icon_html(Heroicon::Trash, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON);
         $editIconHtml = generate_icon_html(Heroicon::PencilSquare, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON);
 
@@ -1651,7 +1663,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             </div>
 
             <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
-                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                <div <?= $contentAttributes->toHtml() ?>>
                     <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
                         <div
                             x-ref="floatingToolbar::<?= e($nodeName) ?>"

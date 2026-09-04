@@ -798,10 +798,10 @@ it('can set `resizableImages()`', function (): void {
     expect($editor->hasResizableImages())->toBeTrue();
 });
 
-it('returns `3rem` for `getMinHeight()` and `null` for `getMaxHeight()` by default', function (): void {
+it('returns `10rem` for `getMinHeight()` and `null` for `getMaxHeight()` by default', function (): void {
     $editor = RichEditor::make('content');
 
-    expect($editor->getMinHeight())->toBe('3rem')
+    expect($editor->getMinHeight())->toBe('10rem')
         ->and($editor->getMaxHeight())->toBeNull();
 });
 
@@ -847,6 +847,23 @@ it('renders the `--min-height` and `--max-height` custom properties when set', f
 
     expect($html)->toContain('--min-height: 20rem')
         ->and($html)->toContain('--max-height: 40rem');
+});
+
+it('makes disabled content using `maxHeight()` a keyboard-focusable named region', function (): void {
+    $html = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->disabled()
+                ->maxHeight('12rem'),
+        ])
+        ->getComponents()[0]
+        ->toHtml();
+
+    expect($html)->toContain('--min-height: 10rem')
+        ->and($html)->toContain('--max-height: 12rem')
+        ->and($html)->toContain('role="region"')
+        ->and($html)->toContain('tabindex="0"');
 });
 
 it('can set `activePanel()`', function (): void {
@@ -1491,7 +1508,7 @@ it('can render `RichEditor` in the browser', function (): void {
                     const initialStyle = getComputedStyle(content)
 
                     if (
-                        getComputedStyle(defaultContent).minHeight !== '48px' ||
+                        getComputedStyle(defaultContent).minHeight !== '160px' ||
                         initialStyle.minHeight !== '192px' ||
                         initialStyle.maxHeight !== '224px' ||
                         initialStyle.overflowY !== 'auto' ||
