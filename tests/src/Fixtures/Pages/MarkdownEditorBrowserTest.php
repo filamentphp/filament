@@ -29,6 +29,16 @@ class MarkdownEditorBrowserTest extends Page
             ->schema([
                 MarkdownEditor::make('content')
                     ->label('Content'),
+                MarkdownEditor::make('nullMinHeightContent')
+                    ->label('Null minimum height content')
+                    ->minHeight('20rem')
+                    ->minHeight(null)
+                    ->extraAttributes(['data-testid' => 'null-min-height-markdown-editor']),
+                MarkdownEditor::make('nullMinHeightWithMaxHeightContent')
+                    ->label('Null minimum height with maximum height content')
+                    ->minHeight(null)
+                    ->maxHeight('12rem')
+                    ->extraAttributes(['data-testid' => 'null-min-height-with-max-height-markdown-editor']),
             ])
             ->statePath('data');
     }

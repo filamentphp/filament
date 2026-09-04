@@ -2532,15 +2532,16 @@ EasyMDE.prototype.render = function (el) {
             options.autoRefresh != undefined ? options.autoRefresh : false,
     })
 
-    this.codemirror.getScrollerElement().style.minHeight = options.minHeight
+    var scrollerElement = this.codemirror.getScrollerElement()
+
+    scrollerElement.style.minHeight = options.minHeight
 
     if (typeof options.maxHeight !== 'undefined') {
-        this.codemirror
-            .getScrollerElement()
-            .style.setProperty(
-                this.hasExplicitMinHeight ? 'max-height' : 'height',
-                options.maxHeight,
-            )
+        scrollerElement.setAttribute('tabindex', '0')
+        scrollerElement.style.setProperty(
+            this.hasExplicitMinHeight ? 'max-height' : 'height',
+            options.maxHeight,
+        )
     }
 
     if (options.forceSync === true) {

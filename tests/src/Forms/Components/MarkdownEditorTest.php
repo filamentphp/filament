@@ -440,6 +440,7 @@ describe('height constraints', function (): void {
 
     it('can clear `minHeight()` with `null`', function (): void {
         $editor = MarkdownEditor::make('content')
+            ->minHeight('20rem')
             ->minHeight(null);
 
         expect($editor->getMinHeight())->toBeNull();
@@ -650,6 +651,39 @@ it('can render `MarkdownEditor` in the browser', function (): void {
         visit('/markdown-editor-browser-test')
             ->assertSee('Content')
             ->assertNoSmoke()
+            ->assertScript(<<<'JS'
+                (async () => {
+                    const nullMinHeightEditor = document.querySelector('[data-testid="null-min-height-markdown-editor"]')
+                    const nullMinHeightScroller = nullMinHeightEditor.querySelector('.CodeMirror-scroll')
+                    const nullMinHeightStyle = getComputedStyle(nullMinHeightScroller)
+                    const nullMinHeightWithMaxHeightEditor = document.querySelector('[data-testid="null-min-height-with-max-height-markdown-editor"]')
+                    const nullMinHeightWithMaxHeightScroller = nullMinHeightWithMaxHeightEditor.querySelector('.CodeMirror-scroll')
+                    const nullMinHeightWithMaxHeightStyle = getComputedStyle(nullMinHeightWithMaxHeightScroller)
+                    const nullMinHeightWithMaxHeightComponent = nullMinHeightWithMaxHeightEditor.querySelector('[x-data]')
+
+                    if (
+                        nullMinHeightScroller.style.minHeight !== '11.25rem' ||
+                        nullMinHeightStyle.minHeight !== '180px' ||
+                        nullMinHeightStyle.maxHeight !== 'none' ||
+                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '11.25rem' ||
+                        nullMinHeightWithMaxHeightScroller.style.maxHeight !== '12rem' ||
+                        nullMinHeightWithMaxHeightScroller.style.height !== '' ||
+                        nullMinHeightWithMaxHeightScroller.tabIndex !== 0 ||
+                        nullMinHeightWithMaxHeightStyle.minHeight !== '180px' ||
+                        nullMinHeightWithMaxHeightStyle.maxHeight !== '192px' ||
+                        nullMinHeightWithMaxHeightStyle.height !== '180px'
+                    ) {
+                        return false
+                    }
+
+                    nullMinHeightWithMaxHeightComponent._editor.codemirror.setValue('Content\n\n'.repeat(100))
+                    nullMinHeightWithMaxHeightComponent._editor.codemirror.refresh()
+
+                    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+
+                    return getComputedStyle(nullMinHeightWithMaxHeightScroller).height === '192px' && nullMinHeightWithMaxHeightScroller.scrollHeight > nullMinHeightWithMaxHeightScroller.clientHeight
+                })()
+                JS)
             ->assertNoAccessibilityIssues();
 
         visit('/markdown-editor-browser-test')
