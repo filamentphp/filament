@@ -146,14 +146,40 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
-    public function resetTableFiltersForm(): void
+    public function resetTableFiltersForm(?string $location = null): void
     {
-        $this->getTableFiltersForm()->fill();
+        $table = $this->getTable();
 
-        if ($this->getTable()->hasDeferredFilters()) {
-            $this->applyTableFilters();
+        $panel = filled($location)
+            ? $table->getFilterPanel($location)
+            : null;
+
+        if (! $panel) {
+            $this->getTableFiltersForm()->fill();
+
+            if ($table->hasDeferredFilters()) {
+                $this->applyTableFilters();
+
+                return;
+            }
+
+            $this->handleTableFilterUpdates();
 
             return;
+        }
+
+        ($table->getFiltersFormForPanel($panel) ?? $this->getTableFiltersForm())->fill();
+
+        if ($table->hasDeferredFilters()) {
+            // Only this panel's filters are applied, so that pending changes made in
+            // another panel are not committed by resetting this one.
+            $this->tableFilters ??= [];
+
+            foreach ($panel->getVisibleFilters() as $filter) {
+                $filterName = $filter->getName();
+
+                $this->tableFilters[$filterName] = Arr::get($this->tableDeferredFilters, $filterName);
+            }
         }
 
         $this->handleTableFilterUpdates();

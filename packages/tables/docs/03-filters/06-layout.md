@@ -2,6 +2,7 @@
 title: Filter layout
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import Aside from "@components/Aside.astro"
 
 ## Positioning filters into grid columns
 
@@ -171,6 +172,150 @@ public function table(Table $table): Table
         ], layout: FiltersLayout::BeforeContentCollapsible); // or `FiltersLayout::AfterContentCollapsible`
 }
 ```
+
+## Placing filters in multiple locations at once
+
+By default, every filter renders together in a single location (the dropdown, unless you change it with `filtersLayout()`). To split filters across several locations at the same time - for example, a status filter that is always visible above the table while the rest stay in the dropdown — pass `FilterPanel` objects to `filters()` instead of a flat array. Each panel takes a location and the filters that belong there:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            FilterPanel::make(FiltersLayout::AboveContent, [
+                SelectFilter::make('status'),
+                SelectFilter::make('category'),
+            ])->columns(2),
+
+            FilterPanel::make(FiltersLayout::Dropdown, [
+                SelectFilter::make('author'),
+            ]),
+        ]);
+}
+```
+
+Here, the `status` and `category` filters render above the table in a two-column grid, while `author` stays behind the dropdown trigger.
+
+<Aside variant="info">
+    A table's `filters()` array must be **either** all `FilterPanel` objects **or** all filters — mixing the two throws an exception (including across `pushFilters()` calls).
+</Aside>
+
+### Configuring a panel
+
+Each panel accepts the same presentation options as the table. Any option left unset on a panel falls through to the table-level `filtersForm*()` method, which itself falls back to a per-location default - so the table-level methods act as the defaults for every panel:
+
+```php
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\FiltersResetActionPosition;
+use Filament\Tables\Filters\FilterPanel;
+
+FilterPanel::make(FiltersLayout::Dropdown, [
+    // ...
+])
+    ->columns(2)
+    ->width(Width::Medium)
+    ->maxHeight('400px')
+    ->resetActionPosition(FiltersResetActionPosition::Footer)
+    ->triggerAction(fn (Action $action): Action => $action->label('Filter'));
+```
+
+Each option also accepts a closure, which can inject `$table` and `$livewire` like anywhere else in Filament:
+
+```php
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+
+FilterPanel::make(FiltersLayout::AboveContent, [
+    // ...
+])->columns(fn (HasTable $livewire): int => $livewire->isTableReordering() ? 1 : 3);
+```
+
+<Aside variant="info">
+    `triggerAction()`, `width()` and `maxHeight()` only apply to a panel that opens - see [supported location combinations](#supported-location-combinations). A panel that is always visible, such as `AboveContent`, ignores them.
+</Aside>
+
+### Supported location combinations
+
+A table has a single filter trigger, so only one panel may be in a location that opens. These locations are **interactive**, and a table may use **at most one** of them:
+
+- `Dropdown`
+- `Modal`
+- `AboveContentCollapsible`
+- `BeforeContent`
+- `BeforeContentCollapsible`
+- `AfterContent`
+- `AfterContentCollapsible`
+
+`BeforeContent` and `AfterContent` are interactive even though they are not collapsible, because below the `lg` breakpoint they are hidden and open from the filter trigger as floating panels.
+
+That panel may be combined with any of the locations that are always rendered in place and have no trigger of their own:
+
+- `AboveContent`
+- `BelowContent`
+- `Hidden`
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+use Filament\Tables\Filters\SelectFilter;
+
+->filters([
+    FilterPanel::make(FiltersLayout::AboveContent, [
+        SelectFilter::make('status'),
+    ]),
+
+    FilterPanel::make(FiltersLayout::Dropdown, [
+        SelectFilter::make('author'),
+    ]),
+])
+```
+
+`AboveContent` additionally cannot be combined with `AboveContentCollapsible`, since both render in the same place above the table.
+
+Any unsupported combination - such as `Dropdown` with `Modal`, or `BeforeContent` with `AfterContent` - throws a `LogicException` rather than silently dropping a panel.
+
+### Resetting and applying filters across panels
+
+Each panel has its own reset action that clears only the filters shown in that panel. When filters are deferred (the [default](overview#live-filters)), resetting a panel applies that panel's cleared filters without submitting changes still pending in any other panel. To clear every filter at once, use the "remove all" button in the active filter indicators above the table.
+
+The apply button and the indicators are always global - the apply button submits every panel's pending filters, whichever panel it was clicked in.
+
+### Merging panels that share a location
+
+Declaring more than one panel for the same location - whether twice in the same `filters()` array, or by appending one later with `pushFilters()` (for example from a plugin) — **merges their filters into a single panel** for that location. The configuration of the **first** panel at that location wins; any configuration set on the later panels is ignored:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\FilterPanel;
+use Filament\Tables\Filters\SelectFilter;
+
+$table
+    ->filters([
+        FilterPanel::make(FiltersLayout::AboveContent, [
+            SelectFilter::make('status'),
+        ])->columns(2),
+
+        // The same location again: its filters are merged into the panel above,
+        // and its own configuration (such as `columns()`) is ignored.
+        FilterPanel::make(FiltersLayout::AboveContent, [
+            SelectFilter::make('category'),
+        ]),
+    ]);
+```
+
+This lets a plugin add filters to a shared location (such as the dropdown) without conflicting with the table's own panels.
+
+<Aside variant="danger">
+    A [custom filter form schema](#customizing-the-filter-form-schema) (`filtersFormSchema()`) cannot be combined with `FilterPanel` objects, as they are competing layout mechanisms. Use `filtersFormSchema()` with a flat `filters()` array only.
+</Aside>
 
 ## Hiding the filter indicators
 
