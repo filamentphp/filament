@@ -619,6 +619,25 @@ class HeroBlock extends RichContentCustomBlock
 }
 ```
 
+#### Using minimal custom block controls
+
+You can reduce the framing around custom block previews to make the content look closer to how it would render on the frontend using `minimalCustomBlockControls()`. This places compact edit and delete buttons beside the preview and visually hides the block's label, while keeping it available to screen readers:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        HeroBlock::class,
+        CallToActionBlock::class,
+    ])
+    ->minimalCustomBlockControls()
+```
+
+This setting applies to all custom blocks with previews in the editor. Blocks without a preview keep their usual header and label. Disabled editors do not display edit or delete buttons.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `minimalCustomBlockControls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Rendering content with custom blocks
 
 When rendering the rich content, you can pass the array of custom blocks to the `RichContentRenderer` to ensure that the blocks are rendered correctly:
