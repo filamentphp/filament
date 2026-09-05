@@ -42,6 +42,15 @@ it('can use `HtmlString` as label', function (): void {
         ->assertCanRenderTableColumn('author.email');
 });
 
+it('can define a relationship for grouped columns', function (): void {
+    Post::factory()->count(5)->create();
+
+    livewire(TestTableWithColumnGroupWithRelationship::class)
+        ->assertSuccessful()
+        ->assertCanRenderTableColumn('author.name')
+        ->assertCanRenderTableColumn('author.email');
+});
+
 class TestTableWithColumnGroup extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -83,6 +92,55 @@ class TestTableWithColumnGroupWithHtmlStringLabel extends Component implements H
                     Tables\Columns\TextColumn::make('author.name'),
                     Tables\Columns\TextColumn::make('author.email'),
                 ]),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithColumnGroupWithRelationship extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\ColumnGroup::make('Author', [
+                    Tables\Columns\TextColumn::make('name'),
+                    Tables\Columns\TextColumn::make('email'),
+                ])->relationship('author'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithColumnGroupWithNestedRelationship extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\ColumnGroup::make('Author Team', [
+                    Tables\Columns\TextColumn::make('name'),
+                ])->relationship('author.team'),
             ]);
     }
 

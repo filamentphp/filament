@@ -22,6 +22,8 @@ class ColumnGroup extends Component
 
     protected bool $shouldTranslateLabel = false;
 
+    protected string | Closure | null $relationship = null;
+
     /**
      * @var array<Column> | Closure
      */
@@ -78,12 +80,30 @@ class ColumnGroup extends Component
         return $this;
     }
 
+    public function relationship(string | Closure | null $name): static
+    {
+        $this->relationship = $name;
+
+        return $this;
+    }
+
+    public function getRelationshipName(): ?string
+    {
+        return $this->evaluate($this->relationship);
+    }
+
     /**
      * @return array<string, Column>
      */
     public function getColumns(): array
     {
-        return array_reduce($this->evaluate($this->columns) ?? [], function (array $result, Column $column): array {
+        $relationshipName = $this->getRelationshipName();
+
+        return array_reduce($this->evaluate($this->columns) ?? [], function (array $result, Column $column) use ($relationshipName): array {
+            if (filled($relationshipName) && (! str($column->getName())->startsWith("{$relationshipName}."))) {
+                $column->name("{$relationshipName}.{$column->getName()}");
+            }
+
             $result[$column->getName()] = $column->group($this);
 
             return $result;

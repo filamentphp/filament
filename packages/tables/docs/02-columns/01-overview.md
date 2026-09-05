@@ -827,6 +827,30 @@ ColumnGroup::make('Website visibility')
     ->wrapHeader()
 ```
 
+If all the columns in a group belong to the same relationship, you can use the `relationship()` method to prefix each child column's name with the relationship name, instead of having to do it manually for each column:
+
+```php
+use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\TextColumn;
+
+ColumnGroup::make('Author', [
+    TextColumn::make('name'),
+    TextColumn::make('email'),
+])->relationship('author')
+```
+
+This is the equivalent of writing:
+
+```php
+use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\TextColumn;
+
+ColumnGroup::make('Author', [
+    TextColumn::make('author.name'),
+    TextColumn::make('author.email'),
+])
+```
+
 ## Hiding columns
 
 You may hide a column by using the `hidden()` or `visible()` method:
