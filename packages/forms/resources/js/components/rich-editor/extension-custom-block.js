@@ -54,6 +54,12 @@ export default Node.create({
                 const editButton = document.createElement('button')
                 editButton.className = 'fi-icon-btn'
                 editButton.type = 'button'
+                if (extension.options.editCustomBlockButtonLabel) {
+                    editButton.setAttribute(
+                        'aria-label',
+                        extension.options.editCustomBlockButtonLabel,
+                    )
+                }
                 editButton.innerHTML =
                     extension.options.editCustomBlockButtonIconHtml
                 editButton.addEventListener('click', () =>
@@ -79,6 +85,12 @@ export default Node.create({
                 const deleteButton = document.createElement('button')
                 deleteButton.className = 'fi-icon-btn'
                 deleteButton.type = 'button'
+                if (extension.options.deleteCustomBlockButtonLabel) {
+                    deleteButton.setAttribute(
+                        'aria-label',
+                        extension.options.deleteCustomBlockButtonLabel,
+                    )
+                }
                 deleteButton.innerHTML =
                     extension.options.deleteCustomBlockButtonIconHtml
                 deleteButton.addEventListener('click', () =>
@@ -119,7 +131,9 @@ export default Node.create({
     addOptions() {
         return {
             deleteCustomBlockButtonIconHtml: null,
+            deleteCustomBlockButtonLabel: null,
             editCustomBlockButtonIconHtml: null,
+            editCustomBlockButtonLabel: null,
             editCustomBlockUsing: () => {},
             insertCustomBlockUsing: () => {},
         }

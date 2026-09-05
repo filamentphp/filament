@@ -1,4 +1,20 @@
 .fi-fo-rich-editor {
+    --fi-fo-rich-editor-toolbar-height: 0px;
+    --fi-fo-rich-editor-sticky-offset: 0px;
+
+    .fi-topbar-ctn ~ * & {
+        --fi-fo-rich-editor-sticky-offset: var(--topbar-height, 4rem);
+    }
+
+    .fi-modal & {
+        --fi-fo-rich-editor-sticky-offset: 0px;
+    }
+
+    & .fi-fo-rich-editor-toolbar.fi-fo-rich-editor-sticky-toolbar {
+        @apply sticky z-20 rounded-t-lg bg-white dark:bg-gray-900;
+        top: var(--fi-fo-rich-editor-sticky-offset);
+    }
+
     & .fi-fo-rich-editor-uploading-file {
         @apply pointer-events-none cursor-wait opacity-50;
     }
@@ -170,7 +186,44 @@
     }
 
     & .fi-fo-rich-editor-custom-block-btn {
-        @apply flex cursor-move gap-1.5 rounded-lg bg-white px-2 py-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 flex cursor-move items-center gap-1.5 rounded-lg bg-white px-2 py-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 focus-visible:ring-2 focus-visible:outline-none dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+
+        & .fi-fo-rich-editor-custom-block-icon,
+        & .fi-loading-indicator {
+            @apply size-4 shrink-0;
+        }
+
+        & .fi-fo-rich-editor-custom-block-icon .fi-icon {
+            @apply size-full;
+        }
+    }
+
+    &
+        .fi-fo-rich-editor-custom-blocks-list.fi-fo-rich-editor-custom-blocks-grid {
+        @apply grid grid-cols-2;
+    }
+
+    &
+        .fi-fo-rich-editor-custom-blocks-grid
+        > .fi-fo-rich-editor-custom-block-btn {
+        @apply min-h-20 flex-col justify-center gap-2 p-3 text-center text-xs;
+
+        & .fi-fo-rich-editor-custom-block-icon,
+        & .fi-loading-indicator {
+            @apply size-6;
+        }
+    }
+
+    & .fi-fo-rich-editor-custom-blocks-search {
+        @apply px-4 py-3;
+    }
+
+    & .fi-fo-rich-editor-custom-blocks-search-input {
+        @apply focus:ring-primary-600 dark:focus:ring-primary-500 block w-full rounded-lg border-0 bg-white px-3 py-2 text-base text-gray-950 ring-1 ring-gray-950/10 outline-none ring-inset placeholder:text-gray-400 focus:ring-2 sm:text-sm dark:bg-white/5 dark:text-white dark:ring-white/20 dark:placeholder:text-gray-500;
+    }
+
+    & .fi-fo-rich-editor-custom-blocks-no-results {
+        @apply px-4 py-3 text-sm text-gray-500 dark:text-gray-400;
     }
 
     & .tiptap {
@@ -424,6 +477,21 @@
         & .fi-fo-rich-editor-panels {
             @apply @2xl:max-w-3xs @2xl:rounded-ee-lg @2xl:border-s @2xl:border-b-0;
         }
+
+        & .fi-fo-rich-editor-panels.fi-fo-rich-editor-sticky-panels {
+            @apply @2xl:sticky @2xl:self-start @2xl:overflow-y-auto;
+
+            @container (min-width: 42rem) {
+                top: calc(
+                    var(--fi-fo-rich-editor-sticky-offset) +
+                        var(--fi-fo-rich-editor-toolbar-height, 0px)
+                );
+                max-height: calc(
+                    100dvh - var(--fi-fo-rich-editor-sticky-offset) -
+                        var(--fi-fo-rich-editor-toolbar-height, 0px) - 1rem
+                );
+            }
+        }
     }
 
     @supports not (container-type: inline-size) {
@@ -433,6 +501,21 @@
 
         & .fi-fo-rich-editor-panels {
             @apply md:max-w-3xs md:rounded-ee-lg md:border-s md:border-b-0;
+        }
+
+        & .fi-fo-rich-editor-panels.fi-fo-rich-editor-sticky-panels {
+            @apply md:sticky md:self-start md:overflow-y-auto;
+
+            @media (min-width: 48rem) {
+                top: calc(
+                    var(--fi-fo-rich-editor-sticky-offset) +
+                        var(--fi-fo-rich-editor-toolbar-height, 0px)
+                );
+                max-height: calc(
+                    100dvh - var(--fi-fo-rich-editor-sticky-offset) -
+                        var(--fi-fo-rich-editor-toolbar-height, 0px) - 1rem
+                );
+            }
         }
     }
 }

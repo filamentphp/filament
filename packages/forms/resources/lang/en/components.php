@@ -665,6 +665,16 @@ return [
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
+        'close_panel' => 'Close panel',
+
+        'custom_blocks' => [
+            'delete_label' => 'Delete block',
+            'edit_label' => 'Edit block',
+            'search_label' => 'Search blocks',
+            'search_placeholder' => 'Search blocks...',
+            'no_search_results_message' => 'No blocks match your search.',
+        ],
+
         'mentions' => [
             'no_options_message' => 'No options available.',
             'no_search_results_message' => 'No results match your search.',

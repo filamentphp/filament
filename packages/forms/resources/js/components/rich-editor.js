@@ -25,10 +25,13 @@ export default function richEditorFormComponent({
     activePanel,
     canAttachFiles,
     deleteCustomBlockButtonIconHtml,
+    deleteCustomBlockButtonLabel,
     editCustomBlockButtonIconHtml,
+    editCustomBlockButtonLabel,
     extensions,
     floatingToolbars,
     hasResizableImages,
+    hasStickyToolbar = false,
     isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
@@ -53,11 +56,14 @@ export default function richEditorFormComponent({
     let editor
     let eventListeners = []
     let isDestroyed = false
+    let toolbarResizeObserver
 
     return {
         state,
 
         activePanel,
+
+        customBlockSearch: '',
 
         editorSelection: { type: 'text', anchor: 1, head: 1 },
 
@@ -70,6 +76,16 @@ export default function richEditorFormComponent({
         editorUpdatedAt: Date.now(),
 
         async init() {
+            if (hasStickyToolbar && this.$refs.toolbar) {
+                toolbarResizeObserver = new ResizeObserver(() => {
+                    this.$el.style.setProperty(
+                        '--fi-fo-rich-editor-toolbar-height',
+                        `${this.$refs.toolbar.getBoundingClientRect().height}px`,
+                    )
+                })
+                toolbarResizeObserver.observe(this.$refs.toolbar)
+            }
+
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
@@ -84,7 +100,9 @@ export default function richEditorFormComponent({
                     canAttachFiles,
                     customExtensionUrls: extensions,
                     deleteCustomBlockButtonIconHtml,
+                    deleteCustomBlockButtonLabel,
                     editCustomBlockButtonIconHtml,
+                    editCustomBlockButtonLabel,
                     editCustomBlockUsing: (id, config) =>
                         this.$wire.mountAction(
                             'customBlock',
@@ -364,6 +382,17 @@ export default function richEditorFormComponent({
             commandChain.run()
         },
 
+        matchesCustomBlockSearch(labels) {
+            const search = this.customBlockSearch.trim().toLocaleLowerCase()
+
+            return (
+                !search ||
+                labels.some((label) =>
+                    label.toLocaleLowerCase().includes(search),
+                )
+            )
+        },
+
         togglePanel(id = null) {
             if (this.isPanelActive(id)) {
                 this.activePanel = null
@@ -401,6 +430,7 @@ export default function richEditorFormComponent({
 
         destroy() {
             isDestroyed = true
+            toolbarResizeObserver?.disconnect()
 
             eventListeners.forEach(([eventName, handler]) => {
                 window.removeEventListener(eventName, handler)
