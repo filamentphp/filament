@@ -97,6 +97,14 @@
             & .fi-sidebar {
                 &:not(.fi-sidebar-open) {
                     @apply lg:sticky lg:w-(--collapsed-sidebar-width) lg:translate-x-0 lg:rtl:-translate-x-0;
+
+                    & .fi-sidebar-nav {
+                        @apply lg:pe-0;
+                    }
+
+                    & .fi-sidebar-nav-groups {
+                        @apply lg:w-max;
+                    }
                 }
             }
         }
