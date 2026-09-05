@@ -213,6 +213,48 @@ The editor has a minimum height of `10rem` by default. Once the content exceeds 
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minHeight()` and `maxHeight()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
+## Keeping the toolbar and panels visible while scrolling
+
+For longer documents where you may find yourself scrolling down the editor, you can keep the toolbar visible while scrolling through a long editor using `stickyToolbar()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->stickyToolbar()
+```
+
+You can also keep the custom blocks and merge tags panels visible using `stickyPanels()`. Each option can be enabled independently:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->stickyToolbar()
+    ->stickyPanels()
+```
+
+Panels only stick when the editor is wide enough to display them beside the content. In narrower editors, panels scroll with the page so they leave room for editing.
+
+Both options are disabled by default. Pass `false` to `stickyToolbar()` or `stickyPanels()` to disable them.
+
+### Setting the sticky offset
+
+Inside a Filament panel, the sticky toolbar and panels automatically account for the topbar. If your page has a custom fixed header, you can set the distance from the top of the viewport using `stickyOffset()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->stickyToolbar()
+    ->stickyPanels()
+    ->stickyOffset('5rem')
+```
+
+The offset accepts a CSS length value. Pass `null` to restore the automatic offset.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `stickyToolbar()`, `stickyPanels()`, and `stickyOffset()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ## Customizing text colors
 
 The rich editor includes a text color tool for styling inline text. By default, it uses the [Tailwind CSS color palette](https://tailwindcss.com/docs/colors). In light mode, the 600 shades are applied to text, and in dark mode, the 400 shades are used.
@@ -674,6 +716,46 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Adding icons to custom blocks
+
+You can display an [icon](../styling/icons) alongside a block's label in the side panel by defining its `getIcon()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+use Filament\Support\Icons\Heroicon;
+
+class HeroBlock extends RichContentCustomBlock
+{
+    // ...
+
+    public static function getIcon(): Heroicon
+    {
+        return Heroicon::RectangleGroup;
+    }
+}
+```
+
+You may return an icon name, a `BackedEnum` such as `Heroicon`, or an object implementing Laravel's `Htmlable` interface. By default, `getIcon()` returns `null` and the block displays its label without an icon.
+
+### Displaying custom blocks in a grid
+
+By default, the side panel displays custom blocks as a list. You can display them as a grid using `customBlocksGrid()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        HeroBlock::class,
+        CallToActionBlock::class,
+    ])
+    ->customBlocksGrid()
+```
+
+Each grid item displays the block's label and its [icon](#adding-icons-to-custom-blocks), if one is defined. Pass `false` to `customBlocksGrid()` to restore the list.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `customBlocksGrid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Grouping custom blocks
 
 You can organize custom blocks into groups using string keys in the `customBlocks()` array. Blocks passed directly (without a string key) are ungrouped and appear first in the panel:
@@ -717,6 +799,33 @@ RichContentRenderer::make($record->content)
     ])
     ->toHtml()
 ```
+
+### Searching custom blocks
+
+You can add a search field to the custom blocks panel using `searchableCustomBlocks()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        'Marketing' => [
+            HeroBlock::class,
+            CallToActionBlock::class,
+        ],
+        'Media' => [
+            ImageGalleryBlock::class,
+            VideoEmbedBlock::class,
+        ],
+    ])
+    ->searchableCustomBlocks()
+```
+
+Search matches block labels and group names, ignoring capitalization and surrounding whitespace. When a group name matches, all blocks in that group appear. If nothing matches, the panel displays a message. Clearing the search restores all blocks.
+
+Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) layouts. It is disabled by default, and you can pass `false` to `searchableCustomBlocks()` to disable it.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchableCustomBlocks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Opening the custom blocks panel by default
 

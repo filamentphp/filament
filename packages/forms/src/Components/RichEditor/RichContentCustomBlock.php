@@ -2,11 +2,18 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
+use BackedEnum;
 use Filament\Actions\Action;
+use Illuminate\Contracts\Support\Htmlable;
 
 abstract class RichContentCustomBlock
 {
     abstract public static function getId(): string;
+
+    public static function getIcon(): string | BackedEnum | Htmlable | null
+    {
+        return null;
+    }
 
     public static function getLabel(): string
     {

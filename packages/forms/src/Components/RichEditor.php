@@ -123,6 +123,16 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     protected string | Closure | null $activePanel = null;
 
+    protected bool | Closure $hasCustomBlocksGrid = false;
+
+    protected bool | Closure $hasSearchableCustomBlocks = false;
+
+    protected bool | Closure $hasStickyToolbar = false;
+
+    protected bool | Closure $hasStickyPanels = false;
+
+    protected string | Closure | null $stickyOffset = null;
+
     /**
      * @var array<string, class-string<RichContentCustomBlock>>
      */
@@ -1221,6 +1231,66 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         return $this->evaluate($this->activePanel);
     }
 
+    public function customBlocksGrid(bool | Closure $condition = true): static
+    {
+        $this->hasCustomBlocksGrid = $condition;
+
+        return $this;
+    }
+
+    public function hasCustomBlocksGrid(): bool
+    {
+        return (bool) $this->evaluate($this->hasCustomBlocksGrid);
+    }
+
+    public function searchableCustomBlocks(bool | Closure $condition = true): static
+    {
+        $this->hasSearchableCustomBlocks = $condition;
+
+        return $this;
+    }
+
+    public function hasSearchableCustomBlocks(): bool
+    {
+        return (bool) $this->evaluate($this->hasSearchableCustomBlocks);
+    }
+
+    public function stickyToolbar(bool | Closure $condition = true): static
+    {
+        $this->hasStickyToolbar = $condition;
+
+        return $this;
+    }
+
+    public function hasStickyToolbar(): bool
+    {
+        return (bool) $this->evaluate($this->hasStickyToolbar);
+    }
+
+    public function stickyPanels(bool | Closure $condition = true): static
+    {
+        $this->hasStickyPanels = $condition;
+
+        return $this;
+    }
+
+    public function hasStickyPanels(): bool
+    {
+        return (bool) $this->evaluate($this->hasStickyPanels);
+    }
+
+    public function stickyOffset(string | Closure | null $offset): static
+    {
+        $this->stickyOffset = $offset;
+
+        return $this;
+    }
+
+    public function getStickyOffset(): ?string
+    {
+        return $this->evaluate($this->stickyOffset);
+    }
+
     /**
      * @param  array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>> | Closure | null  $blocks
      */
@@ -1537,12 +1607,21 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
         $minHeight = $this->getMinHeight();
         $maxHeight = $this->getMaxHeight();
+        $stickyOffset = $this->getStickyOffset();
+        $hasSearchableCustomBlocks = $this->hasSearchableCustomBlocks();
+        $customBlockSearchLabels = $hasSearchableCustomBlocks
+            ? $groupedCustomBlocks->flatMap(static fn (Collection $groupBlocks, string $groupLabel): array => [
+                $groupLabel,
+                ...$groupBlocks->map(static fn (string $block): string => $block::getLabel())->all(),
+            ])->all()
+            : [];
 
         $wrapperAttributes = $this->getExtraAttributeBag()
             ->merge(['x-cloak' => true], escape: false)
             ->style(array_filter([
                 filled($minHeight) ? "--min-height: {$minHeight}" : null,
                 filled($maxHeight) ? "--max-height: {$maxHeight}" : null,
+                filled($stickyOffset) ? "--fi-fo-rich-editor-sticky-offset: {$stickyOffset}" : null,
             ]))
             ->class(['fi-fo-rich-editor']);
 
@@ -1575,7 +1654,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             activePanel: <?= Js::from($this->getActivePanel()) ?>,
                             canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
                             deleteCustomBlockButtonIconHtml: <?= Js::from($deleteIconHtml?->toHtml()) ?>,
+                            deleteCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.delete_label')) ?>,
                             editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
+                            editCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.edit_label')) ?>,
                             extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
                             floatingToolbars: <?= Js::from($floatingToolbars) ?>,
                             getMentionLabelsUsing: async (mentions) => {
@@ -1593,6 +1674,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                 )
                             },
                             hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            hasStickyToolbar: <?= Js::from($this->hasStickyToolbar()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,
                             label: <?= Js::from($label) ?>,
                             isLiveDebounced: <?= Js::from($this->isLiveDebounced()) ?>,
@@ -1624,7 +1706,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                       // a toolbar would promise keyboard behaviour that does not exist. The `aria-label`
                       // still names the group.?>
                 <div
-                    class="fi-fo-rich-editor-toolbar"
+                    class="fi-fo-rich-editor-toolbar <?= $this->hasStickyToolbar() ? 'fi-fo-rich-editor-sticky-toolbar' : '' ?>"
+                    x-ref="toolbar"
                     aria-label="<?= e(__('filament-forms::components.rich_editor.toolbar.label')) ?>"
                 >
                     <?php foreach ($toolbarButtons as $buttonGroup) { ?>
@@ -1684,7 +1767,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                     <div
                         x-show="isPanelActive()"
                         x-cloak
-                        class="fi-fo-rich-editor-panels"
+                        class="fi-fo-rich-editor-panels <?= $this->hasStickyPanels() ? 'fi-fo-rich-editor-sticky-panels' : '' ?>"
                     >
                         <div
                             x-show="isPanelActive('customBlocks')"
@@ -1697,27 +1780,54 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                 </p>
 
                                 <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn" aria-label="<?= e(__('filament-forms::components.rich_editor.close_panel')) ?>">
                                         <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON)?->toHtml() ?>
                                     </button>
                                 </div>
                             </div>
 
+                            <?php if ($hasSearchableCustomBlocks) { ?>
+                                <div class="fi-fo-rich-editor-custom-blocks-search">
+                                    <input
+                                        type="search"
+                                        x-model="customBlockSearch"
+                                        x-on:keydown.enter.prevent
+                                        aria-label="<?= e(__('filament-forms::components.rich_editor.custom_blocks.search_label')) ?>"
+                                        placeholder="<?= e(__('filament-forms::components.rich_editor.custom_blocks.search_placeholder')) ?>"
+                                        class="fi-fo-rich-editor-custom-blocks-search-input"
+                                    />
+                                </div>
+                            <?php } ?>
+
                             <div class="fi-fo-rich-editor-custom-blocks-ctn">
                                 <?php foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks) { ?>
+                                    <?php $groupSearchLabels = [$customBlockGroupLabel, ...$groupBlocks->map(static fn (string $block): string => $block::getLabel())->all()]; ?>
                                     <?php if (filled($customBlockGroupLabel)) { ?>
-                                        <h4 class="fi-fo-rich-editor-custom-blocks-group-header">
+                                        <h4
+                                            <?php if ($hasSearchableCustomBlocks) { ?>
+                                                x-show="matchesCustomBlockSearch(<?= Js::from($groupSearchLabels) ?>)"
+                                            <?php } ?>
+                                            class="fi-fo-rich-editor-custom-blocks-group-header"
+                                        >
                                             <?= e($customBlockGroupLabel) ?>
                                         </h4>
                                     <?php } ?>
 
-                                    <div class="fi-fo-rich-editor-custom-blocks-list">
+                                    <div
+                                        <?php if ($hasSearchableCustomBlocks) { ?>
+                                            x-show="matchesCustomBlockSearch(<?= Js::from($groupSearchLabels) ?>)"
+                                        <?php } ?>
+                                        class="fi-fo-rich-editor-custom-blocks-list <?= $this->hasCustomBlocksGrid() ? 'fi-fo-rich-editor-custom-blocks-grid' : '' ?>"
+                                    >
                                         <?php foreach ($groupBlocks as $block) { ?>
                                             <?php $blockId = $block::getId(); ?>
                                             <button
                                                 draggable="true"
                                                 type="button"
                                                 x-data="{ isLoading: false }"
+                                                <?php if ($hasSearchableCustomBlocks) { ?>
+                                                    x-show="matchesCustomBlockSearch(<?= Js::from([$customBlockGroupLabel, $block::getLabel()]) ?>)"
+                                                <?php } ?>
                                                 x-on:click="
                                                     isLoading = true
                                                     $wire.mountAction(
@@ -1731,11 +1841,26 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                                 x-on:run-rich-editor-commands.window="isLoading = false"
                                                 class="fi-fo-rich-editor-custom-block-btn"
                                             >
-                                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
-                                                <?= e($block::getLabel()) ?>
+                                                <?php if ($blockIcon = $block::getIcon()) { ?>
+                                                    <span x-show="! isLoading" class="fi-fo-rich-editor-custom-block-icon">
+                                                        <?= generate_icon_html($blockIcon)?->toHtml() ?>
+                                                    </span>
+                                                <?php } ?>
+                                                <?= generate_loading_indicator_html((new FilamentComponentAttributeBag(['x-show' => 'isLoading', 'x-cloak' => true])))->toHtml() ?>
+                                                <span><?= e($block::getLabel()) ?></span>
                                             </button>
                                         <?php } ?>
                                     </div>
+                                <?php } ?>
+                                <?php if ($hasSearchableCustomBlocks) { ?>
+                                    <p
+                                        x-show="! matchesCustomBlockSearch(<?= Js::from($customBlockSearchLabels) ?>)"
+                                        x-cloak
+                                        role="status"
+                                        class="fi-fo-rich-editor-custom-blocks-no-results"
+                                    >
+                                        <?= e(__('filament-forms::components.rich_editor.custom_blocks.no_search_results_message')) ?>
+                                    </p>
                                 <?php } ?>
                             </div>
                         </div>
@@ -1751,7 +1876,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                 </p>
 
                                 <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn" aria-label="<?= e(__('filament-forms::components.rich_editor.close_panel')) ?>">
                                         <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON)?->toHtml() ?>
                                     </button>
                                 </div>

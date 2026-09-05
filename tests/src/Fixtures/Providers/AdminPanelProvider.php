@@ -50,6 +50,7 @@ use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Fixtures\Pages\RadioTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\RichEditorSidebarBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
@@ -145,6 +146,7 @@ class AdminPanelProvider extends PanelProvider
                 RadioTest::class,
                 RepeaterTest::class,
                 RichEditorBrowserTest::class,
+                RichEditorSidebarBrowserTest::class,
                 SectionBrowserTest::class,
                 SelectTest::class,
                 Settings::class,
