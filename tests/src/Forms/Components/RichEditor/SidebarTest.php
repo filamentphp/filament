@@ -2,7 +2,6 @@
 
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Schema;
-use Filament\Tests\Fixtures\Forms\RichEditor\SidebarSectionBlock;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
