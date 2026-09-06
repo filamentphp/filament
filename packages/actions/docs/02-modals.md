@@ -691,6 +691,70 @@ Action::make('first')
     ])
 ```
 
+### Validating the data of a parent action
+
+`getRawData()` returns whatever the browser last sent, which nothing has validated. When a nested action acts on that data, use `getValidatedData()` instead, which validates it with the rules of the action it belongs to and returns the result:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('first')
+    ->schema([
+        TextInput::make('foo')
+            ->required(),
+    ])
+    ->action(function () {
+        // ...
+    })
+    ->extraModalFooterActions([
+        Action::make('second')
+            ->action(function (array $mountedActions) {
+                $data = $mountedActions[0]->getValidatedData();
+
+                // ...
+            }),
+    ])
+```
+
+If the parent action's schema is invalid, a `ValidationException` is thrown, and its modal reports the errors as it would for any other failed validation.
+
+<Aside variant="info">
+    This only validates. It deliberately does not run the hooks that write, such as saving relationships, so that reading a parent action's data never has a side effect.
+</Aside>
+
+### Filling in the data of a parent action
+
+A nested action can write into the schema data of the action it was mounted from, using `fillParentActionData()`. The parent action receives it once it is submitted, and validates it with its own rules, just as if the user had entered it themselves:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('createInvoice')
+    ->schema([
+        TextInput::make('title')
+            ->required(),
+        TextInput::make('reference')
+            ->required(),
+    ])
+    ->action(function (array $data) {
+        // `$data['reference']` is filled in.
+    })
+    ->extraModalFooterActions([
+        Action::make('generateReference')
+            ->schema([
+                TextInput::make('prefix')
+                    ->required(),
+            ])
+            ->action(function (Action $action, array $data) {
+                $action->fillParentActionData([
+                    'reference' => "{$data['prefix']}-123",
+                ]);
+            }),
+    ])
+```
+
 ## Closing the modal
 
 ### Closing the modal by clicking away

@@ -110,4 +110,20 @@ trait HasData
     {
         return $this->getRawData();
     }
+
+    /**
+     * Validates the action's schema and returns the validated data, without running the
+     * action itself. A nested action that consumes the data of the action it was mounted
+     * from uses this rather than `getRawData()`, which is whatever the browser last sent
+     * and has been validated by nothing.
+     *
+     * Throws a `ValidationException`, which the action's modal reports as it would for
+     * any other failed validation.
+     *
+     * @return array<string, mixed>
+     */
+    public function getValidatedData(): array
+    {
+        return $this->getLivewire()->getValidatedMountedActionData($this->getNestingIndex());
+    }
 }

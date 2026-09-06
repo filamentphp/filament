@@ -73,4 +73,24 @@ trait HasParentActions
     {
         return (bool) $this->evaluate($this->shouldOverlayParentActions);
     }
+
+    /**
+     * Writes into the schema data of the action that this one was mounted from, so that
+     * it receives the data once it is submitted. The action being written to validates
+     * it with its own rules, just as if the user had entered it themselves.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function fillParentActionData(array $data): static
+    {
+        $parentAction = $this->getParentAction();
+
+        if (! $parentAction) {
+            return $this;
+        }
+
+        $this->getLivewire()->fillMountedActionData($data, $parentAction->getNestingIndex());
+
+        return $this;
+    }
 }

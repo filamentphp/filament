@@ -15,6 +15,8 @@ class Actions extends Page
 {
     protected string $view = 'pages.actions';
 
+    public int $parentDataDehydrationCount = 0;
+
     protected function getHeaderActions(): array
     {
         return [
@@ -409,6 +411,29 @@ class Actions extends Page
                 ->requiresConfirmation()
                 ->unsavedChangesAlert()
                 ->action(static fn () => null),
+            Action::make('parentData')
+                ->schema([
+                    TextInput::make('payload')
+                        ->required()
+                        ->beforeStateDehydrated(function (): void {
+                            $this->parentDataDehydrationCount++;
+                        }),
+                    TextInput::make('reference')
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $this->dispatch('parent-data-called', data: $data);
+                })
+                ->extraModalFooterActions(fn (): array => [
+                    Action::make('readParentData')
+                        ->action(function (array $mountedActions): void {
+                            $this->dispatch('read-parent-data', data: $mountedActions[0]->getValidatedData());
+                        }),
+                    Action::make('fillParentData')
+                        ->action(function (Action $action): void {
+                            $action->fillParentActionData(['reference' => 'generated']);
+                        }),
+                ]),
         ];
     }
 

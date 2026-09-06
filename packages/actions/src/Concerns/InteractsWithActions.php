@@ -430,6 +430,66 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
         return $result;
     }
 
+    /**
+     * Validates a mounted action's schema and returns the validated data, without running
+     * the action. Used by a nested action that consumes the data of the action it was
+     * mounted from, which must not trust the validation of an earlier request.
+     *
+     * @return array<string, mixed>
+     */
+    public function getValidatedMountedActionData(?int $actionNestingIndex = null): array
+    {
+        $action = $this->getMountedAction($actionNestingIndex);
+
+        if (! $action) {
+            return [];
+        }
+
+        $data = [];
+
+        if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
+            foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
+                $data = [
+                    ...$data,
+                    // Hooks that write, such as saving relationships, must not run for a read.
+                    ...$actionComponentChildSchema->getState(shouldCallHooksBefore: false),
+                ];
+            }
+        }
+
+        $schema = $this->getMountedActionSchema(mountedAction: $action);
+
+        if (! $schema) {
+            return $data;
+        }
+
+        return [
+            ...$data,
+            ...$schema->getState(shouldCallHooksBefore: false),
+        ];
+    }
+
+    /**
+     * Writes into a mounted action's schema data, so that it receives the data once it is
+     * submitted. The action validates it with its own rules, just as if the user had
+     * entered it themselves.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function fillMountedActionData(array $data, ?int $actionNestingIndex = null): void
+    {
+        $actionNestingIndex ??= array_key_last($this->mountedActions ?? []);
+
+        if (! array_key_exists($actionNestingIndex, $this->mountedActions ?? [])) {
+            return;
+        }
+
+        $this->mountedActions[$actionNestingIndex]['data'] = [
+            ...($this->mountedActions[$actionNestingIndex]['data'] ?? []),
+            ...$data,
+        ];
+    }
+
     public function forceRender(): void
     {
         app(PartialsComponentHook::class)->forceRender($this);
