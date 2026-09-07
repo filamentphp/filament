@@ -232,6 +232,28 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
     }
 }
 
+if (! function_exists('Filament\Support\get_loading_indicator_target')) {
+    /**
+     * @internal
+     */
+    function get_loading_indicator_target(ComponentAttributeBag $attributes): mixed
+    {
+        if (($attributes::class !== ComponentAttributeBag::class) && ($attributes::class !== FilamentComponentAttributeBag::class)) {
+            return $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(static fn ($value): bool => filled($value))->first();
+        }
+
+        $target = null;
+
+        foreach ($attributes->getAttributes() as $name => $value) {
+            if ((str_starts_with($name, 'wire:target') || str_starts_with($name, 'wire:click')) && filled($value)) {
+                $target ??= $value;
+            }
+        }
+
+        return $target;
+    }
+}
+
 if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
     function generate_loading_indicator_html(?ComponentAttributeBag $attributes = null, ?IconSize $size = null): Htmlable
     {

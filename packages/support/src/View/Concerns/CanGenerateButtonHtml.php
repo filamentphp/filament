@@ -16,6 +16,7 @@ use Illuminate\View\ComponentAttributeBag;
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
+use function Filament\Support\get_loading_indicator_target;
 
 trait CanGenerateButtonHtml
 {
@@ -77,7 +78,7 @@ trait CanGenerateButtonHtml
             default => null,
         };
 
-        $wireTarget = $hasLoadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
+        $wireTarget = $hasLoadingIndicator ? get_loading_indicator_target($attributes) : null;
 
         $hasFormProcessingLoadingIndicator = $type === 'submit' && filled($form);
         $hasLoadingIndicator = filled($wireTarget) || $hasFormProcessingLoadingIndicator;

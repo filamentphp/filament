@@ -339,3 +339,61 @@ it('will generate a JSON search column expression for Postgres with explicit ->>
     expect($expression->getValue($grammar))
         ->toBe("lower(\"name\"->>'en'::text)");
 });
+
+it('preserves attribute order and filled-value semantics in `get_loading_indicator_target()`', function (array $values): void {
+    $attributes = new ComponentAttributeBag($values);
+    $expected = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(static fn ($value): bool => filled($value))->first();
+
+    expect(\Filament\Support\get_loading_indicator_target($attributes))->toBe($expected)
+        ->and($attributes->getAttributes())->toBe($values);
+})->with([
+    'missing' => [[]],
+    'unrelated' => [['class' => 'button', 'data-wire:target' => 'ignored']],
+    'target first' => [['wire:target' => 'save', 'wire:click' => 'delete']],
+    'click first' => [['wire:click' => 'delete', 'wire:target' => 'save']],
+    'modifiers' => [['wire:click.prevent' => 'save']],
+    'prefix without separator' => [['wire:targeted' => 'save']],
+    'blank first' => [['wire:target' => ' ', 'wire:click' => 'save']],
+    'null first' => [['wire:target' => null, 'wire:click' => 'save']],
+    'false first' => [['wire:target' => false, 'wire:click' => 'save']],
+    'zero' => [['wire:target' => 0, 'wire:click' => 'save']],
+    'zero string' => [['wire:target' => '0']],
+    'empty array' => [['wire:target' => [], 'wire:click' => 'save']],
+    'numeric attribute key' => [[0 => 'ignored', 'wire:click' => 'save']],
+    'encoded quotes' => [['wire:target' => 'save(&quot;value&quot;)']],
+]);
+
+it('reads updated attributes on subsequent `get_loading_indicator_target()` calls', function (): void {
+    $attributes = new ComponentAttributeBag(['wire:click' => 'before']);
+    expect(\Filament\Support\get_loading_indicator_target($attributes))->toBe('before');
+    $attributes->setAttributes(['wire:target' => 'after']);
+    expect(\Filament\Support\get_loading_indicator_target($attributes))->toBe('after');
+});
+
+it('preserves custom attribute bag filtering in `get_loading_indicator_target()`', function (): void {
+    $attributes = new class(['wire:click' => 'save']) extends ComponentAttributeBag
+    {
+        public function whereStartsWith($needles): static
+        {
+            return new self(['wire:target' => 'custom']);
+        }
+    };
+
+    expect(\Filament\Support\get_loading_indicator_target($attributes))->toBe('custom');
+});
+
+it('evaluates later matching values in `get_loading_indicator_target()`', function (): void {
+    $attributes = new ComponentAttributeBag([
+        'wire:target' => 'save',
+        'wire:click' => new class implements Stringable
+        {
+            public function __toString(): string
+            {
+                throw new RuntimeException('Invalid target');
+            }
+        },
+    ]);
+
+    expect(fn () => \Filament\Support\get_loading_indicator_target($attributes))
+        ->toThrow(RuntimeException::class, 'Invalid target');
+});

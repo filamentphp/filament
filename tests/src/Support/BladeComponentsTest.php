@@ -1,9 +1,13 @@
 <?php
 
+use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
 use Filament\Support\View\Concerns\CanGenerateButtonHtml;
+use Filament\Support\View\Concerns\CanGenerateDropdownItemHtml;
 use Filament\Support\View\Concerns\CanGenerateIconButtonHtml;
 use Filament\Support\View\Concerns\CanGenerateLinkHtml;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -15,7 +19,9 @@ function embeddedHtmlGenerator(): object
 {
     return new class
     {
+        use CanGenerateBadgeHtml;
         use CanGenerateButtonHtml;
+        use CanGenerateDropdownItemHtml;
         use CanGenerateIconButtonHtml;
         use CanGenerateLinkHtml;
     };
@@ -153,4 +159,48 @@ it('binds `aria-controls` on the collapse button when a collapsible section has 
 
     expect($html)
         ->toContain('x-bind:aria-controls');
+});
+
+it('preserves loading targets in shared embedded component rendering', function (string $method): void {
+    $generator = embeddedHtmlGenerator();
+    $attributes = new ComponentAttributeBag(['wire:target' => ' ', 'wire:click.prevent' => 'save', 'title' => 'Save']);
+    $html = $generator->{$method}($attributes, label: 'Save');
+
+    expect($html)->toContain('wire:target="save"')
+        ->toContain('fi-loading-indicator');
+
+    $withoutIndicator = $generator->{$method}($attributes, label: 'Save', hasLoadingIndicator: false);
+    expect($withoutIndicator)->not->toContain('fi-loading-indicator');
+})->with([
+    'button' => 'generateButtonHtml',
+    'badge' => 'generateBadgeHtml',
+    'icon button' => 'generateIconButtonHtml',
+    'link' => 'generateLinkHtml',
+    'dropdown item' => 'generateDropdownItemHtml',
+]);
+
+it('preserves submit-form loading fallback in shared embedded component rendering', function (string $method): void {
+    $html = embeddedHtmlGenerator()->{$method}(new ComponentAttributeBag, label: 'Save', type: 'submit', form: 'save');
+
+    expect($html)->toContain('fi-loading-indicator');
+})->with(['generateButtonHtml', 'generateBadgeHtml', 'generateIconButtonHtml', 'generateLinkHtml']);
+
+it('keeps form submission and loading controls accessible in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+    Artisan::call('filament:assets');
+
+    visit('/text-input-test')
+        ->type('[data-testid="text-input"] input', 'Ada Lovelace')
+        ->click('Save')
+        ->assertSee('Name')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/text-input-test')
+        ->inDarkMode()
+        ->type('[data-testid="text-input"] input', 'Ada Lovelace')
+        ->click('Save')
+        ->assertSee('Name')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
 });
