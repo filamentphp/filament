@@ -105,6 +105,7 @@ describe('browser interactions', function (): void {
                 // The header actions remain in the tab order.
                 ->assertScript('document.querySelector(\'[id="database-notifications"] .fi-modal-header .fi-ac button\').tabIndex', 0)
                 ->assertNoSmoke()
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
 
             // No notification has been marked as read by simply opening the slide-over.
@@ -114,6 +115,7 @@ describe('browser interactions', function (): void {
                 ->inDarkMode()
                 ->click('[data-testid="database-notifications-trigger"]')
                 ->assertVisible('[id="database-notifications"] .fi-modal-window')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
         });
     });

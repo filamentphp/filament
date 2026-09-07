@@ -1,6 +1,9 @@
 <?php
 
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -131,6 +134,247 @@ describe('`toEmbeddedHtml()` rendering', function (): void {
 
         expect($html)->toContain('fi-sc-has-gap');
     });
+
+    it('can use `deferLoading()` to render a loading indicator before its components', function (): void {
+        $livewire = Livewire::make();
+
+        $schema = Schema::make($livewire)
+            ->key('form')
+            ->components([
+                Text::make('Loaded content'),
+            ])
+            ->extraAttributes([
+                'data-testid' => 'deferred-schema',
+            ])
+            ->deferLoading();
+
+        expect($schema->toEmbeddedHtml())
+            ->toContain('fi-sc-loading')
+            ->toContain('data-testid="deferred-schema"')
+            ->toContain('wire:partial="schema.form"')
+            ->not->toContain('Loaded content');
+
+        $livewire->loadedDeferredSchemas['form'] = true;
+        $livewire->renderingInteractsWithSchemas();
+
+        expect($schema->toEmbeddedHtml())
+            ->not->toContain('fi-sc-loading')
+            ->toContain('Loaded content');
+    });
+
+    it('can conditionally use `deferLoading()`', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->components([
+                Text::make('Loaded content'),
+            ])
+            ->deferLoading(static fn (): bool => false);
+
+        expect($schema->isLoadingDeferred())->toBeFalse()
+            ->and($schema->toEmbeddedHtml())->toContain('Loaded content');
+    });
+
+    it('requires deferred child schemas to have a unique key', function (): void {
+        $group = Group::make()
+            ->schema(
+                Schema::make()
+                    ->components([
+                        Text::make('Loaded content'),
+                    ])
+                    ->deferLoading(),
+            );
+
+        $schema = Schema::make(Livewire::make())
+            ->key('form')
+            ->components([$group]);
+
+        $schema->getComponents();
+
+        expect($group->getChildSchema()->toEmbeddedHtml(...))
+            ->toThrow(LogicException::class, 'A deferred schema must have a unique key.');
+    });
+
+    it('requires sibling deferred schemas to have unique keys', function (): void {
+        $section = Section::make('Details')
+            ->key('details')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        Text::make('Content'),
+                    ])
+                    ->deferLoading(),
+            )
+            ->footer(
+                Schema::make()
+                    ->components([
+                        Text::make('Footer'),
+                    ])
+                    ->deferLoading(),
+            );
+
+        $schema = Schema::make(Livewire::make())
+            ->key('form')
+            ->components([$section]);
+
+        $schema->getComponents();
+        $section->getChildSchema(Section::FOOTER_SCHEMA_KEY)->toEmbeddedHtml();
+
+        expect($section->getChildSchema()->toEmbeddedHtml(...))
+            ->toThrow(LogicException::class, 'Multiple deferred schemas are using the key [form.details].');
+    });
+
+    it('requires reused deferred schemas to have unique keys', function (): void {
+        $childSchema = Schema::make()
+            ->components([
+                Text::make('Content'),
+            ])
+            ->deferLoading();
+
+        $firstGroup = Group::make()
+            ->key('details')
+            ->schema($childSchema);
+        $secondGroup = Group::make()
+            ->key('details')
+            ->schema($childSchema);
+
+        $schema = Schema::make(Livewire::make())
+            ->key('form')
+            ->components([
+                $firstGroup,
+                $secondGroup,
+            ]);
+
+        $schema->getComponents();
+        $firstGroup->getChildSchema()->toEmbeddedHtml();
+
+        expect($secondGroup->getChildSchema()->toEmbeddedHtml(...))
+            ->toThrow(LogicException::class, 'Multiple deferred schemas are using the key [form.details].');
+    });
+
+    it('can use explicit keys for sibling deferred schemas', function (): void {
+        $section = Section::make('Details')
+            ->key('details')
+            ->schema(
+                Schema::make()
+                    ->components([
+                        Text::make('Content'),
+                    ])
+                    ->deferLoading(),
+            )
+            ->footer(
+                Schema::make()
+                    ->key('footer')
+                    ->components([
+                        Text::make('Footer'),
+                    ])
+                    ->deferLoading(),
+            );
+
+        $schema = Schema::make(Livewire::make())
+            ->key('form')
+            ->components([$section]);
+
+        expect($schema->toEmbeddedHtml())
+            ->toContain('wire:partial="schema.form.details"')
+            ->toContain('wire:partial="schema.form.details.footer"');
+    });
+});
+
+it('can pass a `Schema` to a component `schema()`', function (): void {
+    $childSchema = Schema::make()
+        ->components([
+            Text::make('Child content'),
+        ]);
+
+    $group = Group::make()
+        ->key('group')
+        ->schema($childSchema);
+
+    Schema::make(Livewire::make())
+        ->key('form')
+        ->components([$group])
+        ->getComponents();
+
+    expect($group->getChildSchema())->toBe($childSchema);
+});
+
+it('clears cached default child schemas when using `getClone()`', function (): void {
+    $livewire = Livewire::make();
+    $rootSchema = Schema::make($livewire)
+        ->key('form');
+    $childSchema = Schema::make()
+        ->components([
+            Text::make('Child content'),
+        ]);
+    $group = Group::make()
+        ->schema($childSchema)
+        ->container($rootSchema);
+
+    $group->getChildSchemas();
+
+    $clonedGroup = $group
+        ->getClone()
+        ->container($rootSchema);
+    $clonedChildSchema = $clonedGroup->getChildSchema();
+
+    expect($clonedChildSchema)
+        ->not->toBe($childSchema)
+        ->toBe($clonedGroup->getChildSchemas()['default'])
+        ->and($clonedChildSchema->getParentComponent())
+        ->toBe($clonedGroup);
+});
+
+it('invalidates hierarchy caches when a supplied `Schema` is attached', function (): void {
+    $livewire = Livewire::make();
+    $field = TextInput::make('name')
+        ->key('name-field');
+    $childSchema = Schema::make($livewire)
+        ->key('content')
+        ->statePath('child')
+        ->components([$field]);
+
+    $childSchema->getComponents();
+
+    expect($childSchema->getKey())
+        ->toBe('content')
+        ->and($childSchema->getInheritanceKey())
+        ->toBe('content')
+        ->and($field->getStatePath())
+        ->toBe('child.name')
+        ->and($childSchema->getComponentByStatePath('child.name', withAbsoluteStatePath: true))
+        ->toBe($field)
+        ->and($childSchema->getFlatComponents(withAbsoluteKeys: true))
+        ->toHaveKey('content.name-field', $field)
+        ->and($field->getRootContainer())
+        ->toBe($childSchema);
+
+    $group = Group::make()
+        ->key('details')
+        ->statePath('section')
+        ->schema($childSchema);
+
+    $rootSchema = Schema::make($livewire)
+        ->key('form')
+        ->statePath('data')
+        ->components([$group]);
+
+    $rootSchema->getComponents();
+    $group->getChildSchema();
+
+    expect($childSchema->getKey())
+        ->toBe('form.details.content')
+        ->and($childSchema->getInheritanceKey())
+        ->toBe('form.details.content')
+        ->and($field->getStatePath())
+        ->toBe('data.section.child.name')
+        ->and($childSchema->getComponentByStatePath('child.name', withAbsoluteStatePath: true))
+        ->toBeNull()
+        ->and($childSchema->getComponentByStatePath('data.section.child.name', withAbsoluteStatePath: true))
+        ->toBe($field)
+        ->and($childSchema->getFlatComponents(withAbsoluteKeys: true))
+        ->not->toHaveKey('content.name-field')
+        ->toHaveKey('form.details.content.name-field', $field)
+        ->and($field->getRootContainer())
+        ->toBe($rootSchema);
 });
 
 describe('state path', function (): void {

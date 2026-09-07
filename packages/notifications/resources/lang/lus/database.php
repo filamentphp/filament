@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Hriattîrna',
 
+        'unread_label' => 'Hriattîrna chhiar loh',
+
         'actions' => [
 
             'clear' => [

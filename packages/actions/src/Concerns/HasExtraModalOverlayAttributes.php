@@ -19,6 +19,10 @@ trait HasExtraModalOverlayAttributes
     public function extraModalOverlayAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraModalOverlayAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraModalOverlayAttributes[] = $attributes;
         } else {
             $this->extraModalOverlayAttributes = [$attributes];

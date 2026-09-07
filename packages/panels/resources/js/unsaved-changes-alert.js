@@ -67,7 +67,9 @@ window.setUpUnsavedActionChangesAlert = ({
         }
 
         if (
-            ($wire.mountedActions?.length ?? 0) &&
+            ($wire.mountedActions ?? []).some(
+                (mountedAction) => mountedAction.hasUnsavedChangesAlert ?? true,
+            ) &&
             !$wire?.__instance?.effects?.redirect
         ) {
             event.preventDefault()

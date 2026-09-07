@@ -13,11 +13,15 @@ use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Component as LivewireComponent;
+use LogicException;
+
+use function Filament\Support\generate_loading_indicator_html;
 
 class Schema extends ViewComponent implements HasEmbeddedView
 {
@@ -49,6 +53,8 @@ class Schema extends ViewComponent implements HasEmbeddedView
     protected string $evaluationIdentifier = 'schema';
 
     protected string $viewIdentifier = 'schema';
+
+    protected bool | Closure $isLoadingDeferred = false;
 
     /**
      * @param  (LivewireComponent & HasSchemas) | null  $livewire
@@ -143,6 +149,18 @@ class Schema extends ViewComponent implements HasEmbeddedView
             ->alignBetween();
     }
 
+    public function deferLoading(bool | Closure $condition = true): static
+    {
+        $this->isLoadingDeferred = $condition;
+
+        return $this;
+    }
+
+    public function isLoadingDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isLoadingDeferred);
+    }
+
     public function toEmbeddedHtml(): string
     {
         return Component::withVisibilityCache(fn (): string => $this->renderEmbeddedHtml());
@@ -152,6 +170,12 @@ class Schema extends ViewComponent implements HasEmbeddedView
     {
         if ($this->isDirectlyHidden()) {
             return '';
+        }
+
+        $isLoadingDeferred = $this->isLoadingDeferred();
+
+        if ($isLoadingDeferred && (! $this->isDeferredSchemaLoaded())) {
+            return $this->renderDeferredLoadingHtml();
         }
 
         $hasVisibleComponents = false;
@@ -183,7 +207,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                 fn (ComponentAttributeBag $attributes) => $attributes->grid($this->getColumns()),
             )
             ->merge([
-                'wire:partial' => $this->shouldPartiallyRender() ? ('schema.' . $this->getKey()) : null,
+                'wire:partial' => ($this->shouldPartiallyRender() || $isLoadingDeferred) ? ('schema.' . $this->getKey()) : null,
                 'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($this->getKey()) . ' })' : null,
                 'x-on:form-validation-error.window' => $isRoot ? 'handleFormValidationError' : null,
                 'x-on:reset-schema-component-state.window' => $isRoot ? 'handleClientSideStateReset' : null,
@@ -212,6 +236,52 @@ class Schema extends ViewComponent implements HasEmbeddedView
                     <?= $schemaComponent->toHtml() ?>
                 <?php } ?>
             <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
+    }
+
+    /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     */
+    protected function isDeferredSchemaLoaded(): bool
+    {
+        $livewire = $this->getLivewire();
+
+        if (! method_exists($livewire, 'isDeferredSchemaLoaded')) {
+            throw new LogicException('Deferred schema loading requires the Livewire component to use the [InteractsWithSchemas] trait.');
+        }
+
+        return $livewire->isDeferredSchemaLoaded($this);
+    }
+
+    /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     */
+    protected function renderDeferredLoadingHtml(): string
+    {
+        $schemaKey = $this->getKey();
+
+        $attributes = $this->getExtraAttributeBag()
+            ->merge([
+                'wire:partial' => "schema.{$schemaKey}",
+                'x-data' => 'filamentSchema({ livewireId: ' . Js::from($this->getLivewire()->getId()) . ', schemaKey: ' . Js::from($schemaKey) . ', isLoadingDeferred: true })',
+                'role' => 'status',
+                'aria-busy' => 'true',
+            ], escape: false)
+            ->class([
+                'fi-sc',
+                'fi-sc-loading',
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?= generate_loading_indicator_html(size: IconSize::Large)->toHtml() ?>
+
+            <span class="fi-sr-only">
+                <?= e(__('filament::components/loading-section.label')) ?>
+            </span>
         </div>
 
         <?php return ob_get_clean();

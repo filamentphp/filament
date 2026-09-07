@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
@@ -14,6 +15,70 @@ it('belongs to container', function (): void {
 
     expect($component)
         ->getContainer()->toBe($schema);
+});
+
+it('invalidates hierarchy caches when attached to a different container', function (): void {
+    $firstSchema = Schema::make(Livewire::make())
+        ->key('first')
+        ->statePath('firstData');
+    $secondSchema = Schema::make(Livewire::make())
+        ->key('second')
+        ->statePath('secondData');
+    $component = (new Component)
+        ->key('field')
+        ->statePath('name')
+        ->container($firstSchema);
+
+    expect($component->getKey())
+        ->toBe('first.field')
+        ->and($component->getInheritanceKey())
+        ->toBe('first.field')
+        ->and($component->getStatePath())
+        ->toBe('firstData.name')
+        ->and($component->getRootContainer())
+        ->toBe($firstSchema);
+
+    $component->container($secondSchema);
+
+    expect($component->getKey())
+        ->toBe('second.field')
+        ->and($component->getInheritanceKey())
+        ->toBe('second.field')
+        ->and($component->getStatePath())
+        ->toBe('secondData.name')
+        ->and($component->getRootContainer())
+        ->toBe($secondSchema);
+});
+
+it('invalidates cached repeater ancestry when an ancestor is attached to a different container', function (): void {
+    $livewire = Livewire::make();
+    $rootSchema = Schema::make($livewire);
+    $firstRepeater = Repeater::make('first')
+        ->container($rootSchema);
+    $secondRepeater = Repeater::make('second')
+        ->container($rootSchema);
+    $firstRepeaterItem = Schema::make($livewire)
+        ->parentComponent($firstRepeater);
+    $secondRepeaterItem = Schema::make($livewire)
+        ->parentComponent($secondRepeater);
+    $childComponent = new Component;
+    $parentComponent = (new Component)
+        ->container($firstRepeaterItem)
+        ->childComponents([$childComponent]);
+
+    $parentComponent->getChildSchemas()['default']->getComponents();
+
+    expect($childComponent->getParentRepeaterItem())
+        ->toBe($firstRepeaterItem)
+        ->and($childComponent->getParentRepeater())
+        ->toBe($firstRepeater);
+
+    $parentComponent->container($secondRepeaterItem);
+
+    expect($childComponent->getParentRepeaterItem())
+        ->toBe($secondRepeaterItem)
+        ->and($childComponent->getParentRepeater())
+        ->toBe($secondRepeater);
 });
 
 it('can access container\'s Livewire component', function (): void {
@@ -138,6 +203,23 @@ describe('extra attributes', function (): void {
             ->extraAttributes(static fn (): array => ['data-dynamic' => 'yes']);
 
         expect($component->getExtraAttributes())->toBe(['data-dynamic' => 'yes']);
+    });
+
+    it('does not merge the same `Closure` into `extraAttributes()` more than once', function (): void {
+        $evaluationCount = 0;
+        $attributes = static function () use (&$evaluationCount): array {
+            $evaluationCount++;
+
+            return ['class' => 'custom-content'];
+        };
+        $component = (new Component)
+            ->extraAttributes($attributes, merge: true)
+            ->extraAttributes($attributes, merge: true);
+
+        expect($component->getExtraAttributes())
+            ->toBe(['class' => 'custom-content'])
+            ->and($evaluationCount)
+            ->toBe(1);
     });
 });
 

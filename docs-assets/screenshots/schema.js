@@ -1749,7 +1749,7 @@ export default {
                 if (dropdown && container) {
                     const containerRect = container.getBoundingClientRect()
                     const dropdownRect = dropdown.getBoundingClientRect()
-                    container.style.paddingBottom = (dropdownRect.bottom - containerRect.bottom + 64) + 'px'
+                    container.style.paddingBottom = (dropdownRect.bottom - containerRect.bottom + 96) + 'px'
                 }
             })
             await new Promise((resolve) => setTimeout(resolve, 100))

@@ -4,6 +4,7 @@ namespace Filament\Support\Commands\Concerns;
 
 use Illuminate\Support\Arr;
 
+use function Filament\Support\is_path_within_vendor_directory;
 use function Laravel\Prompts\search;
 
 trait HasResourcesLocation
@@ -36,7 +37,7 @@ trait HasResourcesLocation
         $namespaces = $this->panel->getResourceNamespaces();
 
         foreach ($directories as $index => $directory) {
-            if (str($directory)->startsWith(base_path('vendor'))) {
+            if (is_path_within_vendor_directory($directory, base_path())) {
                 unset($directories[$index]);
                 unset($namespaces[$index]);
             }

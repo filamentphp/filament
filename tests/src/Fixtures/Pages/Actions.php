@@ -363,6 +363,52 @@ class Actions extends Page
                 ->action(function (): void {
                     $this->dispatch('enforcement-authorized-called');
                 }),
+            Action::make('disabledSchema')
+                ->schema([
+                    TextInput::make('payload'),
+                ])
+                ->disabledSchema()
+                ->action(function (): void {
+                    $this->dispatch('disabled-schema-called');
+                }),
+            Action::make('withoutUnsavedChangesAlert')
+                ->schema([
+                    TextInput::make('payload'),
+                ])
+                ->unsavedChangesAlert(false)
+                ->action(function (): void {
+                    $this->dispatch('without-unsaved-changes-alert-called');
+                }),
+            Action::make('mountsChildDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert(false)
+                ->registerModalActions([
+                    Action::make('childMountedDuringParentMount')
+                        ->requiresConfirmation()
+                        ->unsavedChangesAlert()
+                        ->action(static fn () => null),
+                ])
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childMountedDuringParentMount');
+                })
+                ->action(static fn () => null),
+            Action::make('unmountsDuringMount')
+                ->requiresConfirmation()
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->unmountAction();
+                })
+                ->action(static fn () => null),
+            Action::make('replacesDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert(false)
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->replaceMountedAction('replacementMountedDuringMount');
+                })
+                ->action(static fn () => null),
+            Action::make('replacementMountedDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert()
+                ->action(static fn () => null),
         ];
     }
 

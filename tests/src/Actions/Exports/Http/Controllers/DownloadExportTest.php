@@ -1,10 +1,16 @@
 <?php
 
+use Filament\Actions\Exports\Downloaders\Contracts\Downloader;
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -29,12 +35,65 @@ class DenyExportViewPolicy
     }
 }
 
-function createExportForOwner(User $owner): Export
+class TestDownloadExportExporter extends Exporter
+{
+    public static function getColumns(): array
+    {
+        return [
+            ExportColumn::make('name'),
+        ];
+    }
+
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        return 'Export completed';
+    }
+}
+
+class TestCustomDownloader implements Downloader
+{
+    public function __construct(
+        protected ExportFormatInterface $format,
+    ) {}
+
+    public function __invoke(Export $export): RedirectResponse
+    {
+        $extension = match ($this->format) {
+            ExportFormat::Csv => 'csv',
+            ExportFormat::Xlsx => 'xlsx',
+            default => 'unknown',
+        };
+
+        return redirect()->away("https://example.com/export.{$extension}");
+    }
+}
+
+class TestCustomDownloaderExporter extends Exporter
+{
+    public static function getColumns(): array
+    {
+        return [
+            ExportColumn::make('name'),
+        ];
+    }
+
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        return 'Export completed';
+    }
+
+    public static function getDownloader(ExportFormatInterface $format): Downloader
+    {
+        return app(TestCustomDownloader::class, ['format' => $format]);
+    }
+}
+
+function createExportForOwner(User $owner, string $exporter = TestDownloadExportExporter::class): Export
 {
     return Export::create([
         'file_disk' => 'local',
         'file_name' => 'export',
-        'exporter' => 'App\\Filament\\Exports\\TestExporter',
+        'exporter' => $exporter,
         'total_rows' => 1,
         'successful_rows' => 1,
         'user_id' => $owner->getKey(),
@@ -130,4 +189,31 @@ it('aborts with `404` when the requested format is unknown', function (): void {
     $this->actingAs($owner)
         ->get(signedExportDownloadUrl($export, format: 'unknown'))
         ->assertStatus(404);
+});
+
+it('uses the exporter\'s `getDownloader()` override for the requested format', function (string $format): void {
+    $owner = User::factory()->create();
+
+    $export = createExportForOwner($owner, exporter: TestCustomDownloaderExporter::class);
+
+    $this->actingAs($owner)
+        ->get(signedExportDownloadUrl($export, format: $format))
+        ->assertRedirect("https://example.com/export.{$format}");
+})->with([
+    'CSV' => 'csv',
+    'XLSX' => 'xlsx',
+]);
+
+it('uses the CSV format downloader when the stored `Exporter` class does not exist', function (): void {
+    $owner = User::factory()->create();
+
+    $export = createExportForOwner($owner, exporter: 'App\\Filament\\Exports\\MissingExporter');
+
+    fakeExportFile($export);
+
+    $response = $this->actingAs($owner)
+        ->get(signedExportDownloadUrl($export))
+        ->assertStatus(200);
+
+    expect($response->streamedContent())->toContain('id,name');
 });

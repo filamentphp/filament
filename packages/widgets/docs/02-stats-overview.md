@@ -127,6 +127,33 @@ protected function getStats(): array
 
 In this example, we are deliberately escaping the `$` in `$dispatch()` since this needs to be passed directly to the HTML, it is not a PHP variable.
 
+## Setting a placeholder for a stat
+
+Sometimes a stat's value may not be available — for example, when a dashboard has nothing to show for a specific period. You can use `placeholder()` to define what should be displayed instead when the value is blank:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+Stat::make('Unique views', $uniqueViews)
+    ->placeholder('-')
+```
+
+A value is considered blank according to Laravel's `blank()` helper. For example, `null` and empty strings are blank, while `0` and `'0'` are not.
+
+### Setting a default placeholder globally
+
+If you'd like every stat in your app to fall back to the same placeholder by default, you can use the static `configureUsing()` method in a service provider's `boot()` method:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+Stat::configureUsing(function (Stat $component): void {
+    $component->placeholder('-');
+});
+```
+
+Individual stats can still override this by calling `placeholder()` themselves.
+
 ## Adding a chart to a stat
 
 You may also add or chain a `chart()` to each stat to provide historical data. The `chart()` method accepts an array of data points to plot:

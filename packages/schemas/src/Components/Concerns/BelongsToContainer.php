@@ -14,9 +14,35 @@ trait BelongsToContainer
 
     public function container(Schema $schema): static
     {
+        if (! isset($this->container)) {
+            $this->container = $schema;
+
+            return $this;
+        }
+
+        if ($this->container === $schema) {
+            return $this;
+        }
+
         $this->container = $schema;
+        $this->flushCachedHierarchy();
 
         return $this;
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function flushCachedHierarchy(): void
+    {
+        $this->flushCachedAbsoluteKey();
+        $this->flushCachedAbsoluteInheritanceKey();
+        $this->flushCachedAbsoluteStatePath();
+        $this->flushCachedParentRepeaterItem();
+        /** @phpstan-ignore unset.possiblyHookedProperty */
+        unset($this->rootContainer);
+
+        $this->flushCachedChildSchemaHierarchies();
     }
 
     public function getContainer(): Schema

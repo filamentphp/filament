@@ -22,6 +22,10 @@ trait HasExtraHeaderAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraHeaderAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraHeaderAttributes[] = $attributes;
         } else {
             $this->extraHeaderAttributes = [$attributes];

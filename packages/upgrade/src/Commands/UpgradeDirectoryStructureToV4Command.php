@@ -2,7 +2,7 @@
 
 namespace Filament\Upgrade\Commands;
 
-use Exception;
+use Composer\InstalledVersions;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -21,6 +21,8 @@ class UpgradeDirectoryStructureToV4Command extends Command
     protected $name = 'filament:upgrade-directory-structure-to-v4';
 
     protected string $phpactorPath;
+
+    protected ?string $composerVendorDirectory = null;
 
     /**
      * @var array<string, array<string, string>>
@@ -70,7 +72,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
         if (! $isDryRun) {
             $this->downloadPhpactor();
         } else {
-            $this->phpactorPath = base_path('vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpactor.phar');
+            $this->phpactorPath = $this->getComposerVendorDirectory() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpactor.phar';
         }
 
         $panels = Filament::getPanels();
@@ -111,7 +113,7 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
     protected function downloadPhpactor(): void
     {
-        $this->phpactorPath = base_path('vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpactor.phar');
+        $this->phpactorPath = $this->getComposerVendorDirectory() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpactor.phar';
 
         if (File::exists($this->phpactorPath)) {
             $this->components->info('Phpactor already exists at: ' . $this->formatPath($this->phpactorPath));
@@ -120,9 +122,12 @@ class UpgradeDirectoryStructureToV4Command extends Command
         }
 
         $this->components->task('Downloading phpactor', function () {
-            $process = Process::command(
-                'curl -Lo ' . $this->phpactorPath . ' https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar'
-            );
+            $process = Process::command([
+                'curl',
+                '-Lo',
+                $this->phpactorPath,
+                'https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar',
+            ]);
             $processOutput = $process->run();
 
             if (! $processOutput->successful()) {
@@ -258,7 +263,30 @@ class UpgradeDirectoryStructureToV4Command extends Command
 
     protected function isVendorPath(string $path): bool
     {
-        return str_contains($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR);
+        $path = str_replace('\\', '/', $path);
+        $isCaseInsensitivePath = preg_match('/^(?:[a-z]:\/|\/\/)/i', $path) === 1;
+        $vendorDirectoryPattern = $isCaseInsensitivePath
+            ? '~(?:^|/)vendor(?:/|$)~i'
+            : '~(?:^|/)vendor(?:/|$)~';
+
+        if (preg_match($vendorDirectoryPattern, $path) === 1) {
+            return true;
+        }
+
+        $vendorDirectory = rtrim(str_replace('\\', '/', $this->getComposerVendorDirectory()), '/');
+        $vendorDirectoryPrefix = $vendorDirectory . '/';
+        $isCaseInsensitive = preg_match('/^(?:[a-z]:\/|\/\/)/i', $vendorDirectoryPrefix) === 1;
+
+        if ($isCaseInsensitive) {
+            return (strcasecmp($path, $vendorDirectory) === 0) || (strncasecmp($path, $vendorDirectoryPrefix, strlen($vendorDirectoryPrefix)) === 0);
+        }
+
+        return ($path === $vendorDirectory) || str_starts_with($path, $vendorDirectoryPrefix);
+    }
+
+    protected function getComposerVendorDirectory(): string
+    {
+        return $this->composerVendorDirectory ??= dirname((new ReflectionClass(InstalledVersions::class))->getFileName(), 2);
     }
 
     /**
@@ -327,34 +355,38 @@ class UpgradeDirectoryStructureToV4Command extends Command
             return;
         }
 
-        try {
-            $process = Process::command(
-                "php {$this->phpactorPath} class:move {$sourcePath} {$destinationPath}"
-            );
-            $process->timeout(60);
-            $processOutput = $process->run();
+        $process = Process::command([
+            PHP_BINARY,
+            $this->phpactorPath,
+            'class:move',
+            $sourcePath,
+            $destinationPath,
+            '--config-extra',
+            json_encode([
+                'composer.autoloader_path' => $this->getComposerVendorDirectory() . DIRECTORY_SEPARATOR . 'autoload.php',
+            ], JSON_THROW_ON_ERROR),
+        ]);
+        $process->timeout(60);
+        $processOutput = $process->run();
 
-            if ($processOutput->successful()) {
-                if ($this->currentResource && (! isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
-                    $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
-                    $this->movedFiles[$this->currentResource] = [];
-                } elseif (! $this->currentResource && (! isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
-                    $this->line('  <fg=yellow;options=bold>Other</>');
-                    $this->movedFiles['Other'] = [];
-                }
+        if (! $processOutput->successful()) {
+            throw new RuntimeException('Failed to move class: ' . $processOutput->errorOutput());
+        }
 
-                $this->line('    • ' . $this->formatPath($sourcePath) . ' → ' . $this->formatPath($destinationPath));
+        if ($this->currentResource && (! isset($this->movedFiles[$this->currentResource]) || empty($this->movedFiles[$this->currentResource]))) {
+            $this->line('  <fg=yellow;options=bold>' . $this->currentResource . '</>');
+            $this->movedFiles[$this->currentResource] = [];
+        } elseif (! $this->currentResource && (! isset($this->movedFiles['Other']) || empty($this->movedFiles['Other']))) {
+            $this->line('  <fg=yellow;options=bold>Other</>');
+            $this->movedFiles['Other'] = [];
+        }
 
-                if ($this->currentResource) {
-                    $this->movedFiles[$this->currentResource][$sourcePath] = $destinationPath;
-                } else {
-                    $this->movedFiles['Other'][$sourcePath] = $destinationPath;
-                }
-            } else {
-                $this->components->error('Failed to move class: ' . $processOutput->errorOutput());
-            }
-        } catch (Exception $exception) {
-            $this->components->error('Exception occurred while moving class: ' . $exception->getMessage());
+        $this->line('    • ' . $this->formatPath($sourcePath) . ' → ' . $this->formatPath($destinationPath));
+
+        if ($this->currentResource) {
+            $this->movedFiles[$this->currentResource][$sourcePath] = $destinationPath;
+        } else {
+            $this->movedFiles['Other'][$sourcePath] = $destinationPath;
         }
     }
 }

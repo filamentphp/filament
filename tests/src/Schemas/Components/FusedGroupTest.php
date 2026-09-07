@@ -80,6 +80,18 @@ describe('required detection', function (): void {
     });
 });
 
+it('uses the plain field wrapper for a supplied `Schema`', function (): void {
+    $childSchema = Schema::make();
+
+    $group = FusedGroup::make()
+        ->schema($childSchema)
+        ->container(Schema::make(Livewire::make()));
+
+    expect($group->getChildSchema())
+        ->toBe($childSchema)
+        ->getCustomFieldWrapperView()->toBe('filament-forms::plain-field-wrapper');
+});
+
 describe('rendering', function (): void {
     it('can render', function (): void {
         livewire(RenderFusedGroup::class)->assertSuccessful();

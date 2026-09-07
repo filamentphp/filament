@@ -22,6 +22,10 @@ trait HasExtraCellAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraCellAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraCellAttributes[] = $attributes;
         } else {
             $this->extraCellAttributes = [$attributes];

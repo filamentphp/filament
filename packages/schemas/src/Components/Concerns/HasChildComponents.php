@@ -48,9 +48,9 @@ trait HasChildComponents
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Closure  $components
      */
-    public function schema(array | Closure $components): static
+    public function schema(array | Schema | Closure $components): static
     {
         $this->childComponents($components);
 
@@ -144,7 +144,7 @@ trait HasChildComponents
     protected function makeChildSchema(string $key): Schema
     {
         return Schema::make($this->getLivewire())
-            ->parentComponent($this);
+            ->parentComponent($this, shouldFlushCachedHierarchy: false);
     }
 
     protected function configureChildSchema(Schema $schema, string $key): Schema
@@ -229,6 +229,36 @@ trait HasChildComponents
     }
 
     /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     */
+    protected function flushCachedChildSchemaHierarchies(): void
+    {
+        $childSchemas = [
+            ...($this->cachedDefaultChildSchemas ?? []),
+            ...$this->cachedChildSchemas,
+        ];
+
+        foreach ($this->childComponents as $childComponents) {
+            if ($childComponents instanceof Schema) {
+                $childSchemas[] = $childComponents;
+            }
+        }
+
+        $flushedChildSchemas = [];
+
+        foreach ($childSchemas as $childSchema) {
+            $childSchemaId = spl_object_id($childSchema);
+
+            if (isset($flushedChildSchemas[$childSchemaId])) {
+                continue;
+            }
+
+            $childSchema->flushCachedHierarchy();
+            $flushedChildSchemas[$childSchemaId] = true;
+        }
+    }
+
+    /**
      * @deprecated Use `clearCachedChildSchemas()` instead.
      */
     public function clearCachedDefaultChildSchemas(): void
@@ -238,6 +268,7 @@ trait HasChildComponents
 
     protected function cloneChildComponents(): static
     {
+        $this->cachedDefaultChildSchemas = null;
         $this->cachedChildSchemas = [];
 
         foreach ($this->childComponents as $key => $childComponents) {

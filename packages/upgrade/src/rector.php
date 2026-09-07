@@ -1,5 +1,6 @@
 <?php
 
+use Composer\InstalledVersions;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -26,6 +27,10 @@ use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Transform\Rector\Class_\AddInterfaceByTraitRector;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->skip([
+        dirname((new ReflectionClass(InstalledVersions::class))->getFileName(), 2),
+    ]);
+
     $rectorConfig->importNames();
     $rectorConfig->importShortClasses();
 

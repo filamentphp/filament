@@ -4,6 +4,7 @@ namespace Filament\Auth\MultiFactor\Pages;
 
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
+use Filament\Auth\MultiFactor\MultiFactorChallenge;
 use Filament\Facades\Filament;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Actions;
@@ -90,14 +91,6 @@ class SetUpRequiredMultiFactorAuthentication extends SimplePage
 
     public function isEnabled(): bool
     {
-        $user = Filament::auth()->user();
-
-        foreach (Filament::getMultiFactorAuthenticationProviders() as $provider) {
-            if ($provider->isEnabled($user)) {
-                return true;
-            }
-        }
-
-        return false;
+        return MultiFactorChallenge::make()->hasEnabledProviders(Filament::auth()->user());
     }
 }

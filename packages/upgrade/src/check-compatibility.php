@@ -1,5 +1,6 @@
 <?php
 
+use Composer\InstalledVersions;
 use Laravel\Prompts\ConfirmPrompt;
 use Laravel\Prompts\Prompt;
 
@@ -82,7 +83,11 @@ $plugins = array_filter($allPackages, function ($plugin) {
     }
 
     try {
-        $composerPath = "vendor/{$plugin}/composer.json";
+        if (! InstalledVersions::isInstalled($plugin)) {
+            return false;
+        }
+
+        $composerPath = (string) InstalledVersions::getInstallPath($plugin) . '/composer.json';
 
         if (! file_exists($composerPath)) {
             return false;
@@ -204,7 +209,7 @@ foreach ($plugins as $plugin) {
         if ($compatibility === null) {
             $stableEmpty = empty($GLOBALS['FILAMENT_UPGRADE_PACKAGIST']['versions'][$plugin]['stable'] ?? []);
             $devEmpty = empty($GLOBALS['FILAMENT_UPGRADE_PACKAGIST']['versions'][$plugin]['dev'] ?? []);
-            $isInstalledLocally = file_exists("vendor/{$plugin}/composer.json");
+            $isInstalledLocally = InstalledVersions::isInstalled($plugin) && file_exists((string) InstalledVersions::getInstallPath($plugin) . '/composer.json');
 
             if ($stableEmpty && $devEmpty && $isInstalledLocally) {
                 // Mark as compatible (unknown) to avoid blocking; we cache this decision.

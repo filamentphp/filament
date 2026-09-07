@@ -300,6 +300,40 @@ describe('`getItems()` memoization', function (): void {
             ->and(array_values($items)[0])->toBeInstanceOf(Schema::class);
     });
 
+    it('clones components from a warmed closure-backed `Schema` for each item', function (): void {
+        $livewire = Livewire::make();
+        $itemSchema = Schema::make($livewire)
+            ->components(static fn (): array => [
+                TextInput::make('name'),
+            ]);
+
+        $itemSchema->getComponents();
+
+        $repeater = Repeater::make('items')
+            ->schema($itemSchema)
+            ->default([
+                ['name' => 'First'],
+                ['name' => 'Second'],
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([$repeater])
+            ->fill();
+
+        [$firstItem, $secondItem] = array_values($repeater->getItems());
+        $firstComponent = $firstItem->getComponents()[0];
+        $secondComponent = $secondItem->getComponents()[0];
+
+        expect($firstComponent)
+            ->not->toBe($secondComponent)
+            ->getContainer()->toBe($firstItem)
+            ->getParentRepeaterItem()->toBe($firstItem)
+            ->getStatePath()->not->toBe($secondComponent->getStatePath())
+            ->and($secondComponent->getContainer())->toBe($secondItem)
+            ->and($secondComponent->getParentRepeaterItem())->toBe($secondItem);
+    });
+
     it('memoizes `getItems()` so repeated calls return the same instances', function (): void {
         $repeater = Repeater::make('items')
             ->schema([

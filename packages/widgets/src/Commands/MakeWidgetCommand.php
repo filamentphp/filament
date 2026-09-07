@@ -31,6 +31,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 use function Filament\Support\discover_app_classes;
+use function Filament\Support\is_path_within_vendor_directory;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
@@ -323,7 +324,7 @@ class MakeWidgetCommand extends Command
         $namespaces = $this->panel->getWidgetNamespaces();
 
         foreach ($directories as $index => $directory) {
-            if (str($directory)->startsWith(base_path('vendor'))) {
+            if (is_path_within_vendor_directory($directory, base_path())) {
                 unset($directories[$index]);
                 unset($namespaces[$index]);
             }

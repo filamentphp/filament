@@ -1,18 +1,20 @@
 <?php
 
+use Filament\Actions\Imports\Downloaders\Contracts\Downloader;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-// A real importer so the controller can resolve `$import->importer` (e.g. for the
-// `shouldPreventFormulaInjection()` static call) instead of a non-existent class string.
+// A real importer so the controller can resolve `$import->importer` for the
+// `getFailedRowsDownloader()` static call instead of a non-existent class string.
 class DownloadFailureTestImporter extends Importer
 {
     public static function getColumns(): array
@@ -23,6 +25,32 @@ class DownloadFailureTestImporter extends Importer
     public static function getCompletedNotificationBody(Import $import): string
     {
         return '';
+    }
+}
+
+class TestCustomImportFailureDownloader implements Downloader
+{
+    public function __invoke(Import $import): RedirectResponse
+    {
+        return redirect()->away('https://example.com/import-failures.csv');
+    }
+}
+
+class TestCustomDownloadFailureImporter extends Importer
+{
+    public static function getColumns(): array
+    {
+        return [];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        return '';
+    }
+
+    public static function getFailedRowsDownloader(): Downloader
+    {
+        return app(TestCustomImportFailureDownloader::class);
     }
 }
 
@@ -44,12 +72,12 @@ class DenyImportViewPolicy
     }
 }
 
-function createImportForOwner(User $owner): Import
+function createImportForOwner(User $owner, string $importer = DownloadFailureTestImporter::class): Import
 {
     return Import::create([
         'file_name' => 'import.csv',
         'file_path' => 'imports/import.csv',
-        'importer' => DownloadFailureTestImporter::class,
+        'importer' => $importer,
         'total_rows' => 1,
         'successful_rows' => 0,
         'user_id' => $owner->getKey(),
@@ -116,4 +144,14 @@ it('aborts with `403` when a `view` policy denies the user', function (): void {
     $this->actingAs($owner)
         ->get(signedImportFailureDownloadUrl($import))
         ->assertStatus(403);
+});
+
+it('uses the importer\'s `getFailedRowsDownloader()` override', function (): void {
+    $owner = User::factory()->create();
+
+    $import = createImportForOwner($owner, importer: TestCustomDownloadFailureImporter::class);
+
+    $this->actingAs($owner)
+        ->get(signedImportFailureDownloadUrl($import))
+        ->assertRedirect('https://example.com/import-failures.csv');
 });
