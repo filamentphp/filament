@@ -137,7 +137,7 @@ export default function fileUploadFormComponent({
                     if (!this.pond) {
                         this.init()
                     } else {
-                        document.dispatchEvent(new Event('visibilitychange'))
+                        requestAnimationFrame(() => document.dispatchEvent(new Event('visibilitychange')))
                     }
                 }
 
