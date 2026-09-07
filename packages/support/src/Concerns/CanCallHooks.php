@@ -10,15 +10,19 @@ trait CanCallHooks
             $this->{$hook}();
         }
 
-        $calledTraitHooks = [];
+        /** @var array<class-string, array<string>> $traitHookSuffixes */
+        static $traitHookSuffixes = [];
 
-        foreach (class_uses_recursive($this) as $trait) {
-            $method = $hook . class_basename($trait);
+        $traitHookSuffixes[static::class] ??= array_unique(array_map(
+            class_basename(...),
+            class_uses_recursive(static::class),
+        ));
 
-            if (method_exists($this, $method) && (! in_array($method, $calledTraitHooks, strict: true))) {
+        foreach ($traitHookSuffixes[static::class] as $suffix) {
+            $method = $hook . $suffix;
+
+            if (method_exists($this, $method)) {
                 $this->{$method}();
-
-                $calledTraitHooks[] = $method;
             }
         }
     }
