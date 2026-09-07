@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\View\ViewManager;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Blade;
@@ -132,4 +133,34 @@ it('executes hooks again and propagates exceptions through `renderHook()`', func
     FilamentView::registerRenderHook('throwing', static fn () => throw new RuntimeException('hook failure'));
 
     expect(static fn () => FilamentView::renderHook('throwing'))->toThrow(RuntimeException::class, 'hook failure');
+});
+
+it('preserves string-keyed hook replacement in `ViewManager` subclasses', function (): void {
+    $manager = new class extends ViewManager
+    {
+        public function registerNamedHook(string $scope, Closure $hook): void
+        {
+            $this->renderHooks['named'][$scope]['plugin'] = $hook;
+        }
+    };
+    $manager->registerNamedHook('', static fn (): string => 'global');
+    $manager->registerNamedHook('scope', static fn (): string => 'scoped');
+
+    expect($manager->renderHook('named', ['scope'])->toHtml())->toBe('scoped')
+        ->and($manager->renderHook('named', ['scope', 'scope'])->toHtml())->toBe('');
+});
+
+it('keeps duplicate tracking local to nested `renderHook()` invocations', function (): void {
+    $nested = false;
+    FilamentView::registerRenderHook('nested', static function () use (&$nested): string {
+        if ($nested) {
+            return 'inner';
+        }
+
+        $nested = true;
+
+        return 'outer[' . FilamentView::renderHook('nested')->toHtml() . ']';
+    });
+
+    expect(FilamentView::renderHook('nested')->toHtml())->toBe('outer[inner]');
 });

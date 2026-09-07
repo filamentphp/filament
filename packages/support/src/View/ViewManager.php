@@ -79,22 +79,28 @@ class ViewManager
 
         $renderedHooks = [];
         $scopes = Arr::wrap($scopes);
-        $html = '';
+        $hooks = [];
 
         foreach (['', ...$scopes] as $scopeName) {
-            foreach ($this->renderHooks[$name][$scopeName] ?? [] as $hook) {
+            foreach ($this->renderHooks[$name][$scopeName] ?? [] as $key => $hook) {
                 $hookId = spl_object_id($hook);
 
-                if (isset($renderedHooks[$hookId])) {
-                    continue;
+                $result = null;
+
+                if (! isset($renderedHooks[$hookId])) {
+                    $renderedHooks[$hookId] = true;
+                    $result = (string) app()->call($hook, ['data' => $data, 'scopes' => $scopes]);
                 }
 
-                $renderedHooks[$hookId] = true;
-                $html .= (string) app()->call($hook, ['data' => $data, 'scopes' => $scopes]);
+                if (is_int($key)) {
+                    $hooks[] = $result;
+                } else {
+                    $hooks[$key] = $result;
+                }
             }
         }
 
-        return new HtmlString($html);
+        return new HtmlString(implode('', $hooks));
     }
 
     public function spa(bool $condition = true, bool $hasPrefetching = false): void
