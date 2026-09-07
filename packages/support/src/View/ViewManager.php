@@ -73,40 +73,28 @@ class ViewManager
      */
     public function renderHook(string $name, string | array | null $scopes = null, array $data = []): Htmlable
     {
-        $renderedHooks = [];
-
-        $scopes = Arr::wrap($scopes);
-
-        $renderHook = function (callable $hook) use (&$renderedHooks, $scopes, $data): ?string {
-            $hookId = spl_object_id($hook);
-
-            if (in_array($hookId, $renderedHooks)) {
-                return null;
-            }
-
-            $renderedHooks[] = $hookId;
-
-            $result = app()->call($hook, ['data' => $data, 'scopes' => $scopes]);
-
-            return (string) $result;
-        };
-
-        $hooks = array_map(
-            $renderHook,
-            $this->renderHooks[$name][''] ?? [],
-        );
-
-        foreach ($scopes as $scopeName) {
-            $hooks = [
-                ...$hooks,
-                ...array_map(
-                    $renderHook,
-                    $this->renderHooks[$name][$scopeName] ?? [],
-                ),
-            ];
+        if (! isset($this->renderHooks[$name])) {
+            return new HtmlString('');
         }
 
-        return new HtmlString(implode('', $hooks));
+        $renderedHooks = [];
+        $scopes = Arr::wrap($scopes);
+        $html = '';
+
+        foreach (['', ...$scopes] as $scopeName) {
+            foreach ($this->renderHooks[$name][$scopeName] ?? [] as $hook) {
+                $hookId = spl_object_id($hook);
+
+                if (isset($renderedHooks[$hookId])) {
+                    continue;
+                }
+
+                $renderedHooks[$hookId] = true;
+                $html .= (string) app()->call($hook, ['data' => $data, 'scopes' => $scopes]);
+            }
+        }
+
+        return new HtmlString($html);
     }
 
     public function spa(bool $condition = true, bool $hasPrefetching = false): void

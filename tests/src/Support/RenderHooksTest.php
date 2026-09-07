@@ -83,3 +83,53 @@ test('render hooks can be passed data', function (): void {
         ->toBeInstanceOf(HtmlString::class)
         ->toHtml()->toBe('bar');
 });
+
+it('renders an empty string for unregistered names and unmatched scopes with `renderHook()`', function (): void {
+    FilamentView::registerRenderHook('registered', static fn (): string => 'scoped', 'matching');
+
+    expect(FilamentView::renderHook('missing', ['matching'])->toHtml())->toBe('')
+        ->and(FilamentView::renderHook('registered', ['different'])->toHtml())->toBe('');
+});
+
+it('preserves global and scope order while deduplicating closure identities with `renderHook()`', function (): void {
+    $calls = [];
+    $shared = static function (array $scopes, array $data) use (&$calls): string {
+        $calls[] = [$scopes, $data];
+
+        return 'shared';
+    };
+
+    FilamentView::registerRenderHook('ordered', $shared, ['', 'first', 'second']);
+    FilamentView::registerRenderHook('ordered', static fn (): string => 'global');
+    FilamentView::registerRenderHook('ordered', static fn (): string => 'first', 'first');
+    FilamentView::registerRenderHook('ordered', static fn (): string => 'second', 'second');
+
+    $scopes = ['second', 'first', 'second', ''];
+    expect(FilamentView::renderHook('ordered', $scopes, ['value' => 42])->toHtml())->toBe('sharedglobalsecondfirst')
+        ->and($calls)->toBe([[$scopes, ['value' => 42]]]);
+});
+
+it('observes registrations in later scopes without changing the current scope snapshot in `renderHook()`', function (): void {
+    FilamentView::registerRenderHook('changing', static function (): string {
+        FilamentView::registerRenderHook('changing', static fn (): string => 'new-global');
+        FilamentView::registerRenderHook('changing', static fn (): string => 'new-scoped', 'later');
+
+        return 'original';
+    });
+
+    expect(FilamentView::renderHook('changing', ['later'])->toHtml())->toBe('originalnew-scoped');
+});
+
+it('executes hooks again and propagates exceptions through `renderHook()`', function (): void {
+    $calls = 0;
+    FilamentView::registerRenderHook('live', static function () use (&$calls): string {
+        return (string) ++$calls;
+    });
+
+    expect(FilamentView::renderHook('live')->toHtml())->toBe('1')
+        ->and(FilamentView::renderHook('live')->toHtml())->toBe('2');
+
+    FilamentView::registerRenderHook('throwing', static fn () => throw new RuntimeException('hook failure'));
+
+    expect(static fn () => FilamentView::renderHook('throwing'))->toThrow(RuntimeException::class, 'hook failure');
+});
