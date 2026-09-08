@@ -21,6 +21,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
@@ -35,6 +36,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
+    use Concerns\CanBeSearchable;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
@@ -117,6 +119,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         parent::setUp();
 
         $this->default([]);
+
+        $this->searchDebounce(0);
 
         $this->afterStateHydrated(static function (Builder $component): void {
             $component->hydrateItems();
@@ -1207,6 +1211,16 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         };
     }
 
+    public function getSearchPrompt(): string | Htmlable
+    {
+        return $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
+    }
+
+    public function getNoSearchResultsMessage(): string | Htmlable
+    {
+        return $this->evaluate($this->noSearchResultsMessage) ?? __('filament-forms::components.builder.block_picker.no_search_results_message');
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -1286,6 +1300,23 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         array | int | null $columns = null,
         Width | string | null $width = null,
     ): string {
+        $blocks = array_values($blocks);
+
+        $isSearchable = $this->isSearchable();
+        $searchPrompt = $isSearchable ? $this->getSearchPrompt() : null;
+        $searchDebounce = $this->getSearchDebounce();
+
+        $blockLabels = $isSearchable
+            ? array_map(
+                static function (Block $block): string {
+                    $label = $block->getLabel();
+
+                    return Str::lower(strip_tags(($label instanceof Htmlable) ? $label->toHtml() : $label));
+                },
+                $blocks,
+            )
+            : null;
+
         /** @var view-string $publishedView */
         $publishedView = 'filament-forms::components.builder.block-picker';
 
@@ -1296,7 +1327,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 'afterItem' => $afterItem,
                 'blocks' => $blocks,
                 'columns' => $columns,
+                'isSearchable' => $isSearchable,
                 'key' => $key,
+                'noSearchResultsMessage' => $isSearchable ? $this->getNoSearchResultsMessage() : null,
+                'searchDebounce' => $searchDebounce,
+                'searchPrompt' => $searchPrompt,
                 'trigger' => new HtmlString($triggerHtml),
                 'width' => $width,
             ])->render();
@@ -1343,6 +1378,15 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 $widthClass,
             ]);
 
+        $listAttributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'x-data' => $isSearchable ? ('{ search: \'\', blockLabels: ' . Js::from($blockLabels) . ' }') : null,
+                'x-effect' => $isSearchable
+                    ? 'if (isOpen) { search = \'\'; $nextTick(() => $refs.searchInput?.focus()) }'
+                    : null,
+            ], escape: false)
+            ->class(['fi-dropdown-list']);
+
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
 
         ob_start(); ?>
@@ -1359,9 +1403,27 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
             <?php if (filled($blocks)) { ?>
                 <div <?= $panelAttributes->toHtml() ?>>
-                    <div class="fi-dropdown-list">
+                    <div <?= $listAttributes->toHtml() ?>>
+                        <?php if ($isSearchable) { ?>
+                            <div class="fi-fo-builder-block-picker-search-ctn">
+                                <?= generate_icon_html(
+                                    Heroicon::MagnifyingGlass,
+                                    FormsIconAlias::COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD,
+                                )?->toHtml() ?>
+
+                                <input
+                                    aria-label="<?= e($searchPrompt) ?>"
+                                    placeholder="<?= e($searchPrompt) ?>"
+                                    type="search"
+                                    x-ref="searchInput"
+                                    x-model.debounce.<?= $searchDebounce ?>="search"
+                                    x-on:keydown.escape="if (search) { search = ''; $event.stopPropagation() }"
+                                    class="fi-input"
+                                />
+                            </div>
+                        <?php } ?>
                         <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
-                            <?php foreach ($blocks as $block) {
+                            <?php foreach ($blocks as $blockIndex => $block) {
                                 $blockIcon = $block->getIcon();
 
                                 $wireClickArguments = ['block' => $block->getName()];
@@ -1379,6 +1441,9 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
                                         'wire:target' => $wireClick,
+                                        'x-show' => $isSearchable
+                                            ? "! search || blockLabels[{$blockIndex}].includes(search.toLowerCase())"
+                                            : null,
                                     ], escape: false)
                                     ->class(['fi-dropdown-list-item'])
                                     ->color(ItemComponent::class, 'gray');
@@ -1403,6 +1468,18 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                             </button>
                             <?php } ?>
                         </div>
+
+                        <?php if ($isSearchable) { ?>
+                            <div
+                                x-cloak
+                                x-show="search && ! blockLabels.some((blockLabel) => blockLabel.includes(search.toLowerCase()))"
+                                role="status"
+                                aria-live="polite"
+                                class="fi-fo-builder-block-picker-no-search-results-message"
+                            >
+                                <?= e($this->getNoSearchResultsMessage()) ?>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             <?php } ?>

@@ -1,6 +1,8 @@
 export default () => ({
     panelId: null,
 
+    isOpen: false,
+
     init() {
         document.addEventListener('livewire:navigate', () => this.close())
 
@@ -63,12 +65,14 @@ export default () => ({
             panel.id = this.panelId
         }
 
+        this.isOpen = panel.style.display === 'block'
+
         this.setAttributeIfChanged(trigger, 'aria-haspopup', 'true')
         this.setAttributeIfChanged(trigger, 'aria-controls', this.panelId)
         this.setAttributeIfChanged(
             trigger,
             'aria-expanded',
-            panel.style.display === 'block' ? 'true' : 'false',
+            this.isOpen ? 'true' : 'false',
         )
 
         // The floating UI plugin also writes `aria-expanded` onto the non-focusable
