@@ -1,0 +1,1 @@
+function s({blockLabels:r}){return{search:"",clearSearch(){this.search=""},handleSearchEscape(e){this.search&&(this.search="",e.stopPropagation())},isBlockVisible(e){return this.search?r[e].includes(this.search.toLowerCase()):!0},get hasNoSearchResults(){return this.search&&!r.some(e=>e.includes(this.search.toLowerCase()))}}}export{s as default};

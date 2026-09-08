@@ -18,6 +18,7 @@
     use Filament\Forms\View\FormsIconAlias;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
+    use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\Contracts\Support\Htmlable;
@@ -39,8 +40,9 @@
 
     $listAttributes = $isSearchable
         ? new FilamentComponentAttributeBag([
-            'x-data' => '{ search: \'\', blockLabels: ' . Js::from($blockLabels) . ' }',
-            'x-effect' => 'if (isOpen) { search = \'\'; $nextTick(() => $refs.searchInput?.focus()) }',
+            'x-load' => true,
+            'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
+            'x-data' => 'builderBlockPickerFormComponent({ blockLabels: ' . Js::from($blockLabels) . ' })',
         ])
         : new FilamentComponentAttributeBag;
 @endphp
@@ -77,8 +79,9 @@
 
                 <x-filament::input
                     type="search"
-                    x-ref="searchInput"
-                    x-on:keydown.escape="if (search) { search = ''; $event.stopPropagation() }"
+                    data-dropdown-autofocus
+                    x-on:dropdown-autofocus="clearSearch()"
+                    x-on:keydown.escape="handleSearchEscape($event)"
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new FilamentComponentAttributeBag([
@@ -114,7 +117,7 @@
                     :icon="$blockIcon"
                     x-on:click="close"
                     :wire:click="$wireClickAction"
-                    :x-show="$isSearchable ? ('! search || blockLabels[' . $loop->index . '].includes(search.toLowerCase())') : null"
+                    :x-show="$isSearchable ? ('isBlockVisible(' . $loop->index . ')') : null"
                 >
                     {{ $block->getLabel() }}
                 </x-filament::dropdown.list.item>
@@ -124,10 +127,7 @@
         @if ($isSearchable)
             <div
                 x-cloak
-                x-show="
-                    search &&
-                        ! blockLabels.some((blockLabel) => blockLabel.includes(search.toLowerCase()))
-                "
+                x-show="hasNoSearchResults"
                 role="status"
                 aria-live="polite"
                 class="fi-fo-builder-block-picker-no-search-results-message"

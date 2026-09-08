@@ -16,6 +16,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -1380,10 +1381,9 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         $listAttributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'x-data' => $isSearchable ? ('{ search: \'\', blockLabels: ' . Js::from($blockLabels) . ' }') : null,
-                'x-effect' => $isSearchable
-                    ? 'if (isOpen) { search = \'\'; $nextTick(() => $refs.searchInput?.focus()) }'
-                    : null,
+                'x-load' => $isSearchable ? true : null,
+                'x-load-src' => $isSearchable ? FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms') : null,
+                'x-data' => $isSearchable ? ('builderBlockPickerFormComponent({ blockLabels: ' . Js::from($blockLabels) . ' })') : null,
             ], escape: false)
             ->class(['fi-dropdown-list']);
 
@@ -1415,9 +1415,10 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                     aria-label="<?= e($searchPrompt) ?>"
                                     placeholder="<?= e($searchPrompt) ?>"
                                     type="search"
-                                    x-ref="searchInput"
+                                    data-dropdown-autofocus
                                     x-model.debounce.<?= $searchDebounce ?>="search"
-                                    x-on:keydown.escape="if (search) { search = ''; $event.stopPropagation() }"
+                                    x-on:dropdown-autofocus="clearSearch()"
+                                    x-on:keydown.escape="handleSearchEscape($event)"
                                     class="fi-input"
                                 />
                             </div>
@@ -1442,7 +1443,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'wire:loading.attr' => 'disabled',
                                         'wire:target' => $wireClick,
                                         'x-show' => $isSearchable
-                                            ? "! search || blockLabels[{$blockIndex}].includes(search.toLowerCase())"
+                                            ? "isBlockVisible({$blockIndex})"
                                             : null,
                                     ], escape: false)
                                     ->class(['fi-dropdown-list-item'])
@@ -1472,7 +1473,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                         <?php if ($isSearchable) { ?>
                             <div
                                 x-cloak
-                                x-show="search && ! blockLabels.some((blockLabel) => blockLabel.includes(search.toLowerCase()))"
+                                x-show="hasNoSearchResults"
                                 role="status"
                                 aria-live="polite"
                                 class="fi-fo-builder-block-picker-no-search-results-message"
