@@ -56,8 +56,8 @@ return [
             ],
 
             'summary' => [
-                'direct' => ':Attribut ist vorhangen',
-                'inverse' => ':Attribut ist nicht vorhanden',
+                'direct' => ':attribute ist vorhanden',
+                'inverse' => ':attribute ist nicht vorhanden',
             ],
 
         ],
