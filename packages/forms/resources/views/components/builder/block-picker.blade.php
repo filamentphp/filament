@@ -14,6 +14,8 @@
 ])
 
 @php
+    use Filament\Forms\Components\Builder\Block;
+    use Filament\Forms\View\FormsIconAlias;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
     use Filament\Support\Icons\Heroicon;
@@ -26,7 +28,7 @@
 
     $blockLabels = $isSearchable
         ? array_map(
-            function ($block): string {
+            static function (Block $block): string {
                 $label = $block->getLabel();
 
                 return Str::lower(strip_tags(($label instanceof Htmlable) ? $label->toHtml() : $label));
@@ -34,6 +36,13 @@
             $blocks,
         )
         : null;
+
+    $listAttributes = $isSearchable
+        ? new FilamentComponentAttributeBag([
+            'x-data' => '{ search: \'\', blockLabels: ' . Js::from($blockLabels) . ' }',
+            'x-effect' => 'if (isOpen) { search = \'\'; $nextTick(() => $refs.searchInput?.focus()) }',
+        ])
+        : new FilamentComponentAttributeBag;
 @endphp
 
 <x-filament::dropdown
@@ -60,12 +69,11 @@
     </x-slot>
 
     <x-filament::dropdown.list
-        :x-data="$isSearchable ? ('{ search: \'\', blockLabels: ' . Js::from($blockLabels) . ' }') : null"
-        :x-effect="$isSearchable ? 'if (isOpen) { search = \'\'; $nextTick(() => $refs.searchInput?.focus()) }' : null"
+        :attributes="\Filament\Support\prepare_inherited_attributes($listAttributes)"
     >
         @if ($isSearchable)
             <div class="fi-fo-builder-block-picker-search-ctn">
-                {{ \Filament\Support\generate_icon_html(Heroicon::MagnifyingGlass, 'forms::components.builder.block-picker.search-field') }}
+                {{ \Filament\Support\generate_icon_html(Heroicon::MagnifyingGlass, FormsIconAlias::COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD) }}
 
                 <x-filament::input
                     type="search"
