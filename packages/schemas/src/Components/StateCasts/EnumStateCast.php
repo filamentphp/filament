@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\StateCasts;
 
 use BackedEnum;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Stringable;
 
 class EnumStateCast implements StateCast
 {
@@ -22,6 +23,10 @@ class EnumStateCast implements StateCast
 
         if ($state instanceof $this->enum) {
             return $state;
+        }
+
+        if ((! is_scalar($state)) && (! $state instanceof Stringable)) {
+            return null;
         }
 
         return $this->enum::tryFrom($state);

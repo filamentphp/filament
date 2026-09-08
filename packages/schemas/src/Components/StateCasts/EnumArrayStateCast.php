@@ -5,6 +5,7 @@ namespace Filament\Schemas\Components\StateCasts;
 use BackedEnum;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Illuminate\Support\Arr;
+use Stringable;
 
 class EnumArrayStateCast implements StateCast
 {
@@ -41,6 +42,10 @@ class EnumArrayStateCast implements StateCast
                 if ($stateItem instanceof BackedEnum) {
                     $carry[] = $stateItem;
 
+                    return $carry;
+                }
+
+                if ((! is_scalar($stateItem)) && (! $stateItem instanceof Stringable)) {
                     return $carry;
                 }
 
