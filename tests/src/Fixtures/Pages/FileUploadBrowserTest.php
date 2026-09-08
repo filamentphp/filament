@@ -38,6 +38,7 @@ class FileUploadBrowserTest extends Page
                     ->multiple()
                     ->reorderable()
                     ->fetchFileInformation(false)
+                    ->preventFilePathTampering(allowFilePathUsing: static fn (string $file): bool => in_array($file, ['first.txt', 'second.txt', 'replacement.txt'], strict: true))
                     ->getUploadedFileUsing(static function (string $file): array {
                         return [
                             'name' => $file,
