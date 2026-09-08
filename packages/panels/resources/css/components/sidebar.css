@@ -147,6 +147,10 @@
     }
 }
 
+.fi-sidebar-header-controls {
+    @apply flex shrink-0 flex-col after:mx-4 after:mt-3 after:border-t after:border-gray-950/5 after:content-[''] dark:after:border-white/10;
+}
+
 .fi-sidebar-nav {
     @apply flex grow flex-col gap-y-7 overflow-x-hidden overflow-y-auto px-6 py-8;
     scrollbar-gutter: stable;
@@ -237,7 +241,7 @@
 }
 
 .fi-sidebar-footer {
-    @apply mx-4 my-3 grid gap-y-3;
+    @apply mx-4 mb-3 grid gap-y-3 border-t border-gray-950/5 pt-3 dark:border-white/10;
 
     & > .fi-no-database {
         @apply block;
