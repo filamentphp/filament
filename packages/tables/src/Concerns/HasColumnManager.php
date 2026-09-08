@@ -159,14 +159,14 @@ trait HasColumnManager
 
     public function getTableColumnsSessionKey(): string
     {
-        $table = md5($this::class);
+        $table = md5($this->getTableSessionKeyNamespace());
 
         return "tables.{$table}_columns";
     }
 
     public function getHasReorderedTableColumnsSessionKey(): string
     {
-        $table = md5($this::class);
+        $table = md5($this->getTableSessionKeyNamespace());
 
         return "tables.{$table}_has_reordered_columns";
     }

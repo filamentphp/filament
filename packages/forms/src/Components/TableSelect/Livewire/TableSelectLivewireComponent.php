@@ -139,6 +139,11 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
         return $table;
     }
 
+    public function getTableSessionKeyNamespace(): string
+    {
+        return $this::class . '|' . base64_decode($this->tableConfiguration);
+    }
+
     /**
      * @return array<mixed>
      */

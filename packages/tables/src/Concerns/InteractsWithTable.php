@@ -195,6 +195,11 @@ trait InteractsWithTable
         return $this->table;
     }
 
+    public function getTableSessionKeyNamespace(): string
+    {
+        return $this::class;
+    }
+
     protected function makeTable(): Table
     {
         return Table::make($this)

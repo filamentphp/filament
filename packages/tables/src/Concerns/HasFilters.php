@@ -232,7 +232,7 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $namespace = $this::class;
+        $namespace = $this->getTableSessionKeyNamespace();
 
         $tenantKey = null;
 
