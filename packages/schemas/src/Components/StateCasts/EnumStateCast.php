@@ -29,6 +29,10 @@ class EnumStateCast implements StateCast
             return null;
         }
 
+        if ($state instanceof Stringable) {
+            $state = (string) $state;
+        }
+
         return $this->enum::tryFrom($state);
     }
 
