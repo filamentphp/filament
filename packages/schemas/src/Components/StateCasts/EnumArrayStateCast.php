@@ -45,12 +45,12 @@ class EnumArrayStateCast implements StateCast
                     return $carry;
                 }
 
-                if ((! is_scalar($stateItem)) && (! $stateItem instanceof Stringable)) {
-                    return $carry;
-                }
-
                 if ($stateItem instanceof Stringable) {
                     $stateItem = (string) $stateItem;
+                }
+
+                if (! is_scalar($stateItem)) {
+                    return $carry;
                 }
 
                 $carry[] = $this->enum::tryFrom($stateItem);

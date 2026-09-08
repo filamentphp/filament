@@ -25,12 +25,12 @@ class EnumStateCast implements StateCast
             return $state;
         }
 
-        if ((! is_scalar($state)) && (! $state instanceof Stringable)) {
-            return null;
-        }
-
         if ($state instanceof Stringable) {
             $state = (string) $state;
+        }
+
+        if (! is_scalar($state)) {
+            return null;
         }
 
         return $this->enum::tryFrom($state);
