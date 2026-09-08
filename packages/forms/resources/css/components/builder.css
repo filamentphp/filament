@@ -162,7 +162,7 @@
         @apply sticky top-0 z-10 -mx-1 -mt-1 flex items-center rounded-t-lg border-b border-gray-100 bg-white ps-3 dark:border-white/5 dark:bg-gray-900;
 
         &:focus-within {
-            @apply ring-2 ring-primary-600 ring-inset dark:ring-primary-500;
+            @apply ring-primary-600 dark:ring-primary-500 ring-2 ring-inset;
         }
 
         & .fi-icon {
