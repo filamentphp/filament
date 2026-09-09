@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Support\TemporaryUploadedFileMetadata;
 use Filament\Schemas\Components\StateCasts\FileUploadStateCast;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -259,10 +260,45 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         $this->acceptedFileTypes = $types;
 
-        $this->rule(static function (BaseFileUpload $component) {
-            $types = implode(',', ($component->getAcceptedFileTypes() ?? []));
+        $this->rule(static function (BaseFileUpload $component): Closure {
+            /** @var list<string> $allowed */
+            $allowed = $component->getAcceptedFileTypes() ?? [];
 
-            return "mimetypes:{$types}";
+            $extensionMimeMap = $component instanceof FileUpload
+                ? $component->getMimeTypeMap()
+                : [];
+
+            return static function (string $attribute, mixed $value, Closure $fail) use ($allowed, $component, $extensionMimeMap): void {
+                if (! $value instanceof TemporaryUploadedFile) {
+                    return;
+                }
+
+                if ($allowed === []) {
+                    return;
+                }
+
+                $metadata = app(TemporaryUploadedFileMetadata::class);
+
+                if ($metadata->hasBlockedPhpExtension($value, $allowed)) {
+                    static::failFileUploadRule($component, $fail, 'mimetypes', 'validation.mimetypes', [
+                        'values' => implode(', ', $allowed),
+                    ]);
+
+                    return;
+                }
+
+                if (! $metadata->exists($value)) {
+                    static::failFileUploadRule($component, $fail, 'temporary_upload_missing', 'filament-forms::validation.temporary_upload_missing');
+
+                    return;
+                }
+
+                if (! $metadata->mimeMatches($value, $allowed, $extensionMimeMap)) {
+                    static::failFileUploadRule($component, $fail, 'mimetypes', 'validation.mimetypes', [
+                        'values' => implode(', ', $allowed),
+                    ]);
+                }
+            };
         });
 
         return $this;
@@ -414,10 +450,36 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         $this->maxSize = $size;
 
-        $this->rule(static function (BaseFileUpload $component): string {
-            $size = $component->getMaxSize();
+        $this->rule(static function (BaseFileUpload $component): Closure {
+            $maxKb = $component->getMaxSize();
 
-            return "max:{$size}";
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component, $maxKb): void {
+                if (! $value instanceof TemporaryUploadedFile || $maxKb === null) {
+                    return;
+                }
+
+                $metadata = app(TemporaryUploadedFileMetadata::class);
+
+                if (! $metadata->exists($value)) {
+                    static::failFileUploadRule($component, $fail, 'temporary_upload_missing', 'filament-forms::validation.temporary_upload_missing');
+
+                    return;
+                }
+
+                $bytes = $metadata->sizeBytes($value);
+
+                if ($bytes === null) {
+                    static::failFileUploadRule($component, $fail, 'temporary_upload_missing', 'filament-forms::validation.temporary_upload_missing');
+
+                    return;
+                }
+
+                if ($bytes > $maxKb * 1024) {
+                    static::failFileUploadRule($component, $fail, 'max', 'validation.max.file', [
+                        'max' => $maxKb,
+                    ]);
+                }
+            };
         });
 
         return $this;
@@ -427,10 +489,36 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         $this->minSize = $size;
 
-        $this->rule(static function (BaseFileUpload $component): string {
-            $size = $component->getMinSize();
+        $this->rule(static function (BaseFileUpload $component): Closure {
+            $minKb = $component->getMinSize();
 
-            return "min:{$size}";
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component, $minKb): void {
+                if (! $value instanceof TemporaryUploadedFile || $minKb === null) {
+                    return;
+                }
+
+                $metadata = app(TemporaryUploadedFileMetadata::class);
+
+                if (! $metadata->exists($value)) {
+                    static::failFileUploadRule($component, $fail, 'temporary_upload_missing', 'filament-forms::validation.temporary_upload_missing');
+
+                    return;
+                }
+
+                $bytes = $metadata->sizeBytes($value);
+
+                if ($bytes === null) {
+                    static::failFileUploadRule($component, $fail, 'temporary_upload_missing', 'filament-forms::validation.temporary_upload_missing');
+
+                    return;
+                }
+
+                if ($bytes < $minKb * 1024) {
+                    static::failFileUploadRule($component, $fail, 'min', 'validation.min.file', [
+                        'min' => $minKb,
+                    ]);
+                }
+            };
         });
 
         return $this;
@@ -782,6 +870,22 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         $ruleName = strtolower(explode(':', $rule)[0]);
 
         return in_array($ruleName, static::ARRAY_VALIDATION_RULES, strict: true);
+    }
+
+    /**
+     * @param  array<string, mixed>  $replace
+     */
+    protected static function failFileUploadRule(BaseFileUpload $component, Closure $fail, string $rule, string $translationKey, array $replace = []): void
+    {
+        $message = $component->getValidationMessages()[$rule] ?? null;
+
+        if (filled($message)) {
+            $fail($message);
+
+            return;
+        }
+
+        $fail($translationKey)->translate($replace);
     }
 
     #[ExposedLivewireMethod]

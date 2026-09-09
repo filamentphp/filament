@@ -9,4 +9,6 @@ return [
 
     'tampered_file_path' => 'The :attribute field contains a file path that is not permitted.',
 
+    'temporary_upload_missing' => 'The :attribute is no longer available. Please upload the file again.',
+
 ];

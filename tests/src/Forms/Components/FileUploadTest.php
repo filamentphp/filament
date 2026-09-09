@@ -299,6 +299,65 @@ describe('validation', function (): void {
             ->call('save')
             ->assertHasFormErrors(['avatar']);
     });
+
+    it('accepts a jpeg against `image()` when the temp upload sidecar type is generic', function (): void {
+        Storage::fake('tmp-for-tests');
+
+        $filename = 'avatar.jpeg';
+        Storage::disk('tmp-for-tests')->put('livewire-tmp/' . $filename, 'dummy-image');
+        Storage::disk('tmp-for-tests')->put('livewire-tmp/' . $filename . '.json', json_encode([
+            'name' => 'avatar.jpeg',
+            'type' => 'application/octet-stream',
+            'size' => 4096,
+            'hash' => $filename,
+        ]));
+
+        $file = TemporaryUploadedFile::createFromLivewire($filename);
+
+        $validationPassed = false;
+
+        try {
+            Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    FileUpload::make('photo')
+                        ->image()
+                        ->maxSize(1024),
+                ])
+                ->fill(['photo' => [$file]])
+                ->validate();
+
+            $validationPassed = true;
+        } catch (ValidationException) {
+            $validationPassed = false;
+        }
+
+        expect($validationPassed)->toBeTrue();
+    });
+
+    it('fails `maxSize()` without throwing when the temp upload object is missing', function (): void {
+        Storage::fake('tmp-for-tests');
+
+        $file = TemporaryUploadedFile::createFromLivewire('absent.jpeg');
+
+        $field = FileUpload::make('document')
+            ->maxSize(100)
+            ->container(Schema::make(Livewire::make())->statePath('data'));
+
+        $validationFailed = false;
+
+        foreach ($field->getValidationRules() as $rule) {
+            if (! $rule instanceof Closure) {
+                continue;
+            }
+
+            $rule('document', [$file], function () use (&$validationFailed): void {
+                $validationFailed = true;
+            });
+        }
+
+        expect($validationFailed)->toBeTrue();
+    });
 });
 
 describe('preventing existing file path tampering', function (): void {

@@ -3,13 +3,12 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Support\TemporaryUploadedFileMetadata;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -66,21 +65,15 @@ trait HasFileAttachments
         }
 
         if ($attachment instanceof TemporaryUploadedFile) {
-            $maxSize = $this->getFileAttachmentsMaxSize();
-            $acceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
-
             try {
-                Validator::validate(
-                    ['file' => $attachment],
-                    rules: [
-                        'file' => [
-                            'file',
-                            ...($maxSize ? ["max:{$maxSize}"] : []),
-                            ...($acceptedFileTypes ? ['mimetypes:' . implode(',', $acceptedFileTypes)] : []),
-                        ],
-                    ],
-                );
-            } catch (ValidationException $exception) {
+                if (! app(TemporaryUploadedFileMetadata::class)->isValid(
+                    $attachment,
+                    $this->getFileAttachmentsAcceptedFileTypes(),
+                    $this->getFileAttachmentsMaxSize(),
+                )) {
+                    return null;
+                }
+            } catch (Throwable) {
                 return null;
             }
         }
