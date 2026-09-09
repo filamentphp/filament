@@ -82,7 +82,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<Aside variant="info">
+<Aside variant="warning">
     To prevent the same app authentication code from being accepted more than once, use a default cache store that supports atomic locks, such as the database or Redis cache driver. All application servers must use the same cache backend. With other cache configurations, concurrent requests may accept the same code more than once.
 </Aside>
 
