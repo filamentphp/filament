@@ -37,7 +37,7 @@
         "@floating-ui/dom": "^1.7.0",
         "@ryangjchandler/alpine-tooltip": "^2.0",
         "@tailwindcss/cli": "^4.1.10",
-        "@tiptap/core": "^3.30.4",
+        "@tiptap/core": "^3.30.5",
         "@tiptap/extension-blockquote": "^3.30.4",
         "@tiptap/extension-bold": "^3.30.4",
         "@tiptap/extension-bubble-menu": "^3.30.4",
