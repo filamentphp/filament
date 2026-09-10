@@ -14,7 +14,6 @@
 ])
 
 @php
-    use Filament\Forms\Components\Builder\Block;
     use Filament\Forms\View\FormsIconAlias;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
@@ -27,22 +26,11 @@
 
     $blocks = array_values($blocks);
 
-    $blockLabels = $isSearchable
-        ? array_map(
-            static function (Block $block): string {
-                $label = $block->getLabel();
-
-                return Str::lower(strip_tags(($label instanceof Htmlable) ? $label->toHtml() : $label));
-            },
-            $blocks,
-        )
-        : null;
-
     $listAttributes = $isSearchable
         ? new FilamentComponentAttributeBag([
             'x-load' => true,
             'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
-            'x-data' => 'builderBlockPickerFormComponent({ blockLabels: ' . Js::from($blockLabels) . ' })',
+            'x-data' => 'builderBlockPickerFormComponent()',
         ])
         : new FilamentComponentAttributeBag;
 @endphp
@@ -81,7 +69,6 @@
                     type="search"
                     data-dropdown-autofocus
                     x-on:dropdown-autofocus="clearSearch()"
-                    x-on:keydown.escape="handleSearchEscape($event)"
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new FilamentComponentAttributeBag([
@@ -102,6 +89,18 @@
                 @php
                     $blockIcon = $block->getIcon();
 
+                    $blockSearchLabel = null;
+
+                    if ($isSearchable) {
+                        $blockSearchLabel = $block->getLabel();
+
+                        if ($blockSearchLabel instanceof Htmlable) {
+                            $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES);
+                        }
+
+                        $blockSearchLabel = Str::lower($blockSearchLabel);
+                    }
+
                     $wireClickActionArguments = ['block' => $block->getName()];
 
                     if (filled($afterItem)) {
@@ -117,7 +116,8 @@
                     :icon="$blockIcon"
                     x-on:click="close"
                     :wire:click="$wireClickAction"
-                    :x-show="$isSearchable ? ('isBlockVisible(' . $loop->index . ')') : null"
+                    :data-block-label="$blockSearchLabel"
+                    :x-show="$isSearchable ? 'isBlockVisible($el)' : null"
                 >
                     {{ $block->getLabel() }}
                 </x-filament::dropdown.list.item>

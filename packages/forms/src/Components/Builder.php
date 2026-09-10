@@ -37,7 +37,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
-    use Concerns\CanBeSearchable;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
@@ -108,6 +107,14 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
     protected Width | string | Closure | null $blockPickerWidth = null;
 
+    protected bool | Closure $isSearchable = false;
+
+    protected string | Htmlable | Closure | null $searchPrompt = null;
+
+    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
+
+    protected int | Closure $searchDebounce = 0;
+
     protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     /**
@@ -120,8 +127,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         parent::setUp();
 
         $this->default([]);
-
-        $this->searchDebounce(0);
 
         $this->afterStateHydrated(static function (Builder $component): void {
             $component->hydrateItems();
@@ -1212,14 +1217,52 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         };
     }
 
+    public function searchable(bool | Closure $condition = true): static
+    {
+        $this->isSearchable = $condition;
+
+        return $this;
+    }
+
+    public function isSearchable(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function searchPrompt(string | Htmlable | Closure | null $prompt): static
+    {
+        $this->searchPrompt = $prompt;
+
+        return $this;
+    }
+
     public function getSearchPrompt(): string | Htmlable
     {
         return $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
     }
 
+    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
+    {
+        $this->noSearchResultsMessage = $message;
+
+        return $this;
+    }
+
     public function getNoSearchResultsMessage(): string | Htmlable
     {
         return $this->evaluate($this->noSearchResultsMessage) ?? __('filament-forms::components.builder.block_picker.no_search_results_message');
+    }
+
+    public function searchDebounce(int | Closure $debounce): static
+    {
+        $this->searchDebounce = $debounce;
+
+        return $this;
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return $this->evaluate($this->searchDebounce);
     }
 
     /**
@@ -1307,17 +1350,6 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         $searchPrompt = $isSearchable ? $this->getSearchPrompt() : null;
         $searchDebounce = $this->getSearchDebounce();
 
-        $blockLabels = $isSearchable
-            ? array_map(
-                static function (Block $block): string {
-                    $label = $block->getLabel();
-
-                    return Str::lower(strip_tags(($label instanceof Htmlable) ? $label->toHtml() : $label));
-                },
-                $blocks,
-            )
-            : null;
-
         /** @var view-string $publishedView */
         $publishedView = 'filament-forms::components.builder.block-picker';
 
@@ -1383,7 +1415,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->merge([
                 'x-load' => $isSearchable ? true : null,
                 'x-load-src' => $isSearchable ? FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms') : null,
-                'x-data' => $isSearchable ? ('builderBlockPickerFormComponent({ blockLabels: ' . Js::from($blockLabels) . ' })') : null,
+                'x-data' => $isSearchable ? 'builderBlockPickerFormComponent()' : null,
             ], escape: false)
             ->class(['fi-dropdown-list']);
 
@@ -1418,14 +1450,25 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                     data-dropdown-autofocus
                                     x-model.debounce.<?= $searchDebounce ?>="search"
                                     x-on:dropdown-autofocus="clearSearch()"
-                                    x-on:keydown.escape="handleSearchEscape($event)"
                                     class="fi-input"
                                 />
                             </div>
                         <?php } ?>
                         <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
-                            <?php foreach ($blocks as $blockIndex => $block) {
+                            <?php foreach ($blocks as $block) {
                                 $blockIcon = $block->getIcon();
+
+                                $blockSearchLabel = null;
+
+                                if ($isSearchable) {
+                                    $blockSearchLabel = $block->getLabel();
+
+                                    if ($blockSearchLabel instanceof Htmlable) {
+                                        $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES);
+                                    }
+
+                                    $blockSearchLabel = Str::lower($blockSearchLabel);
+                                }
 
                                 $wireClickArguments = ['block' => $block->getName()];
 
@@ -1442,9 +1485,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
                                         'wire:target' => $wireClick,
-                                        'x-show' => $isSearchable
-                                            ? "isBlockVisible({$blockIndex})"
-                                            : null,
+                                        'data-block-label' => $isSearchable ? e($blockSearchLabel) : null,
+                                        'x-show' => $isSearchable ? 'isBlockVisible($el)' : null,
                                     ], escape: false)
                                     ->class(['fi-dropdown-list-item'])
                                     ->color(ItemComponent::class, 'gray');
