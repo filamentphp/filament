@@ -165,6 +165,28 @@ Any rows that do not pass validation will not be imported. Instead, they will be
 
 <UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Validating a column against an enum
+
+If a column maps onto a [backed enum](https://www.php.net/manual/en/language.enumerations.backed.php), you can pass the enum class to the `enum()` method. Any row whose value is not a case of the enum will fail validation, instead of reaching the model's cast and throwing a `ValueError`:
+
+```php
+use App\Enums\Status;
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('status')
+    ->enum(Status::class)
+```
+
+The cases of the enum are also used as the [example CSV data](#providing-example-csv-data) for the column, so the user can see which values are accepted without you listing them by hand. Passing `examples()` yourself overrides this.
+
+Pure enums are supported too, in which case the case names are validated and used as the example data.
+
+<Aside variant="info">
+    If the column [handles multiple values](#handling-multiple-values-in-a-single-column), each item in the array is validated against the enum.
+</Aside>
+
+<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `enum()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Casting state
 
 Before [validation](#validating-csv-data), data from the CSV can be cast. This is useful for converting strings into the correct data type, otherwise validation may fail. For example, if you have a `price` column in your CSV, you may want to cast it to a float:
