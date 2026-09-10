@@ -418,10 +418,10 @@ describe('file attachment visibility', function (): void {
 });
 
 describe('height constraints', function (): void {
-    it('defaults `getMinHeight()` to `11.25rem`', function (): void {
+    it('defaults `getMinHeight()` to `10rem`', function (): void {
         $editor = MarkdownEditor::make('content');
 
-        expect($editor->getMinHeight())->toBe('11.25rem');
+        expect($editor->getMinHeight())->toBe('10rem');
     });
 
     it('can set `minHeight()`', function (): void {
@@ -703,9 +703,9 @@ it('can render `MarkdownEditor` in the browser', function (): void {
                     const nullMinHeightWithMaxHeightComponent = nullMinHeightWithMaxHeightEditor.querySelector('[x-data]')
 
                     if (
-                        defaultCodeMirror.clientHeight !== 180 ||
-                        defaultScroller.style.minHeight !== '11.25rem' ||
-                        getComputedStyle(defaultScroller).minHeight !== '180px' ||
+                        defaultCodeMirror.clientHeight !== 160 ||
+                        defaultScroller.style.minHeight !== '10rem' ||
+                        getComputedStyle(defaultScroller).minHeight !== '160px' ||
                         nullMinHeightScroller.style.minHeight !== '3rem' ||
                         nullMinHeightStyle.minHeight !== '48px' ||
                         nullMinHeightStyle.maxHeight !== 'none' ||
