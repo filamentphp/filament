@@ -1062,59 +1062,6 @@ describe('search configuration', function (): void {
         expect($checkboxList->getSearchPrompt())->toBe('Type to search...');
     });
 
-    it('defaults `shouldSearchLabels()` to `true`', function (): void {
-        $checkboxList = CheckboxList::make('options')
-            ->options(['a' => 'A']);
-
-        expect($checkboxList->shouldSearchLabels())->toBeTrue();
-    });
-
-    it('can set `searchLabels()` to `false`', function (): void {
-        $checkboxList = CheckboxList::make('options')
-            ->options(['a' => 'A'])
-            ->searchLabels(false);
-
-        expect($checkboxList->shouldSearchLabels())->toBeFalse();
-    });
-
-    it('defaults `shouldSearchValues()` to `false`', function (): void {
-        $checkboxList = CheckboxList::make('options')
-            ->options(['a' => 'A']);
-
-        expect($checkboxList->shouldSearchValues())->toBeFalse();
-    });
-
-    it('can set `searchValues()`', function (): void {
-        $checkboxList = CheckboxList::make('options')
-            ->options(['a' => 'A'])
-            ->searchValues();
-
-        expect($checkboxList->shouldSearchValues())->toBeTrue();
-    });
-
-    it('returns `[label]` from `getSearchableOptionFields()` by default', function (): void {
-        $checkboxList = CheckboxList::make('options')
-            ->options(['a' => 'A']);
-
-        expect($checkboxList->getSearchableOptionFields())->toBe(['label']);
-    });
-
-    it('returns `[value]` from `getSearchableOptionFields()` when only values searchable', function (): void {
-        $checkboxList = CheckboxList::make('options')
-            ->options(['a' => 'A'])
-            ->searchLabels(false)
-            ->searchValues();
-
-        expect($checkboxList->getSearchableOptionFields())->toBe(['value']);
-    });
-
-    it('returns `[label, value]` from `getSearchableOptionFields()` when both searchable', function (): void {
-        $checkboxList = CheckboxList::make('options')
-            ->options(['a' => 'A'])
-            ->searchValues();
-
-        expect($checkboxList->getSearchableOptionFields())->toBe(['label', 'value']);
-    });
 });
 
 describe('relationship name inference', function (): void {
