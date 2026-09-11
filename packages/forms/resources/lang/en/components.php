@@ -104,6 +104,14 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'No blocks match your search.',
+
+            'search_prompt' => 'Search blocks',
+
+        ],
+
     ],
 
     'checkbox_list' => [

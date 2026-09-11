@@ -158,6 +158,26 @@
         @apply flex-1 border-t border-gray-200 dark:border-white/10;
     }
 
+    & .fi-fo-builder-block-picker-search-ctn {
+        @apply sticky top-0 z-10 -mx-1 -mt-1 flex items-center rounded-t-lg border-b border-gray-100 bg-white ps-3 dark:border-white/5 dark:bg-gray-900;
+
+        &:focus-within {
+            @apply ring-primary-600 dark:ring-primary-500 ring-2 ring-inset;
+        }
+
+        & .fi-icon {
+            @apply shrink-0 text-gray-400 dark:text-gray-500;
+        }
+
+        & .fi-input {
+            @apply flex-1;
+        }
+    }
+
+    & .fi-fo-builder-block-picker-no-search-results-message {
+        @apply px-2 py-1.5 text-sm text-gray-500 dark:text-gray-400;
+    }
+
     & .fi-fo-builder-block-picker {
         @apply flex justify-center;
 

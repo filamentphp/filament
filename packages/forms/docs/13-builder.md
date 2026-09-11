@@ -520,6 +520,36 @@ Builder::make()
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `blockPickerWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Searching blocks
+
+If you have many blocks, you may allow users to search them in the block picker using the `searchable()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make()
+    ->searchable()
+    ->blocks([
+        // ...
+    ])
+```
+
+The search matches the labels of the blocks. You may customize the placeholder of the search field using the `searchPrompt()` method, and the message displayed when no blocks match the search using the `noSearchResultsMessage()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make()
+    ->searchable()
+    ->searchPrompt('Search for a block')
+    ->noSearchResultsMessage('No blocks found.')
+    ->blocks([
+        // ...
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `searchable()`, `searchPrompt()` and `noSearchResultsMessage()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+
 ## Limiting the number of times a block can be used
 
 By default, each block can be used in the builder an unlimited number of times. You may limit this using the `maxItems()` method on a block:

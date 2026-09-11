@@ -1,6 +1,8 @@
 export default () => ({
     panelId: null,
 
+    isOpen: false,
+
     init() {
         document.addEventListener('livewire:navigate', () => this.close())
 
@@ -63,12 +65,14 @@ export default () => ({
             panel.id = this.panelId
         }
 
+        this.isOpen = panel.style.display === 'block'
+
         this.setAttributeIfChanged(trigger, 'aria-haspopup', 'true')
         this.setAttributeIfChanged(trigger, 'aria-controls', this.panelId)
         this.setAttributeIfChanged(
             trigger,
             'aria-expanded',
-            panel.style.display === 'block' ? 'true' : 'false',
+            this.isOpen ? 'true' : 'false',
         )
 
         // The floating UI plugin also writes `aria-expanded` onto the non-focusable
@@ -85,13 +89,50 @@ export default () => ({
     },
 
     toggle(event) {
+        const wasOpen = this.$refs.panel?.style.display === 'block'
+
         this.$refs.panel?.toggle(event)
         this.syncAria()
+
+        if (!wasOpen) {
+            this.autofocus()
+        }
     },
 
     open(event) {
+        const wasOpen = this.$refs.panel?.style.display === 'block'
+
         this.$refs.panel?.open(event)
         this.syncAria()
+
+        if (!wasOpen) {
+            this.autofocus()
+        }
+    },
+
+    autofocus() {
+        // At this point the panel is not visible yet, since the floating UI
+        // plugin makes it visible asynchronously. A `setTimeout` waits for
+        // that, as focus only works on visible elements.
+        setTimeout(() => {
+            const panel = this.$refs.panel
+
+            if (!panel || panel.style.display !== 'block') {
+                return
+            }
+
+            const autofocusable = panel.querySelector(
+                '[data-dropdown-autofocus]',
+            )
+
+            if (!autofocusable) {
+                return
+            }
+
+            autofocusable.dispatchEvent(new CustomEvent('dropdown-autofocus'))
+
+            autofocusable.focus()
+        })
     },
 
     close(event) {
