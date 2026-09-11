@@ -45,21 +45,13 @@ const LocalFilesPlugin = ({
     acceptedTypes,
     acceptedTypesValidationMessage,
     get$WireUsing,
+    getFileAttachmentUrl,
     key,
     maxSize,
     maxSizeValidationMessage,
     statePath,
     uploadingMessage,
 }) => {
-    const getFileAttachmentUrl = (fileKey) =>
-        get$WireUsing().callSchemaComponentMethod(
-            key,
-            'getUploadedFileAttachmentTemporaryUrl',
-            {
-                attachment: fileKey,
-            },
-        )
-
     return new Plugin({
         key: new PluginKey('localFiles'),
         props: {
@@ -444,6 +436,7 @@ export default Extension.create({
             statePath: null,
             uploadingMessage: null,
             get$WireUsing: null,
+            getFileAttachmentUrl: null,
         }
     },
 

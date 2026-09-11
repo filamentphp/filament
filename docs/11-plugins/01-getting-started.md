@@ -40,6 +40,8 @@ While the plugin object is extremely helpful, it is not required to build a plug
 
 All [asset registration](../advanced/assets), including CSS, JS and Alpine Components, should be done through the plugin's service provider in the `packageBooted()` method. This allows Filament to register the assets with the Asset Manager and load them when needed.
 
+For a field built with React, Vue, or Svelte, follow [building reusable JavaScript fields](../forms/custom-fields#building-reusable-plugin-fields) and [publishing ES modules in plugins](../advanced/assets#publishing-es-modules-in-plugins). Build and include the framework dependencies in your plugin's assets so consumers do not need to change their application's Vite configuration.
+
 ## Creating a plugin
 
 While you can certainly build plugins from scratch, we recommend using the [Filament Plugin Skeleton](https://github.com/filamentphp/plugin-skeleton) to quickly get started. This skeleton includes all the necessary boilerplate to get you up and running quickly.

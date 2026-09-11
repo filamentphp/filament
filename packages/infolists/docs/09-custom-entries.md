@@ -242,13 +242,9 @@ class AudioPlayerEntry extends Entry
 
 ### Calling the method from JavaScript
 
-In your Blade view, you may call the exposed method using `$wire.callSchemaComponentMethod()`. The first argument is the component's key (available via `$getKey()`), and the second argument is the method name. You may pass arguments as a third argument:
+In your Blade view, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this entry, so you do not need its key. Pass arguments as an object keyed by PHP parameter name. You can also use `$callSchemaComponentMethod('getWaveformData')`, including for methods whose names collide with built-in utilities or Alpine magics:
 
 ```blade
-@php
-    $key = $getKey();
-@endphp
-
 <x-dynamic-component
     :component="$getEntryWrapperView()"
     :entry="$entry"
@@ -257,10 +253,7 @@ In your Blade view, you may call the exposed method using `$wire.callSchemaCompo
         x-data="{
             waveform: null,
             async loadWaveform() {
-                this.waveform = await $wire.callSchemaComponentMethod(
-                    @js($key),
-                    'getWaveformData',
-                )
+                this.waveform = await this.$getWaveformData()
             },
         }"
         x-init="loadWaveform"

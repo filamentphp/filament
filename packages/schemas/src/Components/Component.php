@@ -28,6 +28,8 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\HasColumns;
 use Filament\Schemas\Concerns\HasGap;
 use Filament\Schemas\Concerns\HasStateBindingModifiers;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\CanOrderColumns;
@@ -76,6 +78,31 @@ class Component extends ViewComponent
     protected string $evaluationIdentifier = 'component';
 
     protected string $viewIdentifier = 'schemaComponent';
+
+    /** @var array<class-string, array<string>> */
+    protected static array $exposedLivewireMethodNames = [];
+
+    /** @return array<string> */
+    public function getExposedLivewireMethodNames(): array
+    {
+        if (isset(static::$exposedLivewireMethodNames[static::class])) {
+            return static::$exposedLivewireMethodNames[static::class];
+        }
+
+        $names = [];
+
+        foreach (ComponentManager::getPublicMethodReflections(static::class) as $method) {
+            if ($method->isStatic() || str_starts_with($method->getName(), '__')) {
+                continue;
+            }
+
+            if ($method->getAttributes(ExposedLivewireMethod::class)) {
+                $names[] = $method->getName();
+            }
+        }
+
+        return static::$exposedLivewireMethodNames[static::class] = $names;
+    }
 
     /**
      * @return array<mixed>
@@ -131,20 +158,33 @@ class Component extends ViewComponent
 
     /**
      * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     *
+     * @return array{key: ?string, exposedMethods: array<string>, path: ?string, containerPath: ?string}
+     */
+    public function getAlpineScopeConfiguration(): array
+    {
+        $container = $this->getContainer();
+        $parentComponent = $container->isEmbeddedInParentComponent()
+            ? $container->getParentComponent()
+            : null;
+
+        return [
+            'key' => $this->getKey(),
+            'exposedMethods' => $this->getExposedLivewireMethodNames(),
+            'path' => $parentComponent ? $parentComponent->getStatePath() : $this->getStatePath(),
+            'containerPath' => $parentComponent ? $parentComponent->getContainer()->getStatePath() : $container->getStatePath(),
+        ];
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
      */
     public function toSchemaHtml(?bool $isVisible = null): string
     {
         $isVisible ??= $this->isVisible();
 
         $container = $this->getContainer();
-
-        $isContainerEmbeddedInParentComponent = $container->isEmbeddedInParentComponent();
-        $containerParentComponent = $isContainerEmbeddedInParentComponent
-            ? $container->getParentComponent()
-            : null;
-        $containerStatePath = $isContainerEmbeddedInParentComponent
-            ? $containerParentComponent->getContainer()->getStatePath()
-            : $container->getStatePath();
+        $alpineScopeConfiguration = $this->getAlpineScopeConfiguration();
 
         /**
          * Instead of only rendering the hidden components, we should
@@ -178,9 +218,7 @@ class Component extends ViewComponent
 
         $maxWidth = $this->getMaxWidth();
 
-        $statePath = $isContainerEmbeddedInParentComponent
-            ? $containerParentComponent->getStatePath()
-            : $this->getStatePath();
+        $statePath = $alpineScopeConfiguration['path'];
 
         $key = $this->getKey();
 
@@ -211,8 +249,7 @@ class Component extends ViewComponent
             <?php } ?>
             <?php if ($isVisible) { ?>
                 x-data="filamentSchemaComponent({
-                    path: <?= Js::from($statePath) ?>,
-                    containerPath: <?= Js::from($containerStatePath) ?>,
+                    ...<?= Js::from($alpineScopeConfiguration) ?>,
                     $wire,
                 })"
                 <?php if ($afterStateUpdatedJs = $this->getAfterStateUpdatedJs()) { ?>

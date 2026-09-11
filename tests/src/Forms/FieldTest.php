@@ -2,6 +2,7 @@
 
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\JsField;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -138,6 +139,28 @@ describe('validation messages for nested recursive rules', function (): void {
             ->toContain('The first choice is invalid.');
     });
 });
+
+it('groups JS field descriptions in embedded and Blade wrappers', function (bool $blade, string $errorMode): void {
+    view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag([
+        'data.title' => $errorMode === 'list' ? ['First error.', 'Second error.'] : ['First error.'],
+    ])));
+    view()->addNamespace('description-test', dirname(__DIR__, 3) . '/packages/forms/resources/views');
+    $field = JsField::make('title')->helperText('Helpful description.')
+        ->allowHtmlValidationMessages($errorMode === 'html')
+        ->showAllValidationMessages($errorMode === 'list');
+    if ($blade) {
+        $field->fieldWrapperView('description-test::field-wrapper');
+    }
+    $html = Schema::make(Livewire::make())->statePath('data')->components([$field])->toHtml();
+    $document = new DOMDocument;
+    @$document->loadHTML($html);
+    $description = $document->getElementById($field->getId() . '-description');
+    expect($description)->not->toBeNull();
+    expect($description->textContent)->toContain('Helpful description.', 'First error.');
+    if ($errorMode === 'list') {
+        expect($description->textContent)->toContain('Second error.');
+    }
+})->with([false, true])->with(['text', 'html', 'list']);
 
 class IdField extends TextInput
 {

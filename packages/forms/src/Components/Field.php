@@ -293,6 +293,7 @@ class Field extends Component implements Contracts\HasValidationRules
         string | Htmlable | null $labelPrefix = null,
         string | Htmlable | null $labelSuffix = null,
         string $labelTag = 'label',
+        ?string $descriptionId = null,
     ): string {
         $statePath = $this->getStatePath();
 
@@ -346,6 +347,7 @@ class Field extends Component implements Contracts\HasValidationRules
                     'labelSuffix' => $labelSuffix,
                     'inlineLabelVerticalAlignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
                     'labelTag' => $labelTag,
+                    'descriptionId' => $descriptionId,
                     'attributes' => (new FilamentComponentAttributeBag)->merge($extraWrapperAttributes, escape: false),
                     'hasErrors' => $hasError,
                     'errorMessage' => $errorMessage,
@@ -362,6 +364,7 @@ class Field extends Component implements Contracts\HasValidationRules
                     'label-suffix' => $labelSuffix,
                     'inline-label-vertical-alignment' => $inlineLabelVerticalAlignment ?? VerticalAlignment::Start,
                     'label-tag' => $labelTag,
+                    'description-id' => $descriptionId,
                     'has-errors' => $hasError,
                     'error-message' => $errorMessage,
                     'error-messages' => $errorMessages,
@@ -479,6 +482,10 @@ class Field extends Component implements Contracts\HasValidationRules
                         <?= $html ?>
                     <?php } ?>
 
+                    <?php if ($descriptionId !== null) { ?>
+                        <div id="<?= e($descriptionId) ?>" class="fi-fo-field-description" <?php if (! ($belowContentSchema || $hasError || $aboveErrorMessageSchema || $belowErrorMessageSchema)) { ?>hidden<?php } ?>>
+                    <?php } ?>
+
                     <?= $belowContentSchema?->toHtml() ?>
 
                     <?php if ($hasError) { ?>
@@ -507,6 +514,9 @@ class Field extends Component implements Contracts\HasValidationRules
                         <?php } ?>
 
                         <?= $belowErrorMessageSchema?->toHtml() ?>
+                    <?php } ?>
+                    <?php if ($descriptionId !== null) { ?>
+                        </div>
                     <?php } ?>
                 </div>
             <?php } ?>

@@ -105,7 +105,6 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
             <?php return $this->wrapEmbeddedHtml(ob_get_clean(), labelTag: 'div');
         }
 
-        $key = $this->getKey();
         $label = $this->getLabel();
         $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
         $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
@@ -147,11 +146,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
                             }
 
                             $wire.upload(`componentFileAttachments.<?= e($statePath) ?>`, file, () => {
-                                $wire
-                                    .callSchemaComponentMethod(
-                                        <?= Js::from($key) ?>,
-                                        'saveUploadedFileAttachmentAndGetUrl',
-                                    )
+                                $saveUploadedFileAttachmentAndGetUrl()
                                     .then((url) => {
                                         if (! url) {
                                             return onError()

@@ -416,6 +416,123 @@ This approach also works for TypeScript files or any other JavaScript that needs
     If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
 </Aside>
 
+### Building lazy-loaded ES modules
+
+Some components, such as [JavaScript custom fields](../forms/custom-fields#rendering-fields-with-javascript-frameworks), load an ES module on demand rather than running a script on every page. The module must preserve the exports expected by the component. For `JsField`, this is the default mount function shown in the field guide.
+
+Add the module to your Laravel Vite plugin's `input` list and preserve entry exports in the production build:
+
+```js
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/js/fields/location-picker.jsx',
+            ],
+        }),
+    ],
+    build: {
+        rolldownOptions: { preserveEntrySignatures: 'exports-only' },
+    },
+})
+```
+
+For Vite versions using Rollup, use `rollupOptions` instead of `rolldownOptions`. Adapt your existing configuration rather than replacing its plugins or entry points. For Vue, enable `@vitejs/plugin-vue` and use the `.js` entry from the [Vue field example](../forms/custom-fields#creating-a-vue-field). For Svelte, enable `@sveltejs/vite-plugin-svelte` and use the `.svelte.js` entry from the [Svelte field example](../forms/custom-fields#creating-a-svelte-field). Use framework plugins compatible with your Vite version.
+
+Do not import the renderer from your main application entry or include it with `@vite()`, as that would load it eagerly. Pass its URL to the field instead:
+
+```php
+use Filament\Forms\Components\JsField;
+use Illuminate\Support\Facades\Vite;
+
+JsField::make('location')
+    ->renderer(Vite::asset('resources/js/fields/location-picker.jsx'))
+```
+
+`Vite::asset()` resolves the development URL or the production manifest's hashed URL. Include the Vite client through your normal application layout during development. Lazy loading does not provide automatic state-preserving hot replacement for an already mounted field.
+
+<Aside variant="info">
+    Importing a built JavaScript URL does not load CSS listed only in Vite's manifest. Include the field's CSS through your application's stylesheet or [register it separately](#registering-css-files). The browser caches imported modules by URL, so use versioned or hashed URLs when deploying changes.
+</Aside>
+
+#### Building modules with esbuild
+
+You can use esbuild instead of Vite. For the [React field example](../forms/custom-fields#creating-a-react-field), install `esbuild`, `react`, and `react-dom` as development dependencies in the project that builds the renderer. Create `build.mjs`:
+
+```js
+import { build } from 'esbuild'
+
+await build({
+    entryPoints: { 'location-picker': 'resources/js/fields/location-picker.jsx' },
+    outdir: 'dist',
+    bundle: true,
+    format: 'esm',
+    minify: true,
+    define: { 'process.env.NODE_ENV': '"production"' },
+})
+```
+
+Run `node build.mjs`. This bundles React into the renderer without requiring globals or an import map. The example imports React for esbuild's classic JSX transform; you may alternatively configure `jsx: 'automatic'`.
+
+Vue single-file components and Svelte components require their framework compilers, which esbuild does not include. Use a build integration that supports your component syntax, styles, and TypeScript requirements, or use the Vite plugins described above. The resulting module must bundle its runtime dependencies and retain its default export, whichever build tool you choose.
+
+### Publishing ES modules in plugins
+
+For a [reusable JavaScript field](../forms/custom-fields#building-reusable-plugin-fields), build the renderer in your plugin repository and include the generated `dist/` directory in your Composer release. Consumers should not need npm dependencies or Vite configuration to use your field.
+
+Register the prebuilt entry in your [plugin's service provider](../plugins/getting-started#registering-assets), using `loadedOnRequest()` to prevent Filament from loading it on every page:
+
+```php
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+
+FilamentAsset::register([
+    Js::make('location-picker', __DIR__ . '/../dist/location-picker.js')
+        ->loadedOnRequest(),
+], package: 'vendor/location-picker');
+```
+
+Use `FilamentAsset::getScriptSrc('location-picker', 'vendor/location-picker')` to obtain the URL, as shown in the reusable field example. Consumers run `php artisan filament:assets` after installing or upgrading your package. `getScriptSrc()` includes the Composer package version in the entry URL. See [creating a plugin](../plugins/getting-started#creating-a-plugin) for package and service-provider setup.
+
+#### Publishing stylesheets and shared chunks
+
+If your build produces separate CSS, [register it explicitly](#registering-css-files). Importing the JavaScript URL does not attach esbuild's CSS output. Keep selectors package-specific.
+
+For several renderers sharing dependencies, you can add `splitting: true` and `chunkNames: 'chunks/[name]-[hash]'` to esbuild. Publish every chunk at the relative path used by the entry. Chunk filenames need content hashes because relative imports do not inherit the entry URL's version query.
+
+For a build that emits JavaScript and CSS in subdirectories, replace the single-entry registration above with this in your service provider:
+
+```php
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\File;
+
+foreach (File::allFiles(__DIR__ . '/../dist') as $file) {
+    $extension = $file->getExtension();
+
+    if (! in_array($extension, ['js', 'css'])) {
+        continue;
+    }
+
+    $id = str_replace('\\', '/', $file->getRelativePathname());
+    $id = substr($id, 0, -(strlen($extension) + 1));
+
+    FilamentAsset::register([
+        $extension === 'css'
+            ? Css::make($id, $file->getPathname())
+            : Js::make($id, $file->getPathname())->loadedOnRequest(),
+    ], package: 'vendor/location-picker');
+}
+```
+
+This preserves relative paths for JavaScript chunks and registers generated stylesheets. If your CSS references fonts or images, publish those files separately at the URLs your stylesheet expects.
+
 ## Ignoring published assets in version control
 
 The files that the `php artisan filament:assets` command copies into the `/public` directory for Filament's own packages are generated, so there is no need to commit them to version control. When you run `php artisan filament:install`, Filament adds the following rules to your app's `.gitignore` file, if they are not already there:
