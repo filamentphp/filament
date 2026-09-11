@@ -570,6 +570,38 @@ public function table(Table $table): Table
 }
 ```
 
+## Persisting the table state in the user's session
+
+Filament can remember a table's [filters](filters#persisting-filters-in-the-users-session), [search](columns#persisting-the-search-in-the-users-session), [sort](columns#persisting-the-sort-in-the-users-session), [grouping](grouping#persisting-the-grouping-in-the-users-session) and [column manager](columns#disabling-column-persistence-in-the-users-session) state in the user's session, so it is restored when they return to the table. Each feature has its own method, but you can toggle all of them at once using the `persistInSession()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistInSession();
+}
+```
+
+Passing `false` disables every kind of session persistence, including the column manager, which is persisted by default:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistInSession(false);
+}
+```
+
 ## Styling table rows
 
 ### Striped table rows

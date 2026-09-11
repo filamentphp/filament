@@ -157,6 +157,37 @@ describe('content grid', function (): void {
     });
 });
 
+describe('session persistence', function (): void {
+    it('can enable all session persistence with `persistInSession()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->persistInSession();
+
+        expect($table->persistsFiltersInSession())->toBeTrue()
+            ->and($table->persistsSearchInSession())->toBeTrue()
+            ->and($table->persistsColumnSearchesInSession())->toBeTrue()
+            ->and($table->persistsSortInSession())->toBeTrue()
+            ->and($table->persistsGroupInSession())->toBeTrue()
+            ->and($table->persistsColumnsInSession())->toBeTrue();
+    });
+
+    it('can disable all session persistence with `persistInSession(false)`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table
+            ->persistFiltersInSession()
+            ->persistSortInSession()
+            ->persistInSession(false);
+
+        expect($table->persistsFiltersInSession())->toBeFalse()
+            ->and($table->persistsSearchInSession())->toBeFalse()
+            ->and($table->persistsColumnSearchesInSession())->toBeFalse()
+            ->and($table->persistsSortInSession())->toBeFalse()
+            ->and($table->persistsGroupInSession())->toBeFalse()
+            ->and($table->persistsColumnsInSession())->toBeFalse();
+    });
+});
+
 describe('rendering', function (): void {
     it('can render the table', function (): void {
         Post::factory()->count(3)->create();

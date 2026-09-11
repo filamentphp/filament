@@ -978,7 +978,7 @@ ModalTableSelect::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">The `tableConfiguration()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-Session persistence is always disabled for the table inside a modal table select, since every modal table select on your app is rendered by the same Livewire component and would otherwise share the same persisted state. Methods such as `persistFiltersInSession()`, `persistSearchInSession()`, `persistSortInSession()`, `persistGroupInSession()` and `persistColumnsInSession()` have no effect when the table configuration class is used by a `ModalTableSelect`.
+Session persistence is always disabled for the table inside a modal table select using [`persistInSession(false)`](../tables#persisting-the-table-state-in-the-users-session), since every modal table select in your app is rendered by the same Livewire component and would otherwise share the same persisted state. Methods such as `persistFiltersInSession()`, `persistSearchInSession()`, `persistSortInSession()`, `persistGroupInSession()` and `persistColumnsInSession()` have no effect when the table configuration class is used by a `ModalTableSelect`.
 
 ### Customizing the modal table select actions
 
