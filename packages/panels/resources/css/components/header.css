@@ -11,9 +11,7 @@
         }
     }
 
-    &:has(> .fi-header-main) {
-        @apply block;
-
+    & .fi-header-main {
         & .fi-header-actions-ctn {
             @apply max-w-full sm:mt-0;
         }
@@ -21,10 +19,14 @@
 }
 
 .fi-header-main {
-    @apply flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between;
+    @apply w-full min-w-0;
 
-    & > div:first-child {
-        @apply w-max max-w-full;
+    & > div {
+        @apply flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between;
+
+        & > div:first-child {
+            @apply w-max max-w-full;
+        }
     }
 }
 
