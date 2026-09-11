@@ -19,45 +19,47 @@
         ])
     }}
 >
-    <div>
-        @if ($breadcrumbs)
-            <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
-        @endif
+    @if ($breadcrumbs)
+        <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
+    @endif
 
-        {{ FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_HEADING_BEFORE, scopes: $this->getRenderHookScopes()) }}
+    <div class="fi-header-main">
+        <div>
+            {{ FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_HEADING_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-        @if (filled($heading))
-            <h1 class="fi-header-heading">
-                {{ $heading }}
-            </h1>
-        @endif
-
-        {{ FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_HEADING_AFTER, scopes: $this->getRenderHookScopes()) }}
-
-        @if (filled($subheading))
-            <p class="fi-header-subheading">
-                {{ $subheading }}
-            </p>
-        @endif
-    </div>
-
-    @php
-        $beforeActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
-        $afterActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
-    @endphp
-
-    @if (filled($beforeActions) || $actions || filled($afterActions))
-        <div class="fi-header-actions-ctn">
-            {{ $beforeActions }}
-
-            @if ($actions)
-                <x-filament::actions
-                    :actions="$actions"
-                    :alignment="$actionsAlignment"
-                />
+            @if (filled($heading))
+                <h1 class="fi-header-heading">
+                    {{ $heading }}
+                </h1>
             @endif
 
-            {{ $afterActions }}
+            {{ FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_HEADING_AFTER, scopes: $this->getRenderHookScopes()) }}
+
+            @if (filled($subheading))
+                <p class="fi-header-subheading">
+                    {{ $subheading }}
+                </p>
+            @endif
         </div>
-    @endif
+
+        @php
+            $beforeActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
+            $afterActions = FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
+        @endphp
+
+        @if (filled($beforeActions) || $actions || filled($afterActions))
+            <div class="fi-header-actions-ctn">
+                {{ $beforeActions }}
+
+                @if ($actions)
+                    <x-filament::actions
+                        :actions="$actions"
+                        :alignment="$actionsAlignment"
+                    />
+                @endif
+
+                {{ $afterActions }}
+            </div>
+        @endif
+    </div>
 </header>
