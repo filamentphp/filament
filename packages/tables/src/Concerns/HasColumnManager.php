@@ -176,6 +176,10 @@ trait HasColumnManager
      */
     protected function loadTableColumnsFromSession(): array
     {
+        if (! $this->getTable()->persistsColumnsInSession()) {
+            return $this->getDefaultTableColumnState();
+        }
+
         return session()->get(
             $this->getTableColumnsSessionKey(),
             $this->getDefaultTableColumnState(),
