@@ -9,7 +9,7 @@ return [
 
         'failed' => [
             'title' => 'Nepodařilo se zablokovat změnu e-mailové adresy',
-            'body' => 'Bohužel se Vám nepodařilo zabránit změně e-mailové adresy na :email, protože již byla ověřena před zablokováním. Pokud jste o změnu nežádali, kontaktujte nás prosím ihned.',
+            'body' => 'Bohužel se vám nepodařilo zabránit změně e-mailové adresy na :email, protože již byla ověřena před zablokováním. Pokud jste o změnu nežádali, kontaktujte nás prosím ihned.',
         ],
     ],
 ];

@@ -77,7 +77,7 @@ return [
 
         'throttled' => [
             'title' => 'Příliš mnoho pokusů o přihlášení.',
-            'body' => 'Zkuste to znovu za :seconds vteřin.',
+            'body' => 'Zkuste to znovu za :seconds s.',
         ],
 
     ],

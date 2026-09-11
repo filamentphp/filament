@@ -33,12 +33,12 @@ return [
     'notifications' => [
 
         'sent' => [
-            'body' => 'Pokud Váš účet neexistuje, e-mail neobdržíte.',
+            'body' => 'Pokud váš účet neexistuje, e-mail neobdržíte.',
         ],
 
         'throttled' => [
             'title' => 'Příliš mnoho požadavků',
-            'body' => 'Zkuste to prosím znovu za :seconds sekund.',
+            'body' => 'Zkuste to prosím znovu za :seconds s.',
         ],
 
     ],
