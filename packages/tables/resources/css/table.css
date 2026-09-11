@@ -90,6 +90,15 @@
                 @apply sm:px-3 sm:first:ps-6;
             }
 
+            &.fi-ta-individual-search-cell {
+                @apply sm:px-3;
+            }
+
+            &.fi-ta-group-selection-cell,
+            &:has(.fi-ta-reorder-handle) {
+                @apply sm:px-3 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+            }
+
             &.sm\:fi-hidden {
                 @apply sm:hidden;
             }
