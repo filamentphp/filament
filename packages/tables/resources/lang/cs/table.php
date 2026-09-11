@@ -41,7 +41,7 @@ return [
 
         'select' => [
 
-            'loading_message' => 'Načítává se...',
+            'loading_message' => 'Načítá se...',
 
             'no_options_message' => 'Nejsou dostupné žádné možnosti.',
 
@@ -62,7 +62,7 @@ return [
                 'expand_list' => 'Zobrazit o :count více',
             ],
 
-            'more_list_items' => 'a 1 další|a :count další| a :count dalších',
+            'more_list_items' => 'a 1 další|a :count další|a :count dalších',
         ],
 
     ],
@@ -95,7 +95,7 @@ return [
 
         'subheadings' => [
             'all' => 'Všechny :label',
-            'group' => ':group shrnutí',
+            'group' => 'Shrnutí: :group',
             'page' => 'Tato stránka',
         ],
 
@@ -157,7 +157,7 @@ return [
 
         'heading' => 'Žádné záznamy nenalezeny',
 
-        'description' => 'Začněte vytvořením :modelu.',
+        'description' => 'Začněte vytvořením záznamu (:model).',
 
     ],
 
@@ -239,7 +239,7 @@ return [
 
     ],
 
-    'loading' => 'Načítává se...',
+    'loading' => 'Načítá se...',
 
     'reorder_indicator' => 'Vyberte a přesuňte položky.',
 
@@ -252,7 +252,7 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => 'Označit všechny :count',
+                'label' => 'Vybrat vše (:count)',
             ],
 
             'deselect_all' => [

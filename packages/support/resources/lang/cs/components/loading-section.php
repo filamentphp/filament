@@ -2,6 +2,6 @@
 
 return [
 
-    'label' => 'Načítává se...',
+    'label' => 'Načítá se...',
 
 ];
