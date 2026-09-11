@@ -25,7 +25,7 @@
         @apply flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between;
 
         & > div:first-child {
-            @apply w-max max-w-full;
+            @apply max-w-full sm:w-max;
         }
     }
 }
