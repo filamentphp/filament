@@ -86,7 +86,7 @@
     }
 
     & .fi-fo-rich-editor-content {
-        @apply relative min-h-12 w-full flex-1 px-5 py-3;
+        @apply relative flex min-h-12 w-full flex-1 flex-col px-5 py-3;
     }
 
     &[style*='--min-height'] .fi-fo-rich-editor-content {
@@ -175,7 +175,7 @@
     }
 
     & .tiptap {
-        @apply h-full;
+        @apply h-full flex-1;
 
         &:focus {
             @apply outline-none;
