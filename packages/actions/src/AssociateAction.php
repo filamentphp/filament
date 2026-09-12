@@ -8,7 +8,6 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Table;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,8 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\apply_search_constraint;
 
 class AssociateAction extends Action
 {
@@ -224,24 +222,20 @@ class AssociateAction extends Action
             $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
 
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
-                /** @var Connection $databaseConnection */
-                $databaseConnection = $relationshipQuery->getConnection();
-
                 $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-                $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
                 $searchColumns ??= [$titleAttribute];
 
                 $isFirst = true;
 
-                $relationshipQuery->where(function (Builder $query) use ($databaseConnection, $isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
-                        $whereClause = $isFirst ? 'where' : 'orWhere';
-
-                        $query->{$whereClause}(
-                            generate_search_column_expression($query->qualifyColumn($searchColumn), $isForcedCaseInsensitive, $databaseConnection),
-                            'like',
+                        apply_search_constraint(
+                            $query,
+                            $query->qualifyColumn($searchColumn),
                             "%{$search}%",
+                            $isForcedCaseInsensitive,
+                            $isFirst ? 'and' : 'or',
                         );
 
                         $isFirst = false;

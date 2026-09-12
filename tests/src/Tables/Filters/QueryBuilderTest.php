@@ -31,6 +31,11 @@ use Filament\Tests\Fixtures\Models\QueryBuilderItem;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as BaseQueryBuilder;
+use Illuminate\Database\Query\Grammars\Grammar;
+use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
@@ -1649,6 +1654,78 @@ describe('relationship method constraints', function (): void {
                 ->call('applyTableFilters'))
             ->assertCanSeeTableRecords([$highTotalUser])
             ->assertCanNotSeeTableRecords([$lowTotalUser]);
+    });
+
+    it('uses `whereRelationAggregate()` provided by an unsupported Eloquent query builder', function (): void {
+        $databaseConnection = Mockery::mock(Connection::class);
+        $databaseConnection->shouldReceive('getDriverName')->andReturn('mongodb');
+
+        $query = new class(new BaseQueryBuilder($databaseConnection, new Grammar($databaseConnection), new Processor)) extends EloquentBuilder
+        {
+            /** @var array{relationship: string, column: string, aggregate: string, operator: string, value: float, modifyQueryUsing: Closure | null} | null */
+            public ?array $relationshipAggregateWhere = null;
+
+            public function whereRelationAggregate(string $relationship, string $column, string $aggregate, string $operator, float $value, ?Closure $modifyQueryUsing = null): static
+            {
+                $this->relationshipAggregateWhere = [
+                    'relationship' => $relationship,
+                    'column' => $column,
+                    'aggregate' => $aggregate,
+                    'operator' => $operator,
+                    'value' => $value,
+                    'modifyQueryUsing' => $modifyQueryUsing,
+                ];
+
+                return $this;
+            }
+        };
+        $query->setModel(new User);
+
+        $modifyQueryUsing = static fn (EloquentBuilder $query): EloquentBuilder => $query->where('is_published', true);
+        $constraint = NumberConstraint::make('posts.rating')
+            ->modifyRelationshipQueryUsing($modifyQueryUsing);
+        $operator = IsMinOperator::make()
+            ->constraint($constraint)
+            ->settings(['number' => 20, 'aggregate' => 'sum']);
+
+        expect($operator->apply($query, 'rating'))
+            ->toBe($query)
+            ->and($query->relationshipAggregateWhere)
+            ->toBe([
+                'relationship' => 'posts',
+                'column' => 'rating',
+                'aggregate' => 'sum',
+                'operator' => '>=',
+                'value' => 20.0,
+                'modifyQueryUsing' => $modifyQueryUsing,
+            ]);
+    });
+
+    it('does not use `whereRelationAggregate()` for a supported database driver', function (): void {
+        $query = new class(User::query()->toBase()) extends EloquentBuilder
+        {
+            public bool $usedRelationshipAggregateWhere = false;
+
+            public function whereRelationAggregate(string $relationship, string $column, string $aggregate, string $operator, float $value, ?Closure $modifyQueryUsing = null): static
+            {
+                $this->usedRelationshipAggregateWhere = true;
+
+                return $this;
+            }
+        };
+        $query->setModel(new User);
+
+        $constraint = NumberConstraint::make('posts.rating');
+        $operator = IsMinOperator::make()
+            ->constraint($constraint)
+            ->settings(['number' => 20, 'aggregate' => 'sum']);
+
+        expect($operator->apply($query, 'rating'))
+            ->toBe($query)
+            ->and($query->usedRelationshipAggregateWhere)
+            ->toBeFalse()
+            ->and($query->getQuery()->wheres[0]['type'])
+            ->toBe('raw');
     });
 
     it('can filter records using number constraint with average aggregate on relationship', function (): void {

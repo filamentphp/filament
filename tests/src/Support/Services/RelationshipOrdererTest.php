@@ -4,12 +4,75 @@ use Filament\Support\Services\RelationshipOrderer;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Database\Query\Grammars\Grammar;
+use Illuminate\Database\Query\Processors\Processor;
 
 uses(TestCase::class);
 
 beforeEach(function (): void {
     $this->orderer = new RelationshipOrderer;
+});
+
+describe('`orderQuery()`', function (): void {
+    it('uses `orderByRelation()` provided by an unsupported Eloquent query builder', function (): void {
+        $databaseConnection = Mockery::mock(Connection::class);
+        $databaseConnection->shouldReceive('getDriverName')->andReturn('mongodb');
+
+        $query = new class(new Builder($databaseConnection, new Grammar($databaseConnection), new Processor)) extends EloquentBuilder
+        {
+            /** @var array{relationship: string, column: string, direction: string} | null */
+            public ?array $relationshipOrder = null;
+
+            public function orderByRelation(string $relationship, string $column, string $direction): static
+            {
+                $this->relationshipOrder = [
+                    'relationship' => $relationship,
+                    'column' => $column,
+                    'direction' => $direction,
+                ];
+
+                return $this;
+            }
+        };
+        $query->setModel(new Post);
+
+        expect($this->orderer->orderQuery($query, 'author', 'name', 'desc'))
+            ->toBe($query)
+            ->and($query->relationshipOrder)
+            ->toBe([
+                'relationship' => 'author',
+                'column' => 'name',
+                'direction' => 'desc',
+            ]);
+    });
+
+    it('uses a relationship subquery for a supported driver when the Eloquent query builder provides `orderByRelation()`', function (): void {
+        $query = new class(Post::query()->toBase()) extends EloquentBuilder
+        {
+            public bool $usedRelationshipOrder = false;
+
+            public function orderByRelation(string $relationship, string $column, string $direction): static
+            {
+                $this->usedRelationshipOrder = true;
+
+                return $this;
+            }
+        };
+        $query->setModel(new Post);
+
+        expect($this->orderer->orderQuery($query, 'author', 'name', 'desc'))
+            ->toBe($query)
+            ->and($query->usedRelationshipOrder)
+            ->toBeFalse()
+            ->and($query->getQuery()->orders[0]['column'])
+            ->toBeInstanceOf(Expression::class)
+            ->and($query->getQuery()->orders[0]['direction'])
+            ->toBe('desc');
+    });
 });
 
 describe('`buildSubquery()`', function (): void {
