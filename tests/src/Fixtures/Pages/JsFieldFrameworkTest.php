@@ -177,6 +177,26 @@ class JsFieldFrameworkTest extends Page
             ->readOnly(fn (): bool => $this->locked && ($name === 'blur'))
             ->extraAttributes(['data-field' => $name]);
 
+        if (($this->scenario === 'description') || str_starts_with($this->scenario, 'inline-')) {
+            return $schema->statePath('data')->components([$field('live')->live()]);
+        }
+
+        if ($this->scenario === 'failure') {
+            return $schema->statePath('data')->components([
+                $field('live')->live(),
+                $field('unavailable')->renderer(match ($this->failure) {
+                    'missing' => '/js/js-field-tests/missing.js',
+                    'export' => 'data:text/javascript,export default 42',
+                    default => RawJs::make('async (context) => {
+                        const mount = (await import("/js/tests/js-fields/' . $this->framework . '.js")).default
+                        const instance = await mount(context)
+                        instance.destroy()
+                        throw new Error("Fixture mount failure after framework cleanup")
+                    }'),
+                }),
+            ]);
+        }
+
         return $schema->statePath('data')->stateBindingModifiers($this->scenario === 'modifiers' ? ['live'] : null)->components([
             TextInput::make('caption'),
             BladeMethodField::make('blade'),
@@ -189,18 +209,6 @@ class JsFieldFrameworkTest extends Page
                 TextInput::make('caption'),
                 FrameworkField::make('field')->live()->extraAttributes(['data-field' => 'nested']),
             ]),
-            ...($this->failure ? [
-                $field('unavailable')->renderer(match ($this->failure) {
-                    'missing' => '/js/js-field-tests/missing.js',
-                    'export' => 'data:text/javascript,export default 42',
-                    default => RawJs::make('async (context) => {
-                        const mount = (await import("/js/tests/js-fields/' . $this->framework . '.js")).default
-                        const instance = await mount(context)
-                        instance.destroy()
-                        throw new Error("Fixture mount failure after framework cleanup")
-                    }'),
-                }),
-            ] : []),
         ]);
     }
 }

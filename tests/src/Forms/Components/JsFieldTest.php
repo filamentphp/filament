@@ -109,7 +109,7 @@ it('obeys `live()` modifiers and remounts when field configuration changes', fun
         ->assertNoAccessibilityIssues();
 
     $page->inDarkMode()->assertNoAccessibilityIssues();
-});
+})->group('serial');
 
 class RenderJsField extends Livewire
 {
