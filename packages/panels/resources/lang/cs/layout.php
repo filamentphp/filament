@@ -20,7 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Zobrazit notifikace',
-            'label_with_unread_count' => '{1} Oznámení, :count nepřečtené oznámení|[2,*] Oznámení, :count nepřečtená oznámení',
+            'label_with_unread_count' => '{1} Oznámení, :count nepřečtené oznámení|[2,4] Oznámení, :count nepřečtená oznámení|[0,*] Oznámení, :count nepřečtených oznámení',
         ],
 
         'open_user_menu' => [
@@ -72,7 +72,7 @@ return [
     ],
 
     'logo' => [
-        'alt' => ':name logo',
+        'alt' => 'Logo :name',
     ],
 
     'tenant_menu' => [

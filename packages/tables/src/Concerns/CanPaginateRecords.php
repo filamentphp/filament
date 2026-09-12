@@ -19,9 +19,11 @@ trait CanPaginateRecords
 
     public function updatedTableRecordsPerPage(): void
     {
-        session()->put([
-            $this->getTablePerPageSessionKey() => $this->getTableRecordsPerPage(),
-        ]);
+        if ($this->getTable()->persistsRecordsPerPageInSession()) {
+            session()->put([
+                $this->getTablePerPageSessionKey() => $this->getTableRecordsPerPage(),
+            ]);
+        }
 
         $this->resetPage();
     }
@@ -70,10 +72,10 @@ trait CanPaginateRecords
 
     public function getDefaultTableRecordsPerPageSelectOption(): int | string
     {
-        $option = session()->get(
-            $this->getTablePerPageSessionKey(),
-            $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption(),
-        );
+        $defaultOption = $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption();
+        $option = $this->getTable()->persistsRecordsPerPageInSession()
+            ? session()->get($this->getTablePerPageSessionKey(), $defaultOption)
+            : $defaultOption;
 
         $pageOptions = $this->getTable()->getPaginationPageOptions();
 
@@ -81,7 +83,9 @@ trait CanPaginateRecords
             return $option;
         }
 
-        session()->remove($this->getTablePerPageSessionKey());
+        if ($this->getTable()->persistsRecordsPerPageInSession()) {
+            session()->remove($this->getTablePerPageSessionKey());
+        }
 
         return $pageOptions[0];
     }

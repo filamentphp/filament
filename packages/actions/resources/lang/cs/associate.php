@@ -25,7 +25,7 @@ return [
                 ],
 
                 'associate_another' => [
-                    'label' => 'Připojit & připojit další',
+                    'label' => 'Připojit a připojit další',
                 ],
 
             ],
