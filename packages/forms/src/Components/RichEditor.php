@@ -1654,9 +1654,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             activePanel: <?= Js::from($this->getActivePanel()) ?>,
                             canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
                             deleteCustomBlockButtonIconHtml: <?= Js::from($deleteIconHtml?->toHtml()) ?>,
-                            deleteCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.delete_label')) ?>,
+                            deleteCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.actions.delete.label')) ?>,
                             editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
-                            editCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.edit_label')) ?>,
+                            editCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.actions.edit.label')) ?>,
                             extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
                             floatingToolbars: <?= Js::from($floatingToolbars) ?>,
                             getMentionLabelsUsing: async (mentions) => {
@@ -1780,7 +1780,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                 </p>
 
                                 <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn" aria-label="<?= e(__('filament-forms::components.rich_editor.close_panel')) ?>">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn" aria-label="<?= e(__('filament-forms::components.rich_editor.actions.close_panel.label')) ?>">
                                         <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON)?->toHtml() ?>
                                     </button>
                                 </div>
@@ -1788,12 +1788,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
                             <?php if ($hasSearchableCustomBlocks) { ?>
                                 <div class="fi-fo-rich-editor-custom-blocks-search">
+                                    <?= generate_icon_html(Heroicon::MagnifyingGlass)?->toHtml() ?>
+
                                     <input
                                         type="search"
                                         x-model="customBlockSearch"
                                         x-on:keydown.enter.prevent
                                         aria-label="<?= e(__('filament-forms::components.rich_editor.custom_blocks.search_label')) ?>"
-                                        placeholder="<?= e(__('filament-forms::components.rich_editor.custom_blocks.search_placeholder')) ?>"
+                                        placeholder="<?= e(__('filament-forms::components.rich_editor.custom_blocks.search_prompt')) ?>"
                                         class="fi-fo-rich-editor-custom-blocks-search-input"
                                     />
                                 </div>
@@ -1801,7 +1803,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
                             <div class="fi-fo-rich-editor-custom-blocks-ctn">
                                 <?php foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks) { ?>
-                                    <?php $groupSearchLabels = [$customBlockGroupLabel, ...$groupBlocks->map(static fn (string $block): string => $block::getLabel())->all()]; ?>
+                                    <?php if ($hasSearchableCustomBlocks) { ?>
+                                        <?php $groupSearchLabels = [$customBlockGroupLabel, ...$groupBlocks->map(static fn (string $block): string => $block::getLabel())->all()]; ?>
+                                    <?php } ?>
                                     <?php if (filled($customBlockGroupLabel)) { ?>
                                         <h4
                                             <?php if ($hasSearchableCustomBlocks) { ?>
@@ -1876,7 +1880,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                 </p>
 
                                 <div class="fi-fo-rich-editor-panel-close-btn-ctn">
-                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn" aria-label="<?= e(__('filament-forms::components.rich_editor.close_panel')) ?>">
+                                    <button type="button" x-on:click="togglePanel()" class="fi-icon-btn" aria-label="<?= e(__('filament-forms::components.rich_editor.actions.close_panel.label')) ?>">
                                         <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON)?->toHtml() ?>
                                     </button>
                                 </div>

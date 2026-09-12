@@ -3,6 +3,10 @@
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
+
+use function Filament\Support\generate_icon_html;
 
 uses(TestCase::class);
 
@@ -81,6 +85,10 @@ describe('`getLabel()` logic', function (): void {
 });
 
 describe('default implementations', function (): void {
+    it('returns `null` from `getIcon()` by default', function (): void {
+        expect(TestCalloutBlock::getIcon())->toBeNull();
+    });
+
     it('returns `null` from `toHtml()` by default', function (): void {
         expect(TestCalloutBlock::toHtml([], []))->toBeNull();
     });
@@ -98,6 +106,21 @@ describe('default implementations', function (): void {
         $result = TestCalloutBlock::configureEditorAction($action);
 
         expect($result)->toBe($action);
+    });
+});
+
+describe('`getIcon()`', function (): void {
+    it('can render an `Htmlable` icon', function (): void {
+        $block = new class extends TestCalloutBlock
+        {
+            public static function getIcon(): Htmlable
+            {
+                return new HtmlString('<svg aria-hidden="true"><path d="M0 0h16v16H0z" /></svg>');
+            }
+        };
+
+        expect(generate_icon_html($block::getIcon())->toHtml())
+            ->toContain('<svg aria-hidden="true"><path d="M0 0h16v16H0z" /></svg>');
     });
 });
 

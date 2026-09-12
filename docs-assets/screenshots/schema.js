@@ -1803,6 +1803,15 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/rich-editor/searchable-custom-blocks-grid': {
+        url: 'forms/fields/rich-editor',
+        selector: '#richEditorSearchableCustomBlocksGrid',
+        viewport: {
+            width: 1920,
+            height: 900,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/rich-editor/floating-toolbar': {
         url: 'forms/fields/rich-editor',
         selector: '#richEditorFloatingToolbar',

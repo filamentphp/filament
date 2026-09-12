@@ -66,6 +66,9 @@ it('can search labels and groups and insert a block at the preserved editor sele
 
     $page
         ->assertPresent('[data-testid="sidebar-rich-editor"] .tiptap')
+        ->assertPresent('.fi-fo-rich-editor-custom-blocks-search svg[aria-hidden="true"]')
+        ->assertPresent('.fi-fo-rich-editor-custom-blocks-search-input[aria-label="Search blocks"][placeholder="Search blocks"]')
+        ->assertPresent('.fi-fo-rich-editor-panel-close-btn-ctn button[aria-label="Close panel"]')
         ->assertScript(<<<'JS'
             (() => {
                 const buttons = [...document.querySelectorAll('.fi-fo-rich-editor-custom-block-btn')]
@@ -83,6 +86,15 @@ it('can search labels and groups and insert a block at the preserved editor sele
         ->assertVisible('.fi-fo-rich-editor-custom-block-btn:has-text("Quote")')
         ->assertVisible('.fi-fo-rich-editor-custom-block-btn:has-text("Section")')
         ->assertMissing('.fi-fo-rich-editor-custom-block-btn:has-text("Image")')
+        ->assertScript(<<<'JS'
+            (() => {
+                const panel = document.querySelector('.fi-fo-rich-editor-panel')
+                const blocks = panel.querySelector('.fi-fo-rich-editor-custom-blocks-ctn')
+
+                return panel.scrollHeight === panel.clientHeight &&
+                    blocks.getBoundingClientRect().bottom <= panel.getBoundingClientRect().bottom
+            })()
+            JS)
         ->fill('.fi-fo-rich-editor-custom-blocks-search-input', 'unknown block')
         ->assertVisible('.fi-fo-rich-editor-custom-blocks-ctn [role="status"]')
         ->assertMissing('.fi-fo-rich-editor-custom-block-btn:has-text("Quote")')
@@ -102,6 +114,8 @@ it('can search labels and groups and insert a block at the preserved editor sele
         ->assertMissing('.fi-fo-rich-editor-custom-block-btn:has-text("Section")')
         ->click('.fi-fo-rich-editor-custom-block-btn:has-text("Quote")')
         ->assertPresent('.tiptap [data-type="customBlock"]')
+        ->assertScript('Alpine.$data(document.querySelector("[data-testid=sidebar-rich-editor] .tiptap")).$getEditor().extensionManager.extensions.find(extension => extension.name === "customBlock").options.editCustomBlockButtonLabel', 'Edit block')
+        ->assertPresent('.tiptap button[aria-label="Delete block"]')
         ->assertScript(<<<'JS'
             (() => {
                 const editor = Alpine.$data(document.querySelector('[data-testid="sidebar-rich-editor"] .tiptap')).$getEditor()
@@ -152,7 +166,25 @@ it('keeps the toolbar visible while scrolling with responsive sticky panels', fu
                     Math.abs(toolbar.getBoundingClientRect().top - 64) < 2
             })()
             JS)
-        ->assertScript('getComputedStyle(document.querySelector("[data-testid=sidebar-rich-editor] .fi-fo-rich-editor-panels")).position', $isMobile ? 'static' : 'sticky')
+        ->assertScript('getComputedStyle(document.querySelector("[data-testid=sidebar-rich-editor] .fi-fo-rich-editor-panel")).position', $isMobile ? 'static' : 'sticky')
+        ->assertScript(<<<'JS'
+            (() => {
+                const panel = document.querySelector('[data-testid="sidebar-rich-editor"] .fi-fo-rich-editor-panel')
+                const style = getComputedStyle(panel)
+
+                return Math.abs(parseFloat(style.maxHeight) + parseFloat(style.top) - window.innerHeight) < 2
+            })()
+            JS, ! $isMobile)
+        ->assertScript(<<<'JS'
+            (() => {
+                const wrapper = document.querySelector('[data-testid="sidebar-rich-editor"]')
+                const panels = wrapper.querySelector('.fi-fo-rich-editor-panels').getBoundingClientRect()
+                const content = wrapper.querySelector('.fi-fo-rich-editor-content').getBoundingClientRect()
+
+                return Math.abs(panels.top - content.top) < 2 &&
+                    Math.abs(panels.bottom - content.bottom) < 2
+            })()
+            JS, ! $isMobile)
         ->assertNoAccessibilityIssues();
 })->with([
     'desktop in light mode' => [false, false],

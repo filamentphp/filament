@@ -215,7 +215,7 @@ The editor has a minimum height of `10rem` by default. Once the content exceeds 
 
 ## Keeping the toolbar and panels visible while scrolling
 
-For longer documents where you may find yourself scrolling down the editor, you can keep the toolbar visible while scrolling through a long editor using `stickyToolbar()`:
+You can keep the toolbar visible while scrolling through a long document using `stickyToolbar()`:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -236,11 +236,13 @@ RichEditor::make('content')
 
 Panels only stick when the editor is wide enough to display them beside the content. In narrower editors, panels scroll with the page so they leave room for editing.
 
+Inside an action modal or slide-over, sticky panels fit within the modal's scrollable area, leaving room for its sticky footer. If the blocks or merge tags exceed the available height, you can scroll the panel independently.
+
 Both options are disabled by default. Pass `false` to `stickyToolbar()` or `stickyPanels()` to disable them.
 
 ### Setting the sticky offset
 
-Inside a Filament panel, the sticky toolbar and panels automatically account for the topbar. If your page has a custom fixed header, you can set the distance from the top of the viewport using `stickyOffset()`:
+Inside a Filament panel, the sticky toolbar and panels automatically account for the topbar. Inside an action modal or slide-over, they account for the modal's sticky header instead. If your page has a custom fixed header, you can set the distance from the top of the scroll viewport using `stickyOffset()`:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -826,6 +828,8 @@ Search matches block labels and group names, ignoring capitalization and surroun
 Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) layouts. It is disabled by default, and you can pass `false` to `searchableCustomBlocks()` to disable it.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchableCustomBlocks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/rich-editor/searchable-custom-blocks-grid" alt="Rich editor with searchable custom blocks in a grid" version="4.x" />
 
 ### Opening the custom blocks panel by default
 

@@ -24,31 +24,8 @@ class RichEditorSidebarBrowserTest extends Page
     {
         $this->hasGrid = request()->boolean('grid');
 
-        $content = '<p>First paragraph.</p><p>Last paragraph.</p>';
-
-        if (request()->boolean('translated')) {
-            app()->setLocale('fr');
-            app('translator')->addLines([
-                'components.rich_editor.custom_blocks.edit_label' => 'Modifier le bloc',
-                'components.rich_editor.custom_blocks.delete_label' => 'Supprimer le bloc',
-            ], 'fr', 'filament-forms');
-
-            $content = [
-                'type' => 'doc',
-                'content' => [
-                    [
-                        'type' => 'customBlock',
-                        'attrs' => [
-                            'id' => 'quote',
-                            'config' => ['quote' => 'Bonjour'],
-                        ],
-                    ],
-                ],
-            ];
-        }
-
         $this->form->fill([
-            'content' => $content,
+            'content' => '<p>First paragraph.</p><p>Last paragraph.</p>',
         ]);
     }
 
