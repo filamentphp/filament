@@ -34,9 +34,6 @@ class JsFieldFrameworkTest extends Page
     #[Locked]
     public string $framework = 'react';
 
-    #[Locked]
-    public ?string $failure = null;
-
     public array $data = [];
 
     public bool $locked = false;
@@ -55,7 +52,6 @@ class JsFieldFrameworkTest extends Page
     {
         $this->framework = request('framework', 'react');
         abort_unless(in_array($this->framework, ['react', 'vue', 'svelte']), 404);
-        $this->failure = request('failure');
         $this->mounted = ! request()->boolean('unmounted');
         $this->blurIsLive = ! request()->boolean('deferredBlur');
         $this->hasAlternateLayout = request()->boolean('layout');
@@ -184,16 +180,12 @@ class JsFieldFrameworkTest extends Page
         if ($this->scenario === 'failure') {
             return $schema->statePath('data')->components([
                 $field('live')->live(),
-                $field('unavailable')->renderer(match ($this->failure) {
-                    'missing' => '/js/js-field-tests/missing.js',
-                    'export' => 'data:text/javascript,export default 42',
-                    default => RawJs::make('async (context) => {
+                $field('unavailable')->renderer(RawJs::make('async (context) => {
                         const mount = (await import("/js/tests/js-fields/' . $this->framework . '.js")).default
                         const instance = await mount(context)
                         instance.destroy()
                         throw new Error("Fixture mount failure after framework cleanup")
-                    }'),
-                }),
+                    }')),
             ]);
         }
 

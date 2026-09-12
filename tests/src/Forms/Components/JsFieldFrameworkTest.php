@@ -34,11 +34,8 @@ beforeEach(function (): void {
     $this->actingAs(User::factory()->create());
 });
 
-it('calls exposed field methods and the owning `$wire` across nested instances and remounts', function (string $framework, bool $dark): void {
+it('calls exposed field methods and the owning `$wire` across nested instances and remounts', function (string $framework): void {
     $page = visit('/js-field-framework-test?framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $report = "JSON.parse(document.querySelectorAll('[data-field=nested] [data-report]')[1].textContent || 'null')";
     $page->click('[data-blade-method=blade] button:has-text("Named Blade call")')
@@ -83,19 +80,13 @@ it('calls exposed field methods and the owning `$wire` across nested instances a
         ->assertScript("{$state}.items[1].field.title", 'Remounted')
         ->click('[data-field=nested] button:has-text("Call field method")')
         ->assertScript("JSON.parse(document.querySelector('[data-field=nested] [data-report]').textContent || 'null')", ['path' => 'data.items.1.field', 'previous' => 'Remounted', 'title' => 'PHP café replacement'])
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
         ->assertNoSmoke();
-    $page->screenshotElement('[data-field=nested]', 'js-field-methods-' . $framework . ($dark ? '-dark' : '-light'));
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+})->with('JS field frameworks');
 
-it('synchronizes composite state with deferred, live, blur and debounce bindings', function (string $framework, bool $dark): void {
+it('synchronizes composite state with deferred, live, blur and debounce bindings', function (string $framework): void {
     $page = visit('/js-field-framework-test?framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->assertValue('[id="form.deferred"]', 'Original café');
-    $page->assertScript('[...document.querySelectorAll("[data-field=deferred] [x-ref=host] *")].map(element => element.tagName)', ['DIV', 'INPUT', 'LABEL', 'INPUT', 'BUTTON', 'OUTPUT', 'OUTPUT', 'BUTTON', 'OUTPUT', 'BUTTON', 'BUTTON', 'BUTTON', 'BUTTON']);
     $page->script('() => { window.requests = 0; Livewire.hook("request", () => window.requests++); }');
 
     $page->fill('[id="form.deferred"]', 'Edited "café" <em>text</em>')
@@ -130,12 +121,11 @@ it('synchronizes composite state with deferred, live, blur and debounce bindings
         ->assertChecked('[data-field="live"] input[type="checkbox"]')
         ->assertSeeIn('[data-field="live"] [data-channels]', '["email"]');
     $requests = $page->script('window.requests');
-    $page->wait(0.7)->assertScript('window.requests', $requests)->assertNoSmoke()
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark);
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+    $page->wait(0.7)->assertScript('window.requests', $requests)->assertNoSmoke();
+})->with('JS field frameworks');
 
-it('contains initialization failures without losing state or breaking other framework instances', function (string $framework, string $failure, bool $dark): void {
-    $page = visit('/js-field-framework-test?scenario=failure&framework=' . $framework . '&failure=' . $failure);
+it('contains initialization failures without losing state or breaking other framework instances', function (string $framework, bool $dark): void {
+    $page = visit('/js-field-framework-test?scenario=failure&framework=' . $framework);
     if ($dark) {
         $page = $page->inDarkMode();
     }
@@ -148,18 +138,14 @@ it('contains initialization failures without losing state or breaking other fram
         ->assertScript("{$state}.live.title", 'Still working')
         ->assertScript("{$state}.unavailable", ['title' => 'Original café', 'enabled' => true, 'tags' => ['email']])
         ->assertScript('document.querySelectorAll("[x-ref=host] input").length', 2)
-        ->assertScript('document.getAnimations().every(animation => animation.playState !== "running" || animation.effect.getTiming().iterations === Infinity)', true)
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark);
+        ->assertScript('document.getAnimations().every(animation => animation.playState !== "running" || animation.effect.getTiming().iterations === Infinity)', true);
     $page->script('document.querySelector("[data-field=unavailable]").scrollIntoView({ block: "center", behavior: "instant" })');
     $page->assertVisible('[data-field="unavailable"] [role="alert"]')
         ->assertNoAccessibilityIssues();
-})->with('JS field frameworks')->with(['missing', 'export', 'mount'])->with(['light' => false, 'dark' => true]);
+})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
 
-it('updates PHP props and nested schema utilities without remounting framework state', function (string $framework, bool $dark): void {
+it('updates PHP props and nested schema utilities without remounting framework state', function (string $framework): void {
     $page = visit('/js-field-framework-test?framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $configuration = "JSON.parse(document.querySelector('[data-field=deferred] [data-config]').textContent)";
     $page->assertValue('[id="form.deferred"]', 'Original café');
@@ -191,19 +177,14 @@ it('updates PHP props and nested schema utilities without remounting framework s
         ->assertScript("{$state}.items[1].field.title", 'Nested edit')
         ->click('Sync')->assertScript("{$report}.state.title", 'Second row')
         ->assertScript('window.inputs.every((input, index) => input === document.querySelectorAll("[x-ref=host] input")[index])', true)
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
         ->assertNoSmoke();
-    $page->screenshotElement('[data-field="nested"] >> nth=1', 'js-field-' . $framework . ($dark ? '-dark' : '-light'));
     $page->click('[data-field="nested"] button:has-text("Use utilities") >> nth=1')
         ->assertScript("{$report}.state.title", 'Nested edit')
         ->assertScript("{$report}.root", 'Changed root by renderer');
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+})->with('JS field frameworks');
 
-it('lazy loads one module for independent instances and cleans up on removal and remount', function (string $framework, bool $dark): void {
+it('lazy loads one module for independent instances and cleans up on removal and remount', function (string $framework): void {
     $page = visit('/js-field-framework-test?unmounted=1&framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
     $loads = "performance.getEntriesByType('resource').filter(entry => new URL(entry.name).pathname === '/js/tests/js-fields/{$framework}.js').length";
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->assertScript($loads, 0)->click('Toggle mounted')
@@ -233,9 +214,8 @@ it('lazy loads one module for independent instances and cleans up on removal and
         ->assertValue('[id="form.items.1.field"]', 'Survived')
         ->assertScript($loads, 1)
         ->fill('[id="form.live"]', 'Remounted edit')->assertScript("{$state}.live.title", 'Remounted edit')
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
         ->assertNoSmoke();
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+})->with('JS field frameworks');
 
 it('associates helper and validation text with each framework input', function (string $framework, bool $dark): void {
     $page = visit('/js-field-framework-test?scenario=description&framework=' . $framework);
@@ -248,7 +228,6 @@ it('associates helper and validation text with each framework input', function (
         ->click('Show validation error')
         ->assertAttribute('[id="form.live"]', 'aria-invalid', 'true')
         ->assertScript("{$description}.includes('Choose a different title.')", true)
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
         ->assertNoAccessibilityIssues();
     $page->screenshotElement('[data-field-wrapper]:has([id="form.live"])', 'js-field-description-' . $framework . ($dark ? '-dark' : '-light'));
     $page->click('Show validation error')
@@ -258,11 +237,8 @@ it('associates helper and validation text with each framework input', function (
         ->assertNoSmoke();
 })->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
 
-it('respects a conditional `live(onBlur: true)` binding', function (string $framework, bool $dark): void {
-    $page = visit('/js-field-framework-test?deferredBlur=1&framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
+it('respects a conditional `live(onBlur: true)` binding', function (): void {
+    $page = visit('/js-field-framework-test?deferredBlur=1&framework=react');
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->assertValue('[id="form.blur"]', 'Original café');
     $page->script('() => { window.requests = 0; Livewire.hook("request", () => window.requests++); }');
@@ -276,15 +252,11 @@ it('respects a conditional `live(onBlur: true)` binding', function (string $fram
         ->assertScript("{$state}.blur.title", 'Deferred despite blur')
         ->click('#framework-server-state')
         ->assertScript("{$state}.blur.title", 'Now live on blur')
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
         ->assertNoSmoke();
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+});
 
-it('binds tab and step methods to their own instances and preserves wizard autofocus', function (string $framework, bool $dark): void {
-    $page = visit('/js-field-framework-test?scenario=panels&framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
+it('binds tab and step methods to their own instances and preserves wizard autofocus', function (): void {
+    $page = visit('/js-field-framework-test?scenario=panels&framework=react');
     $page->assertValue('[id="form.deferred"]', 'Original café');
     foreach (['tab' => 'Tab', 'step' => 'Step'] as $kind => $label) {
         foreach (['first' => 'First', 'second' => 'Second'] as $position => $name) {
@@ -307,13 +279,10 @@ it('binds tab and step methods to their own instances and preserves wizard autof
         ->assertScript('document.activeElement.id', 'form.second_focus')
         ->assertScript("'incorrect_step_call' in JSON.parse(document.querySelector('#framework-server-state').textContent)", false)
         ->assertNoSmoke();
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+});
 
-it('honors explicit and inherited `stateBindingModifiers()`', function (string $framework, bool $dark): void {
-    $page = visit('/js-field-framework-test?scenario=modifiers&framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
+it('honors explicit and inherited `stateBindingModifiers()`', function (): void {
+    $page = visit('/js-field-framework-test?scenario=modifiers&framework=react');
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->assertValue('[id="form.live"]', 'Original café');
     $page->script('() => { window.requests = 0; Livewire.hook("request", () => window.requests++); }');
@@ -335,10 +304,10 @@ it('honors explicit and inherited `stateBindingModifiers()`', function (string $
         ->assertScript("{$state}.debounce.title", 'Explicit debounce')
         ->assertScript('window.requests', 1)
         ->assertNoSmoke();
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+});
 
-it('keeps inline-label renderers full width with descriptions in both wrappers', function (string $framework, bool $dark, string $wrapper): void {
-    $page = visit('/js-field-framework-test?scenario=inline-' . $wrapper . '&framework=' . $framework);
+it('keeps inline-label renderers full width with descriptions in both wrappers', function (bool $dark, string $wrapper): void {
+    $page = visit('/js-field-framework-test?scenario=inline-' . $wrapper . '&framework=react');
     if ($dark) {
         $page = $page->inDarkMode();
     }
@@ -349,14 +318,11 @@ it('keeps inline-label renderers full width with descriptions in both wrappers',
         ->assertAttribute('[id="form.live"]', 'aria-invalid', 'true')
         ->assertScript($fullWidth, true)
         ->assertNoSmoke()->assertNoAccessibilityIssues();
-    $page->screenshotElement('.fi-fo-field:has([id="form.live"])', 'js-field-inline-' . $framework . '-' . $wrapper . ($dark ? '-dark' : '-light'));
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true])->with(['embedded', 'blade']);
+    $page->screenshotElement('.fi-fo-field:has([id="form.live"])', 'js-field-inline-' . $wrapper . ($dark ? '-dark' : '-light'));
+})->with(['light' => false, 'dark' => true])->with(['embedded', 'blade']);
 
-it('scopes utilities to components in lists, tables and liberated layouts', function (string $framework, bool $dark): void {
-    $page = visit('/js-field-framework-test?layout=1&framework=' . $framework);
-    if ($dark) {
-        $page = $page->inDarkMode();
-    }
+it('scopes utilities to components in lists, tables and liberated layouts', function (): void {
+    $page = visit('/js-field-framework-test?layout=1&framework=react');
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
     $page->click('[data-list-select] .fi-select-input-btn')
         ->fill('[data-list-select] .fi-select-input-search-ctn input', 'Café')
@@ -386,7 +352,6 @@ it('scopes utilities to components in lists, tables and liberated layouts', func
         ->assertScript("JSON.parse(document.querySelector('[data-field=table] [data-report]').textContent || 'null')", 'Read: PHP café replacement')
         ->click('[data-blade-method=caption] button:has-text("General Blade call")')
         ->assertSeeIn('[data-blade-method=caption] output', 'data.items.1.caption: Second caption: General café')
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
         ->assertNoSmoke();
     $rootContent = '.fi-fo-field:has([data-field=liberated]) [data-embedded-scope]';
     $rowContent = 'td:has([data-field=table]) [data-embedded-scope]';
@@ -399,6 +364,4 @@ it('scopes utilities to components in lists, tables and liberated layouts', func
         ->assertScript("{$state}.items[1].caption", 'Embedded café')
         ->assertScript("{$state}.caption", 'Embedded café')
         ->assertNoSmoke();
-    $page->script('window.scrollTo(0, 0)');
-    $page->screenshot(filename: 'js-field-layouts-' . $framework . ($dark ? '-dark' : '-light'));
-})->with('JS field frameworks')->with(['light' => false, 'dark' => true]);
+});

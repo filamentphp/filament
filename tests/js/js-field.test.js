@@ -188,16 +188,29 @@ test('loads a module default export and updates it with current state', async ()
 })
 
 test('does not mount a module when removed while the import is pending', async () => {
+    const renderer = `data:text/javascript,${encodeURIComponent(`
+        export let mounts = 0
+        export default () => {
+            mounts++
+            return { update() {}, destroy() {} }
+        }
+    `)}`
     const field = jsField({
         state: null,
         configuration: {},
-        renderer:
-            'data:text/javascript,export default () => { throw new Error("Mounted after removal") }',
+        renderer,
     })
     field.$el = { ownerDocument: { baseURI: 'https://example.test/form' } }
+    field.$refs = { host: {} }
+    field.$watch = () => {}
     const initialization = field.init()
     field.destroy()
     await initialization
+    const module = await import(renderer)
+    assert.equal(module.mounts, 0)
+    const mounted = await fixture({}, renderer)
+    assert.equal(module.mounts, 1)
+    mounted.field.destroy()
 })
 
 test('passes through schema utilities and reads current scope state', async () => {

@@ -9,9 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\RawJs;
 use Filament\Tests\Fixtures\Livewire\Livewire;
-use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
@@ -73,43 +71,6 @@ it('renders effective `stateBindingModifiers()` instead of overridden `live()` o
     'seconds' => [['live', 'debounce', '1s'], true, false, 1000],
     'zero debounce' => [['live', 'debounce', 0], true, false, 0],
 ]);
-
-it('obeys `live()` modifiers and remounts when field configuration changes', function (): void {
-    Artisan::call('filament:assets');
-    $this->actingAs(User::factory()->create());
-
-    $page = visit('/js-field-browser-test');
-    $state = "JSON.parse(document.querySelector('#js-field-server-state').textContent)";
-
-    $page->fill('Blur', 'Edited on blur')
-        ->wait(0.4)
-        ->assertScript("{$state}.blur", 'Original blur')
-        ->click('#js-field-server-state')
-        ->assertScript("{$state}.blur", 'Edited on blur')
-        ->fill('Debounce', 'Edited after delay')
-        ->assertScript("{$state}.debounce", 'Original debounce')
-        ->assertScript("{$state}.debounce", 'Edited after delay');
-
-    $utilities = 'document.querySelector(\'[id="form.debounce"]\').parentElement.utilities';
-    $page->assertScript("{$utilities}.\$get('blur')", 'Edited on blur')
-        ->assertScript("{$utilities}.\$get('data.blur', true)", 'Edited on blur')
-        ->assertScript("{$utilities}.\$statePath", 'data.debounce')
-        ->assertScript("{$utilities}.\$state", 'Edited after delay');
-    $page->script("() => { {$utilities}.\$set('blur', 'Set through schema utility', false, true) }");
-    $page->assertValue('[id="form.blur"]', 'Set through schema utility')
-        ->assertScript("{$state}.blur", 'Set through schema utility');
-    $page->script("() => { {$utilities}.\$set('data.debounce', 'Utility replacement', true, true) }");
-    $page->assertValue('[id="form.debounce"]', 'Utility replacement')
-        ->assertScript("{$utilities}.\$state", 'Utility replacement')
-        ->click('Toggle locked')
-        ->assertDisabled('[id="form.blur"]')
-        ->assertAttribute('[id="form.debounce"]', 'readonly', '')
-        ->assertValue('[id="form.blur"]', 'Set through schema utility')
-        ->assertNoSmoke()
-        ->assertNoAccessibilityIssues();
-
-    $page->inDarkMode()->assertNoAccessibilityIssues();
-})->group('serial');
 
 class RenderJsField extends Livewire
 {

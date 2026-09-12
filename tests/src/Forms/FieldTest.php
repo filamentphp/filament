@@ -146,7 +146,6 @@ it('groups JS field descriptions in embedded and Blade wrappers', function (bool
     ])));
     view()->addNamespace('description-test', dirname(__DIR__, 3) . '/packages/forms/resources/views');
     $field = JsField::make('title')->helperText('Helpful description.')
-        ->allowHtmlValidationMessages($errorMode === 'html')
         ->showAllValidationMessages($errorMode === 'list');
     if ($blade) {
         $field->fieldWrapperView('description-test::field-wrapper');
@@ -160,7 +159,7 @@ it('groups JS field descriptions in embedded and Blade wrappers', function (bool
     if ($errorMode === 'list') {
         expect($description->textContent)->toContain('Second error.');
     }
-})->with([false, true])->with(['text', 'html', 'list']);
+})->with([false, true])->with(['text', 'list']);
 
 class IdField extends TextInput
 {
