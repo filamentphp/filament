@@ -161,6 +161,8 @@ describe('session persistence', function (): void {
     it('can toggle all session persistence with `persistInSession()`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
 
+        expect($table->persistsRecordsPerPageInSession())->toBeTrue();
+
         $table->persistInSession(false);
 
         expect($table->persistsFiltersInSession())->toBeFalse()

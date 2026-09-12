@@ -85,9 +85,12 @@ trait HasColumnManager
         }
 
         if (
-            $this->getTable()->persistsColumnsInSession() &&
             $this->hasReorderableTableColumns() &&
-            session()->get($this->getHasReorderedTableColumnsSessionKey())
+            (
+                $this->getTable()->persistsColumnsInSession()
+                    ? session()->get($this->getHasReorderedTableColumnsSessionKey())
+                    : ($wasReordered || $this->hasReorderedTableColumns())
+            )
         ) {
             $this->syncReorderableColumnsFromDefaultTableColumnState();
         } else {

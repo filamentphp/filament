@@ -83,7 +83,9 @@ trait CanPaginateRecords
             return $option;
         }
 
-        session()->remove($this->getTablePerPageSessionKey());
+        if ($this->getTable()->persistsRecordsPerPageInSession()) {
+            session()->remove($this->getTablePerPageSessionKey());
+        }
 
         return $pageOptions[0];
     }

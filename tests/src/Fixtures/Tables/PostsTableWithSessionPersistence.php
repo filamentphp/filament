@@ -15,8 +15,12 @@ class PostsTableWithSessionPersistence
             ->columns([
                 TextColumn::make('title')
                     ->toggleable(),
+                TextColumn::make('author_id')
+                    ->label('Author'),
             ])
             ->reorderableColumns()
+            ->paginationPageOptions([10, 25])
+            ->defaultPaginationPageOption(50)
             ->persistInSession();
     }
 }

@@ -44,17 +44,35 @@ describe('session persistence', function (): void {
             ->and($table->persistsRecordsPerPageInSession())->toBeFalse();
     });
 
-    it('does not write records per page or reordered columns to the session', function (): void {
-        $livewire = livewire(TableSelectLivewireComponent::class, [
+    it('keeps reordered columns in component state without writing to the session', function (): void {
+        $testable = livewire(TableSelectLivewireComponent::class, [
             'tableConfiguration' => base64_encode(PostsTableWithSessionPersistence::class),
-        ])
+        ]);
+
+        $reorderedTableColumns = array_reverse($testable->instance()->tableColumns);
+
+        $testable
+            ->call('applyTableColumnManager', $reorderedTableColumns, true)
             ->set('tableRecordsPerPage', 25)
-            ->instance();
+            ->assertSet('tableColumns.0.name', 'author_id');
 
-        $livewire->applyTableColumnManager($livewire->tableColumns, wasReordered: true);
+        $livewire = $testable->instance();
 
-        expect(session()->has($livewire->getTablePerPageSessionKey()))->toBeFalse()
+        expect(array_keys($livewire->getTable()->getColumns()))->toBe(['author_id', 'title'])
+            ->and(session()->has($livewire->getTablePerPageSessionKey()))->toBeFalse()
             ->and(session()->has($livewire->getHasReorderedTableColumnsSessionKey()))->toBeFalse();
+
+        $testable
+            ->call('applyTableColumnManager', array_reverse($reorderedTableColumns), true)
+            ->assertSet('tableColumns.0.name', 'title');
+
+        expect(array_keys($testable->instance()->getTable()->getColumns()))->toBe(['title', 'author_id']);
+
+        $freshLivewire = livewire(TableSelectLivewireComponent::class, [
+            'tableConfiguration' => base64_encode(PostsTableWithSessionPersistence::class),
+        ])->instance();
+
+        expect(array_keys($freshLivewire->getTable()->getColumns()))->toBe(['title', 'author_id']);
     });
 
     it('does not load table state from the session', function (): void {
@@ -76,6 +94,7 @@ describe('session persistence', function (): void {
         ])->instance();
 
         expect($livewire->tableRecordsPerPage)->toBe(10)
-            ->and($livewire->isTableColumnToggledHidden('title'))->toBeFalse();
+            ->and($livewire->isTableColumnToggledHidden('title'))->toBeFalse()
+            ->and(session()->get($livewire->getTablePerPageSessionKey()))->toBe(25);
     });
 });
