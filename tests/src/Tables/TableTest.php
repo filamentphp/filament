@@ -157,6 +157,34 @@ describe('content grid', function (): void {
     });
 });
 
+describe('session persistence', function (): void {
+    it('can toggle all session persistence with `persistInSession()`', function (): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        expect($table->persistsRecordsPerPageInSession())->toBeTrue();
+
+        $table->persistInSession(false);
+
+        expect($table->persistsFiltersInSession())->toBeFalse()
+            ->and($table->persistsSearchInSession())->toBeFalse()
+            ->and($table->persistsColumnSearchesInSession())->toBeFalse()
+            ->and($table->persistsSortInSession())->toBeFalse()
+            ->and($table->persistsGroupInSession())->toBeFalse()
+            ->and($table->persistsColumnsInSession())->toBeFalse()
+            ->and($table->persistsRecordsPerPageInSession())->toBeFalse();
+
+        $table->persistInSession();
+
+        expect($table->persistsFiltersInSession())->toBeTrue()
+            ->and($table->persistsSearchInSession())->toBeTrue()
+            ->and($table->persistsColumnSearchesInSession())->toBeTrue()
+            ->and($table->persistsSortInSession())->toBeTrue()
+            ->and($table->persistsGroupInSession())->toBeTrue()
+            ->and($table->persistsColumnsInSession())->toBeTrue()
+            ->and($table->persistsRecordsPerPageInSession())->toBeTrue();
+    });
+});
+
 describe('rendering', function (): void {
     it('can render the table', function (): void {
         Post::factory()->count(3)->create();

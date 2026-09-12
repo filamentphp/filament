@@ -84,7 +84,14 @@ trait HasColumnManager
             }
         }
 
-        if ($this->hasReorderableTableColumns() && session()->get($this->getHasReorderedTableColumnsSessionKey())) {
+        if (
+            $this->hasReorderableTableColumns() &&
+            (
+                $this->getTable()->persistsColumnsInSession()
+                    ? session()->get($this->getHasReorderedTableColumnsSessionKey())
+                    : ($wasReordered || $this->hasReorderedTableColumns())
+            )
+        ) {
             $this->syncReorderableColumnsFromDefaultTableColumnState();
         } else {
             $this->syncStaticColumnsFromTableColumnState();
@@ -176,6 +183,10 @@ trait HasColumnManager
      */
     protected function loadTableColumnsFromSession(): array
     {
+        if (! $this->getTable()->persistsColumnsInSession()) {
+            return $this->getDefaultTableColumnState();
+        }
+
         return session()->get(
             $this->getTableColumnsSessionKey(),
             $this->getDefaultTableColumnState(),
@@ -194,6 +205,10 @@ trait HasColumnManager
 
     protected function persistHasReorderedTableColumns(bool $wasReordered = false): void
     {
+        if (! $this->getTable()->persistsColumnsInSession()) {
+            return;
+        }
+
         session()->put(
             $this->getHasReorderedTableColumnsSessionKey(),
             $wasReordered || $this->hasReorderedTableColumns()
