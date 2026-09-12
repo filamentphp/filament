@@ -427,21 +427,14 @@ class Chart extends Component
 
 #### Calling the method from JavaScript
 
-In your Blade view, you may call the exposed method using `$wire.callSchemaComponentMethod()`. The first argument is the component's key (available via `$getKey()`), and the second argument is the method name. You may pass arguments as a third argument:
+In your Blade view or embedded HTML, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this schema component, so you do not need its key. You can also use `$callSchemaComponentMethod('getChartData')`. Built-in utility and Alpine magic names are reserved; methods with colliding names remain available through the general utility. Avoid registering your own Alpine magics with the same names as exposed methods.
 
 ```blade
-@php
-    $key = $getKey();
-@endphp
-
 <div
     x-data="{
         data: null,
         async loadData() {
-            this.data = await $wire.callSchemaComponentMethod(
-                @js($key),
-                'getChartData',
-            )
+            this.data = await this.$getChartData()
         },
     }"
     x-init="loadData"
@@ -452,21 +445,15 @@ In your Blade view, you may call the exposed method using `$wire.callSchemaCompo
 </div>
 ```
 
-You may pass arguments to the method by providing an object as the third argument:
+Pass arguments as an object keyed by PHP parameter name:
 
 ```blade
-@php
-    $key = $getKey();
-@endphp
-
 <div
     x-data="{
         data: null,
         dateRange: 'week',
         async loadData() {
-            this.data = await $wire.callSchemaComponentMethod(
-                @js($key),
-                'getChartData',
+            this.data = await this.$getChartData(
                 { dateRange: this.dateRange },
             )
         },
@@ -511,3 +498,7 @@ class Chart extends Component
     }
 }
 ```
+
+### Styling components outside the container grid
+
+Components using `liberatedFromContainerGrid()` receive a `.fi-sc-liberated` Alpine scope wrapper with `display: contents`, so their contents still participate in the surrounding layout. If your [custom CSS](../styling/css-hooks) targets their output as a direct child of `.fi-sc`, include `.fi-sc > .fi-sc-liberated > ...` in that selector too. The wrapper provides the scope for [calling component methods](#calling-component-methods-from-javascript), but does not generate its own layout box.

@@ -273,7 +273,6 @@ class Tabs extends Component implements HasEmbeddedView
             $this->getChildSchema()->getComponents(),
             static fn ($component): bool => $component instanceof Tab,
         ));
-        $tabsKey = $this->getKey();
 
         $getTabVisibilityJs = static function (Tab $tab, ?int $index = null, ?string $mode = null) use ($isScrollable): ?string {
             $hiddenJs = $tab->getHiddenJs();
@@ -342,7 +341,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                 async init() {
                     try {
-                        const badges = await $wire.callSchemaComponentMethod(' . Js::from($tabsKey) . ', \'getDeferredTabBadges\')
+                        const badges = await this.$getDeferredTabBadges()
                         this.deferredBadges = badges ?? {}
                     } finally {
                         this.isLoadingDeferredBadges = false
@@ -648,7 +647,6 @@ class Tabs extends Component implements HasEmbeddedView
         $isVertical = $this->isVertical();
         $label = $this->getLabel();
         $renderHookScopes = $this->getRenderHookScopes();
-        $tabsKey = $this->getKey();
 
         // Tab keys are overridden with their array keys in
         // `getDefaultChildComponents()`.
@@ -680,7 +678,7 @@ class Tabs extends Component implements HasEmbeddedView
 
                     async init() {
                         try {
-                            const badges = await $wire.callSchemaComponentMethod(' . Js::from($tabsKey) . ', \'getDeferredTabBadges\')
+                            const badges = await this.$getDeferredTabBadges()
                             this.deferredBadges = badges ?? {}
                         } finally {
                             this.isLoadingDeferredBadges = false

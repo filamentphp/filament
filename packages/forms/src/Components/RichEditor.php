@@ -1579,18 +1579,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
                             floatingToolbars: <?= Js::from($floatingToolbars) ?>,
                             getMentionLabelsUsing: async (mentions) => {
-                                return await $wire.callSchemaComponentMethod(
-                                    <?= Js::from($key) ?>,
-                                    'getMentionLabelsForJs',
-                                    { mentions },
-                                )
+                                return await $getMentionLabelsForJs({ mentions })
                             },
                             getMentionSearchResultsUsing: async (query, char) => {
-                                return await $wire.callSchemaComponentMethod(
-                                    <?= Js::from($key) ?>,
-                                    'getMentionSearchResultsForJs',
-                                    { search: query, char },
-                                )
+                                return await $getMentionSearchResultsForJs({ search: query, char })
                             },
                             hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,

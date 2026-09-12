@@ -394,8 +394,8 @@ class Wizard extends Component implements HasEmbeddedView
             x-data="wizardSchemaComponent({
                         isSkippable: <?= Js::from($this->isSkippable()) ?>,
                         isStepPersistedInQueryString: <?= Js::from($this->isStepPersistedInQueryString()) ?>,
-                        key: <?= Js::from($key) ?>,
                         livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
+                        nextStep: $nextStep,
                         schemaKey: <?= Js::from($this->getRootContainer()->getKey()) ?>,
                         startStep: <?= Js::from($this->getStartStep()) ?>,
                         stepQueryStringKey: <?= Js::from($this->getStepQueryStringKey()) ?>,

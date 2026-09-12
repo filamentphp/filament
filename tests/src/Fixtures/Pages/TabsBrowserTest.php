@@ -20,8 +20,16 @@ class TabsBrowserTest extends Page
 
     public ?array $data = [];
 
+    public bool $deferredBadges = false;
+
+    public bool $livewireTabs = false;
+
+    public string $activeTab = 'Account';
+
     public function mount(): void
     {
+        $this->deferredBadges = request()->boolean('deferred');
+        $this->livewireTabs = request()->boolean('livewire');
         $this->form->fill();
     }
 
@@ -30,9 +38,11 @@ class TabsBrowserTest extends Page
         return $form
             ->schema([
                 Tabs::make('Profile Tabs')
+                    ->livewireProperty($this->livewireTabs ? 'activeTab' : null)
                     ->tabs([
                         Tab::make('Account')
                             ->badge('Available')
+                            ->deferBadge($this->deferredBadges)
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
                             ->schema([
                                 TextInput::make('username')

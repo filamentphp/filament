@@ -110,6 +110,8 @@ jobs:
           cache: npm
       - name: Install npm dependencies
         run: npm ci --ignore-scripts
+      - name: Test JavaScript and build browser fixtures
+        run: npm run test:js
       - name: Install Chromium system dependencies
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libnss3 libatk-bridge2.0-0 libdrm2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libpango-1.0-0 libcairo2 libasound2t64
       - name: Cache Playwright Chromium

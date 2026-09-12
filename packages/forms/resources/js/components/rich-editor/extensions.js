@@ -47,6 +47,7 @@ export default async ({
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
+    getFileAttachmentUrl,
     getMentionLabelsUsing,
     getMentionSearchResultsUsing,
     hasResizableImages,
@@ -116,6 +117,7 @@ export default async ({
                       acceptedTypesValidationMessage:
                           acceptedFileTypesValidationMessage,
                       get$WireUsing: () => $wire,
+                      getFileAttachmentUrl,
                       key,
                       maxSize: maxFileSize,
                       maxSizeValidationMessage: maxFileSizeValidationMessage,

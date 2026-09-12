@@ -1837,7 +1837,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $isNative = (! ($isSearchable || $isMultiple || $isHtmlAllowed) && $this->isNative());
         $isPrefixInline = $this->isPrefixInline();
         $isSuffixInline = $this->isSuffixInline();
-        $key = $this->getKey();
         $id = $this->getId();
         $prefixActions = $this->getPrefixActions();
         $prefixIcon = $this->getPrefixIcon();
@@ -1953,26 +1952,16 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
                                     clearButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.clear.label')) ?>,
                                     getOptionLabelUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(<?= Js::from($key) ?>, 'getOptionLabel')
+                                        return await $getOptionLabel()
                                     },
                                     getOptionLabelsUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getOptionLabelsForJs',
-                                        )
+                                        return await $getOptionLabelsForJs()
                                     },
                                     getOptionsUsing: async () => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getOptionsForJs',
-                                        )
+                                        return await $getOptionsForJs()
                                     },
                                     getSearchResultsUsing: async (search) => {
-                                        return await $wire.callSchemaComponentMethod(
-                                            <?= Js::from($key) ?>,
-                                            'getSearchResultsForJs',
-                                            { search },
-                                        )
+                                        return await $getSearchResultsForJs({ search })
                                     },
                                     hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,

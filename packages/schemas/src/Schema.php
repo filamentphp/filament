@@ -233,7 +233,16 @@ class Schema extends ViewComponent implements HasEmbeddedView
                 <?php } elseif (! $schemaComponent->isLiberatedFromContainerGrid()) { ?>
                     <?= $schemaComponent->toSchemaHtml(isVisible: $isSchemaComponentVisible) ?>
                 <?php } elseif ($isSchemaComponentVisible) { ?>
-                    <?= $schemaComponent->toHtml() ?>
+                    <div
+                        class="fi-sc-liberated"
+                        wire:key="<?= e($schemaComponent->getLivewireKey()) ?>"
+                        x-data="filamentSchemaComponent({
+                            ...<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>,
+                            $wire,
+                        })"
+                    >
+                        <?= $schemaComponent->toHtml() ?>
+                    </div>
                 <?php } ?>
             <?php } ?>
         </div>
