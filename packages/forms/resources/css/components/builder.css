@@ -139,7 +139,7 @@
     }
 
     & .fi-fo-builder-add-between-items {
-        @apply absolute top-1/2 z-10 translate-y-[calc(-50%+0.5rem)] rounded-lg bg-white dark:bg-gray-900;
+        @apply absolute top-1/2 z-1 translate-y-[calc(-50%+0.5rem)] rounded-lg bg-white dark:bg-gray-900;
     }
 
     & .fi-fo-builder-label-between-items-ctn {

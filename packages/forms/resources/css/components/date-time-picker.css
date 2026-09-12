@@ -15,7 +15,7 @@
     }
 
     & .fi-fo-date-time-picker-panel {
-        @apply absolute z-10 space-y-3 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply absolute z-20 space-y-3 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         & .fi-fo-date-time-picker-panel-header {
             @apply flex items-center justify-between;

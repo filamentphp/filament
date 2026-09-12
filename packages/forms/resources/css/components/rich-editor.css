@@ -12,7 +12,7 @@
     }
 
     & .fi-fo-rich-editor-toolbar.fi-fo-rich-editor-sticky-toolbar {
-        @apply sticky z-20 rounded-t-lg bg-white dark:bg-gray-900;
+        @apply sticky z-5 rounded-t-lg bg-white dark:bg-gray-900;
         top: var(
             --fi-fo-rich-editor-sticky-offset,
             var(--fi-fo-rich-editor-modal-header-height, 0px)
@@ -28,7 +28,7 @@
     }
 
     & .fi-fo-rich-editor-floating-toolbar {
-        @apply invisible absolute z-[20] -mt-1 flex max-w-full flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
+        @apply invisible absolute z-5 -mt-1 flex max-w-full flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
     }
 
     & .fi-fo-rich-editor-toolbar-group {
@@ -178,7 +178,7 @@
     }
 
     & .fi-fo-rich-editor-custom-blocks-group-header {
-        @apply sticky -top-px z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
+        @apply sticky -top-px z-1 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
 
         &:not(:first-child) {
             @apply border-t;
@@ -352,7 +352,7 @@
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 2px;
-            z-index: 10;
+            z-index: 1;
 
             &:hover {
                 background: rgba(0, 0, 0, 0.8);
