@@ -111,6 +111,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      */
     protected array | Closure | null $customBlocks = null;
 
+    protected bool | Closure $hasMinimalCustomBlockControls = false;
+
     protected string | Closure | null $noMergeTagSearchResultsMessage = null;
 
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
@@ -1221,6 +1223,18 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         return $this->evaluate($this->activePanel);
     }
 
+    public function minimalCustomBlockControls(bool | Closure $condition = true): static
+    {
+        $this->hasMinimalCustomBlockControls = $condition;
+
+        return $this;
+    }
+
+    public function hasMinimalCustomBlockControls(): bool
+    {
+        return (bool) $this->evaluate($this->hasMinimalCustomBlockControls);
+    }
+
     /**
      * @param  array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>> | Closure | null  $blocks
      */
@@ -1575,7 +1589,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             activePanel: <?= Js::from($this->getActivePanel()) ?>,
                             canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
                             deleteCustomBlockButtonIconHtml: <?= Js::from($deleteIconHtml?->toHtml()) ?>,
+                            deleteCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.delete_label')) ?>,
                             editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
+                            editCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.edit_label')) ?>,
                             extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
                             floatingToolbars: <?= Js::from($floatingToolbars) ?>,
                             getMentionLabelsUsing: async (mentions) => {
@@ -1593,6 +1609,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                 )
                             },
                             hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            hasMinimalCustomBlockControls: <?= Js::from($this->hasMinimalCustomBlockControls()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,
                             label: <?= Js::from($label) ?>,
                             isLiveDebounced: <?= Js::from($this->isLiveDebounced()) ?>,
