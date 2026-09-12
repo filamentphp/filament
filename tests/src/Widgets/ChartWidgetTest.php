@@ -133,6 +133,32 @@ it('returns `null` from `getDescription()` by default', function (): void {
     expect($widget->instance()->getDescription())->toBeNull();
 });
 
+it('returns `5s` from `getPollingInterval()` by default', function (): void {
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getPollingInterval())->toBe('5s');
+});
+
+it('can override `getPollingInterval()` via `poll()`', function (): void {
+    $widget = Livewire::test(TestChartWidgetWithCustomPolling::class);
+
+    expect($widget->instance()->getPollingInterval())->toBe('30s');
+});
+
+it('can disable or alter polling for all widgets via `Widget::configureUsing()`', function (): void {
+    $undo = ChartWidget::configureUsing(fn (ChartWidget $chartWidget) => $chartWidget->poll(null));
+
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getPollingInterval())->toBeNull();
+
+    $undo();
+
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getPollingInterval())->toBe('5s');
+});
+
 class TestChartWidgetDefault extends ChartWidget
 {
     use ChartWidget\Concerns\HasFiltersSchema;
@@ -241,6 +267,26 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
             ->components([
                 Select::make('year')->options(['2024' => '2024', '2023' => '2023'])->default('2024'),
             ]);
+    }
+}
+
+class TestChartWidgetWithCustomPolling extends ChartWidget
+{
+    protected function getType(): string
+    {
+        return 'bar';
+    }
+
+    protected function getData(): array
+    {
+        return ['datasets' => [], 'labels' => []];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->poll('30s');
     }
 }
 

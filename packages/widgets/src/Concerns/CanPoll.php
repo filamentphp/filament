@@ -2,12 +2,21 @@
 
 namespace Filament\Widgets\Concerns;
 
+use Closure;
+
 trait CanPoll
 {
-    protected ?string $pollingInterval = '5s';
+    protected string | Closure | null $pollingInterval = '5s';
 
-    protected function getPollingInterval(): ?string
+    public function poll(string | Closure | null $interval = '5s'): static
     {
-        return $this->pollingInterval;
+        $this->pollingInterval = $interval;
+
+        return $this;
+    }
+
+    public function getPollingInterval(): ?string
+    {
+        return $this->evaluate($this->pollingInterval);
     }
 }

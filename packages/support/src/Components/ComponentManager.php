@@ -98,7 +98,7 @@ class ComponentManager implements ScopedComponentManager
         }
     }
 
-    public function configure(Component $component, Closure $setUp): void
+    public function configure(object $component, Closure $setUp): void
     {
         $componentClass = $component::class;
 
