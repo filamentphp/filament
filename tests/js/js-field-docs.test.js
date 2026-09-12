@@ -116,7 +116,9 @@ test('the documented renderer and exposed method types match the Composer declar
                     moduleResolution: 'bundler',
                     paths: {
                         '@filament/forms/js-field': [
-                            resolve('packages/forms/types/js-field.d.ts'),
+                            resolve(
+                                'packages/forms/resources/js/types/js-field.d.ts',
+                            ),
                         ],
                     },
                 },

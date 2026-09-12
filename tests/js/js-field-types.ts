@@ -1,4 +1,4 @@
-import type { JsFieldRenderer } from '../../packages/forms/types/js-field'
+import type { JsFieldRenderer } from '../../packages/forms/resources/js/types/js-field'
 
 interface Value {
     title: string

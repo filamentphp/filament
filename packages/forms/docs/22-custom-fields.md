@@ -569,7 +569,7 @@ Filament includes TypeScript declarations in its Composer package, without a Jav
 {
     "compilerOptions": {
         "paths": {
-            "@filament/forms/js-field": ["./vendor/filament/forms/types/js-field.d.ts"]
+            "@filament/forms/js-field": ["./vendor/filament/forms/resources/js/types/js-field.d.ts"]
         }
     }
 }
