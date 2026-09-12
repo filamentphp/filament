@@ -639,6 +639,25 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Strict hierarchical breadcrumbs
+
+By default, breadcrumbs for a page are built from its resource and parent record relationships - for example, an `EditRecord` page's breadcrumbs are derived from its resource's list and view pages, and any parent resources in the case of nested resources.
+
+If you'd prefer breadcrumbs to reflect the full navigational hierarchy of a page instead - including its [cluster](clusters), [navigation group](#grouping-navigation-items), and [navigation parent item](#grouping-navigation-items-under-other-items) - you can enable strict hierarchical breadcrumbs in your [configuration](../05-panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->breadcrumbs(strictHierarchical: true);
+}
+```
+
+When enabled, a page's breadcrumbs will be built by walking up through its cluster, its navigation group, and its navigation parent item, before falling back to the page's own breadcrumb. This is particularly useful if you rely heavily on [navigation parent items](#grouping-navigation-items-under-other-items) to create deep, third-level navigation, and want the breadcrumb trail to mirror that structure exactly.
+
 ## Reloading the sidebar and topbar
 
 Once a page in the panel is loaded, the sidebar and topbar are not reloaded until you navigate away from the page, or until a menu item is clicked to trigger an action. You can manually reload these components to update them by dispatching a `refresh-sidebar` or `refresh-topbar` browser event.
