@@ -17,6 +17,7 @@ class Table extends ViewComponent
     use Table\Concerns\CanDeferLoading;
     use Table\Concerns\CanGroupRecords;
     use Table\Concerns\CanPaginateRecords;
+    use Table\Concerns\CanPersistInSession;
     use Table\Concerns\CanPollRecords;
     use Table\Concerns\CanReorderRecords;
     use Table\Concerns\CanSearchRecords;
