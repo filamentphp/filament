@@ -158,8 +158,18 @@ describe('content grid', function (): void {
 });
 
 describe('session persistence', function (): void {
-    it('can enable all session persistence with `persistInSession()`', function (): void {
+    it('can toggle all session persistence with `persistInSession()`', function (): void {
         $table = livewire(TableTestComponent::class)->instance()->getTable();
+
+        $table->persistInSession(false);
+
+        expect($table->persistsFiltersInSession())->toBeFalse()
+            ->and($table->persistsSearchInSession())->toBeFalse()
+            ->and($table->persistsColumnSearchesInSession())->toBeFalse()
+            ->and($table->persistsSortInSession())->toBeFalse()
+            ->and($table->persistsGroupInSession())->toBeFalse()
+            ->and($table->persistsColumnsInSession())->toBeFalse()
+            ->and($table->persistsRecordsPerPageInSession())->toBeFalse();
 
         $table->persistInSession();
 
@@ -168,23 +178,8 @@ describe('session persistence', function (): void {
             ->and($table->persistsColumnSearchesInSession())->toBeTrue()
             ->and($table->persistsSortInSession())->toBeTrue()
             ->and($table->persistsGroupInSession())->toBeTrue()
-            ->and($table->persistsColumnsInSession())->toBeTrue();
-    });
-
-    it('can disable all session persistence with `persistInSession(false)`', function (): void {
-        $table = livewire(TableTestComponent::class)->instance()->getTable();
-
-        $table
-            ->persistFiltersInSession()
-            ->persistSortInSession()
-            ->persistInSession(false);
-
-        expect($table->persistsFiltersInSession())->toBeFalse()
-            ->and($table->persistsSearchInSession())->toBeFalse()
-            ->and($table->persistsColumnSearchesInSession())->toBeFalse()
-            ->and($table->persistsSortInSession())->toBeFalse()
-            ->and($table->persistsGroupInSession())->toBeFalse()
-            ->and($table->persistsColumnsInSession())->toBeFalse();
+            ->and($table->persistsColumnsInSession())->toBeTrue()
+            ->and($table->persistsRecordsPerPageInSession())->toBeTrue();
     });
 });
 

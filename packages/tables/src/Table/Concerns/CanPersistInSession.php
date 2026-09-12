@@ -14,6 +14,7 @@ trait CanPersistInSession
         $this->persistSortInSession($condition);
         $this->persistGroupInSession($condition);
         $this->persistColumnsInSession($condition);
+        $this->persistRecordsPerPageInSession($condition);
 
         return $this;
     }
