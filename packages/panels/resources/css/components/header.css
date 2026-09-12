@@ -8,6 +8,12 @@
     & > div:first-child:not(.fi-header-actions-ctn) {
         @apply max-w-full sm:w-max;
     }
+
+    &.fi-header-has-subheading {
+        & .fi-header-actions-ctn {
+            @apply sm:self-center;
+        }
+    }
 }
 
 .fi-header-heading {

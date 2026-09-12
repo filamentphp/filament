@@ -18,6 +18,7 @@
         $attributes->class([
             'fi-header',
             'fi-header-has-breadcrumbs' => $breadcrumbs,
+            'fi-header-has-subheading' => filled($subheading),
         ])
     }}
 >
