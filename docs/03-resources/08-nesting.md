@@ -69,6 +69,44 @@ public static function getParentResourceRegistration(): ?ParentResourceRegistrat
 
 You can omit the calls to `relationship()` and `inverseRelationship()` if you want to use the default names.
 
+## Nested resource breadcrumbs and index URLs
+
+When you open a nested create/edit page, Filament builds breadcrumbs for the nested resource. The nested resource’s plural label (for example “Lessons”) links to the nested resource **index URL**.
+
+For nested resources, that index URL is resolved from the **parent** resource:
+
+1. An explicit page name set with `ParentResourceRegistration::page()`
+2. A parent page keyed like the relationship name (for example `lessons`)
+3. The first parent [`ManageRelatedRecords`](managing-relationships#relation-pages) page whose relationship matches
+4. Otherwise the parent view/edit page (legacy fallback)
+
+When registering a relation page that lists the nested resource, use the **relationship name** as the `getPages()` key:
+
+```php
+public static function getPages(): array
+{
+    return [
+        // ...
+        'lessons' => Pages\ManageCourseLessons::route('/{record}/lessons'),
+    ];
+}
+```
+
+If you register the page under a different key (for example `manageLessons`), Filament will still find it when the page’s `$relationship` matches. You can also set the page name explicitly on the nested resource:
+
+```php
+use App\Filament\Resources\Courses\CourseResource;
+use Filament\Resources\ParentResourceRegistration;
+
+public static function getParentResourceRegistration(): ?ParentResourceRegistration
+{
+    return CourseResource::asParent()
+        ->relationship('lessons')
+        ->inverseRelationship('course')
+        ->page('manageLessons');
+}
+```
+
 ## Registering a relation manager with the correct URL
 
 When dealing with a nested resource that is listed by a relation manager, and the relation manager is amongst others on that page, you may notice that the URL to it is not correct when you redirect from the nested resource back to it. This is because each relation manager registered on a resource is assigned an integer, which is used to identify it in the URL when switching between multiple relation managers. For example, `?relation=0` might represent one relation manager in the URL, and `?relation=1` might represent another.

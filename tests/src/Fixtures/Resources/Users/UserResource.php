@@ -76,6 +76,7 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'view' => Pages\ViewUser::route('/{record}'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
+            'managePosts' => Pages\ManageUserPosts::route('/{record}/manage-posts'),
         ];
     }
 }
