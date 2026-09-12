@@ -91,9 +91,9 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         return (bool) $this->evaluate($this->isSearchable);
     }
 
-    public function searchPrompt(string | Htmlable | Closure | null $prompt): static
+    public function searchPrompt(string | Htmlable | Closure | null $message): static
     {
-        $this->searchPrompt = $prompt;
+        $this->searchPrompt = $message;
 
         return $this;
     }

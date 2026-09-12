@@ -1007,7 +1007,7 @@ describe('pivot data', function (): void {
 });
 
 describe('search configuration', function (): void {
-    it('has `getSearchDebounce()` of `0` (set in `setUp()`)', function (): void {
+    it('returns `0` from `getSearchDebounce()` by default', function (): void {
         $checkboxList = CheckboxList::make('options')
             ->options(['a' => 'A']);
 
