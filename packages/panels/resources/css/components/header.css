@@ -1,14 +1,16 @@
 .fi-header {
-    @apply flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between;
+    @apply block;
 
     & .fi-breadcrumbs {
         @apply mb-2 hidden sm:block;
     }
+}
 
-    &.fi-header-has-breadcrumbs {
-        .fi-header-actions-ctn {
-            @apply sm:mt-7;
-        }
+.fi-header-main {
+    @apply flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between;
+
+    & > div:first-child {
+        @apply max-w-full sm:w-max;
     }
 }
 
@@ -21,7 +23,7 @@
 }
 
 .fi-header-actions-ctn {
-    @apply flex shrink-0 items-center gap-3;
+    @apply flex max-w-full shrink-0 items-center gap-3;
 
     & > .fi-ac {
         @apply flex-1;
