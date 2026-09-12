@@ -29,7 +29,7 @@ class SingleDomainPanel extends PanelProvider
     {
         return $panel
             ->id('single-domain')
-            ->domain('example3.com')
+            ->domain('https://example3.com')
             ->login()
             ->registration()
             ->passwordReset()

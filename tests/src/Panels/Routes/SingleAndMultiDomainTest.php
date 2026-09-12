@@ -35,7 +35,7 @@ it('panels with multiple domains should use the domain in names of all routes', 
     expect($route)->not->toBeEmpty();
 });
 
-it('does not register the home route when a page already owns the root path', function (): void {
+it('does not register the home route when a page already owns the root path and `domain()` contains a scheme', function (): void {
     expect(Route::getRoutes()->getByName('filament.single-domain.home'))->toBeNull()
         ->and(Route::getRoutes()->getByName('filament.single-domain.pages.dashboard'))->not->toBeNull();
 });
