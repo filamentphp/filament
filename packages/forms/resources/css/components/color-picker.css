@@ -12,6 +12,6 @@
     }
 
     & .fi-fo-color-picker-panel {
-        @apply absolute z-10 hidden rounded-lg shadow-lg;
+        @apply absolute z-20 hidden rounded-lg shadow-lg;
     }
 }

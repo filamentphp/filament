@@ -1,4 +1,24 @@
 .fi-fo-rich-editor {
+    --fi-fo-rich-editor-toolbar-height: 0px;
+    --fi-fo-rich-editor-sticky-offset: 0px;
+
+    .fi-topbar-ctn ~ * & {
+        --fi-fo-rich-editor-sticky-offset: var(--topbar-height, 4rem);
+    }
+
+    .fi-modal & {
+        /* Resolve the measured header height inside the editor's `wire:ignore` element. */
+        --fi-fo-rich-editor-sticky-offset: initial;
+    }
+
+    & .fi-fo-rich-editor-toolbar.fi-fo-rich-editor-sticky-toolbar {
+        @apply sticky z-5 rounded-t-lg bg-white dark:bg-gray-900;
+        top: var(
+            --fi-fo-rich-editor-sticky-offset,
+            var(--fi-fo-rich-editor-modal-header-height, 0px)
+        );
+    }
+
     & .fi-fo-rich-editor-uploading-file {
         @apply pointer-events-none cursor-wait opacity-50;
     }
@@ -8,7 +28,14 @@
     }
 
     & .fi-fo-rich-editor-floating-toolbar {
-        @apply invisible absolute z-[20] -mt-1 flex max-w-full flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
+        @apply invisible absolute z-5 -mt-1 flex max-w-full flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
+    }
+
+    & .fi-fo-rich-editor-toolbar,
+    & .fi-fo-rich-editor-floating-toolbar {
+        &:has(.fi-fo-rich-editor-dropdown-tool-trigger[aria-expanded='true']) {
+            @apply z-20;
+        }
     }
 
     & .fi-fo-rich-editor-toolbar-group {
@@ -139,6 +166,10 @@
 
     & .fi-fo-rich-editor-panel {
         @apply grid divide-y divide-gray-200 dark:divide-white/10;
+
+        &:has(.fi-fo-rich-editor-custom-blocks-ctn) {
+            @apply -mb-px;
+        }
     }
 
     & .fi-fo-rich-editor-merge-tags-list {
@@ -150,11 +181,11 @@
     }
 
     & .fi-fo-rich-editor-custom-blocks-ctn {
-        @apply grid overflow-y-auto;
+        @apply grid overflow-y-auto border-b border-gray-200 dark:border-white/10;
     }
 
     & .fi-fo-rich-editor-custom-blocks-group-header {
-        @apply sticky -top-px z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
+        @apply sticky -top-px z-1 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
 
         &:not(:first-child) {
             @apply border-t;
@@ -171,7 +202,48 @@
     }
 
     & .fi-fo-rich-editor-custom-block-btn {
-        @apply flex cursor-move gap-1.5 rounded-lg bg-white px-2 py-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 flex cursor-move items-center gap-1.5 rounded-lg bg-white px-2 py-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 focus-visible:ring-2 focus-visible:outline-none dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+
+        & .fi-fo-rich-editor-custom-block-icon,
+        & .fi-loading-indicator {
+            @apply size-4 shrink-0;
+        }
+
+        & .fi-fo-rich-editor-custom-block-icon .fi-icon {
+            @apply size-full;
+        }
+    }
+
+    &
+        .fi-fo-rich-editor-custom-blocks-list.fi-fo-rich-editor-custom-blocks-grid {
+        @apply grid grid-cols-2;
+    }
+
+    &
+        .fi-fo-rich-editor-custom-blocks-grid
+        > .fi-fo-rich-editor-custom-block-btn {
+        @apply min-h-20 flex-col justify-center gap-2 p-3 text-center text-xs;
+
+        & .fi-fo-rich-editor-custom-block-icon,
+        & .fi-loading-indicator {
+            @apply size-6;
+        }
+    }
+
+    & .fi-fo-rich-editor-custom-blocks-search {
+        @apply flex items-center gap-2 px-4 focus-within:inset-shadow-[0_-2px_0_var(--color-primary-600)] dark:focus-within:inset-shadow-[0_-2px_0_var(--color-primary-500)];
+
+        & > .fi-icon {
+            @apply size-4 shrink-0 text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-fo-rich-editor-custom-blocks-search-input {
+        @apply block min-w-0 flex-1 border-0 bg-transparent px-0 py-2.5 text-base text-gray-950 outline-none placeholder:text-gray-500 focus:ring-0 sm:text-sm dark:text-white dark:placeholder:text-gray-400;
+    }
+
+    & .fi-fo-rich-editor-custom-blocks-no-results {
+        @apply px-4 py-3 text-sm text-gray-500 dark:text-gray-400;
     }
 
     & .tiptap {
@@ -287,7 +359,7 @@
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 2px;
-            z-index: 10;
+            z-index: 1;
 
             &:hover {
                 background: rgba(0, 0, 0, 0.8);
@@ -425,6 +497,35 @@
         & .fi-fo-rich-editor-panels {
             @apply @2xl:max-w-3xs @2xl:rounded-ee-lg @2xl:border-s @2xl:border-b-0;
         }
+
+        &
+            .fi-fo-rich-editor-panels.fi-fo-rich-editor-sticky-panels
+            > .fi-fo-rich-editor-panel {
+            @apply @2xl:sticky @2xl:overflow-y-auto;
+
+            & .fi-fo-rich-editor-custom-blocks-ctn {
+                @apply @2xl:overflow-visible;
+            }
+
+            @container (min-width: 42rem) {
+                top: calc(
+                    var(
+                            --fi-fo-rich-editor-sticky-offset,
+                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                        ) +
+                        var(--fi-fo-rich-editor-toolbar-height, 0px)
+                );
+                max-height: calc(
+                    var(--fi-fo-rich-editor-modal-viewport-height, 100dvh) -
+                        var(
+                            --fi-fo-rich-editor-sticky-offset,
+                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                        ) -
+                        var(--fi-fo-rich-editor-toolbar-height, 0px) -
+                        var(--fi-fo-rich-editor-modal-footer-height, 0px)
+                );
+            }
+        }
     }
 
     @supports not (container-type: inline-size) {
@@ -434,6 +535,35 @@
 
         & .fi-fo-rich-editor-panels {
             @apply md:max-w-3xs md:rounded-ee-lg md:border-s md:border-b-0;
+        }
+
+        &
+            .fi-fo-rich-editor-panels.fi-fo-rich-editor-sticky-panels
+            > .fi-fo-rich-editor-panel {
+            @apply md:sticky md:overflow-y-auto;
+
+            & .fi-fo-rich-editor-custom-blocks-ctn {
+                @apply md:overflow-visible;
+            }
+
+            @media (min-width: 48rem) {
+                top: calc(
+                    var(
+                            --fi-fo-rich-editor-sticky-offset,
+                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                        ) +
+                        var(--fi-fo-rich-editor-toolbar-height, 0px)
+                );
+                max-height: calc(
+                    var(--fi-fo-rich-editor-modal-viewport-height, 100dvh) -
+                        var(
+                            --fi-fo-rich-editor-sticky-offset,
+                            var(--fi-fo-rich-editor-modal-header-height, 0px)
+                        ) -
+                        var(--fi-fo-rich-editor-toolbar-height, 0px) -
+                        var(--fi-fo-rich-editor-modal-footer-height, 0px)
+                );
+            }
         }
     }
 }

@@ -149,6 +149,30 @@ class RichEditorSchema
                         ]),
                 ]),
             Group::make()
+                ->id('richEditorSearchableCustomBlocksGrid')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorSearchableCustomBlocksGrid')
+                        ->label('Page content')
+                        ->customBlocks([
+                            'Marketing' => [
+                                HeroBlock::class,
+                                CallToActionBlock::class,
+                                BannerBlock::class,
+                                TestimonialBlock::class,
+                            ],
+                            'Media' => [
+                                ImageGalleryBlock::class,
+                                VideoEmbedBlock::class,
+                            ],
+                        ])
+                        ->customBlocksGrid()
+                        ->searchableCustomBlocks()
+                        ->activePanel('customBlocks'),
+                ]),
+            Group::make()
                 ->id('richEditorFloatingToolbar')
                 ->extraAttributes([
                     'class' => 'p-16 max-w-5xl',

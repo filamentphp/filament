@@ -139,7 +139,11 @@
     }
 
     & .fi-fo-builder-add-between-items {
-        @apply absolute top-1/2 z-10 translate-y-[calc(-50%+0.5rem)] rounded-lg bg-white dark:bg-gray-900;
+        @apply absolute top-1/2 z-5 translate-y-[calc(-50%+0.5rem)] rounded-lg bg-white dark:bg-gray-900;
+
+        &:has(.fi-dropdown-trigger > button[aria-expanded='true']) {
+            @apply z-20;
+        }
     }
 
     & .fi-fo-builder-label-between-items-ctn {
