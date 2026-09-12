@@ -4,6 +4,7 @@ namespace Filament\Support\Assets;
 
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\HtmlString;
 
 class Js extends Asset
@@ -120,6 +121,11 @@ class Js extends Asset
         $module = $this->isModule() ? 'type="module"' : '';
         $extraAttributesHtml = $this->getExtraAttributesHtml();
 
+        // Rendered inline after `src` so that the output is unchanged, byte for
+        // byte, when no nonce is configured.
+        $nonce = Vite::cspNonce();
+        $nonceHtml = filled($nonce) ? ' nonce="' . e($nonce) . '"' : '';
+
         $hasSpaMode = FilamentView::hasSpaMode();
 
         $navigateOnce = ($hasSpaMode && $this->isNavigateOnce()) ? 'data-navigate-once' : '';
@@ -128,7 +134,7 @@ class Js extends Asset
         return new HtmlString(
             "
             <script
-                src=\"{$html}\"
+                src=\"{$html}\"{$nonceHtml}
                 {$async}
                 {$defer}
                 {$module}

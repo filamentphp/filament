@@ -291,3 +291,91 @@ With the trait in place, an attacker tampering with a Livewire request to upload
 When building tables, resources, or custom Livewire components, ensure that database queries are properly scoped to the current user's permissions. Filament's resource system uses Eloquent queries that return all records by default — it is up to you to apply appropriate query scopes using the `modifyQueryUsing()` method on your table or by overriding the `getEloquentQuery()` method on your resource to ensure users can only access records they are authorized to see.
 
 For example, in a multi-tenant application, forgetting to scope queries to the current tenant would allow users to see other tenants' data. If you are using Filament's built-in [tenancy](../users/tenancy) features, queries are scoped automatically for resources. However, any custom queries, actions, or pages you build must be scoped manually.
+
+## Content Security Policy (CSP)
+
+A Content Security Policy lets the browser reject scripts that you did not put on the page yourself, which is one of the strongest defences against cross-site scripting. Filament can add a [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) to scripts rendered through its asset manager.
+
+### Configuring the nonce
+
+Filament uses Laravel's `Vite` nonce, which is also used by Livewire. After your Content Security Policy middleware generates a nonce, pass it to `Vite::useCspNonce()` before the response is rendered:
+
+```php
+use Illuminate\Support\Facades\Vite;
+
+Vite::useCspNonce($nonce);
+```
+
+You must do this for every request, using the same nonce that you add to the `Content-Security-Policy` header. Do not configure it once in a service provider's `boot()` method, since the nonce must change between requests and service providers are not booted again between requests when using a long-running worker such as Laravel Octane.
+
+Until you configure a nonce, Filament does not add a `nonce` attribute.
+
+If you use [spatie/laravel-csp](https://github.com/spatie/laravel-csp), you can create middleware that resolves its request-scoped nonce and shares it with Laravel before the panel is rendered:
+
+```php
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
+use Symfony\Component\HttpFoundation\Response;
+
+class SetCspNonce
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        Vite::useCspNonce(app('csp-nonce'));
+
+        return $next($request);
+    }
+}
+```
+
+<Aside variant="info">
+    The `Vite` facade is only used to share the nonce between Laravel, Livewire, and Filament. Your application does not need to compile its assets with Vite or use the `@vite` Blade directive, so this also works in applications that use alternative frontend tooling.
+</Aside>
+
+### Sending the policy header
+
+Whichever package or middleware you use to send the `Content-Security-Policy` header, register it in your panel's `middleware()` method rather than in your application's `web` middleware group:
+
+```php
+use App\Http\Middleware\SetCspNonce;
+use Filament\Panel;
+use Spatie\Csp\AddCspHeaders;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->middleware([
+            // ...
+            SetCspNonce::class,
+            AddCspHeaders::class,
+        ]);
+}
+```
+
+<Aside variant="warning">
+    Panels build their own middleware stack and do not resolve Laravel's `web` group, so middleware appended to `web` never runs on panel routes and no header is sent. This is a common cause of a policy that appears to be configured but has no effect.
+</Aside>
+
+Registering it on the panel also scopes the policy to that panel, leaving the rest of your application untouched.
+
+### Rendering the nonce in your own views
+
+If you write your own `<script>` elements, in a custom page, a [render hook](render-hooks), or a plugin, you are responsible for adding the nonce to them. You can retrieve it using `Vite::cspNonce()`:
+
+```blade
+<script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
+    // ...
+</script>
+```
+
+<Aside variant="info">
+    Filament automatically adds the nonce to scripts rendered through `FilamentAsset`, including registered scripts and the inline `window.filamentData` script. Scripts registered with `Js::make()->html()` are rendered exactly as you provide them, so you must add the nonce to that HTML yourself.
+</Aside>
+
+<Aside variant="warning">
+    Filament does not currently add the nonce to every inline script rendered by the framework or its components. Content that you inject through [render hooks](render-hooks), the `scripts` Blade stack, or `RawJs` is not modified either. Configuring this nonce does not, by itself, allow you to remove `'unsafe-inline'` from `script-src`; you must audit and handle every script rendered by your application. Filament also does not currently support a strict `style-src` directive, since Livewire, Alpine.js, and TipTap rely on inline styles.
+</Aside>

@@ -1,5 +1,9 @@
 @if (isset($data))
-    <script>
+    @php
+        $nonce = \Illuminate\Support\Facades\Vite::cspNonce();
+    @endphp
+
+    <script @if (filled($nonce)) nonce="{{ $nonce }}" @endif>
         window.filamentData = @js($data)
     </script>
 @endif
