@@ -5,7 +5,7 @@ return [
 
     'heading' => 'Nastavte dvoufázové ověření',
 
-    'subheading' => '2FA přidává další úroveň zabezpečení Vašeho účtu tím, že při přihlášení vyžaduje druhou formu ověření.',
+    'subheading' => '2FA přidává další úroveň zabezpečení vašeho účtu tím, že při přihlášení vyžaduje druhou formu ověření.',
 
     'actions' => [
         'continue' => [
