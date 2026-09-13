@@ -6,57 +6,65 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-Livewire components are PHP classes that have their state stored in the user's browser. When a network request is made, the state is sent to the server, and filled into public properties on the Livewire component class, where it can be accessed in the same way as any other class property in PHP can be.
+You can create a reusable field with a Blade view, React, Vue, Svelte, or framework-free JavaScript. Start by generating a field, then customize its view or renderer. Filament handles the field wrapper, validation, and state binding.
 
-Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: with the [`wire:model` attribute](https://livewire.laravel.com/docs/properties#data-binding), or by [entangling](https://livewire.laravel.com/docs/javascript#the-wire-object) it with an Alpine.js property:
-
-```blade
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
-    <input wire:model="name" />
-    
-    <!-- Or -->
-    
-    <div x-data="{ state: $wire.$entangle('name') }">
-        <input x-model="state" />
-    </div>
-</x-dynamic-component>
-```
-
-When the user types into the input field, the `$name` property is updated in the Livewire component class. When the user submits the form, the `$name` property is sent to the server, where it can be saved.
-
-This is the basis of how fields work in Filament. Each field is assigned to a public property in the Livewire component class, which is where the state of the field is stored. We call the name of this property the "state path" of the field. You can access the state path of a field using the `$getStatePath()` function in the field's view:
-
-```blade
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
-    <input wire:model="{{ $getStatePath() }}" />
-
-    <!-- Or -->
-    
-    <div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
-        <input x-model="state" />
-    </div>
-</x-dynamic-component>
-```
-
-If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../advanced/assets#asynchronous-alpinejs-components).
-
-## Custom field classes
-
-You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
-
-To create a custom field class and view, you may use the following command:
+To generate a Blade-based field:
 
 ```bash
 php artisan make:filament-form-field LocationPicker
 ```
 
-This will create the following component class:
+Use the generated class in your form's schema:
+
+```php
+use App\Filament\Forms\Components\LocationPicker;
+
+LocationPicker::make('location')
+```
+
+Edit the generated Blade view to render your input, following [custom field classes](#custom-field-classes). For a JavaScript-rendered field, choose one of the options below instead.
+
+### Generating a JavaScript field
+
+Add one renderer flag to the command:
+
+```bash
+php artisan make:filament-form-field LocationPicker --react
+php artisan make:filament-form-field LocationPicker --vue
+php artisan make:filament-form-field LocationPicker --svelte
+php artisan make:filament-form-field LocationPicker --js
+```
+
+The command creates a PHP field class and a text-input renderer in `resources/js/filament/forms/components/`, without a Blade view. It installs any required development dependencies, updates recognizable Vite configurations, and offers to compile your assets. Use the generated class in your schema as shown above, then replace the starter input with your own UI.
+
+For TypeScript, add `--typescript` or its alias `--ts`:
+
+```bash
+php artisan make:filament-form-field LocationPicker --react --ts
+```
+
+The [JavaScript renderer examples](#rendering-fields-with-javascript-frameworks) show how to build a location picker with each option.
+
+#### Customizing generation
+
+Use `--pm=yarn` to use Yarn instead of npm, `--skip-install` to install dependencies yourself, or `--skip-build` to skip the compilation prompt. Blade-based generation does not run a package manager.
+
+The generated PHP class uses `HasJsRenderer`, implements `HasEmbeddedView`, and loads its entry through `Vite::asset()`. The generated files depend on your chosen renderer:
+
+- React: `location-picker.jsx`, or `location-picker.tsx` with `--typescript`.
+- Vue: `location-picker.js` and `LocationPicker.vue`. With `--typescript`, the entry uses `.ts` and the component uses `<script setup lang="ts">`.
+- Svelte 5: `location-picker.svelte.js` and `LocationPicker.svelte`. With `--typescript`, the entry uses `.svelte.ts` and the component uses `<script lang="ts">`.
+- Framework-free JavaScript: `location-picker.js`, or `location-picker.ts` with `--typescript`.
+
+Nested field names, such as `Maps/LocationPicker`, place the JavaScript files in a `maps/` subdirectory. TypeScript generation also configures the `@filament/forms/js-field` [type alias](#typing-renderers).
+
+The command shares its npm/Yarn and Vite setup with the theme generator. It adds the renderer to the Laravel plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support.
+
+If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them. For a plugin, use a [published module](#building-reusable-plugin-fields) instead of the application's Vite manifest.
+
+## Custom field classes
+
+The Blade-based generator creates a field class that selects its view:
 
 ```php
 use Filament\Forms\Components\Field;
@@ -73,7 +81,37 @@ It will also create a view file at `resources/views/filament/forms/components/lo
     Filament form fields are **not** Livewire components. Defining public properties and methods on a form field class will not make them accessible in the Blade view.
 </Aside>
 
-## Accessing the state of another component in the Blade view
+### Binding the input to field state
+
+Each field has a "state path" that identifies its value in the owning Livewire component. Use `$getStatePath()` to bind your input, rather than hard-coding a property name:
+
+```blade
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+>
+    <input wire:model="{{ $getStatePath() }}" />
+</x-dynamic-component>
+```
+
+If your input needs Alpine state, [entangle](https://livewire.laravel.com/docs/javascript#the-wire-object) it with the same state path:
+
+```blade
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+>
+    <div x-data="{ state: $wire.$entangle(@js($getStatePath())) }">
+        <input x-model="state" />
+    </div>
+</x-dynamic-component>
+```
+
+Edits are sent to the server on the next Livewire request, such as submitting the form. Follow [state binding modifiers](#obeying-state-binding-modifiers) to support `live()` and other binding options in your custom view.
+
+For inputs that depend on third-party libraries, you can [load an Alpine component asynchronously](../advanced/assets#asynchronous-alpinejs-components) so its JavaScript only loads when needed.
+
+### Accessing the state of another component in the Blade view
 
 Inside the Blade view, you may access the state of another component in the schema using the `$get()` function:
 
@@ -90,7 +128,7 @@ Inside the Blade view, you may access the state of another component in the sche
     Unless a form field is [reactive](../forms/overview#the-basics-of-reactivity), the Blade view will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
 
-## Accessing the Eloquent record in the Blade view
+### Accessing the Eloquent record in the Blade view
 
 Inside the Blade view, you may access the current Eloquent record using the `$record` variable:
 
@@ -103,7 +141,7 @@ Inside the Blade view, you may access the current Eloquent record using the `$re
 </x-dynamic-component>
 ```
 
-## Accessing the current operation in the Blade view
+### Accessing the current operation in the Blade view
 
 Inside the Blade view, you may access the current operation, usually `create`, `edit` or `view`, using the `$operation` variable:
 
@@ -120,7 +158,7 @@ Inside the Blade view, you may access the current operation, usually `create`, `
 </x-dynamic-component>
 ```
 
-## Accessing the current Livewire component instance in the Blade view
+### Accessing the current Livewire component instance in the Blade view
 
 Inside the Blade view, you may access the current Livewire component instance using `$this`:
 
@@ -139,7 +177,7 @@ Inside the Blade view, you may access the current Livewire component instance us
 </x-dynamic-component>
 ```
 
-## Accessing the current field instance in the Blade view
+### Accessing the current field instance in the Blade view
 
 Inside the Blade view, you may access the current field instance using `$field`. You can call public methods on this object to access other information that may not be available in variables:
 
@@ -154,7 +192,7 @@ Inside the Blade view, you may access the current field instance using `$field`.
 </x-dynamic-component>
 ```
 
-## Adding a configuration method to a custom field class
+### Adding a configuration method to a custom field class
 
 You may add a public method to the custom field class that accepts a configuration value, stores it in a protected property, and returns it again from another public method:
 
@@ -203,7 +241,7 @@ LocationPicker::make('location')
     ->zoom(0.5)
 ```
 
-## Allowing utility injection in a custom field configuration method
+#### Allowing utility injection in a custom field configuration method
 
 [Utility injection](overview#field-utility-injection) is a powerful feature of Filament that allows users to configure a component using functions that can access various utilities. You can allow utility injection by ensuring that the parameter type and property type of the configuration allows the user to pass a `Closure`. In the getter method, you should pass the configuration value to the `$this->evaluate()` method, which will inject utilities into the user's function if they pass one, or return the value if it is static:
 
@@ -240,7 +278,7 @@ LocationPicker::make('location')
     ->zoom(fn (Conference $record): float => $record->isGlobal() ? 1 : 0.5)
 ```
 
-## Obeying state binding modifiers
+### Obeying state binding modifiers
 
 When you bind a field to a state path, you may use the `defer` modifier to ensure that the state is only sent to the server when the user submits the form, or whenever the next Livewire request is made. This is the default behavior.
 
@@ -265,7 +303,9 @@ Filament provides a `$applyStateBindingModifiers()` function that you may use in
 
 ## Rendering fields with JavaScript frameworks
 
-You can use `JsField` to render an input using Vue, React, Svelte, or another JavaScript library. Filament owns the field wrapper and state synchronization. Your application owns the renderer and its dependencies; Filament does not install or bundle a framework.
+After [generating a JavaScript field](#generating-a-javascript-field), customize its renderer using one of the examples below. Your application owns the renderer and its dependencies; Filament does not bundle a framework.
+
+You can also use `JsField` directly without generating a PHP class. Pass the URL of your renderer's ES module to `renderer()`:
 
 ```php
 use Filament\Forms\Components\JsField;
@@ -276,15 +316,17 @@ JsField::make('location')
     ->default(['latitude' => 51.5, 'longitude' => -0.12])
 ```
 
-Pass the URL of an ES module to `renderer()`. Filament loads it when the field initializes, without a global registry or a script tag. Each field gets its own mounted instance, even when the browser has already loaded the module for another field.
-
-If you already load the renderer through another script, you may pass a trusted `Filament\Support\RawJs` function expression instead of a URL.
+Filament loads the module when the field initializes, without a global registry or a script tag. Each field gets its own mounted instance, even when the browser has already loaded the module for another field.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `renderer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-Choose one of the examples below, then follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to build its entry file. For a plugin, you can [publish a prebuilt module](../advanced/assets#publishing-es-modules-in-plugins) instead. Your application or plugin owns the framework dependencies; Filament does not install them.
+### Writing a renderer
 
-### Creating a React field
+Each renderer exports a mount function that receives `host`, `props`, and optional schema `utilities`. Render inside `host`, then return `update(props)` to receive changes and `destroy()` to clean up. Filament supplies state, accessibility props, and callbacks to connect your input to the form.
+
+Choose one example below. If you used the generator, adapt it in your generated files and keep their existing entry paths. If you create the files manually, follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to compile the example's entry file.
+
+#### Creating a React field
 
 Create `resources/js/fields/location-picker.jsx`. The component edits a latitude and longitude, storing an empty input as `null`. Apply Filament's input props so labels, descriptions, validation, and disabled or read-only states work:
 
@@ -330,7 +372,7 @@ export default function mountLocationPicker({ host, props: initialProps }) {
 
 The default export mounts the component inside `host`. Filament calls `update(props)` when state or PHP configuration changes, and `destroy()` when removing or remounting the field. Keep the initial callbacks when updating props, as shown above.
 
-### Creating a Vue field
+#### Creating a Vue field
 
 Create `resources/js/fields/LocationPicker.vue`:
 
@@ -391,7 +433,7 @@ export default function mountLocationPicker({ host, props: initialProps }) {
 }
 ```
 
-### Creating a Svelte field
+#### Creating a Svelte field
 
 For Svelte 5, create `resources/js/fields/LocationPicker.svelte`:
 
@@ -444,6 +486,81 @@ export default function mountLocationPicker({ host, props: initialProps }) {
 }
 ```
 
+#### Creating a framework-free JavaScript field
+
+You do not need a framework to build a JavaScript field. Create `resources/js/fields/location-picker.js`, add it to your Vite input, and use its built URL in `renderer()` as shown above. The following renderer creates the same latitude and longitude inputs using browser DOM APIs:
+
+```js
+export default function mountLocationPicker({ host, props: initialProps }) {
+    const coordinates = ['latitude', 'longitude']
+    let currentProps = initialProps
+    const inputs = Object.fromEntries(coordinates.map((coordinate) => {
+        const label = document.createElement('label')
+        const labelText = document.createTextNode(
+            coordinate === 'latitude' ? 'Latitude' : 'Longitude',
+        )
+        const input = document.createElement('input')
+
+        input.type = 'number'
+        input.step = 'any'
+        label.append(labelText, input)
+        host.append(label)
+
+        return [coordinate, input]
+    }))
+
+    const onInput = (event) => {
+        const coordinate = coordinates.find(
+            (coordinate) => inputs[coordinate] === event.currentTarget,
+        )
+
+        initialProps.onChange({
+            ...currentProps.value,
+            [coordinate]: event.currentTarget.value === ''
+                ? null
+                : Number(event.currentTarget.value),
+        })
+    }
+
+    for (const input of Object.values(inputs)) {
+        input.addEventListener('input', onInput)
+        input.addEventListener('blur', initialProps.onBlur)
+    }
+
+    const update = (props) => {
+        currentProps = { ...currentProps, ...props }
+
+        coordinates.forEach((coordinate) => {
+            const input = inputs[coordinate]
+
+            input.id = coordinate === 'latitude' ? currentProps.id : `${currentProps.id}-longitude`
+            input.value = currentProps.value?.[coordinate] ?? ''
+            input.disabled = currentProps.disabled
+            input.readOnly = currentProps.readOnly
+            input.required = currentProps.required
+            input.setAttribute('aria-invalid', String(currentProps.invalid))
+            input.setAttribute('aria-describedby', currentProps.ariaDescribedBy)
+        })
+    }
+
+    update(initialProps)
+
+    return {
+        update,
+        destroy() {
+            for (const input of Object.values(inputs)) {
+                input.removeEventListener('input', onInput)
+                input.removeEventListener('blur', initialProps.onBlur)
+            }
+
+            host.replaceChildren()
+        },
+    }
+}
+```
+
+The default export receives `host` and the initial props, builds only inside that host, and returns the same `update(props)` and `destroy()` lifecycle methods as a framework renderer. The input listeners retain the initial `onChange()` and `onBlur()` callbacks because later updates do not include callbacks. `update()` applies incoming state and the `id`, disabled, read-only, required, invalid, and description properties. `destroy()` removes every listener and DOM node created during mounting.
+
 The examples leave styling to your application. See [registering CSS files](../advanced/assets#registering-css-files) to include a stylesheet with your field.
 
 ### Receiving state and emitting changes
@@ -465,6 +582,8 @@ JsField::make('location')
 
 `live()` sends changes immediately, `live(onBlur: true)` waits for `props.onBlur()`, and `live(debounce: 500)` waits after the latest edit. Other Livewire requests may send pending state earlier.
 
+#### Applying accessibility and input state
+
 Apply `id`, `disabled`, `readOnly`, `required`, `invalid`, and `ariaDescribedBy` to your inputs as shown in the examples. Use `id` on the primary input to associate Filament's label, and give additional inputs their own labels. `ariaDescribedBy` associates the wrapper's helper and validation text; append any additional description IDs instead of replacing it. If you override the field wrapper, preserve its supplied `descriptionId` around that text.
 
 ### Passing configuration from PHP
@@ -485,6 +604,8 @@ Read it from `props.config.zoom` in your component. Configuration is separate fr
 In the Vue example, add `config` to `defineProps()`. In the Svelte example, read `config` from `$props()` alongside `value` and the other props.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `rendererProps()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+#### Updating configuration from another field
 
 For example, you can use the selected country to configure a location picker:
 
@@ -522,7 +643,7 @@ You can destructure functions such as `$get` and `$set`, but keep the `utilities
 
 In Svelte components, local names beginning with `$` are reserved. Keep property access such as `utilities.$get()`, or alias destructured functions: `const { $get: getState, $set: setState } = utilities`.
 
-### Calling PHP methods
+#### Calling PHP methods
 
 You can [expose methods on your custom field class](#calling-field-methods-from-javascript) and call them through `utilities`, such as `utilities.$geocodeAddress({ address })`. The same method exposure and authorization rules apply to Blade and JavaScript-rendered fields. See [calling an exposed method from a framework](#calling-an-exposed-method-from-a-framework) for an example.
 
@@ -534,36 +655,11 @@ await utilities.$wire.$call('saveLocation')
 
 `$wire` is the original Livewire proxy, exposed through a getter to avoid Svelte deeply proxying it. Pass the `utilities` object intact. Direct `$wire` writes bypass the field's state binding timing; prefer `props.onChange()` for field edits. Handle request failures in your interaction handlers, and stop using utilities when the renderer is destroyed.
 
-### Building reusable plugin fields
-
-You do not need to extend `JsField` to build a reusable field. Use `HasJsRenderer` on your own `Field` class and implement `HasEmbeddedView`. The trait provides `toEmbeddedHtml()`, the field wrapper, read-only configuration, and state synchronization. Implement `getRenderer()` to return your module URL:
-
-```php
-namespace Vendor\LocationPicker\Forms\Components;
-
-use Filament\Forms\Components\Concerns\HasJsRenderer;
-use Filament\Forms\Components\Field;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
-use Filament\Support\Facades\FilamentAsset;
-
-class LocationPicker extends Field implements HasEmbeddedView
-{
-    use HasJsRenderer;
-
-    public function getRenderer(): string
-    {
-        return FilamentAsset::getScriptSrc('location-picker', 'vendor/location-picker');
-    }
-}
-```
-
-Follow the [plugin guide](../plugins/getting-started#creating-a-plugin) to set up your package and [publish its prebuilt module](../advanced/assets#publishing-es-modules-in-plugins) under this asset ID and package name. Consumers can then use `LocationPicker::make('location')->live()` without a renderer URL, a Blade view, or changes to their Vite setup.
-
-Use the same mount function as for `JsField`. To pass [configuration](#passing-configuration-from-php), override `getRendererProps(): array` and return your field's evaluated configuration values. You can expose those values through the usual [fluent configuration methods](#adding-a-configuration-method-to-a-custom-field-class).
-
 ### Typing renderers
 
-Filament includes TypeScript declarations in its Composer package, without a JavaScript runtime dependency. Add a type alias to your application's `tsconfig.json`, relative to that configuration file:
+Use [`--typescript` or `--ts`](#generating-a-javascript-field) to generate typed starters. Filament includes the declarations in its Composer package, without a JavaScript runtime dependency.
+
+For an existing renderer, add a type alias to your application's `tsconfig.json`, relative to that configuration file (or its `baseUrl`, if configured):
 
 ```json
 {
@@ -601,6 +697,8 @@ export default mountLocationPicker
 
 You can also import `JsFieldRendererContext`, `JsFieldInitialProps`, `JsFieldProps`, `JsFieldUtilities`, and `JsFieldRendererInstance` to type individual parts of your implementation. Initial props include callbacks; subsequent props do not. State and configuration are deeply read-only snapshots in TypeScript, not runtime-frozen objects. Unspecified types must be narrowed before use. Keep `import type` so your bundler does not try to load the declaration file, and keep PHP validation even when using TypeScript.
 
+#### Typing exposed methods
+
 For [exposed PHP methods](#calling-an-exposed-method-from-a-framework), supply a third type argument, such as `JsFieldRenderer<Location, Config, Methods>`. Declare the methods your field exposes; PHP signatures are not automatically translated into TypeScript:
 
 ```ts
@@ -611,19 +709,21 @@ interface Methods {
 
 `JsFieldLivewire` declares `$call()`, `$get()`, and `$set()` on `$wire`. Use `$call()` for custom Livewire methods. Other Livewire APIs remain available at runtime; extend the type locally to match your installed Livewire version when using them. In a plugin repository, point the type alias at your development Composer installation.
 
-### Understanding the boundary with Blade and Alpine
-
-Render only inside `host`, whose contents are ignored by Livewire. Do not change its parent or siblings. PHP records, operations, closures, Blade slots, and rendered Filament child schemas are not automatically available inside it. Compute serializable data in `rendererProps()` and keep server-rendered actions, hints, and child schemas outside the host. Filament and Livewire still own field state, validation, authorization, and HTTP responses.
-
-Alpine directives and magic properties are not injected into React, Vue, or Svelte templates. Use the framework's event, reference, and lifecycle APIs, native DOM events, or the supplied `$wire` for Livewire-specific operations. There are no dedicated framework adapters for uploads, actions/modals, or sibling-state subscriptions; access to `$wire` does not automatically make those APIs reactive in your framework. Clean up listeners and subscriptions using their owning API's cleanup mechanism.
-
 ### Synchronizing and disposing renderers
 
 Return `update(props)` and `destroy()` from your mount function, or return a promise for that object. Server changes update the renderer and cancel a pending debounce when the incoming value differs from the pending edit. Removal cancels pending commits and calls `destroy()`. A renderer that finishes initializing after removal is immediately destroyed.
 
 Clean up subscriptions, event listeners, and framework roots in `destroy()`, including when the host is already detached. Stop DOM work synchronously even if cleanup returns a promise. Changes to the renderer URL or state binding configuration remount the renderer with current state; changes to `rendererProps()` update it in place. Keep persistent data in the field value, not only in component-local state.
 
-### Handling renderer errors
+#### Understanding the boundary with Blade and Alpine
+
+Render only inside `host`, whose contents are ignored by Livewire. Do not change its parent or siblings. PHP records, operations, closures, Blade slots, and rendered Filament child schemas are not automatically available inside it. Compute serializable data in `rendererProps()` and keep server-rendered actions, hints, and child schemas outside the host. Filament and Livewire still own field state, validation, authorization, and HTTP responses.
+
+Alpine directives and magic properties are not injected into React, Vue, or Svelte templates. Use the framework's event, reference, and lifecycle APIs, native DOM events, or the supplied `$wire` for Livewire-specific operations. There are no dedicated framework adapters for uploads, actions/modals, or sibling-state subscriptions; access to `$wire` does not automatically make those APIs reactive in your framework. Clean up listeners and subscriptions using their owning API's cleanup mechanism.
+
+If you already load the renderer through another script, you may pass a trusted `Filament\Support\RawJs` function expression to `renderer()` instead of a URL.
+
+#### Handling renderer errors
 
 If importing, mounting, or `update()` fails, Filament clears the host and shows an accessible error message without changing the field value. Console diagnostics identify the phase (`import`, `mount`, `update`, or `cleanup`), state path, renderer, and original error. Cleanup failures are reported without preventing other fields from being disposed. Both thrown errors and rejected lifecycle promises are handled. Filament does not add field values or PHP props to these diagnostics, but your error objects and renderer URLs may contain sensitive information.
 
@@ -632,6 +732,33 @@ Reload the page after correcting the module URL or implementation. If your mount
 <Aside variant="danger">
     Only use trusted application URLs or `RawJs` code; never let user input choose executable modules or interpolate it into renderer expressions. Renderers are not sandboxed and must comply with your application's CSP and cross-origin policy. Validate and authorize submitted values in PHP, including for disabled or read-only fields.
 </Aside>
+
+### Building reusable plugin fields
+
+You do not need to extend `JsField` to build a reusable field. Use `HasJsRenderer` on your own `Field` class and implement `HasEmbeddedView`. The trait provides `toEmbeddedHtml()`, the field wrapper, read-only configuration, and state synchronization. Implement `getRenderer()` to return your module URL:
+
+```php
+namespace Vendor\LocationPicker\Forms\Components;
+
+use Filament\Forms\Components\Concerns\HasJsRenderer;
+use Filament\Forms\Components\Field;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Facades\FilamentAsset;
+
+class LocationPicker extends Field implements HasEmbeddedView
+{
+    use HasJsRenderer;
+
+    public function getRenderer(): string
+    {
+        return FilamentAsset::getScriptSrc('location-picker', 'vendor/location-picker');
+    }
+}
+```
+
+Follow the [plugin guide](../plugins/getting-started#creating-a-plugin) to set up your package and [publish its prebuilt module](../advanced/assets#publishing-es-modules-in-plugins) under this asset ID and package name. Consumers can then use `LocationPicker::make('location')->live()` without a renderer URL, a Blade view, or changes to their Vite setup.
+
+Use the same mount function as for `JsField`. To pass [configuration](#passing-configuration-from-php), override `getRendererProps(): array` and return your field's evaluated configuration values. You can expose those values through the usual [fluent configuration methods](#adding-a-configuration-method-to-a-custom-field-class).
 
 ## Calling field methods from JavaScript
 

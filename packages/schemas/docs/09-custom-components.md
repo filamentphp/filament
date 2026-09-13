@@ -4,6 +4,24 @@ title: Custom components
 import Aside from "@components/Aside.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
+## Introduction
+
+For a one-off component, insert a [Blade view](#inserting-a-blade-view-into-a-schema) into your schema. For a reusable component with its own PHP configuration, generate a class and view:
+
+```bash
+php artisan make:filament-schema-component Chart
+```
+
+Use the generated class in your schema:
+
+```php
+use App\Filament\Schemas\Components\Chart;
+
+Chart::make()
+```
+
+Then customize the generated view, following [custom component classes](#custom-component-classes). Most custom components can use Blade and the schema's existing utilities; use a [nested Livewire component](#inserting-a-livewire-component-into-a-schema) when you need a separately managed Livewire component.
+
 ## Inserting a Blade view into a schema
 
 You may use a "view" component to insert a Blade view into a schema arbitrarily:
@@ -427,7 +445,7 @@ class Chart extends Component
 
 #### Calling the method from JavaScript
 
-In your Blade view or embedded HTML, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this schema component, so you do not need its key. You can also use `$callSchemaComponentMethod('getChartData')`. Built-in utility and Alpine magic names are reserved; methods with colliding names remain available through the general utility. Avoid registering your own Alpine magics with the same names as exposed methods.
+In your Blade view or embedded HTML, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this schema component, so you do not need its key:
 
 ```blade
 <div
@@ -444,6 +462,10 @@ In your Blade view or embedded HTML, call the exposed public instance method usi
     </template>
 </div>
 ```
+
+You can also use `$callSchemaComponentMethod('getChartData')`. Built-in utility and Alpine magic names are reserved; methods with colliding names remain available through the general utility. Avoid registering your own Alpine magics with the same names as exposed methods.
+
+#### Passing arguments to an exposed method
 
 Pass arguments as an object keyed by PHP parameter name:
 

@@ -1,0 +1,20 @@
+<script setup>
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps(['value', 'id', 'disabled', 'readOnly', 'required', 'invalid', 'ariaDescribedBy', 'onChange', 'onBlur'])
+</script>
+
+<template>
+    <input
+        :id="props.id"
+        type="text"
+        :value="props.value ?? ''"
+        :disabled="props.disabled"
+        :readonly="props.readOnly"
+        :required="props.required"
+        :aria-invalid="props.invalid"
+        :aria-describedby="props.ariaDescribedBy"
+        @input="props.onChange($event.target.value)"
+        @blur="props.onBlur()"
+    />
+</template>

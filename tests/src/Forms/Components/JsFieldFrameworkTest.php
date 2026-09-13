@@ -34,6 +34,43 @@ beforeEach(function (): void {
     $this->actingAs(User::factory()->create());
 });
 
+it('binds generated field templates and preserves callbacks after updates', function (string $framework, bool $isDarkMode): void {
+    $browser = $isDarkMode ? visit('/js-field-framework-test?scenario=generated&framework=' . $framework)->inDarkMode() : visit('/js-field-framework-test?scenario=generated&framework=' . $framework);
+    $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";
+
+    $browser->assertValue('[id="form.live"]', 'Original café')
+        ->assertNoAccessibilityIssues()
+        ->fill('[id="form.live"]', 'Edited café')
+        ->assertScript("{$state}.live", 'Edited café')
+        ->click('Reset')
+        ->assertValue('[id="form.live"]', 'Original café')
+        ->fill('[id="form.live"]', 'After reset')
+        ->assertScript("{$state}.live", 'After reset')
+        ->fill('[id="form.blur"]', 'After blur')
+        ->assertScript("{$state}.blur", 'Second field');
+
+    $browser->script('document.getElementById("form.blur").blur()');
+    $browser->assertScript("{$state}.blur", 'After blur')
+        ->click('Show validation error')
+        ->assertAttribute('[id="form.live"]', 'aria-invalid', 'true')
+        ->assertNoAccessibilityIssues()
+        ->click('Toggle locked')
+        ->assertDisabled('[id="form.live"]')
+        ->assertAttribute('[id="form.blur"]', 'readonly', '')
+        ->click('Toggle locked')
+        ->click('Toggle mounted')
+        ->assertNotPresent('[id="form.live"]')
+        ->click('Toggle mounted')
+        ->assertValue('[id="form.live"]', 'After reset')
+        ->fill('[id="form.live"]', 'After remount')
+        ->assertScript("{$state}.live", 'After remount')
+        ->assertNoSmoke();
+
+    if ($framework === 'js') {
+        $browser->screenshotElement('[data-field-wrapper]:has([id="form.live"])', 'generated-js-validation-' . ($isDarkMode ? 'dark' : 'light'));
+    }
+})->with(['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts'])->with([false, true]);
+
 it('calls exposed field methods and the owning `$wire` across nested instances and remounts', function (string $framework): void {
     $page = visit('/js-field-framework-test?framework=' . $framework);
     $state = "JSON.parse(document.querySelector('#framework-server-state').textContent)";

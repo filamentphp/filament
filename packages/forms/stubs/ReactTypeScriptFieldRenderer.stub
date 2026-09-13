@@ -1,0 +1,31 @@
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import type { JsFieldInitialProps, JsFieldProps, JsFieldRenderer } from '@filament/forms/js-field'
+
+function {{ componentName }}(props: JsFieldInitialProps<string | null>) {
+    return (
+        <input
+            id={props.id}
+            type="text"
+            value={props.value ?? ''}
+            disabled={props.disabled}
+            readOnly={props.readOnly}
+            required={props.required}
+            aria-invalid={props.invalid}
+            aria-describedby={props.ariaDescribedBy}
+            onChange={(event) => props.onChange(event.target.value)}
+            onBlur={props.onBlur}
+        />
+    )
+}
+
+const mount{{ componentName }}: JsFieldRenderer<string | null> = ({ host, props: initialProps }) => {
+    const root = createRoot(host)
+    const update = (props: JsFieldProps<string | null>) => root.render(<{{ componentName }} {...initialProps} {...props} />)
+
+    update(initialProps)
+
+    return { update, destroy: () => root.unmount() }
+}
+
+export default mount{{ componentName }}

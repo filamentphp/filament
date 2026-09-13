@@ -13,7 +13,19 @@ To create a custom entry class and view, you may use the following command:
 php artisan make:filament-infolist-entry AudioPlayerEntry
 ```
 
-This will create the following component class:
+Use the generated entry in your schema:
+
+```php
+use App\Filament\Infolists\Components\AudioPlayerEntry;
+
+AudioPlayerEntry::make('recording')
+```
+
+Then customize its Blade view to display the entry's state.
+
+## Custom entry classes
+
+The generator creates an entry class that selects its view:
 
 ```php
 use Filament\Infolists\Components\Entry;
@@ -30,7 +42,7 @@ It will also create a view file at `resources/views/filament/infolists/component
     Filament infolist entries are **not** Livewire components. Defining public properties and methods on a infolist entry class will not make them accessible in the Blade view.
 </Aside>
 
-## Accessing the state of the entry in the Blade view
+### Accessing the state of the entry in the Blade view
 
 Inside the Blade view, you may access the [state](overview#entry-content-state) of the entry using the `$getState()` function:
 
@@ -43,7 +55,7 @@ Inside the Blade view, you may access the [state](overview#entry-content-state) 
 </x-dynamic-component>
 ```
 
-## Accessing the state of another component in the Blade view
+### Accessing the state of another component in the Blade view
 
 Inside the Blade view, you may access the state of another component in the schema using the `$get()` function:
 
@@ -60,7 +72,7 @@ Inside the Blade view, you may access the state of another component in the sche
     Unless a form field is [reactive](../infolists/overview#the-basics-of-reactivity), the Blade view will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
 
-## Accessing the Eloquent record in the Blade view
+### Accessing the Eloquent record in the Blade view
 
 Inside the Blade view, you may access the current Eloquent record using the `$record` variable:
 
@@ -73,7 +85,7 @@ Inside the Blade view, you may access the current Eloquent record using the `$re
 </x-dynamic-component>
 ```
 
-## Accessing the current operation in the Blade view
+### Accessing the current operation in the Blade view
 
 Inside the Blade view, you may access the current operation, usually `create`, `edit` or `view`, using the `$operation` variable:
 
@@ -90,7 +102,7 @@ Inside the Blade view, you may access the current operation, usually `create`, `
 </x-dynamic-component>
 ```
 
-## Accessing the current Livewire component instance in the Blade view
+### Accessing the current Livewire component instance in the Blade view
 
 Inside the Blade view, you may access the current Livewire component instance using `$this`:
 
@@ -109,7 +121,7 @@ Inside the Blade view, you may access the current Livewire component instance us
 </x-dynamic-component>
 ```
 
-## Accessing the current entry instance in the Blade view
+### Accessing the current entry instance in the Blade view
 
 Inside the Blade view, you may access the current entry instance using `$entry`. You can call public methods on this object to access other information that may not be available in variables:
 
@@ -124,7 +136,7 @@ Inside the Blade view, you may access the current entry instance using `$entry`.
 </x-dynamic-component>
 ```
 
-## Adding a configuration method to a custom entry class
+### Adding a configuration method to a custom entry class
 
 You may add a public method to the custom entry class that accepts a configuration value, stores it in a protected property, and returns it again from another public method:
 
@@ -173,7 +185,7 @@ AudioPlayerEntry::make('recording')
     ->speed(0.5)
 ```
 
-## Allowing utility injection in a custom entry configuration method
+#### Allowing utility injection in a custom entry configuration method
 
 [Utility injection](overview#entry-utility-injection) is a powerful feature of Filament that allows users to configure a component using functions that can access various utilities. You can allow utility injection by ensuring that the parameter type and property type of the configuration allows the user to pass a `Closure`. In the getter method, you should pass the configuration value to the `$this->evaluate()` method, which will inject utilities into the user's function if they pass one, or return the value if it is static:
 
@@ -242,7 +254,7 @@ class AudioPlayerEntry extends Entry
 
 ### Calling the method from JavaScript
 
-In your Blade view, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this entry, so you do not need its key. Pass arguments as an object keyed by PHP parameter name. You can also use `$callSchemaComponentMethod('getWaveformData')`, including for methods whose names collide with built-in utilities or Alpine magics:
+In your Blade view, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this entry, so you do not need its key:
 
 ```blade
 <x-dynamic-component
@@ -264,6 +276,8 @@ In your Blade view, call the exposed public instance method using its `$`-prefix
     </div>
 </x-dynamic-component>
 ```
+
+Pass arguments as an object keyed by PHP parameter name. You can also use `$callSchemaComponentMethod('getWaveformData')`, including for methods whose names collide with built-in utilities or Alpine magics.
 
 ### Preventing re-renders
 
