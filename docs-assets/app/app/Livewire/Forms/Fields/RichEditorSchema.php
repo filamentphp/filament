@@ -127,6 +127,21 @@ class RichEditorSchema
                         ]),
                 ]),
             Group::make()
+                ->id('richEditorCustomBlocksGrid')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorCustomBlocksGrid')
+                        ->label('Page content')
+                        ->customBlocks([
+                            HeroBlock::class,
+                            CallToActionBlock::class,
+                        ])
+                        ->customBlocksGrid()
+                        ->activePanel('customBlocks'),
+                ]),
+            Group::make()
                 ->id('richEditorGroupedCustomBlocks')
                 ->extraAttributes([
                     'class' => 'p-16 max-w-5xl',

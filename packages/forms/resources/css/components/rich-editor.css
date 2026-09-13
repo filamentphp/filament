@@ -165,7 +165,7 @@
     }
 
     & .fi-fo-rich-editor-panel {
-        @apply grid divide-y divide-gray-200 dark:divide-white/10;
+        @apply grid grid-cols-1 divide-y divide-gray-200 dark:divide-white/10;
 
         &:has(.fi-fo-rich-editor-custom-blocks-ctn) {
             @apply -mb-px;

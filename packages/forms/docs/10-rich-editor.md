@@ -756,6 +756,10 @@ RichEditor::make('content')
 
 Each grid item displays the block's label and its [icon](#adding-icons-to-custom-blocks), if one is defined. Pass `false` to `customBlocksGrid()` to restore the list.
 
+Defining an icon for each block makes the grid easier to scan:
+
+<AutoScreenshot name="forms/fields/rich-editor/custom-blocks-grid" alt="Rich editor with icons above custom block labels in a grid" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `customBlocksGrid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Grouping custom blocks
@@ -829,7 +833,7 @@ Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) 
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchableCustomBlocks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/rich-editor/searchable-custom-blocks-grid" alt="Rich editor with searchable custom blocks in a grid" version="4.x" />
+<AutoScreenshot name="forms/fields/rich-editor/searchable-custom-blocks-grid" alt="Rich editor with custom blocks filtered to the Media group, showing image gallery and video embed icons in a grid" version="4.x" />
 
 ### Opening the custom blocks panel by default
 
