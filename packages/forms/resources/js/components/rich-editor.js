@@ -25,10 +25,13 @@ export default function richEditorFormComponent({
     activePanel,
     canAttachFiles,
     deleteCustomBlockButtonIconHtml,
+    deleteCustomBlockButtonLabel,
     editCustomBlockButtonIconHtml,
+    editCustomBlockButtonLabel,
     extensions,
     floatingToolbars,
     hasResizableImages,
+    hasStickyToolbar = false,
     isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
@@ -53,11 +56,16 @@ export default function richEditorFormComponent({
     let editor
     let eventListeners = []
     let isDestroyed = false
+    let toolbarResizeObserver
+    let modalResizeObserver
+    let modalMutationObserver
 
     return {
         state,
 
         activePanel,
+
+        customBlockSearch: '',
 
         editorSelection: { type: 'text', anchor: 1, head: 1 },
 
@@ -70,6 +78,119 @@ export default function richEditorFormComponent({
         editorUpdatedAt: Date.now(),
 
         async init() {
+            if (hasStickyToolbar && this.$refs.toolbar) {
+                toolbarResizeObserver = new ResizeObserver(([entry]) => {
+                    this.$el.style.setProperty(
+                        '--fi-fo-rich-editor-toolbar-height',
+                        `${entry.borderBoxSize[0].blockSize}px`,
+                    )
+                })
+                toolbarResizeObserver.observe(this.$refs.toolbar, {
+                    box: 'border-box',
+                })
+            }
+
+            const modal = this.$el.closest('.fi-modal')
+            const hasStickyPanels = !!this.$el.querySelector(
+                '.fi-fo-rich-editor-sticky-panels',
+            )
+
+            if (modal && (hasStickyToolbar || hasStickyPanels)) {
+                const modalWindow = modal.querySelector(
+                    ':scope > .fi-modal-window-ctn > .fi-modal-window',
+                )
+                let modalHeader
+                let modalFooter
+                let modalViewport
+
+                const updateModalMeasurements = () => {
+                    const nextModalHeader = modal.matches(
+                        '.fi-modal-has-sticky-header',
+                    )
+                        ? modalWindow.querySelector(':scope > .fi-modal-header')
+                        : null
+                    const nextModalFooter =
+                        hasStickyPanels &&
+                        modal.matches('.fi-modal-has-sticky-footer')
+                            ? modalWindow.querySelector(
+                                  ':scope > .fi-modal-footer',
+                              )
+                            : null
+                    const nextModalViewport = hasStickyPanels
+                        ? modalWindow.parentElement
+                        : null
+
+                    for (const [previous, next, property, box] of [
+                        [
+                            modalHeader,
+                            nextModalHeader,
+                            '--fi-fo-rich-editor-modal-header-height',
+                            'border-box',
+                        ],
+                        [
+                            modalFooter,
+                            nextModalFooter,
+                            '--fi-fo-rich-editor-modal-footer-height',
+                            'border-box',
+                        ],
+                        [
+                            modalViewport,
+                            nextModalViewport,
+                            '--fi-fo-rich-editor-modal-viewport-height',
+                            'content-box',
+                        ],
+                    ]) {
+                        if (previous === next) {
+                            continue
+                        }
+
+                        if (previous) {
+                            modalResizeObserver.unobserve(previous)
+                        }
+
+                        this.$el.style.removeProperty(property)
+
+                        if (next) {
+                            modalResizeObserver.observe(next, { box })
+                        }
+                    }
+
+                    modalHeader = nextModalHeader
+                    modalFooter = nextModalFooter
+                    modalViewport = nextModalViewport
+                }
+
+                modalResizeObserver = new ResizeObserver((entries) => {
+                    for (const entry of entries) {
+                        const property =
+                            entry.target === modalHeader
+                                ? '--fi-fo-rich-editor-modal-header-height'
+                                : entry.target === modalFooter
+                                  ? '--fi-fo-rich-editor-modal-footer-height'
+                                  : '--fi-fo-rich-editor-modal-viewport-height'
+                        const height =
+                            entry.target === modalViewport
+                                ? entry.contentBoxSize[0].blockSize
+                                : entry.borderBoxSize[0].blockSize
+
+                        this.$el.style.setProperty(property, `${height}px`)
+                    }
+                })
+
+                updateModalMeasurements()
+
+                modalMutationObserver = new MutationObserver(
+                    updateModalMeasurements,
+                )
+                modalMutationObserver.observe(modal, {
+                    attributes: true,
+                    attributeFilter: ['class'],
+                })
+                modalMutationObserver.observe(modalWindow, {
+                    childList: true,
+                })
+            }
+
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
@@ -84,7 +205,9 @@ export default function richEditorFormComponent({
                     canAttachFiles,
                     customExtensionUrls: extensions,
                     deleteCustomBlockButtonIconHtml,
+                    deleteCustomBlockButtonLabel,
                     editCustomBlockButtonIconHtml,
+                    editCustomBlockButtonLabel,
                     editCustomBlockUsing: (id, config) =>
                         this.$wire.mountAction(
                             'customBlock',
@@ -364,6 +487,17 @@ export default function richEditorFormComponent({
             commandChain.run()
         },
 
+        matchesCustomBlockSearch(labels) {
+            const search = this.customBlockSearch.trim().toLocaleLowerCase()
+
+            return (
+                !search ||
+                labels.some((label) =>
+                    label.toLocaleLowerCase().includes(search),
+                )
+            )
+        },
+
         togglePanel(id = null) {
             if (this.isPanelActive(id)) {
                 this.activePanel = null
@@ -401,6 +535,9 @@ export default function richEditorFormComponent({
 
         destroy() {
             isDestroyed = true
+            toolbarResizeObserver?.disconnect()
+            modalResizeObserver?.disconnect()
+            modalMutationObserver?.disconnect()
 
             eventListeners.forEach(([eventName, handler]) => {
                 window.removeEventListener(eventName, handler)
