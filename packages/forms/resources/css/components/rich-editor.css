@@ -149,7 +149,7 @@
     }
 
     & .fi-fo-rich-editor-panels {
-        @apply w-full border-b border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-gray-900/30;
+        @apply w-full overflow-clip border-b border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-gray-900/30;
     }
 
     & .fi-fo-rich-editor-panel-header {
