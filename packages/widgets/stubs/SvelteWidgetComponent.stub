@@ -1,0 +1,6 @@
+<script>
+    let { config } = $props()
+</script>
+
+<h2>{config.heading ?? 'Widget heading'}</h2>
+<p>{config.description ?? 'Widget description'}</p>

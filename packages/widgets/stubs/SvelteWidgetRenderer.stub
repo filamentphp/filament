@@ -1,0 +1,12 @@
+import { mount, unmount } from 'svelte'
+import {{ componentName }} from './{{ componentName }}.svelte'
+
+export default function mount{{ componentName }}({ host, props: initialProps }) {
+    const props = $state({ ...initialProps })
+    const component = mount({{ componentName }}, { target: host, props })
+
+    return {
+        update: (nextProps) => { Object.assign(props, nextProps) },
+        destroy: () => unmount(component),
+    }
+}
