@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import type { JsWidgetProps } from '@filament/widgets/js-widget'
+
+defineProps<JsWidgetProps<{ heading?: string; description?: string }>>()
+</script>
+
+<template>
+    <h2>{{ config.heading ?? 'Widget heading' }}</h2>
+    <p>{{ config.description ?? 'Widget description' }}</p>
+</template>

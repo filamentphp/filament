@@ -1,0 +1,19 @@
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import type { JsWidgetProps, JsWidgetRenderer } from '@filament/widgets/js-widget'
+
+type Config = { heading?: string; description?: string }
+
+function {{ componentName }}({ config }: JsWidgetProps<Config>) {
+    return <><h2>{config.heading ?? 'Widget heading'}</h2><p>{config.description ?? 'Widget description'}</p></>
+}
+
+const mount{{ componentName }}: JsWidgetRenderer<Config> = ({ host, props: initialProps }) => {
+    const root = createRoot(host)
+    const update = (props: JsWidgetProps<Config>) => root.render(<{{ componentName }} {...props} />)
+    update(initialProps)
+
+    return { update, destroy: () => root.unmount() }
+}
+
+export default mount{{ componentName }}

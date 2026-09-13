@@ -11,6 +11,7 @@ const { field: generatedEntryPoints } = await buildRendererStarters({
         stubName: 'SchemaComponent',
         componentStubName: 'SchemaComponent',
     },
+    widget: 'widgets',
 })
 
 execFileSync(
@@ -26,6 +27,7 @@ execFileSync(
         '--module',
         'esnext',
         'tests/js/js-field-types.ts',
+        'tests/js/js-widget-types.ts',
     ],
     { stdio: 'inherit' },
 )
