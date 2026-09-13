@@ -24,7 +24,8 @@ class ManagedUserPostResource extends Resource
     {
         return UserResource::asParent(static::class)
             ->relationship('posts')
-            ->inverseRelationship('author');
+            ->inverseRelationship('author')
+            ->page('managePosts');
     }
 
     public static function form(Schema $form): Schema

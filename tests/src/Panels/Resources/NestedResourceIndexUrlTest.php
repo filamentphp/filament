@@ -27,10 +27,11 @@ it('resolves the parent relation page when the page key matches the relationship
     ]))->toContain('/tickets/' . $parentRecord->getRouteKey() . '/departments');
 });
 
-it('discovers a manage related records page registered under a custom page key', function (): void {
+it('uses an explicit page name when the relation page uses a custom key', function (): void {
     $registration = ManagedUserPostResource::getParentResourceRegistration();
 
-    expect($registration->resolveRelationshipPageName())->toBe('managePosts')
+    expect($registration->getPageName())->toBe('managePosts')
+        ->and($registration->resolveRelationshipPageName())->toBe('managePosts')
         ->and($registration->getRouteName())->toBe('posts');
 
     $parentRecord = User::factory()->create();
@@ -40,7 +41,7 @@ it('discovers a manage related records page registered under a custom page key',
     ]))->toContain('/users/' . $parentRecord->getRouteKey() . '/manage-posts');
 });
 
-it('prefers an explicit page name over discovery', function (): void {
+it('prefers an explicit page name over the relationship key', function (): void {
     $registration = UserResource::asParent(ManagedUserPostResource::class)
         ->relationship('posts')
         ->inverseRelationship('author')

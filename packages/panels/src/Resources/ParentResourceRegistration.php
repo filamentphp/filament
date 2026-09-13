@@ -2,7 +2,6 @@
 
 namespace Filament\Resources;
 
-use Filament\Resources\Pages\ManageRelatedRecords;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -120,36 +119,10 @@ class ParentResourceRegistration
     /**
      * Resolve which parent page should be used as the nested resource index.
      *
-     * Order: explicit `page()` → page keyed like the relationship → first
-     * `ManageRelatedRecords` page whose relationship matches.
+     * Order: explicit `page()` → page keyed like the relationship.
      */
-    public function resolveRelationshipPageName(): ?string
+    public function resolveRelationshipPageName(): string
     {
-        if (filled($this->pageName)) {
-            return $this->pageName;
-        }
-
-        $parentResource = $this->getParentResource();
-        $relationshipPageName = $this->getRouteName();
-
-        if ($parentResource::hasPage($relationshipPageName)) {
-            return $relationshipPageName;
-        }
-
-        foreach ($parentResource::getPages() as $name => $page) {
-            $pageClass = $page->getPage();
-
-            if (! is_subclass_of($pageClass, ManageRelatedRecords::class)) {
-                continue;
-            }
-
-            if ($pageClass::getRelationshipName() !== $this->getRelationshipName()) {
-                continue;
-            }
-
-            return $name;
-        }
-
-        return null;
+        return $this->pageName ?? $this->getRouteName();
     }
 }

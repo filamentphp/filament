@@ -77,8 +77,7 @@ For nested resources, that index URL is resolved from the **parent** resource:
 
 1. An explicit page name set with `ParentResourceRegistration::page()`
 2. A parent page keyed like the relationship name (for example `lessons`)
-3. The first parent [`ManageRelatedRecords`](managing-relationships#relation-pages) page whose relationship matches
-4. Otherwise the parent view/edit page (legacy fallback)
+3. Otherwise the parent view/edit page (legacy fallback)
 
 When registering a relation page that lists the nested resource, use the **relationship name** as the `getPages()` key:
 
@@ -92,7 +91,7 @@ public static function getPages(): array
 }
 ```
 
-If you register the page under a different key (for example `manageLessons`), Filament will still find it when the page’s `$relationship` matches. You can also set the page name explicitly on the nested resource:
+If you register the page under a different key (for example `manageLessons`), set the page name explicitly on the nested resource:
 
 ```php
 use App\Filament\Resources\Courses\CourseResource;

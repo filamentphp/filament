@@ -91,7 +91,7 @@ trait CanGenerateUrls
             $record = $parameters[$parentRouteParameterName] ?? null;
             unset($parameters[$parentRouteParameterName]);
 
-            if (filled($relationshipPageName = $parentResourceRegistration->resolveRelationshipPageName()) && $parentResource::hasPage($relationshipPageName)) {
+            if ($parentResource::hasPage($relationshipPageName = $parentResourceRegistration->resolveRelationshipPageName())) {
                 return $parentResource::getUrl($relationshipPageName, [
                     ...$parameters,
                     'record' => $record,
