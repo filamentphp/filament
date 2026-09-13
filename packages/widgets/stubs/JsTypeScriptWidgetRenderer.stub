@@ -1,0 +1,20 @@
+import type { JsWidgetProps, JsWidgetRenderer } from '@filament/widgets/js-widget'
+
+type Config = { heading?: string; description?: string }
+
+const mount{{ componentName }}: JsWidgetRenderer<Config> = ({ host, props: initialProps }) => {
+    const heading = document.createElement('h2')
+    const paragraph = document.createElement('p')
+
+    const update = ({ config }: JsWidgetProps<Config>) => {
+        heading.textContent = config.heading ?? 'Widget heading'
+        paragraph.textContent = config.description ?? 'Widget description'
+    }
+
+    update(initialProps)
+    host.append(heading, paragraph)
+
+    return { update, destroy: () => host.replaceChildren() }
+}
+
+export default mount{{ componentName }}
