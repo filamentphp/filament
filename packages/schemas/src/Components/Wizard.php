@@ -8,7 +8,7 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\View\SchemaIconAlias;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
@@ -92,7 +92,7 @@ class Wizard extends Component implements HasEmbeddedView
         ]);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function nextStep(int $currentStepIndex): void
     {
         if (! $this->isSkippable()) {
@@ -124,7 +124,7 @@ class Wizard extends Component implements HasEmbeddedView
         $livewire->dispatch('next-wizard-step', key: $this->getKey());
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function previousStep(int $currentStepIndex): void
     {
         if ($currentStepIndex < 1) {

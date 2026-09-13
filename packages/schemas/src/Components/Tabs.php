@@ -12,7 +12,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Schema;
 use Filament\Schemas\View\SchemaIconAlias;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
@@ -893,7 +893,7 @@ class Tabs extends Component implements HasEmbeddedView
     /**
      * @return array<string, array{badge: ?string, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getDeferredTabBadges(): array
     {

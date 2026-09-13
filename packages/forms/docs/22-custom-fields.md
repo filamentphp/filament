@@ -761,21 +761,25 @@ Use the same mount function as for `JsField`. To pass [configuration](#passing-c
 
 ## Calling field methods from JavaScript
 
-You can call methods on your custom field class from a Blade view or a [JavaScript renderer](#rendering-fields-with-javascript-frameworks). For example, a location picker might call a geocoding service in PHP. Expose the method using `#[ExposedLivewireMethod]`.
+You can call methods on your custom field class from a Blade view or a [JavaScript renderer](#rendering-fields-with-javascript-frameworks). For example, a location picker might call a geocoding service in PHP. Expose the method using `#[Exposed]`.
 
 ### Exposing a method
 
-Add `#[ExposedLivewireMethod]` to a public instance method on your field. This Blade-based example also applies to a class using [`HasJsRenderer`](#building-reusable-plugin-fields):
+<Aside variant="info">
+    `#[Exposed]` replaces `#[ExposedLivewireMethod]`. Update your import to `Filament\Support\Components\Attributes\Exposed` and use `#[Exposed]`. The old attribute is deprecated but remains supported, so existing fields continue to work.
+</Aside>
+
+Add `#[Exposed]` to a public instance method on your field. This Blade-based example also applies to a class using [`HasJsRenderer`](#building-reusable-plugin-fields):
 
 ```php
 use Filament\Forms\Components\Field;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 
 class LocationPicker extends Field
 {
     protected string $view = 'filament.forms.components.location-picker';
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function geocodeAddress(string $address): array
     {
         // Perform geocoding logic...
@@ -789,7 +793,7 @@ class LocationPicker extends Field
 ```
 
 <Aside variant="danger">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called through these utilities, but exposing a method is not authorization. Validate arguments and authorize record access on the server. Disabled or read-only fields and hidden buttons are not security boundaries.
+    Only methods marked with `#[Exposed]` can be called through these utilities, but exposing a method is not authorization. Validate arguments and authorize record access on the server. Disabled or read-only fields and hidden buttons are not security boundaries.
 </Aside>
 
 Arguments must be a JSON-serializable object keyed by PHP parameter name. Filament binds each call to the current field, including nested repeater instances. The returned promise resolves to the method's return value, or `null` if the component or exposed method is missing. Calls make Livewire requests and can send pending deferred edits, regardless of `live()`.
@@ -846,14 +850,14 @@ By default, calling an exposed method triggers a re-render of the Livewire compo
 
 ```php
 use Filament\Forms\Components\Field;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Livewire\Attributes\Renderless;
 
 class LocationPicker extends Field
 {
     protected string $view = 'filament.forms.components.location-picker';
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function geocodeAddress(string $address): array
     {

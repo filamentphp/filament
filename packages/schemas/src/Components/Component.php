@@ -28,7 +28,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\HasColumns;
 use Filament\Schemas\Concerns\HasGap;
 use Filament\Schemas\Concerns\HasStateBindingModifiers;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
@@ -96,7 +96,7 @@ class Component extends ViewComponent
                 continue;
             }
 
-            if ($method->getAttributes(ExposedLivewireMethod::class)) {
+            if ($method->getAttributes(Exposed::class, \ReflectionAttribute::IS_INSTANCEOF)) {
                 $names[] = $method->getName();
             }
         }

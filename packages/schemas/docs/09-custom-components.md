@@ -410,15 +410,15 @@ class Chart extends Component
 
 ### Calling component methods from JavaScript
 
-Sometimes you need to call a method on the component class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously or perform some server-side computation. Filament provides a way to expose methods on your component class to JavaScript using the `#[ExposedLivewireMethod]` attribute.
+Sometimes you need to call a method on the component class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously or perform some server-side computation. Filament provides a way to expose methods on your component class to JavaScript using the `#[Exposed]` attribute.
 
 #### Exposing a method
 
-To expose a method to JavaScript, add the `#[ExposedLivewireMethod]` attribute to a public method on your custom component class:
+To expose a method to JavaScript, add the `#[Exposed]` attribute to a public method on your custom component class:
 
 ```php
 use Filament\Schemas\Components\Component;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 
 class Chart extends Component
 {
@@ -429,7 +429,7 @@ class Chart extends Component
         return app(static::class);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function getChartData(): array
     {
         // Fetch and process chart data...
@@ -440,7 +440,7 @@ class Chart extends Component
 ```
 
 <Aside variant="info">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+    Only methods marked with `#[Exposed]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
 </Aside>
 
 #### Calling the method from JavaScript
@@ -496,11 +496,11 @@ Pass arguments as an object keyed by PHP parameter name:
 
 #### Preventing re-renders
 
-By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[ExposedLivewireMethod]` to skip the re-render:
+By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[Exposed]` to skip the re-render:
 
 ```php
 use Filament\Schemas\Components\Component;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Livewire\Attributes\Renderless;
 
 class Chart extends Component
@@ -512,7 +512,7 @@ class Chart extends Component
         return app(static::class);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getChartData(): array
     {

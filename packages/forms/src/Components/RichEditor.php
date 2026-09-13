@@ -25,7 +25,7 @@ use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentAsset;
@@ -1140,7 +1140,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     /**
      * @return array<mixed>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getMentionSearchResultsForJs(?string $search = null, ?string $char = '@'): array
     {
@@ -1163,7 +1163,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      * @param  array<array{id: mixed, char: string}>  $mentions
      * @return array<mixed, string>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getMentionLabelsForJs(array $mentions = []): array
     {

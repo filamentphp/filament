@@ -9,7 +9,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Attributes\Renderless;
 
@@ -68,7 +68,7 @@ class WizardBrowserTest extends Page
 
 class WizardBrowserTestSelect extends Select
 {
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionsForJs(): array
     {

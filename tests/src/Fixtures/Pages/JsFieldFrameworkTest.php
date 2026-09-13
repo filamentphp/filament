@@ -19,7 +19,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
 use Filament\Tests\Fixtures\Schemas\Components\BladeMethodEntry;
@@ -227,7 +227,7 @@ class JsFieldFrameworkTest extends Page
 
 class MethodTab extends Tab
 {
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function scopeLabel(): string
     {
         return 'Tab: ' . $this->getLabel();
@@ -236,13 +236,13 @@ class MethodTab extends Tab
 
 class MethodStep extends Step
 {
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function nextStep(int $currentStepIndex): void
     {
         $this->getLivewire()->data['incorrect_step_call'] = $currentStepIndex;
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function scopeLabel(): string
     {
         return 'Step: ' . $this->getLabel();

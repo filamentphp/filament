@@ -5,7 +5,7 @@ namespace Filament\Tests\Fixtures\Schemas\Components;
 use Filament\Forms\Components\Concerns\HasJsRenderer;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Attributes\Renderless;
 
@@ -13,7 +13,7 @@ class FrameworkField extends Field
 {
     use HasJsRenderer;
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function replaceTitle(string $title): array
     {
         $previous = $this->getState();
@@ -22,7 +22,7 @@ class FrameworkField extends Field
         return ['path' => $this->getStatePath(), 'previous' => $previous['title'], 'title' => $title];
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function inspectTitle(string $prefix): string
     {
