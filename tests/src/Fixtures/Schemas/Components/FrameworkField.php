@@ -6,11 +6,10 @@ use Filament\Forms\Components\Concerns\HasJsRenderer;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Attributes\Renderless;
 
-class FrameworkField extends Field implements HasEmbeddedView
+class FrameworkField extends Field
 {
     use HasJsRenderer;
 

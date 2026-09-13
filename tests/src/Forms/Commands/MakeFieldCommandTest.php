@@ -106,8 +106,8 @@ it('can generate a JavaScript field without a Blade view', function (string $fra
     $class = file_get_contents(app_path("Filament/Forms/Components/{$name}.php"));
 
     expect($class)
-        ->toContain('extends Field implements HasEmbeddedView', 'use HasJsRenderer;', "return Vite::asset('{$renderer}');")
-        ->not->toContain('protected string $view');
+        ->toContain('extends Field', 'use HasJsRenderer;', "return Vite::asset('{$renderer}');")
+        ->not->toContain('HasEmbeddedView', 'protected string $view');
     expect(file_exists($viewPath))->toBeFalse();
 
     $componentName = basename($name);

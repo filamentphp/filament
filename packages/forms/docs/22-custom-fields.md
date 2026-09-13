@@ -49,7 +49,7 @@ The [JavaScript renderer examples](#rendering-fields-with-javascript-frameworks)
 
 Use `--pm=yarn` to use Yarn instead of npm, `--skip-install` to install dependencies yourself, or `--skip-build` to skip the compilation prompt. Blade-based generation does not run a package manager.
 
-The generated PHP class uses `HasJsRenderer`, implements `HasEmbeddedView`, and loads its entry through `Vite::asset()`. The generated files depend on your chosen renderer:
+The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::asset()`. The generated files depend on your chosen renderer:
 
 - React: `location-picker.jsx`, or `location-picker.tsx` with `--typescript`.
 - Vue: `location-picker.js` and `LocationPicker.vue`. With `--typescript`, the entry uses `.ts` and the component uses `<script setup lang="ts">`.
@@ -735,17 +735,16 @@ Reload the page after correcting the module URL or implementation. If your mount
 
 ### Building reusable plugin fields
 
-You do not need to extend `JsField` to build a reusable field. Use `HasJsRenderer` on your own `Field` class and implement `HasEmbeddedView`. The trait provides `toEmbeddedHtml()`, the field wrapper, read-only configuration, and state synchronization. Implement `getRenderer()` to return your module URL:
+You do not need to extend `JsField` to build a reusable field. Use `HasJsRenderer` on your own `Field` class. The trait provides `toEmbeddedHtml()`, the field wrapper, read-only configuration, and state synchronization, without a Blade view or an additional interface. Implement `getRenderer()` to return your module URL:
 
 ```php
 namespace Vendor\LocationPicker\Forms\Components;
 
 use Filament\Forms\Components\Concerns\HasJsRenderer;
 use Filament\Forms\Components\Field;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;
 
-class LocationPicker extends Field implements HasEmbeddedView
+class LocationPicker extends Field
 {
     use HasJsRenderer;
 

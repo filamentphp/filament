@@ -38,6 +38,7 @@ it('evaluates and clears `rendererProps()` with utility injection', function ():
 
 it('renders `JsField` and independent fields using `HasJsRenderer` with embedded wrappers', function (): void {
     expect(is_subclass_of(PluginLocationField::class, JsField::class))->toBeFalse();
+    expect(is_subclass_of(PluginLocationField::class, HasEmbeddedView::class))->toBeFalse();
 
     livewire(RenderJsField::class)
         ->assertSuccessful()
@@ -83,7 +84,7 @@ class RenderJsField extends Livewire
     }
 }
 
-class PluginLocationField extends Field implements HasEmbeddedView
+class PluginLocationField extends Field
 {
     use HasJsRenderer;
 

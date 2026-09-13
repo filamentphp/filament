@@ -3,10 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\RawJs;
 
-class JsField extends Field implements HasEmbeddedView
+class JsField extends Field
 {
     use Concerns\HasJsRenderer;
 
