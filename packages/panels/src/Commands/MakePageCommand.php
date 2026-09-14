@@ -2,6 +2,7 @@
 
 namespace Filament\Commands;
 
+use Filament\Commands\Concerns\CanGenerateInertiaPages;
 use Filament\Commands\FileGenerators\CustomPageClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Pages\ResourceCreateRecordPageClassGenerator;
 use Filament\Commands\FileGenerators\Resources\Pages\ResourceCustomPageClassGenerator;
@@ -62,6 +63,7 @@ class MakePageCommand extends Command
     use CanAskForSchema;
     use CanAskForViewLocation;
     use CanCheckFileGenerationFlags;
+    use CanGenerateInertiaPages;
     use CanManipulateFiles;
     use HasCluster;
     use HasClusterPagesLocation;
@@ -129,6 +131,12 @@ class MakePageCommand extends Command
     protected function getOptions(): array
     {
         return [
+            new InputOption('vue', mode: InputOption::VALUE_NONE, description: 'Generate an Inertia page using Vue'),
+            new InputOption('react', mode: InputOption::VALUE_NONE, description: 'Generate an Inertia page using React'),
+            new InputOption('svelte', mode: InputOption::VALUE_NONE, description: 'Generate an Inertia page using Svelte'),
+            new InputOption('ts', mode: InputOption::VALUE_NONE, description: 'Generate TypeScript for the selected Inertia framework'),
+            new InputOption('typescript', mode: InputOption::VALUE_NONE, description: 'Alias for --ts'),
+            new InputOption('ssr', mode: InputOption::VALUE_NONE, description: 'Also generate an Inertia server entry point without replacing existing configuration'),
             new InputOption(
                 name: 'cluster',
                 shortcut: 'C',
@@ -171,6 +179,7 @@ class MakePageCommand extends Command
     public function handle(): int
     {
         try {
+            $this->configureInertia();
             $this->configureFqnEnd();
             $this->configurePanel(question: 'Which panel would you like to create this page in?');
             $this->configureHasResource();
@@ -219,6 +228,14 @@ class MakePageCommand extends Command
 
     protected function configureHasResource(): void
     {
+        if ($this->inertiaFramework !== null) {
+            $this->hasResource = false;
+            $this->resourceFqn = null;
+            $this->resourcePageType = null;
+
+            return;
+        }
+
         $this->hasResource = $this->option('resource') || confirm(
             label: 'Would you like to create this page in a resource?',
             default: false,
@@ -368,6 +385,13 @@ class MakePageCommand extends Command
     {
         $this->fqn = $this->pagesNamespace . '\\' . $this->fqnEnd;
 
+        if ($this->inertiaFramework !== null) {
+            $this->view = null;
+            $this->viewPath = null;
+
+            return;
+        }
+
         if ((! $this->hasResource) || ($this->resourcePageType === ResourcePage::class)) {
             $componentLocations = FilamentCli::getComponentLocations();
 
@@ -400,6 +424,12 @@ class MakePageCommand extends Command
     protected function createCustomPage(): void
     {
         if ($this->hasResource) {
+            return;
+        }
+
+        if ($this->inertiaFramework !== null) {
+            $this->createInertiaPage($this->inertiaFramework);
+
             return;
         }
 

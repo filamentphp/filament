@@ -21,6 +21,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\HandleInertiaRequests;
 use Filament\Http\Middleware\IdentifyPageConfiguration;
 use Filament\Http\Middleware\IdentifyResourceConfiguration;
 use Filament\Http\Middleware\IdentifyTenant;
@@ -31,6 +32,8 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\View\LegacyComponents;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
@@ -87,6 +90,11 @@ class FilamentServiceProvider extends PackageServiceProvider
         app(Router::class)->aliasMiddleware('panel', SetUpPanel::class);
         app(Router::class)->aliasMiddleware('resource-configuration', IdentifyResourceConfiguration::class);
         app(Router::class)->aliasMiddleware('page-configuration', IdentifyPageConfiguration::class);
+
+        $this->callAfterResolving(Kernel::class, static function (\Illuminate\Foundation\Http\Kernel $kernel): void {
+            $kernel->addToMiddlewarePriorityBefore(Authorize::class, IdentifyTenant::class);
+            $kernel->addToMiddlewarePriorityAfter(Authorize::class, HandleInertiaRequests::class);
+        });
     }
 
     public function packageBooted(): void

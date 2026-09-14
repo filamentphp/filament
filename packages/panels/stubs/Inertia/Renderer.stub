@@ -1,0 +1,4 @@
+import { createRenderer } from '{{ helper }}'
+import { resolve } from '{{ resolver }}'
+
+export default createRenderer({ resolve })

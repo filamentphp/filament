@@ -3,6 +3,7 @@ parameters:
 
     paths:
         - packages
+        - tests/src/Inertia/Fixtures
 
     excludePaths:
         - packages/upgrade/bin
