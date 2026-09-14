@@ -255,6 +255,10 @@ class TextColumn extends Column implements HasEmbeddedView
             $classString .= ' fi-inline';
         }
 
+        if ($this->isNumeric() || $this->isMoney()) {
+            $classString .= ' fi-numeric';
+        }
+
         $alignment = $this->getAlignment();
 
         if ($alignment instanceof Alignment) {
@@ -286,6 +290,7 @@ class TextColumn extends Column implements HasEmbeddedView
             ->class([
                 'fi-ta-text',
                 'fi-inline' => $this->isInline(),
+                'fi-numeric' => $this->isNumeric() || $this->isMoney(),
             ]);
 
         $alignment = $this->getAlignment();

@@ -11,7 +11,9 @@ use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
@@ -24,7 +26,7 @@ class SetUpEmailAuthenticationAction
         return Action::make('setUpEmailAuthentication')
             ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.label'))
             ->color('primary')
-            ->icon(Heroicon::LockClosed)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP) ?? Heroicon::LockClosed)
             ->link()
             ->mountUsing(function (Schema $schema) use ($emailAuthentication): void {
                 $schema->fill();
@@ -35,7 +37,7 @@ class SetUpEmailAuthenticationAction
                 $emailAuthentication->sendCode($user);
             })
             ->modalWidth(Width::Large)
-            ->modalIcon(Heroicon::OutlinedLockClosed)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_MODAL) ?? Heroicon::OutlinedLockClosed)
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.description'))
@@ -98,7 +100,7 @@ class SetUpEmailAuthenticationAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.notifications.enabled.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedLockClosed)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_SET_UP_NOTIFICATION) ?? Heroicon::OutlinedLockClosed)
                     ->send();
             })
             ->rateLimit(5);

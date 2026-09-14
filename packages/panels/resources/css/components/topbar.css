@@ -1,9 +1,13 @@
+.fi-body {
+    --topbar-height: 4rem;
+}
+
 .fi-topbar-ctn {
     @apply sticky top-0 z-30 overflow-x-clip;
 }
 
 .fi-topbar {
-    @apply flex min-h-16 items-center bg-white px-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply flex min-h-(--topbar-height) items-center bg-white px-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
     & .fi-tenant-menu {
         @apply hidden lg:block;

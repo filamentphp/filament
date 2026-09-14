@@ -1,11 +1,3 @@
-@php
-    use Filament\Support\Enums\IconPosition;
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\Enums\Size;
-    use Filament\Support\View\Components\BadgeComponent;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
-
 @props([
     'color' => 'primary',
     'deleteButton' => null,
@@ -15,11 +7,11 @@
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => IconPosition::Before,
+    'iconPosition' => null,
     'iconSize' => null,
     'keyBindings' => null,
     'loadingIndicator' => true,
-    'size' => Size::Medium,
+    'size' => null,
     'spaMode' => null,
     'tag' => 'span',
     'target' => null,
@@ -28,6 +20,16 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\View\ComponentAttributeBag;
+
+    $iconPosition ??= IconPosition::Before;
+    $size ??= Size::Medium;
+
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
@@ -69,7 +71,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
-            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            allowHTML: @js($tooltip instanceof Htmlable),
         }"
     @endif
     {{
@@ -99,19 +101,19 @@
     @if ($iconPosition === IconPosition::Before)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
     @endif
@@ -143,20 +145,24 @@
                     ])
             }}
         >
-            {{
-                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Support\View\SupportIconAlias::BADGE_DELETE_BUTTON, attributes: (new \Filament\Support\View\ComponentAttributeBag([
-                    'aria-hidden' => 'true',
-                    'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
-                    'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
-                ])), size: \Filament\Support\Enums\IconSize::ExtraSmall)
-            }}
+            <span
+                {{
+                    (new Filament\Support\View\ComponentAttributeBag([
+                        'aria-hidden' => 'true',
+                        'wire:loading.remove.delay.' . $loadingDelay => $deleteButtonHasLoadingIndicator,
+                        'wire:target' => $deleteButtonHasLoadingIndicator ? $deleteButtonLoadingIndicatorTarget : false,
+                    ]))->class([
+                        'fi-badge-delete-btn-icon',
+                    ])
+                }}
+            ></span>
 
             @if ($deleteButtonHasLoadingIndicator)
                 {{
-                    \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                    \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                         'wire:loading.delay.' . $loadingDelay => '',
                         'wire:target' => $deleteButtonLoadingIndicatorTarget,
-                    ])), size: \Filament\Support\Enums\IconSize::ExtraSmall)
+                    ])), size: IconSize::ExtraSmall)
                 }}
             @endif
 
@@ -167,19 +173,19 @@
     @elseif ($iconPosition === IconPosition::After)
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . $loadingDelay => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
 
         @if ($hasLoadingIndicator)
             {{
-                \Filament\Support\generate_loading_indicator_html((new \Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html((new Filament\Support\View\ComponentAttributeBag([
                     'wire:loading.delay.' . $loadingDelay => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ])), size: $iconSize ?? \Filament\Support\Enums\IconSize::Small)
+                ])), size: $iconSize ?? IconSize::Small)
             }}
         @endif
     @endif

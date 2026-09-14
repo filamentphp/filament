@@ -31,6 +31,7 @@
 @import './components/section.css' layer(components);
 @import './components/tabs.css' layer(components);
 @import './components/toggle.css' layer(components);
+@import './components/tooltip.css' layer(components);
 @import './sortable.css' layer(components);
 
 @theme inline {

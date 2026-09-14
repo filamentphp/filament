@@ -43,6 +43,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Throwable;
 
+use function Filament\Support\is_path_within_vendor_directory;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\search;
@@ -330,7 +331,7 @@ class MakePageCommand extends Command
         $namespaces = $this->panel->getPageNamespaces();
 
         foreach ($directories as $index => $directory) {
-            if (str($directory)->startsWith(base_path('vendor'))) {
+            if (is_path_within_vendor_directory($directory, base_path())) {
                 unset($directories[$index]);
                 unset($namespaces[$index]);
             }

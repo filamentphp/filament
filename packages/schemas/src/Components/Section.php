@@ -15,7 +15,6 @@ use Filament\Schemas\Components\Concerns\HasFooterActions;
 use Filament\Schemas\Components\Concerns\HasHeaderActions;
 use Filament\Schemas\Components\Concerns\HasHeading;
 use Filament\Schemas\Components\Concerns\HasLabel;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -40,7 +39,7 @@ use Illuminate\Support\Str;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\is_slot_empty;
 
-class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, HasEmbeddedView
+class Section extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
     use CanBeCollapsed;
     use CanBeCompact;
@@ -63,6 +62,8 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     protected bool | Closure | null $isAside = null;
 
     protected bool | Closure $isFormBefore = false;
+
+    protected ?Closure $contentSchemaExtraAttributes = null;
 
     const AFTER_HEADER_SCHEMA_KEY = 'after_header';
 
@@ -129,11 +130,6 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $this->isAside = $condition;
 
         return $this;
-    }
-
-    public function canConcealComponents(): bool
-    {
-        return $this->isCollapsible();
     }
 
     public function isAside(): bool
@@ -228,6 +224,13 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     {
         $schema = parent::configureChildSchema($schema, $key);
 
+        if ($key === 'default') {
+            $schema->extraAttributes(
+                $this->contentSchemaExtraAttributes ??= static fn (): array => ['class' => 'fi-section-content'],
+                merge: true,
+            );
+        }
+
         if (in_array($key, [
             static::AFTER_HEADER_SCHEMA_KEY,
             static::FOOTER_SCHEMA_KEY,
@@ -313,7 +316,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $collapseId = $id;
 
         // Render child schema content
-        $contentHtml = $this->getChildSchema()?->extraAttributes(['class' => 'fi-section-content'])->toHtml();
+        $contentHtml = $this->getChildSchema()?->toHtml();
         $hasContent = ! is_slot_empty(filled($contentHtml) ? new HtmlString($contentHtml) : null);
         $hasFooter = ! is_slot_empty($footer);
 

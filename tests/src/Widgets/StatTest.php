@@ -17,22 +17,84 @@ it('can be constructed with `make()`', function (): void {
 });
 
 it('can set `value()` with a string', function (): void {
-    $stat = Stat::make('Revenue', '$10,000');
+    $stat = Stat::make('Revenue', null)
+        ->value('$10,000');
 
     expect($stat->getValue())->toBe('$10,000');
 });
 
 it('can set `value()` with a `Closure`', function (): void {
-    $stat = Stat::make('Count', static fn (): int => 42);
+    $stat = Stat::make('Count', null)
+        ->value(static fn (): int => 42);
 
     expect($stat->getValue())->toBe(42);
 });
 
 it('can set `value()` with an `Htmlable`', function (): void {
     $htmlable = new HtmlString('<strong>100</strong>');
-    $stat = Stat::make('Count', $htmlable);
+    $stat = Stat::make('Count', null)
+        ->value($htmlable);
 
     expect($stat->getValue())->toBe($htmlable);
+});
+
+it('can clear `value()` with `null`', function (): void {
+    $stat = Stat::make('Count', 100)
+        ->value(null);
+
+    expect($stat->getValue())->toBeNull();
+});
+
+describe('placeholder', function (): void {
+    it('returns `null` for `getPlaceholder()` by default', function (): void {
+        $stat = Stat::make('Count', null);
+
+        expect($stat->getPlaceholder())->toBeNull();
+    });
+
+    it('can set `placeholder()` with a string', function (): void {
+        $stat = Stat::make('Count', null)
+            ->placeholder('Not available');
+
+        expect($stat->getPlaceholder())->toBe('Not available');
+    });
+
+    it('can set `placeholder()` with a `Closure`', function (): void {
+        $stat = Stat::make('Count', null)
+            ->placeholder(static fn (): string => 'Not available');
+
+        expect($stat->getPlaceholder())->toBe('Not available');
+    });
+
+    it('can set `placeholder()` with an `Htmlable`', function (): void {
+        $placeholder = new HtmlString('<strong>Not available</strong>');
+        $stat = Stat::make('Count', null)
+            ->placeholder($placeholder);
+
+        expect($stat->getPlaceholder())->toBe($placeholder);
+    });
+
+    it('can clear `placeholder()` with `null`', function (): void {
+        $stat = Stat::make('Count', null)
+            ->placeholder('Not available')
+            ->placeholder(null);
+
+        expect($stat->getPlaceholder())->toBeNull();
+    });
+
+    it('can configure a default `placeholder()` with `configureUsing()`', function (): void {
+        Stat::configureUsing(
+            static function (Stat $component): void {
+                $component->placeholder('Not available');
+            },
+            during: function (): void {
+                expect(Stat::make('Count', null)->getPlaceholder())
+                    ->toBe('Not available')
+                    ->and(Stat::make('Count', null)->placeholder('Unknown')->getPlaceholder())
+                    ->toBe('Unknown');
+            },
+        );
+    });
 });
 
 describe('chart', function (): void {

@@ -36,6 +36,7 @@ use Filament\Tests\Fixtures\Pages\ColumnsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
+use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
@@ -53,6 +54,7 @@ use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
+use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
 use Filament\Tests\Fixtures\Pages\TextareaTest;
@@ -60,6 +62,7 @@ use Filament\Tests\Fixtures\Pages\TextInputTest;
 use Filament\Tests\Fixtures\Pages\TimePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\ToggleButtonsTest;
 use Filament\Tests\Fixtures\Pages\ToggleTest;
+use Filament\Tests\Fixtures\Pages\UnsavedChangesAlertBrowserTest;
 use Filament\Tests\Fixtures\Pages\WizardBrowserTest;
 use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource;
@@ -92,6 +95,7 @@ class AdminPanelProvider extends PanelProvider
             ->emailChangeVerification()
             ->emailVerification()
             ->profile()
+            ->unsavedChangesAlerts(static fn (): bool => request()->routeIs('filament.admin.pages.unsaved-changes-alert-browser-test'))
             ->resources([
                 CompanyResource::class,
                 CompanyTeamResource::class,
@@ -127,6 +131,7 @@ class AdminPanelProvider extends PanelProvider
                 DatabaseNotificationsBrowserTest::class,
                 DatePickerBrowserTest::class,
                 DateTimePickerTest::class,
+                DeferredSchemaLoadingBrowserTest::class,
                 FileUploadBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
@@ -144,6 +149,7 @@ class AdminPanelProvider extends PanelProvider
                 SelectTest::class,
                 Settings::class,
                 SliderBrowserTest::class,
+                StatsOverviewWidgetBrowserTest::class,
                 TabsBrowserTest::class,
                 TagsInputTest::class,
                 TextareaTest::class,
@@ -151,6 +157,7 @@ class AdminPanelProvider extends PanelProvider
                 TimePickerBrowserTest::class,
                 ToggleButtonsTest::class,
                 ToggleTest::class,
+                UnsavedChangesAlertBrowserTest::class,
                 WizardBrowserTest::class,
                 UserManagement::class,
                 ManageAdmins::class,

@@ -10,6 +10,10 @@
 ])
 
 @php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\View\PanelsIconAlias;
+
     $tag = $url ? 'a' : 'button';
 @endphp
 
@@ -33,7 +37,7 @@
         class="fi-topbar-item-btn"
     >
         @if ($icon || $activeIcon)
-            {{ \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Filament\Support\View\ComponentAttributeBag)->class(['fi-topbar-item-icon'])) }}
+            {{ \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new ComponentAttributeBag)->class(['fi-topbar-item-icon'])) }}
         @endif
 
         <span class="fi-topbar-item-label">
@@ -51,7 +55,7 @@
         @endif
 
         @if (! $url)
-            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\View\PanelsIconAlias::TOPBAR_GROUP_TOGGLE_BUTTON, attributes: (new \Filament\Support\View\ComponentAttributeBag)->class(['fi-topbar-group-toggle-icon'])) }}
+            {{ \Filament\Support\generate_icon_html(Heroicon::ChevronDown, alias: PanelsIconAlias::TOPBAR_GROUP_TOGGLE_BUTTON, attributes: (new ComponentAttributeBag)->class(['fi-topbar-group-toggle-icon'])) }}
         @endif
     </{{ $tag }}>
 </li>

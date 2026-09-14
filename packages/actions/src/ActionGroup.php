@@ -762,6 +762,10 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraDropdownAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraDropdownAttributes[] = $attributes;
         } else {
             $this->extraDropdownAttributes = [$attributes];

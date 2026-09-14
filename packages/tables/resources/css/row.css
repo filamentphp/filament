@@ -51,17 +51,10 @@
         }
 
         & > *:first-child {
-            @apply relative;
-
-            &::before {
-                @apply bg-primary-600 absolute inset-y-0 start-0 w-0.5;
-                content: '';
-            }
+            @apply inset-shadow-[2px_0_0_0_var(--primary-600)] rtl:inset-shadow-[-2px_0_0_0_var(--primary-600)];
 
             @variant dark {
-                &::before {
-                    @apply bg-primary-500;
-                }
+                @apply inset-shadow-[2px_0_0_0_var(--primary-500)] rtl:inset-shadow-[-2px_0_0_0_var(--primary-500)];
             }
         }
     }

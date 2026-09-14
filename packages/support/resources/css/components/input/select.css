@@ -55,8 +55,15 @@ select.fi-select-input {
         @apply flex-1;
     }
 
+    /* The glyph is a mask painted in `currentColor`, not a hardcoded fill, so
+       this rule's own hover and focus colors still reach it. */
     & .fi-select-input-value-remove-btn {
-        @apply absolute end-8 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600 focus-visible:text-gray-600 focus-visible:outline-none dark:hover:text-gray-300 dark:focus-visible:text-gray-300;
+        @apply absolute end-8 top-1/2 size-4 -translate-y-1/2 text-gray-500 hover:text-gray-600 focus-visible:text-gray-600 focus-visible:outline-none dark:hover:text-gray-300 dark:focus-visible:text-gray-300;
+
+        background-color: currentColor;
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor'%3E%3Cpath d='M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z' /%3E%3C/svg%3E");
+        mask-position: center;
+        mask-repeat: no-repeat;
     }
 
     & .fi-select-input-ctn-clearable .fi-select-input-btn {

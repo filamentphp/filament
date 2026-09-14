@@ -26,12 +26,11 @@ class CopyAction extends Action
         $this->defaultColor('gray');
 
         $this->alpineClickHandler(function (mixed $state): string {
-            $copyableState = Js::from($state);
             $copyMessageJs = Js::from($this->getCopyMessage($state));
             $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($state));
 
             return <<<JS
-                window.navigator.clipboard.writeText({$copyableState})
+                window.navigator.clipboard.writeText(\$el.closest('.fi-input-wrp').querySelector('input').value)
                 \$tooltip({$copyMessageJs}, {
                     theme: \$store.theme,
                     timeout: {$copyMessageDurationJs},

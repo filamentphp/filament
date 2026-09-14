@@ -24,7 +24,9 @@ use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
@@ -41,7 +43,7 @@ class SetUpAppAuthenticationAction
         return Action::make('setUpAppAuthentication')
             ->label(__('filament-panels::auth/multi-factor/app/actions/set-up.label'))
             ->color('primary')
-            ->icon(Heroicon::LockClosed)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP) ?? Heroicon::LockClosed)
             ->link()
             ->mountUsing(function (HasActions $livewire, Schema $schema) use ($appAuthentication): void {
                 $schema->fill();
@@ -59,7 +61,7 @@ class SetUpAppAuthenticationAction
             ->modalWidth(Width::Large)
             ->closeModalByClickingAway(false)
             ->closeModalByEscaping(false)
-            ->modalIcon(Heroicon::OutlinedLockClosed)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_MODAL) ?? Heroicon::OutlinedLockClosed)
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.heading'))
             ->modalDescription(new HtmlString(Blade::render(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.description'))))
@@ -184,7 +186,7 @@ class SetUpAppAuthenticationAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/app/actions/set-up.notifications.enabled.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedLockClosed)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_NOTIFICATION) ?? Heroicon::OutlinedLockClosed)
                     ->send();
             })
             ->rateLimit(5);

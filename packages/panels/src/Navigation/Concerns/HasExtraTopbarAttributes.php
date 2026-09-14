@@ -22,6 +22,10 @@ trait HasExtraTopbarAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraTopbarAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraTopbarAttributes[] = $attributes;
         } else {
             $this->extraTopbarAttributes = [$attributes];

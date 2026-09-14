@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Icons\Heroicon;
+@endphp
+
 <div
     x-data="{ theme: null }"
     x-init="
@@ -12,17 +16,17 @@
     class="fi-theme-switcher"
 >
     <x-filament-panels::theme-switcher.button
-        :icon="\Filament\Support\Icons\Heroicon::Sun"
+        :icon="Heroicon::Sun"
         theme="light"
     />
 
     <x-filament-panels::theme-switcher.button
-        :icon="\Filament\Support\Icons\Heroicon::Moon"
+        :icon="Heroicon::Moon"
         theme="dark"
     />
 
     <x-filament-panels::theme-switcher.button
-        :icon="\Filament\Support\Icons\Heroicon::ComputerDesktop"
+        :icon="Heroicon::ComputerDesktop"
         theme="system"
     />
 </div>

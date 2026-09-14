@@ -7,6 +7,11 @@
     'label' => null,
 ])
 
+@php
+    use Filament\Support\View\ComponentAttributeBag;
+    use Illuminate\Support\Number;
+@endphp
+
 <li
     {{
         $attributes->class([
@@ -32,7 +37,7 @@
     >
         @if ($icon || $iconAlias)
             {{
-                \Filament\Support\generate_icon_html($icon, $iconAlias, attributes: (new \Filament\Support\View\ComponentAttributeBag)->merge(['aria-hidden' => 'true'], escape: false)->class([
+                \Filament\Support\generate_icon_html($icon, $iconAlias, attributes: (new ComponentAttributeBag)->merge(['aria-hidden' => 'true'], escape: false)->class([
                     'fi-pagination-item-icon',
                 ]))
             }}
@@ -40,7 +45,7 @@
 
         @if (filled($label))
             <span class="fi-pagination-item-label">
-                {{ is_numeric($label) ? \Illuminate\Support\Number::format($label) : ($label ?? '...') }}
+                {{ is_numeric($label) ? Number::format($label) : ($label ?? '...') }}
             </span>
         @endif
     </button>

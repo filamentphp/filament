@@ -528,6 +528,7 @@ describe('searching', function (): void {
             visit('/column-manager-browser-test')
                 ->inDarkMode()
                 ->click('#second-table button[aria-label="Column manager"]')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
         });
     });

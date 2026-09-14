@@ -1,8 +1,3 @@
-@php
-    use Filament\Support\Enums\IconSize;
-    use Filament\Support\View\Components\SectionComponent\IconComponent;
-@endphp
-
 @props([
     'compact' => false,
     'contained' => true,
@@ -16,6 +11,10 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Support\View\Components\SectionComponent\IconComponent;
+
     if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
         $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }
@@ -43,7 +42,7 @@
                 ])
             >
                 {{
-                    \Filament\Support\generate_icon_html($icon, attributes: (new \Filament\Support\View\ComponentAttributeBag)
+                    \Filament\Support\generate_icon_html($icon, attributes: (new ComponentAttributeBag)
                         ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)
                 }}
             </div>

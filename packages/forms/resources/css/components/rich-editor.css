@@ -86,7 +86,21 @@
     }
 
     & .fi-fo-rich-editor-content {
-        @apply relative min-h-12 w-full flex-1 px-5 py-3;
+        @apply relative flex min-h-12 w-full flex-1 flex-col px-5 py-3;
+    }
+
+    &[style*='--min-height'] .fi-fo-rich-editor-content {
+        min-height: var(--min-height);
+    }
+
+    &[style*='--max-height'] .fi-fo-rich-editor-content {
+        @apply overflow-y-auto;
+        scrollbar-gutter: stable;
+        max-height: var(--max-height);
+    }
+
+    &[style*='--max-height'] .fi-fo-rich-editor-content[role='region'] {
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 outline-none focus-visible:ring-2 focus-visible:ring-inset;
     }
 
     & span[data-type='mergeTag'] {
@@ -161,7 +175,7 @@
     }
 
     & .tiptap {
-        @apply h-full;
+        @apply h-full flex-1;
 
         &:focus {
             @apply outline-none;

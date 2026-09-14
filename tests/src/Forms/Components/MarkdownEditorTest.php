@@ -418,10 +418,10 @@ describe('file attachment visibility', function (): void {
 });
 
 describe('height constraints', function (): void {
-    it('defaults `getMinHeight()` to `11.25rem`', function (): void {
+    it('defaults `getMinHeight()` to `10rem`', function (): void {
         $editor = MarkdownEditor::make('content');
 
-        expect($editor->getMinHeight())->toBe('11.25rem');
+        expect($editor->getMinHeight())->toBe('10rem');
     });
 
     it('can set `minHeight()`', function (): void {
@@ -438,11 +438,15 @@ describe('height constraints', function (): void {
         expect($editor->getMinHeight())->toBe('15rem');
     });
 
-    it('can clear `minHeight()` with `null`', function (): void {
+    it('can clear `minHeight()` and `maxHeight()` with `null`', function (): void {
         $editor = MarkdownEditor::make('content')
-            ->minHeight(null);
+            ->minHeight('20rem')
+            ->maxHeight('40rem')
+            ->minHeight(null)
+            ->maxHeight(null);
 
-        expect($editor->getMinHeight())->toBeNull();
+        expect($editor->getMinHeight())->toBeNull()
+            ->and($editor->getMaxHeight())->toBeNull();
     });
 
     it('returns `null` for `getMaxHeight()` by default', function (): void {
@@ -463,6 +467,40 @@ describe('height constraints', function (): void {
             ->maxHeight(static fn (): string => '50rem');
 
         expect($editor->getMaxHeight())->toBe('50rem');
+    });
+
+    it('applies `minHeight()` and `maxHeight()` to disabled content', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight('8rem')
+                    ->maxHeight('12rem'),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->toContain('--min-height: 8rem')
+            ->and($html)->toContain('--max-height: 12rem')
+            ->and($html)->toContain('tabindex="0"');
+    });
+
+    it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight(null)
+                    ->maxHeight(null),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->not->toContain('--min-height')
+            ->and($html)->not->toContain('--max-height')
+            ->and($html)->not->toContain('tabindex="0"');
     });
 });
 
@@ -650,6 +688,47 @@ it('can render `MarkdownEditor` in the browser', function (): void {
         visit('/markdown-editor-browser-test')
             ->assertSee('Content')
             ->assertNoSmoke()
+            ->assertScript(<<<'JS'
+                (async () => {
+                    const defaultEditor = document.querySelector('[data-testid="default-markdown-editor"]')
+                    const defaultCodeMirror = defaultEditor.querySelector('.CodeMirror')
+                    const defaultScroller = defaultEditor.querySelector('.CodeMirror-scroll')
+                    const nullMinHeightEditor = document.querySelector('[data-testid="null-min-height-markdown-editor"]')
+                    const nullMinHeightScroller = nullMinHeightEditor.querySelector('.CodeMirror-scroll')
+                    const nullMinHeightStyle = getComputedStyle(nullMinHeightScroller)
+                    const nullMinHeightWithMaxHeightEditor = document.querySelector('[data-testid="null-min-height-with-max-height-markdown-editor"]')
+                    const nullMinHeightWithMaxHeightCodeMirror = nullMinHeightWithMaxHeightEditor.querySelector('.CodeMirror')
+                    const nullMinHeightWithMaxHeightScroller = nullMinHeightWithMaxHeightEditor.querySelector('.CodeMirror-scroll')
+                    const nullMinHeightWithMaxHeightStyle = getComputedStyle(nullMinHeightWithMaxHeightScroller)
+                    const nullMinHeightWithMaxHeightComponent = nullMinHeightWithMaxHeightEditor.querySelector('[x-data]')
+
+                    if (
+                        defaultCodeMirror.clientHeight !== 160 ||
+                        defaultScroller.style.minHeight !== '10rem' ||
+                        getComputedStyle(defaultScroller).minHeight !== '160px' ||
+                        nullMinHeightScroller.style.minHeight !== '3rem' ||
+                        nullMinHeightStyle.minHeight !== '48px' ||
+                        nullMinHeightStyle.maxHeight !== 'none' ||
+                        nullMinHeightWithMaxHeightScroller.style.minHeight !== '3rem' ||
+                        nullMinHeightWithMaxHeightScroller.style.maxHeight !== '12rem' ||
+                        nullMinHeightWithMaxHeightScroller.style.height !== '' ||
+                        nullMinHeightWithMaxHeightScroller.tabIndex !== 0 ||
+                        nullMinHeightWithMaxHeightStyle.minHeight !== '48px' ||
+                        nullMinHeightWithMaxHeightStyle.maxHeight !== '192px' ||
+                        nullMinHeightWithMaxHeightStyle.height !== '48px' ||
+                        nullMinHeightWithMaxHeightCodeMirror.clientHeight !== 48
+                    ) {
+                        return false
+                    }
+
+                    nullMinHeightWithMaxHeightComponent._editor.codemirror.setValue('Content\n\n'.repeat(100))
+                    nullMinHeightWithMaxHeightComponent._editor.codemirror.refresh()
+
+                    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+
+                    return nullMinHeightWithMaxHeightCodeMirror.clientHeight === 192 && getComputedStyle(nullMinHeightWithMaxHeightScroller).height === '192px' && nullMinHeightWithMaxHeightScroller.scrollHeight > nullMinHeightWithMaxHeightScroller.clientHeight
+                })()
+                JS)
             ->assertNoAccessibilityIssues();
 
         visit('/markdown-editor-browser-test')

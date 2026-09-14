@@ -121,6 +121,28 @@ class Actions extends Page
                         ])
                         ->action(fn () => null),
                 ]),
+            Action::make('staleSchemaParent')
+                ->schema([
+                    TextInput::make('parentField'),
+                ])
+                ->registerModalActions([
+                    Action::make('first')
+                        ->schema([
+                            TextInput::make('alpha'),
+                        ])
+                        ->action(fn () => null),
+                    Action::make('second')
+                        ->schema([
+                            TextInput::make('beta'),
+                        ])
+                        ->action(fn () => null),
+                ])
+                ->action(fn () => null),
+            Action::make('staleSchemaOther')
+                ->schema([
+                    TextInput::make('otherField'),
+                ])
+                ->action(fn () => null),
             Action::make('grandparentWithModalCloseCancellation')
                 ->schema([
                     TextInput::make('grandparentValue')
@@ -146,6 +168,68 @@ class Actions extends Page
                                 ])
                                 ->action(fn () => null),
                         ]),
+                ])
+                ->action(fn () => null),
+            // No schema and no confirmation, so this action has no modal of its own.
+            Action::make('haltsWithoutModal')
+                ->action(function (Action $action): void {
+                    $this->dispatch('halts-without-modal-called');
+
+                    $action->halt();
+                }),
+            Action::make('callsTwoNestedActionsWithoutModal')
+                ->registerModalActions([
+                    Action::make('firstNestedActionWithoutModal')
+                        ->action(static fn () => null),
+                    Action::make('secondNestedActionWithModal')
+                        ->requiresConfirmation()
+                        ->action(static fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('firstNestedActionWithoutModal');
+                    $action->getLivewire()->mountAction('secondNestedActionWithModal');
+
+                    $action->halt();
+                }),
+            Action::make('haltsWithoutModalAfterMountingAChild')
+                ->registerModalActions([
+                    Action::make('childOfActionWithoutModal')
+                        ->modalHeading('Child')
+                        ->action(fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childOfActionWithoutModal');
+
+                    $action->halt();
+                }),
+            Action::make('haltsWithModalAfterMountingAChild')
+                ->requiresConfirmation()
+                ->registerModalActions([
+                    Action::make('childOfActionWithModal')
+                        ->modalHeading('Child')
+                        ->action(fn () => null),
+                ])
+                ->action(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childOfActionWithModal');
+
+                    $action->halt();
+                }),
+            // The grandparent has a modal of its own, so only the two actions above it on the
+            // stack have nothing to be seen in.
+            Action::make('hasModalAndMountsAnActionWithoutModal')
+                ->requiresConfirmation()
+                ->registerModalActions([
+                    Action::make('nestedActionWithoutModal')
+                        ->registerModalActions([
+                            Action::make('childOfNestedActionWithoutModal')
+                                ->modalHeading('Child')
+                                ->action(fn () => null),
+                        ])
+                        ->action(function (Action $action): void {
+                            $action->getLivewire()->mountAction('childOfNestedActionWithoutModal');
+
+                            $action->halt();
+                        }),
                 ])
                 ->action(fn () => null),
             Action::make('halt')
@@ -279,6 +363,58 @@ class Actions extends Page
                 ->action(function (): void {
                     $this->dispatch('enforcement-authorized-called');
                 }),
+            Action::make('disabledSchema')
+                ->schema([
+                    TextInput::make('payload'),
+                ])
+                ->disabledSchema()
+                ->action(function (): void {
+                    $this->dispatch('disabled-schema-called');
+                }),
+            Action::make('withoutUnsavedChangesAlert')
+                ->schema([
+                    TextInput::make('payload'),
+                ])
+                ->unsavedChangesAlert(false)
+                ->action(function (): void {
+                    $this->dispatch('without-unsaved-changes-alert-called');
+                }),
+            Action::make('mountsChildDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert(false)
+                ->registerModalActions([
+                    Action::make('childMountedDuringParentMount')
+                        ->requiresConfirmation()
+                        ->unsavedChangesAlert()
+                        ->action(static fn () => null),
+                ])
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->mountAction('childMountedDuringParentMount');
+                })
+                ->action(static fn () => null),
+            Action::make('unmountsDuringMount')
+                ->requiresConfirmation()
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->unmountAction();
+                })
+                ->action(static fn () => null),
+            Action::make('replacesDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert(false)
+                ->mountUsing(function (Action $action): void {
+                    $action->getLivewire()->replaceMountedAction('replacementMountedDuringMount');
+                })
+                ->action(static fn () => null),
+            Action::make('replacementMountedDuringMount')
+                ->requiresConfirmation()
+                ->unsavedChangesAlert()
+                ->action(static fn () => null),
         ];
+    }
+
+    public function unmountThenMountAction(string $name): void
+    {
+        $this->unmountAction();
+        $this->mountAction($name);
     }
 }

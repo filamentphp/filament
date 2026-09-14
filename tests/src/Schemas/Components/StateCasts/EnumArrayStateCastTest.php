@@ -28,6 +28,13 @@ it('can ignore if an array of enums is passed to the getter already', function (
         ->toBe([StringBackedEnum::One, StringBackedEnum::Two, StringBackedEnum::Three]);
 });
 
+it('can get an array of enums from `Stringable` values', function (): void {
+    $cast = app(EnumArrayStateCast::class, ['enum' => StringBackedEnum::class]);
+
+    expect($cast->get([str('one'), str('two')]))
+        ->toBe([StringBackedEnum::One, StringBackedEnum::Two]);
+});
+
 it('can return an empty array if blank values are passed to the getter', function (): void {
     $cast = app(EnumArrayStateCast::class, ['enum' => StringBackedEnum::class]);
 
@@ -41,6 +48,13 @@ it('can filter out blank values from the array of enums in the getter', function
 
     expect($cast->get(['one', null, 'two', '', 'three']))
         ->toBe([StringBackedEnum::One, StringBackedEnum::Two, StringBackedEnum::Three]);
+});
+
+it('can filter out tampered non-scalar values from the array of enums in the getter', function (): void {
+    $cast = app(EnumArrayStateCast::class, ['enum' => StringBackedEnum::class]);
+
+    expect($cast->get(['one', ['tampered'], 'two']))
+        ->toBe([StringBackedEnum::One, StringBackedEnum::Two]);
 });
 
 it('can decode a JSON array of enum from strings', function (): void {

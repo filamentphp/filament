@@ -312,7 +312,7 @@ class Field extends Component implements Contracts\HasValidationRules
             if ($this->shouldShowAllValidationMessages()) {
                 $errorMessages = $errors->has($statePath)
                     ? $errors->get($statePath)
-                    : ($hasNestedRecursiveValidationRules ? $errors->get("{$statePath}.*") : []);
+                    : ($hasNestedRecursiveValidationRules ? Arr::flatten($errors->get("{$statePath}.*")) : []);
 
                 if (count($errorMessages) === 1) {
                     $errorMessage = Arr::first($errorMessages);

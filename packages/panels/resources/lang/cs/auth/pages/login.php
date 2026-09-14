@@ -4,7 +4,7 @@ return [
 
     'title' => 'Přihlášení',
 
-    'heading' => 'Přihlašte se k Vašemu účtu',
+    'heading' => 'Přihlaste se ke svému účtu',
 
     'actions' => [
 
@@ -22,7 +22,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Emailová adresa',
+            'label' => 'E-mailová adresa',
         ],
 
         'password' => [
@@ -47,7 +47,7 @@ return [
 
         'heading' => 'Ověřte svou identitu',
 
-        'subheading' => 'Pro pokračování přihlášení musíte ověřit svou identitu.',
+        'subheading' => 'Pro pokračování v přihlášení musíte ověřit svou identitu.',
 
         'form' => [
 
@@ -77,7 +77,7 @@ return [
 
         'throttled' => [
             'title' => 'Příliš mnoho pokusů o přihlášení.',
-            'body' => 'Zkuste to znovu za :seconds vteřin.',
+            'body' => 'Zkuste to znovu za :seconds s.',
         ],
 
     ],

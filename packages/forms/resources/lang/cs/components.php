@@ -342,7 +342,7 @@ return [
 
         'file_attachments_accepted_file_types_message' => 'Nahrané soubory musí být typu: :values.',
 
-        'file_attachments_max_size_message' => 'Nahrané soubory nesmí být větší než :max kilobajtů.',
+        'file_attachments_max_size_message' => 'Nahrané soubory nesmí být větší než :max kB.',
 
         'tools' => [
             'attach_files' => 'Přidat soubory',
@@ -532,14 +532,14 @@ return [
                             'placeholder' => 'Žádné',
 
                             'options' => [
-                                'two' => 'Dvě',
+                                'two' => 'Dva',
                                 'three' => 'Tři',
                                 'four' => 'Čtyři',
                                 'five' => 'Pět',
-                                'two_start_third' => 'Dvě (Začátek třetí)',
-                                'two_end_third' => 'Dvě (Konec třetí)',
-                                'two_start_fourth' => 'Dvě (Začátek čtvrté)',
-                                'two_end_fourth' => 'Dvě (Konec čtvrté)',
+                                'two_start_third' => 'Dva (první zabírá třetinu)',
+                                'two_end_third' => 'Dva (druhý zabírá třetinu)',
+                                'two_start_fourth' => 'Dva (první zabírá čtvrtinu)',
+                                'two_end_fourth' => 'Dva (druhý zabírá čtvrtinu)',
                             ],
                         ],
 
@@ -661,14 +661,14 @@ return [
 
         'file_attachments_accepted_file_types_message' => 'Nahrané soubory musí být typu: :values.',
 
-        'file_attachments_max_size_message' => 'Nahrané soubory nesmí být větší než :max kilobajtů.',
+        'file_attachments_max_size_message' => 'Nahrané soubory nesmí být větší než :max kB.',
 
         'no_merge_tag_search_results_message' => 'Žádné výsledky pro značky slučování.',
 
         'mentions' => [
             'no_options_message' => 'Nejsou dostupné žádné možnosti.',
             'no_search_results_message' => 'Žádné výsledky neodpovídají vašemu hledání.',
-            'search_prompt' => 'Začněte psát na vyhledávání...',
+            'search_prompt' => 'Zadejte hledaný výraz...',
             'searching_message' => 'Hledám...',
         ],
 
@@ -789,7 +789,7 @@ return [
 
         'loading_message' => 'Načítání...',
 
-        'max_items_message' => 'Lze vybrat pouze 1 položka.|Lze vybrat pouze :count položky.|Lze vybrat pouze :count položek.',
+        'max_items_message' => 'Lze vybrat pouze 1 položku.|Lze vybrat pouze :count položky.|Lze vybrat pouze :count položek.',
 
         'no_options_message' => 'Nejsou dostupné žádné možnosti.',
 

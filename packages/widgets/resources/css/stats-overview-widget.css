@@ -18,7 +18,13 @@
     }
 
     & .fi-wi-stats-overview-stat-value {
-        @apply text-3xl font-semibold tracking-tight text-gray-950 dark:text-white;
+        /* Tabular figures: stat values are near-always numeric, and polled
+           widgets would otherwise reflow as digit widths change. */
+        @apply text-3xl font-semibold tracking-tight text-gray-950 tabular-nums dark:text-white;
+    }
+
+    & .fi-wi-stats-overview-stat-placeholder {
+        @apply text-3xl font-medium text-gray-500 dark:text-gray-400;
     }
 
     & .fi-wi-stats-overview-stat-description {

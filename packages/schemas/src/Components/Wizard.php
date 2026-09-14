@@ -356,6 +356,22 @@ class Wizard extends Component implements HasEmbeddedView
             $this->getChildSchema()->getComponents(),
             static fn ($component): bool => $component instanceof Step,
         );
+
+        if (
+            (count($steps) > 1) &&
+            ($nextAction->getLivewireTarget() === 'callSchemaComponentMethod')
+        ) {
+            $nextActionLivewireTargetKey = Js::from($key)->toHtml();
+
+            $nextAction->livewireTarget(
+                collect(range(0, count($steps) - 2))
+                    ->map(static fn (int $stepIndex): string => "callSchemaComponentMethod({$nextActionLivewireTargetKey}, 'nextStep', " . Js::from([
+                        'currentStepIndex' => $stepIndex,
+                    ])->toHtml() . ')')
+                    ->implode(', '),
+            );
+        }
+
         $isHeaderHidden = $this->isHeaderHidden();
 
         $outerAttributes = (new FilamentComponentAttributeBag)
@@ -515,7 +531,7 @@ class Wizard extends Component implements HasEmbeddedView
                         x-on:click="requestNextStep()"
                     <?php } ?>
                     x-bind:class="{ 'fi-hidden': isLastStep() }"
-                    wire:loading.class="fi-disabled"
+                    wire:loading.attr="inert"
                 >
                     <?= $nextAction->toHtml() ?>
                 </div>

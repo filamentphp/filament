@@ -3,11 +3,11 @@
 return [
 
     'modal' => [
-
         'heading' => 'Arifa',
 
-        'actions' => [
+        'unread_label' => 'Taarifa ambayo haijasomwa',
 
+        'actions' => [
             'clear' => [
                 'label' => 'Safisha',
             ],
@@ -15,14 +15,12 @@ return [
             'mark_all_as_read' => [
                 'label' => 'Weka alama zote kama zimesomwa',
             ],
-
         ],
 
         'empty' => [
             'heading' => 'Hakuna arifa hapa',
-            'description' => 'Tafadhali angalia tena baadae',
+            'description' => 'Tafadhali angalia tena baadaye',
         ],
-
     ],
 
 ];

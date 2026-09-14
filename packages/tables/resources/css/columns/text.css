@@ -1,6 +1,12 @@
 .fi-ta-text {
     @apply w-full;
 
+    &.fi-numeric {
+        /* Numeric and money columns use tabular figures, so digits line up
+           down the column. */
+        @apply tabular-nums;
+    }
+
     &.fi-ta-text-has-descriptions,
     &.fi-ta-text-list-limited {
         /* Add space between content and descriptions / list limit message. */

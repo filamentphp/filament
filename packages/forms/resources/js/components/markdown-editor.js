@@ -131,7 +131,7 @@ export default function markdownEditorFormComponent({
                 imageUploadFunction: uploadFileAttachmentUsing,
                 initialValue: this.state ?? '',
                 maxHeight,
-                minHeight,
+                minHeight: minHeight ?? '3rem',
                 placeholder,
                 previewImagesInEditor: true,
                 spellChecker: false,

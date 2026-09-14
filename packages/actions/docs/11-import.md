@@ -736,6 +736,24 @@ public static function modifyCompletedNotification(Notification $notification, I
 
 The `Import` model exposes the column mapping and options the user selected via `$import->getColumnMap()` and `$import->getOptions()`, so you can tailor the notification based on what the user imported.
 
+## Customizing how failed rows are downloaded
+
+By default, failed rows are compiled into a CSV and returned as a streamed response. You may customize how they are downloaded for an importer by overriding the `getFailedRowsDownloader()` method:
+
+```php
+use App\Filament\Imports\Downloaders\CustomFailedRowsDownloader;
+use Filament\Actions\Imports\Downloaders\Contracts\Downloader;
+
+public static function getFailedRowsDownloader(): Downloader
+{
+    return app(CustomFailedRowsDownloader::class);
+}
+```
+
+A downloader is an invokable class that accepts the `Import` model and returns a Symfony `Response`. This response may stream a download, return a file, or redirect the user to a temporary URL on a remote filesystem.
+
+If your custom downloader only changes how the generated content is delivered, you may use `CsvImportFailureContentGenerator` to write the failed rows to a League CSV `Writer`. Filament resolves this class from the container so that you can reuse the built-in content generation without duplicating it.
+
 ## Customizing the import job
 
 The default job for processing imports is `Filament\Actions\Imports\Jobs\ImportCsv`. If you want to extend this class and override any of its methods, you may replace the original class in the `register()` method of a service provider:
@@ -969,6 +987,35 @@ class ProductImporter extends Importer
     }
 }
 ```
+
+### Defining lifecycle hooks in traits
+
+To define a lifecycle hook in a trait, suffix the hook name with the trait's name. This follows the `boot{TraitName}()` convention used by Eloquent and the `mount{TraitName}()` convention used by Livewire, allowing reusable traits to hook into an importer's lifecycle without colliding with hooks defined on the importer itself:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+trait LogsImports
+{
+    protected function afterSaveLogsImports(): void
+    {
+        // Runs after a record is saved to the database, in addition to the
+        // hook on the importer.
+    }
+}
+
+class ProductImporter extends Importer
+{
+    use LogsImports;
+
+    protected function afterSave(): void
+    {
+        // Both lifecycle hooks are called.
+    }
+}
+```
+
+The importer's own hook is called first, followed by each trait hook. Hooks from traits used by other traits are also called. Trait hooks are called automatically, so you should not also call them from the importer's own hook.
 
 Inside these hooks, you can access the current row's data using `$this->data`. You can also access the original row of data from the CSV, before it was [cast](#casting-state) or mapped, using `$this->originalData`.
 
