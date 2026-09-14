@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use LogicException;
 
 trait HasParentActions
 {
@@ -75,21 +76,24 @@ trait HasParentActions
     }
 
     /**
-     * Writes into the schema data of the action that this one was mounted from, so that
-     * it receives the data once it is submitted. The action being written to validates
-     * it with its own rules, just as if the user had entered it themselves.
+     * Writes into the schema data of the action that this one was mounted from. The action
+     * being written to validates it with its own rules when it is submitted.
+     *
+     * The parent is taken from the mounted stack rather than `getParentAction()`, which is
+     * only set for actions registered on a modal, and not for actions registered on a
+     * component inside one.
      *
      * @param  array<string, mixed>  $data
      */
     public function fillParentActionData(array $data): static
     {
-        $parentAction = $this->getParentAction();
+        $nestingIndex = $this->getNestingIndex();
 
-        if (! $parentAction) {
-            return $this;
+        if (blank($nestingIndex) || ($nestingIndex < 1)) {
+            throw new LogicException("The action [{$this->getName()}] tried to fill the data of a parent action, but it was not mounted from one.");
         }
 
-        $this->getLivewire()->fillMountedActionData($data, $parentAction->getNestingIndex());
+        $this->getLivewire()->fillMountedActionData($data, $nestingIndex - 1);
 
         return $this;
     }

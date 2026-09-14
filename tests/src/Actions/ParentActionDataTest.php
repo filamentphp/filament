@@ -20,6 +20,8 @@ describe('reading the data of a parent action', function (): void {
             ->assertDispatched('read-parent-data', data: [
                 'payload' => 'foo',
                 'reference' => 'bar',
+                'nested' => ['city' => null],
+                'dotted' => ['postcode' => null],
             ]);
     });
 
@@ -35,7 +37,7 @@ describe('reading the data of a parent action', function (): void {
             ->assertNotDispatched('read-parent-data');
     });
 
-    it('does not call the hooks that write when `getValidatedData()` reads', function (): void {
+    it('does not call `beforeStateDehydrated()` when `getValidatedData()` reads', function (): void {
         livewire(Actions::class)
             ->mountAction('parentData')
             ->setActionData([
@@ -43,11 +45,16 @@ describe('reading the data of a parent action', function (): void {
                 'reference' => 'bar',
             ])
             ->callAction(TestAction::make('readParentData'))
-            ->assertDispatched('read-parent-data')
+            ->assertDispatched('read-parent-data', data: [
+                'payload' => 'foo',
+                'reference' => 'bar',
+                'nested' => ['city' => null],
+                'dotted' => ['postcode' => null],
+            ])
             ->assertSet('parentDataDehydrationCount', 0);
     });
 
-    it('calls the hooks that write when the parent action is submitted', function (): void {
+    it('calls `beforeStateDehydrated()` when the parent action is submitted', function (): void {
         livewire(Actions::class)
             ->mountAction('parentData')
             ->setActionData([
@@ -74,6 +81,8 @@ describe('filling the data of a parent action', function (): void {
             ->assertDispatched('parent-data-called', data: [
                 'payload' => 'foo',
                 'reference' => 'generated',
+                'nested' => ['city' => null],
+                'dotted' => ['postcode' => null],
             ]);
     });
 
@@ -87,5 +96,51 @@ describe('filling the data of a parent action', function (): void {
             ->callMountedAction()
             ->assertHasErrors(['mountedActions.0.data.reference'])
             ->assertNotDispatched('parent-data-called');
+    });
+});
+
+describe('filling a parent action from an action that is not registered on its modal', function (): void {
+    it('can use `fillParentActionData()` from an action registered on a schema component', function (): void {
+        livewire(Actions::class)
+            ->mountAction('parentData')
+            ->setActionData([
+                'payload' => 'foo',
+                'reference' => null,
+            ])
+            ->callAction(TestAction::make('fillParentDataFromComponent')->schemaComponent('reference'))
+            ->callMountedAction()
+            ->assertHasNoErrors()
+            ->assertDispatched('parent-data-called', data: [
+                'payload' => 'foo',
+                'reference' => 'from component',
+                'nested' => ['city' => null],
+                'dotted' => ['postcode' => null],
+            ]);
+    });
+
+    it('throws when the action was not mounted from a parent action', function (): void {
+        livewire(Actions::class)
+            ->callAction('fillWithoutParent')
+            ->assertNotDispatched('fill-without-parent-called');
+    })->throws(LogicException::class);
+});
+
+describe('filling nested state of a parent action', function (): void {
+    it('writes nested state and dot-notation keys where the parent action reads them', function (): void {
+        livewire(Actions::class)
+            ->mountAction('parentData')
+            ->setActionData([
+                'payload' => 'foo',
+                'reference' => 'bar',
+            ])
+            ->callAction(TestAction::make('fillParentDataWithNesting'))
+            ->callMountedAction()
+            ->assertHasNoErrors()
+            ->assertDispatched('parent-data-called', data: [
+                'payload' => 'foo',
+                'reference' => 'bar',
+                'nested' => ['city' => 'generated city'],
+                'dotted' => ['postcode' => 'generated postcode'],
+            ]);
     });
 });

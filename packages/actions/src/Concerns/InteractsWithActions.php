@@ -435,6 +435,11 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
      * the action. Used by a nested action that consumes the data of the action it was
      * mounted from, which must not trust the validation of an earlier request.
      *
+     * The hooks that run before dehydration are skipped, as they are for
+     * `Repeater::getItemState()`, since reading an action's data must not have the side
+     * effects of submitting it. File uploads are therefore returned as they were sent,
+     * rather than as the paths they are stored at once the action is submitted.
+     *
      * @return array<string, mixed>
      */
     public function getValidatedMountedActionData(?int $actionNestingIndex = null): array
@@ -451,7 +456,6 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
             foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
                 $data = [
                     ...$data,
-                    // Hooks that write, such as saving relationships, must not run for a read.
                     ...$actionComponentChildSchema->getState(shouldCallHooksBefore: false),
                 ];
             }
@@ -470,24 +474,28 @@ trait InteractsWithActions /** @phpstan-ignore trait.unused */
     }
 
     /**
-     * Writes into a mounted action's schema data, so that it receives the data once it is
-     * submitted. The action validates it with its own rules, just as if the user had
-     * entered it themselves.
+     * Writes into a mounted action's schema data, hydrating it as the schema would for any
+     * other partial fill, so that nested state and dot-notation keys land where the action
+     * will read them.
      *
      * @param  array<string, mixed>  $data
      */
     public function fillMountedActionData(array $data, ?int $actionNestingIndex = null): void
     {
-        $actionNestingIndex ??= array_key_last($this->mountedActions ?? []);
-
-        if (! array_key_exists($actionNestingIndex, $this->mountedActions ?? [])) {
+        if (blank($this->mountedActions ?? [])) {
             return;
         }
 
-        $this->mountedActions[$actionNestingIndex]['data'] = [
-            ...($this->mountedActions[$actionNestingIndex]['data'] ?? []),
-            ...$data,
-        ];
+        $actionNestingIndex ??= array_key_last($this->mountedActions);
+
+        if (! array_key_exists($actionNestingIndex, $this->mountedActions)) {
+            return;
+        }
+
+        $this->getMountedActionSchema($actionNestingIndex)?->fillPartially(
+            $data,
+            array_keys(Arr::dot($data)),
+        );
     }
 
     public function forceRender(): void

@@ -117,13 +117,18 @@ trait HasData
      * from uses this rather than `getRawData()`, which is whatever the browser last sent
      * and has been validated by nothing.
      *
-     * Throws a `ValidationException`, which the action's modal reports as it would for
-     * any other failed validation.
+     * Throws a `ValidationException` when the schema is invalid.
      *
      * @return array<string, mixed>
      */
     public function getValidatedData(): array
     {
-        return $this->getLivewire()->getValidatedMountedActionData($this->getNestingIndex());
+        $nestingIndex = $this->getNestingIndex();
+
+        if (blank($nestingIndex)) {
+            return [];
+        }
+
+        return $this->getLivewire()->getValidatedMountedActionData($nestingIndex);
     }
 }

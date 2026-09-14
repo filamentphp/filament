@@ -7,6 +7,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Models\Post;
@@ -411,6 +412,12 @@ class Actions extends Page
                 ->requiresConfirmation()
                 ->unsavedChangesAlert()
                 ->action(static fn () => null),
+            Action::make('fillWithoutParent')
+                ->action(function (Action $action): void {
+                    $action->fillParentActionData(['reference' => 'nowhere']);
+
+                    $this->dispatch('fill-without-parent-called');
+                }),
             Action::make('parentData')
                 ->schema([
                     TextInput::make('payload')
@@ -419,12 +426,31 @@ class Actions extends Page
                             $this->parentDataDehydrationCount++;
                         }),
                     TextInput::make('reference')
-                        ->required(),
+                        ->required()
+                        ->registerActions([
+                            Action::make('fillParentDataFromComponent')
+                                ->action(function (Action $action): void {
+                                    $action->fillParentActionData(['reference' => 'from component']);
+                                }),
+                        ]),
+                    Group::make([
+                        TextInput::make('city'),
+                    ])->statePath('nested'),
+                    Group::make([
+                        TextInput::make('postcode'),
+                    ])->statePath('dotted'),
                 ])
                 ->action(function (array $data): void {
                     $this->dispatch('parent-data-called', data: $data);
                 })
                 ->extraModalFooterActions(fn (): array => [
+                    Action::make('fillParentDataWithNesting')
+                        ->action(function (Action $action): void {
+                            $action->fillParentActionData([
+                                'nested' => ['city' => 'generated city'],
+                                'dotted.postcode' => 'generated postcode',
+                            ]);
+                        }),
                     Action::make('readParentData')
                         ->action(function (array $mountedActions): void {
                             $this->dispatch('read-parent-data', data: $mountedActions[0]->getValidatedData());

@@ -717,15 +717,29 @@ Action::make('first')
     ])
 ```
 
-If the parent action's schema is invalid, a `ValidationException` is thrown, and its modal reports the errors as it would for any other failed validation.
+If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedData()` from `mountUsing()` instead, so that the errors are reported before the nested action's modal opens:
 
-<Aside variant="info">
-    This only validates. It deliberately does not run the hooks that write, such as saving relationships, so that reading a parent action's data never has a side effect.
+```php
+use Filament\Actions\Action;
+
+Action::make('second')
+    ->schema([
+        // ...
+    ])
+    ->mountUsing(function (array $mountedActions) {
+        $data = $mountedActions[0]->getValidatedData();
+
+        // ...
+    })
+```
+
+<Aside variant="warning">
+    Reading an action's data must not have the side effects of submitting it, so the hooks that run before dehydration are skipped, as they are for the repeater's `getItemState()`. A file upload is therefore returned as it was sent, rather than as the path it is stored at once the action is submitted. `mutateDataUsing()` is not applied either, and the action's `beforeFormValidated()` and `afterFormValidated()` hooks do not run.
 </Aside>
 
 ### Filling in the data of a parent action
 
-A nested action can write into the schema data of the action it was mounted from, using `fillParentActionData()`. The parent action receives it once it is submitted, and validates it with its own rules, just as if the user had entered it themselves:
+A nested action can write into the schema data of the action it was mounted from, using `fillParentActionData()`. The data is hydrated by the parent action's schema, so nested state and dot-notation keys land where the action reads them, and the parent validates it with its own rules when it is submitted:
 
 ```php
 use Filament\Actions\Action;
