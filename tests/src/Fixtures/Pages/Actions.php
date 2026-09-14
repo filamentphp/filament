@@ -418,6 +418,10 @@ class Actions extends Page
 
                     $this->dispatch('fill-without-parent-called');
                 }),
+            Action::make('readWithoutParent')
+                ->action(function (Action $action): void {
+                    $this->dispatch('read-without-parent-called', data: $action->getParentActionValidatedData());
+                }),
             Action::make('parentData')
                 ->schema([
                     TextInput::make('payload')
@@ -431,6 +435,10 @@ class Actions extends Page
                             Action::make('fillParentDataFromComponent')
                                 ->action(function (Action $action): void {
                                     $action->fillParentActionData(['reference' => 'from component']);
+                                }),
+                            Action::make('readParentDataFromComponent')
+                                ->action(function (Action $action): void {
+                                    $this->dispatch('read-parent-data', data: $action->getParentActionValidatedData());
                                 }),
                         ]),
                     Group::make([

@@ -717,6 +717,21 @@ Action::make('first')
     ])
 ```
 
+A nested action that only needs the action it was mounted from can use `getParentActionValidatedData()` instead of reaching into `$mountedActions`:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('second')
+    ->action(function (Action $action) {
+        $data = $action->getParentActionValidatedData();
+
+        // ...
+    })
+```
+
+Unlike `$mountedActions`, this works for an action registered on a component inside the modal as well as one registered on the modal itself. A `LogicException` is thrown when the action was not mounted from another action.
+
 If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedData()` from `mountUsing()` instead, so that the errors are reported before the nested action's modal opens:
 
 ```php

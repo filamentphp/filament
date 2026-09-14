@@ -99,6 +99,30 @@ describe('filling the data of a parent action', function (): void {
     });
 });
 
+describe('reading a parent action from an action that is not registered on its modal', function (): void {
+    it('can use `getParentActionValidatedData()` from an action registered on a schema component', function (): void {
+        livewire(Actions::class)
+            ->mountAction('parentData')
+            ->setActionData([
+                'payload' => 'foo',
+                'reference' => 'bar',
+            ])
+            ->callAction(TestAction::make('readParentDataFromComponent')->schemaComponent('reference'))
+            ->assertDispatched('read-parent-data', data: [
+                'payload' => 'foo',
+                'reference' => 'bar',
+                'nested' => ['city' => null],
+                'dotted' => ['postcode' => null],
+            ]);
+    });
+
+    it('throws from `getParentActionValidatedData()` when the action was not mounted from a parent action', function (): void {
+        livewire(Actions::class)
+            ->callAction('readWithoutParent')
+            ->assertNotDispatched('read-without-parent-called');
+    })->throws(LogicException::class);
+});
+
 describe('filling a parent action from an action that is not registered on its modal', function (): void {
     it('can use `fillParentActionData()` from an action registered on a schema component', function (): void {
         livewire(Actions::class)

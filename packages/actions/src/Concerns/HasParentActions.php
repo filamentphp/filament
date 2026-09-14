@@ -76,6 +76,23 @@ trait HasParentActions
     }
 
     /**
+     * Validates the schema of the action that this one was mounted from, and returns the
+     * validated data, without running it.
+     *
+     * The parent is taken from the mounted stack rather than `getParentAction()`, which is
+     * only set for actions registered on a modal, and not for actions registered on a
+     * component inside one.
+     *
+     * @return array<string, mixed>
+     */
+    public function getParentActionValidatedData(): array
+    {
+        return $this->getLivewire()->getValidatedMountedActionData(
+            $this->getParentActionNestingIndex(),
+        );
+    }
+
+    /**
      * Writes into the schema data of the action that this one was mounted from. The action
      * being written to validates it with its own rules when it is submitted.
      *
@@ -87,14 +104,19 @@ trait HasParentActions
      */
     public function fillParentActionData(array $data): static
     {
+        $this->getLivewire()->fillMountedActionData($data, $this->getParentActionNestingIndex());
+
+        return $this;
+    }
+
+    protected function getParentActionNestingIndex(): int
+    {
         $nestingIndex = $this->getNestingIndex();
 
         if (blank($nestingIndex) || ($nestingIndex < 1)) {
-            throw new LogicException("The action [{$this->getName()}] tried to fill the data of a parent action, but it was not mounted from one.");
+            throw new LogicException("The action [{$this->getName()}] tried to use the data of a parent action, but it was not mounted from one.");
         }
 
-        $this->getLivewire()->fillMountedActionData($data, $nestingIndex - 1);
-
-        return $this;
+        return $nestingIndex - 1;
     }
 }
