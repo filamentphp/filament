@@ -55,7 +55,9 @@ php artisan make:filament-page Reports --react
 php artisan make:filament-page Reports --svelte
 ```
 
-The `--vue`, `--react`, and `--svelte` options are mutually exclusive. Add `--ts` or its `--typescript` alias to generate TypeScript files, and add `--ssr` to generate an optional server entry point. TypeScript requires a framework option. Omitting all framework options preserves the existing Blade page behavior.
+The `--vue`, `--react`, and `--svelte` options are mutually exclusive. Add `--ts` or its `--typescript` alias to generate TypeScript files. All Inertia setup options require a framework option. Omitting all framework options preserves the existing Blade page behavior.
+
+On first interactive setup, the command asks whether to generate an SSR entry. Pass `--ssr` to request it or `--no-ssr` to skip it without prompting. Non-interactive commands do not generate a new SSR entry unless you pass `--ssr`. Neither skipping generation nor passing `--no-ssr` disables SSR in your application.
 
 The command rejects resource pages because their record lifecycle is not compatible with Inertia content. Before writing anything, it also checks for the required Composer and Node packages and prints actionable installation instructions when a dependency is missing. It does not install dependencies or change your panel, Vite, TypeScript, or SSR configuration.
 
@@ -68,9 +70,40 @@ resources/js/filament/pages/Reports.vue
 resources/js/filament/resolve.js
 ```
 
-TypeScript changes the JavaScript extensions to `.ts`, React pages use `.jsx` or `.tsx`, and Svelte pages use `.svelte`. The shared resolver loads every component for the selected framework whose name starts with `Filament/`, and `inertia.js` exports a reusable Filament renderer. The `--ssr` option also creates `resources/js/filament/ssr.js` or `ssr.ts`.
+TypeScript changes the JavaScript extensions to `.ts`, React pages use `.jsx` or `.tsx`, and Svelte pages use `.svelte`. The shared resolver loads every component for the selected framework whose name starts with `Filament/`, and `inertia.js` exports a reusable Filament renderer. The `--ssr` option also creates `resources/js/filament/ssr.js` or `ssr.ts` when no existing server is detected.
 
 Shared entry and resolver files are preserved if they already exist, including when you use `--force`. A second page reuses them. The command rejects a different framework when the existing renderer uses one of the other generated helpers; configure a separate renderer manually if your panel needs multiple frameworks. When switching a React page between JavaScript and TypeScript, rename or remove its existing component first so both extensions do not resolve to the same name.
+
+#### Reusing an existing setup
+
+| Existing setup | What the command does |
+| --- | --- |
+| Missing dependencies | Generates nothing and lists missing packages. Prints Composer and npm commands where applicable; use equivalent commands for another package manager. Matching unreleased Inertia builds must come from your chosen source rather than an incompatible public release. |
+| Native Inertia outside Filament | Reuses installed packages and creates separate Filament files. Leaves the native bootstrap, components, middleware, build configuration and SSR server unchanged. |
+| Conventional Filament renderer and resolver | Creates only the new PHP page and component, reusing the shared files. Registering the plugin with `rendererEntry()` lets the command identify the source entry without evaluating a renderer callback. |
+| Custom Filament renderer | Uses explicit paths. Does not infer or edit arbitrary JavaScript imports and resolvers. If there is no sibling `resolve.js` or `resolve.ts`, creates only the page/component and reports that resolver registration and SSR integration are manual. |
+| Existing SSR server | Preserves it and reports how to dispatch `Filament/` components through the Filament resolver. Does not generate a second server entry. |
+
+For custom paths, pass paths relative to your application's root:
+
+```bash
+php artisan make:filament-page Reports --react --ts \
+    --inertia-entry=resources/js/admin/inertia.ts \
+    --inertia-pages=resources/js/admin/pages \
+    --inertia-ssr-entry=resources/server/ssr.ts
+```
+
+`--inertia-entry` selects the **Filament renderer**, not the native application's `createInertiaApp()` bootstrap. If the panel already uses `rendererEntry()`, the option must agree with it. An existing `renderer()` URL or callback is still supported at runtime, but the command cannot determine its source; supply the paths explicitly or switch to `rendererEntry()`.
+
+Without `--inertia-pages`, the conventional component directory is `pages` beside the renderer. Existing renderers outside `resources/js/filament` require an explicit component directory on subsequent invocations too. Existing resolvers are never rewritten when you change this directory; add the new component mapping or update the glob yourself. Generated resolvers use a relative glob for the supplied directory. Paths must use letters, numbers, slashes, dots, underscores or hyphens, without parent traversal. Other layouts can be configured manually.
+
+The command detects `resources/js/ssr.js`, `resources/js/ssr.ts`, `resources/js/ssr.jsx`, and `resources/js/ssr.tsx` as existing shared servers. Use `--inertia-ssr-entry` for another existing location; it does not create that file or rewrite it. Without this option, custom SSR locations cannot be detected. If SSR is already enabled, ensure it handles the new component even when using `--no-ssr`.
+
+#### Completing manual setup
+
+The command ends with a remaining-work checklist. A registered `rendererEntry()` and an entry present in `public/build/manifest.json` are reported separately from unverified configuration. A manifest only proves inclusion in the **last build**, not that your current configuration or newly generated page works. Custom manifest paths, Vite plugin configuration, export preservation, TypeScript settings, custom renderer wiring, and dependency peer-version compatibility are not verified automatically.
+
+The command never installs packages, edits configuration, registers middleware, modifies your native Inertia app, runs builds, or starts an SSR server. Merge the following configuration manually, then build and test your page. Existing application-specific configuration is preserved rather than guessed or replaced.
 
 ### Configuring the generated files
 
@@ -81,7 +114,6 @@ Generation leaves four one-time application changes to you:
 ```php
 use Filament\Inertia\InertiaPlugin;
 use Filament\Panel;
-use Illuminate\Foundation\Vite;
 
 public function panel(Panel $panel): Panel
 {
@@ -89,12 +121,12 @@ public function panel(Panel $panel): Panel
         // ...
         ->plugin(
             InertiaPlugin::make()
-                ->renderer(fn (): string => app(Vite::class)->asset('resources/js/filament/inertia.js')),
+                ->rendererEntry('resources/js/filament/inertia.js'),
         );
 }
 ```
 
-Use `.ts` in the asset path when you generated TypeScript.
+Use `.ts` in the asset path when you generated TypeScript. `rendererEntry()` resolves the source entry through Laravel's Vite integration. You can still use `renderer()` for a custom URL or callback; setting either option replaces the other.
 
 2. Add `resources/js/filament/inertia.js` to the Laravel Vite plugin's `input` array and add your framework's Vite plugin. Set `preserveEntrySignatures: 'exports-only'` in `build.rollupOptions`, or in `build.rolldownOptions` when using Rolldown-based Vite. Filament dynamically imports the entry's default export, which would otherwise be removed from some production builds.
 3. When using TypeScript, include the generated files in your TypeScript configuration. Use `moduleResolution: 'bundler'`, `allowImportingTsExtensions: true`, `noEmit: true`, and the `vite/client` types. React also needs `jsx: 'react-jsx'`. Use `vue-tsc` or `svelte-check` to check single-file components for those frameworks.
@@ -226,6 +258,33 @@ GET partial reloads can change query parameters on the same path without navigat
 The optional generated SSR entry sets `id: 'filament-inertia'` in its `createInertiaApp()` options. Filament's browser host requires that exact root ID; the adapters' default `app` ID does not work.
 
 If an existing SSR server also handles a native Inertia application, keep that application's bootstrap and root ID unchanged. The same server can dispatch by component prefix: use `filament-inertia` for `Filament/` components and the native application's existing ID for everything else. Merge this dispatch into your existing server entry rather than overwriting its SSR configuration.
+
+For example, this Vue server selects the root ID and resolver per request. This example assumes your native resolver is exported from `resources/js/resolve.js`; use your existing resolver and native root ID instead:
+
+```js
+// resources/js/ssr.js
+import { createInertiaApp } from '@inertiajs/vue3'
+import createServer from '@inertiajs/vue3/server'
+import { renderToString } from '@vue/server-renderer'
+import { createSSRApp, h } from 'vue'
+import { resolve as resolveNative } from './resolve.js'
+import { resolve as resolveFilament } from './filament/resolve.js'
+
+createServer((page) => {
+    const isFilament = page.component.startsWith('Filament/')
+
+    return createInertiaApp({
+        id: isFilament ? 'filament-inertia' : 'app',
+        page,
+        render: renderToString,
+        resolve: isFilament ? resolveFilament : resolveNative,
+        setup: ({ App, props, plugin }) =>
+            createSSRApp({ render: () => h(App, props) }).use(plugin),
+    })
+})
+```
+
+Keep any additional native SSR plugins or options. For React, use `@inertiajs/react`, `renderToString` from `react-dom/server`, and `setup: ({ App, props }) => createElement(App, props)` with `createElement` imported from `react`. For Svelte 5, use `@inertiajs/svelte`, import `render` from `svelte/server`, and use `setup: ({ App, props }) => render(App, { props })` without a separate `render` option. Each adapter also provides its own `/server` import. If the two parts of your app use different frameworks or rendering configuration, branch to separate `createInertiaApp()` calls inside the **same** server callback instead of sharing those options. Do not change the native application's root ID to `filament-inertia`.
 
 Without SSR, Filament displays a loading indicator until the framework mounts. With SSR, content remains visible but inert until hydration finishes. Deferred props can continue loading afterward. If the renderer cannot load or mount, Filament displays a reload action.
 

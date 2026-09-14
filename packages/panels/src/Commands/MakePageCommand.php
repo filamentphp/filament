@@ -137,6 +137,10 @@ class MakePageCommand extends Command
             new InputOption('ts', mode: InputOption::VALUE_NONE, description: 'Generate TypeScript for the selected Inertia framework'),
             new InputOption('typescript', mode: InputOption::VALUE_NONE, description: 'Alias for --ts'),
             new InputOption('ssr', mode: InputOption::VALUE_NONE, description: 'Also generate an Inertia server entry point without replacing existing configuration'),
+            new InputOption('no-ssr', mode: InputOption::VALUE_NONE, description: 'Skip SSR generation without disabling an existing SSR configuration'),
+            new InputOption('inertia-entry', mode: InputOption::VALUE_REQUIRED, description: 'Filament renderer source path, relative to the application root'),
+            new InputOption('inertia-pages', mode: InputOption::VALUE_REQUIRED, description: 'Filament component directory, relative to the application root'),
+            new InputOption('inertia-ssr-entry', mode: InputOption::VALUE_REQUIRED, description: 'Existing shared SSR entry to integrate manually, relative to the application root'),
             new InputOption(
                 name: 'cluster',
                 shortcut: 'C',
