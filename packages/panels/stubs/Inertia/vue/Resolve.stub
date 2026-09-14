@@ -1,12 +1,12 @@
 {{ componentTypeImport }}
-const pages = import.meta.glob{{ globType }}('./pages/**/*.vue')
+const pages = import.meta.glob{{ globType }}('{{ pages }}/**/*.vue')
 
 export function resolve(name{{ nameType }}) {
     if (!name.startsWith('Filament/')) {
         throw new Error(`Unknown Filament page: ${name}`)
     }
 
-    const page = pages[`./pages/${name.slice('Filament/'.length)}.vue`]
+    const page = pages[`{{ pages }}/${name.slice('Filament/'.length)}.vue`]
 
     if (!page) {
         throw new Error(`Unknown Filament page: ${name}`)

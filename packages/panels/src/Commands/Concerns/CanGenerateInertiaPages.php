@@ -9,6 +9,8 @@ use Illuminate\Filesystem\Filesystem;
 use Inertia\Middleware;
 use ReflectionClass;
 
+use function Laravel\Prompts\confirm;
+
 trait CanGenerateInertiaPages
 {
     /** @var 'react' | 'vue' | 'svelte' | null */
@@ -30,13 +32,19 @@ trait CanGenerateInertiaPages
         $this->inertiaFramework = $frameworks[0] ?? null;
 
         if ($this->inertiaFramework === null) {
-            if ($this->hasInertiaTypeScript || $this->option('ssr')) {
-                $this->components->error('The --ts, --typescript, and --ssr options require --vue, --react, or --svelte.');
+            if ($this->hasInertiaTypeScript || $this->option('ssr') || $this->option('no-ssr') || $this->option('inertia-entry') || $this->option('inertia-pages') || $this->option('inertia-ssr-entry')) {
+                $this->components->error('Inertia setup options require --vue, --react, or --svelte.');
 
                 throw new FailureCommandOutput;
             }
 
             return;
+        }
+
+        if ($this->option('no-ssr') && ($this->option('ssr') || $this->option('inertia-ssr-entry'))) {
+            $this->components->error('Choose --no-ssr or SSR setup options, not both.');
+
+            throw new FailureCommandOutput;
         }
 
         foreach (['resource', 'resource-namespace', 'type'] as $option) {
@@ -75,13 +83,23 @@ trait CanGenerateInertiaPages
             ...(($this->hasInertiaTypeScript && ($framework === 'react')) ? ['@types/react', '@types/react-dom'] : []),
         ];
 
+        $missingPackages = [];
+
         foreach ($packages as $package) {
             if ($this->fileExists(base_path("node_modules/{$package}/package.json"))) {
                 continue;
             }
 
             $this->components->error("Missing JavaScript package [{$package}]. Install it with your package manager, using a version compatible with your framework and Vite.");
+            if (! str_starts_with($package, '@inertiajs/')) {
+                $missingPackages[] = $package;
+            }
             $hasMissingDependencies = true;
+        }
+
+        if ($missingPackages !== []) {
+            $this->components->info('Install the missing packages with npm (or the equivalent command for your package manager), choosing compatible versions:');
+            $this->line('    npm install ' . implode(' ', $missingPackages));
         }
 
         $typesPath = base_path('node_modules/@inertiajs/core/types/types.d.ts');
@@ -101,8 +119,66 @@ trait CanGenerateInertiaPages
     /** @param 'react' | 'vue' | 'svelte' $framework */
     protected function createInertiaPage(string $framework): void
     {
-        $directory = resource_path('js/filament');
         $extension = $this->hasInertiaTypeScript ? 'ts' : 'js';
+        $plugin = $this->panel->hasPlugin('inertia') ? $this->panel->getPlugin('inertia') : null;
+        $configuredEntry = ($plugin instanceof InertiaPlugin) ? $plugin->getRendererEntry() : null;
+
+        if ($plugin && ($configuredEntry === null) && (! $this->option('inertia-entry'))) {
+            $this->components->error('Cannot determine the configured renderer source without evaluating renderer(). Set rendererEntry() on the plugin, or pass --inertia-entry and --inertia-pages. No files were generated.');
+
+            throw new FailureCommandOutput;
+        }
+
+        $rendererPath = ($entry = $this->option('inertia-entry') ?? $configuredEntry)
+            ? $this->getInertiaSourcePath($entry)
+            : $this->getInertiaSharedPath('inertia', $extension);
+
+        if (($configuredEntry !== null) && ($rendererPath !== $this->getInertiaSourcePath($configuredEntry))) {
+            $this->components->error('The requested entry differs from the panel rendererEntry(). Update the panel configuration explicitly before generating into another renderer.');
+
+            throw new FailureCommandOutput;
+        }
+
+        if ((! in_array(pathinfo($rendererPath, PATHINFO_EXTENSION), ['js', 'ts'])) || in_array(pathinfo($rendererPath, PATHINFO_FILENAME), ['resolve', 'ssr'])) {
+            $this->components->error('Use a .js or .ts renderer entry, with a name other than resolve or ssr.');
+
+            throw new FailureCommandOutput;
+        }
+
+        $directory = dirname($rendererPath);
+
+        if (($directory !== resource_path('js/filament')) && $this->fileExists($rendererPath) && (! $this->option('inertia-pages'))) {
+            $this->components->error('Cannot determine the component directory of a custom renderer. Pass --inertia-pages; arbitrary JavaScript resolvers are not inspected.');
+
+            throw new FailureCommandOutput;
+        }
+
+        $pagesDirectory = $this->option('inertia-pages') ? $this->getInertiaSourcePath($this->option('inertia-pages')) : "{$directory}/pages";
+        $resolverPath = $this->getInertiaSharedPath('resolve', $extension, $directory);
+        $serverPath = $this->getInertiaSharedPath('ssr', $extension, $directory);
+        $hasCustomResolver = $this->fileExists($rendererPath) && (! $this->fileExists($resolverPath));
+        $existingServerPath = $this->option('inertia-ssr-entry') ? $this->getInertiaSourcePath($this->option('inertia-ssr-entry')) : null;
+
+        if (($existingServerPath !== null) && (! $this->fileExists($existingServerPath))) {
+            $this->components->error('--inertia-ssr-entry must identify an existing SSR entry. Omit it and use --ssr to generate a new server.');
+
+            throw new FailureCommandOutput;
+        }
+
+        foreach (['js', 'ts', 'jsx', 'tsx'] as $serverExtension) {
+            $candidate = resource_path("js/ssr.{$serverExtension}");
+            if (($existingServerPath === null) && $this->fileExists($candidate)) {
+                $existingServerPath = $candidate;
+            }
+        }
+
+        $hasServer = $this->fileExists($serverPath);
+        $generateServer = (! $this->option('no-ssr')) && ($this->option('ssr') || ($existingServerPath !== null) || $hasServer);
+
+        if ((! $generateServer) && (! $this->option('no-ssr')) && (! $this->fileExists($rendererPath)) && $this->input->isInteractive()) {
+            $generateServer = confirm('Generate an Inertia SSR entry?', default: false);
+        }
+
         $componentExtension = match ($framework) {
             'react' => $this->hasInertiaTypeScript ? 'tsx' : 'jsx',
             'vue' => 'vue',
@@ -115,8 +191,20 @@ trait CanGenerateInertiaPages
             ->replaceStart('Pages/', '')
             ->replace('/Pages/', '/')
             ->prepend('Filament/');
-        $componentPath = $directory . '/pages/' . substr($component, strlen('Filament/')) . ".{$componentExtension}";
+        $componentPath = $pagesDirectory . '/' . substr($component, strlen('Filament/')) . ".{$componentExtension}";
         $classPath = str_replace('\\', '/', "{$this->pagesDirectory}/{$this->fqnEnd}.php");
+
+        $sharedPaths = [$rendererPath, $resolverPath, $serverPath, ...(($existingServerPath !== null) ? [$existingServerPath] : [])];
+
+        if (array_intersect(array_map($this->normalizePath(...), [$classPath, $componentPath]), array_map($this->normalizePath(...), $sharedPaths))) {
+            $this->components->error('The page or component destination conflicts with a shared renderer, resolver or SSR entry. Choose a different destination; --force cannot overwrite shared files.');
+
+            throw new FailureCommandOutput;
+        }
+
+        $this->checkInertiaFilePaths([
+            $classPath, $componentPath, ...$sharedPaths,
+        ]);
 
         if ($framework === 'react') {
             $otherComponentPath = substr($componentPath, 0, -3) . ($this->hasInertiaTypeScript ? 'jsx' : 'tsx');
@@ -137,10 +225,6 @@ trait CanGenerateInertiaPages
             }
         }
 
-        $rendererPath = $this->getInertiaSharedPath('inertia', $extension);
-        $resolverPath = $this->getInertiaSharedPath('resolve', $extension);
-        $serverPath = $this->getInertiaSharedPath('ssr', $extension);
-
         if ($this->fileExists($rendererPath)) {
             $renderer = app(Filesystem::class)->get($rendererPath);
 
@@ -153,13 +237,14 @@ trait CanGenerateInertiaPages
             }
         }
 
-        $helper = $this->getRelativePath(
+        $helper = $this->getInertiaImportPath(
             dirname((new ReflectionClass(InertiaPlugin::class))->getFileName(), 3) . "/resources/js/inertia/{$framework}.js",
             $directory,
         );
         $replacements = [
             'helper' => str_replace("'", "\\'", $helper),
             'resolver' => './' . basename($resolverPath),
+            'pages' => $this->getInertiaImportPath($pagesDirectory, $directory),
             'nameType' => $this->hasInertiaTypeScript ? ': string' : '',
             'componentTypeImport' => $this->hasInertiaTypeScript ? match ($framework) {
                 'react' => "import type { ComponentType } from 'react'\n",
@@ -183,8 +268,8 @@ trait CanGenerateInertiaPages
 
         foreach ([
             $rendererPath => 'Inertia/Renderer',
-            $resolverPath => "Inertia/{$framework}/Resolve",
-            ...($this->option('ssr') ? [$serverPath => "Inertia/{$framework}/Server"] : []),
+            ...(! $hasCustomResolver ? [$resolverPath => "Inertia/{$framework}/Resolve"] : []),
+            ...(($generateServer && ($existingServerPath === null) && (! $hasCustomResolver)) ? [$serverPath => "Inertia/{$framework}/Server"] : []),
         ] as $path => $stub) {
             if ($this->fileExists($path)) {
                 $this->components->info("Preserved [{$path}]. Check that it resolves [{$component}].");
@@ -196,29 +281,105 @@ trait CanGenerateInertiaPages
         }
 
         $entry = $this->getRelativePath($rendererPath, base_path());
-        $this->components->info('Register InertiaPlugin on your panel with:');
-        $this->line("    InertiaPlugin::make()->renderer(fn (): string => app(\\Illuminate\\Foundation\\Vite::class)->asset('{$entry}'))");
-        $this->components->info("Add [{$entry}] to your Vite inputs and configure the {$framework} plugin. Set preserveEntrySignatures: 'exports-only' in build.rollupOptions (build.rolldownOptions for Rolldown-based Vite), then run your asset build.");
+        $this->components->info('Remaining setup (existing application configuration has not been changed):');
+
+        if (! $plugin) {
+            $this->line("    Register InertiaPlugin::make()->rendererEntry('{$entry}') on your panel.");
+        } elseif ($configuredEntry === null) {
+            $this->line("    Panel plugin is registered, but its renderer binding is unverified. Ensure renderer() points to the built [{$entry}].");
+        } else {
+            $this->line("    Panel rendererEntry() already selects [{$entry}].");
+        }
+
+        $manifestPath = public_path('build/manifest.json');
+        $manifest = $this->fileExists($manifestPath) ? json_decode(app(Filesystem::class)->get($manifestPath), associative: true) : null;
+
+        if (is_array($manifest) && isset($manifest[$entry]['isEntry']) && $manifest[$entry]['isEntry']) {
+            $this->line("    [{$entry}] is present in the last Vite build. Rebuild to include the new page.");
+        } else {
+            $this->line("    Vite input is unverified. Add [{$entry}] if needed (custom manifests are not inspected), then build your assets.");
+        }
+
+        $this->line("    Verify your {$framework} Vite plugin and preserveEntrySignatures: 'exports-only' in build.rollupOptions (build.rolldownOptions for Rolldown-based Vite). Arbitrary build configuration is not inspected.");
+        if ($hasCustomResolver) {
+            $this->line("    Custom resolver location is unknown; no resolver or server was generated. Register [{$component}] from [{$componentPath}] in your existing resolver and configure SSR manually if needed.");
+        } else {
+            $this->line("    Existing resolvers are not rewritten. Ensure [{$resolverPath}] resolves [{$component}] from [{$componentPath}].");
+        }
+
+        $this->line("    Custom renderers must default-export Filament's createRenderer(), not a native createInertiaApp() bootstrap. Custom JavaScript wiring is not verified.");
 
         if ($this->hasInertiaTypeScript) {
-            $this->components->info('Include resources/js/filament in your TypeScript configuration, with vite/client types and the compiler settings for your framework.');
+            $this->line("    Include [{$directory}] and [{$pagesDirectory}] in your TypeScript configuration, with vite/client types and your framework compiler settings; these are not inspected.");
         }
 
-        if ($this->option('ssr')) {
-            $this->components->info('Configure the generated SSR entry in Vite, build it, and run your Inertia SSR server. If your app already has an SSR entry, merge the Filament/ component dispatch into it rather than replacing it. Filament requires the filament-inertia root ID.');
+        if ($existingServerPath !== null) {
+            $this->line("    Preserved existing SSR entry [{$existingServerPath}]; no second server was generated.");
+            $this->line("    Dispatch page.component.startsWith('Filament/') to createInertiaApp() with id: 'filament-inertia' and your Filament resolver. Keep your framework's SSR render/setup options and the native application's fallback branch/root ID. See the custom page documentation for a complete dispatch example.");
+        } elseif ($generateServer && (! $hasCustomResolver)) {
+            $this->line("    Configure [{$serverPath}] as your Vite SSR entry, build it and run the SSR server. If you already have a server elsewhere, do not start a second one: merge the Filament/ dispatch into it instead. Custom SSR locations require --inertia-ssr-entry.");
+        } else {
+            $this->line('    SSR generation skipped. Use --ssr to add it, or --inertia-ssr-entry for an existing custom server. This does not disable application SSR; configure existing SSR dispatch manually if enabled. Use --no-ssr to explicitly skip generation.');
         }
 
-        $this->components->info('Your dependencies, panel, and build configuration have not been changed. See the custom page documentation for the remaining setup.');
+        $this->components->info('Dependencies, middleware, native Inertia bootstraps, panel, Vite, TypeScript and SSR configuration are never installed or edited by this command. Package presence/API checks do not verify peer-version compatibility. See the custom page documentation for manual setup.');
     }
 
-    protected function getInertiaSharedPath(string $name, string $extension): string
+    protected function getInertiaSourcePath(string $path): string
     {
+        if (($path === '') || str_starts_with($path, '/') || preg_match('#(^|/)\.\.(/|$)|[^a-zA-Z0-9_./-]#', $path)) {
+            $this->components->error('Inertia source paths must be relative to the application root, without parent traversal, and contain only letters, numbers, slashes, dots, underscores or hyphens.');
+
+            throw new FailureCommandOutput;
+        }
+
+        return $this->normalizePath(base_path($path));
+    }
+
+    protected function getInertiaImportPath(string $path, string $from): string
+    {
+        $relativePath = rtrim($this->getRelativePath($path, $from), '/');
+
+        return match (true) {
+            $relativePath === '' => '.',
+            ($relativePath === '..') || str_starts_with($relativePath, '../') => $relativePath,
+            default => "./{$relativePath}",
+        };
+    }
+
+    /** @param array<string> $paths */
+    protected function checkInertiaFilePaths(array $paths): void
+    {
+        $filesystem = app(Filesystem::class);
+        $paths = array_map($this->normalizePath(...), $paths);
+
+        foreach ($paths as $path) {
+            if ($this->fileExists($path) && (! $filesystem->isFile($path))) {
+                $this->components->error("[{$path}] must be a file. No files were generated.");
+
+                throw new FailureCommandOutput;
+            }
+
+            for ($directory = dirname($path); dirname($directory) !== $directory; $directory = dirname($directory)) {
+                if (in_array($directory, $paths, true) || ($this->fileExists($directory) && (! $filesystem->isDirectory($directory)))) {
+                    $this->components->error("[{$directory}] must be a directory, not an existing or planned file. No files were generated.");
+
+                    throw new FailureCommandOutput;
+                }
+            }
+        }
+    }
+
+    protected function getInertiaSharedPath(string $name, string $extension, ?string $directory = null): string
+    {
+        $directory ??= resource_path('js/filament');
+
         foreach (array_unique([$extension, 'js', 'ts']) as $existingExtension) {
-            if ($this->fileExists($path = resource_path("js/filament/{$name}.{$existingExtension}"))) {
+            if ($this->fileExists($path = "{$directory}/{$name}.{$existingExtension}")) {
                 return $path;
             }
         }
 
-        return resource_path("js/filament/{$name}.{$extension}");
+        return "{$directory}/{$name}.{$extension}";
     }
 }
