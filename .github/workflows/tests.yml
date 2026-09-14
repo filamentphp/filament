@@ -64,15 +64,15 @@ jobs:
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - DB:${{ matrix.db }}
     services:
       mysql:
-        image: mysql:8.0
+        image: ${{ matrix.db == 'mysql' && 'mysql:8.0' || '' }}
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: testing
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=12
       postgres:
-        image: postgres:15
+        image: ${{ matrix.db == 'pgsql' && 'postgres:15' || '' }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
@@ -80,7 +80,7 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
-        options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=12
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

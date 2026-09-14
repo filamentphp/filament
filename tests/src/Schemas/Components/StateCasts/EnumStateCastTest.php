@@ -40,6 +40,13 @@ it('can ignore if an enum is passed to the getter already', function (StringBack
     StringBackedEnum::Three,
 ]);
 
+it('can get an enum from a `Stringable` value', function (): void {
+    $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
+
+    expect($cast->get(str('one')))
+        ->toBe(StringBackedEnum::One);
+});
+
 it('can return null if a blank value is passed to the getter', function ($value): void {
     $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
 
@@ -49,6 +56,12 @@ it('can return null if a blank value is passed to the getter', function ($value)
     null,
     '',
 ]);
+
+it('can return null if a tampered non-scalar value is passed to the getter', function (): void {
+    $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
+
+    expect($cast->get(['tampered']))->toBeNull();
+});
 
 it('can get the value from a string backed enum in the setter', function (StringBackedEnum $enum, string $string): void {
     $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);

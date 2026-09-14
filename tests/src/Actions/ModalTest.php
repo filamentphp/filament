@@ -35,6 +35,8 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="read-only-unsaved-changes-alert-trigger"]')
             ->assertVisible('[data-testid="read-only-unsaved-changes-alert-modal"]')
             ->assertScript($dispatchBeforeUnloadEvent, false)
+            // Let finite animations finish before Axe measures colors through the modal overlay.
+            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="read-only-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="read-only-unsaved-changes-alert-modal"]')
@@ -49,7 +51,7 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Open editable nested action')
             ->assertVisible('[data-testid="editable-nested-unsaved-changes-alert-modal"]')
             ->assertScript($dispatchBeforeUnloadEvent, true)
-            ->wait(0.5)
+            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="editable-nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
@@ -98,7 +100,7 @@ describe('browser interactions', function (): void {
             ->assertVisible('[data-testid="modal-less-parent-child-modal"]')
             ->click('[data-testid="modal-less-parent-child-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="modal-less-parent-child-modal"]')
-            ->wait(0.5)
+            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="action-after-child-trigger"]')
             ->assertSeeIn('[data-testid="action-after-child-result"]', 'ran')
@@ -245,6 +247,7 @@ describe('browser interactions', function (): void {
                 ->assertMissing('[data-testid="basic-modal"]')
                 ->assertPresent('[data-testid="basic-trigger"]:focus')
                 ->assertNoSmoke()
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
 
             visit('/modal-browser-test')
@@ -312,12 +315,14 @@ describe('browser interactions', function (): void {
                 ->click('[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn')
                 ->assertMissing('[data-testid="escape-close-disabled-modal"]')
                 ->assertNoSmoke()
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
 
             visit('/modal-browser-test')
                 ->inDarkMode()
                 ->click('Escape close disabled')
                 ->assertVisible('[data-testid="escape-close-disabled-modal"]')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
         });
     });
@@ -340,6 +345,7 @@ describe('browser interactions', function (): void {
                 ->assertMissing('[data-testid="cancel-on-close-modal"]')
                 ->assertPresent('[data-testid="cancel-on-close-trigger"]:focus')
                 ->assertNoSmoke()
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
 
             visit('/modal-browser-test')

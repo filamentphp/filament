@@ -12,7 +12,7 @@ return [
 
             'file' => [
                 'label' => 'Soubor',
-                'placeholder' => 'Nahrát CSV soubor',
+                'placeholder' => 'Nahrát soubor CSV',
                 'rules' => [
                     'duplicate_columns' => '{0} Soubor nesmí obsahovat více než jednu prázdnou hlavičku sloupce.|{1,*} Soubor nesmí obsahovat duplicitní hlavičky sloupců: :columns.',
                 ],
@@ -48,7 +48,7 @@ return [
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => 'Stáhnout informace o chybném řádku|Stáhnout informace o chybných řádcích',
+                    'label' => '{1} Stáhnout informace o chybném řádku|[0,*] Stáhnout informace o chybných řádcích',
                 ],
 
             ],
@@ -56,13 +56,13 @@ return [
         ],
 
         'max_rows' => [
-            'title' => 'Nahraný CSV soubor je příliš velký',
-            'body' => 'Nelze importovat více než 1 řádek najednou.|Nelze importovat více než :count řádků najednou.',
+            'title' => 'Nahraný soubor CSV je příliš velký',
+            'body' => 'Nelze importovat více než 1 řádek najednou.|Nelze importovat více než :count řádky najednou.|Nelze importovat více než :count řádků najednou.',
         ],
 
         'started' => [
             'title' => 'Zahájení importu',
-            'body' => 'Váš import byl zahájen a na pozadí bude zpracován 1 řádek.|Váš import byl zahájen a na pozadí budou zpracovány řádky :count.',
+            'body' => 'Import byl zahájen a na pozadí bude zpracován 1 řádek.|Import byl zahájen a na pozadí budou zpracovány :count řádky.|Import byl zahájen a na pozadí bude zpracováno :count řádků.',
         ],
 
     ],
@@ -75,7 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'chyba',
         'system_error' => 'Chyba systému, kontaktujte prosím podporu.',
-        'column_mapping_required_for_new_record' => 'Sloupec :attribute nebyl přiřazen k žádnému sloupci ve souboru, ale je vyžadován pro vytvoření nových záznamů.',
+        'column_mapping_required_for_new_record' => 'Sloupec :attribute nebyl přiřazen k žádnému sloupci v souboru, ale je vyžadován pro vytvoření nových záznamů.',
     ],
 
 ];
