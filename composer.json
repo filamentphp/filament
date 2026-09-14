@@ -12,6 +12,7 @@
         "chillerlan/php-qrcode": "^5.0",
         "danharrin/date-format-converter": "^0.3.1",
         "filament/support": "*",
+        "inertiajs/inertia-laravel": "^3.3",
         "larastan/larastan": "^3.0",
         "laravel/pint": "1.29.2",
         "laravel/prompts": "^0.3.5",

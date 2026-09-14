@@ -1,0 +1,13 @@
+import { createInertiaApp } from '@inertiajs/react'
+import createServer from '@inertiajs/react/server'
+import { createElement } from 'react'
+import { renderToString } from 'react-dom/server'
+import { resolve } from '{{ resolver }}'
+
+createServer((page) => createInertiaApp({
+    id: 'filament-inertia',
+    page,
+    render: renderToString,
+    resolve,
+    setup: ({ App, props }) => createElement(App, props),
+}))
