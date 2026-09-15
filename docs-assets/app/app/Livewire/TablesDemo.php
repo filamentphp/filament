@@ -22,9 +22,12 @@ use Filament\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Constraints\TextConstraint;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid as SchemaGrid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
@@ -51,6 +54,20 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Components\TableColumnManager;
+use Filament\Tables\Components\TableContent;
+use Filament\Tables\Components\TableEmptyState;
+use Filament\Tables\Components\TableFilterIndicators;
+use Filament\Tables\Components\TableFilters;
+use Filament\Tables\Components\TableFiltersTrigger;
+use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableHeader;
+use Filament\Tables\Components\TablePagination;
+use Filament\Tables\Components\TableSearch;
+use Filament\Tables\Components\TableSelectionIndicator;
+use Filament\Tables\Components\TableSortingSettings;
+use Filament\Tables\Components\TableToolbar;
+use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\ColumnManagerLayout;
@@ -2414,6 +2431,170 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
         return $table
             ->query(Post::query())
             ->defaultPaginationPageOption(5);
+    }
+
+    /**
+     * The base for every layout variant: identical content, only the arrangement differs.
+     */
+    protected function layoutVariantTable(Table $table): Table
+    {
+        return $this->layoutDemo($table)
+            ->filters([
+                SelectFilter::make('job')
+                    ->options([
+                        'Developer' => 'Developer',
+                        'Designer' => 'Designer',
+                    ]),
+                TernaryFilter::make('email_verified_at')
+                    ->label('Verified')
+                    ->nullable(),
+            ]);
+    }
+
+    public function layoutControl(Table $table): Table
+    {
+        return $this->layoutVariantTable($table);
+    }
+
+    public function layoutDefaultExplicit(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->layout(fn (): Schema => $table->getDefaultLayout());
+    }
+
+    public function layoutSortAndSearchRow(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->contentGrid(['md' => 2, 'xl' => 3])
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                TableToolbar::make([
+                    TableSortingSettings::make(),
+                    TableSearch::make(),
+                    TableFiltersTrigger::make(),
+                ]),
+                TableSelectionIndicator::make(),
+                TableFilterIndicators::make(),
+                TableContent::make(),
+                TableEmptyState::make(),
+                TablePagination::make(),
+            ]));
+    }
+
+    public function layoutSidebarFilters(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->contained(false)
+            ->filtersLayout(FiltersLayout::Hidden)
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                SchemaGrid::make(['lg' => 3])
+                    ->schema([
+                        TableGroup::make([
+                            TableGroup::make([
+                                TableToolbar::make([
+                                    TableSearch::make(),
+                                    TableColumnManager::make(),
+                                ]),
+                                TableSelectionIndicator::make(),
+                                TableFilterIndicators::make(),
+                                TableContent::make(),
+                                TableEmptyState::make(),
+                                TablePagination::make(),
+                            ])->extraAttributes(['class' => 'fi-ta-main']),
+                        ])
+                            ->extraAttributes(['class' => 'fi-ta-ctn'])
+                            ->columnSpan(['lg' => 2]),
+                        Section::make('Filters')
+                            ->schema([
+                                TableFilters::make(),
+                            ]),
+                    ]),
+            ]));
+    }
+
+    public function layoutHeaderRow(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->heading('Team')
+            ->description('Everyone with access to this workspace.')
+            ->headerActions([
+                CreateAction::make(),
+            ])
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                Flex::make([
+                    TableHeader::make(),
+                    TableSearch::make()
+                        ->grow(false),
+                ])->extraAttributes(['class' => 'fi-ta-header']),
+                TableFilterIndicators::make(),
+                TableContent::make(),
+                TableEmptyState::make(),
+                TablePagination::make(),
+            ]));
+    }
+
+    public function layoutBulkActionsBelow(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                TableToolbar::make([
+                    TableSearch::make(),
+                    TableFiltersTrigger::make(),
+                ]),
+                TableFilterIndicators::make(),
+                TableContent::make(),
+                TableEmptyState::make(),
+                TableToolbar::make([
+                    TableToolbarActions::make(),
+                    TableSelectionIndicator::make(),
+                ]),
+                TablePagination::make(),
+            ]));
+    }
+
+    public function layoutPaginationTop(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                TableToolbar::make(),
+                TablePagination::make(),
+                TableContent::make(),
+                TableEmptyState::make(),
+            ]));
+    }
+
+    public function layoutMinimal(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                TableContent::make(),
+                TableEmptyState::make(),
+            ]));
+    }
+
+    public function layoutCollapsibleFiltersAbove(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                TableFilters::make()->collapsible(),
+                TableToolbar::make([
+                    TableSearch::make(),
+                ]),
+                TableContent::make(),
+                TableEmptyState::make(),
+                TablePagination::make(),
+            ]));
+    }
+
+    /**
+     * Deliberately omits `TableContent`, so the exception message can be reviewed.
+     */
+    public function layoutBroken(Table $table): Table
+    {
+        return $this->layoutVariantTable($table)
+            ->layout(fn (Schema $schema): Schema => $schema->components([
+                TableToolbar::make(),
+                TablePagination::make(),
+            ]));
     }
 
     public function usersTable(Table $table): Table

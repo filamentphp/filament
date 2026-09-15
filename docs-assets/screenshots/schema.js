@@ -5481,6 +5481,132 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
+    'tables/layout/custom/layoutSortAndSearchRow': {
+        url: 'tables?table=layoutSortAndSearchRow',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutSortAndSearchRow/mobile': {
+        url: 'tables?table=layoutSortAndSearchRow',
+        selector: '#table',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutSidebarFilters': {
+        url: 'tables?table=layoutSidebarFilters',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutSidebarFilters/mobile': {
+        url: 'tables?table=layoutSidebarFilters',
+        selector: '#table',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutHeaderRow': {
+        url: 'tables?table=layoutHeaderRow',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutHeaderRow/mobile': {
+        url: 'tables?table=layoutHeaderRow',
+        selector: '#table',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutBulkActionsBelow': {
+        url: 'tables?table=layoutBulkActionsBelow',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutBulkActionsBelow/mobile': {
+        url: 'tables?table=layoutBulkActionsBelow',
+        selector: '#table',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutPaginationTop': {
+        url: 'tables?table=layoutPaginationTop',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutPaginationTop/mobile': {
+        url: 'tables?table=layoutPaginationTop',
+        selector: '#table',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutMinimal': {
+        url: 'tables?table=layoutMinimal',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutMinimal/mobile': {
+        url: 'tables?table=layoutMinimal',
+        selector: '#table',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutCollapsibleFiltersAbove': {
+        url: 'tables?table=layoutCollapsibleFiltersAbove',
+        selector: '#table',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/custom/layoutCollapsibleFiltersAbove/mobile': {
+        url: 'tables?table=layoutCollapsibleFiltersAbove',
+        selector: '#table',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/layout/demo': {
         url: 'tables?table=layoutDemo',
         selector: '#table',

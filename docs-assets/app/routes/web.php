@@ -82,6 +82,7 @@ Route::prefix('schemas')->group(function (): void {
 });
 
 Route::get('/tables', TablesDemo::class);
+Route::view('/table-layouts', 'table-layouts');
 
 Route::get('/widgets', WidgetsDemo::class);
 
