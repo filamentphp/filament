@@ -27,7 +27,7 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_START) }}
 
         <div class="fi-sidebar-header-ctn">
-            <header
+            <div
                 class="fi-sidebar-header"
             >
                 @if ((! $hasTopbar) && $isSidebarCollapsibleOnDesktop)
@@ -98,7 +98,7 @@
                 </div>
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_LOGO_AFTER) }}
-            </header>
+            </div>
         </div>
 
         @if ($hasTenantMenu || $hasGlobalSearchInSidebar)
