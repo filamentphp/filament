@@ -1143,6 +1143,10 @@ public static function getPages(): array
 }
 ```
 
+<Aside variant="tip">
+    Use the relationship name as the page key (for example `addresses`). Nested resources use that key when building breadcrumbs and other “index” links back to the relation page. See [nested resource breadcrumbs and index URLs](nesting#nested-resource-breadcrumbs-and-index-urls).
+</Aside>
+
 <Aside variant="warning">
     When using a relation page, you do not need to generate a relation manager with `make:filament-relation-manager`, and you do not need to register it in the `getRelations()` method of the resource.
 </Aside>

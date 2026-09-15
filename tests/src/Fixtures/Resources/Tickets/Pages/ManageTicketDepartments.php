@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Resources\Departments\Tables\DepartmentsTable;
+use Filament\Tests\Fixtures\Resources\Tickets\Resources\TicketDepartmentResource;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 
 class ManageTicketDepartments extends ManageRelatedRecords
@@ -19,6 +20,8 @@ class ManageTicketDepartments extends ManageRelatedRecords
     protected static string $resource = TicketResource::class;
 
     protected static string $relationship = 'departments';
+
+    protected static ?string $relatedResource = TicketDepartmentResource::class;
 
     protected function getHeaderActions(): array
     {

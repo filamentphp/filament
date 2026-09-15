@@ -71,7 +71,9 @@ use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
+use Filament\Tests\Fixtures\Resources\Tickets\Resources\TicketDepartmentResource;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
+use Filament\Tests\Fixtures\Resources\Users\Resources\ManagedUserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -104,9 +106,11 @@ class AdminPanelProvider extends PanelProvider
                 PostCategoryResource::class,
                 ProductResource::class,
                 TicketResource::class,
+                TicketDepartmentResource::class,
                 TicketMessageResource::class,
                 UserResource::class,
                 UserPostResource::class,
+                ManagedUserPostResource::class,
             ])
             ->pages([
                 Pages\Dashboard::class,
