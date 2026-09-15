@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
@@ -74,6 +75,29 @@ trait HasToolbarActions
     public function getToolbarActions(): array
     {
         return $this->toolbarActions;
+    }
+
+    public function hasNonBulkToolbarAction(): bool
+    {
+        foreach ($this->getVisibleToolbarActions() as $toolbarAction) {
+            if ($toolbarAction instanceof BulkActionGroup) {
+                continue;
+            }
+
+            if ($toolbarAction instanceof ActionGroup) {
+                if ($toolbarAction->hasNonBulkAction()) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if (! $toolbarAction->isBulk()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

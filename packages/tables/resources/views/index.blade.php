@@ -20,6 +20,8 @@
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\Enums\TableFiltersPosition;
+    use Filament\Schemas\Schema;
+    use Filament\Tables\Components\TableToolbar;
     use Filament\Tables\Filters\Indicator;
     use Filament\Tables\Table;
     use Filament\Tables\View\TablesIconAlias;
@@ -61,37 +63,13 @@
     $group = $getGrouping();
     $toolbarActions = $getVisibleToolbarActions();
 
-    $hasNonBulkToolbarAction = false;
-
-    foreach ($toolbarActions as $toolbarAction) {
-        if ($toolbarAction instanceof BulkActionGroup) {
-            continue;
-        }
-
-        if ($toolbarAction instanceof ActionGroup) {
-            if ($toolbarAction->hasNonBulkAction()) {
-                $hasNonBulkToolbarAction = true;
-
-                break;
-            }
-
-            continue;
-        }
-
-        if (! $toolbarAction->isBulk()) {
-            $hasNonBulkToolbarAction = true;
-
-            break;
-        }
-    }
+    $hasNonBulkToolbarAction = $hasNonBulkToolbarAction();
 
     $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
-    $areGroupingSettingsVisible = $areGroupingSettingsVisible();
     $areGroupsCollapsedByDefault = $areGroupsCollapsedByDefault();
     $isColumnSearchVisible = $isSearchableByColumn();
-    $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
     $isSelectionEnabled = $canSelectRecords();
     $selectsCurrentPageOnly = $selectsCurrentPageOnly();
@@ -100,18 +78,10 @@
     $isStriped = $isStriped();
     $isStackedOnMobile = $isStackedOnMobile();
     $isLoaded = $isLoaded();
-    $hasFiltersTrigger = $hasFiltersTrigger();
-    $hasColumnManager = $hasColumnManager();
     $hasHeader = $hasHeader();
-    $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
 
     // https://github.com/filamentphp/filament/pull/19787
-    $headerVisibilityMode = ($hasHeader || $hasNonBulkToolbarAction)
-        ? 'visible'
-        : (count($toolbarActions) ? 'selection' : 'hidden');
-    $headerToolbarVisibilityMode = ($hasHeaderToolbar || $hasNonBulkToolbarAction)
-        ? 'visible'
-        : (count($toolbarActions) ? 'selection' : 'hidden');
+    $headerVisibilityMode = $getHeaderVisibilityMode();
     $secondLevelHeadingTag = $getSecondLevelHeadingTag();
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
@@ -193,36 +163,7 @@
 
                 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_BEFORE, scopes: static::class) }}
 
-                <div
-                    @if (! $hasHeaderToolbar) x-cloak @endif
-                    x-show="@js($hasHeaderToolbar) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
-                    wire:key="{{ $this->getId() }}.table.header-toolbar.{{ $headerToolbarVisibilityMode }}"
-                    class="fi-ta-header-toolbar"
-                >
-                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
-
-                    <div class="fi-ta-actions fi-align-start fi-wrapped">
-                        @include('filament-tables::components.parts.reorder-trigger', ['table' => $table, 'part' => null])
-
-                        @include('filament-tables::components.parts.toolbar-actions', ['table' => $table, 'part' => null])
-
-                        @include('filament-tables::components.parts.grouping-settings', ['table' => $table, 'part' => null])
-                    </div>
-
-                    @if ($isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager)
-                        <div>
-                            @include('filament-tables::components.parts.search', ['table' => $table, 'part' => null])
-
-                            @if ($hasFiltersTrigger || $hasColumnManager)
-                                @include('filament-tables::components.parts.filters-trigger', ['table' => $table, 'part' => null])
-
-                                @include('filament-tables::components.parts.column-manager', ['table' => $table, 'part' => null])
-                            @endif
-                        </div>
-                    @endif
-
-                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END) }}
-                </div>
+                @include('filament-tables::components.parts.toolbar', ['table' => $table, 'part' => TableToolbar::make()->container(Schema::make($this))])
 
                 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER) }}
             </div>

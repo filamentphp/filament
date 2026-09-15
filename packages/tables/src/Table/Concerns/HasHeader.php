@@ -63,4 +63,37 @@ trait HasHeader
             || count($this->getFilterIndicators())
             || $this->hasColumnManager();
     }
+
+    public function hasHeaderToolbar(): bool
+    {
+        return $this->isReorderable()
+            || $this->areGroupingSettingsVisible()
+            || $this->isSearchable()
+            || $this->hasFiltersTrigger()
+            || $this->hasColumnManager();
+    }
+
+    /**
+     * Whether the header is always visible, visible only while records are selected, or hidden.
+     *
+     * @see https://github.com/filamentphp/filament/pull/19787
+     */
+    public function getHeaderVisibilityMode(): string
+    {
+        return $this->getVisibilityMode($this->hasHeader());
+    }
+
+    public function getHeaderToolbarVisibilityMode(): string
+    {
+        return $this->getVisibilityMode($this->hasHeaderToolbar());
+    }
+
+    protected function getVisibilityMode(bool $hasContent): string
+    {
+        if ($hasContent || $this->hasNonBulkToolbarAction()) {
+            return 'visible';
+        }
+
+        return count($this->getVisibleToolbarActions()) ? 'selection' : 'hidden';
+    }
 }
