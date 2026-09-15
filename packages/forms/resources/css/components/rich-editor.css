@@ -415,6 +415,45 @@
         @apply px-4 py-3;
     }
 
+    & div[data-type='customBlock'].fi-fo-rich-editor-custom-block-minimal {
+        @apply relative grid-cols-1 divide-y-0 shadow-none ring-0;
+
+        &:has(> .fi-fo-rich-editor-custom-block-header .fi-icon-btn) {
+            @apply grid-cols-[minmax(0,1fr)_auto] gap-x-2;
+        }
+
+        & > .fi-fo-rich-editor-custom-block-header {
+            @apply col-start-2 row-start-1 gap-1 self-start border-0 bg-transparent p-0;
+
+            &:not(:has(.fi-icon-btn)) {
+                @apply sr-only;
+            }
+
+            & > .fi-fo-rich-editor-custom-block-heading {
+                @apply sr-only;
+            }
+
+            & > .fi-fo-rich-editor-custom-block-edit-btn-ctn,
+            & > .fi-fo-rich-editor-custom-block-delete-btn-ctn {
+                & > .fi-icon-btn {
+                    @apply m-0 size-8 focus-visible:bg-gray-50 focus-visible:ring-inset dark:focus-visible:bg-white/5;
+
+                    @media (hover: hover) {
+                        @apply hover:bg-gray-50 dark:hover:bg-white/5;
+                    }
+
+                    @media (pointer: coarse) {
+                        @apply size-11;
+                    }
+                }
+            }
+        }
+
+        & > .fi-fo-rich-editor-custom-block-preview {
+            @apply col-start-1 row-start-1 min-w-0 border-0 p-0;
+        }
+    }
+
     @supports (container-type: inline-size) {
         @apply @container;
 
