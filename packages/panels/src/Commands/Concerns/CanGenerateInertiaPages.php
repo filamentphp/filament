@@ -173,9 +173,25 @@ trait CanGenerateInertiaPages
         }
 
         $hasServer = $this->fileExists($serverPath);
+        $existingServerBundle = config('inertia.ssr.bundle');
+
+        if (! filled($existingServerBundle)) {
+            $existingServerBundle = null;
+
+            foreach (['js', 'mjs'] as $bundleExtension) {
+                $candidate = base_path("bootstrap/ssr/ssr.{$bundleExtension}");
+
+                if ($this->fileExists($candidate)) {
+                    $existingServerBundle = $candidate;
+
+                    break;
+                }
+            }
+        }
+
         $generateServer = (! $this->option('no-ssr')) && ($this->option('ssr') || ($existingServerPath !== null) || $hasServer);
 
-        if ((! $generateServer) && (! $this->option('no-ssr')) && (! $this->fileExists($rendererPath)) && $this->input->isInteractive()) {
+        if ((! $generateServer) && ($existingServerBundle === null) && (! $this->option('no-ssr')) && (! $this->fileExists($rendererPath)) && $this->input->isInteractive()) {
             $generateServer = confirm('Generate an Inertia SSR entry?', default: false);
         }
 
@@ -194,7 +210,7 @@ trait CanGenerateInertiaPages
         $componentPath = $pagesDirectory . '/' . substr($component, strlen('Filament/')) . ".{$componentExtension}";
         $classPath = str_replace('\\', '/', "{$this->pagesDirectory}/{$this->fqnEnd}.php");
 
-        $sharedPaths = [$rendererPath, $resolverPath, $serverPath, ...(($existingServerPath !== null) ? [$existingServerPath] : [])];
+        $sharedPaths = [$rendererPath, $resolverPath, $serverPath, ...(($existingServerPath !== null) ? [$existingServerPath] : []), ...(($existingServerBundle !== null) ? [$existingServerBundle] : [])];
 
         if (array_intersect(array_map($this->normalizePath(...), [$classPath, $componentPath]), array_map($this->normalizePath(...), $sharedPaths))) {
             $this->components->error('The page or component destination conflicts with a shared renderer, resolver or SSR entry. Choose a different destination; --force cannot overwrite shared files.');
@@ -220,6 +236,10 @@ trait CanGenerateInertiaPages
         foreach ([$classPath, $componentPath] as $path) {
             if ((! $this->option('force')) && $this->fileExists($path)) {
                 $this->components->error("[{$path}] already exists. Use --force to overwrite the page and component. Shared renderer files will be preserved.");
+
+                if ($this->option('ssr')) {
+                    $this->components->warn('To add SSR to a customized page, follow the manual SSR setup documentation or use --ssr when generating a new page. Do not use --force just to add SSR: it replaces your page and component. No files were changed.');
+                }
 
                 throw new FailureCommandOutput;
             }
@@ -269,7 +289,7 @@ trait CanGenerateInertiaPages
         foreach ([
             $rendererPath => 'Inertia/Renderer',
             ...(! $hasCustomResolver ? [$resolverPath => "Inertia/{$framework}/Resolve"] : []),
-            ...(($generateServer && ($existingServerPath === null) && (! $hasCustomResolver)) ? [$serverPath => "Inertia/{$framework}/Server"] : []),
+            ...(($generateServer && ($existingServerPath === null) && ($existingServerBundle === null) && (! $hasCustomResolver)) ? [$serverPath => "Inertia/{$framework}/Server"] : []),
         ] as $path => $stub) {
             if ($this->fileExists($path)) {
                 $this->components->info("Preserved [{$path}]. Check that it resolves [{$component}].");
@@ -311,15 +331,21 @@ trait CanGenerateInertiaPages
 
         if ($this->hasInertiaTypeScript) {
             $this->line("    Include [{$directory}] and [{$pagesDirectory}] in your TypeScript configuration, with vite/client types and your framework compiler settings; these are not inspected.");
+            $this->line('    Run your framework typechecker before shipping. See the TypeScript setup recipes for compatible compiler/checker versions and SSR Node types; optional checker tooling is not installed or verified.');
         }
 
         if ($existingServerPath !== null) {
             $this->line("    Preserved existing SSR entry [{$existingServerPath}]; no second server was generated.");
             $this->line("    Dispatch page.component.startsWith('Filament/') to createInertiaApp() with id: 'filament-inertia' and your Filament resolver. Keep your framework's SSR render/setup options and the native application's fallback branch/root ID. See the custom page documentation for a complete dispatch example.");
+        } elseif ($hasServer) {
+            $this->line("    Preserved Filament SSR entry [{$serverPath}]. Verify your existing Vite SSR entry includes it, then rebuild and restart that server. Its configuration and running service are not verified.");
+        } elseif ($existingServerBundle !== null) {
+            $this->line("    Detected configured or built SSR bundle [{$existingServerBundle}]; no second server was generated.");
+            $this->line('    Its source entry and running service are not verified. Locate its source in your Vite configuration and add the Filament/ dispatch there, then rebuild and restart that server. Do not edit the built bundle.');
         } elseif ($generateServer && (! $hasCustomResolver)) {
             $this->line("    Configure [{$serverPath}] as your Vite SSR entry, build it and run the SSR server. If you already have a server elsewhere, do not start a second one: merge the Filament/ dispatch into it instead. Custom SSR locations require --inertia-ssr-entry.");
         } else {
-            $this->line('    SSR generation skipped. Use --ssr to add it, or --inertia-ssr-entry for an existing custom server. This does not disable application SSR; configure existing SSR dispatch manually if enabled. Use --no-ssr to explicitly skip generation.');
+            $this->line('    SSR generation skipped. To add it later, follow the manual SSR setup documentation or pass --ssr when generating a new page. Do not use --force on a customized page just to add SSR. This does not disable application SSR; configure existing SSR dispatch manually if enabled. Use --no-ssr to explicitly skip generation.');
         }
 
         $this->components->info('Dependencies, middleware, native Inertia bootstraps, panel, Vite, TypeScript and SSR configuration are never installed or edited by this command. Package presence/API checks do not verify peer-version compatibility. See the custom page documentation for manual setup.');

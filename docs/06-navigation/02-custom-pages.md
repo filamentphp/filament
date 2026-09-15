@@ -84,20 +84,27 @@ Shared entry and resolver files are preserved if they already exist, including w
 | Custom Filament renderer | Uses explicit paths. Does not infer or edit arbitrary JavaScript imports and resolvers. If there is no sibling `resolve.js` or `resolve.ts`, creates only the page/component and reports that resolver registration and SSR integration are manual. |
 | Existing SSR server | Preserves it and reports how to dispatch `Filament/` components through the Filament resolver. Does not generate a second server entry. |
 
-For custom paths, pass paths relative to your application's root:
+For custom paths in a new setup, pass paths relative to your application's root. Add `--ssr` to generate a server entry alongside the renderer:
 
 ```bash
-php artisan make:filament-page Reports --react --ts \
+php artisan make:filament-page Reports --react --ts --ssr \
     --inertia-entry=resources/js/admin/inertia.ts \
-    --inertia-pages=resources/js/admin/pages \
-    --inertia-ssr-entry=resources/server/ssr.ts
+    --inertia-pages=resources/js/admin/pages
 ```
 
 `--inertia-entry` selects the **Filament renderer**, not the native application's `createInertiaApp()` bootstrap. If the panel already uses `rendererEntry()`, the option must agree with it. An existing `renderer()` URL or callback is still supported at runtime, but the command cannot determine its source; supply the paths explicitly or switch to `rendererEntry()`.
 
 Without `--inertia-pages`, the conventional component directory is `pages` beside the renderer. Existing renderers outside `resources/js/filament` require an explicit component directory on subsequent invocations too. Existing resolvers are never rewritten when you change this directory; add the new component mapping or update the glob yourself. Generated resolvers use a relative glob for the supplied directory. Paths must use letters, numbers, slashes, dots, underscores or hyphens, without parent traversal. Other layouts can be configured manually.
 
-The command detects `resources/js/ssr.js`, `resources/js/ssr.ts`, `resources/js/ssr.jsx`, and `resources/js/ssr.tsx` as existing shared servers. Use `--inertia-ssr-entry` for another existing location; it does not create that file or rewrite it. Without this option, custom SSR locations cannot be detected. If SSR is already enabled, ensure it handles the new component even when using `--no-ssr`.
+The command detects `resources/js/ssr.js`, `resources/js/ssr.ts`, `resources/js/ssr.jsx`, and `resources/js/ssr.tsx` as existing shared server entries. It also detects a configured `inertia.ssr.bundle` or an existing `bootstrap/ssr/ssr.js` or `ssr.mjs` bundle. In these cases it does not generate a second server. A configured bundle is respected even before it has been built. Bundle detection does not prove that the server is running or identify its source: locate the source in your Vite configuration and merge the Filament dispatch there, not into the compiled bundle.
+
+For an existing source in another location, you can identify it with `--inertia-ssr-entry=resources/server/ssr.ts`. That file must already exist; this option never creates or rewrites it. Arbitrary Vite configuration, remote SSR services, and other custom locations are not inspected. If none of the detected files or configuration exists, use `--no-ssr` and integrate your custom server manually rather than generating a second one. If SSR is already enabled, ensure it handles the new component even when using `--no-ssr`.
+
+#### Adding SSR to existing pages
+
+You do not need to regenerate your PHP pages or client components to enable SSR. Add a server entry using the framework setup described below, configure its Vite entry, build it, and start the server. If you already have an SSR server, add the Filament dispatch to that server instead.
+
+Alternatively, when adding a genuinely new page, pass `--ssr` to generate the shared server entry if none is detected. Do not rerun the generator with `--force` on a customized page just to add SSR: it replaces the page and component, even though shared renderer files are preserved. Without `--force`, a page collision stops generation before any files are changed.
 
 #### Completing manual setup
 
@@ -139,6 +146,50 @@ npm run build
 npx vite build --ssr
 php artisan inertia:start-ssr
 ```
+
+#### Checking TypeScript
+
+Install checker tooling separately from the packages required to generate pages. These recipes use TypeScript 6: the audited Vue 3.5 / `vue-tsc` 3.3 and Svelte 5 / `svelte-check` 4.7 tools do not support a plain TypeScript 7 installation. Check their compatibility before upgrading the compiler. The generator checks package presence, not checker compatibility.
+
+```bash
+# React
+npm install --save-dev typescript@~6.0 @types/react@^19 @types/react-dom@^19 @types/node
+npx tsc --noEmit
+
+# Vue
+npm install --save-dev typescript@~6.0 vue-tsc@~3.3 @types/node
+npx vue-tsc --noEmit
+
+# Svelte
+npm install --save-dev typescript@~6.0 svelte-check@~4.7 @types/node
+npx svelte-check --tsconfig ./tsconfig.json
+```
+
+Use React types matching your React major and Node types matching your supported Node runtime. The current unreleased core declarations also reference Axios: install `axios` if your strict check reports it missing, even when your application does not use that HTTP client. Merge these options into your existing `tsconfig.json`, retaining application-specific settings and includes:
+
+```json
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "strict": true,
+        "skipLibCheck": false,
+        "types": ["vite/client", "node"]
+    },
+    "include": ["resources/js/filament/**/*"]
+}
+```
+
+React also needs `"jsx": "react-jsx"`. Node types cover SSR imports such as `node:stream`. Check generated server entries as well as browser entries: a successful Vite build is not a typecheck. Use matching Inertia core/adapter builds with the Svelte recursive-render declaration correction; do not hide declaration errors with `skipLibCheck`.
+
+#### Working with linked development packages
+
+Normal installed packages should not need development-only resolution settings. When testing Filament or Inertia through symlinks to adjacent checkouts, imports may resolve from the linked package rather than your application. In that setup, add your adapter and framework to Vite's `resolve.dedupe`, for example `['@inertiajs/core', '@inertiajs/react', 'react', 'react-dom']` for React. Vue uses `@inertiajs/vue3` and `vue`; Svelte uses `@inertiajs/svelte` and `svelte` alongside core.
+
+TypeScript may also need `paths` mappings to the application's installed declarations to avoid missing or duplicate framework types. Inspect each package's `types` and `exports` fields rather than assuming declarations live in `dist`. Keep these mappings in your development setup, not generated application code. Package installation may remove manually created links; verify resolved package paths after installing tooling. Test packaged dependencies separately before treating a linked-checkout workaround as a normal installation requirement.
 
 ### Rendering PHP and client components
 
@@ -251,7 +302,9 @@ Filament owns navigation between pages. Inertia links and redirects use Livewire
 
 Use Inertia's remember APIs for local state that should survive leaving a page; ordinary component state is recreated on navigation. Remembered state is scoped to the panel, tenant, authenticated user, session, and request URI. Override `getInertiaRememberKey()` to choose a page-specific key, such as one shared across query-string tabs.
 
-GET partial reloads can change query parameters on the same path without navigating. A different path, component, or mutation redirect destination is handed back to Filament. For redirects to another page, use `Inertia::location($url)` when the destination needs one-time session data such as flash messages. This prevents an intermediate Inertia response from consuming that data before Filament loads the destination document.
+GET partial reloads can send different query parameters on the same path without navigating. They update the requested props, but **do not update the address bar or add a browser history entry**, in either SPA mode. For example, `router.get('/reports', { period: 'October' }, { only: ['period', 'total'] })` can load October's figures while the address bar stays on `/reports`. Back/forward navigation does not traverse these prop-only updates. Use a normal Inertia link or GET visit without partial options when the new query should be a navigable URL; ordinary component state will then be recreated by the host.
+
+A different path, component, fragment, or mutation redirect destination is handed back to Filament. For redirects to another page, use `Inertia::location($url)` when the destination needs one-time session data such as flash messages. This prevents an intermediate Inertia response from consuming that data before Filament loads the destination document.
 
 ### Rendering on the server
 
