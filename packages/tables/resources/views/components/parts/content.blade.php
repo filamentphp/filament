@@ -2,6 +2,7 @@
     use Filament\Actions\BulkAction;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
+    use Filament\Tables\Components\TableContentHeader;
     use Filament\Tables\Components\TablePageCheckbox;
     use Filament\Tables\Components\TableSortingSettings;
     use Filament\Tables\Table;
@@ -120,9 +121,10 @@
 
     $loadingTargetsWireTarget = implode(',', Table::LOADING_TARGETS);
 
-    // A layout that places `TablePageCheckbox` or `TableSortingSettings` elsewhere must not repeat them in the content header.
-    $hasPageCheckboxInContentHeader = ! $table->hasLayoutPart(TablePageCheckbox::class);
-    $hasSortingSettingsInContentHeader = ! $table->hasLayoutPart(TableSortingSettings::class);
+    // A layout that places `TableContentHeader`, `TablePageCheckbox` or `TableSortingSettings` elsewhere must not repeat them above the records.
+    $hasContentHeader = ! $table->hasLayoutPart(TableContentHeader::class);
+    $hasPageCheckboxInContentHeader = $hasContentHeader && (! $table->hasLayoutPart(TablePageCheckbox::class));
+    $hasSortingSettingsInContentHeader = $hasContentHeader && (! $table->hasLayoutPart(TableSortingSettings::class));
 @endphp
 
 @if ((! $hasContentLayout) || ($records === null) || count($records))

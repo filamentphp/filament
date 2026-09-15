@@ -1,18 +1,6 @@
 .fi-ta-content-ctn {
     @apply relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10;
 
-    & .fi-ta-content-header {
-        @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5;
-
-        & .fi-ta-page-checkbox {
-            @apply my-4 shrink-0;
-        }
-
-        & .fi-ta-sorting-settings {
-            @apply flex gap-x-3 py-3;
-        }
-    }
-
     &:not(.fi-ta-ctn-with-footer .fi-ta-content-ctn) {
         @apply rounded-b-xl;
     }
@@ -329,5 +317,18 @@
                 }
             }
         }
+    }
+}
+
+/* Scoped to the table wrapper rather than the content container, so a `TableContentHeader` part styles the same wherever a layout places it. */
+.fi-ta .fi-ta-content-header {
+    @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5;
+
+    & .fi-ta-page-checkbox {
+        @apply my-4 shrink-0;
+    }
+
+    & .fi-ta-sorting-settings {
+        @apply flex gap-x-3 py-3;
     }
 }

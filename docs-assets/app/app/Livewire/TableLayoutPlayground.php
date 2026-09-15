@@ -15,13 +15,13 @@ use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Components\TableColumnManager;
 use Filament\Tables\Components\TableContent;
+use Filament\Tables\Components\TableContentHeader;
 use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFiltersTrigger;
 use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TableGroupingSettings;
 use Filament\Tables\Components\TableHeader;
-use Filament\Tables\Components\TablePageCheckbox;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TablePaginationLinks;
 use Filament\Tables\Components\TablePaginationOverview;
@@ -29,7 +29,6 @@ use Filament\Tables\Components\TablePaginationRecordsPerPage;
 use Filament\Tables\Components\TableReorderTrigger;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
-use Filament\Tables\Components\TableSortingSettings;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Grouping\Group;
@@ -68,7 +67,6 @@ class TableLayoutPlayground extends TablesDemo
             ->reorderable('phone')
             ->layout(fn (Schema $schema): Schema => $schema->components([
                 TableToolbar::make([
-                    TablePageCheckbox::make(),
                     TableHeader::make(),
                     TableToolbarActions::make(),
                     TableReorderTrigger::make(),
@@ -80,9 +78,13 @@ class TableLayoutPlayground extends TablesDemo
                         TableColumnManager::make(),
                         TablePaginationRecordsPerPage::make(),
                     ]),
+                    TableGroup::make([
+                        TablePageCheckbox::make(),
+                    ]),
                 ]),
                 TableSelectionIndicator::make(),
                 TableFilterIndicators::make(),
+                TableContentHeader::make(),
                 TableContent::make(),
                 TableEmptyState::make(),
                 TablePagination::make([
