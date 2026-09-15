@@ -51,7 +51,6 @@
     $content = $getContent();
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
-    $filterIndicators = $getFilterIndicators();
     $filtersApplyAction = $getFiltersApplyAction();
     $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
@@ -105,7 +104,7 @@
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
-    $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
+    $isSelectionEnabled = $canSelectRecords();
     $selectsCurrentPageOnly = $selectsCurrentPageOnly();
     $selectsGroupsOnly = $selectsGroupsOnly();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
@@ -144,7 +143,6 @@
     $records = $isLoaded ? $getRecords() : null;
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
-    $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $page = $this->getTablePage();
@@ -684,132 +682,9 @@
                 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER) }}
             </div>
 
-            @if ($isReordering)
-                <div
-                    x-cloak
-                    role="status"
-                    aria-live="polite"
-                    wire:key="{{ $this->getId() }}.table.reorder.indicator"
-                    class="fi-ta-reorder-indicator"
-                >
-                    {{
-                        \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => 'reorderTable',
-                        ]))
-                    }}
+            @include('filament-tables::components.parts.selection-indicator', ['table' => $table, 'part' => null])
 
-                    {{ __('filament-tables::table.reorder_indicator') }}
-                </div>
-            @elseif ($isSelectionEnabled && ($maxSelectableRecords !== 1) && $isLoaded)
-                <div
-                    x-cloak
-                    role="status"
-                    aria-live="polite"
-                    aria-atomic="true"
-                    x-bind:hidden="! getSelectedRecordsCount()"
-                    x-show="getSelectedRecordsCount()"
-                    wire:key="{{ $this->getId() }}.table.selection.indicator"
-                    class="fi-ta-selection-indicator"
-                >
-                    <div>
-                        {{
-                            \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
-                                'x-show' => 'isLoading',
-                            ]))
-                        }}
-
-                        <span
-                            x-text="
-                                window.pluralize(@js(__('filament-tables::table.selection_indicator.selected_count')), getSelectedRecordsCount(), {
-                                    count: new Intl.NumberFormat(@js(str_replace('_', '-', app()->getLocale()))).format(getSelectedRecordsCount()),
-                                })
-                            "
-                        ></span>
-                    </div>
-
-                    @if (! $isSelectionDisabled)
-                        <div>
-                            {{ FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
-
-                            <div class="fi-ta-selection-indicator-actions-ctn">
-                                @if (! $selectsGroupsOnly)
-                                    <x-filament::link
-                                        color="primary"
-                                        tag="button"
-                                        x-on:click="selectAllRecords"
-                                        x-show="canSelectAllRecords()"
-                                        {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
-                                        :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
-                                    >
-                                        {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount, ['count' => Number::format($allSelectableRecordsCount, locale: app()->getLocale())]) }}
-                                    </x-filament::link>
-                                @endif
-
-                                <x-filament::link
-                                    color="danger"
-                                    tag="button"
-                                    x-on:click="deselectAllRecords"
-                                >
-                                    {{ __('filament-tables::table.selection_indicator.actions.deselect_all.label') }}
-                                </x-filament::link>
-                            </div>
-
-                            {{ FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER, scopes: static::class) }}
-                        </div>
-                    @endif
-                </div>
-            @endif
-
-            @if ($filterIndicators)
-                @if (filled($filterIndicatorsView = FilamentView::renderHook(TablesRenderHook::FILTER_INDICATORS, scopes: static::class, data: ['filterIndicators' => $filterIndicators])))
-                    {{ $filterIndicatorsView }}
-                @else
-                    <div class="fi-ta-filter-indicators">
-                        <div>
-                            <span class="fi-ta-filter-indicators-label">
-                                {{ __('filament-tables::table.filters.indicator') }}
-                            </span>
-
-                            <div
-                                class="fi-ta-filter-indicators-badges-ctn"
-                                role="list"
-                            >
-                                @foreach ($filterIndicators as $indicator)
-                                    @php
-                                        $indicatorColor = $indicator->getColor();
-                                    @endphp
-
-                                    <x-filament::badge
-                                        :color="$indicatorColor"
-                                        role="listitem"
-                                    >
-                                        {{ $indicator->getLabel() }}
-
-                                        @if ($indicator->isRemovable())
-                                            @php
-                                                $indicatorRemoveLivewireClickHandler = $indicator->getRemoveLivewireClickHandler();
-                                            @endphp
-
-                                            <x-slot
-                                                name="deleteButton"
-                                                :label="__('filament-tables::table.filters.actions.remove.label')"
-                                                :wire:click="$indicatorRemoveLivewireClickHandler"
-                                                wire:loading.attr="disabled"
-                                                wire:target="removeTableFilter"
-                                            ></x-slot>
-                                        @endif
-                                    </x-filament::badge>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        @if (collect($filterIndicators)->contains(fn (Indicator $indicator): bool => $indicator->isRemovable()))
-                            {{ $getFiltersRemoveAllAction() }}
-                        @endif
-                    </div>
-                @endif
-            @endif
+            @include('filament-tables::components.parts.filter-indicators', ['table' => $table, 'part' => null])
 
             @if (((! $content) && (! $hasColumnsLayout)) || ($records === null) || count($records))
                 <div

@@ -113,6 +113,14 @@ trait HasBulkActions
         return $this;
     }
 
+    /**
+     * Whether records can be selected: selection is enabled and the table does not show groups only.
+     */
+    public function canSelectRecords(): bool
+    {
+        return $this->isSelectionEnabled() && (! ($this->isGroupsOnly() && $this->getGrouping()));
+    }
+
     public function isSelectionEnabled(): bool
     {
         if (is_bool($isSelectable = $this->evaluate($this->isSelectable))) {

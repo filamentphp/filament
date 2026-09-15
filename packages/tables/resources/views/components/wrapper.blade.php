@@ -5,7 +5,6 @@
 @php
     $isLoaded = $table->isLoaded();
     $records = $isLoaded ? $table->getRecords() : null;
-    $isSelectionEnabled = $table->isSelectionEnabled() && (! ($table->isGroupsOnly() && $table->getGrouping()));
 @endphp
 
 <div
@@ -29,7 +28,7 @@
 >
     <input
         type="hidden"
-        value="{{ ($isSelectionEnabled && $isLoaded) ? $table->getAllSelectableRecordsCount() : null }}"
+        value="{{ ($table->canSelectRecords() && $isLoaded) ? $table->getAllSelectableRecordsCount() : null }}"
         x-ref="allSelectableRecordsCount"
     />
 
