@@ -330,3 +330,8 @@
 .fi-ta .fi-growable {
     @apply flex-1;
 }
+
+/* A `TableGroup` with `inline()` lays its parts out as a row, wherever the layout places it. */
+.fi-ta .fi-ta-group.fi-inline {
+    @apply flex flex-wrap items-center gap-3;
+}

@@ -74,3 +74,11 @@ it('can grow inside a content header', function (): void {
         ->toContain('<div id="checkbox-group" class="fi-growable">')
         ->toContain('fi-ta-sorting-settings');
 });
+
+it('renders the inline classes with `inline()`', function (): void {
+    $html = livewireTableWithParts([
+        TableGroup::make([TableSearch::make()])->id('search-group')->inline()->grow(),
+    ])->html();
+
+    expect($html)->toContain('<div id="search-group" class="fi-ta-group fi-inline fi-growable">');
+});

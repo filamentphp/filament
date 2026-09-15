@@ -698,7 +698,7 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TablePaginationLinks` - the page links, with the previous and next buttons shown on narrow screens.
 
 The three pagination parts may also be placed outside `TablePagination`, for example the per page select in the toolbar. They keep their styles, but the page links only switch between the buttons and the numbered links inside `TablePagination`, since that switch depends on the width of the pagination row.
-- `TableGroup` - a plain `<div>` container for parts, with optional `extraAttributes()`. Inside a row such as the toolbar or the content header, `grow()` lets the group take the free space, like a `Split` child, so the groups after it sit at the end.
+- `TableGroup` - a plain `<div>` container for parts, with optional `extraAttributes()`. Its parts stack by default; `inline()` lays them out as a row. Inside a row such as the toolbar, the content header or a composed pagination, `grow()` lets the group take the free space, like a `Split` child, so the groups after it sit at the end.
 
 ### Rules for custom layouts
 
