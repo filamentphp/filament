@@ -510,3 +510,129 @@ Now, render the components in the Blade file:
     @endforeach
 </div>
 ```
+
+## Rearranging the table layout
+
+By default, Filament renders the header, the toolbar, the records, the empty state and the pagination of a table in a fixed order inside a card. If you need a different arrangement, such as the sort and search controls next to each other above a grid of records, pass a schema to the `layout()` method. The schema is built from table "parts", each rendering one piece of the table, and you may combine them with any [schema layout component](../schemas/layouts):
+
+```php
+use Filament\Schemas\Schema;
+use Filament\Tables\Components\TableContent;
+use Filament\Tables\Components\TableEmptyState;
+use Filament\Tables\Components\TableFilterIndicators;
+use Filament\Tables\Components\TableFiltersTrigger;
+use Filament\Tables\Components\TablePagination;
+use Filament\Tables\Components\TableSearch;
+use Filament\Tables\Components\TableSelectionIndicator;
+use Filament\Tables\Components\TableSortingSettings;
+use Filament\Tables\Components\TableToolbar;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->contentGrid(['md' => 2, 'xl' => 3])
+        ->layout(fn (Schema $schema): Schema => $schema->components([
+            TableToolbar::make([
+                TableSortingSettings::make(),
+                TableSearch::make(),
+                TableFiltersTrigger::make(),
+            ]),
+            TableSelectionIndicator::make(),
+            TableFilterIndicators::make(),
+            TableContent::make(),
+            TableEmptyState::make(),
+            TablePagination::make(),
+        ]));
+}
+```
+
+Each part renders exactly what the default table renders for that feature, including its borders and spacing, and hides itself when the feature is not configured. For example, `TableSearch` renders nothing when no column is `searchable()`, and `TablePagination` renders nothing when the table is not `paginated()`.
+
+<Aside variant="info">
+    Parts may only be used inside `layout()`. They read their configuration from the table of the Livewire component that renders them, so placing one in another schema throws an exception.
+</Aside>
+
+### Removing the card around the table
+
+The default table is wrapped in a card with a border and a background. When the parts are arranged inside your own containers, you may remove that card with `contained(false)`. This example moves the filters form into a section next to the records:
+
+```php
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Components\TableColumnManager;
+use Filament\Tables\Components\TableContent;
+use Filament\Tables\Components\TableEmptyState;
+use Filament\Tables\Components\TableFilterIndicators;
+use Filament\Tables\Components\TableFilters;
+use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TablePagination;
+use Filament\Tables\Components\TableSearch;
+use Filament\Tables\Components\TableSelectionIndicator;
+use Filament\Tables\Components\TableToolbar;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->contained(false)
+        ->filtersLayout(FiltersLayout::Hidden)
+        ->layout(fn (Schema $schema): Schema => $schema->components([
+            Grid::make(['lg' => 3])
+                ->schema([
+                    TableGroup::make([
+                        TableToolbar::make([
+                            TableSearch::make(),
+                            TableColumnManager::make(),
+                        ]),
+                        TableSelectionIndicator::make(),
+                        TableFilterIndicators::make(),
+                        TableContent::make(),
+                        TableEmptyState::make(),
+                        TablePagination::make(),
+                    ])
+                        ->extraAttributes(['class' => 'fi-ta-ctn'])
+                        ->columnSpan(['lg' => 2]),
+                    Section::make('Filters')
+                        ->schema([
+                            TableFilters::make(),
+                        ]),
+                ]),
+        ]));
+}
+```
+
+`TableGroup` is a plain `<div>` without any styling of its own. Here it receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. `FiltersLayout::Hidden` keeps the filters trigger button out of the toolbar, since the form is always visible.
+
+### Available parts
+
+All parts live in the `Filament\Tables\Components` namespace:
+
+- `TableHeader` - the heading, description and header actions.
+- `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own.
+- `TableReorderTrigger` - the button that starts and stops reordering records.
+- `TableToolbarActions` - the toolbar and bulk actions.
+- `TableGroupingSettings` - the group and direction selects.
+- `TableSortingSettings` - the column and direction selects, used by tables with a `contentGrid()` or a custom column layout, since row tables sort through their header cells.
+- `TableSearch` - the global search field.
+- `TableFiltersTrigger` - the filters button, including the dropdown or modal for those layouts.
+- `TableColumnManager` - the column manager button and its dropdown or modal.
+- `TableFilters` - the filters form. Use `collapsible()` to render a trigger that toggles the form.
+- `TableSelectionIndicator` - the "records selected" bar with the select all and deselect all links, and the indicator shown while reordering.
+- `TableFilterIndicators` - the active filter badges and the "remove all" action.
+- `TableContent` - the records, including the summaries and the loading state.
+- `TableEmptyState` - the empty state.
+- `TablePagination` - the pagination links and the per page select.
+- `TableGroup` - a plain `<div>` container for parts, with optional `extraAttributes()`.
+
+### Rules for custom layouts
+
+Filament throws a `LogicException` with instructions when a layout breaks one of these rules:
+
+- The layout must contain a `TableContent` part, otherwise no records would be rendered.
+- Each part may appear only once. The only exception is `TableFilters`, since the default layout places it in every position and renders the one matching the `filtersLayout()`.
+- Parts must be rendered by a Livewire component that has a table. Placing a part in a form or infolist schema is not supported.
+
+You may also call `$table->getDefaultLayout()` to get the default arrangement as a schema, which is useful when you want to make a small change to it.
