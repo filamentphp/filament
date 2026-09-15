@@ -11,7 +11,13 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Grammars\Grammar;
+use Illuminate\Database\Query\Processors\Processor;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -83,6 +89,78 @@ describe('sortable', function (): void {
             ->sortable();
 
         expect($column->isSortable())->toBeTrue();
+    });
+
+    it('uses `orderByRelationAggregate()` provided by an unsupported Eloquent query builder', function (): void {
+        $modifyRelationQueryUsing = static fn (EloquentBuilder $query): EloquentBuilder => $query->where('is_approved', true);
+        $configurations = [
+            [TextColumn::make('comments_avg_rating')->avg('comments', 'rating'), ['comments', 'rating', 'avg', 'desc', null]],
+            [TextColumn::make('comments_count')->counts('comments'), ['comments', '*', 'count', 'desc', null]],
+            [TextColumn::make('comments_exists')->exists('comments'), ['comments', '*', 'exists', 'desc', null]],
+            [TextColumn::make('comments_max_rating')->max('comments', 'rating'), ['comments', 'rating', 'max', 'desc', null]],
+            [TextColumn::make('comments_min_rating')->min('comments', 'rating'), ['comments', 'rating', 'min', 'desc', null]],
+            [TextColumn::make('comments_sum_rating')->sum('comments', 'rating'), ['comments', 'rating', 'sum', 'desc', null]],
+            [TextColumn::make('approved_comments_count')->counts(['comments as approved_comments_count' => $modifyRelationQueryUsing]), ['comments', '*', 'count', 'desc', $modifyRelationQueryUsing]],
+            [TextColumn::make('comments_count')->counts(['comments', 'tags']), ['comments', '*', 'count', 'desc', null]],
+            [TextColumn::make('approved_comments_count')->counts(['comments as approved_comments_count', 'tags']), ['comments', '*', 'count', 'desc', null]],
+            [TextColumn::make('comments_count')->counts(['comments' => $modifyRelationQueryUsing, 'tags']), ['comments', '*', 'count', 'desc', $modifyRelationQueryUsing]],
+            [TextColumn::make('comments_count')->avg('comments', 'rating')->counts('comments'), ['comments', '*', 'count', 'desc', null]],
+        ];
+
+        foreach ($configurations as [$column, $expectedRelationshipAggregateOrder]) {
+            $databaseConnection = Mockery::mock(Connection::class);
+            $databaseConnection->shouldReceive('getDriverName')->andReturn('mongodb');
+
+            $query = new class(new QueryBuilder($databaseConnection, new Grammar($databaseConnection), new Processor)) extends EloquentBuilder
+            {
+                /** @var array{relation: string, aggregateColumn: string | Expression, function: string, direction: string, modifyQueryUsing: Closure | null} | null */
+                public ?array $relationshipAggregateOrder = null;
+
+                public function orderByRelationAggregate(string $relation, string | Expression $aggregateColumn, string $function, string $direction, ?Closure $modifyQueryUsing = null): static
+                {
+                    $this->relationshipAggregateOrder = [
+                        'relation' => $relation,
+                        'aggregateColumn' => $aggregateColumn,
+                        'function' => $function,
+                        'direction' => $direction,
+                        'modifyQueryUsing' => $modifyQueryUsing,
+                    ];
+
+                    return $this;
+                }
+            };
+            $query->setModel(new Post);
+
+            expect($column->sortable()->applySort($query, 'desc'))
+                ->toBe($query)
+                ->and(array_values($query->relationshipAggregateOrder))
+                ->toBe($expectedRelationshipAggregateOrder);
+        }
+    });
+
+    it('does not use `orderByRelationAggregate()` for a supported database driver', function (): void {
+        $query = new class(Post::query()->toBase()) extends EloquentBuilder
+        {
+            public bool $usedRelationshipAggregateOrder = false;
+
+            public function orderByRelationAggregate(string $relation, string | Expression $aggregateColumn, string $function, string $direction, ?Closure $modifyQueryUsing = null): static
+            {
+                $this->usedRelationshipAggregateOrder = true;
+
+                return $this;
+            }
+        };
+        $query->setModel(new Post);
+
+        expect(TextColumn::make('comments_count')->counts('comments')->sortable()->applySort($query, 'desc'))
+            ->toBe($query)
+            ->and($query->usedRelationshipAggregateOrder)
+            ->toBeFalse()
+            ->and($query->getQuery()->orders[0])
+            ->toMatchArray([
+                'column' => 'comments_count',
+                'direction' => 'desc',
+            ]);
     });
 });
 
