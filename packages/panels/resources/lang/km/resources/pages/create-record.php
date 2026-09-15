@@ -11,7 +11,7 @@ return [
         'actions' => [
 
             'cancel' => [
-                'label' => 'ចាកចេញ',
+                'label' => 'បោះបង់',
             ],
 
             'create' => [
@@ -19,7 +19,7 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'បង្កើត & បង្កើតឡើងវិញ',
+                'label' => 'បង្កើត & បង្កើតមួយទៀត',
             ],
 
         ],
@@ -29,7 +29,7 @@ return [
     'notifications' => [
 
         'created' => [
-            'title' => 'បានបង្កើត :label បានជោគជ័យ',
+            'title' => 'បានបង្កើត',
         ],
 
     ],

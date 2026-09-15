@@ -48,7 +48,7 @@ return [
 
         'throttled' => [
             'title' => 'Příliš mnoho požadavků',
-            'body' => 'Zkuste to prosím znovu za :seconds sekund.',
+            'body' => 'Zkuste to prosím znovu za :seconds s.',
         ],
 
     ],

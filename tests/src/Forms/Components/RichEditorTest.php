@@ -1506,13 +1506,15 @@ it('can render `RichEditor` in the browser', function (): void {
                     const content = document.querySelector('[data-testid="height-constrained-rich-editor"] .fi-fo-rich-editor-content')
                     const editor = content.querySelector('.tiptap')
                     const initialStyle = getComputedStyle(content)
+                    const expectedEditorHeight = content.clientHeight - parseFloat(initialStyle.paddingTop) - parseFloat(initialStyle.paddingBottom)
 
                     if (
                         getComputedStyle(defaultContent).minHeight !== '160px' ||
                         initialStyle.minHeight !== '192px' ||
                         initialStyle.maxHeight !== '224px' ||
                         initialStyle.overflowY !== 'auto' ||
-                        content.clientHeight !== 192
+                        content.clientHeight !== 192 ||
+                        Math.abs(editor.getBoundingClientRect().height - expectedEditorHeight) > 0.5
                     ) {
                         return false
                     }
