@@ -296,8 +296,8 @@
     }
 }
 
-/* Not scoped to `.fi-ta-ctn`, since a custom layout may place the filters form outside the table's frame. */
-.fi-ta-filters {
+/* Scoped to the table wrapper instead of its frame, since a custom layout may place the filters form outside the frame; the specificity stays the same. */
+.fi-ta .fi-ta-filters {
     @apply grid gap-y-4;
 
     &.fi-ta-filters-below-content {
