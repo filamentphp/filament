@@ -157,6 +157,20 @@ trait HasLayout
     }
 
     /**
+     * @param  class-string<TablePart>  $partClass
+     */
+    public function hasLayoutPart(string $partClass): bool
+    {
+        foreach ($this->getLayoutParts($this->getLayout()) as $part) {
+            if ($part instanceof $partClass) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return array<TablePart>
      */
     protected function getLayoutParts(Schema $schema): array

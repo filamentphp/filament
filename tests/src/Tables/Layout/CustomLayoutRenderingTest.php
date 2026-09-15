@@ -18,6 +18,7 @@ it('renders a custom layout inside the table wrapper and frame', function (): vo
     expect($html)
         ->toContain('x-data="filamentTable(')
         ->toContain('class="fi-ta-ctn')
+        ->toContain('<div class="fi-ta-main">')
         ->toContain('<p>stub content</p>')
         ->not->toContain('fi-sc');
 });
@@ -30,7 +31,8 @@ it('renders a custom layout without the frame when `contained(false)`', function
     expect($html)
         ->toContain('x-data="filamentTable(')
         ->toContain('<p>stub content</p>')
-        ->not->toContain('fi-ta-ctn');
+        ->not->toContain('fi-ta-ctn')
+        ->not->toContain('fi-ta-main');
 });
 
 it('throws when a custom layout has no `TableContent` part', function (): void {

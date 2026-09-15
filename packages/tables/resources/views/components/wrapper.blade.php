@@ -42,7 +42,14 @@
                 'fi-ta-ctn-with-header' => $table->hasHeader(),
             ])
         >
-            {{ $slot }}
+            {{-- The frame is a flex row that places sidebar filters next to the records, so a custom layout gets the `fi-ta-main` column the default layout brings along itself. --}}
+            <?php if ($table->hasCustomLayout()) { ?>
+                <div class="fi-ta-main">
+                    {{ $slot }}
+                </div>
+            <?php } else { ?>
+                {{ $slot }}
+            <?php } ?>
         </div>
     <?php } else { ?>
         {{ $slot }}

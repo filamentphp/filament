@@ -13,6 +13,7 @@
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
+    use Filament\Tables\Components\TableSortingSettings;
     use Filament\Tables\Enums\ColumnManagerLayout;
     use Filament\Tables\Enums\ColumnManagerResetActionPosition;
     use Filament\Tables\Enums\FiltersLayout;
@@ -145,6 +146,9 @@
     }
 
     $loadingTargetsWireTarget = implode(',', Table::LOADING_TARGETS);
+
+    // A layout that places `TableSortingSettings` elsewhere must not repeat the sort selects in the content header.
+    $hasSortingSettingsInContentHeader = ! $table->hasLayoutPart(TableSortingSettings::class);
 @endphp
 
 @if (((! $content) && (! $hasColumnsLayout)) || ($records === null) || count($records))
@@ -178,10 +182,10 @@
         @if ($hasContentLayout && ($records !== null) && count($records))
             @if (! $isReordering)
                 @php
-                    $sortableColumns = array_filter(
+                    $sortableColumns = $hasSortingSettingsInContentHeader ? array_filter(
                         $columns,
                         fn (Column $column): bool => $column->isSortable(),
-                    );
+                    ) : [];
                 @endphp
 
                 @if (($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupsOnly)) || count($sortableColumns))
@@ -224,7 +228,9 @@
                             />
                         @endif
 
-                        @include('filament-tables::components.parts.sorting-settings', ['table' => $table, 'part' => null])
+                        <?php if ($hasSortingSettingsInContentHeader) { ?>
+                            @include('filament-tables::components.parts.sorting-settings', ['table' => $table, 'part' => null])
+                        <?php } ?>
                     </div>
                 @endif
             @endif

@@ -547,7 +547,7 @@ public function table(Table $table): Table
 }
 ```
 
-Each part renders exactly what the default table renders for that feature, including its borders and spacing, and hides itself when the feature is not configured. For example, `TableSearch` renders nothing when no column is `searchable()`, and `TablePagination` renders nothing when the table is not `paginated()`.
+Inside the card, the parts of a custom layout are stacked in a single column in the order you list them. Each part renders exactly what the default table renders for that feature, including its borders and spacing, and hides itself when the feature is not configured. For example, `TableSearch` renders nothing when no column is `searchable()`, and `TablePagination` renders nothing when the table is not `paginated()`.
 
 <Aside variant="info">
     Parts may only be used inside `layout()`. They read their configuration from the table of the Livewire component that renders them, so placing one in another schema throws an exception.
@@ -583,15 +583,17 @@ public function table(Table $table): Table
             Grid::make(['lg' => 3])
                 ->schema([
                     TableGroup::make([
-                        TableToolbar::make([
-                            TableSearch::make(),
-                            TableColumnManager::make(),
-                        ]),
-                        TableSelectionIndicator::make(),
-                        TableFilterIndicators::make(),
-                        TableContent::make(),
-                        TableEmptyState::make(),
-                        TablePagination::make(),
+                        TableGroup::make([
+                            TableToolbar::make([
+                                TableSearch::make(),
+                                TableColumnManager::make(),
+                            ]),
+                            TableSelectionIndicator::make(),
+                            TableFilterIndicators::make(),
+                            TableContent::make(),
+                            TableEmptyState::make(),
+                            TablePagination::make(),
+                        ])->extraAttributes(['class' => 'fi-ta-main']),
                     ])
                         ->extraAttributes(['class' => 'fi-ta-ctn'])
                         ->columnSpan(['lg' => 2]),
@@ -604,7 +606,7 @@ public function table(Table $table): Table
 }
 ```
 
-`TableGroup` is a plain `<div>` without any styling of its own. Here it receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. `FiltersLayout::Hidden` keeps the filters trigger button out of the toolbar, since the form is always visible.
+`TableGroup` is a plain `<div>` without any styling of its own. Here the outer group receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. Since `fi-ta-ctn` is a flex row that places sidebar filters next to the records, the parts sit in an inner `fi-ta-main` group, like they do in the default table. `FiltersLayout::Hidden` keeps the filters trigger button out of the toolbar, since the form is always visible.
 
 ### Available parts
 
