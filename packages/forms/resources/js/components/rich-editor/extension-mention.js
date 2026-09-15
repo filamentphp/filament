@@ -385,6 +385,7 @@ export default Node.create({
 
                             if (
                                 query &&
+                                isSearchable &&
                                 typeof getMentionSearchResultsUsing ===
                                     'function'
                             ) {
