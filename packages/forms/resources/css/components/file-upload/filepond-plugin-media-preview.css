@@ -2,6 +2,7 @@
  * Source: https://github.com/nielsboogaard/filepond-plugin-media-preview (MIT)
  * Changes:
  * - Vendored compiled CSS from dist — upstream source is SCSS.
+ * - Restored the default cursor over audio controls when file reordering is enabled.
  */
 .filepond--media-preview audio {
     display: none;
@@ -10,6 +11,7 @@
 .filepond--media-preview .audioplayer {
     width: calc(100% - 1.4em);
     margin: 2.3em auto auto;
+    cursor: auto;
 }
 
 .filepond--media-preview .playpausebtn {

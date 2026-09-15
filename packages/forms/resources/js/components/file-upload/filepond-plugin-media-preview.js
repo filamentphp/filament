@@ -3,6 +3,7 @@
  * Changes:
  * - Merged all source modules into a single file.
  * - Fixed upstream PR #33 `mediaPreviewHeight` implementation.
+ * - Prevented audio controls from initiating file reordering.
  */
 
 const isPreviewableVideo = (file) => /^video/.test(file.type)
@@ -42,6 +43,11 @@ class AudioPlayer {
         this.audioElements.button.addEventListener(
             'click',
             this.play.bind(this),
+        )
+        this.audioElements.container.addEventListener(
+            'pointerdown',
+            (event) => event.stopPropagation(),
+            false,
         )
         this.audioElements.playhead.addEventListener(
             'mousedown',
