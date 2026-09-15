@@ -336,6 +336,21 @@ trait HasFilters
         return (bool) count($this->getFilters());
     }
 
+    public function hasFiltersDialog(): bool
+    {
+        return $this->isFilterable() && in_array($this->getFiltersLayout(), [FiltersLayout::Dropdown, FiltersLayout::Modal]);
+    }
+
+    public function hasFiltersTrigger(): bool
+    {
+        return $this->isFilterable() && ($this->hasFiltersDialog() || in_array($this->getFiltersLayout(), [
+            FiltersLayout::BeforeContent,
+            FiltersLayout::BeforeContentCollapsible,
+            FiltersLayout::AfterContent,
+            FiltersLayout::AfterContentCollapsible,
+        ]));
+    }
+
     public function persistsFiltersInSession(): bool
     {
         return (bool) $this->evaluate($this->persistsFiltersInSession);

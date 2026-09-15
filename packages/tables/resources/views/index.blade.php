@@ -43,7 +43,6 @@
         $recordActionsAlignment = filled($recordActionsAlignment) ? (Alignment::tryFrom($recordActionsAlignment) ?? $recordActionsAlignment) : null;
     }
 
-    $activeFiltersCount = $getActiveFiltersCount();
     $isSelectionDisabled = $isSelectionDisabled();
     $maxSelectableRecords = $getMaxSelectableRecords();
     $columns = $getVisibleColumns();
@@ -52,10 +51,6 @@
     $content = $getContent();
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
-    $filtersApplyAction = $getFiltersApplyAction();
-    $filtersForm = $getFiltersForm();
-    $filtersFormWidth = $getFiltersFormWidth();
-    $filtersResetActionPosition = $getFiltersResetActionPosition();
     $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
@@ -112,15 +107,7 @@
     $isStriped = $isStriped();
     $isStackedOnMobile = $isStackedOnMobile();
     $isLoaded = $isLoaded();
-    $hasFilters = $isFilterable();
-    $filtersLayout = $getFiltersLayout();
-    $filtersTriggerAction = $getFiltersTriggerAction();
-    $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
-    $hasFiltersBeforeContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible]);
-    $hasFiltersAfterContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AfterContent, FiltersLayout::AfterContentCollapsible]);
-    $hasCollapsibleFilters = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContentCollapsible, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]);
-    $hasFiltersTrigger = $hasFilters && ($hasFiltersDialog || $hasFiltersBeforeContent || $hasFiltersAfterContent);
-    $filtersFormMaxHeight = $getFiltersFormMaxHeight();
+    $hasFiltersTrigger = $hasFiltersTrigger();
     $hasColumnManager = $hasColumnManager();
     $columnManagerLayout = $getColumnManagerLayout();
     $hasReorderableColumns = $hasReorderableColumns();
@@ -198,10 +185,6 @@
 
     if ($group) {
         $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
-    }
-
-    if (is_string($filtersFormWidth)) {
-        $filtersFormWidth = Width::tryFrom($filtersFormWidth) ?? $filtersFormWidth;
     }
 
     $loadingTargetsWireTarget = implode(',', Table::LOADING_TARGETS);
@@ -415,94 +398,7 @@
                             @include('filament-tables::components.parts.search', ['table' => $table, 'part' => null])
 
                             @if ($hasFiltersTrigger || $hasColumnManager)
-                                @if ($hasFiltersDialog)
-                                    @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
-                                        @php
-                                            $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
-                                            $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
-                                            $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
-                                            $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
-                                            $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
-                                            $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
-                                            $filtersTriggerActionExtraModalWindowAttributeBag = $filtersTriggerAction->getExtraModalWindowAttributeBag();
-                                            $filtersTriggerActionExtraModalOverlayAttributeBag = $filtersTriggerAction->getExtraModalOverlayAttributeBag();
-                                            $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
-                                            $filtersTriggerActionModalFooterActionsAlignment = $filtersTriggerAction->getModalFooterActionsAlignment();
-                                            $filtersTriggerActionModalHeading = $filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading');
-                                            $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
-                                            $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
-                                            $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
-                                            $filtersTriggerActionModalSlideOverPosition = $filtersTriggerAction->getModalSlideOverPosition();
-                                            $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
-                                            $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
-                                        @endphp
-
-                                        <x-filament::modal
-                                            :alignment="$filtersTriggerActionModalAlignment"
-                                            :autofocus="$filtersTriggerActionIsModalAutofocused"
-                                            :close-button="$filtersTriggerActionHasModalCloseButton"
-                                            :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
-                                            :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
-                                            :description="$filtersTriggerActionModalDescription"
-                                            :extra-modal-window-attribute-bag="$filtersTriggerActionExtraModalWindowAttributeBag"
-                                            :extra-modal-overlay-attribute-bag="$filtersTriggerActionExtraModalOverlayAttributeBag"
-                                            :footer-actions="$filtersTriggerActionVisibleModalFooterActions"
-                                            :footer-actions-alignment="$filtersTriggerActionModalFooterActionsAlignment"
-                                            :heading="$filtersTriggerActionModalHeading"
-                                            :icon="$filtersTriggerActionModalIcon"
-                                            :icon-color="$filtersTriggerActionModalIconColor"
-                                            :slide-over="$filtersTriggerActionIsModalSlideOver"
-                                            :slide-over-position="$filtersTriggerActionModalSlideOverPosition"
-                                            :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
-                                            :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
-                                            :width="$filtersFormWidth"
-                                            :wire:key="$this->getId() . '.table.filters'"
-                                            class="fi-ta-filters-modal"
-                                        >
-                                            <x-slot name="trigger">
-                                                {{ $filtersTriggerAction->badge($activeFiltersCount) }}
-                                            </x-slot>
-
-                                            {{ $filtersTriggerAction->getModalContent() }}
-
-                                            {{ $filtersForm }}
-
-                                            {{ $filtersTriggerAction->getModalContentFooter() }}
-                                        </x-filament::modal>
-                                    @else
-                                        <x-filament::dropdown
-                                            :max-height="$filtersFormMaxHeight"
-                                            placement="bottom-end"
-                                            shift
-                                            :flip="false"
-                                            :width="$filtersFormWidth ?? Width::ExtraSmall"
-                                            :wire:key="$this->getId() . '.table.filters'"
-                                            class="fi-ta-filters-dropdown"
-                                        >
-                                            <x-slot name="trigger">
-                                                {{ $filtersTriggerAction->badge($activeFiltersCount) }}
-                                            </x-slot>
-
-                                            <x-filament-tables::filters
-                                                :apply-action="$filtersApplyAction"
-                                                :form="$filtersForm"
-                                                :heading-tag="$secondLevelHeadingTag"
-                                                :reset-action-position="$filtersResetActionPosition"
-                                            />
-                                        </x-filament::dropdown>
-                                    @endif
-                                @elseif ($hasFiltersBeforeContent || $hasFiltersAfterContent)
-                                    <span
-                                        x-ref="filtersTriggerActionContainer"
-                                        x-on:click="toggleFiltersDropdown"
-                                        @class([
-                                            'fi-ta-filters-trigger-action-ctn',
-                                            'lg:fi-hidden' => ! $hasCollapsibleFilters,
-                                        ])
-                                    >
-                                        {{ $filtersTriggerAction->badge($activeFiltersCount) }}
-                                    </span>
-                                @endif
+                                @include('filament-tables::components.parts.filters-trigger', ['table' => $table, 'part' => null])
 
                                 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE, scopes: static::class) }}
 
