@@ -113,30 +113,6 @@
         }
     }
 
-    & .fi-ta-filters {
-        @apply grid gap-y-4;
-
-        &.fi-ta-filters-below-content {
-            @apply border-t border-gray-200 p-4 sm:px-6 dark:border-white/10;
-        }
-
-        & .fi-ta-filters-header {
-            @apply flex items-center justify-between;
-
-            & .fi-ta-filters-heading {
-                @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
-            }
-
-            & .fi-loading-indicator {
-                @apply text-gray-400 dark:text-gray-500;
-            }
-        }
-
-        & .fi-ta-filters-actions-ctn {
-            @apply flex gap-3;
-        }
-    }
-
     & .fi-ta-filters-above-content-ctn {
         @apply grid border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10;
 
@@ -312,5 +288,30 @@
 
     & .fi-ta-filters-after-content-ctn {
         @apply end-0 lg:rounded-s-none lg:rounded-e-xl lg:border-s;
+    }
+}
+
+/* Not scoped to `.fi-ta-ctn`, since a custom layout may place the filters form outside the table's frame. */
+.fi-ta-filters {
+    @apply grid gap-y-4;
+
+    &.fi-ta-filters-below-content {
+        @apply border-t border-gray-200 p-4 sm:px-6 dark:border-white/10;
+    }
+
+    & .fi-ta-filters-header {
+        @apply flex items-center justify-between;
+
+        & .fi-ta-filters-heading {
+            @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
+        }
+
+        & .fi-loading-indicator {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-ta-filters-actions-ctn {
+        @apply flex gap-3;
     }
 }
