@@ -420,6 +420,30 @@ Alternatively, you may disable polling altogether:
 protected ?string $pollingInterval = null;
 ```
 
+### Globally changing the polling interval of all chart widgets
+
+If you wish to change the polling behavior of all chart widgets globally, then you can call the static `ChartWidget::configureUsing()` method inside a service provider's `boot()` method or a middleware. Pass a closure which is able to modify the widget, using the `poll()` method:
+
+```php
+use Filament\Widgets\ChartWidget;
+
+ChartWidget::configureUsing(function (ChartWidget $widget): void {
+    $widget->poll('30s');
+});
+```
+
+To disable polling for all chart widgets, pass `null` to `poll()`:
+
+```php
+use Filament\Widgets\ChartWidget;
+
+ChartWidget::configureUsing(function (ChartWidget $widget): void {
+    $widget->poll(null);
+});
+```
+
+Of course, you are still able to overwrite this behavior on each widget individually, either by overriding the `$pollingInterval` property or by calling `poll()` in the widget's `setUp()` method.
+
 ## Setting a maximum chart height
 
 You may place a maximum height on the chart to ensure that it doesn't get too big, using the `$maxHeight` property:

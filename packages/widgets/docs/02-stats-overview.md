@@ -222,6 +222,30 @@ Alternatively, you may disable polling altogether:
 protected ?string $pollingInterval = null;
 ```
 
+### Globally changing the polling interval of all stats overview widgets
+
+If you wish to change the polling behavior of all stats overview widgets globally, then you can call the static `StatsOverviewWidget::configureUsing()` method inside a service provider's `boot()` method or a middleware. Pass a closure which is able to modify the widget, using the `poll()` method:
+
+```php
+use Filament\Widgets\StatsOverviewWidget;
+
+StatsOverviewWidget::configureUsing(function (StatsOverviewWidget $widget): void {
+    $widget->poll('30s');
+});
+```
+
+To disable polling for all stats overview widgets, pass `null` to `poll()`:
+
+```php
+use Filament\Widgets\StatsOverviewWidget;
+
+StatsOverviewWidget::configureUsing(function (StatsOverviewWidget $widget): void {
+    $widget->poll(null);
+});
+```
+
+Of course, you are still able to overwrite this behavior on each widget individually, either by overriding the `$pollingInterval` property or by calling `poll()` in the widget's `setUp()` method.
+
 ## Disabling lazy loading
 
 By default, widgets are lazy-loaded. This means that they will only be loaded when they are visible on the page.
