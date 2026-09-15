@@ -160,6 +160,11 @@ trait CanGroupRecords
         return (bool) $this->evaluate($this->areGroupingSettingsHidden);
     }
 
+    public function areGroupingSettingsVisible(): bool
+    {
+        return (! $this->isReordering()) && count($this->getGroups()) && (! $this->areGroupingSettingsHidden());
+    }
+
     public function isGroupingDirectionSettingHidden(): bool
     {
         return (bool) $this->evaluate($this->isGroupingDirectionSettingHidden);

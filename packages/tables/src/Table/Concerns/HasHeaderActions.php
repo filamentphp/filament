@@ -101,4 +101,15 @@ trait HasHeaderActions
     {
         return $this->headerActions;
     }
+
+    /**
+     * @return array<string, Action | BulkAction | ActionGroup>
+     */
+    public function getVisibleHeaderActions(): array
+    {
+        return array_filter(
+            $this->getHeaderActions(),
+            fn (Action | ActionGroup $action): bool => $action->isVisible(),
+        );
+    }
 }

@@ -4,6 +4,9 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Enums\PaginationMode;
+use Illuminate\Contracts\Pagination\CursorPaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Arr;
 
 trait CanPaginateRecords
@@ -147,5 +150,16 @@ trait CanPaginateRecords
     public function hasExtremePaginationLinks(): bool
     {
         return (bool) $this->evaluate($this->hasExtremePaginationLinks);
+    }
+
+    public function hasPagination(): bool
+    {
+        $records = $this->isLoaded() ? $this->getRecords() : null;
+
+        if (! (($records instanceof Paginator) || ($records instanceof CursorPaginator))) {
+            return false;
+        }
+
+        return (bool) (($records instanceof LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
     }
 }

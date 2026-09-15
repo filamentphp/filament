@@ -124,4 +124,11 @@ trait HasEmptyState
             ?? FilamentIcon::resolve(TablesIconAlias::EMPTY_STATE)
             ?? Heroicon::OutlinedXMark;
     }
+
+    public function hasEmptyState(): bool
+    {
+        $records = $this->isLoaded() ? $this->getRecords() : null;
+
+        return ($records !== null) && (! count($records));
+    }
 }

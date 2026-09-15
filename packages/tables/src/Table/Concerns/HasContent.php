@@ -58,4 +58,9 @@ trait HasContent
     {
         return $this->evaluate($this->contentFooter);
     }
+
+    public function hasContentLayout(): bool
+    {
+        return ($this->getContent() !== null) || $this->hasColumnsLayout();
+    }
 }

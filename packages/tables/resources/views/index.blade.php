@@ -220,39 +220,7 @@
     $loadingTargetsWireTarget = implode(',', Table::LOADING_TARGETS);
 @endphp
 
-<div
-    @if (! $isLoaded)
-        wire:init="loadTable"
-    @endif
-    x-data="filamentTable({
-                areGroupsCollapsedByDefault: @js($areGroupsCollapsedByDefault),
-                canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
-                currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
-                maxSelectableRecords: @js($maxSelectableRecords),
-                selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
-                $wire,
-            })"
-    {{
-        $getExtraAttributeBag()->class([
-            'fi-ta',
-            'fi-loading' => $records === null,
-        ])
-    }}
->
-    <input
-        type="hidden"
-        value="{{ $allSelectableRecordsCount }}"
-        x-ref="allSelectableRecordsCount"
-    />
-
-    <div
-        @class([
-            'fi-ta-ctn',
-            'fi-ta-ctn-with-content-layout' => $hasContentLayout,
-            'fi-ta-ctn-with-footer' => $hasPagination || $hasEmptyState || $hasFiltersBelowContent,
-            'fi-ta-ctn-with-header' => $hasHeader,
-        ])
-    >
+<x-filament-tables::wrapper :table="$table">
         @if ($hasFiltersBeforeContent)
             <div
                 wire:ignore.self
@@ -2617,7 +2585,4 @@
                 />
             </div>
         @endif
-    </div>
-
-    <x-filament-actions::modals />
-</div>
+</x-filament-tables::wrapper>

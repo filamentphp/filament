@@ -49,4 +49,18 @@ trait HasHeader
     {
         return $this->evaluate($this->description);
     }
+
+    public function hasHeader(): bool
+    {
+        return filled($this->getHeader())
+            || filled($this->getHeading())
+            || filled($this->getDescription())
+            || ($this->getVisibleHeaderActions() && (! $this->isReordering()))
+            || $this->isReorderable()
+            || $this->areGroupingSettingsVisible()
+            || $this->isSearchable()
+            || $this->isFilterable()
+            || count($this->getFilterIndicators())
+            || $this->hasColumnManager();
+    }
 }

@@ -8,6 +8,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tables\Components\TableContent;
 use Filament\Tables\Components\TablePart;
+use Filament\Tables\Enums\FiltersLayout;
 use Livewire\Component as LivewireComponent;
 use LogicException;
 
@@ -17,9 +18,12 @@ trait HasLayout
 
     protected bool | Closure $isContained = true;
 
+    protected ?Schema $cachedLayout = null;
+
     public function layout(Schema | Closure | null $layout): static
     {
         $this->layout = $layout;
+        $this->cachedLayout = null;
 
         return $this;
     }
@@ -47,9 +51,21 @@ trait HasLayout
             return $this->getDefaultLayout();
         }
 
+        return $this->cachedLayout ??= $this->makeCustomLayout();
+    }
+
+    protected function makeCustomLayout(): Schema
+    {
         $schema = Schema::make($this->getLivewireWithSchemas());
 
         return $this->evaluate($this->layout, ['schema' => $schema], [Schema::class => $schema]) ?? $schema;
+    }
+
+    public function hasFooter(): bool
+    {
+        return $this->hasPagination()
+            || $this->hasEmptyState()
+            || ($this->isFilterable() && ($this->getFiltersLayout() === FiltersLayout::BelowContent));
     }
 
     public function getDefaultLayout(): Schema
@@ -80,14 +96,14 @@ trait HasLayout
 
     public function assertLayoutIsComplete(Schema $layout): void
     {
-        $partClasses = $this->getLayoutPartClasses($layout);
+        $parts = $this->getLayoutParts($layout);
 
-        if (! in_array(TableContent::class, $partClasses, strict: true)) {
+        if (! array_filter($parts, fn (TablePart $part): bool => $part instanceof TableContent)) {
             throw new LogicException('The table layout does not contain a [' . TableContent::class . '] part, so no records would be rendered. Add `TableContent::make()` to the schema passed to `$table->layout()`.');
         }
 
         $duplicatePartClasses = array_keys(array_filter(
-            array_count_values($partClasses),
+            array_count_values(array_map(fn (TablePart $part): string => $part::class, $parts)),
             fn (int $count): bool => $count > 1,
         ));
 
@@ -97,11 +113,11 @@ trait HasLayout
     }
 
     /**
-     * @return array<class-string<TablePart>>
+     * @return array<TablePart>
      */
-    protected function getLayoutPartClasses(Schema $schema): array
+    protected function getLayoutParts(Schema $schema): array
     {
-        $partClasses = [];
+        $parts = [];
 
         foreach ($schema->getComponents(withHidden: true) as $component) {
             if (! ($component instanceof Component)) {
@@ -109,15 +125,15 @@ trait HasLayout
             }
 
             if ($component instanceof TablePart) {
-                $partClasses[] = $component::class;
+                $parts[] = $component;
             }
 
             foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
-                $partClasses = [...$partClasses, ...$this->getLayoutPartClasses($childSchema)];
+                $parts = [...$parts, ...$this->getLayoutParts($childSchema)];
             }
         }
 
-        return $partClasses;
+        return $parts;
     }
 
     protected function getLivewireWithSchemas(): LivewireComponent & HasSchemas

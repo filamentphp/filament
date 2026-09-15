@@ -6,6 +6,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasDefaultDataFormattingSettings;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Contracts\View\View;
 
 class Table extends ViewComponent
 {
@@ -95,6 +96,17 @@ class Table extends ViewComponent
                 'model' => $table->getModelLabel(),
             ]);
         });
+    }
+
+    public function render(): View
+    {
+        if (! $this->hasCustomLayout()) {
+            return parent::render();
+        }
+
+        $this->assertLayoutIsComplete($this->getLayout());
+
+        return $this->renderView('filament-tables::layout');
     }
 
     /**

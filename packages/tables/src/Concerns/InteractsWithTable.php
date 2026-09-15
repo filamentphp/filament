@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -47,6 +48,7 @@ trait InteractsWithTable
         $this->table = $this->table($this->makeTable());
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
+        $this->cacheSchema('tableLayout', fn (): ?Schema => $this->getTable()->hasCustomLayout() ? $this->getTable()->getLayout() : null);
 
         if (empty($this->cacheMountedActions($this->mountedActions))) {
             $this->mountedActions = [];
