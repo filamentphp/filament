@@ -4,8 +4,8 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Tables\Components\TableContent;
-use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TablePart;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
@@ -62,7 +62,7 @@ it('returns a complete default layout from `getDefaultLayout()`', function (): v
     $table->assertLayoutIsComplete($layout);
 
     expect($layout->getComponents())->toHaveCount(3)
-        ->and($layout->getComponents()[1])->toBeInstanceOf(TableGroup::class);
+        ->and($layout->getComponents()[1])->toBeInstanceOf(TableStack::class);
 });
 
 it('can set `layout()` with a `Closure`', function (): void {
@@ -140,11 +140,11 @@ it('renders the layout parts with `renderLayout()` and no wrapper element', func
     expect($table->renderLayout($layout))->toBe('<p>first</p><p>second</p>');
 });
 
-it('renders `TableGroup` as a bare `div` with its attributes', function (): void {
+it('renders `TableStack` as a bare `div` with its attributes', function (): void {
     $table = makeTableForLayout();
 
     $layout = Schema::make($table->getLivewire())->components([
-        TableGroup::make([
+        TableStack::make([
             FirstStubTablePart::make(),
             SecondStubTablePart::make(),
         ])->extraAttributes([

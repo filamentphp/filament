@@ -4,9 +4,9 @@ use Filament\Actions\BulkAction;
 use Filament\Schemas\Components\Flex;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Components\TableColumnManager;
-use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TableHeader;
 use Filament\Tables\Components\TableSearch;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Table;
@@ -75,7 +75,7 @@ it('renders a nested layout component as a toolbar group of its own', function (
 it('renders no actions group when the toolbar holds layout components only', function (): void {
     $html = livewireTableWithParts([
         TableToolbar::make([
-            TableGroup::make([TableSearch::make()]),
+            TableStack::make([TableSearch::make()]),
         ]),
     ])->html();
 

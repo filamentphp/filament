@@ -521,7 +521,7 @@ use Filament\Tables\Components\TableContent;
 use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFiltersTrigger;
-use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
@@ -537,7 +537,7 @@ public function table(Table $table): Table
             TableToolbar::make([
                 TableToolbarActions::make(),
                 TableSortingSettings::make(),
-                TableGroup::make([
+                TableStack::make([
                     TableSearch::make(),
                     TableFiltersTrigger::make(),
                 ]),
@@ -570,7 +570,7 @@ use Filament\Tables\Components\TableContent;
 use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFilters;
-use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
@@ -584,8 +584,8 @@ public function table(Table $table): Table
         ->layout(fn (Schema $schema): Schema => $schema->components([
             Grid::make(['lg' => 3])
                 ->schema([
-                    TableGroup::make([
-                        TableGroup::make([
+                    TableStack::make([
+                        TableStack::make([
                             TableToolbar::make([
                                 TableToolbarActions::make(),
                                 TableSearch::make(),
@@ -609,7 +609,7 @@ public function table(Table $table): Table
 }
 ```
 
-`TableGroup` is a plain `<div>` without any styling of its own. Here the outer group receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. Since `fi-ta-ctn` is a flex row that places sidebar filters next to the records, the parts sit in an inner `fi-ta-main` group, like they do in the default table. The filters trigger button is not needed, since a layout that places `TableFilters` itself renders no trigger.
+`TableStack` is a plain `<div>` without any styling of its own. Here the outer stack receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. Since `fi-ta-ctn` is a flex row that places sidebar filters next to the records, the parts sit in an inner `fi-ta-main` group, like they do in the default table. The filters trigger button is not needed, since a layout that places `TableFilters` itself renders no trigger.
 
 The toolbar row can also hold the table's heading, description and header actions, so a table with a title and a search field on one row needs no header of its own:
 
@@ -618,7 +618,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Components\TableContent;
 use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
-use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TableHeader;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TableSearch;
@@ -634,7 +634,7 @@ public function table(Table $table): Table
             TableToolbar::make([
                 TableHeader::make(),
                 TableToolbarActions::make(),
-                TableGroup::make([
+                TableStack::make([
                     TableSearch::make(),
                 ]),
             ]),
@@ -648,36 +648,32 @@ public function table(Table $table): Table
 
 A custom toolbar shows itself as long as one of its parts renders something. When it holds only the bulk actions, it appears while records are selected, like the default toolbar.
 
-With more than two groups, the toolbar spreads them across the row. To keep some groups together at the start and push the rest to the end, give the last group of the first cluster `grow()`, the same option a `Split` child has:
+### Arranging parts in a row
+
+`TableSplit` lays parts out in a row the way a `Split` column layout does: every part grows to share the free space, and `grow(false)` shrinks one to its content. That is how you keep some parts at the start of a row and push the rest to the end, in a toolbar, a content header or a composed pagination alike:
 
 ```php
-use Filament\Tables\Components\TableColumnManager;
-use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableContentHeader;
 use Filament\Tables\Components\TablePageCheckbox;
-use Filament\Tables\Components\TableSearch;
-use Filament\Tables\Components\TableToolbar;
-use Filament\Tables\Components\TableToolbarActions;
+use Filament\Tables\Components\TableSortingSettings;
+use Filament\Tables\Components\TableSplit;
 
-TableToolbar::make([
-    TableGroup::make([
+TableContentHeader::make([
+    TableSplit::make([
         TablePageCheckbox::make(),
-        TableToolbarActions::make(),
-    ]),
-    TableGroup::make([
-        TableSearch::make(),
-    ])->grow(),
-    TableGroup::make([
-        TableColumnManager::make(),
+        TableSortingSettings::make()->grow(false),
     ]),
 ])
 ```
+
+The checkbox takes the free space and the sort selects sit at the end. Like a `Split`, the row stacks below a breakpoint with `from('md')`. `TableStack` is the counterpart that stacks parts vertically.
 
 ### Available parts
 
 All parts live in the `Filament\Tables\Components` namespace:
 
 - `TableHeader` - the heading, description and header actions.
-- `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own. Only the parts you pass are rendered, so include `TableToolbarActions` when the table has toolbar or bulk actions. Parts placed directly in the toolbar share one group at the start of the row. A nested `TableGroup` forms a group of its own, and the toolbar places the second group at the end of the row, where the default toolbar keeps the search field.
+- `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own. Only the parts you pass are rendered, so include `TableToolbarActions` when the table has toolbar or bulk actions. Parts placed directly in the toolbar share one group at the start of the row. A nested `TableStack` forms a group of its own, and the toolbar places the second group at the end of the row, where the default toolbar keeps the search field.
 - `TableReorderTrigger` - the button that starts and stops reordering records.
 - `TableToolbarActions` - the toolbar and bulk actions. A custom layout without this part hides record selection, since a selection could never be acted upon, unless `selectable()` is set explicitly.
 - `TableGroupingSettings` - the group and direction selects.
@@ -698,7 +694,8 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TablePaginationLinks` - the page links, with the previous and next buttons shown on narrow screens.
 
 The three pagination parts may also be placed outside `TablePagination`, for example the per page select in the toolbar. They keep their styles, but the page links only switch between the buttons and the numbered links inside `TablePagination`, since that switch depends on the width of the pagination row.
-- `TableGroup` - a plain `<div>` container for parts, with optional `extraAttributes()`. Its parts stack by default; `inline()` lays them out as a row. Inside a row such as the toolbar, the content header or a composed pagination, `grow()` lets the group take the free space, like a `Split` child, so the groups after it sit at the end.
+- `TableStack` - a plain `<div>` that stacks parts, with optional `extraAttributes()`.
+- `TableSplit` - a row of parts, like the `Split` column layout: parts grow by default, `grow(false)` shrinks one to its content, and `from()` stacks the row below a breakpoint.
 
 ### Rules for custom layouts
 

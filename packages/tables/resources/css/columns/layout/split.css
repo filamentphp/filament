@@ -33,3 +33,12 @@
         @apply 2xl:flex-row 2xl:items-center 2xl:gap-3;
     }
 }
+
+/* A `TableSplit` layout part shares the column split's row, fills its parent so its growing parts have room, and grows them like split columns. */
+.fi-ta-split.fi-ta-layout-split {
+    @apply w-full;
+
+    & > .fi-growable {
+        @apply w-full flex-1;
+    }
+}

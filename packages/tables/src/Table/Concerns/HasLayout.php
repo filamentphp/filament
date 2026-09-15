@@ -10,11 +10,11 @@ use Filament\Tables\Components\TableContent;
 use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFilters;
-use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TableHeader;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TablePart;
 use Filament\Tables\Components\TableSelectionIndicator;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\TableFiltersPosition;
@@ -91,8 +91,8 @@ trait HasLayout
 
         return Schema::make($livewire)->components([
             TableFilters::make()->position(TableFiltersPosition::Before),
-            TableGroup::make([
-                TableGroup::make([
+            TableStack::make([
+                TableStack::make([
                     TableHeader::make(),
                     TableFilters::make()->position(TableFiltersPosition::Above),
                     TableToolbar::make(),

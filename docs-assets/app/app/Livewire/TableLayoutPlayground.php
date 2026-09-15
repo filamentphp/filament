@@ -19,9 +19,9 @@ use Filament\Tables\Components\TableContentHeader;
 use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFiltersTrigger;
-use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TableGroupingSettings;
 use Filament\Tables\Components\TableHeader;
+use Filament\Tables\Components\TablePageCheckbox;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TablePaginationLinks;
 use Filament\Tables\Components\TablePaginationOverview;
@@ -29,6 +29,9 @@ use Filament\Tables\Components\TablePaginationRecordsPerPage;
 use Filament\Tables\Components\TableReorderTrigger;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
+use Filament\Tables\Components\TableSortingSettings;
+use Filament\Tables\Components\TableSplit;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Grouping\Group;
@@ -49,6 +52,7 @@ class TableLayoutPlayground extends TablesDemo
     public function table(Table $table): Table
     {
         $table = $this->layoutVariantTable($table)
+            // ->contained(false)
             ->heading('Team')
             ->description('Everyone with access to this workspace.')
             ->headerActions([
@@ -71,25 +75,28 @@ class TableLayoutPlayground extends TablesDemo
                     TableToolbarActions::make(),
                     TableReorderTrigger::make(),
                     TableGroupingSettings::make(),
-                    TableSortingSettings::make(),
-                    TableGroup::make([
+                    TableStack::make([
                         TableSearch::make(),
                         TableFiltersTrigger::make(),
                         TableColumnManager::make(),
                         TablePaginationRecordsPerPage::make(),
                     ]),
-                    TableGroup::make([
-                        TablePageCheckbox::make(),
-                    ]),
                 ]),
                 TableSelectionIndicator::make(),
                 TableFilterIndicators::make(),
-                TableContentHeader::make(),
+                TableContentHeader::make([
+                    TableSplit::make([
+                        TablePageCheckbox::make(),
+                        TableSortingSettings::make()->grow(false),
+                    ]),
+                ]),
                 TableContent::make(),
                 TableEmptyState::make(),
                 TablePagination::make([
-                    TablePaginationOverview::make(),
-                    TablePaginationLinks::make(),
+                    TableSplit::make([
+                        TablePaginationOverview::make(),
+                        TablePaginationLinks::make()->grow(false),
+                    ]),
                 ]),
             ]));
 

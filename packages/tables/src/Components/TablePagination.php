@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Components;
 
-class TablePagination extends TableGroup
+class TablePagination extends TableStack
 {
     protected bool $hasDefaultItems = false;
 

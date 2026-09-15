@@ -4,7 +4,7 @@ namespace Filament\Tables\Components;
 
 use Filament\Schemas\Components\Component;
 
-class TableToolbar extends TableGroup
+class TableToolbar extends TableStack
 {
     protected bool $hasDefaultItems = false;
 
@@ -39,7 +39,7 @@ class TableToolbar extends TableGroup
 
     /**
      * Parts placed directly in the toolbar share one actions group at the start of the row. A nested
-     * layout component, such as a `Flex` or a `TableGroup`, renders as a direct child of the toolbar
+     * layout component, such as a `Flex` or a `TableStack`, renders as a direct child of the toolbar
      * instead, so the toolbar lays it out as a group of its own, like the search field in the default toolbar.
      */
     public function renderItems(): string

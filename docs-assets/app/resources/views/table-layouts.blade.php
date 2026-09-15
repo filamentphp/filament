@@ -17,7 +17,7 @@
     TableToolbar::make([
         TableToolbarActions::make(),
         TableSortingSettings::make(),
-        TableGroup::make([TableSearch::make(), TableFiltersTrigger::make()]),
+        TableStack::make([TableSearch::make(), TableFiltersTrigger::make()]),
     ]),
     TableSelectionIndicator::make(),
     TableFilterIndicators::make(),
@@ -33,8 +33,8 @@ PHP,
 ->contained(false)
 ->layout(fn (Schema $schema): Schema => $schema->components([
     Grid::make(['lg' => 3])->schema([
-        TableGroup::make([
-            TableGroup::make([
+        TableStack::make([
+            TableStack::make([
                 TableToolbar::make([TableToolbarActions::make(), TableSearch::make(), TableColumnManager::make()]),
                 TableSelectionIndicator::make(),
                 TableFilterIndicators::make(),
@@ -54,7 +54,7 @@ PHP,
 ->heading('Team')->description('Everyone with access to this workspace.')
 ->headerActions([CreateAction::make()])
 ->layout(fn (Schema $schema): Schema => $schema->components([
-    TableToolbar::make([TableHeader::make(), TableToolbarActions::make(), TableGroup::make([TableSearch::make()])]),
+    TableToolbar::make([TableHeader::make(), TableToolbarActions::make(), TableStack::make([TableSearch::make()])]),
     TableFilterIndicators::make(),
     TableContent::make(),
     TableEmptyState::make(),

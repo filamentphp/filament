@@ -59,12 +59,12 @@ use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFilters;
 use Filament\Tables\Components\TableFiltersTrigger;
-use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TableHeader;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
 use Filament\Tables\Components\TableSortingSettings;
+use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -2469,7 +2469,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TableToolbar::make([
                     TableToolbarActions::make(),
                     TableSortingSettings::make(),
-                    TableGroup::make([
+                    TableStack::make([
                         TableSearch::make(),
                         TableFiltersTrigger::make(),
                     ]),
@@ -2489,8 +2489,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->layout(fn (Schema $schema): Schema => $schema->components([
                 SchemaGrid::make(['lg' => 3])
                     ->schema([
-                        TableGroup::make([
-                            TableGroup::make([
+                        TableStack::make([
+                            TableStack::make([
                                 TableToolbar::make([
                                     TableToolbarActions::make(),
                                     TableSearch::make(),
@@ -2525,7 +2525,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TableToolbar::make([
                     TableHeader::make(),
                     TableToolbarActions::make(),
-                    TableGroup::make([
+                    TableStack::make([
                         TableSearch::make(),
                     ]),
                 ]),

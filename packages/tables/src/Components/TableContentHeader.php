@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Components;
 
-class TableContentHeader extends TableGroup
+class TableContentHeader extends TableStack
 {
     protected function setUp(): void
     {
