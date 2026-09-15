@@ -37,6 +37,7 @@ use Filament\Tests\Fixtures\Pages\CustomTableLayoutBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
+use Filament\Tests\Fixtures\Pages\DefaultTableLayoutBrowserTest;
 use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
@@ -132,6 +133,7 @@ class AdminPanelProvider extends PanelProvider
                 ColorPickerTest::class,
                 DatabaseNotificationsBrowserTest::class,
                 DatePickerBrowserTest::class,
+                DefaultTableLayoutBrowserTest::class,
                 DateTimePickerTest::class,
                 DeferredSchemaLoadingBrowserTest::class,
                 FileUploadBrowserTest::class,
