@@ -100,6 +100,13 @@ class Table extends ViewComponent
 
     public function render(): View
     {
+        // Load the records before any part renders, so parts that need the record
+        // count (such as the selection indicator) read the cached page instead of
+        // running their own query.
+        if ($this->isLoaded()) {
+            $this->getRecords();
+        }
+
         if (! $this->hasCustomLayout()) {
             return parent::render();
         }

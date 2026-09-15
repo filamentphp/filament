@@ -219,15 +219,17 @@ trait HasBulkActions
                 ->count();
         }
 
+        $records = $this->getTableRecords();
+
         if ($this->getTable()->selectsCurrentPageOnly()) {
-            return $this->cachedTableRecords->count();
+            return $records->count();
         }
 
-        if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
-            return $this->cachedTableRecords->total();
+        if ($records instanceof LengthAwarePaginator) {
+            return $records->total();
         }
 
-        return $this->getFilteredTableQuery()?->count() ?? $this->cachedTableRecords->count();
+        return $this->getFilteredTableQuery()?->count() ?? $records->count();
     }
 
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection
