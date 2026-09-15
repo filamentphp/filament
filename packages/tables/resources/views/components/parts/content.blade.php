@@ -22,9 +22,10 @@
     $columns = $table->getVisibleColumns();
     $collapsibleColumnsLayout = $table->getCollapsibleColumnsLayout();
     $columnsLayout = $table->getColumnsLayout();
-    $content = $table->getContent();
+    // The content and footer views are fetched by the partials that render them: Blade
+    // would render a `Renderable` passed into an `@include` before the partial runs.
+    $hasCustomContent = $table->getContent() !== null;
     $contentGrid = $table->getContentGrid();
-    $contentFooter = $table->getContentFooter();
     $hasColumnGroups = $table->hasColumnGroups();
     $hasColumnsLayout = $table->hasColumnsLayout();
     $hasPageSummary = $table->hasPageSummary();
@@ -57,7 +58,7 @@
     $secondLevelHeadingTag = $table->getSecondLevelHeadingTag();
     $pluralModelLabel = $table->getPluralModelLabel();
     $records = $isLoaded ? $table->getRecords() : null;
-    $hasContentLayout = $content || $hasColumnsLayout;
+    $hasContentLayout = $hasCustomContent || $hasColumnsLayout;
     $searchDebounce = $table->getSearchDebounce();
     $columnsCount = count($columns);
     $page = $this->getTablePage();
@@ -122,7 +123,7 @@
     $hasSortingSettingsInContentHeader = ! $table->hasLayoutPart(TableSortingSettings::class);
 @endphp
 
-@if (((! $content) && (! $hasColumnsLayout)) || ($records === null) || count($records))
+@if ((! $hasContentLayout) || ($records === null) || count($records))
     <div
         @if ((! $isReordering) && ($pollingInterval = $table->getPollingInterval()))
             wire:poll.{{ $pollingInterval }}
@@ -152,7 +153,7 @@
 
         @if ($hasContentLayout && ($records !== null) && count($records))
             @include('filament-tables::components.parts.content.layout')
-        @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
+        @elseif ((! $hasContentLayout) && ($records !== null))
             @include('filament-tables::components.parts.content.table')
         @elseif ($records === null)
             <div

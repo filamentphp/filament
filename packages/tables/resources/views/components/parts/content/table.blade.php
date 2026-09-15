@@ -122,6 +122,11 @@
         </tbody>
     @endif
 
+    @php
+        // Fetched after the row partials rendered, since Blade renders a `Renderable` it passes into an `@include`.
+        $contentFooter = $table->getContentFooter();
+    @endphp
+
     @if (($records !== null) && count($records) && $contentFooter)
         <tfoot>
             <tr>

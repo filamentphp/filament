@@ -5,6 +5,12 @@
 
 @include('filament-tables::components.parts.content.layout-header')
 
+@php
+    // Blade renders every `Renderable` it passes into an `@include`, so the custom
+    // content view is only fetched here, where it is rendered with its records.
+    $content = $table->getContent();
+@endphp
+
 @if ($content)
     {{ $content->with(['records' => $records]) }}
 @else
@@ -86,6 +92,10 @@
         @endif
     </div>
 @endif
+
+@php
+    $contentFooter = $table->getContentFooter();
+@endphp
 
 @if (($content || $hasColumnsLayout) && $contentFooter)
     {{
