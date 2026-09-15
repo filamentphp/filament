@@ -19,6 +19,7 @@
     use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Filament\Tables\Enums\TableFiltersPosition;
     use Filament\Tables\Filters\Indicator;
     use Filament\Tables\Table;
     use Filament\Tables\View\TablesIconAlias;
@@ -115,8 +116,6 @@
     $filtersLayout = $getFiltersLayout();
     $filtersTriggerAction = $getFiltersTriggerAction();
     $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
-    $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
-    $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasFiltersBeforeContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible]);
     $hasFiltersAfterContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AfterContent, FiltersLayout::AfterContentCollapsible]);
     $hasCollapsibleFilters = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContentCollapsible, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]);
@@ -209,28 +208,7 @@
 @endphp
 
 <x-filament-tables::wrapper :table="$table">
-        @if ($hasFiltersBeforeContent)
-            <div
-                wire:ignore.self
-                x-ref="filtersContentContainer"
-                x-transition:enter-start="fi-opacity-0"
-                x-transition:leave-end="fi-opacity-0"
-                x-bind:class="{ 'fi-open': areFiltersOpen }"
-                @class([
-                    'fi-ta-filters-before-content-ctn',
-                    'lg:fi-open' => ! $hasCollapsibleFilters,
-                    (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
-                ])
-            >
-                <x-filament-tables::filters
-                    :apply-action="$filtersApplyAction"
-                    :form="$filtersForm"
-                    :heading-tag="$secondLevelHeadingTag"
-                    class="fi-ta-filters-before-content"
-                    :reset-action-position="$filtersResetActionPosition"
-                />
-            </div>
-        @endif
+        @include('filament-tables::components.parts.filters', ['table' => $table, 'part' => null, 'position' => TableFiltersPosition::Before])
 
         <div class="fi-ta-main">
             <div
@@ -241,34 +219,7 @@
             >
                 @include('filament-tables::components.parts.header', ['table' => $table, 'part' => null])
 
-                @if ($hasFiltersAboveContent)
-                    <div
-                        @if ($hasCollapsibleFilters)
-                            x-bind:class="{ 'fi-open': areFiltersOpen }"
-                        @endif
-                        @class([
-                            'fi-ta-filters-above-content-ctn',
-                        ])
-                    >
-                        <x-filament-tables::filters
-                            :apply-action="$filtersApplyAction"
-                            :form="$filtersForm"
-                            :heading-tag="$secondLevelHeadingTag"
-                            x-cloak
-                            :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
-                            :reset-action-position="$filtersResetActionPosition"
-                        />
-
-                        @if ($hasCollapsibleFilters)
-                            <span
-                                x-on:click="areFiltersOpen = ! areFiltersOpen"
-                                class="fi-ta-filters-trigger-action-ctn"
-                            >
-                                {{ $filtersTriggerAction->badge($activeFiltersCount) }}
-                            </span>
-                        @endif
-                    </div>
-                @endif
+                @include('filament-tables::components.parts.filters', ['table' => $table, 'part' => null, 'position' => TableFiltersPosition::Above])
 
                 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_BEFORE, scopes: static::class) }}
 
@@ -2328,37 +2279,8 @@
 
             @include('filament-tables::components.parts.pagination', ['table' => $table, 'part' => null])
 
-            @if ($hasFiltersBelowContent)
-                <x-filament-tables::filters
-                    :apply-action="$filtersApplyAction"
-                    :form="$filtersForm"
-                    :heading-tag="$secondLevelHeadingTag"
-                    class="fi-ta-filters-below-content"
-                    :reset-action-position="$filtersResetActionPosition"
-                />
-            @endif
+            @include('filament-tables::components.parts.filters', ['table' => $table, 'part' => null, 'position' => TableFiltersPosition::Below])
         </div>
 
-        @if ($hasFiltersAfterContent)
-            <div
-                wire:ignore.self
-                x-ref="filtersContentContainer"
-                x-transition:enter-start="fi-opacity-0"
-                x-transition:leave-end="fi-opacity-0"
-                x-bind:class="{ 'fi-open': areFiltersOpen }"
-                @class([
-                    'fi-ta-filters-after-content-ctn',
-                    'lg:fi-open' => ! $hasCollapsibleFilters,
-                    (($filtersFormWidth ??= Width::ExtraSmall) instanceof Width) ? "fi-width-{$filtersFormWidth->value}" : (is_string($filtersFormWidth) ? $filtersFormWidth : null),
-                ])
-            >
-                <x-filament-tables::filters
-                    :apply-action="$filtersApplyAction"
-                    :form="$filtersForm"
-                    :heading-tag="$secondLevelHeadingTag"
-                    class="fi-ta-filters-after-content"
-                    :reset-action-position="$filtersResetActionPosition"
-                />
-            </div>
-        @endif
+        @include('filament-tables::components.parts.filters', ['table' => $table, 'part' => null, 'position' => TableFiltersPosition::After])
 </x-filament-tables::wrapper>

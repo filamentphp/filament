@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tables\Components\TableContent;
+use Filament\Tables\Components\TableFilters;
 use Filament\Tables\Components\TablePart;
 use Filament\Tables\Enums\FiltersLayout;
 use Livewire\Component as LivewireComponent;
@@ -102,8 +103,12 @@ trait HasLayout
             throw new LogicException('The table layout does not contain a [' . TableContent::class . '] part, so no records would be rendered. Add `TableContent::make()` to the schema passed to `$table->layout()`.');
         }
 
+        // The default layout places `TableFilters` in every position and lets `FiltersLayout` pick one.
         $duplicatePartClasses = array_keys(array_filter(
-            array_count_values(array_map(fn (TablePart $part): string => $part::class, $parts)),
+            array_count_values(array_map(
+                fn (TablePart $part): string => $part::class,
+                array_filter($parts, fn (TablePart $part): bool => ! ($part instanceof TableFilters)),
+            )),
             fn (int $count): bool => $count > 1,
         ));
 
