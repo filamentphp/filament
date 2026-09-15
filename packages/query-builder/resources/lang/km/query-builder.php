@@ -19,7 +19,7 @@ return [
             ],
 
             'block' => [
-                'label' => 'ការផ្តាច់ខ្លួន (ឬ)',
+                'label' => 'លក្ខខណ្ឌ "ឬ"',
                 'or' => 'ឬ',
             ],
 
@@ -480,13 +480,13 @@ return [
             'contains' => [
 
                 'label' => [
-                    'direct' => 'មាន',
-                    'inverse' => 'មិនមែន',
+                    'direct' => 'មានផ្ទុក',
+                    'inverse' => 'មិនមានផ្ទុក',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute មាន :text',
-                    'inverse' => ':attribute មិនមែន :text',
+                    'direct' => ':attribute មានផ្ទុក :text',
+                    'inverse' => ':attribute មិនមានផ្ទុក :text',
                 ],
 
             ],
@@ -552,7 +552,7 @@ return [
         ],
 
         'add_rule_group' => [
-            'label' => 'បន្ថែមក្រុមច្បាប់',
+            'label' => 'បន្ថែមលក្ខខណ្ឌ "ឬ"',
         ],
 
     ],
