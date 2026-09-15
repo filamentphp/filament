@@ -9,6 +9,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Js;
 
 class UnorderedList extends Component implements HasEmbeddedView
 {
@@ -79,7 +80,15 @@ class UnorderedList extends Component implements HasEmbeddedView
 
         <ul <?= $attributes->toHtml() ?>>
             <?php foreach ($this->getChildSchema()->getComponents() as $schemaComponent) { ?>
-                <li><?= $schemaComponent->toHtml() ?></li>
+                <li
+                    <?php if ($schemaComponent instanceof Component) { ?>
+                        wire:key="<?= e($schemaComponent->getLivewireKey()) ?>"
+                        x-data="filamentSchemaComponent({
+                            ...<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>,
+                            $wire,
+                        })"
+                    <?php } ?>
+                ><?= $schemaComponent->toHtml() ?></li>
             <?php } ?>
         </ul>
 

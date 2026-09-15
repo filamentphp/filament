@@ -1,5 +1,6 @@
 @props([
     'areHtmlErrorMessagesAllowed' => null,
+    'descriptionId' => null,
     'errorMessage' => null,
     'errorMessages' => null,
     'field' => null,
@@ -155,6 +156,10 @@
                 {{ $slot }}
             @endif
 
+            @if ($descriptionId !== null)
+                {!! '<div id="' . e($descriptionId) . '" class="fi-fo-field-description"' . (($belowContentSchema || $hasError || $aboveErrorMessageSchema || $belowErrorMessageSchema) ? '' : ' hidden') . '>' !!}
+            @endif
+
             {{ $belowContentSchema }}
 
             @if ($hasError)
@@ -192,6 +197,10 @@
                 @endif
 
                 {{ $belowErrorMessageSchema }}
+            @endif
+
+            @if ($descriptionId !== null)
+                {!! '</div>' !!}
             @endif
         </div>
     @endif

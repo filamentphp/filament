@@ -7,7 +7,6 @@ use Closure;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasBadgeTooltip;
@@ -788,7 +787,7 @@ class Action extends ViewComponent implements Arrayable
 
     public function toHtml(): string
     {
-        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+        if (! $this->hasView()) {
             return $this->toEmbeddedHtml();
         }
 

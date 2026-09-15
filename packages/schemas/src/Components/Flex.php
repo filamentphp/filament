@@ -92,6 +92,8 @@ class Flex extends Component implements HasEmbeddedView
                     ?>
                     <div
                         x-data="filamentSchemaComponent({
+                                    key: <?= Js::from($schemaComponent->getKey()) ?>,
+                                    exposedMethods: <?= Js::from($schemaComponent->getExposedLivewireMethodNames()) ?>,
                                     path: <?= Js::from($schemaComponentStatePath) ?>,
                                     containerPath: <?= Js::from($statePath) ?>,
                                     $wire,

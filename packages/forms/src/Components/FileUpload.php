@@ -836,7 +836,6 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
         $automaticallyResizeImagesWidth = $this->getAutomaticallyResizeImagesWidth();
         $isAvatar = $this->isAvatar();
         $isMultiple = $this->isMultiple();
-        $key = $this->getKey();
         $statePath = $this->getStatePath();
         $isDisabled = $this->isDisabled();
         $hasImageEditor = $this->hasImageEditor();
@@ -896,18 +895,11 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         canEditSvgs: <?= Js::from($this->canEditSvgs()) ?>,
                         confirmSvgEditingMessage: <?= Js::from(__('filament-forms::components.file_upload.editor.svg.messages.confirmation')) ?>,
                         deleteUploadedFileUsing: async (fileKey) => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'deleteUploadedFile',
-                                { fileKey },
-                            )
+                            return await $deleteUploadedFile({ fileKey })
                         },
                         disabledSvgEditingMessage: <?= Js::from(__('filament-forms::components.file_upload.editor.svg.messages.disabled')) ?>,
                         getUploadedFilesUsing: async () => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'getUploadedFiles',
-                            )
+                            return await $getUploadedFiles()
                         },
                         hasCircleCropper: <?= Js::from($hasCircleCropper) ?>,
                         hasImageEditor: <?= Js::from($hasImageEditor) ?>,
@@ -941,18 +933,10 @@ class FileUpload extends BaseFileUpload implements HasEmbeddedView
                         placeholder: <?= Js::from($this->getPlaceholder()) ?>,
                         removeUploadedFileButtonPosition: <?= Js::from($this->getRemoveUploadedFileButtonPosition()) ?>,
                         removeUploadedFileUsing: async (fileKey) => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'removeUploadedFile',
-                                { fileKey },
-                            )
+                            return await $removeUploadedFile({ fileKey })
                         },
                         reorderUploadedFilesUsing: async (fileKeys) => {
-                            return await $wire.callSchemaComponentMethod(
-                                <?= Js::from($key) ?>,
-                                'reorderUploadedFiles',
-                                { fileKeys },
-                            )
+                            return await $reorderUploadedFiles({ fileKeys })
                         },
                         shouldAppendFiles: <?= Js::from($this->shouldAppendFiles()) ?>,
                         shouldAutomaticallyUpscaleImagesWhenResizing: <?= Js::from($this->shouldAutomaticallyUpscaleImagesWhenResizing()) ?>,

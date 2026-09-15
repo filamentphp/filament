@@ -1,0 +1,30 @@
+export default function mount{{ componentName }}({ host, props: initialProps }) {
+    const input = document.createElement('input')
+    input.type = 'text'
+
+    const onInput = () => initialProps.onChange(input.value)
+    input.addEventListener('input', onInput)
+    input.addEventListener('blur', initialProps.onBlur)
+
+    const update = (props) => {
+        input.id = props.id
+        input.value = props.value ?? ''
+        input.disabled = props.disabled
+        input.readOnly = props.readOnly
+        input.required = props.required
+        input.setAttribute('aria-invalid', String(props.invalid))
+        input.setAttribute('aria-describedby', props.ariaDescribedBy)
+    }
+
+    update(initialProps)
+    host.append(input)
+
+    return {
+        update,
+        destroy() {
+            input.removeEventListener('input', onInput)
+            input.removeEventListener('blur', initialProps.onBlur)
+            input.remove()
+        },
+    }
+}

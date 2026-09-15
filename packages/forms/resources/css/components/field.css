@@ -54,7 +54,8 @@
         }
     }
 
-    & .fi-fo-field-content-col {
+    & .fi-fo-field-content-col,
+    & .fi-fo-field-description {
         @apply grid auto-cols-fr gap-y-2;
     }
 

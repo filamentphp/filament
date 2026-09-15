@@ -1926,6 +1926,37 @@ describe('rendering', function (): void {
             ->toContain('wire:click="mountAction(');
     });
 
+    it('renders embedded action HTML without `HasEmbeddedView` and respects configured views', function (): void {
+        $action = new class('test') extends Action
+        {
+            public function toEmbeddedHtml(): string
+            {
+                return 'embedded action';
+            }
+        };
+
+        expect($action->toHtml())->toBe('embedded action');
+
+        $action->defaultView(Action::BUTTON_VIEW);
+        expect($action->toHtml())->toContain('<button')->not->toContain('embedded action');
+
+        $action->view('simple-component');
+        expect($action->toHtml())->toBe("<div>Simple component view</div>\n");
+    });
+
+    it('falls back to an action custom `render()` without a configured view', function (): void {
+        $action = new class('test') extends Action
+        {
+            public function render(): View
+            {
+                return view('simple-component');
+            }
+        };
+
+        expect($action->hasView())->toBeFalse()
+            ->and($action->toHtml())->toBe("<div>Simple component view</div>\n");
+    });
+
     it('renders a `link()` action as an `<a>` when given a `url()`', function (): void {
         $html = Action::make('test')->link()->url('/foo')->toHtml();
 

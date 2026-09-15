@@ -527,6 +527,19 @@ it('can render `Tabs` in the browser', function (): void {
     });
 });
 
+it('loads deferred badges through `$getDeferredTabBadges()` in both tab renderers', function (bool $livewireTabs, bool $dark): void {
+    $this->actingAs(User::factory()->create());
+    $page = visit('/tabs-browser-test?deferred=1&livewire=' . (int) $livewireTabs);
+    if ($dark) {
+        $page = $page->inDarkMode();
+    }
+    $page->assertSeeIn('.fi-badge', 'Available')
+        ->assertVisible('.fi-badge')
+        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
+        ->assertScript('document.getAnimations().every(animation => animation.playState !== "running" || animation.effect.getTiming().iterations === Infinity)', true)
+        ->assertNoSmoke()->assertNoAccessibilityIssues();
+})->with(['Alpine' => false, 'Livewire' => true])->with(['light' => false, 'dark' => true]);
+
 class RenderTabs extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
