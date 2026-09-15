@@ -107,13 +107,11 @@ class Table extends ViewComponent
             $this->getRecords();
         }
 
-        if (! $this->hasCustomLayout()) {
-            return parent::render();
+        if ($this->hasCustomLayout()) {
+            $this->assertLayoutIsComplete($this->getLayout());
         }
 
-        $this->assertLayoutIsComplete($this->getLayout());
-
-        return $this->renderView('filament-tables::layout');
+        return parent::render();
     }
 
     /**

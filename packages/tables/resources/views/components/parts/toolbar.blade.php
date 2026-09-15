@@ -5,6 +5,8 @@
     $hasHeaderToolbar = $table->hasHeaderToolbar();
 @endphp
 
+{{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_BEFORE, scopes: static::class) }}
+
 <div
     @if (! $hasHeaderToolbar) x-cloak @endif
     x-show="@js($hasHeaderToolbar) || @js($table->hasNonBulkToolbarAction()) || (getSelectedRecordsCount() && @js(count($table->getVisibleToolbarActions())))"
@@ -46,3 +48,5 @@
 
     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END) }}
 </div>
+
+{{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER) }}

@@ -7,9 +7,18 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tables\Components\TableContent;
+use Filament\Tables\Components\TableEmptyState;
+use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFilters;
+use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableHeader;
+use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TablePart;
+use Filament\Tables\Components\TableSelectionIndicator;
+use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\TableFiltersPosition;
+use Illuminate\Support\Js;
 use Livewire\Component as LivewireComponent;
 use LogicException;
 
@@ -20,6 +29,8 @@ trait HasLayout
     protected bool | Closure $isContained = true;
 
     protected ?Schema $cachedLayout = null;
+
+    protected ?Schema $cachedDefaultLayout = null;
 
     public function layout(Schema | Closure | null $layout): static
     {
@@ -71,7 +82,35 @@ trait HasLayout
 
     public function getDefaultLayout(): Schema
     {
-        throw new LogicException('The default table layout is not available as a schema yet.');
+        return $this->cachedDefaultLayout ??= $this->makeDefaultLayout();
+    }
+
+    protected function makeDefaultLayout(): Schema
+    {
+        $livewire = $this->getLivewireWithSchemas();
+
+        return Schema::make($livewire)->components([
+            TableFilters::make()->position(TableFiltersPosition::Before),
+            TableGroup::make([
+                TableGroup::make([
+                    TableHeader::make(),
+                    TableFilters::make()->position(TableFiltersPosition::Above),
+                    TableToolbar::make(),
+                ])->extraAttributes(fn (): array => [
+                    'x-cloak' => ! $this->hasHeader(),
+                    'x-show' => Js::from($this->hasHeader()) . ' || ' . Js::from($this->hasNonBulkToolbarAction()) . ' || (getSelectedRecordsCount() && ' . Js::from(count($this->getVisibleToolbarActions())) . ')',
+                    'wire:key' => "{$livewire->getId()}.table.header.{$this->getHeaderVisibilityMode()}",
+                    'class' => 'fi-ta-header-ctn',
+                ]),
+                TableSelectionIndicator::make(),
+                TableFilterIndicators::make(),
+                TableContent::make(),
+                TableEmptyState::make(),
+                TablePagination::make(),
+                TableFilters::make()->position(TableFiltersPosition::Below),
+            ])->extraAttributes(['class' => 'fi-ta-main']),
+            TableFilters::make()->position(TableFiltersPosition::After),
+        ]);
     }
 
     /**

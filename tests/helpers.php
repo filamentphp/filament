@@ -29,6 +29,7 @@ if (! function_exists('\Filament\Tests\normalizeTableHtml')) {
         $html = preg_replace('/(bulk-select-page\.checkbox(?:\.stacked)?\.)[A-Za-z0-9]+/', '$1__RANDOM__', $html);
         $html = preg_replace('/wire:key="[A-Za-z0-9]{16}"/', 'wire:key="__RANDOM__"', $html);
         $html = preg_replace('/\s+/', ' ', $html);
+        $html = preg_replace('/\s+>/', '>', $html);
         $html = preg_replace('/>\s+</', '><', $html);
 
         return trim($html);

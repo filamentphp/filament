@@ -50,7 +50,19 @@ it('has no custom layout by default', function (): void {
     $table = makeTableForLayout();
 
     expect($table->hasCustomLayout())->toBeFalse()
-        ->and($table->isContained())->toBeTrue();
+        ->and($table->isContained())->toBeTrue()
+        ->and($table->getLayout())->toBe($table->getDefaultLayout());
+});
+
+it('returns a complete default layout from `getDefaultLayout()`', function (): void {
+    $table = makeTableForLayout();
+
+    $layout = $table->getDefaultLayout();
+
+    $table->assertLayoutIsComplete($layout);
+
+    expect($layout->getComponents())->toHaveCount(3)
+        ->and($layout->getComponents()[1])->toBeInstanceOf(TableGroup::class);
 });
 
 it('can set `layout()` with a `Closure`', function (): void {

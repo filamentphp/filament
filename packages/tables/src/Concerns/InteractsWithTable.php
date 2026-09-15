@@ -48,7 +48,7 @@ trait InteractsWithTable
         $this->table = $this->table($this->makeTable());
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
-        $this->cacheSchema('tableLayout', fn (): ?Schema => $this->getTable()->hasCustomLayout() ? $this->getTable()->getLayout() : null);
+        $this->cacheSchema('tableLayout', fn (): Schema => $this->getTable()->getLayout());
 
         if (empty($this->cacheMountedActions($this->mountedActions))) {
             $this->mountedActions = [];
