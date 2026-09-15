@@ -6,7 +6,6 @@ use Filament\Commands\FileGenerators\CustomPageClassGenerator;
 use Filament\Inertia\InertiaPlugin;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Filesystem\Filesystem;
-use Inertia\Middleware;
 use ReflectionClass;
 
 use function Laravel\Prompts\confirm;
@@ -63,7 +62,7 @@ trait CanGenerateInertiaPages
     {
         $hasMissingDependencies = false;
 
-        if (! class_exists(Middleware::class)) {
+        if (! InertiaPlugin::hasCompatibleAdapter()) {
             $this->components->error('Install the PHP adapter first: composer require inertiajs/inertia-laravel:"^3.3"');
             $hasMissingDependencies = true;
         }
@@ -321,6 +320,8 @@ trait CanGenerateInertiaPages
         }
 
         $this->line("    Verify your {$framework} Vite plugin and preserveEntrySignatures: 'exports-only' in build.rollupOptions (build.rolldownOptions for Rolldown-based Vite). Arbitrary build configuration is not inspected.");
+        $this->line("    Render @vite('{$entry}') from a panel HEAD_END render hook to load entry CSS and development assets. " . (($framework === 'react') ? 'Place @viteReactRefresh before it. ' : '') . 'See the custom page documentation; these Blade tags are not generated or verified.');
+        $this->line('    If a native Inertia app shares this origin, exclude its routes with spaUrlExceptions() and use document links back to Filament. Cross-app redirects require Inertia::location().');
         if ($hasCustomResolver) {
             $this->line("    Custom resolver location is unknown; no resolver or server was generated. Register [{$component}] from [{$componentPath}] in your existing resolver and configure SSR manually if needed.");
         } else {

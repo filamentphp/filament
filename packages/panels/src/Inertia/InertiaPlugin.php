@@ -3,6 +3,7 @@
 namespace Filament\Inertia;
 
 use Closure;
+use Composer\InstalledVersions;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\HandleInertiaRequests;
@@ -80,11 +81,22 @@ class InertiaPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        if (! class_exists(Middleware::class)) {
-            throw new LogicException('Install `inertiajs/inertia-laravel` to enable Inertia pages.');
+        if (! static::hasCompatibleAdapter()) {
+            throw new LogicException('Install `inertiajs/inertia-laravel:^3.3` to enable Inertia pages. Other adapter versions can still be used outside Filament when this plugin is disabled.');
         }
 
         $panel->middleware([HandleInertiaRequests::class . ':' . $this->middleware]);
+    }
+
+    public static function hasCompatibleAdapter(): bool
+    {
+        if ((! class_exists(Middleware::class)) || (! InstalledVersions::isInstalled('inertiajs/inertia-laravel'))) {
+            return false;
+        }
+
+        $version = InstalledVersions::getVersion('inertiajs/inertia-laravel');
+
+        return ($version !== null) && version_compare($version, '3.3.0', '>=') && version_compare($version, '4.0.0-dev', '<');
     }
 
     public function boot(Panel $panel): void {}

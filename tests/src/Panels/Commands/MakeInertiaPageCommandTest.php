@@ -1,5 +1,6 @@
 <?php
 
+use Composer\InstalledVersions;
 use Filament\Commands\MakePageCommand;
 use Filament\Facades\Filament;
 use Filament\Inertia\InertiaPlugin;
@@ -56,6 +57,32 @@ it('generates a PHP page, component, shared renderer and optional server for eac
     ['vue', false, 'vue'], ['vue', true, 'vue'],
     ['svelte', false, 'svelte'], ['svelte', true, 'svelte'],
 ]);
+
+it('checks the PHP adapter version only when enabling or generating Inertia pages', function (string $version, bool $compatible): void {
+    $installed = InstalledVersions::getRawData();
+    $vendorDiscovery = new ReflectionProperty(InstalledVersions::class, 'canGetVendors');
+    $previousVendorDiscovery = $vendorDiscovery->getValue();
+    $vendorDiscovery->setValue(null, false);
+    $modified = $installed;
+    $modified['versions']['inertiajs/inertia-laravel']['version'] = $version;
+    InstalledVersions::reload($modified);
+
+    try {
+        expect(InertiaPlugin::hasCompatibleAdapter())->toBe($compatible);
+
+        if (! $compatible) {
+            expect(fn () => InertiaPlugin::make()->register(Filament::getPanel('admin')))
+                ->toThrow(LogicException::class, 'inertiajs/inertia-laravel:^3.3');
+            $this->artisan('make:filament-page', [
+                'name' => 'Reports', '--panel' => 'admin', '--vue' => true, '--no-interaction' => true,
+            ])->expectsOutputToContain('Install the PHP adapter first')->assertFailed();
+            expect(is_dir($this->inertiaDirectory))->toBeFalse();
+        }
+    } finally {
+        InstalledVersions::reload($installed);
+        $vendorDiscovery->setValue(null, $previousVendorDiscovery);
+    }
+})->with([['2.0.0.0', false], ['3.2.9.0', false], ['3.3.0.0', true], ['3.4.0.0', true], ['4.0.0.0-dev', false]]);
 
 it('rejects incompatible options before writing files', function (array $options): void {
     $this->artisan('make:filament-page', [
