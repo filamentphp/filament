@@ -3,6 +3,7 @@
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TablePaginationLinks;
 use Filament\Tables\Components\TablePaginationOverview;
+use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
@@ -87,4 +88,29 @@ it('marks a composed pagination as simple for a simple paginator', function (): 
         ->toContain('class="fi-pagination fi-ta-pagination fi-simple"')
         ->toContain('fi-pagination-next-btn')
         ->not->toContain('fi-pagination-items');
+});
+
+it('shows a composed pagination without records when another part renders', function (): void {
+    $html = livewireTableWithParts([
+        TablePagination::make([
+            TableSearch::make(),
+            TablePaginationLinks::make(),
+        ]),
+    ])->html();
+
+    expect($html)
+        ->toContain('class="fi-pagination fi-ta-pagination"')
+        ->toContain('fi-ta-search-field')
+        ->not->toContain('fi-pagination-items');
+});
+
+it('hides a composed pagination without records when its parts render nothing', function (): void {
+    $html = livewireTableWithParts([
+        TablePagination::make([
+            TablePaginationOverview::make(),
+            TablePaginationLinks::make(),
+        ]),
+    ])->html();
+
+    expect($html)->not->toContain('fi-pagination');
 });

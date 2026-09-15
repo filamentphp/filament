@@ -41,6 +41,11 @@ class TableSplit extends TableStack
             }
         });
 
+        // A split whose parts all render nothing leaves no empty row behind.
+        if ($html === '') {
+            return '';
+        }
+
         return "<div {$attributes->toHtml()}>{$html}</div>";
     }
 }

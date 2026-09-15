@@ -124,3 +124,12 @@ it('is a group of its own inside a toolbar', function (): void {
         ->toContain('fi-ta-layout-split')
         ->not->toContain('<div class="fi-ta-actions fi-align-start fi-wrapped">');
 });
+
+it('renders nothing when every part renders nothing', function (): void {
+    $html = livewireTableWithParts(
+        [TableSplit::make([TableSearch::make(), TableSortingSettings::make()])->id('split')],
+        fn (Table $table): Table => $table->columns([TextColumn::make('title')]),
+    )->html();
+
+    expect($html)->not->toContain('fi-ta-layout-split');
+});

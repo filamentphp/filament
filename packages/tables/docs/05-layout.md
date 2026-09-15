@@ -688,7 +688,7 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TableFilterIndicators` - the active filter badges and the "remove all" action.
 - `TableContent` - the records, including the summaries and the loading state.
 - `TableEmptyState` - the empty state.
-- `TablePagination` - the pagination row. Without arguments it holds the results overview, the per page select and the page links; pass an array of the three parts below to choose your own, laid out as a row in the order you list them.
+- `TablePagination` - the pagination row. Without arguments it holds the results overview, the per page select and the page links; pass an array of parts to choose your own, laid out as a row in the order you list them. A composed pagination shows itself as long as one of its parts renders something, so a search field placed there stays while the pagination parts hide without records.
 - `TablePaginationOverview` - the "Showing 1 to 10 of 50 results" text.
 - `TablePaginationRecordsPerPage` - the per page select.
 - `TablePaginationLinks` - the page links, with the previous and next buttons shown on narrow screens.
