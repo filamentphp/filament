@@ -33,4 +33,9 @@ trait HasHeadings
 
         return "h{$level}";
     }
+
+    public function getSecondLevelHeadingTag(): string
+    {
+        return filled($this->getHeading()) ? $this->getHeadingTag(1) : $this->getHeadingTag();
+    }
 }

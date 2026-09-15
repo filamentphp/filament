@@ -150,7 +150,6 @@
     $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
-    $hasEmptyState = ($records !== null) && ! count($records);
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
@@ -2499,44 +2498,7 @@
                 </div>
             @endif
 
-            @if ($hasEmptyState)
-                @if ($emptyState = $getEmptyState())
-                    {{ $emptyState }}
-                @else
-                    <div class="fi-ta-empty-state" role="status">
-                        <div class="fi-ta-empty-state-content">
-                            <div class="fi-ta-empty-state-icon-bg">
-                                {{ \Filament\Support\generate_icon_html($getEmptyStateIcon(), size: IconSize::Large) }}
-                            </div>
-
-                            <{{ $secondLevelHeadingTag }}
-                                class="fi-ta-empty-state-heading"
-                            >
-                                {{ $getEmptyStateHeading() }}
-                            </{{ $secondLevelHeadingTag }}>
-
-                            @if (filled($emptyStateDescription = $getEmptyStateDescription()))
-                                <p class="fi-ta-empty-state-description">
-                                    {{ $emptyStateDescription }}
-                                </p>
-                            @endif
-
-                            @if ($emptyStateActions = array_filter(
-                                     $getEmptyStateActions(),
-                                     fn (\Filament\Actions\Action | ActionGroup $action): bool => $action->isVisible(),
-                                 ))
-                                <div
-                                    class="fi-ta-actions fi-align-center fi-wrapped"
-                                >
-                                    @foreach ($emptyStateActions as $action)
-                                        {{ $action }}
-                                    @endforeach
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-            @endif
+            @include('filament-tables::components.parts.empty-state', ['table' => $table, 'part' => null])
 
             @include('filament-tables::components.parts.pagination', ['table' => $table, 'part' => null])
 
