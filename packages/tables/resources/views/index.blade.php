@@ -412,21 +412,7 @@
 
                     @if ($isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager)
                         <div>
-                            {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
-
-                            @if ($isGlobalSearchVisible)
-                                @php
-                                    $searchPlaceholder = $getSearchPlaceholder();
-                                @endphp
-
-                                <x-filament-tables::search-field
-                                    :debounce="$searchDebounce"
-                                    :on-blur="$isSearchOnBlur"
-                                    :placeholder="$searchPlaceholder"
-                                />
-                            @endif
-
-                            {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_AFTER, scopes: static::class) }}
+                            @include('filament-tables::components.parts.search', ['table' => $table, 'part' => null])
 
                             @if ($hasFiltersTrigger || $hasColumnManager)
                                 @if ($hasFiltersDialog)
