@@ -2,6 +2,8 @@
 
 namespace Filament\Tests;
 
+use Closure;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithParts;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
@@ -30,5 +32,18 @@ if (! function_exists('\Filament\Tests\normalizeTableHtml')) {
         $html = preg_replace('/>\s+</', '><', $html);
 
         return trim($html);
+    }
+}
+
+if (! function_exists('\Filament\Tests\livewireTableWithParts')) {
+    /**
+     * @param  array<\Filament\Schemas\Components\Component>  $parts
+     */
+    function livewireTableWithParts(array $parts, ?Closure $configureTable = null): Testable
+    {
+        PostsTableWithParts::$parts = $parts;
+        PostsTableWithParts::$configureTable = $configureTable;
+
+        return livewire(PostsTableWithParts::class);
     }
 }

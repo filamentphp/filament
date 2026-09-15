@@ -150,7 +150,6 @@
     $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
-    $hasPagination = (($records instanceof Paginator) || ($records instanceof CursorPaginator)) && (($records instanceof LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
     $hasEmptyState = ($records !== null) && ! count($records);
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
@@ -2539,18 +2538,7 @@
                 @endif
             @endif
 
-            @if ($hasPagination)
-                @php
-                    $hasExtremePaginationLinks = $hasExtremePaginationLinks();
-                    $paginationPageOptions = $getPaginationPageOptions();
-                @endphp
-
-                <x-filament::pagination
-                    :extreme-links="$hasExtremePaginationLinks"
-                    :page-options="$paginationPageOptions"
-                    :paginator="$records"
-                />
-            @endif
+            @include('filament-tables::components.parts.pagination', ['table' => $table, 'part' => null])
 
             @if ($hasFiltersBelowContent)
                 <x-filament-tables::filters
