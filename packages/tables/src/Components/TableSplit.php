@@ -30,21 +30,10 @@ class TableSplit extends TableStack
                     continue;
                 }
 
-                $componentHtml = $component->toHtml();
-
-                // A part that renders nothing must not leave an empty cell behind, and Livewire's block markers are not content.
-                if (blank(trim(preg_replace('/<!--.*?-->/s', '', $componentHtml) ?? ''))) {
-                    continue;
-                }
-
-                $html .= ($component->canGrow() ? '<div class="fi-growable">' : '<div>') . $componentHtml . '</div>';
+                // A part that renders nothing keeps its cell, so the parts around it do not shift.
+                $html .= ($component->canGrow() ? '<div class="fi-growable">' : '<div>') . $component->toHtml() . '</div>';
             }
         });
-
-        // A split whose parts all render nothing leaves no empty row behind.
-        if ($html === '') {
-            return '';
-        }
 
         return "<div {$attributes->toHtml()}>{$html}</div>";
     }

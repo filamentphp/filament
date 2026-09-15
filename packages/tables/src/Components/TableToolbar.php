@@ -61,8 +61,7 @@ class TableToolbar extends TableStack
                 if ($component instanceof TableToolbarActions) {
                     $this->hasToolbarActionsItem = true;
                     $this->hasNonBulkItems = $this->hasNonBulkItems || $this->getTable()->hasNonBulkToolbarAction();
-                } elseif (filled(trim(preg_replace('/<!--.*?-->/s', '', $html) ?? ''))) {
-                    // A part that renders nothing still leaves Livewire's block markers behind, so comments do not count as content.
+                } elseif (! $this->getTable()->isLayoutHtmlBlank($html)) {
                     $this->hasNonBulkItems = true;
                 }
 

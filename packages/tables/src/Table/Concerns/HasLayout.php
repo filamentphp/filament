@@ -117,6 +117,21 @@ trait HasLayout
      * Renders the layout's components one after another, without the `<div class="fi-sc">`
      * wrapper that `Schema::toHtml()` would add, so the table markup stays unchanged.
      */
+    /**
+     * Whether rendered layout markup holds any content. Livewire's block markers are comments, and a
+     * `TableSplit` keeps a cell for every part so the row does not shift, so comments and empty elements do not count.
+     */
+    public function isLayoutHtmlBlank(string $html): bool
+    {
+        $html = preg_replace('/<!--.*?-->/s', '', $html) ?? '';
+
+        do {
+            $html = preg_replace('/<(\w+)[^>]*>\s*<\/\1>/', '', $html, count: $removedElementsCount) ?? '';
+        } while ($removedElementsCount);
+
+        return blank(trim($html));
+    }
+
     public function renderLayout(Schema $layout): string
     {
         return Component::withVisibilityCache(function () use ($layout): string {

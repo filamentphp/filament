@@ -164,3 +164,13 @@ it('throws when a part is used outside a table Livewire component', function ():
 
     $layout->getComponents()[0]->getTable();
 })->throws(LogicException::class, 'can only be used inside a Livewire component that implements [Filament\Tables\Contracts\HasTable]');
+
+it('treats comments and empty elements as blank layout markup', function (): void {
+    $table = makeTableForLayout();
+
+    expect($table->isLayoutHtmlBlank(''))->toBeTrue()
+        ->and($table->isLayoutHtmlBlank('<!--[if BLOCK]><![endif]--> <!--[if ENDBLOCK]><![endif]-->'))->toBeTrue()
+        ->and($table->isLayoutHtmlBlank('<div class="fi-ta-split"><div class="fi-growable"><!--[if BLOCK]><![endif]--></div><div></div></div>'))->toBeTrue()
+        ->and($table->isLayoutHtmlBlank('<div><div><input type="checkbox" /></div></div>'))->toBeFalse()
+        ->and($table->isLayoutHtmlBlank('<div><span>Showing 1 to 10</span></div>'))->toBeFalse();
+});

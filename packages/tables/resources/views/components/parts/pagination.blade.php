@@ -4,9 +4,9 @@
     $hasDefaultItems = $part->hasDefaultItems();
 
     // A composed pagination shows itself as long as one of its parts renders something: the pagination parts hide themselves
-    // without records, while a search field placed there stays. Livewire's block markers are not content.
+    // without records, while a search field placed there stays.
     $itemsHtml = $hasDefaultItems ? null : $table->renderLayout($part->getChildSchema());
-    $hasItems = $hasDefaultItems ? $table->hasPagination() : filled(trim(preg_replace('/<!--.*?-->/s', '', $itemsHtml) ?? ''));
+    $hasItems = $hasDefaultItems ? $table->hasPagination() : (! $table->isLayoutHtmlBlank($itemsHtml));
     $records = $table->isLoaded() ? $table->getRecords() : null;
 @endphp
 

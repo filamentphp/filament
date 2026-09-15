@@ -55,13 +55,15 @@ it('stacks below the given breakpoint', function (): void {
     expect($html)->toContain('<div id="split" class="fi-ta-split fi-ta-layout-split md:fi-ta-split">');
 });
 
-it('leaves no cell behind for a part that renders nothing', function (): void {
+it('keeps a cell for a part that renders nothing, so the row does not shift', function (): void {
     $html = livewireTableWithParts(
-        [TableSplit::make([TableSearch::make(), TableSortingSettings::make()])->id('split')],
+        [TableSplit::make([TableSortingSettings::make(), TableSearch::make()])->id('split')],
         fn (Table $table): Table => $table->columns([TextColumn::make('title')->searchable()]),
     )->html();
 
-    expect(substr_count(compactSplitHtml($html), '<div class="fi-growable">'))->toBe(1);
+    $html = compactSplitHtml($html);
+
+    expect($html)->toContain('<div id="split" class="fi-ta-split fi-ta-layout-split default:fi-ta-split"><div class="fi-growable"></div><div class="fi-growable"><div');
 });
 
 it('pushes the sort selects to the end of a content header', function (): void {
@@ -125,11 +127,17 @@ it('is a group of its own inside a toolbar', function (): void {
         ->not->toContain('<div class="fi-ta-actions fi-align-start fi-wrapped">');
 });
 
-it('renders nothing when every part renders nothing', function (): void {
+it('keeps its row when every part renders nothing, and the row around it can still hide', function (): void {
+    Post::factory()->count(15)->create();
+
     $html = livewireTableWithParts(
-        [TableSplit::make([TableSearch::make(), TableSortingSettings::make()])->id('split')],
+        [
+            TablePagination::make([
+                TableSplit::make([TableSortingSettings::make()])->id('split'),
+            ]),
+        ],
         fn (Table $table): Table => $table->columns([TextColumn::make('title')]),
     )->html();
 
-    expect($html)->not->toContain('fi-ta-layout-split');
+    expect($html)->not->toContain('fi-ta-pagination');
 });
