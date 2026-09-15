@@ -14,7 +14,7 @@
                 'code' => <<<'PHP'
 ->contentGrid(['md' => 2, 'xl' => 3])
 ->layout(fn (Schema $schema): Schema => $schema->components([
-    TableToolbar::make([TableSortingSettings::make(), TableSearch::make(), TableFiltersTrigger::make()]),
+    TableToolbar::make([TableToolbarActions::make(), TableSortingSettings::make(), TableSearch::make(), TableFiltersTrigger::make()]),
     TableSelectionIndicator::make(),
     TableFilterIndicators::make(),
     TableContent::make(),
@@ -32,7 +32,7 @@ PHP,
     Grid::make(['lg' => 3])->schema([
         TableGroup::make([
             TableGroup::make([
-                TableToolbar::make([TableSearch::make(), TableColumnManager::make()]),
+                TableToolbar::make([TableToolbarActions::make(), TableSearch::make(), TableColumnManager::make()]),
                 TableSelectionIndicator::make(),
                 TableFilterIndicators::make(),
                 TableContent::make(),
@@ -46,12 +46,12 @@ PHP,
 PHP,
             ],
             'layoutHeaderRow' => [
-                'description' => 'Heading, header actions and search on one row.',
+                'description' => 'Heading, header actions, bulk actions and search on one row.',
                 'code' => <<<'PHP'
 ->heading('Team')->description('Everyone with access to this workspace.')
 ->headerActions([CreateAction::make()])
 ->layout(fn (Schema $schema): Schema => $schema->components([
-    Flex::make([TableHeader::make(), TableSearch::make()->grow(false)])->extraAttributes(['class' => 'fi-ta-header']),
+    Flex::make([TableHeader::make(), TableToolbarActions::make()->grow(false), TableSearch::make()->grow(false)])->extraAttributes(['class' => 'fi-ta-header']),
     TableFilterIndicators::make(),
     TableContent::make(),
     TableEmptyState::make(),
@@ -97,7 +97,7 @@ PHP,
                 'code' => <<<'PHP'
 ->layout(fn (Schema $schema): Schema => $schema->components([
     TableFilters::make()->collapsible(),
-    TableToolbar::make([TableSearch::make()]),
+    TableToolbar::make([TableToolbarActions::make(), TableSearch::make()]),
     TableContent::make(),
     TableEmptyState::make(),
     TablePagination::make(),

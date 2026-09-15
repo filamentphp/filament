@@ -2468,6 +2468,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->contentGrid(['md' => 2, 'xl' => 3])
             ->layout(fn (Schema $schema): Schema => $schema->components([
                 TableToolbar::make([
+                    TableToolbarActions::make(),
                     TableSortingSettings::make(),
                     TableSearch::make(),
                     TableFiltersTrigger::make(),
@@ -2491,6 +2492,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         TableGroup::make([
                             TableGroup::make([
                                 TableToolbar::make([
+                                    TableToolbarActions::make(),
                                     TableSearch::make(),
                                     TableColumnManager::make(),
                                 ]),
@@ -2522,6 +2524,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->layout(fn (Schema $schema): Schema => $schema->components([
                 Flex::make([
                     TableHeader::make(),
+                    TableToolbarActions::make()
+                        ->grow(false),
                     TableSearch::make()
                         ->grow(false),
                 ])->extraAttributes(['class' => 'fi-ta-header']),
@@ -2577,6 +2581,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->layout(fn (Schema $schema): Schema => $schema->components([
                 TableFilters::make()->collapsible(),
                 TableToolbar::make([
+                    TableToolbarActions::make(),
                     TableSearch::make(),
                 ]),
                 TableContent::make(),

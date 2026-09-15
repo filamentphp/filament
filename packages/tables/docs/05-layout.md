@@ -534,6 +534,7 @@ public function table(Table $table): Table
         ->contentGrid(['md' => 2, 'xl' => 3])
         ->layout(fn (Schema $schema): Schema => $schema->components([
             TableToolbar::make([
+                TableToolbarActions::make(),
                 TableSortingSettings::make(),
                 TableSearch::make(),
                 TableFiltersTrigger::make(),
@@ -585,6 +586,7 @@ public function table(Table $table): Table
                     TableGroup::make([
                         TableGroup::make([
                             TableToolbar::make([
+                                TableToolbarActions::make(),
                                 TableSearch::make(),
                                 TableColumnManager::make(),
                             ]),
@@ -613,7 +615,7 @@ public function table(Table $table): Table
 All parts live in the `Filament\Tables\Components` namespace:
 
 - `TableHeader` - the heading, description and header actions.
-- `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own.
+- `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own. Only the parts you pass are rendered, so include `TableToolbarActions` when the table has toolbar or bulk actions.
 - `TableReorderTrigger` - the button that starts and stops reordering records.
 - `TableToolbarActions` - the toolbar and bulk actions.
 - `TableGroupingSettings` - the group and direction selects.
