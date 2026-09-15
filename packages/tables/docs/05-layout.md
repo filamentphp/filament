@@ -658,6 +658,7 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TableToolbarActions` - the toolbar and bulk actions. A custom layout without this part hides record selection, since a selection could never be acted upon, unless `selectable()` is set explicitly.
 - `TableGroupingSettings` - the group and direction selects.
 - `TableSortingSettings` - the column and direction selects, used by tables with a `contentGrid()` or a custom column layout, since row tables sort through their header cells.
+- `TablePageCheckbox` - the checkbox that selects every record on the page, used by tables with a `contentGrid()` or a custom column layout, since row tables render it in their header cell. When a layout places it, the header row above the records is no longer needed and renders only if it still holds the sort selects.
 - `TableSearch` - the global search field.
 - `TableFiltersTrigger` - the filters button, including the dropdown or modal for those layouts. It renders nothing when the layout places a `TableFilters` part, since the form is already visible.
 - `TableColumnManager` - the column manager button and its dropdown or modal.

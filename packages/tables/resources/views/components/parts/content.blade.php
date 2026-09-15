@@ -2,6 +2,7 @@
     use Filament\Actions\BulkAction;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
+    use Filament\Tables\Components\TablePageCheckbox;
     use Filament\Tables\Components\TableSortingSettings;
     use Filament\Tables\Table;
     use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -119,7 +120,8 @@
 
     $loadingTargetsWireTarget = implode(',', Table::LOADING_TARGETS);
 
-    // A layout that places `TableSortingSettings` elsewhere must not repeat the sort selects in the content header.
+    // A layout that places `TablePageCheckbox` or `TableSortingSettings` elsewhere must not repeat them in the content header.
+    $hasPageCheckboxInContentHeader = ! $table->hasLayoutPart(TablePageCheckbox::class);
     $hasSortingSettingsInContentHeader = ! $table->hasLayoutPart(TableSortingSettings::class);
 @endphp
 

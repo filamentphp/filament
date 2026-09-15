@@ -8,11 +8,13 @@
             $columns,
             fn (Column $column): bool => $column->isSortable(),
         ) : [];
+
+        $hasPageCheckbox = $hasPageCheckboxInContentHeader && $isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupsOnly);
     @endphp
 
-    @if (($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupsOnly)) || count($sortableColumns))
+    @if ($hasPageCheckbox || count($sortableColumns))
         <div class="fi-ta-content-header">
-            @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupsOnly))
+            @if ($hasPageCheckbox)
                 @include('filament-tables::components.parts.content.page-checkbox', ['isStacked' => false])
             @endif
 
