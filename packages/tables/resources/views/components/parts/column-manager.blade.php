@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Facades\FilamentView;
-    use Filament\Tables\View\TablesRenderHook;
     use Filament\Tables\Enums\ColumnManagerLayout;
+    use Filament\Tables\View\TablesRenderHook;
 
     $columnManagerTriggerAction = $table->getColumnManagerTriggerAction();
     $hasReorderableColumns = $table->hasReorderableColumns();

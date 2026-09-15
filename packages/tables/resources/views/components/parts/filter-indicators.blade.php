@@ -16,10 +16,7 @@
                     {{ __('filament-tables::table.filters.indicator') }}
                 </span>
 
-                <div
-                    class="fi-ta-filter-indicators-badges-ctn"
-                    role="list"
-                >
+                <div class="fi-ta-filter-indicators-badges-ctn" role="list">
                     @foreach ($filterIndicators as $indicator)
                         @php
                             $indicatorColor = $indicator->getColor();

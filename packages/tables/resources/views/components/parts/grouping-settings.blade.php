@@ -85,9 +85,7 @@
                             <option value="">-</option>
 
                             @foreach ($groups as $groupOption)
-                                <option
-                                    value="{{ $groupOption->getId() }}"
-                                >
+                                <option value="{{ $groupOption->getId() }}">
                                     {{ $groupOption->getLabel() }}
                                 </option>
                             @endforeach
@@ -102,9 +100,7 @@
                         </span>
 
                         <x-filament::input.wrapper>
-                            <x-filament::input.select
-                                x-model="direction"
-                            >
+                            <x-filament::input.select x-model="direction">
                                 <option value="asc">
                                     {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
                                 </option>
@@ -132,9 +128,7 @@
                             <option value="">-</option>
 
                             @foreach ($groups as $groupOption)
-                                <option
-                                    value="{{ $groupOption->getId() }}"
-                                >
+                                <option value="{{ $groupOption->getId() }}">
                                     {{ $groupOption->getLabel() }}
                                 </option>
                             @endforeach
@@ -149,9 +143,7 @@
                         </span>
 
                         <x-filament::input.wrapper>
-                            <x-filament::input.select
-                                x-model="direction"
-                            >
+                            <x-filament::input.select x-model="direction">
                                 <option value="asc">
                                     {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
                                 </option>

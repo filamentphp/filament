@@ -16,9 +16,7 @@
                     {{ \Filament\Support\generate_icon_html($table->getEmptyStateIcon(), size: IconSize::Large) }}
                 </div>
 
-                <{{ $headingTag }}
-                    class="fi-ta-empty-state-heading"
-                >
+                <{{ $headingTag }} class="fi-ta-empty-state-heading">
                     {{ $table->getEmptyStateHeading() }}
                 </{{ $headingTag }}>
 
@@ -32,9 +30,7 @@
                          $table->getEmptyStateActions(),
                          fn (Action | ActionGroup $action): bool => $action->isVisible(),
                      ))
-                    <div
-                        class="fi-ta-actions fi-align-center fi-wrapped"
-                    >
+                    <div class="fi-ta-actions fi-align-center fi-wrapped">
                         @foreach ($emptyStateActions as $action)
                             {{ $action }}
                         @endforeach

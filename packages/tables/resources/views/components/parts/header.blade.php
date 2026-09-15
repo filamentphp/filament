@@ -26,9 +26,7 @@
         @if ($heading || $description)
             <div>
                 @if ($heading)
-                    <{{ $headingTag }}
-                        class="fi-ta-header-heading"
-                    >
+                    <{{ $headingTag }} class="fi-ta-header-heading">
                         {{ $heading }}
                     </{{ $headingTag }}>
                 @endif
@@ -42,9 +40,7 @@
         @endif
 
         @if ((! $isReordering) && $headerActions)
-            <div
-                class="fi-ta-actions fi-align-start fi-wrapped"
-            >
+            <div class="fi-ta-actions fi-align-start fi-wrapped">
                 @foreach ($headerActions as $action)
                     {{ $action }}
                 @endforeach

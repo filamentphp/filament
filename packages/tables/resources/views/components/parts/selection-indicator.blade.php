@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Facades\FilamentView;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Tables\View\TablesRenderHook;
     use Illuminate\Support\Number;
 
@@ -15,7 +16,7 @@
         class="fi-ta-reorder-indicator"
     >
         {{
-            \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+            \Filament\Support\generate_loading_indicator_html(new FilamentComponentAttributeBag([
                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                 'wire:target' => 'reorderTable',
             ]))
@@ -41,7 +42,7 @@
     >
         <div>
             {{
-                \Filament\Support\generate_loading_indicator_html(new Filament\Support\View\ComponentAttributeBag([
+                \Filament\Support\generate_loading_indicator_html(new FilamentComponentAttributeBag([
                     'x-show' => 'isLoading',
                 ]))
             }}

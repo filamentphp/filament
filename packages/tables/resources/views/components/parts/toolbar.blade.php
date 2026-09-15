@@ -16,32 +16,37 @@
     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
     {{-- Raw PHP instead of `@if`, so Livewire does not inject `<!--[if BLOCK]-->` markers the original toolbar did not have. --}}
+
     <?php if ($part->hasDefaultItems()) { ?>
-        @php
-            [$reorderTrigger, $toolbarActions, $groupingSettings, $search, $filtersTrigger, $columnManager] = $part->getChildSchema()->getComponents();
-        @endphp
 
-        <div class="fi-ta-actions fi-align-start fi-wrapped">
-            {{ $reorderTrigger }}
+    @php
+        [$reorderTrigger, $toolbarActions, $groupingSettings, $search, $filtersTrigger, $columnManager] = $part->getChildSchema()->getComponents();
+    @endphp
 
-            {{ $toolbarActions }}
+    <div class="fi-ta-actions fi-align-start fi-wrapped">
+        {{ $reorderTrigger }}
 
-            {{ $groupingSettings }}
+        {{ $toolbarActions }}
+
+        {{ $groupingSettings }}
+    </div>
+
+    @if ($table->isSearchable() || $table->hasFiltersTrigger() || $table->hasColumnManager())
+        <div>
+            {{ $search }}
+
+            @if ($table->hasFiltersTrigger() || $table->hasColumnManager())
+                {{ $filtersTrigger }}
+
+                {{ $columnManager }}
+            @endif
         </div>
+    @endif
 
-        @if ($table->isSearchable() || $table->hasFiltersTrigger() || $table->hasColumnManager())
-            <div>
-                {{ $search }}
-
-                @if ($table->hasFiltersTrigger() || $table->hasColumnManager())
-                    {{ $filtersTrigger }}
-
-                    {{ $columnManager }}
-                @endif
-            </div>
-        @endif
     <?php } else { ?>
-        {!! $part->renderItems() !!}
+
+    {!! $part->renderItems() !!}
+
     <?php } ?>
 
     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END) }}

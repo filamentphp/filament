@@ -57,17 +57,13 @@
             <x-filament::input.wrapper
                 :prefix="__('filament-tables::table.sorting.fields.column.label')"
             >
-                <x-filament::input.select
-                    x-model="column"
-                >
+                <x-filament::input.select x-model="column">
                     <option value="">
                         {{ $table->getDefaultSortOptionLabel() }}
                     </option>
 
                     @foreach ($sortableColumns as $column)
-                        <option
-                            value="{{ $column->getName() }}"
-                        >
+                        <option value="{{ $column->getName() }}">
                             {{ $column->getLabel() }}
                         </option>
                     @endforeach
@@ -81,9 +77,7 @@
             </span>
 
             <x-filament::input.wrapper>
-                <x-filament::input.select
-                    x-model="direction"
-                >
+                <x-filament::input.select x-model="direction">
                     <option value="asc">
                         {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
                     </option>
