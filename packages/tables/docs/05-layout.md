@@ -617,7 +617,7 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TableHeader` - the heading, description and header actions.
 - `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own. Only the parts you pass are rendered, so include `TableToolbarActions` when the table has toolbar or bulk actions.
 - `TableReorderTrigger` - the button that starts and stops reordering records.
-- `TableToolbarActions` - the toolbar and bulk actions.
+- `TableToolbarActions` - the toolbar and bulk actions. A custom layout without this part hides record selection, since a selection could never be acted upon, unless `selectable()` is set explicitly.
 - `TableGroupingSettings` - the group and direction selects.
 - `TableSortingSettings` - the column and direction selects, used by tables with a `contentGrid()` or a custom column layout, since row tables sort through their header cells.
 - `TableSearch` - the global search field.

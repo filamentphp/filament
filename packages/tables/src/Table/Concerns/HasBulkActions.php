@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Enums\RecordCheckboxPosition;
 use Illuminate\Database\Eloquent\Model;
 
@@ -125,6 +126,11 @@ trait HasBulkActions
     {
         if (is_bool($isSelectable = $this->evaluate($this->isSelectable))) {
             return $isSelectable;
+        }
+
+        // Without the part that renders the bulk actions, a selection could never be acted upon.
+        if ($this->hasCustomLayout() && (! $this->hasLayoutPart(TableToolbarActions::class))) {
+            return false;
         }
 
         foreach ($this->getFlatBulkActions() as $action) {

@@ -15,6 +15,7 @@ use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
 use Filament\Tables\Components\TableSortingSettings;
 use Filament\Tables\Components\TableToolbar;
+use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Table;
 
 class PostsTableWithCustomLayout extends PostsTable
@@ -29,6 +30,7 @@ class PostsTableWithCustomLayout extends PostsTable
                     ->schema([
                         Group::make([
                             TableToolbar::make([
+                                TableToolbarActions::make(),
                                 TableSortingSettings::make(),
                                 TableSearch::make(),
                             ]),

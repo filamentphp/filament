@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Tables\Components\TableSelectionIndicator;
+use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
@@ -12,7 +13,7 @@ uses(TestCase::class);
 it('renders the selection indicator for a selectable table', function (): void {
     Post::factory()->count(2)->create();
 
-    $html = livewireTableWithParts([TableSelectionIndicator::make()])->html();
+    $html = livewireTableWithParts([TableToolbarActions::make(), TableSelectionIndicator::make()])->html();
 
     expect($html)
         ->toContain('class="fi-ta-selection-indicator"')
@@ -24,7 +25,7 @@ it('renders the reorder indicator instead while reordering', function (): void {
     Post::factory()->count(2)->create();
 
     $html = livewireTableWithParts(
-        [TableSelectionIndicator::make()],
+        [TableToolbarActions::make(), TableSelectionIndicator::make()],
         fn (Table $table): Table => $table->reorderable('sort'),
     )
         ->call('toggleTableReordering')
@@ -46,4 +47,12 @@ it('renders nothing for a table without selection', function (): void {
     expect($html)
         ->not->toContain('fi-ta-selection-indicator')
         ->not->toContain('fi-ta-reorder-indicator');
+});
+
+it('renders nothing when the layout has no `TableToolbarActions` part to act on the selection', function (): void {
+    Post::factory()->count(2)->create();
+
+    $html = livewireTableWithParts([TableSelectionIndicator::make()])->html();
+
+    expect($html)->not->toContain('fi-ta-selection-indicator');
 });
