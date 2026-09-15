@@ -416,6 +416,26 @@ This approach also works for TypeScript files or any other JavaScript that needs
     If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
 </Aside>
 
+## Content Security Policy nonces
+
+If your application sends a [Content Security Policy](security#content-security-policy-csp) header, Filament can add a `nonce` attribute to scripts rendered through `FilamentAsset`, including registered scripts and registered script data. Filament uses Laravel's `Vite` nonce, which is also used by Livewire:
+
+```php
+use Illuminate\Support\Facades\Vite;
+
+Vite::useCspNonce($nonce);
+```
+
+You should call `Vite::useCspNonce()` for every request, before the response is rendered, using the same nonce that you add to the `Content-Security-Policy` header. You can usually do this in the middleware that creates the policy.
+
+<Aside variant="info">
+    The `Vite` facade is only used to share the nonce between Laravel, Livewire, and Filament. Your application does not need to compile its assets with Vite or use the `@vite` Blade directive, so this also works in applications that use Laravel Mix.
+</Aside>
+
+<Aside variant="info">
+    Scripts registered with `Js::make()->html()`, where the HTML already contains a `<script>` element, are rendered exactly as you provide them. Filament does not modify that markup, so you should add the nonce yourself using `Vite::cspNonce()`.
+</Aside>
+
 ## Ignoring published assets in version control
 
 The files that the `php artisan filament:assets` command copies into the `/public` directory for Filament's own packages are generated, so there is no need to commit them to version control. When you run `php artisan filament:install`, Filament adds the following rules to your app's `.gitignore` file, if they are not already there:
