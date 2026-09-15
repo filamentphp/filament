@@ -648,6 +648,30 @@ public function table(Table $table): Table
 
 A custom toolbar shows itself as long as one of its parts renders something. When it holds only the bulk actions, it appears while records are selected, like the default toolbar.
 
+With more than two groups, the toolbar spreads them across the row. To keep some groups together at the start and push the rest to the end, give the last group of the first cluster `grow()`, the same option a `Split` child has:
+
+```php
+use Filament\Tables\Components\TableColumnManager;
+use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TablePageCheckbox;
+use Filament\Tables\Components\TableSearch;
+use Filament\Tables\Components\TableToolbar;
+use Filament\Tables\Components\TableToolbarActions;
+
+TableToolbar::make([
+    TableGroup::make([
+        TablePageCheckbox::make(),
+        TableToolbarActions::make(),
+    ]),
+    TableGroup::make([
+        TableSearch::make(),
+    ])->grow(),
+    TableGroup::make([
+        TableColumnManager::make(),
+    ]),
+])
+```
+
 ### Available parts
 
 All parts live in the `Filament\Tables\Components` namespace:
@@ -674,7 +698,7 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TablePaginationLinks` - the page links, with the previous and next buttons shown on narrow screens.
 
 The three pagination parts may also be placed outside `TablePagination`, for example the per page select in the toolbar. They keep their styles, but the page links only switch between the buttons and the numbered links inside `TablePagination`, since that switch depends on the width of the pagination row.
-- `TableGroup` - a plain `<div>` container for parts, with optional `extraAttributes()`.
+- `TableGroup` - a plain `<div>` container for parts, with optional `extraAttributes()`. Inside a toolbar, `grow()` lets the group take the free space of the row, like a `Split` child, so the groups after it sit at the end.
 
 ### Rules for custom layouts
 

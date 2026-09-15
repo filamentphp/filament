@@ -75,6 +75,11 @@
             @apply ms-auto;
         }
 
+        /* A `TableGroup` with `grow()` takes the free space of the row, like a `Split` child, so the groups after it sit at the end. */
+        & > .fi-growable {
+            @apply flex-1;
+        }
+
         /* A header placed in the toolbar is row content: the toolbar already provides the padding and the border. */
         & .fi-ta-header {
             @apply border-0 p-0;

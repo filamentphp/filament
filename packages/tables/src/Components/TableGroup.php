@@ -16,16 +16,23 @@ class TableGroup extends Group
 
     public function toEmbeddedHtml(): string
     {
-        $attributes = '';
+        $attributes = ['id' => $this->getId(), ...$this->getExtraAttributes()];
 
-        foreach (['id' => $this->getId(), ...$this->getExtraAttributes()] as $name => $value) {
+        // The same `grow()` as a `Split` child: a growing group takes the free space of its row, which pushes the groups after it to the end.
+        if ($this->canGrow(default: false)) {
+            $attributes['class'] = trim(($attributes['class'] ?? '') . ' fi-growable');
+        }
+
+        $html = '';
+
+        foreach ($attributes as $name => $value) {
             if (($value === false) || ($value === null)) {
                 continue;
             }
 
-            $attributes .= ($value === true) ? " {$name}" : " {$name}=\"{$value}\"";
+            $html .= ($value === true) ? " {$name}" : " {$name}=\"{$value}\"";
         }
 
-        return "<div{$attributes}>" . $this->getTable()->renderLayout($this->getChildSchema()) . '</div>';
+        return "<div{$html}>" . $this->getTable()->renderLayout($this->getChildSchema()) . '</div>';
     }
 }
