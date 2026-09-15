@@ -1,7 +1,3 @@
-@php
-    use Illuminate\Support\Str;
-@endphp
-
 @if ($isStackedOnMobile && (count($sortableColumns) || ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))) && (! $isReordering))
     <tr class="fi-ta-table-stacked-header-row">
         <td colspan="100%" class="fi-ta-table-stacked-header-cell">
@@ -92,41 +88,7 @@
             @endif
 
             @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
-                <input
-                    aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
-                    type="checkbox"
-                    @if ($isSelectionDisabled)
-                        disabled
-                    @elseif ($maxSelectableRecords)
-                        x-bind:disabled="
-                            const recordsOnPage = getRecordsOnPage()
-
-                            return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
-                        "
-                    @endif
-                    x-bind:checked="
-                        const recordsOnPage = getRecordsOnPage()
-
-                        if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                            $el.checked = true
-                            $el.indeterminate = false
-
-                            return 'checked'
-                        }
-
-                        $el.checked = false
-                        $el.indeterminate =
-                            recordsOnPage.length && areRecordsPartiallySelected(recordsOnPage)
-
-                        return null
-                    "
-                    x-on:click="toggleSelectRecordsOnPage"
-                    {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                    wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.stacked.{{ Str::random() }}"
-                    wire:loading.attr="disabled"
-                    wire:target="{{ $loadingTargetsWireTarget }}"
-                    class="fi-ta-page-checkbox fi-checkbox-input"
-                />
+                @include('filament-tables::components.parts.content.page-checkbox', ['isStacked' => true])
             @endif
         </td>
     </tr>
