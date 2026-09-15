@@ -22,7 +22,6 @@ use Filament\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Constraints\TextConstraint;
-use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid as SchemaGrid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -2523,13 +2522,13 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 CreateAction::make(),
             ])
             ->layout(fn (Schema $schema): Schema => $schema->components([
-                Flex::make([
+                TableToolbar::make([
                     TableHeader::make(),
-                    TableToolbarActions::make()
-                        ->grow(false),
-                    TableSearch::make()
-                        ->grow(false),
-                ])->extraAttributes(['class' => 'fi-ta-header']),
+                    TableToolbarActions::make(),
+                    TableGroup::make([
+                        TableSearch::make(),
+                    ]),
+                ]),
                 TableFilterIndicators::make(),
                 TableContent::make(),
                 TableEmptyState::make(),

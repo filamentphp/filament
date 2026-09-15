@@ -611,6 +611,43 @@ public function table(Table $table): Table
 
 `TableGroup` is a plain `<div>` without any styling of its own. Here the outer group receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. Since `fi-ta-ctn` is a flex row that places sidebar filters next to the records, the parts sit in an inner `fi-ta-main` group, like they do in the default table. The filters trigger button is not needed, since a layout that places `TableFilters` itself renders no trigger.
 
+The toolbar row can also hold the table's heading, description and header actions, so a table with a title and a search field on one row needs no header of its own:
+
+```php
+use Filament\Schemas\Schema;
+use Filament\Tables\Components\TableContent;
+use Filament\Tables\Components\TableEmptyState;
+use Filament\Tables\Components\TableFilterIndicators;
+use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableHeader;
+use Filament\Tables\Components\TablePagination;
+use Filament\Tables\Components\TableSearch;
+use Filament\Tables\Components\TableToolbar;
+use Filament\Tables\Components\TableToolbarActions;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Team')
+        ->layout(fn (Schema $schema): Schema => $schema->components([
+            TableToolbar::make([
+                TableHeader::make(),
+                TableToolbarActions::make(),
+                TableGroup::make([
+                    TableSearch::make(),
+                ]),
+            ]),
+            TableFilterIndicators::make(),
+            TableContent::make(),
+            TableEmptyState::make(),
+            TablePagination::make(),
+        ]));
+}
+```
+
+A custom toolbar shows itself as long as one of its parts renders something. When it holds only the bulk actions, it appears while records are selected, like the default toolbar.
+
 ### Available parts
 
 All parts live in the `Filament\Tables\Components` namespace:

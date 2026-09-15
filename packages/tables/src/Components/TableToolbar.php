@@ -8,6 +8,10 @@ class TableToolbar extends TableGroup
 {
     protected bool $hasDefaultItems = false;
 
+    protected bool $hasNonBulkItems = false;
+
+    protected bool $hasToolbarActionsItem = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,8 +44,11 @@ class TableToolbar extends TableGroup
      */
     public function renderItems(): string
     {
+        $this->hasNonBulkItems = false;
+        $this->hasToolbarActionsItem = false;
+
         return Component::withVisibilityCache(function (): string {
-            /** @var array<int, Component | array<int, TablePart>> $groups */
+            /** @var array<int, string | array<int, string>> $groups */
             $groups = [];
 
             foreach ($this->getChildSchema()->getComponents(withHidden: true) as $component) {
@@ -49,8 +56,18 @@ class TableToolbar extends TableGroup
                     continue;
                 }
 
+                $html = $component->toHtml();
+
+                if ($component instanceof TableToolbarActions) {
+                    $this->hasToolbarActionsItem = true;
+                    $this->hasNonBulkItems = $this->hasNonBulkItems || $this->getTable()->hasNonBulkToolbarAction();
+                } elseif (filled(trim(preg_replace('/<!--.*?-->/s', '', $html) ?? ''))) {
+                    // A part that renders nothing still leaves Livewire's block markers behind, so comments do not count as content.
+                    $this->hasNonBulkItems = true;
+                }
+
                 if (! ($component instanceof TablePart)) {
-                    $groups[] = $component;
+                    $groups[] = $html;
 
                     continue;
                 }
@@ -58,24 +75,37 @@ class TableToolbar extends TableGroup
                 $lastGroupKey = array_key_last($groups);
 
                 if (($lastGroupKey !== null) && is_array($groups[$lastGroupKey])) {
-                    $groups[$lastGroupKey][] = $component;
+                    $groups[$lastGroupKey][] = $html;
 
                     continue;
                 }
 
-                $groups[] = [$component];
+                $groups[] = [$html];
             }
 
             $html = '';
 
             foreach ($groups as $group) {
                 $html .= is_array($group)
-                    ? '<div class="fi-ta-actions fi-align-start fi-wrapped">' . implode('', array_map(fn (TablePart $part): string => $part->toHtml(), $group)) . '</div>'
-                    : $group->toHtml();
+                    ? '<div class="fi-ta-actions fi-align-start fi-wrapped">' . implode('', $group) . '</div>'
+                    : $group;
             }
 
             return $html;
         });
+    }
+
+    /**
+     * Whether the rendered custom items include anything beyond the bulk actions, which only show while records are selected.
+     */
+    public function hasNonBulkItems(): bool
+    {
+        return $this->hasNonBulkItems;
+    }
+
+    public function hasToolbarActionsItem(): bool
+    {
+        return $this->hasToolbarActionsItem;
     }
 
     public function toEmbeddedHtml(): string

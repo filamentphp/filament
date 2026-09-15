@@ -5,8 +5,10 @@ use Filament\Schemas\Components\Flex;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Components\TableColumnManager;
 use Filament\Tables\Components\TableGroup;
+use Filament\Tables\Components\TableHeader;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableToolbar;
+use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Table;
 use Filament\Tests\Tables\TestCase;
 
@@ -80,4 +82,51 @@ it('renders no actions group when the toolbar holds layout components only', fun
     expect($html)
         ->toContain('class="fi-ta-search-field"')
         ->not->toContain('<div class="fi-ta-actions fi-align-start fi-wrapped">');
+});
+
+it('shows a custom toolbar whose header renders, even when the table has no toolbar features', function (): void {
+    $html = livewireTableWithParts(
+        [TableToolbar::make([TableHeader::make()])],
+        fn (Table $table): Table => $table
+            ->heading('Team')
+            ->columns([TextColumn::make('title')])
+            ->filters([])
+            ->groups([])
+            ->toolbarActions([]),
+    )->html();
+
+    expect($html)
+        ->toContain('x-show="true || false || (getSelectedRecordsCount() && 0)"')
+        ->toContain('.table.header-toolbar.visible"')
+        ->toContain('fi-ta-header-heading');
+});
+
+it('hides a custom toolbar whose items render nothing', function (): void {
+    $html = livewireTableWithParts(
+        [TableToolbar::make([TableSearch::make()])],
+        fn (Table $table): Table => $table
+            ->columns([TextColumn::make('title')])
+            ->filters([])
+            ->groups([])
+            ->toolbarActions([]),
+    )->html();
+
+    expect($html)
+        ->toContain('x-show="false || false || (getSelectedRecordsCount() && 0)"')
+        ->toContain('.table.header-toolbar.hidden"');
+});
+
+it('shows a custom toolbar holding only bulk actions while records are selected', function (): void {
+    $html = livewireTableWithParts(
+        [TableToolbar::make([TableToolbarActions::make()])],
+        fn (Table $table): Table => $table
+            ->columns([TextColumn::make('title')])
+            ->filters([])
+            ->groups([])
+            ->toolbarActions([BulkAction::make('first'), BulkAction::make('second')]),
+    )->html();
+
+    expect($html)
+        ->toContain('x-show="false || false || (getSelectedRecordsCount() && 2)"')
+        ->toContain('.table.header-toolbar.selection"');
 });

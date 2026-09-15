@@ -54,7 +54,7 @@ PHP,
 ->heading('Team')->description('Everyone with access to this workspace.')
 ->headerActions([CreateAction::make()])
 ->layout(fn (Schema $schema): Schema => $schema->components([
-    Flex::make([TableHeader::make(), TableToolbarActions::make()->grow(false), TableSearch::make()->grow(false)])->extraAttributes(['class' => 'fi-ta-header']),
+    TableToolbar::make([TableHeader::make(), TableToolbarActions::make(), TableGroup::make([TableSearch::make()])]),
     TableFilterIndicators::make(),
     TableContent::make(),
     TableEmptyState::make(),
