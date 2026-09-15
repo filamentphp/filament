@@ -333,9 +333,36 @@ A different path, component, fragment, or mutation redirect destination is hande
 
 Filament's authentication middleware uses this location protocol when an Inertia request loses authentication on a plugin-enabled panel, preserving the intended URL for login. Custom authentication middleware must provide equivalent handling; ordinary JSON/API authentication errors remain JSON errors.
 
+Prefer registering Filament's middleware directly on the panel:
+
+```php
+use Filament\Http\Middleware\Authenticate;
+
+// In your panel configuration:
+->authMiddleware([Authenticate::class])
+```
+
+If your application needs a custom subclass, extend `Filament\Http\Middleware\Authenticate`, not Laravel's independent authentication middleware. Inherit `redirectTo()` unless you need a different login destination. An override must retain Filament's nullable string return type:
+
+```php
+use Filament\Http\Middleware\Authenticate as FilamentAuthenticate;
+
+class Authenticate extends FilamentAuthenticate
+{
+    protected function redirectTo($request): ?string
+    {
+        return route('login');
+    }
+}
+```
+
+Register that subclass in `authMiddleware()` instead. A separate middleware extending `Illuminate\Auth\Middleware\Authenticate` does not inherit this Inertia handling; returning a normal redirect from it can display login HTML inside Inertia's error dialog after authentication is lost.
+
 ### Rendering on the server
 
 The optional generated SSR entry sets `id: 'filament-inertia'` in its `createInertiaApp()` options. Filament's browser host requires that exact root ID; the adapters' default `app` ID does not work.
+
+When you navigate away from a React page before its initial hydration starts, React can report "This root received an early update" (production error 424) as Filament synchronously unmounts the abandoned root. This cancellation does not require waiting for hydration before navigating away. Filament does not suppress the diagnostic. Investigate hydration errors on pages that remain mounted separately; this cancellation case does not explain genuine server/client markup mismatches.
 
 If an existing SSR server also handles a native Inertia application, keep that application's bootstrap and root ID unchanged. The same server can dispatch by component prefix: use `filament-inertia` for `Filament/` components and the native application's existing ID for everything else. Merge this dispatch into your existing server entry rather than overwriting its SSR configuration.
 
