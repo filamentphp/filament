@@ -63,12 +63,6 @@
     $hasAllTableSummary = $hasAllTableSummary();
     $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
     $hasTopLevelSummary = $hasSummary && ($hasPageSummary || $hasAllTableSummary);
-    $header = $getHeader();
-    $headerActions = array_filter(
-        $getHeaderActions(),
-        fn (\Filament\Actions\Action | ActionGroup $action): bool => $action->isVisible(),
-    );
-    $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
     $toolbarActions = array_filter(
@@ -101,7 +95,6 @@
     }
 
     $groups = $getGroups();
-    $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
@@ -136,7 +129,7 @@
     $hasToggleableColumns = $hasToggleableColumns();
     $columnManagerApplyAction = $getColumnManagerApplyAction();
     $columnManagerTriggerAction = $getColumnManagerTriggerAction();
-    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManager;
+    $hasHeader = $hasHeader();
     $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
 
     // https://github.com/filamentphp/filament/pull/19787
@@ -146,8 +139,7 @@
     $headerToolbarVisibilityMode = ($hasHeaderToolbar || $hasNonBulkToolbarAction)
         ? 'visible'
         : (count($toolbarActions) ? 'selection' : 'hidden');
-    $headingTag = $getHeadingTag();
-    $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
+    $secondLevelHeadingTag = $getSecondLevelHeadingTag();
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $hasContentLayout = $content || $hasColumnsLayout;
@@ -249,48 +241,7 @@
                 wire:key="{{ $this->getId() }}.table.header.{{ $headerVisibilityMode }}"
                 class="fi-ta-header-ctn"
             >
-                {{ FilamentView::renderHook(TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
-
-                @if ($header)
-                    {{ $header }}
-                @elseif ($heading || $description || ($headerActions && (! $isReordering)))
-                    <div
-                        @class([
-                            'fi-ta-header',
-                            'fi-ta-header-adaptive-actions-position' => $headerActions && (! $isReordering) && ($headerActionsPosition === HeaderActionsPosition::Adaptive),
-                        ])
-                    >
-                        @if ($heading || $description)
-                            <div>
-                                @if ($heading)
-                                    <{{ $headingTag }}
-                                        class="fi-ta-header-heading"
-                                    >
-                                        {{ $heading }}
-                                    </{{ $headingTag }}>
-                                @endif
-
-                                @if ($description)
-                                    <p class="fi-ta-header-description">
-                                        {{ $description }}
-                                    </p>
-                                @endif
-                            </div>
-                        @endif
-
-                        @if ((! $isReordering) && $headerActions)
-                            <div
-                                class="fi-ta-actions fi-align-start fi-wrapped"
-                            >
-                                @foreach ($headerActions as $action)
-                                    {{ $action }}
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                @endif
-
-                {{ FilamentView::renderHook(TablesRenderHook::HEADER_AFTER, scopes: static::class) }}
+                @include('filament-tables::components.parts.header', ['table' => $table, 'part' => null])
 
                 @if ($hasFiltersAboveContent)
                     <div
