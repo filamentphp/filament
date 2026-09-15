@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Components\TableFilters;
 use Filament\Tables\Components\TableFiltersTrigger;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
@@ -42,6 +43,18 @@ it('renders the sidebar trigger for `FiltersLayout::BeforeContent`', function ()
 it('renders nothing for `FiltersLayout::AboveContent`', function (): void {
     expect(renderTableFiltersTrigger(FiltersLayout::AboveContent))
         ->not->toContain('filtersTriggerActionContainer')
+        ->not->toContain('fi-ta-filters-dropdown')
+        ->not->toContain('fi-ta-filters-modal');
+});
+
+it('renders nothing when the layout places a `TableFilters` part', function (): void {
+    $html = livewireTableWithParts(
+        [TableFilters::make(), TableFiltersTrigger::make()],
+        fn (Table $table): Table => $table->filtersLayout(FiltersLayout::Dropdown),
+    )->html();
+
+    expect($html)
+        ->toContain('class="fi-ta-filters"')
         ->not->toContain('fi-ta-filters-dropdown')
         ->not->toContain('fi-ta-filters-modal');
 });

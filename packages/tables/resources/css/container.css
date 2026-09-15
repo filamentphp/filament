@@ -75,6 +75,11 @@
             @apply ms-auto;
         }
 
+        /* The content header styles the sort selects as a row; a layout that moves them into the toolbar needs the same. */
+        & .fi-ta-sorting-settings {
+            @apply flex items-center gap-x-3;
+        }
+
         & .fi-ta-grouping-settings {
             & .fi-dropdown {
                 &.sm\:fi-hidden {

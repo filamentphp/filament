@@ -41,9 +41,7 @@
             </div>
         @endif
     <?php } else { ?>
-        <div class="fi-ta-actions fi-align-start fi-wrapped">
-            {!! $table->renderLayout($part->getChildSchema()) !!}
-        </div>
+        {!! $part->renderItems() !!}
     <?php } ?>
 
     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END) }}

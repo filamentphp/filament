@@ -3,6 +3,7 @@
     use Filament\Tables\Enums\FiltersLayout;
 
     $filtersLayout = $table->getFiltersLayout();
+    $hasFiltersTrigger = $table->hasFiltersTrigger();
     $hasFiltersDialog = $table->hasFiltersDialog();
     $hasFiltersBeforeOrAfterContent = $table->isFilterable() && in_array($filtersLayout, [FiltersLayout::BeforeContent, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContent, FiltersLayout::AfterContentCollapsible]);
     $hasCollapsibleFilters = $table->isFilterable() && in_array($filtersLayout, [FiltersLayout::AboveContentCollapsible, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]);
@@ -15,7 +16,7 @@
     }
 @endphp
 
-@if ($hasFiltersDialog)
+@if ($hasFiltersTrigger && $hasFiltersDialog)
     @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
         @php
             $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
@@ -91,7 +92,7 @@
             />
         </x-filament::dropdown>
     @endif
-@elseif ($hasFiltersBeforeOrAfterContent)
+@elseif ($hasFiltersTrigger && $hasFiltersBeforeOrAfterContent)
     <span
         x-ref="filtersTriggerActionContainer"
         x-on:click="toggleFiltersDropdown"

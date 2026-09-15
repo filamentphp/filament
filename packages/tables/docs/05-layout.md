@@ -521,6 +521,7 @@ use Filament\Tables\Components\TableContent;
 use Filament\Tables\Components\TableEmptyState;
 use Filament\Tables\Components\TableFilterIndicators;
 use Filament\Tables\Components\TableFiltersTrigger;
+use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
@@ -536,8 +537,10 @@ public function table(Table $table): Table
             TableToolbar::make([
                 TableToolbarActions::make(),
                 TableSortingSettings::make(),
-                TableSearch::make(),
-                TableFiltersTrigger::make(),
+                TableGroup::make([
+                    TableSearch::make(),
+                    TableFiltersTrigger::make(),
+                ]),
             ]),
             TableSelectionIndicator::make(),
             TableFilterIndicators::make(),
@@ -572,14 +575,12 @@ use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableSelectionIndicator;
 use Filament\Tables\Components\TableToolbar;
-use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return $table
         ->contained(false)
-        ->filtersLayout(FiltersLayout::Hidden)
         ->layout(fn (Schema $schema): Schema => $schema->components([
             Grid::make(['lg' => 3])
                 ->schema([
@@ -608,20 +609,20 @@ public function table(Table $table): Table
 }
 ```
 
-`TableGroup` is a plain `<div>` without any styling of its own. Here the outer group receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. Since `fi-ta-ctn` is a flex row that places sidebar filters next to the records, the parts sit in an inner `fi-ta-main` group, like they do in the default table. `FiltersLayout::Hidden` keeps the filters trigger button out of the toolbar, since the form is always visible.
+`TableGroup` is a plain `<div>` without any styling of its own. Here the outer group receives the `fi-ta-ctn` class so the records keep their card while the filters live in a section. Since `fi-ta-ctn` is a flex row that places sidebar filters next to the records, the parts sit in an inner `fi-ta-main` group, like they do in the default table. The filters trigger button is not needed, since a layout that places `TableFilters` itself renders no trigger.
 
 ### Available parts
 
 All parts live in the `Filament\Tables\Components` namespace:
 
 - `TableHeader` - the heading, description and header actions.
-- `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own. Only the parts you pass are rendered, so include `TableToolbarActions` when the table has toolbar or bulk actions.
+- `TableToolbar` - a toolbar row. Without arguments it holds the default items in their default order; pass an array of parts to choose your own. Only the parts you pass are rendered, so include `TableToolbarActions` when the table has toolbar or bulk actions. Parts placed directly in the toolbar share one group at the start of the row. A nested `TableGroup` forms a group of its own, and the toolbar places the second group at the end of the row, where the default toolbar keeps the search field.
 - `TableReorderTrigger` - the button that starts and stops reordering records.
 - `TableToolbarActions` - the toolbar and bulk actions. A custom layout without this part hides record selection, since a selection could never be acted upon, unless `selectable()` is set explicitly.
 - `TableGroupingSettings` - the group and direction selects.
 - `TableSortingSettings` - the column and direction selects, used by tables with a `contentGrid()` or a custom column layout, since row tables sort through their header cells.
 - `TableSearch` - the global search field.
-- `TableFiltersTrigger` - the filters button, including the dropdown or modal for those layouts.
+- `TableFiltersTrigger` - the filters button, including the dropdown or modal for those layouts. It renders nothing when the layout places a `TableFilters` part, since the form is already visible.
 - `TableColumnManager` - the column manager button and its dropdown or modal.
 - `TableFilters` - the filters form. Use `collapsible()` to render a trigger that toggles the form.
 - `TableSelectionIndicator` - the "records selected" bar with the select all and deselect all links, and the indicator shown while reordering.

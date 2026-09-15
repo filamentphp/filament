@@ -2470,8 +2470,10 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TableToolbar::make([
                     TableToolbarActions::make(),
                     TableSortingSettings::make(),
-                    TableSearch::make(),
-                    TableFiltersTrigger::make(),
+                    TableGroup::make([
+                        TableSearch::make(),
+                        TableFiltersTrigger::make(),
+                    ]),
                 ]),
                 TableSelectionIndicator::make(),
                 TableFilterIndicators::make(),
@@ -2485,7 +2487,6 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     {
         return $this->layoutVariantTable($table)
             ->contained(false)
-            ->filtersLayout(FiltersLayout::Hidden)
             ->layout(fn (Schema $schema): Schema => $schema->components([
                 SchemaGrid::make(['lg' => 3])
                     ->schema([

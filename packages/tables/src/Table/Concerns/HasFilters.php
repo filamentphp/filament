@@ -10,6 +10,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Components\TableFilters;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\BaseFilter;
@@ -343,6 +344,11 @@ trait HasFilters
 
     public function hasFiltersTrigger(): bool
     {
+        // A layout that places the filters form itself has nothing for the trigger to open.
+        if ($this->hasCustomLayout() && $this->hasLayoutPart(TableFilters::class)) {
+            return false;
+        }
+
         return $this->isFilterable() && ($this->hasFiltersDialog() || in_array($this->getFiltersLayout(), [
             FiltersLayout::BeforeContent,
             FiltersLayout::BeforeContentCollapsible,

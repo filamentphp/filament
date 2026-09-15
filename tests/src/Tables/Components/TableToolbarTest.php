@@ -1,7 +1,10 @@
 <?php
 
 use Filament\Actions\BulkAction;
+use Filament\Schemas\Components\Flex;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Components\TableColumnManager;
+use Filament\Tables\Components\TableGroup;
 use Filament\Tables\Components\TableSearch;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Table;
@@ -46,4 +49,35 @@ it('shows the toolbar only while records are selected when it holds bulk actions
     expect($html)
         ->toContain('x-show="false || false || (getSelectedRecordsCount() && 2)"')
         ->toContain('.table.header-toolbar.selection"');
+});
+
+it('renders a nested layout component as a toolbar group of its own', function (): void {
+    $html = livewireTableWithParts([
+        TableToolbar::make([
+            TableSearch::make(),
+            Flex::make([TableColumnManager::make()]),
+        ]),
+    ])->html();
+
+    $actionsGroupPosition = strpos($html, '<div class="fi-ta-actions fi-align-start fi-wrapped">');
+    $searchPosition = strpos($html, 'fi-ta-search-field');
+    $flexPosition = strpos($html, 'fi-sc-flex');
+    $columnManagerPosition = strpos($html, 'fi-ta-col-manager-dropdown');
+
+    expect(substr_count($html, '<div class="fi-ta-actions fi-align-start fi-wrapped">'))->toBe(1);
+    expect($actionsGroupPosition)->toBeLessThan($searchPosition);
+    expect($searchPosition)->toBeLessThan($flexPosition);
+    expect($flexPosition)->toBeLessThan($columnManagerPosition);
+});
+
+it('renders no actions group when the toolbar holds layout components only', function (): void {
+    $html = livewireTableWithParts([
+        TableToolbar::make([
+            TableGroup::make([TableSearch::make()]),
+        ]),
+    ])->html();
+
+    expect($html)
+        ->toContain('class="fi-ta-search-field"')
+        ->not->toContain('<div class="fi-ta-actions fi-align-start fi-wrapped">');
 });

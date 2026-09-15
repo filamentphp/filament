@@ -10,11 +10,15 @@
                 'code' => '->layout(fn (): Schema => $table->getDefaultLayout())',
             ],
             'layoutSortAndSearchRow' => [
-                'description' => 'Sort selects, search and the filters trigger on one row above a grid of records.',
+                'description' => 'Bulk actions and sort selects at the start of the row, search and the filters trigger at the end, above a grid of records.',
                 'code' => <<<'PHP'
 ->contentGrid(['md' => 2, 'xl' => 3])
 ->layout(fn (Schema $schema): Schema => $schema->components([
-    TableToolbar::make([TableToolbarActions::make(), TableSortingSettings::make(), TableSearch::make(), TableFiltersTrigger::make()]),
+    TableToolbar::make([
+        TableToolbarActions::make(),
+        TableSortingSettings::make(),
+        TableGroup::make([TableSearch::make(), TableFiltersTrigger::make()]),
+    ]),
     TableSelectionIndicator::make(),
     TableFilterIndicators::make(),
     TableContent::make(),
@@ -27,7 +31,6 @@ PHP,
                 'description' => 'Filters as a page sidebar, no frame around the table.',
                 'code' => <<<'PHP'
 ->contained(false)
-->filtersLayout(FiltersLayout::Hidden)
 ->layout(fn (Schema $schema): Schema => $schema->components([
     Grid::make(['lg' => 3])->schema([
         TableGroup::make([
