@@ -2,7 +2,9 @@
 
 namespace Filament\Actions\Imports;
 
+use BackedEnum;
 use Closure;
+use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
@@ -14,10 +16,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
+use UnitEnum;
 
 class ImportColumn extends Component
 {
+    use HasEnum;
+
     protected string $name;
 
     protected string | Closure | null $label = null;
@@ -430,6 +436,10 @@ class ImportColumn extends Component
             };
         }
 
+        if (filled($enum = $this->getEnum()) && (! $this->isMultiple())) {
+            $rules[] = Rule::enum($enum);
+        }
+
         return $rules;
     }
 
@@ -543,7 +553,13 @@ class ImportColumn extends Component
      */
     public function getNestedRecursiveDataValidationRules(): array
     {
-        return $this->evaluate($this->nestedRecursiveDataValidationRules);
+        $rules = $this->evaluate($this->nestedRecursiveDataValidationRules);
+
+        if (filled($enum = $this->getEnum()) && $this->isMultiple()) {
+            $rules[] = Rule::enum($enum);
+        }
+
+        return $rules;
     }
 
     public function isNumeric(): bool
@@ -594,7 +610,24 @@ class ImportColumn extends Component
      */
     public function getExamples(): array
     {
-        return Arr::wrap($this->evaluate($this->examples));
+        $examples = Arr::wrap($this->evaluate($this->examples));
+
+        if (filled($examples)) {
+            return $examples;
+        }
+
+        $enum = $this->getEnum();
+
+        if (blank($enum)) {
+            return $examples;
+        }
+
+        return array_map(
+            fn (BackedEnum | UnitEnum $case): string | int => ($case instanceof BackedEnum)
+                ? $case->value
+                : $case->name,
+            $enum::cases(),
+        );
     }
 
     /**
