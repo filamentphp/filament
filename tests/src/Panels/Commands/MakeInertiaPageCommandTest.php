@@ -338,6 +338,77 @@ it('preserves a detected or explicitly selected native SSR entry instead of gene
     expect(file_exists(resource_path('js/filament/resolve.js')))->toBeTrue();
 })->with([['resources/js/ssr.ts', false], ['resources/js/ssr.tsx', false], ['resources/js/ssr.jsx', false], ['resources/server/render.ts', true]]);
 
+it('detects existing SSR bundles without requiring another source option', function (string $bundle, bool $configured, bool $built): void {
+    if ($configured) {
+        config()->set('inertia.ssr.bundle', base_path($bundle));
+    }
+
+    if ($built) {
+        app(Filesystem::class)->ensureDirectoryExists(dirname(base_path($bundle)));
+        file_put_contents(base_path($bundle), '// existing bundle');
+    }
+
+    $this->artisan('make:filament-page', [
+        'name' => 'Reports', '--panel' => 'admin', '--vue' => true, '--ssr' => true, '--no-interaction' => true,
+    ])->expectsOutputToContain('no second server was generated')
+        ->expectsOutputToContain('Do not edit the built bundle')->assertSuccessful();
+
+    expect(file_exists(resource_path('js/filament/ssr.js')))->toBeFalse();
+    expect(file_exists(resource_path('js/filament/resolve.js')))->toBeTrue();
+    if ($built) {
+        expect(file_get_contents(base_path($bundle)))->toBe('// existing bundle');
+    }
+})->with([
+    ['bootstrap/ssr/ssr.js', false, true],
+    ['bootstrap/ssr/ssr.mjs', false, true],
+    ['build/server/custom.mjs', true, true],
+    ['build/server/custom.mjs', true, false],
+]);
+
+it('reports the known Filament SSR source when a built bundle also exists', function (): void {
+    $options = ['--panel' => 'admin', '--vue' => true, '--ssr' => true, '--no-interaction' => true];
+    $this->artisan('make:filament-page', ['name' => 'Reports', ...$options])->assertSuccessful();
+    $server = file_get_contents(resource_path('js/filament/ssr.js'));
+    app(Filesystem::class)->ensureDirectoryExists(base_path('bootstrap/ssr'));
+    file_put_contents(base_path('bootstrap/ssr/ssr.js'), '// built server');
+
+    $this->artisan('make:filament-page', ['name' => 'Orders', ...$options])
+        ->expectsOutputToContain('Preserved Filament SSR entry')->assertSuccessful();
+
+    expect(file_get_contents(resource_path('js/filament/ssr.js')))->toBe($server);
+    expect(file_get_contents(base_path('bootstrap/ssr/ssr.js')))->toBe('// built server');
+});
+
+it('cannot overwrite a configured SSR bundle with a component using `--force`', function (): void {
+    $bundle = resource_path('js/filament/pages/Reports.jsx');
+    app(Filesystem::class)->ensureDirectoryExists(dirname($bundle));
+    file_put_contents($bundle, '// configured server');
+    config()->set('inertia.ssr.bundle', $bundle);
+
+    $this->artisan('make:filament-page', [
+        'name' => 'Reports', '--panel' => 'admin', '--react' => true, '--force' => true, '--no-interaction' => true,
+    ])->expectsOutputToContain('--force cannot overwrite shared files')->assertFailed();
+
+    expect(file_get_contents($bundle))->toBe('// configured server');
+    expect(file_exists(base_path('app/Reports.php')))->toBeFalse();
+});
+
+it('leaves customized files unchanged when adding SSR collides with an existing page', function (): void {
+    $options = ['name' => 'Reports', '--panel' => 'admin', '--react' => true, '--no-interaction' => true];
+    $this->artisan('make:filament-page', [...$options, '--no-ssr' => true])->assertSuccessful();
+
+    file_put_contents(base_path('app/Reports.php'), '<?php // customized PHP page');
+    file_put_contents(resource_path('js/filament/pages/Reports.jsx'), '// customized component');
+    $before = collect(app(Filesystem::class)->allFiles($this->inertiaDirectory))
+        ->mapWithKeys(static fn ($file): array => [$file->getPathname() => $file->getContents()])->all();
+
+    $this->artisan('make:filament-page', [...$options, '--ssr' => true])
+        ->expectsOutputToContain('Do not use --force just to add SSR')->assertFailed();
+
+    expect(collect(app(Filesystem::class)->allFiles($this->inertiaDirectory))
+        ->mapWithKeys(static fn ($file): array => [$file->getPathname() => $file->getContents()])->all())->toBe($before);
+});
+
 it('rejects invalid setup options before writing files', function (array $options): void {
     $this->artisan('make:filament-page', [
         'name' => 'Reports', '--panel' => 'admin', '--vue' => true, '--no-interaction' => true, ...$options,
