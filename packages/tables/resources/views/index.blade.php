@@ -59,10 +59,7 @@
     $hasTopLevelSummary = $hasSummary && ($hasPageSummary || $hasAllTableSummary);
     $heading = $getHeading();
     $group = $getGrouping();
-    $toolbarActions = array_filter(
-        $getToolbarActions(),
-        fn (\Filament\Actions\Action | ActionGroup $action): bool => $action->isVisible(),
-    );
+    $toolbarActions = $getVisibleToolbarActions();
 
     $hasNonBulkToolbarAction = false;
 
@@ -121,7 +118,6 @@
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
     $columnsCount = count($columns);
-    $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $page = $this->getTablePage();
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
     $sortDirection = $getSortDirection();
@@ -206,19 +202,9 @@
                     {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
                     <div class="fi-ta-actions fi-align-start fi-wrapped">
-                        {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
+                        @include('filament-tables::components.parts.reorder-trigger', ['table' => $table, 'part' => null])
 
-                        @if ($isReorderable)
-                            {{ $reorderRecordsTriggerAction }}
-                        @endif
-
-                        {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
-
-                        @if ((! $isReordering) && count($toolbarActions))
-                            @foreach ($toolbarActions as $action)
-                                {{ $action }}
-                            @endforeach
-                        @endif
+                        @include('filament-tables::components.parts.toolbar-actions', ['table' => $table, 'part' => null])
 
                         @include('filament-tables::components.parts.grouping-settings', ['table' => $table, 'part' => null])
                     </div>

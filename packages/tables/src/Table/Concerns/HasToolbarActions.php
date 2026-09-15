@@ -75,4 +75,15 @@ trait HasToolbarActions
     {
         return $this->toolbarActions;
     }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getVisibleToolbarActions(): array
+    {
+        return array_filter(
+            $this->getToolbarActions(),
+            fn (Action | ActionGroup $action): bool => $action->isVisible(),
+        );
+    }
 }
