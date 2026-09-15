@@ -31,6 +31,7 @@ use App\Livewire\Panels\Navigation\UserMenuSidebar;
 use App\Livewire\PrimesDemo;
 use App\Livewire\Schemas\LayoutDemo;
 use App\Livewire\Schemas\OverviewDemo;
+use App\Livewire\TableLayoutPlayground;
 use App\Livewire\TablesDemo;
 use App\Livewire\WidgetsDemo;
 use Illuminate\Support\Facades\Route;
@@ -83,6 +84,7 @@ Route::prefix('schemas')->group(function (): void {
 
 Route::get('/tables', TablesDemo::class);
 Route::view('/table-layouts', 'table-layouts');
+Route::get('/table-playground', TableLayoutPlayground::class);
 
 Route::get('/widgets', WidgetsDemo::class);
 
