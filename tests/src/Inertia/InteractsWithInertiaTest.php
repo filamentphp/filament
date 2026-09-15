@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\HandleInertiaRequests as PanelInertiaMiddleware;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -61,9 +62,42 @@ it('denies access before evaluating props for document, full and partial Inertia
 
 it('retains route authentication before props for document, full and partial Inertia requests', function (string $path, string $page, string $shell, array $headers): void {
     auth()->logout();
-    $this->get($path, $headers)->assertRedirect();
+    $response = $this->get($path, $headers);
+    if (isset($headers['X-Inertia'])) {
+        $response->assertStatus(409)->assertHeader('X-Inertia-Location', Filament::getLoginUrl());
+    } else {
+        $response->assertRedirect(Filament::getLoginUrl());
+    }
+    $response->assertSessionHas('url.intended', url($path));
     expect(RequestState::$responses)->toBe(0)->and(RequestState::$shares)->toBe(0);
 })->with('inertia shells')->with('inertia request headers');
+
+it('allows authentication subclasses to retain the inherited untyped `unauthenticated()` signature', function (): void {
+    $middleware = new class(app('auth')) extends Authenticate
+    {
+        protected function unauthenticated($request, array $guards)
+        {
+            parent::unauthenticated($request, $guards);
+        }
+    };
+
+    expect($middleware)->toBeInstanceOf(Authenticate::class);
+});
+
+it('retains JSON authentication errors instead of redirecting API requests', function (): void {
+    auth()->logout();
+    $this->getJson('/integration/page', ['X-Inertia' => 'true'])->assertUnauthorized()
+        ->assertHeaderMissing('X-Inertia-Location');
+    expect(RequestState::$responses)->toBe(0)->and(RequestState::$shares)->toBe(0);
+});
+
+it('does not change authentication redirects on panels without the Inertia plugin', function (): void {
+    $panel = Filament::getPanel('admin');
+    Filament::setCurrentPanel($panel);
+    auth()->logout();
+    $this->get(Settings::getUrl(), ['X-Inertia' => 'true'])->assertRedirect()
+        ->assertHeaderMissing('X-Inertia-Location');
+});
 
 it('does not rebuild props on shell updates and reauthorizes after access revocation', function (string $path, string $page): void {
     $component = Livewire::test($page);
@@ -195,7 +229,13 @@ it('never shares eager tenant records when panel authentication or tenant access
 
     auth()->shouldUse('web');
     $response = $this->get('/integration-tenancy/' . $tenant->getKey() . '/page', $headers);
-    $authenticated ? $response->assertNotFound() : $response->assertRedirect();
+    if ($authenticated) {
+        $response->assertNotFound();
+    } elseif (isset($headers['X-Inertia'])) {
+        $response->assertStatus(409)->assertHeader('X-Inertia-Location', Filament::getLoginUrl());
+    } else {
+        $response->assertRedirect();
+    }
 
     expect(RequestState::$shares)->toBe(0)->and(RequestState::$responses)->toBe(0);
 })->with('inertia request headers')->with([false, true]);

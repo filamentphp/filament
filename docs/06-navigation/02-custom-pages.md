@@ -29,6 +29,8 @@ You can render Vue, React, or Svelte components inside Filament custom pages. Fi
 
 Install `inertiajs/inertia-laravel` version 3.3 or later within major version 3, together with the Inertia adapter and Vite plugin for your chosen framework. Inertia is optional, so Filament does not install these dependencies for you.
 
+This requirement applies when enabling `InertiaPlugin` or generating Inertia pages. Applications using another Inertia version outside Filament can continue using Blade/Livewire panels without enabling the plugin.
+
 ```bash
 composer require inertiajs/inertia-laravel:"^3.3"
 ```
@@ -114,7 +116,7 @@ The command never installs packages, edits configuration, registers middleware, 
 
 ### Configuring the generated files
 
-Generation leaves four one-time application changes to you:
+Generation leaves these one-time application changes to you:
 
 1. Register `InertiaPlugin` on the panel and point it at the generated browser entry:
 
@@ -137,7 +139,30 @@ Use `.ts` in the asset path when you generated TypeScript. `rendererEntry()` res
 
 2. Add `resources/js/filament/inertia.js` to the Laravel Vite plugin's `input` array and add your framework's Vite plugin. Set `preserveEntrySignatures: 'exports-only'` in `build.rollupOptions`, or in `build.rolldownOptions` when using Rolldown-based Vite. Filament dynamically imports the entry's default export, which would otherwise be removed from some production builds.
 3. When using TypeScript, include the generated files in your TypeScript configuration. Use `moduleResolution: 'bundler'`, `allowImportingTsExtensions: true`, `noEmit: true`, and the `vite/client` types. React also needs `jsx: 'react-jsx'`. Use `vue-tsc` or `svelte-check` to check single-file components for those frameworks.
-4. Build your assets.
+4. Render the renderer's Vite tags in your panel so development initialization and extracted production CSS are loaded. Register this hook in your panel provider:
+
+```php
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
+
+// In your panel configuration:
+->renderHook(
+    PanelsRenderHook::HEAD_END,
+    static fn (): View => view('filament.inertia-assets'),
+)
+```
+
+Create `resources/views/filament/inertia-assets.blade.php`:
+
+```blade
+{{-- React only: omit this directive for Vue and Svelte. --}}
+@viteReactRefresh
+@vite('resources/js/filament/inertia.js')
+```
+
+Use the same entry path as `rendererEntry()`, including `.ts` when applicable. The React refresh preamble must precede the entry during development. `rendererEntry()` alone supplies a module URL, not these tags. Loading the generated module here does not mount it twice: it only exports the renderer, which Filament invokes. Do not load your native application's bootstrap in this hook.
+
+5. Build your assets, or run your Vite development server while developing.
 
 If you generated an SSR entry, also set the Laravel Vite plugin's `ssr` option to `resources/js/filament/ssr.js` or `.ts`, then build and run your Inertia SSR bundle. Do not replace existing Vite, TypeScript, or SSR settings; merge the generated entries into them.
 
@@ -304,7 +329,9 @@ Use Inertia's remember APIs for local state that should survive leaving a page; 
 
 GET partial reloads can send different query parameters on the same path without navigating. They update the requested props, but **do not update the address bar or add a browser history entry**, in either SPA mode. For example, `router.get('/reports', { period: 'October' }, { only: ['period', 'total'] })` can load October's figures while the address bar stays on `/reports`. Back/forward navigation does not traverse these prop-only updates. Use a normal Inertia link or GET visit without partial options when the new query should be a navigable URL; ordinary component state will then be recreated by the host.
 
-A different path, component, fragment, or mutation redirect destination is handed back to Filament. For redirects to another page, use `Inertia::location($url)` when the destination needs one-time session data such as flash messages. This prevents an intermediate Inertia response from consuming that data before Filament loads the destination document.
+A different path, component, fragment, or mutation redirect destination is handed back to Filament. Use `Inertia::location($url)` for redirects to ordinary Blade/Livewire pages, even without flash data, so Inertia does not receive HTML where it expects JSON. Also use it when another Inertia page needs one-time session data such as flash messages: it prevents an intermediate response from consuming that data before Filament loads the destination document.
+
+Filament's authentication middleware uses this location protocol when an Inertia request loses authentication on a plugin-enabled panel, preserving the intended URL for login. Custom authentication middleware must provide equivalent handling; ordinary JSON/API authentication errors remain JSON errors.
 
 ### Rendering on the server
 
@@ -344,6 +371,19 @@ Without SSR, Filament displays a loading indicator until the framework mounts. W
 ### Coexisting with an existing Inertia application
 
 The generated `resources/js/filament/inertia.js` is a separate renderer for content mounted inside Filament. Keep an existing native Inertia application's browser bootstrap, root element, routes, and component resolver unchanged. Resolve only `Filament/` components through Filament's entry, and route native components through the existing entry. You can use one shared component resolver from both entries when it preserves that distinction.
+
+Crossing between the two applications must replace the document, even on the same origin. When the panel uses SPA mode, exclude native Inertia routes with `spaUrlExceptions()`. Patterns match complete URLs, including query strings and fragments. For a native app under `/account`, include the root URL's query and fragment forms as well as child paths:
+
+```php
+->spaUrlExceptions([
+    url('/account'),
+    url('/account/*'),
+    url('/account?*'),
+    url('/account#*'),
+])
+```
+
+Filament cannot infer which same-origin routes belong to the native app. From the native app, use ordinary `<a href="...">` links to Filament, not Inertia `<Link>` or router visits. Use `Inertia::location()` for redirects across this boundary. This lets each application initialize its own router/history listeners in a fresh document.
 
 To customize shared props or asset versioning for panel routes, pass your application's Inertia middleware class to `InertiaPlugin::middleware()`. The plugin runs it after session middleware, panel authentication, and tenant identification where applicable. Do not register the same middleware separately on the same panel routes.
 
