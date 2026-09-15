@@ -667,7 +667,12 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TableFilterIndicators` - the active filter badges and the "remove all" action.
 - `TableContent` - the records, including the summaries and the loading state.
 - `TableEmptyState` - the empty state.
-- `TablePagination` - the pagination links and the per page select.
+- `TablePagination` - the pagination row. Without arguments it holds the results overview, the per page select and the page links; pass an array of the three parts below to choose your own, laid out as a row in the order you list them.
+- `TablePaginationOverview` - the "Showing 1 to 10 of 50 results" text.
+- `TablePaginationRecordsPerPage` - the per page select.
+- `TablePaginationLinks` - the page links, with the previous and next buttons shown on narrow screens.
+
+The three pagination parts may also be placed outside `TablePagination`, for example the per page select in the toolbar. They keep their styles, but the page links only switch between the buttons and the numbered links inside `TablePagination`, since that switch depends on the width of the pagination row.
 - `TableGroup` - a plain `<div>` container for parts, with optional `extraAttributes()`.
 
 ### Rules for custom layouts

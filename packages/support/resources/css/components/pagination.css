@@ -5,6 +5,18 @@
         @apply hidden;
     }
 
+    @supports (container-type: inline-size) {
+        @apply @container;
+    }
+}
+
+/* A pagination part placed outside the `.fi-pagination` wrapper carries the same styles, without its grid. */
+.fi-pagination,
+.fi-pagination-part {
+    & .fi-pagination-links {
+        @apply flex items-center gap-x-3;
+    }
+
     & .fi-pagination-previous-btn {
         @apply justify-self-start;
     }
@@ -86,8 +98,6 @@
     }
 
     @supports (container-type: inline-size) {
-        @apply @container;
-
         & .fi-pagination-records-per-page-select {
             &:not(.fi-compact) {
                 @apply @md:inline;

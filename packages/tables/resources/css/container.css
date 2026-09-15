@@ -192,6 +192,11 @@
 
     & .fi-pagination {
         @apply border-t border-gray-200 px-3 py-3 sm:px-6 dark:border-white/10;
+
+        /* A composed `TablePagination` lays its parts out as a row, since the three-column grid assumes all three. */
+        &.fi-ta-pagination {
+            @apply flex flex-wrap justify-between gap-3;
+        }
     }
 
     & .fi-ta-table-loading-ctn {
