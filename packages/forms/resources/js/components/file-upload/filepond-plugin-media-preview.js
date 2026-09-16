@@ -4,6 +4,7 @@
  * - Merged all source modules into a single file.
  * - Fixed upstream PR #33 `mediaPreviewHeight` implementation.
  * - Prevented audio controls from initiating file reordering.
+ * - Corrected audio timeline positioning when the preview is transformed or resized.
  */
 
 const isPreviewableVideo = (file) => /^video/.test(file.type)
@@ -16,9 +17,6 @@ class AudioPlayer {
         this.audioElements = audioElements
         this.onPlayhead = false
         this.duration = 0
-        this.timelineWidth =
-            this.audioElements.timeline.offsetWidth -
-            this.audioElements.playhead.offsetWidth
         this.movePlayheadHandler = this.movePlayhead.bind(this)
 
         this.registerListeners()
@@ -80,20 +78,7 @@ class AudioPlayer {
     }
 
     movePlayhead(event) {
-        const newMarginLeft =
-            event.clientX - this.getPosition(this.audioElements.timeline)
-
-        if (newMarginLeft >= 0 && newMarginLeft <= this.timelineWidth) {
-            this.audioElements.playhead.style.marginLeft = `${newMarginLeft}px`
-        }
-
-        if (newMarginLeft < 0) {
-            this.audioElements.playhead.style.marginLeft = '0px'
-        }
-
-        if (newMarginLeft > this.timelineWidth) {
-            this.audioElements.playhead.style.marginLeft = `${this.timelineWidth - 4}px`
-        }
+        this.audioElements.playhead.style.marginLeft = `${this.clickPercent(event) * 100}%`
     }
 
     timelineClicked(event) {
@@ -128,14 +113,16 @@ class AudioPlayer {
     }
 
     clickPercent(event) {
-        return (
-            (event.clientX - this.getPosition(this.audioElements.timeline)) /
-            this.timelineWidth
-        )
-    }
+        const timelineBounds =
+            this.audioElements.timeline.getBoundingClientRect()
 
-    getPosition(element) {
-        return element.getBoundingClientRect().left
+        return Math.max(
+            0,
+            Math.min(
+                1,
+                (event.clientX - timelineBounds.left) / timelineBounds.width,
+            ),
+        )
     }
 }
 
