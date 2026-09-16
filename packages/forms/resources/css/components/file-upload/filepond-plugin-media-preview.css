@@ -2,8 +2,8 @@
  * Source: https://github.com/nielsboogaard/filepond-plugin-media-preview (MIT)
  * Changes:
  * - Vendored compiled CSS from dist — upstream source is SCSS.
- * - Restored the pointer cursor over audio controls when file reordering is enabled.
- * - Expanded the audio timeline hit target to match native media controls.
+ * - Overrode FilePond's reordering cursor for audio controls.
+ * - Expanded the audio timeline hit target.
  */
 .filepond--media-preview audio {
     display: none;
