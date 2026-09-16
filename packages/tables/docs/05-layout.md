@@ -650,23 +650,36 @@ A custom toolbar shows itself as long as one of its parts renders something. Whe
 
 ### Arranging parts in a row
 
-`TableSplit` lays parts out in a row the way a `Split` column layout does: every part grows to share the free space, and `grow(false)` shrinks one to its content. That is how you keep some parts at the start of a row and push the rest to the end, in a toolbar, a content header or a composed pagination alike:
+`TableSplit` lays parts out in a row the way a `Split` column layout does: every part grows to share the free space, and `grow(false)` shrinks one to its content. That is how you keep some parts at the start of a row and push the rest to the end, in a toolbar or a composed pagination alike:
+
+```php
+use Filament\Tables\Components\TablePagination;
+use Filament\Tables\Components\TablePaginationLinks;
+use Filament\Tables\Components\TablePaginationOverview;
+use Filament\Tables\Components\TableSplit;
+
+TablePagination::make([
+    TableSplit::make([
+        TablePaginationOverview::make(),
+        TablePaginationLinks::make()->grow(false),
+    ]),
+])
+```
+
+The overview takes the free space and the page links sit at the end. Like a `Split`, the row stacks below a breakpoint with `from('md')`. `TableStack` is the counterpart that stacks parts vertically.
+
+`TableContentHeader` is a `TableSplit` itself, so its items take `grow()` directly:
 
 ```php
 use Filament\Tables\Components\TableContentHeader;
 use Filament\Tables\Components\TablePageCheckbox;
 use Filament\Tables\Components\TableSortingSettings;
-use Filament\Tables\Components\TableSplit;
 
 TableContentHeader::make([
-    TableSplit::make([
-        TablePageCheckbox::make(),
-        TableSortingSettings::make()->grow(false),
-    ]),
+    TablePageCheckbox::make(),
+    TableSortingSettings::make()->grow(false),
 ])
 ```
-
-The checkbox takes the free space and the sort selects sit at the end. Like a `Split`, the row stacks below a breakpoint with `from('md')`. `TableStack` is the counterpart that stacks parts vertically.
 
 ### Available parts
 
@@ -679,7 +692,7 @@ All parts live in the `Filament\Tables\Components` namespace:
 - `TableGroupingSettings` - the group and direction selects.
 - `TableSortingSettings` - the column and direction selects, used by tables with a `contentGrid()` or a custom column layout, since row tables sort through their header cells.
 - `TablePageCheckbox` - the checkbox that selects every record on the page, used by tables with a `contentGrid()` or a custom column layout, since row tables render it in their header cell. When a layout places it, the header row above the records is no longer needed and renders only if it still holds the sort selects.
-- `TableContentHeader` - the grey header row above a content grid. Without arguments it holds `TablePageCheckbox` and `TableSortingSettings`, so it rebuilds the default row wherever you place it; pass an array of parts to choose your own. It renders nothing when none of its items do.
+- `TableContentHeader` - the grey header row above a content grid, laid out as a `TableSplit`. Without arguments it holds `TablePageCheckbox` and `TableSortingSettings` at the start of the row, so it rebuilds the default row wherever you place it; pass an array of parts to choose your own. It renders nothing when none of its items do.
 - `TableSearch` - the global search field.
 - `TableFiltersTrigger` - the filters button, including the dropdown or modal for those layouts. It renders nothing when the layout places a `TableFilters` part, since the form is already visible.
 - `TableColumnManager` - the column manager button and its dropdown or modal.

@@ -6,6 +6,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Components\TableContent;
 use Filament\Tables\Components\TableContentHeader;
 use Filament\Tables\Components\TablePageCheckbox;
+use Filament\Tables\Components\TableSortingSettings;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Components\TableToolbarActions;
 use Filament\Tables\Table;
@@ -30,28 +31,44 @@ function configureSelectableSortableGridTable(Table $table): Table
         ]);
 }
 
-it('renders the select all checkbox and the sort selects by default', function (): void {
+/**
+ * Parts render with whitespace and Livewire block markers around their markup, which the assertions ignore.
+ */
+function compactContentHeaderHtml(string $html): string
+{
+    return preg_replace(['/<!--.*?-->/s', '/>\s+</', '/\s+/'], ['', '><', ' '], $html);
+}
+
+it('renders the select all checkbox and the sort selects at the start of the row by default', function (): void {
     $html = livewireTableWithParts(
         [TableContentHeader::make(), TableToolbarActions::make()],
         configureSelectableSortableGridTable(...),
     )->html();
 
-    expect($html)
-        ->toContain('class="fi-ta-content-header"')
+    expect(compactContentHeaderHtml($html))
+        ->toContain('<div class="fi-ta-split fi-ta-layout-split default:fi-ta-split fi-ta-content-header"><div><input')
         ->toContain('class="fi-ta-page-checkbox fi-checkbox-input"')
-        ->toContain('class="fi-ta-sorting-settings"');
+        ->toContain('<div><div x-data')
+        ->toContain('class="fi-ta-sorting-settings"')
+        ->not->toContain('fi-growable');
 });
 
-it('renders only the given items', function (): void {
+it('lays the given items out like a split', function (): void {
     $html = livewireTableWithParts(
-        [TableContentHeader::make([TablePageCheckbox::make()]), TableToolbarActions::make()],
+        [
+            TableContentHeader::make([
+                TablePageCheckbox::make(),
+                TableSortingSettings::make()->grow(false),
+            ])->from('md'),
+            TableToolbarActions::make(),
+        ],
         configureSelectableSortableGridTable(...),
     )->html();
 
-    expect($html)
-        ->toContain('class="fi-ta-content-header"')
-        ->toContain('class="fi-ta-page-checkbox fi-checkbox-input"')
-        ->not->toContain('fi-ta-sorting-settings');
+    expect(compactContentHeaderHtml($html))
+        ->toContain('<div class="fi-ta-split fi-ta-layout-split md:fi-ta-split fi-ta-content-header"><div class="fi-growable"><input')
+        ->toContain('<div><div x-data')
+        ->toContain('class="fi-ta-sorting-settings"');
 });
 
 it('renders nothing when its items render nothing', function (): void {
@@ -72,6 +89,6 @@ it('replaces the header row above the records when placed', function (): void {
         configureSelectableSortableGridTable(...),
     )->html();
 
-    expect(substr_count($html, 'class="fi-ta-content-header"'))->toBe(1);
+    expect(substr_count($html, 'fi-ta-content-header'))->toBe(1);
     expect(strpos($html, 'fi-ta-content-header'))->toBeLessThan(strpos($html, 'fi-ta-content-ctn'));
 });

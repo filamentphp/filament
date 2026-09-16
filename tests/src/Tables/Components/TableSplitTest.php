@@ -1,10 +1,6 @@
 <?php
 
-use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Components\TableContentHeader;
-use Filament\Tables\Components\TablePageCheckbox;
 use Filament\Tables\Components\TablePagination;
 use Filament\Tables\Components\TablePaginationLinks;
 use Filament\Tables\Components\TablePaginationOverview;
@@ -64,36 +60,6 @@ it('keeps a cell for a part that renders nothing, so the row does not shift', fu
     $html = compactSplitHtml($html);
 
     expect($html)->toContain('<div id="split" class="fi-ta-split fi-ta-layout-split default:fi-ta-split"><div class="fi-growable"></div><div class="fi-growable"><div');
-});
-
-it('pushes the sort selects to the end of a content header', function (): void {
-    $html = livewireTableWithParts(
-        [
-            TableContentHeader::make([
-                TableSplit::make([
-                    TablePageCheckbox::make(),
-                    TableSortingSettings::make()->grow(false),
-                ]),
-            ]),
-            TableToolbarActions::make(),
-        ],
-        fn (Table $table): Table => $table
-            ->contentGrid(['md' => 2])
-            ->columns([
-                Stack::make([
-                    TextColumn::make('title')->sortable(),
-                ]),
-            ])
-            ->bulkActions([
-                DeleteBulkAction::make(),
-            ]),
-    )->html();
-
-    expect(compactSplitHtml($html))
-        ->toContain('class="fi-ta-content-header"')
-        ->toContain('<div class="fi-growable"><input')
-        ->toContain('<div><div')
-        ->toContain('class="fi-ta-sorting-settings"');
 });
 
 it('lays out a composed pagination', function (): void {

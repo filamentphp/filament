@@ -320,7 +320,7 @@
     }
 }
 
-/* Scoped to the table wrapper rather than the content container, so a `TableContentHeader` part styles the same wherever a layout places it. */
+/* Scoped to the table wrapper rather than the content container, so a `TableContentHeader` part styles the same wherever a layout places it. The part is a `TableSplit`, and these rules win over the split's spacing because they load later at the same specificity. */
 .fi-ta .fi-ta-content-header {
     @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5;
 
