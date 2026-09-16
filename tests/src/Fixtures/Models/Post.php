@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -47,6 +48,11 @@ class Post extends Model
             User::class,
             foreignKeyLookup: [User::class => 'author_id']
         );
+    }
+
+    public function teamThroughAuthor(): HasOneThrough
+    {
+        return $this->hasOneThrough(Team::class, User::class, 'id', 'id', 'author_id', 'team_id');
     }
 
     public function metadata(): HasOne

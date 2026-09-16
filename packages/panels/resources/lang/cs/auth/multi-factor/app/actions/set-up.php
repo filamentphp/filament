@@ -34,7 +34,7 @@ return [
 
             'recovery_codes' => [
 
-                'instruction' => 'Uložte si prosím následující záložní kódy na bezpečné místo. Budou zobrazeny pouze jednou, ale budete je potřebovat, pokud ztratíte přístup k ověřovací aplikaci:',
+                'instruction' => 'Uložte si prosím následující obnovovací kódy na bezpečné místo. Budou zobrazeny pouze jednou, ale budete je potřebovat, pokud ztratíte přístup k ověřovací aplikaci:',
 
             ],
 
@@ -44,11 +44,11 @@ return [
 
             'code' => [
 
-                'label' => 'Zadejte 6-místný kód z ověřovací aplikace',
+                'label' => 'Zadejte šestimístný kód z ověřovací aplikace',
 
-                'validation_attribute' => 'code',
+                'validation_attribute' => 'kód',
 
-                'below_content' => 'Při každém přihlášení nebo provádění citlivých akcí budete muset zadat 6-místný kód z ověřovací aplikace.',
+                'below_content' => 'Při každém přihlášení nebo provádění citlivých akcí budete muset zadat šestimístný kód z ověřovací aplikace.',
 
                 'messages' => [
 
