@@ -425,6 +425,31 @@ describe('nested state resolution', function (): void {
 });
 
 describe('relationships', function (): void {
+    it('can rebuild items when a loaded relationship `Collection` is mutated in place', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2), 'posts')
+            ->create()
+            ->load('posts');
+
+        $schema = Schema::make(Livewire::make())
+            ->record($user)
+            ->components([
+                RepeatableEntry::make('posts')
+                    ->schema([
+                        TextEntry::make('title'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        expect($entry->getItems())->toHaveCount(2);
+
+        $user->posts->pop();
+
+        expect($entry->getState())->toHaveCount(1)
+            ->and($entry->getItems())->toHaveCount(1);
+    });
+
     it('can resolve state for relationship-based `RepeatableEntry`', function (): void {
         $user = User::factory()
             ->has(Post::factory()->count(2)->sequence(

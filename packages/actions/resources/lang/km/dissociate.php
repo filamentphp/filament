@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'ផ្តាច់ខ្លួន',
+        'label' => 'ផ្តាច់ទំនាក់ទំនង',
 
         'modal' => [
 
-            'heading' => 'ផ្តាច់ខ្លួន :label',
+            'heading' => 'ផ្តាច់ទំនាក់ទំនង :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'ផ្តាច់ខ្លួន',
+                    'label' => 'ផ្តាច់ទំនាក់ទំនង',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'បែកគ្នា',
+                'title' => 'បានផ្តាច់ទំនាក់ទំនង',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'បានជ្រើសរើសផ្តាច់មុខ',
+        'label' => 'ផ្តាច់ទំនាក់ទំនងដែលបានជ្រើសរើស',
 
         'modal' => [
 
-            'heading' => 'បានជ្រើសរើសផ្តាច់មុខ :label',
+            'heading' => 'ផ្តាច់ទំនាក់ទំនង :label ដែលបានជ្រើសរើស',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'ផ្តាច់ខ្លួន',
+                    'label' => 'ផ្តាច់ទំនាក់ទំនង',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'បែកគ្នា។',
+                'title' => 'បានផ្តាច់ទំនាក់ទំនង',
             ],
 
         ],

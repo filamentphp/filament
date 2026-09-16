@@ -29,11 +29,11 @@ return [
                 'form' => [
 
                     'is_enabled' => [
-                        'label' => ':column povoleno',
+                        'label' => 'Povolit sloupec :column',
                     ],
 
                     'label' => [
-                        'label' => ':column popisek',
+                        'label' => 'Popisek sloupce :column',
                     ],
 
                 ],
@@ -74,17 +74,17 @@ return [
 
         'max_rows' => [
             'title' => 'Export překračuje povolenou velikost',
-            'body' => 'Není možné exportovat více než 1 řádek najednou.|Není možné exportovat více než :count řádků najednou.',
+            'body' => 'Není možné exportovat více než 1 řádek najednou.|Není možné exportovat více než :count řádky najednou.|Není možné exportovat více než :count řádků najednou.',
         ],
 
         'no_columns' => [
             'title' => 'Nejsou vybrány žádné sloupce',
-            'body' => 'Prosím vyberte alespoň jeden sloupec k exportu.',
+            'body' => 'Vyberte prosím alespoň jeden sloupec k exportu.',
         ],
 
         'started' => [
             'title' => 'Export byl zahájen',
-            'body' => 'Export byl zahájen a 1 řádek bude zpracován na pozadí.|Váš export byl zahájen a :count řádků bude zpracováno na pozadí.',
+            'body' => 'Export byl zahájen a na pozadí bude zpracován 1 řádek.|Export byl zahájen a na pozadí budou zpracovány :count řádky.|Export byl zahájen a na pozadí bude zpracováno :count řádků.',
         ],
 
     ],

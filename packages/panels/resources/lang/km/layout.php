@@ -19,7 +19,7 @@ return [
         ],
 
         'open_database_notifications' => [
-            'label' => 'បើកការជូនដំណឹង',
+            'label' => 'ការជូនដំណឹង',
             'label_with_unread_count' => '{1} ការជូនដំណឹង, :count មិនទាន់អាន|[2,*] ការជូនដំណឹង, :count មិនទាន់អាន',
         ],
 
@@ -68,11 +68,11 @@ return [
     ],
 
     'avatar' => [
-        'alt' => 'រូបតំណាង នៃ :name',
+        'alt' => 'រូបតំណាងរបស់ :name',
     ],
 
     'logo' => [
-        'alt' => ':name និមិត្តសញ្ញា',
+        'alt' => 'និមិត្តសញ្ញា :name',
     ],
 
     'tenant_menu' => [

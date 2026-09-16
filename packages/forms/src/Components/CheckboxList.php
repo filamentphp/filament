@@ -31,7 +31,6 @@ use function Filament\Support\generate_icon_html;
 class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
     use Concerns\CanAllowHtml;
-    use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
@@ -45,6 +44,14 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     use HasExtraAlpineAttributes;
 
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::components.checkbox-list';
+
+    protected bool | Closure | null $isSearchable = false;
+
+    protected string | Htmlable | Closure | null $searchPrompt = null;
+
+    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
+
+    protected int | Closure $searchDebounce = 0;
 
     protected string | Closure | null $relationshipTitleAttribute = null;
 
@@ -66,12 +73,58 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     {
         parent::setUp();
 
-        $this->searchDebounce(0);
-
         $this->registerActions([
             fn (CheckboxList $component): Action => $component->getSelectAllAction(),
             fn (CheckboxList $component): Action => $component->getDeselectAllAction(),
         ]);
+    }
+
+    public function searchable(bool | Closure | null $condition = true): static
+    {
+        $this->isSearchable = $condition;
+
+        return $this;
+    }
+
+    public function isSearchable(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function searchPrompt(string | Htmlable | Closure | null $message): static
+    {
+        $this->searchPrompt = $message;
+
+        return $this;
+    }
+
+    public function getSearchPrompt(): string | Htmlable
+    {
+        return $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.select.search_prompt');
+    }
+
+    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
+    {
+        $this->noSearchResultsMessage = $message;
+
+        return $this;
+    }
+
+    public function getNoSearchResultsMessage(): string | Htmlable
+    {
+        return $this->evaluate($this->noSearchResultsMessage) ?? __('filament-forms::components.select.no_search_results_message');
+    }
+
+    public function searchDebounce(int | Closure $debounce): static
+    {
+        $this->searchDebounce = $debounce;
+
+        return $this;
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return $this->evaluate($this->searchDebounce);
     }
 
     public function getSelectAllAction(): Action
