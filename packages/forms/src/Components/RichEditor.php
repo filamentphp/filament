@@ -1116,7 +1116,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     }
 
     /**
-     * @return array<int, array{char: string, extraAttributes: array<string, mixed>, isSearchable: bool, items: array<string, string>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string}>
+     * @return array<int, array{char: string, extraAttributes: array<string, mixed>, isSearchable: bool, items: array<int, array{id: string, label: string}>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string}>
      */
     public function getMentionsForJs(): array
     {
@@ -1126,7 +1126,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                     'char' => $provider->getChar(),
                     'extraAttributes' => $provider->getExtraAttributes(),
                     'isSearchable' => $provider->hasSearchResultsUsing(),
-                    'items' => $provider->getItems(),
+                    'items' => static::formatMentionItemsForJs($provider->getItems()),
                     'noOptionsMessage' => $provider->getNoItemsMessage(),
                     'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
                     'searchPrompt' => $provider->getSearchPrompt(),
@@ -1138,7 +1138,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     }
 
     /**
-     * @return array<mixed>
+     * @return array<int, array{id: string, label: string}>
      */
     #[ExposedLivewireMethod]
     #[Renderless]
@@ -1156,7 +1156,24 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             return [];
         }
 
-        return $provider->getSearchResults($search ?? '');
+        return static::formatMentionItemsForJs($provider->getSearchResults($search ?? ''));
+    }
+
+    /**
+     * Mention items are sent to JavaScript as an ordered list instead of an
+     * object keyed by ID, since JavaScript objects reorder integer-like keys
+     * in ascending numeric order, which would discard the order of the items.
+     *
+     * @param  array<string, string>  $items
+     * @return array<int, array{id: string, label: string}>
+     */
+    protected static function formatMentionItemsForJs(array $items): array
+    {
+        return array_map(
+            fn (string $label, string $id): array => ['id' => $id, 'label' => $label],
+            $items,
+            array_keys($items),
+        );
     }
 
     /**
