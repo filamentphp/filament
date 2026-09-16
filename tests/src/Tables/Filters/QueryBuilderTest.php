@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Testing\TestAction;
 use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsAfterOperator;
 use Filament\QueryBuilder\Constraints\DateConstraint\Operators\IsBeforeOperator;
@@ -4079,6 +4080,53 @@ describe('absolute and relative date filtering', function (): void {
             ->assertCanNotSeeTableRecords([$earlyPost])
             ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
             ->assertDontSee('Published at is after Mon, Jul 13, 2026 05:00:00');
+    });
+
+    it('applies datetime constraints and summaries from the applied state after the rule has been deleted from the unapplied deferred form', function (): void {
+        $earlyPost = Post::factory()->create([
+            'published_at' => '2026-07-13 10:00:00',
+        ]);
+
+        $latePost = Post::factory()->create([
+            'published_at' => '2026-07-13 20:00:00',
+        ]);
+
+        $component = livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$earlyPost, $latePost])
+            // Apply a rule that only matches the late post.
+            ->set('tableDeferredFilters.query_builder.rules', [
+                'rule-uuid' => [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isAfter',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 15:00:00',
+                        ],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters')
+            ->assertCanSeeTableRecords([$latePost])
+            ->assertCanNotSeeTableRecords([$earlyPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            // Delete the rule from the deferred form, *without* applying it.
+            ->mountAction(TestAction::make('delete')
+                ->schemaComponent('query_builder.rules', schema: 'tableFiltersForm')
+                ->arguments(['item' => 'rule-uuid']));
+
+        // A pending deferred update in the same request forces a full render, as it does in the browser.
+        $component->update(
+            calls: [['method' => 'callMountedAction', 'params' => [], 'path' => '']],
+            updates: ['tableDeferredFilters.query_builder.rules' => []],
+        );
+
+        // The query and the summary must still reflect the applied rule, even though the deferred
+        // form no longer has a block for it.
+        $component
+            ->assertCanSeeTableRecords([$latePost])
+            ->assertCanNotSeeTableRecords([$earlyPost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00');
     });
 
     it('can filter records using datetime constraint with is after operator with `this_minute` preset', function (): void {
