@@ -646,7 +646,7 @@ public function table(Table $table): Table
 }
 ```
 
-A custom toolbar shows itself as long as one of its parts renders something. When it holds only the bulk actions, it appears while records are selected, like the default toolbar.
+A custom toolbar shows itself as long as one of its parts renders something. When it holds only the bulk actions or the selection indicator, it appears while records are selected, like the default toolbar.
 
 ### Arranging parts in a row
 

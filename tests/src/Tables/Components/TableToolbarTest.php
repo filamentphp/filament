@@ -6,6 +6,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Components\TableColumnManager;
 use Filament\Tables\Components\TableHeader;
 use Filament\Tables\Components\TableSearch;
+use Filament\Tables\Components\TableSelectionIndicator;
 use Filament\Tables\Components\TableStack;
 use Filament\Tables\Components\TableToolbar;
 use Filament\Tables\Components\TableToolbarActions;
@@ -128,5 +129,20 @@ it('shows a custom toolbar holding only bulk actions while records are selected'
 
     expect($html)
         ->toContain('x-show="false || false || (getSelectedRecordsCount() && 2)"')
+        ->toContain('.table.header-toolbar.selection"');
+});
+
+it('shows a custom toolbar holding bulk actions and the selection indicator only while records are selected', function (): void {
+    $html = livewireTableWithParts(
+        [TableToolbar::make([TableToolbarActions::make(), TableSelectionIndicator::make()])],
+        fn (Table $table): Table => $table
+            ->columns([TextColumn::make('title')])
+            ->filters([])
+            ->groups([])
+            ->toolbarActions([BulkAction::make('first')]),
+    )->html();
+
+    expect($html)
+        ->toContain('x-show="false || false || (getSelectedRecordsCount() && 1)"')
         ->toContain('.table.header-toolbar.selection"');
 });

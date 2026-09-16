@@ -9,16 +9,18 @@
     $hasHeaderToolbar = $hasDefaultItems ? $table->hasHeaderToolbar() : $part->hasNonBulkItems();
     $hasNonBulkToolbarAction = $hasDefaultItems && $table->hasNonBulkToolbarAction();
     $toolbarActionsCount = ($hasDefaultItems || $part->hasToolbarActionsItem()) ? count($table->getVisibleToolbarActions()) : 0;
+    // A custom toolbar also shows while records are selected when it holds the selection indicator.
+    $showsWhileRecordsAreSelected = $hasDefaultItems ? $toolbarActionsCount : ($toolbarActionsCount ?: (int) $part->hasSelectionIndicatorItem());
     $visibilityMode = $hasDefaultItems
         ? $table->getHeaderToolbarVisibilityMode()
-        : ($hasHeaderToolbar ? 'visible' : ($toolbarActionsCount ? 'selection' : 'hidden'));
+        : ($hasHeaderToolbar ? 'visible' : ($showsWhileRecordsAreSelected ? 'selection' : 'hidden'));
 @endphp
 
 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_BEFORE, scopes: static::class) }}
 
 <div
     @if (! $hasHeaderToolbar) x-cloak @endif
-    x-show="@js($hasHeaderToolbar) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js($toolbarActionsCount))"
+    x-show="@js($hasHeaderToolbar) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js($showsWhileRecordsAreSelected))"
     wire:key="{{ $this->getId() }}.table.header-toolbar.{{ $visibilityMode }}"
     class="fi-ta-header-toolbar"
 >

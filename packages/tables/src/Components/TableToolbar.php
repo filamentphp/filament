@@ -12,6 +12,8 @@ class TableToolbar extends TableStack
 
     protected bool $hasToolbarActionsItem = false;
 
+    protected bool $hasSelectionIndicatorItem = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -46,6 +48,7 @@ class TableToolbar extends TableStack
     {
         $this->hasNonBulkItems = false;
         $this->hasToolbarActionsItem = false;
+        $this->hasSelectionIndicatorItem = false;
 
         return Component::withVisibilityCache(function (): string {
             /** @var array<int, string | array<int, string>> $groups */
@@ -61,6 +64,9 @@ class TableToolbar extends TableStack
                 if ($component instanceof TableToolbarActions) {
                     $this->hasToolbarActionsItem = true;
                     $this->hasNonBulkItems = $this->hasNonBulkItems || $this->getTable()->hasNonBulkToolbarAction();
+                } elseif ($component instanceof TableSelectionIndicator) {
+                    // The indicator renders a hidden element until records are selected, so it is not content of its own.
+                    $this->hasSelectionIndicatorItem = true;
                 } elseif (! $this->getTable()->isLayoutHtmlBlank($html)) {
                     $this->hasNonBulkItems = true;
                 }
@@ -105,6 +111,11 @@ class TableToolbar extends TableStack
     public function hasToolbarActionsItem(): bool
     {
         return $this->hasToolbarActionsItem;
+    }
+
+    public function hasSelectionIndicatorItem(): bool
+    {
+        return $this->hasSelectionIndicatorItem;
     }
 
     public function toEmbeddedHtml(): string
