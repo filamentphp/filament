@@ -14,6 +14,10 @@ return [
 
             'label' => 'Grupper',
 
+            'group' => [
+                'label' => 'Grupp',
+            ],
+
             'block' => [
                 'label' => 'Disjunktion (ELLER)',
                 'or' => 'ELLER',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(Inga regler)',
+
+    'max_rules_reached_tooltip' => 'Du har nått maxgränsen på :count regler.',
 
     'item_separators' => [
         'and' => 'OCH',
