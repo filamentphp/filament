@@ -1,6 +1,10 @@
 .fi-fo-toggle-buttons {
     &.fi-btn-group {
         @apply w-max;
+
+        &.fi-width-full {
+            @apply w-full;
+        }
     }
 
     &:not(.fi-btn-group) {
@@ -8,6 +12,10 @@
 
         &.fi-inline {
             @apply flex flex-wrap;
+
+            &.fi-width-full {
+                @apply grid grid-cols-[repeat(auto-fit,minmax(0,1fr))];
+            }
         }
 
         &:not(.fi-inline).fi-grid-direction-col {
@@ -16,6 +24,10 @@
             & .fi-fo-toggle-buttons-btn-ctn {
                 @apply break-inside-avoid pt-3;
             }
+        }
+
+        &.fi-width-full .fi-fo-toggle-buttons-btn-ctn .fi-btn {
+            @apply w-full;
         }
     }
 
