@@ -4,6 +4,7 @@ namespace Filament\Tests\Forms\Components;
 
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Size;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -52,6 +53,37 @@ it('can set multiple state', function (): void {
 });
 
 describe('properties', function (): void {
+    it('can set `buttonSize()` and get `getButtonSize()`', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->buttonSize(Size::Small);
+
+        expect($toggleButtons->getButtonSize())->toBe(Size::Small);
+    });
+
+    it('can set `buttonSize()` with a `Closure`', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->buttonSize(static fn (): Size => Size::Small);
+
+        expect($toggleButtons->getButtonSize())->toBe(Size::Small);
+    });
+
+    it('returns `Size::Medium` from `getButtonSize()` by default', function (): void {
+        $toggleButtons = ToggleButtons::make('status')->options(['a' => 'A']);
+
+        expect($toggleButtons->getButtonSize())->toBe(Size::Medium);
+    });
+
+    it('can reset `buttonSize()` to its default', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->buttonSize(Size::Small)
+            ->buttonSize(null);
+
+        expect($toggleButtons->getButtonSize())->toBe(Size::Medium);
+    });
+
     it('can set `inline()` and check `isInline()`', function (): void {
         $inline = ToggleButtons::make('status')->options(['a' => 'A'])->inline();
         $notInline = ToggleButtons::make('status')->options(['a' => 'A'])->inline(false);
@@ -330,6 +362,49 @@ it('returns only enabled option keys from `getInValidationRuleValues()`', functi
 });
 
 describe('rendering', function (): void {
+    it('renders the medium button size by default', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active']),
+            ])
+            ->fill();
+
+        expect($field->toHtml())->toContain('fi-size-md');
+    });
+
+    it('renders the configured button size', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->buttonSize(Size::Small),
+            ])
+            ->fill();
+
+        expect($field->toHtml())
+            ->toContain('fi-size-sm')
+            ->not->toContain('fi-size-md');
+    });
+
+    it('renders the configured button size when grouped', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->buttonSize(Size::Small)
+                    ->grouped(),
+            ])
+            ->fill();
+
+        expect($field->toHtml())
+            ->toContain('fi-size-sm')
+            ->not->toContain('fi-size-md');
+    });
+
     it('can render with `inline()`', function (): void {
         livewire(RenderToggleButtonsWithInline::class)->assertSuccessful();
     });
