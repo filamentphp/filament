@@ -2,6 +2,33 @@
 
 return [
 
+    'callout' => [
+
+        'statuses' => [
+            'danger' => 'Error:',
+            'info' => 'Note:',
+            'success' => 'Success:',
+            'warning' => 'Warning:',
+        ],
+
+    ],
+
+    'section' => [
+
+        'actions' => [
+
+            'collapse' => [
+                'label' => 'Peida sektsioon',
+            ],
+
+            'expand' => [
+                'label' => 'Ava sektsioon',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [
@@ -12,6 +39,19 @@ return [
 
             'next_step' => [
                 'label' => 'Järgmine',
+            ],
+
+        ],
+
+        'header' => [
+
+            'step' => [
+
+                'statuses' => [
+                    'completed' => 'Lõpetatud',
+                    'upcoming' => 'Ei ole lõpetatud',
+                ],
+
             ],
 
         ],

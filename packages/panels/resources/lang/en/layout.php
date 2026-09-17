@@ -58,10 +58,10 @@ return [
         ],
 
     ],
-
     'navigation' => [
         'label' => 'Sidebar navigation',
     ],
+
 
     'topbar' => [
         'label' => 'Topbar',
