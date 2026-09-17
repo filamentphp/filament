@@ -62,7 +62,6 @@ return [
         'label' => 'Sidebar navigation',
     ],
 
-
     'topbar' => [
         'label' => 'Topbar',
     ],

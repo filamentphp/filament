@@ -62,7 +62,6 @@ return [
         'label' => 'Küljepaneeli navigatsioon',
     ],
 
-
     'topbar' => [
         'label' => 'Ülemine paneel',
     ],
