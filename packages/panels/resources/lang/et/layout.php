@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Otse sisu juurde',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Ava teated',
+            'label_with_unread_count' => '{1} Teateid, :count lugemata notification|[2,*] Teateid, :count lugemata teateid',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Teema',
+
             'dark' => [
                 'label' => 'Tume teema',
             ],
@@ -50,6 +57,14 @@ return [
 
         ],
 
+    ],
+    'navigation' => [
+        'label' => 'Küljepaneeli navigatsioon',
+    ],
+
+
+    'topbar' => [
+        'label' => 'Ülemine paneel',
     ],
 
     'avatar' => [
