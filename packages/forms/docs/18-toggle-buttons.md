@@ -210,6 +210,7 @@ ToggleButtons::make('feedback')
     ->fullWidth()
 ```
 
+<AutoScreenshot name="forms/fields/toggle-buttons/full-width" alt="Full width toggle buttons" version="4.x" />
 
 Optionally, you may pass a boolean value to control if the buttons should fill the container width or not:
 
