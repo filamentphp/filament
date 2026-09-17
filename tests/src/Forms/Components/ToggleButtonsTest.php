@@ -107,6 +107,20 @@ describe('properties', function (): void {
 
         expect($grouped->isGrouped())->toBeTrue();
     });
+
+    it('can set `fullWidth()` and check `isFullWidth()`', function (): void {
+        $fullWidth = ToggleButtons::make('status')->options(['a' => 'A'])->fullWidth();
+        $notFullWidth = ToggleButtons::make('status')->options(['a' => 'A'])->fullWidth(false);
+
+        expect($fullWidth->isFullWidth())->toBeTrue();
+        expect($notFullWidth->isFullWidth())->toBeFalse();
+    });
+
+    it('has `isFullWidth()` returning false by default', function (): void {
+        $toggleButtons = ToggleButtons::make('status')->options(['a' => 'A']);
+
+        expect($toggleButtons->isFullWidth())->toBeFalse();
+    });
 });
 
 describe('validation', function (): void {
@@ -257,6 +271,14 @@ it('can set `hiddenButtonLabels()` with a `Closure`', function (): void {
     expect($buttons->areButtonLabelsHidden())->toBeTrue();
 });
 
+it('can set `fullWidth()` with a `Closure`', function (): void {
+    $buttons = ToggleButtons::make('status')
+        ->options(['a' => 'A'])
+        ->fullWidth(static fn (): bool => true);
+
+    expect($buttons->isFullWidth())->toBeTrue();
+});
+
 it('converts boolean default state to `int`', function (): void {
     $buttons = ToggleButtons::make('active')
         ->boolean()
@@ -354,6 +376,22 @@ describe('rendering', function (): void {
         livewire(RenderToggleButtonsWithGrouped::class)->assertSuccessful();
     });
 
+    it('can render with `fullWidth()`', function (): void {
+        livewire(RenderToggleButtonsWithFullWidth::class)->assertSuccessful();
+    });
+
+    it('can render with `fullWidth()` set via `Closure`', function (): void {
+        livewire(RenderToggleButtonsWithClosureFullWidth::class)->assertSuccessful();
+    });
+
+    it('can render with `fullWidth()` and `inline()`', function (): void {
+        livewire(RenderToggleButtonsWithFullWidthInline::class)->assertSuccessful();
+    });
+
+    it('can render with `fullWidth()` and `grouped()`', function (): void {
+        livewire(RenderToggleButtonsWithFullWidthGrouped::class)->assertSuccessful();
+    });
+
     it('can render with `boolean()` custom labels', function (): void {
         livewire(RenderToggleButtonsWithBooleanCustomLabels::class)
             ->assertSuccessful()
@@ -400,6 +438,45 @@ describe('rendering', function (): void {
         $html = $field->toHtml();
 
         expect($html)->toContain('allowHTML: false');
+    });
+
+    it('emits the `fi-width-full` class when `fullWidth()` is set', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->fullWidth(),
+            ])
+            ->fill();
+
+        expect($field->toHtml())->toContain('fi-width-full');
+    });
+
+    it('does not emit the `fi-width-full` class by default', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active']),
+            ])
+            ->fill();
+
+        expect($field->toHtml())->not->toContain('fi-width-full');
+    });
+
+    it('emits the `fi-width-full` class in `grouped()` mode when `fullWidth()` is set', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->grouped()
+                    ->fullWidth(),
+            ])
+            ->fill();
+
+        expect($field->toHtml())->toContain('fi-width-full');
     });
 });
 
@@ -474,6 +551,46 @@ class RenderToggleButtonsWithGrouped extends Livewire
     {
         return $form->schema([
             ToggleButtons::make('status')->options(['a' => 'A', 'b' => 'B'])->grouped(),
+        ])->statePath('data');
+    }
+}
+
+class RenderToggleButtonsWithFullWidth extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            ToggleButtons::make('status')->options(['a' => 'A', 'b' => 'B'])->fullWidth(),
+        ])->statePath('data');
+    }
+}
+
+class RenderToggleButtonsWithClosureFullWidth extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            ToggleButtons::make('status')->options(['a' => 'A'])->fullWidth(static fn (): bool => true),
+        ])->statePath('data');
+    }
+}
+
+class RenderToggleButtonsWithFullWidthInline extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            ToggleButtons::make('status')->options(['a' => 'A', 'b' => 'B'])->inline()->fullWidth(),
+        ])->statePath('data');
+    }
+}
+
+class RenderToggleButtonsWithFullWidthGrouped extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            ToggleButtons::make('status')->options(['a' => 'A', 'b' => 'B'])->grouped()->fullWidth(),
         ])->statePath('data');
     }
 }
