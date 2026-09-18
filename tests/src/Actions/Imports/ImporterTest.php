@@ -1,11 +1,17 @@
 <?php
 
+use Filament\Actions\ImportAction;
+use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
+use League\Csv\Reader;
+use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 uses(TestCase::class);
 
@@ -42,6 +48,50 @@ class FormulaSafeTestImporter extends Importer
     public static function getColumns(): array
     {
         return [];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        return 'Import completed';
+    }
+}
+
+enum ImporterTestStatus: string
+{
+    case Draft = 'draft';
+
+    case Published = 'published';
+}
+
+enum ImporterTestPureStatus
+{
+    case Draft;
+}
+
+class EnumTestImporter extends Importer
+{
+    public static function getColumns(): array
+    {
+        return [
+            ImportColumn::make('status')
+                ->enum(ImporterTestStatus::class),
+        ];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        return 'Import completed';
+    }
+}
+
+class DynamicEnumTestImporter extends Importer
+{
+    public static function getColumns(): array
+    {
+        return [
+            ImportColumn::make('status')
+                ->enum(static fn (Importer $importer): string => $importer->getOptions()['enum']),
+        ];
     }
 
     public static function getCompletedNotificationBody(Import $import): string
@@ -95,6 +145,130 @@ it('calls trait lifecycle hooks alongside `Importer` hooks', function (): void {
         'afterSave',
         'afterSaveTracksImporterLifecycleHooks',
     ]);
+});
+
+describe('enum columns', function (): void {
+    $downloadExampleCsv = static function (string $importer): Reader {
+        $response = ImportAction::make()
+            ->importer($importer)
+            ->livewire(new class extends Component {})
+            ->getModalAction('downloadExample')
+            ->call();
+
+        expect($response)->toBeInstanceOf(StreamedResponse::class);
+
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+
+        $reader = Reader::createFromString($content);
+        $reader->setHeaderOffset(0);
+
+        return $reader;
+    };
+
+    it('uses enum backing values as examples by default', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(ImporterTestStatus::class);
+
+        expect($column->getExamples())->toBe(['draft', 'published']);
+    });
+
+    it('keeps `examples()` when it is used with `enum()`', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(ImporterTestStatus::class)
+            ->examples(['draft']);
+
+        expect($column->getExamples())->toBe(['draft']);
+    });
+
+    it('allows `examples([])` to prevent enum example rows from being generated', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(ImporterTestStatus::class)
+            ->examples([]);
+
+        expect($column->getExamples())->toBe([]);
+    });
+
+    it('writes enum backing values to the example CSV', function () use ($downloadExampleCsv): void {
+        $reader = $downloadExampleCsv(EnumTestImporter::class);
+
+        expect(iterator_to_array($reader->getRecords()))->toBe([
+            1 => ['status' => 'draft'],
+            2 => ['status' => 'published'],
+        ]);
+    });
+
+    it('does not evaluate a dynamic `enum()` when writing the example CSV', function () use ($downloadExampleCsv): void {
+        $reader = $downloadExampleCsv(DynamicEnumTestImporter::class);
+
+        expect($reader->getHeader())->toBe(['status'])
+            ->and(iterator_to_array($reader->getRecords()))->toBe([]);
+    });
+
+    it('validates the state against the enum', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(ImporterTestStatus::class);
+
+        $rules = ['status' => $column->getDataValidationRules()];
+
+        expect(Validator::make(['status' => 'draft'], $rules)->fails())->toBeFalse();
+        expect(Validator::make(['status' => 'unknown'], $rules)->fails())->toBeTrue();
+    });
+
+    it('rejects a pure enum', function (): void {
+        expect(
+            static fn (): array => ImportColumn::make('status')
+                ->enum(ImporterTestPureStatus::class)
+                ->getDataValidationRules(),
+        )->toThrow(InvalidArgumentException::class, 'must be a backed enum');
+    });
+
+    it('does not validate against the enum when `enum()` is not used', function (): void {
+        $column = ImportColumn::make('status');
+
+        expect($column->getDataValidationRules())->toBe([]);
+    });
+
+    it('accepts a `Closure` for `enum()`', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(static fn (): string => ImporterTestStatus::class);
+
+        expect($column->getEnum())->toBe(ImporterTestStatus::class)
+            ->and($column->getExamples())->toBe([]);
+    });
+
+    it('evaluates a dynamic `enum()` with the importer while validating without evaluating it for example data', function (): void {
+        $importer = new DynamicEnumTestImporter(
+            new Import,
+            ['status' => 'status'],
+            ['enum' => ImporterTestStatus::class],
+        );
+
+        expect($importer->getCachedColumns()[0]->getExamples())->toBe([]);
+
+        $rules = $importer->getValidationRules();
+
+        expect(Validator::make(['status' => 'draft'], $rules)->fails())->toBeFalse();
+        expect(Validator::make(['status' => 'unknown'], $rules)->fails())->toBeTrue();
+    });
+
+    it('returns `null` for `getEnum()` by default', function (): void {
+        expect(ImportColumn::make('status')->getEnum())->toBeNull();
+    });
+
+    it('validates each item of a `multiple()` column against the enum', function (): void {
+        $column = ImportColumn::make('statuses')
+            ->multiple()
+            ->enum(ImporterTestStatus::class);
+
+        expect($column->getDataValidationRules())->toBe([]);
+
+        $rules = ['statuses.*' => $column->getNestedRecursiveDataValidationRules()];
+
+        expect(Validator::make(['statuses' => ['draft', 'published']], $rules)->fails())->toBeFalse();
+        expect(Validator::make(['statuses' => ['draft', 'unknown']], $rules)->fails())->toBeTrue();
+    });
 });
 
 describe('`shouldPreventFormulaInjection()`', function (): void {
