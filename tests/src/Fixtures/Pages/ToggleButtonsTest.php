@@ -31,8 +31,18 @@ class ToggleButtonsTest extends Page
                 ToggleButtons::make('field')
                     ->label('Test ToggleButtons')
                     ->options(['a' => 'Option A', 'b' => 'Option B'])
-                    ->buttonSize(Size::Small)
+                    ->size(Size::Small)
                     ->extraAttributes(['data-testid' => 'toggle-buttons']),
+                ToggleButtons::make('grouped_field')
+                    ->label('Grouped ToggleButtons')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->icons([
+                        'a' => Heroicon::Check,
+                        'b' => Heroicon::XMark,
+                    ])
+                    ->size(Size::ExtraSmall)
+                    ->grouped()
+                    ->extraAttributes(['data-testid' => 'grouped-toggle-buttons']),
             ])
             ->statePath('data');
     }

@@ -106,7 +106,7 @@ ToggleButtons::make('status')
 
 ## Changing the button size
 
-By default, toggle buttons use the medium size. You can change the size using the `buttonSize()` method:
+By default, toggle buttons use the medium size. You can change the size using the `size()` method:
 
 ```php
 use Filament\Forms\Components\ToggleButtons;
@@ -118,10 +118,14 @@ ToggleButtons::make('status')
         'scheduled' => 'Scheduled',
         'published' => 'Published',
     ])
-    ->buttonSize(Size::Small)
+    ->size(Size::Small)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `buttonSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+The available sizes are `Size::ExtraSmall`, `Size::Small`, `Size::Medium`, `Size::Large`, and `Size::ExtraLarge`. You can also pass their backed values (`'xs'`, `'sm'`, `'md'`, `'lg'`, and `'xl'`). Any other string is applied as a custom CSS class. Passing `null` restores the default medium size. The button size is also applied when using `grouped()`.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/toggle-buttons/size" alt="Small toggle buttons" version="4.x" />
 
 ## Boolean options
 

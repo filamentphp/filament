@@ -12,6 +12,7 @@ use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\GridDirection;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -45,18 +46,24 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
     protected bool | Closure $areButtonLabelsHidden = false;
 
-    protected Size | string | Closure | null $buttonSize = null;
+    protected Size | string | Closure | null $size = null;
 
-    public function buttonSize(Size | string | Closure | null $size): static
+    public function size(Size | string | Closure | null $size): static
     {
-        $this->buttonSize = $size;
+        $this->size = $size;
 
         return $this;
     }
 
-    public function getButtonSize(): Size | string
+    public function getSize(): Size | string
     {
-        return $this->evaluate($this->buttonSize) ?? Size::Medium;
+        $size = $this->evaluate($this->size);
+
+        if (! $size instanceof Size) {
+            $size = filled($size) ? (Size::tryFrom($size) ?? $size) : Size::Medium;
+        }
+
+        return $size;
     }
 
     public function grouped(bool | Closure $condition = true): static
@@ -93,7 +100,11 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $isMultiple = $this->isMultiple();
         $statePath = $this->getStatePath();
         $areButtonLabelsHidden = $this->areButtonLabelsHidden();
-        $buttonSize = $this->getButtonSize();
+        $size = $this->getSize();
+        $iconSize = match ($size) {
+            Size::ExtraSmall, Size::Small => IconSize::Small,
+            default => null,
+        };
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
         $isAutofocused = $this->isAutofocused();
@@ -136,7 +147,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     ], escape: false)
                     ->class([
                         'fi-btn',
-                        ($buttonSize instanceof Size) ? "fi-size-{$buttonSize->value}" : $buttonSize,
+                        ($size instanceof Size) ? "fi-size-{$size->value}" : e($size),
                         'fi-disabled' => $shouldOptionBeDisabled,
                     ])
                     ->color(ButtonComponent::class, $color);
@@ -163,7 +174,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                         <?= $buttonAttributes->toHtml() ?>
                     >
                         <?php if (filled($icon)) { ?>
-                            <?= generate_icon_html($icon)?->toHtml() ?>
+                            <?= generate_icon_html($icon, size: $iconSize)?->toHtml() ?>
                         <?php } ?>
 
                         <?php if (! $areButtonLabelsHidden) { ?>
@@ -185,7 +196,11 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $isMultiple = $this->isMultiple();
         $statePath = $this->getStatePath();
         $areButtonLabelsHidden = $this->areButtonLabelsHidden();
-        $buttonSize = $this->getButtonSize();
+        $size = $this->getSize();
+        $iconSize = match ($size) {
+            Size::ExtraSmall, Size::Small => IconSize::Small,
+            default => null,
+        };
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
 
@@ -217,7 +232,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     ->class([
                         'fi-btn',
                         'fi-btn-group-btn',
-                        ($buttonSize instanceof Size) ? "fi-size-{$buttonSize->value}" : $buttonSize,
+                        ($size instanceof Size) ? "fi-size-{$size->value}" : e($size),
                         'fi-disabled' => $shouldOptionBeDisabled,
                     ])
                     ->color(ButtonComponent::class, $color);
@@ -243,7 +258,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
                     <?= $buttonAttributes->toHtml() ?>
                 >
                     <?php if (filled($icon)) { ?>
-                        <?= generate_icon_html($icon)?->toHtml() ?>
+                        <?= generate_icon_html($icon, size: $iconSize)?->toHtml() ?>
                     <?php } ?>
 
                     <?php if (! $areButtonLabelsHidden) { ?>
