@@ -1246,7 +1246,7 @@ it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`'
                 return true
             })()
             JS)
-        ->keys($secondCallout . $editButton, 'Enter')
+        ->click($secondCallout . $editButton)
         ->assertVisible('[data-testid="minimal-controls-edit-modal"]')
         ->fill('[data-testid="minimal-controls-message-input"]', 'Updated second callout.')
         ->click('[data-testid="minimal-controls-edit-modal"] button[type="submit"]')
