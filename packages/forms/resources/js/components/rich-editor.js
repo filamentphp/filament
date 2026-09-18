@@ -79,6 +79,7 @@ export default function richEditorFormComponent({
                 editorProps: {
                     attributes: {
                         ...(label ? { 'aria-label': label } : {}),
+                        'data-testid': 'rich-editor-content',
                     },
                 },
                 extensions: await getExtensions({

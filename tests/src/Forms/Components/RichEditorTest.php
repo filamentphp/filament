@@ -1240,7 +1240,7 @@ it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`'
         ->assertNotPresent('[data-testid="disabled-controls-editor"] [data-testid$="-button"]')
         ->assertScript(<<<'JS'
             (() => {
-                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
                 editor.commands.focus()
                 editor.commands.setTextSelection(editor.state.doc.content.size - 1)
                 return true
@@ -1252,7 +1252,7 @@ it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`'
         ->click('[data-testid="minimal-controls-edit-modal"] button[type="submit"]')
         ->assertScript(<<<'JS'
             (() => {
-                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
                 return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
             })()
             JS, ['First callout.', 'Updated second callout.'])
@@ -1261,12 +1261,12 @@ it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`'
         ->click($firstCallout . $deleteButton)
         ->assertScript(<<<'JS'
             (() => {
-                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
                 return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
             })()
             JS, ['Updated second callout.'])
         ->assertScript(<<<'JS'
-            document.activeElement === document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')
+            document.activeElement === document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')
             JS);
 
     $page->page()->keyDown('Control');
@@ -1277,7 +1277,7 @@ it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`'
     $page
         ->assertScript(<<<'JS'
             (() => {
-                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
                 return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
             })()
             JS, ['First callout.', 'Updated second callout.'])
