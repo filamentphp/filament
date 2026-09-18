@@ -484,16 +484,19 @@ it('can render `ToggleButtons` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        $assertFullWidthLayouts = <<<'JS'
+        $assertLayouts = <<<'JS'
             (() => {
                 const stacked = document.querySelector('[data-testid="full-width-stacked-toggle-buttons"]')
                 const stackedButtons = [...stacked.querySelectorAll('.fi-btn')]
                 const inline = document.querySelector('[data-testid="full-width-inline-toggle-buttons"]')
                 const inlineButtonContainers = [...inline.querySelectorAll('.fi-fo-toggle-buttons-btn-ctn')]
                 const grouped = document.querySelector('[data-testid="full-width-grouped-toggle-buttons"]')
+                const groupedWithLongLabels = document.querySelector('[data-testid="grouped-toggle-buttons-with-long-labels"]')
+                const groupedWithLongLabelsButtons = [...groupedWithLongLabels.querySelectorAll('.fi-btn')]
 
                 const stackedWidth = stacked.getBoundingClientRect().width
                 const groupedWidth = grouped.getBoundingClientRect().width
+                const groupedWithLongLabelsWidth = groupedWithLongLabels.getBoundingClientRect().width
                 const inlineBounds = inline.getBoundingClientRect()
                 const inlineRows = [...inlineButtonContainers.reduce((rows, container) => {
                     const row = rows.get(container.offsetTop) ?? []
@@ -517,19 +520,21 @@ it('can render `ToggleButtons` in the browser', function (): void {
                     inlineRows.length > 1 &&
                     inlineRowsFillWidth &&
                     inlineButtonsFillContainers &&
-                    Math.abs(groupedWidth - 288) < 1
+                    Math.abs(groupedWidth - 288) < 1 &&
+                    Math.abs(groupedWithLongLabelsWidth - 288) < 1 &&
+                    groupedWithLongLabelsButtons.every((button) => button.scrollWidth === button.clientWidth && button.getBoundingClientRect().height > 36)
             })()
             JS;
 
         visit('/toggle-buttons-test')
             ->assertSee('Test ToggleButtons')
             ->assertNoSmoke()
-            ->assertScript($assertFullWidthLayouts)
+            ->assertScript($assertLayouts)
             ->assertNoAccessibilityIssues();
 
         visit('/toggle-buttons-test')
             ->inDarkMode()
-            ->assertScript($assertFullWidthLayouts)
+            ->assertScript($assertLayouts)
             ->assertNoAccessibilityIssues();
     });
 });

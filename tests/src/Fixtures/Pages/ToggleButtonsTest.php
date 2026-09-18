@@ -56,6 +56,15 @@ class ToggleButtonsTest extends Page
                     ->fullWidth()
                     ->extraAttributes(['data-testid' => 'full-width-grouped-toggle-buttons'])
                     ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
+                ToggleButtons::make('groupedWithLongLabels')
+                    ->label('Grouped ToggleButtons with long labels')
+                    ->options([
+                        'review' => 'Needs additional editorial review before publishing',
+                        'response' => 'Awaiting a detailed response from the customer',
+                    ])
+                    ->grouped()
+                    ->extraAttributes(['data-testid' => 'grouped-toggle-buttons-with-long-labels'])
+                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
             ])
             ->statePath('data');
     }

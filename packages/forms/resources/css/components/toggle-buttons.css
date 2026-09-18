@@ -1,6 +1,6 @@
 .fi-fo-toggle-buttons {
     &.fi-btn-group {
-        @apply w-max;
+        @apply w-max max-w-full;
 
         &.fi-width-full {
             @apply w-full;
