@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Trenutna lozinka',
+                'validation_attribute' => 'trenutna lozinka',
+            ],
+
             'code' => [
 
                 'label' => 'Unesite kod od 6 cifara iz aplikacije za autentifikaciju',

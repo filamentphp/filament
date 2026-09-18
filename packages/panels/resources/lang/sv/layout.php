@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'Hoppa till innehåll',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -16,6 +20,7 @@ return [
 
         'open_database_notifications' => [
             'label' => 'Öppna notiser',
+            'label_with_unread_count' => '{1} Notiser, :count oläst notis|[2,*] Notiser, :count olästa notiser',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'Tema',
+
             'dark' => [
                 'label' => 'Använd mörkt tema',
             ],
@@ -50,6 +57,14 @@ return [
 
         ],
 
+    ],
+
+    'navigation' => [
+        'label' => 'Navigering i sidopanel',
+    ],
+
+    'topbar' => [
+        'label' => 'Toppfält',
     ],
 
     'avatar' => [

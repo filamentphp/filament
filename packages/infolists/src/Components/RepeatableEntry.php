@@ -14,6 +14,7 @@ use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 
 class RepeatableEntry extends Entry implements HasEmbeddedView
@@ -71,7 +72,9 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     public function getDefaultChildSchemas(): array
     {
-        $this->cachedItemsState = $state = ($this->getState() ?? []);
+        $state = $this->getState() ?? [];
+
+        $this->cachedItemsState = $state instanceof Collection ? $state->all() : $state;
 
         $containers = [];
 
@@ -96,7 +99,9 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
 
     protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->cachedItemsState === ($this->getState() ?? []);
+        $state = $this->getState() ?? [];
+
+        return $this->cachedItemsState === ($state instanceof Collection ? $state->all() : $state);
     }
 
     public function toEmbeddedHtml(): string

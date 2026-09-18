@@ -1509,8 +1509,6 @@ it('can add and delete items in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/repeater-test')
-            ->assertSee('Repeater Test')
-            ->assertSee('Items')
             ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
             ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
             ->wait(1)

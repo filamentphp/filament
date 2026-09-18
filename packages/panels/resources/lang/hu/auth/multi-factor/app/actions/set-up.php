@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Jelenlegi jelszó',
+                'validation_attribute' => 'jelenlegi jelszó',
+            ],
+
             'code' => [
 
                 'label' => 'Add meg a 6 jegyű kódot a hitelesítő alkalmazásból',

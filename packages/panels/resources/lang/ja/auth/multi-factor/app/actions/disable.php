@@ -11,6 +11,10 @@ return [
         'description' => '本当に認証アプリの使用を停止しますか？この操作を行うと、アカウントのセキュリティが低下します。',
 
         'form' => [
+            'password' => [
+                'label' => '現在のパスワード',
+                'validation_attribute' => '現在のパスワード',
+            ],
 
             'code' => [
 

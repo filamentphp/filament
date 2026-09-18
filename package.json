@@ -12,6 +12,8 @@
         "build:panels-css": "npx @tailwindcss/cli -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
         "build": "npm-run-all build:*",
         "build-demo": "npm run build && cd ../demo && php artisan filament:upgrade && cd ../filament && cd docs-assets/app && php artisan filament:upgrade && npm run build && cd ../../",
+        "docs:fix-version": "node bin/update-docs-version.js",
+        "test:docs-version": "node --test tests/bin/update-docs-version.test.js",
         "prettier": "npx prettier --write --cache --cache-location=.prettiercache ."
     },
     "devDependencies": {

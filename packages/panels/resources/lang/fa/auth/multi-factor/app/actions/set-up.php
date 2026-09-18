@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'رمز عبور فعلی',
+                'validation_attribute' => 'رمز عبور فعلی',
+            ],
+
             'code' => [
 
                 'label' => 'کد ۶ رقمی اپلیکیشن تأییدکننده را وارد کنید',

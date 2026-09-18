@@ -2,6 +2,8 @@
  * Source: https://github.com/nielsboogaard/filepond-plugin-media-preview (MIT)
  * Changes:
  * - Vendored compiled CSS from dist — upstream source is SCSS.
+ * - Overrode FilePond's reordering cursor for audio controls.
+ * - Expanded the audio timeline hit target.
  */
 .filepond--media-preview audio {
     display: none;
@@ -10,6 +12,7 @@
 .filepond--media-preview .audioplayer {
     width: calc(100% - 1.4em);
     margin: 2.3em auto auto;
+    cursor: pointer;
 }
 
 .filepond--media-preview .playpausebtn {
@@ -38,12 +41,15 @@
 }
 
 .filepond--media-preview .timeline {
+    box-sizing: content-box;
     width: calc(100% - 2.5em);
     height: 3px;
-    margin-top: 1em;
+    padding-block: 14px;
+    margin-top: 2px;
     float: left;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.3);
+    background-clip: content-box;
 }
 
 .filepond--media-preview .playhead {
@@ -52,6 +58,7 @@
     border-radius: 50%;
     margin-top: -5px;
     background: white;
+    transform: translateX(-50%);
 }
 
 .filepond--media-preview-wrapper {

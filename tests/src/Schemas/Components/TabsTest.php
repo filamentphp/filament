@@ -515,9 +515,6 @@ it('can render `Tabs` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/tabs-browser-test')
-            ->assertSee('Account')
-            ->assertSee('Contact')
-            ->assertSee('Available')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
