@@ -80,7 +80,7 @@ class QueryBuilder extends BaseFilter
             }
 
             // The summaries describe the applied rules, so the rule builder must be resolved from the applied state too. Otherwise a rule that has been removed from the filters form without applying it has no matching block.
-            return $this->withAppliedFiltersFormState(fn (): array => $this->getRuleSummaries($state['rules'], $this->getRuleBuilder()));
+            return $this->getTable()->withAppliedFiltersFormState(fn (): array => $this->getRuleSummaries($state['rules'], $this->getRuleBuilder()));
         });
 
         $this->columnSpanFull();
@@ -160,7 +160,7 @@ class QueryBuilder extends BaseFilter
             return 0;
         }
 
-        return $this->withAppliedFiltersFormState(fn (): int => $this->countRules($rules, $this->getRuleBuilder()));
+        return $this->getTable()->withAppliedFiltersFormState(fn (): int => $this->countRules($rules, $this->getRuleBuilder()));
     }
 
     /**
@@ -409,35 +409,6 @@ class QueryBuilder extends BaseFilter
         }
 
         return false;
-    }
-
-    /**
-     * @template TReturn
-     *
-     * @param  Closure(): TReturn  $callback
-     * @return TReturn
-     */
-    protected function withAppliedFiltersFormState(Closure $callback): mixed
-    {
-        if (! $this->getTable()->hasDeferredFilters()) {
-            return $callback();
-        }
-
-        $this->setFiltersFormStatePath('tableFilters');
-
-        try {
-            return $callback();
-        } finally {
-            $this->setFiltersFormStatePath('tableDeferredFilters');
-        }
-    }
-
-    protected function setFiltersFormStatePath(string $statePath): void
-    {
-        $filtersForm = $this->getLivewire()->getTableFiltersForm()->statePath($statePath);
-
-        $filtersForm->flushCachedAbsoluteStatePaths();
-        $filtersForm->clearCachedChildSchemas();
     }
 
     protected function getRuleBuilder(): RuleBuilder
