@@ -3,9 +3,11 @@
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
+use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
@@ -92,6 +94,32 @@ class DynamicEnumTestImporter extends Importer
             ImportColumn::make('status')
                 ->enum(static fn (Importer $importer): string => $importer->getOptions()['enum']),
         ];
+    }
+
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        return 'Import completed';
+    }
+}
+
+class BlankEnumTestImporter extends Importer
+{
+    public static function getColumns(): array
+    {
+        return [
+            ImportColumn::make('name'),
+            ImportColumn::make('email'),
+            ImportColumn::make('status')
+                ->enum(ImporterTestStatus::class),
+        ];
+    }
+
+    public function resolveRecord(): ?Model
+    {
+        return User::firstOrNew(
+            ['email' => $this->data['email']],
+            ['password' => 'password'],
+        );
     }
 
     public static function getCompletedNotificationBody(Import $import): string
@@ -216,6 +244,25 @@ describe('enum columns', function (): void {
         expect(Validator::make(['status' => 'unknown'], $rules)->fails())->toBeTrue();
     });
 
+    it('does not validate a blank state against the enum', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(ImporterTestStatus::class);
+
+        $multipleColumn = ImportColumn::make('statuses')
+            ->multiple()
+            ->enum(ImporterTestStatus::class);
+
+        $rules = ['status' => $column->getDataValidationRules()];
+        $nestedRules = ['statuses.*' => $multipleColumn->getNestedRecursiveDataValidationRules()];
+
+        // A blank CSV cell is cast to `null` before the data is validated, so an
+        // optional column must not be failed by the enum rule.
+        expect($column->castState(''))->toBeNull()
+            ->and(Validator::make(['status' => $column->castState('')], $rules)->fails())->toBeFalse()
+            ->and(Validator::make(['status' => ''], $rules)->fails())->toBeFalse()
+            ->and(Validator::make(['statuses' => ['draft', null]], $nestedRules)->fails())->toBeFalse();
+    });
+
     it('rejects a pure enum', function (): void {
         expect(
             static fn (): array => ImportColumn::make('status')
@@ -268,6 +315,29 @@ describe('enum columns', function (): void {
 
         expect(Validator::make(['statuses' => ['draft', 'published']], $rules)->fails())->toBeFalse();
         expect(Validator::make(['statuses' => ['draft', 'unknown']], $rules)->fails())->toBeTrue();
+    });
+
+    it('imports a row whose optional enum column is a blank CSV cell', function (): void {
+        app()->bind(Authenticatable::class, User::class);
+
+        $import = Import::create([
+            'file_name' => 'import.csv',
+            'file_path' => 'imports/import.csv',
+            'importer' => BlankEnumTestImporter::class,
+            'processed_rows' => 0,
+            'total_rows' => 2,
+            'successful_rows' => 0,
+            'user_id' => User::factory()->create()->getKey(),
+        ]);
+
+        (new ImportCsv($import, [
+            ['name' => 'Ada', 'email' => 'ada@example.com', 'status' => 'draft'],
+            ['name' => 'Grace', 'email' => 'grace@example.com', 'status' => ''],
+        ], ['name' => 'name', 'email' => 'email', 'status' => 'status']))->handle();
+
+        expect($import->refresh()->successful_rows)->toBe(2)
+            ->and($import->failedRows()->count())->toBe(0)
+            ->and(User::where('email', 'grace@example.com')->value('status'))->toBeNull();
     });
 });
 

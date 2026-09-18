@@ -177,6 +177,8 @@ ImportColumn::make('status')
     ->enum(Status::class)
 ```
 
+Empty cells are not validated against the enum, so users may leave an optional column blank. If you want to reject empty cells, add a `required` [rule](#validating-csv-data) to the column.
+
 The backing values of the enum are also used as the [example CSV data](#providing-example-csv-data) for the column, so the user can see which values are accepted without you listing them by hand. Passing `examples()` yourself overrides this, and passing an empty array prevents example rows from being generated for that column.
 
 <Aside variant="info">

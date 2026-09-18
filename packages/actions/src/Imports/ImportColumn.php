@@ -436,6 +436,7 @@ class ImportColumn extends Component
         }
 
         if (filled($enum = $this->getBackedEnum()) && (! $this->isMultiple())) {
+            $rules[] = 'nullable';
             $rules[] = Rule::enum($enum);
         }
 
@@ -555,6 +556,7 @@ class ImportColumn extends Component
         $rules = $this->evaluate($this->nestedRecursiveDataValidationRules);
 
         if (filled($enum = $this->getBackedEnum()) && $this->isMultiple()) {
+            $rules[] = 'nullable';
             $rules[] = Rule::enum($enum);
         }
 
