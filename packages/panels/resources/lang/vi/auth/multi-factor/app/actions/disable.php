@@ -11,6 +11,10 @@ return [
         'description' => 'Bạn có chắc chắn muốn ngừng sử dụng ứng dụng xác thực không? Làm vậy sẽ bỏ bớt một lớp bảo mật ra khỏi tài khoản.',
 
         'form' => [
+            'password' => [
+                'label' => 'Mật khẩu hiện tại',
+                'validation_attribute' => 'mật khẩu hiện tại',
+            ],
 
             'code' => [
 

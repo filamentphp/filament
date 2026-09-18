@@ -7,6 +7,6 @@
 
     <p>
         Submitted code:
-        <span>{{ data_get($data, 'code') }}</span>
+        <span data-testid="submitted-code">{{ data_get($data, 'code') }}</span>
     </p>
 </x-filament-panels::page>

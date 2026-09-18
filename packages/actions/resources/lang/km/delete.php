@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'លុបចោលការជ្រើសរើស',
+        'label' => 'លុបអ្វីដែលបានជ្រើសរើស',
 
         'modal' => [
 
-            'heading' => 'លុបចោលការជ្រើសរើស :label',
+            'heading' => 'លុប :label ដែលបានជ្រើសរើស',
 
             'actions' => [
 

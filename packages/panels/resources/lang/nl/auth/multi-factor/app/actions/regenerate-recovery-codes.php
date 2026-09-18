@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Of voer je huidige wachtwoord in',
+                'label' => 'Voer je huidige wachtwoord in',
 
                 'validation_attribute' => 'wachtwoord',
 

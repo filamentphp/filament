@@ -11,6 +11,10 @@ return [
         'description' => 'Tem a certeza de que deseja parar de usar a aplicação de autenticação? Desativar esta opção removerá uma camada extra de segurança da sua conta.',
 
         'form' => [
+            'password' => [
+                'label' => 'Palavra-passe atual',
+                'validation_attribute' => 'palavra-passe atual',
+            ],
 
             'code' => [
 

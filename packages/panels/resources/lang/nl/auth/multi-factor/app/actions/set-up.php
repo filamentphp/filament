@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Huidig wachtwoord',
+                'validation_attribute' => 'huidig wachtwoord',
+            ],
+
             'code' => [
 
                 'label' => 'Voer de 6-cijferige code uit de authenticator-app in',

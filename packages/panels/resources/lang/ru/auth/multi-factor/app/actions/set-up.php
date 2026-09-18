@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Текущий пароль',
+                'validation_attribute' => 'текущий пароль',
+            ],
+
             'code' => [
 
                 'label' => 'Введите 6-значный код из 2FA-приложения',

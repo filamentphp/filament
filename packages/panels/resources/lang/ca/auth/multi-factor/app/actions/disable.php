@@ -11,6 +11,10 @@ return [
         'description' => 'Estàs segur que vols deixar de fer servir l\'aplicació d\'autenticació? Desactivar-la eliminarà una capa addicional de seguretat del teu compte.',
 
         'form' => [
+            'password' => [
+                'label' => 'Contrasenya actual',
+                'validation_attribute' => 'contrasenya actual',
+            ],
 
             'code' => [
 

@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Uneko pasahitza',
+                'validation_attribute' => 'uneko pasahitza',
+            ],
+
             'code' => [
 
                 'label' => 'Sartu autentifikazio-aplikazioko 6 digituko kodea',

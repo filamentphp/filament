@@ -1,10 +1,24 @@
 export default () => ({
     panelId: null,
 
+    observer: null,
+
+    navigateListener: null,
+
     init() {
-        document.addEventListener('livewire:navigate', () => this.close())
+        this.navigateListener = () => this.close()
+
+        document.addEventListener('livewire:navigate', this.navigateListener)
 
         this.setUpAria()
+    },
+
+    destroy() {
+        this.observer?.disconnect()
+        this.observer = null
+
+        document.removeEventListener('livewire:navigate', this.navigateListener)
+        this.navigateListener = null
     },
 
     setUpAria() {
@@ -23,20 +37,20 @@ export default () => ({
 
         this.syncAria()
 
-        const observer = new MutationObserver(() => this.syncAria())
+        this.observer = new MutationObserver(() => this.syncAria())
 
         // The floating UI plugin toggles the panel's `display` for open and close paths this
         // component does not drive itself (click-away, the plugin's own Escape handler), so observe
         // it directly to keep `aria-expanded` on the real trigger correct in every case. A Livewire
         // morph also strips the client-applied panel `id`, so observe that too and re-apply it.
-        observer.observe(panel, {
+        this.observer.observe(panel, {
             attributeFilter: ['id', 'style'],
         })
 
         // A Livewire morph re-renders the trigger from server HTML, stripping the client-applied
         // ARIA attributes, so observe them and re-apply. `syncAria()` only writes attributes whose
         // values have changed, so re-applying does not retrigger the observer in a loop.
-        observer.observe(trigger, {
+        this.observer.observe(trigger, {
             attributeFilter: [
                 'aria-controls',
                 'aria-expanded',

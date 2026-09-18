@@ -1,0 +1,35 @@
+<?php
+
+trait DiagnosticTrait
+{
+}
+
+class DiagnosticProbe
+{
+    use DiagnosticTrait;
+}
+
+function test(): void
+{
+    new DiagnosticProbe;
+}
+
+test();
+-----
+<?php
+
+trait DiagnosticTrait
+{
+}
+
+class DiagnosticProbe
+{
+    use DiagnosticTrait;
+}
+
+function test(): void
+{
+    new DiagnosticProbe;
+}
+
+test();

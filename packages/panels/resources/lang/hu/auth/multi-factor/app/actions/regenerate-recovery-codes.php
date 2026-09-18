@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Vagy add meg a jelenlegi jelszavadat',
+                'label' => 'Add meg a jelenlegi jelszavadat',
 
                 'validation_attribute' => 'jelszó',
 

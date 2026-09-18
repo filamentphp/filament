@@ -84,7 +84,10 @@ describe('setup flow', function (): void {
         $recoveryCodes = $encryptedActionArguments['recoveryCodes'];
 
         $livewire
-            ->fillForm(['code' => $appAuthentication->getCurrentCode($user, $secret)])
+            ->fillForm([
+                'code' => $appAuthentication->getCurrentCode($user, $secret),
+                'password' => 'password',
+            ])
             ->callMountedAction()
             ->assertHasNoFormErrors();
 
@@ -128,6 +131,7 @@ describe('setup flow', function (): void {
         $livewire
             ->fillForm([
                 'code' => ($appAuthentication->getCurrentCode($user, $secret) === '000000') ? '111111' : '000000',
+                'password' => 'password',
             ])
             ->callMountedAction()
             ->assertHasFormErrors();
@@ -144,6 +148,109 @@ describe('setup flow', function (): void {
 });
 
 describe('validation', function (): void {
+    test('the user\'s current password is required', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'));
+
+        $secret = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted'])['secret'];
+
+        $livewire
+            ->fillForm(['code' => $appAuthentication->getCurrentCode($user, $secret)])
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'password' => 'required',
+            ]);
+
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
+    });
+
+    test('the user\'s current password must be valid', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'));
+
+        $secret = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted'])['secret'];
+
+        $livewire
+            ->fillForm([
+                'code' => $appAuthentication->getCurrentCode($user, $secret),
+                'password' => 'incorrect-password',
+            ])
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'password' => 'current_password',
+            ]);
+
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
+    });
+
+    test('the user\'s current password is not validated when authentication attempts are rate limited', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        $rateLimitingKey = 'filament-set-up-app-authentication:' . $user->getAuthIdentifier();
+
+        foreach (range(1, 5) as $attempt) {
+            RateLimiter::hit($rateLimitingKey);
+        }
+
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'));
+
+        $secret = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted'])['secret'];
+
+        $livewire
+            ->fillForm([
+                'code' => $appAuthentication->getCurrentCode($user, $secret),
+                'password' => 'incorrect-password',
+            ])
+            ->goToNextWizardStep()
+            ->assertHasFormErrors([
+                'password' => __('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.rate_limited'),
+            ]);
+    });
+
+    test('password verification attempts are throttled when the code is blank', function (): void {
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('setUpAppAuthentication')
+                ->schemaComponent('app', schema: 'content'));
+
+        foreach (range(1, 5) as $attempt) {
+            $livewire
+                ->fillForm([
+                    'code' => '',
+                    'password' => "incorrect-password-{$attempt}",
+                ])
+                ->goToNextWizardStep()
+                ->assertHasFormErrors([
+                    'password' => 'current_password',
+                ]);
+        }
+
+        $livewire
+            ->fillForm([
+                'code' => '',
+                'password' => 'incorrect-password-6',
+            ])
+            ->goToNextWizardStep()
+            ->assertHasFormErrors([
+                'password' => __('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.rate_limited'),
+            ]);
+    });
+
     test('codes are required', function (): void {
         $user = auth()->user();
 
@@ -159,7 +266,10 @@ describe('validation', function (): void {
         livewire(EditProfile::class)
             ->mountAction(TestAction::make('setUpAppAuthentication')
                 ->schemaComponent('app', schema: 'content'))
-            ->fillForm(['code' => ''])
+            ->fillForm([
+                'code' => '',
+                'password' => 'password',
+            ])
             ->callMountedAction()
             ->assertHasFormErrors([
                 'code' => 'required',
@@ -199,6 +309,7 @@ describe('validation', function (): void {
         $livewire
             ->fillForm([
                 'code' => Str::limit($appAuthentication->getCurrentCode($user, $secret), limit: 5, end: ''),
+                'password' => 'password',
             ])
             ->callMountedAction()
             ->assertHasFormErrors([
@@ -237,9 +348,14 @@ it('can throttle code verification attempts per user', function (): void {
 
     // Even with a valid code, the rate limit should block the attempt
     $livewire
-        ->fillForm(['code' => $appAuthentication->getCurrentCode($user, $secret)])
+        ->fillForm([
+            'code' => $appAuthentication->getCurrentCode($user, $secret),
+            'password' => 'password',
+        ])
         ->callMountedAction()
-        ->assertHasFormErrors(['code']);
+        ->assertHasFormErrors([
+            'password' => __('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.rate_limited'),
+        ]);
 
     expect(filled($user->getAppAuthenticationSecret()))
         ->toBeFalse();
