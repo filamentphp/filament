@@ -165,7 +165,7 @@ Any rows that do not pass validation will not be imported. Instead, they will be
 
 <UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-### Validating a column against an enum
+#### Validating a column against an enum
 
 If a column maps onto a [backed enum](https://www.php.net/manual/en/language.enumerations.backed.php), you can pass the enum class to the `enum()` method. Any row whose value is not a case of the enum will fail validation, instead of reaching the model's cast and throwing a `ValueError`:
 
