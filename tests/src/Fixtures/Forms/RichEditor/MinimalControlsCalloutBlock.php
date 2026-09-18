@@ -15,9 +15,13 @@ class MinimalControlsCalloutBlock extends RichContentCustomBlock
 
     public static function configureEditorAction(Action $action): Action
     {
-        return $action->schema([
-            TextInput::make('message')->required(),
-        ]);
+        return $action
+            ->schema([
+                TextInput::make('message')
+                    ->required()
+                    ->extraInputAttributes(['data-testid' => 'minimal-controls-message-input']),
+            ])
+            ->extraModalWindowAttributes(['data-testid' => 'minimal-controls-edit-modal']);
     }
 
     public static function toPreviewHtml(array $config): ?string

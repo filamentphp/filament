@@ -33,6 +33,7 @@ export default Node.create({
             const dom = document.createElement('div')
             dom.setAttribute('data-config', JSON.stringify(node.attrs.config))
             dom.setAttribute('data-id', node.attrs.id)
+            dom.setAttribute('data-testid', 'rich-editor-custom-block')
             dom.setAttribute('data-type', 'customBlock')
 
             if (
@@ -60,6 +61,8 @@ export default Node.create({
 
                 const editButton = document.createElement('button')
                 editButton.className = 'fi-icon-btn'
+                editButton.dataset.testid =
+                    'rich-editor-custom-block-edit-button'
                 editButton.type = 'button'
                 if (extension.options.editCustomBlockButtonLabel) {
                     editButton.setAttribute(
@@ -93,6 +96,8 @@ export default Node.create({
 
                 const deleteButton = document.createElement('button')
                 deleteButton.className = 'fi-icon-btn'
+                deleteButton.dataset.testid =
+                    'rich-editor-custom-block-delete-button'
                 deleteButton.type = 'button'
                 if (extension.options.deleteCustomBlockButtonLabel) {
                     deleteButton.setAttribute(
