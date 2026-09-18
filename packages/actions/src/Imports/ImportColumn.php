@@ -65,11 +65,9 @@ class ImportColumn extends Component
     protected ?Importer $importer = null;
 
     /**
-     * @var array<mixed> | Closure
+     * @var array<mixed> | Closure | null
      */
-    protected array | Closure $examples = [];
-
-    protected bool $hasExamples = false;
+    protected array | Closure | null $examples = null;
 
     protected string | Closure | null $exampleHeader = null;
 
@@ -159,7 +157,6 @@ class ImportColumn extends Component
         }
 
         $this->examples = $examples;
-        $this->hasExamples = true;
 
         return $this;
     }
@@ -612,7 +609,7 @@ class ImportColumn extends Component
      */
     public function getExamples(): array
     {
-        if ($this->hasExamples) {
+        if ($this->examples !== null) {
             return Arr::wrap($this->evaluate($this->examples));
         }
 
