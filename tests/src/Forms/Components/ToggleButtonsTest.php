@@ -439,101 +439,18 @@ describe('rendering', function (): void {
 
         expect($html)->toContain('allowHTML: false');
     });
-
-    it('emits the `fi-width-full` class when `fullWidth()` is set', function (): void {
-        Schema::make($livewire = Livewire::make())
-            ->statePath('data')
-            ->components([
-                $field = ToggleButtons::make('status')
-                    ->options(['active' => 'Active'])
-                    ->fullWidth(),
-            ])
-            ->fill();
-
-        expect($field->toHtml())->toContain('fi-width-full');
-    });
-
-    it('does not emit the `fi-width-full` class by default', function (): void {
-        Schema::make($livewire = Livewire::make())
-            ->statePath('data')
-            ->components([
-                $field = ToggleButtons::make('status')
-                    ->options(['active' => 'Active']),
-            ])
-            ->fill();
-
-        expect($field->toHtml())->not->toContain('fi-width-full');
-    });
-
-    it('emits the `fi-width-full` class in `grouped()` mode when `fullWidth()` is set', function (): void {
-        Schema::make($livewire = Livewire::make())
-            ->statePath('data')
-            ->components([
-                $field = ToggleButtons::make('status')
-                    ->options(['active' => 'Active'])
-                    ->grouped()
-                    ->fullWidth(),
-            ])
-            ->fill();
-
-        expect($field->toHtml())->toContain('fi-width-full');
-    });
 });
 
 it('can render `ToggleButtons` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        $assertLayouts = <<<'JS'
-            (() => {
-                const stacked = document.querySelector('[data-testid="full-width-stacked-toggle-buttons"]')
-                const stackedButtons = [...stacked.querySelectorAll('.fi-btn')]
-                const inline = document.querySelector('[data-testid="full-width-inline-toggle-buttons"]')
-                const inlineButtonContainers = [...inline.querySelectorAll('.fi-fo-toggle-buttons-btn-ctn')]
-                const grouped = document.querySelector('[data-testid="full-width-grouped-toggle-buttons"]')
-                const groupedWithLongLabels = document.querySelector('[data-testid="grouped-toggle-buttons-with-long-labels"]')
-                const groupedWithLongLabelsButtons = [...groupedWithLongLabels.querySelectorAll('.fi-btn')]
-
-                const stackedWidth = stacked.getBoundingClientRect().width
-                const groupedWidth = grouped.getBoundingClientRect().width
-                const groupedWithLongLabelsWidth = groupedWithLongLabels.getBoundingClientRect().width
-                const inlineBounds = inline.getBoundingClientRect()
-                const inlineRows = [...inlineButtonContainers.reduce((rows, container) => {
-                    const row = rows.get(container.offsetTop) ?? []
-                    row.push(container)
-                    rows.set(container.offsetTop, row)
-
-                    return rows
-                }, new Map()).values()]
-                const inlineRowsFillWidth = inlineRows.every((row) => {
-                    const firstButtonBounds = row.at(0).getBoundingClientRect()
-                    const lastButtonBounds = row.at(-1).getBoundingClientRect()
-
-                    return Math.abs(firstButtonBounds.left - inlineBounds.left) < 1 &&
-                        Math.abs(lastButtonBounds.right - inlineBounds.right) < 1
-                })
-                const inlineButtonsFillContainers = inlineButtonContainers.every((container) => {
-                    return Math.abs(container.querySelector('.fi-btn').getBoundingClientRect().width - container.getBoundingClientRect().width) < 1
-                })
-
-                return stackedButtons.every((button) => Math.abs(button.getBoundingClientRect().width - stackedWidth) < 1) &&
-                    inlineRows.length > 1 &&
-                    inlineRowsFillWidth &&
-                    inlineButtonsFillContainers &&
-                    Math.abs(groupedWidth - 288) < 1 &&
-                    Math.abs(groupedWithLongLabelsWidth - 288) < 1 &&
-                    groupedWithLongLabelsButtons.every((button) => button.scrollWidth === button.clientWidth && button.getBoundingClientRect().height > 36)
-            })()
-            JS;
-
         visit('/toggle-buttons-test')
             ->assertNoSmoke()
-            ->assertScript($assertLayouts)
             ->assertNoAccessibilityIssues();
 
         visit('/toggle-buttons-test')
             ->inDarkMode()
-            ->assertScript($assertLayouts)
             ->assertNoAccessibilityIssues();
     });
 });

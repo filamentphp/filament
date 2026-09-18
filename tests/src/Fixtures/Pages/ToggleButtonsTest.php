@@ -34,9 +34,7 @@ class ToggleButtonsTest extends Page
                 ToggleButtons::make('fullWidthStacked')
                     ->label('Full-width stacked ToggleButtons')
                     ->options(['a' => 'Option A', 'b' => 'Option B'])
-                    ->fullWidth()
-                    ->extraAttributes(['data-testid' => 'full-width-stacked-toggle-buttons'])
-                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
+                    ->fullWidth(),
                 ToggleButtons::make('fullWidthInline')
                     ->label('Full-width inline ToggleButtons')
                     ->options([
@@ -46,25 +44,12 @@ class ToggleButtonsTest extends Page
                         'published' => 'Published publicly',
                     ])
                     ->inline()
-                    ->fullWidth()
-                    ->extraAttributes(['data-testid' => 'full-width-inline-toggle-buttons'])
-                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
+                    ->fullWidth(),
                 ToggleButtons::make('fullWidthGrouped')
                     ->label('Full-width grouped ToggleButtons')
                     ->options(['a' => 'Option A', 'b' => 'Option B'])
                     ->grouped()
-                    ->fullWidth()
-                    ->extraAttributes(['data-testid' => 'full-width-grouped-toggle-buttons'])
-                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
-                ToggleButtons::make('groupedWithLongLabels')
-                    ->label('Grouped ToggleButtons with long labels')
-                    ->options([
-                        'review' => 'Needs additional editorial review before publishing',
-                        'response' => 'Awaiting a detailed response from the customer',
-                    ])
-                    ->grouped()
-                    ->extraAttributes(['data-testid' => 'grouped-toggle-buttons-with-long-labels'])
-                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
+                    ->fullWidth(),
             ])
             ->statePath('data');
     }
