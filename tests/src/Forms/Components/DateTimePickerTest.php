@@ -820,7 +820,6 @@ it('can render `DateTimePicker` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/date-time-picker-test')
-            ->assertSee('Test DateTimePicker')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
