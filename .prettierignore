@@ -4,5 +4,7 @@
 composer.lock
 docs-assets
 packages/panels/resources/boost
+packages/support/stubs/scaffolding/resources/css/app.css
 tests/src/Panels/Commands/Fixture
+tests/src/Rector/Rules/Fixtures
 tests/src/Upgrade/Fixture

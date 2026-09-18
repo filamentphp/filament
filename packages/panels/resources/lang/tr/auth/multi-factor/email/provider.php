@@ -41,6 +41,10 @@ return [
                             'title' => 'Size e-posta ile yeni bir kod gönderdik',
                         ],
 
+                        'throttled' => [
+                            'title' => 'Çok fazla yeniden gönderme denemesi. Lütfen yeni bir kod istemeden önce bekleyin.',
+                        ],
+
                     ],
 
                 ],

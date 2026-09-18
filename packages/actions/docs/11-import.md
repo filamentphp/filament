@@ -736,6 +736,24 @@ public static function modifyCompletedNotification(Notification $notification, I
 
 The `Import` model exposes the column mapping and options the user selected via `$import->getColumnMap()` and `$import->getOptions()`, so you can tailor the notification based on what the user imported.
 
+## Customizing how failed rows are downloaded
+
+By default, failed rows are compiled into a CSV and returned as a streamed response. You may customize how they are downloaded for an importer by overriding the `getFailedRowsDownloader()` method:
+
+```php
+use App\Filament\Imports\Downloaders\CustomFailedRowsDownloader;
+use Filament\Actions\Imports\Downloaders\Contracts\Downloader;
+
+public static function getFailedRowsDownloader(): Downloader
+{
+    return app(CustomFailedRowsDownloader::class);
+}
+```
+
+A downloader is an invokable class that accepts the `Import` model and returns a Symfony `Response`. This response may stream a download, return a file, or redirect the user to a temporary URL on a remote filesystem.
+
+If your custom downloader only changes how the generated content is delivered, you may use `CsvImportFailureContentGenerator` to write the failed rows to a League CSV `Writer`. Filament resolves this class from the container so that you can reuse the built-in content generation without duplicating it.
+
 ## Customizing the import job
 
 The default job for processing imports is `Filament\Actions\Imports\Jobs\ImportCsv`. If you want to extend this class and override any of its methods, you may replace the original class in the `register()` method of a service provider:
@@ -970,6 +988,35 @@ class ProductImporter extends Importer
 }
 ```
 
+### Defining lifecycle hooks in traits
+
+To define a lifecycle hook in a trait, suffix the hook name with the trait's name. This follows the `boot{TraitName}()` convention used by Eloquent and the `mount{TraitName}()` convention used by Livewire, allowing reusable traits to hook into an importer's lifecycle without colliding with hooks defined on the importer itself:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+trait LogsImports
+{
+    protected function afterSaveLogsImports(): void
+    {
+        // Runs after a record is saved to the database, in addition to the
+        // hook on the importer.
+    }
+}
+
+class ProductImporter extends Importer
+{
+    use LogsImports;
+
+    protected function afterSave(): void
+    {
+        // Both lifecycle hooks are called.
+    }
+}
+```
+
+The importer's own hook is called first, followed by each trait hook. Hooks from traits used by other traits are also called. Trait hooks are called automatically, so you should not also call them from the importer's own hook.
+
 Inside these hooks, you can access the current row's data using `$this->data`. You can also access the original row of data from the CSV, before it was [cast](#casting-state) or mapped, using `$this->originalData`.
 
 The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.
@@ -1016,3 +1063,28 @@ If you need per-record authorization during import, you should add checks in you
 ### CSV formula injection
 
 When rows fail validation during import, Filament compiles them into a downloadable CSV for the user to review. This failure CSV contains the original data from the uploaded file exactly as it was submitted, without any transformation. If the uploaded CSV contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the failure CSV. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if the original CSV was provided by an untrusted source. You should ensure that your users are aware of this risk when reviewing failure CSVs, or implement sanitization in your importer's lifecycle hooks to neutralize potentially dangerous values before they are stored as failed rows.
+
+Alternatively, you may opt in to Filament's built-in protection for the failure CSV. When enabled, any cell that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Because the failure CSV includes every column from the uploaded file — even columns that are not mapped to an `ImportColumn` — this protection is applied to the whole file rather than to individual columns.
+
+To enable it for a single importer, set the `$shouldPreventFormulaInjection` property on your importer class:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+class ProductImporter extends Importer
+{
+    protected static bool $shouldPreventFormulaInjection = true;
+}
+```
+
+To enable it for every importer across your application, call the `preventFormulaInjection()` method inside the `boot()` method of a service provider:
+
+```php
+use Filament\Actions\Imports\Importer;
+
+Importer::preventFormulaInjection();
+```
+
+<Aside variant="warning">
+    This protection is **opt in** and disabled by default, because the failure CSV is intended to be corrected and re-uploaded. Prefixing a single quote alters legitimate data — for example, values such as `-5` or a phone number like `+44 1234 567890` are valid formula triggers and would be rewritten to `'-5` and `'+44 1234 567890`, which would then be imported with the leading quote intact. Only enable it when the uploaded files may come from an untrusted source.
+</Aside>

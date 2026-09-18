@@ -48,9 +48,9 @@ trait HasChildComponents
     }
 
     /**
-     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $components
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Closure  $components
      */
-    public function schema(array | Closure $components): static
+    public function schema(array | Schema | Closure $components): static
     {
         $this->childComponents($components);
 
@@ -79,11 +79,11 @@ trait HasChildComponents
     public function getChildSchema($key = null): ?Schema
     {
         if (filled($key) && ! array_key_exists($key, $this->childComponents)) {
-            return ($this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())[$key] ?? null;
+            return $this->getCachedDefaultChildSchemas()[$key] ?? null;
         }
 
-        if (filled($key) && array_key_exists($key, $this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())) {
-            return $this->cachedDefaultChildSchemas[$key];
+        if (filled($key) && array_key_exists($key, $cachedDefaultChildSchemas = $this->getCachedDefaultChildSchemas())) {
+            return $cachedDefaultChildSchemas[$key];
         }
 
         $key ??= 'default';
@@ -144,7 +144,7 @@ trait HasChildComponents
     protected function makeChildSchema(string $key): Schema
     {
         return Schema::make($this->getLivewire())
-            ->parentComponent($this);
+            ->parentComponent($this, shouldFlushCachedHierarchy: false);
     }
 
     protected function configureChildSchema(Schema $schema, string $key): Schema
@@ -162,7 +162,7 @@ trait HasChildComponents
         }
 
         return [
-            ...(array_key_exists('default', $this->childComponents) ? ($this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas()) : []),
+            ...(array_key_exists('default', $this->childComponents) ? $this->getCachedDefaultChildSchemas() : []),
             ...array_reduce(
                 array_keys($this->childComponents),
                 function (array $carry, string $key): array {
@@ -199,10 +199,63 @@ trait HasChildComponents
         return ['default' => $this->getChildSchema()];
     }
 
+    /**
+     * @return array<Schema>
+     */
+    protected function getCachedDefaultChildSchemas(): array
+    {
+        if (($this->cachedDefaultChildSchemas !== null) && $this->areCachedDefaultChildSchemasFresh()) {
+            return $this->cachedDefaultChildSchemas;
+        }
+
+        return $this->cachedDefaultChildSchemas = $this->getDefaultChildSchemas();
+    }
+
+    /**
+     * Components whose child schemas are derived from state, such as repeaters,
+     * can override this method to compare the current state against a snapshot
+     * taken when the cache was built, so that the cache invalidates itself when
+     * the state changes, without an explicit `clearCachedChildSchemas()` call.
+     */
+    protected function areCachedDefaultChildSchemasFresh(): bool
+    {
+        return true;
+    }
+
     public function clearCachedChildSchemas(): void
     {
         $this->cachedDefaultChildSchemas = null;
         $this->cachedChildSchemas = [];
+    }
+
+    /**
+     * @internal This method is not part of the public API and should not be used. Its parameters may change at any time without notice.
+     */
+    protected function flushCachedChildSchemaHierarchies(): void
+    {
+        $childSchemas = [
+            ...($this->cachedDefaultChildSchemas ?? []),
+            ...$this->cachedChildSchemas,
+        ];
+
+        foreach ($this->childComponents as $childComponents) {
+            if ($childComponents instanceof Schema) {
+                $childSchemas[] = $childComponents;
+            }
+        }
+
+        $flushedChildSchemas = [];
+
+        foreach ($childSchemas as $childSchema) {
+            $childSchemaId = spl_object_id($childSchema);
+
+            if (isset($flushedChildSchemas[$childSchemaId])) {
+                continue;
+            }
+
+            $childSchema->flushCachedHierarchy();
+            $flushedChildSchemas[$childSchemaId] = true;
+        }
     }
 
     /**
@@ -215,6 +268,7 @@ trait HasChildComponents
 
     protected function cloneChildComponents(): static
     {
+        $this->cachedDefaultChildSchemas = null;
         $this->cachedChildSchemas = [];
 
         foreach ($this->childComponents as $key => $childComponents) {

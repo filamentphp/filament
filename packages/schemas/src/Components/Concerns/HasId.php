@@ -22,6 +22,9 @@ trait HasId
 
     public function getCustomId(): ?string
     {
-        return $this->evaluate($this->id);
+        $id = $this->evaluate($this->id);
+
+        // Security: Strip characters that could break out of a quoted HTML attribute or a JS string, so every downstream sink that embeds this ID raw is safe without per-sink escaping. Legitimate IDs never contain these characters.
+        return ($id === null) ? null : preg_replace('/[<>"\'`\x00-\x1F\x7F]/', '', $id);
     }
 }

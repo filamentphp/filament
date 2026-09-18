@@ -2,6 +2,10 @@
 
 namespace Filament\Tests\Infolists\Components;
 
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
@@ -421,6 +425,31 @@ describe('nested state resolution', function (): void {
 });
 
 describe('relationships', function (): void {
+    it('can rebuild items when a loaded relationship `Collection` is mutated in place', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2), 'posts')
+            ->create()
+            ->load('posts');
+
+        $schema = Schema::make(Livewire::make())
+            ->record($user)
+            ->components([
+                RepeatableEntry::make('posts')
+                    ->schema([
+                        TextEntry::make('title'),
+                    ]),
+            ]);
+
+        $entry = $schema->getComponents()[0];
+
+        expect($entry->getItems())->toHaveCount(2);
+
+        $user->posts->pop();
+
+        expect($entry->getState())->toHaveCount(1)
+            ->and($entry->getItems())->toHaveCount(1);
+    });
+
     it('can resolve state for relationship-based `RepeatableEntry`', function (): void {
         $user = User::factory()
             ->has(Post::factory()->count(2)->sequence(
@@ -514,6 +543,69 @@ describe('relationships', function (): void {
                                         ->schema([
                                             TextEntry::make('title'),
                                         ]),
+                                ]),
+                        ]),
+                ]);
+        }
+
+        public function render(): string
+        {
+            return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
+        }
+    }
+
+    it('does not render a related record\'s row after an `Action` deletes it, without a page refresh', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2)->sequence(
+                ['title' => 'Delete me without a refresh'],
+                ['title' => 'Keep me rendered'],
+            ), 'posts')
+            ->create();
+
+        $component = livewire(TestRelationshipRepeatableEntryWithDeleteAction::class, ['user' => $user])
+            ->assertSeeText('Delete me without a refresh')
+            ->assertSeeText('Keep me rendered')
+            ->callAction(TestAction::make('deletePost')->schemaComponent('posts.0.title'));
+
+        expect(Post::query()->where('title', 'Delete me without a refresh')->exists())->toBeFalse();
+        expect($user->posts()->count())->toBe(1);
+
+        $component
+            ->assertSeeText('Keep me rendered')
+            ->assertDontSeeText('Delete me without a refresh');
+    });
+
+    class TestRelationshipRepeatableEntryWithDeleteAction extends Component implements HasActions, HasSchemas
+    {
+        use InteractsWithActions;
+        use InteractsWithSchemas;
+
+        public User $user;
+
+        public function mount(User $user): void
+        {
+            $this->user = $user;
+        }
+
+        public function infolist(Schema $schema): Schema
+        {
+            return $schema
+                ->record($this->user)
+                ->components([
+                    RepeatableEntry::make('posts')
+                        ->schema([
+                            TextEntry::make('title')
+                                ->registerActions([
+                                    Action::make('deletePost')
+                                        ->action(function (Post $record): void {
+                                            $record->delete();
+
+                                            $this->user->setRelation('posts', $this->user->posts()->get());
+                                        }),
                                 ]),
                         ]),
                 ]);

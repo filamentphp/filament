@@ -1,7 +1,3 @@
-@php
-    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
-@endphp
-
 @props([
     'debounce' => '500ms',
     'onBlur' => false,
@@ -10,6 +6,10 @@
 ])
 
 @php
+    use Filament\Support\Icons\Heroicon;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Filament\Tables\View\TablesIconAlias;
+
     $wireModelAttribute = $onBlur ? 'wire:model.blur' : "wire:model.live.debounce.{$debounce}";
 @endphp
 
@@ -23,8 +23,8 @@
 
     <x-filament::input.wrapper
         inline-prefix
-        :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-        :prefix-icon-alias="\Filament\Tables\View\TablesIconAlias::SEARCH_FIELD"
+        :prefix-icon="Heroicon::MagnifyingGlass"
+        :prefix-icon-alias="TablesIconAlias::SEARCH_FIELD"
         :wire:target="$wireModel"
     >
         <x-filament::input

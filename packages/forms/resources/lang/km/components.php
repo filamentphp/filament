@@ -83,7 +83,7 @@ return [
             ],
 
             'collapse' => [
-                'label' => 'ដួលរលំ',
+                'label' => 'បង្រួម',
             ],
 
             'expand' => [
@@ -91,7 +91,7 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'ដួលរលំទាំងអស់',
+                'label' => 'បង្រួមទាំងអស់',
             ],
 
             'expand_all' => [
@@ -118,9 +118,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'ឧបករណ៍ជ្រើសរើសពណ៌',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'ខែ',
+        ],
+
+        'year_input' => [
+            'label' => 'ឆ្នាំ',
+        ],
+
+        'hour_input' => [
+            'label' => 'ម៉ោង',
+        ],
+
+        'minute_input' => [
+            'label' => 'នាទី',
+        ],
+
+        'second_input' => [
+            'label' => 'វិនាទី',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'ទាញយក',
+            ],
+
+            'open' => [
+                'label' => 'បើកក្នុងផ្ទាំងថ្មី',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'កម្មវិធីកែសម្រួលរូបភាព',
 
             'actions' => [
 
@@ -264,10 +308,22 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'សកម្មភាព',
+            ],
+
+            'reorder' => [
+                'label' => 'តម្រៀបឡើងវិញ',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
-                'label' => 'គន្លឺះ',
+                'label' => 'គន្លឹះ',
             ],
 
             'value' => [
@@ -286,13 +342,13 @@ return [
             'bold' => 'ដិត',
             'bullet_list' => 'បញ្ជីគ្រាប់',
             'code_block' => 'ប្លុកកូដ',
-            'heading' => 'Heading',
+            'heading' => 'ចំណងជើង',
             'italic' => 'ទ្រេត',
             'link' => 'តំណភ្ជាប់',
             'ordered_list' => 'បញ្ជីលេខ',
             'redo' => 'ធ្វើឡើងវិញ',
-            'strike' => 'ការវាយឆ្មក់',
-            'table' => 'តុ',
+            'strike' => 'បន្ទាត់កាត់',
+            'table' => 'តារាង',
             'undo' => 'មិនធ្វើវិញ',
         ],
 
@@ -326,6 +382,18 @@ return [
 
     'repeater' => [
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'សកម្មភាព',
+            ],
+
+            'reorder' => [
+                'label' => 'តម្រៀបឡើងវិញ',
+            ],
+
+        ],
+
         'actions' => [
 
             'add' => [
@@ -357,7 +425,7 @@ return [
             ],
 
             'collapse' => [
-                'label' => 'ដួលរលំ',
+                'label' => 'បង្រួម',
             ],
 
             'expand' => [
@@ -365,7 +433,7 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'ដួលរលំទាំងអស់',
+                'label' => 'បង្រួមទាំងអស់',
             ],
 
             'expand_all' => [
@@ -579,6 +647,10 @@ return [
             'searching_message' => 'កំពុងស្វែងរក...',
         ],
 
+        'toolbar' => [
+            'label' => 'របារឧបករណ៍កម្មវិធីនិពន្ធ',
+        ],
+
         'tools' => [
             'align_center' => 'តម្រឹមចំកណ្តាល',
             'align_end' => 'តម្រឹមខាងចុង',
@@ -611,7 +683,7 @@ return [
             'ordered_list' => 'បញ្ជីលេខ',
             'redo' => 'ធ្វើឡើងវិញ',
             'small' => 'អត្ថបទតូច',
-            'strike' => 'ការវាយឆ្មក់',
+            'strike' => 'បន្ទាត់កាត់',
             'subscript' => 'អក្សរក្រោម (Subscript)',
             'superscript' => 'អក្សរលើ (Superscript)',
             'table' => 'តារាង',
@@ -639,6 +711,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'សម្អាតការជ្រើសរើស',
+            ],
+
             'create_option' => [
 
                 'label' => 'បង្កើត',
@@ -654,7 +730,7 @@ return [
                         ],
 
                         'create_another' => [
-                            'label' => 'បង្កើត & បង្កើតឡើងវិញ',
+                            'label' => 'បង្កើត & បង្កើតមួយទៀត',
                         ],
 
                     ],
@@ -683,6 +759,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'លុប :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -692,17 +772,19 @@ return [
 
         'loading_message' => 'កំពុងផ្ទុក...',
 
-        'max_items_message' => 'តែប៉ុណ្ណោះ :count អាចត្រូវបានជ្រើសរើស.',
-
-        'no_search_results_message' => 'មិនមានជម្រើសត្រូវជាមួយការស្វែងរក.',
+        'max_items_message' => 'អាចជ្រើសរើសបានត្រឹមតែ :count ប៉ុណ្ណោះ។',
 
         'no_options_message' => 'គ្មានជម្រើស។',
 
-        'placeholder' => 'ជ្រើសរើសជម្រើស',
+        'no_search_results_message' => 'រកមិនឃើញជម្រើសត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
 
-        'searching_message' => 'ស្វែងរក...',
+        'placeholder' => 'ជ្រើសរើសជម្រើសមួយ',
 
-        'search_prompt' => 'ចាប់ផ្តើមសសេរដើម្បីស្វែងរក...',
+        'searching_message' => 'កំពុងស្វែងរក...',
+
+        'search_label' => 'ស្វែងរក',
+
+        'search_prompt' => 'ចាប់ផ្តើមវាយដើម្បីស្វែងរក...',
 
     ],
 
@@ -713,6 +795,8 @@ return [
                 'label' => 'លុប',
             ],
         ],
+        'tag_added' => 'បានបន្ថែម៖ :tag',
+        'tag_removed' => 'បានយកចេញ៖ :tag',
     ],
 
     'text_input' => [

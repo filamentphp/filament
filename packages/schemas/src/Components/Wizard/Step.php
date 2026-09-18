@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Wizard;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
@@ -14,7 +13,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
-class Step extends Component implements CanConcealComponents, HasEmbeddedView
+class Step extends Component implements HasEmbeddedView
 {
     use HasLabel;
 
@@ -139,11 +138,6 @@ class Step extends Component implements CanConcealComponents, HasEmbeddedView
         return parent::getAllColumns();
     }
 
-    public function canConcealComponents(): bool
-    {
-        return true;
-    }
-
     public function formWrapper(bool | Closure $condition = true): static
     {
         $this->hasFormWrapper = $condition;
@@ -166,11 +160,24 @@ class Step extends Component implements CanConcealComponents, HasEmbeddedView
 
         $tag = filled($alpineSubmitHandler) ? 'form' : 'div';
 
+        // The header button carrying `id="{$id}-tab"` only renders when the wizard header is shown, so a
+        // `hiddenHeader()` wizard has no such element — reference it only when it exists, otherwise the
+        // `role="group"` panel would point `aria-labelledby` at a nonexistent id and lose its name.
+        $hasHeaderReference = filled($id) && ! $wizard->isHeaderHidden();
+
+        $label = $this->getLabel();
+        $labelText = $label instanceof Htmlable ? strip_tags($label->toHtml()) : $label;
+
         $attributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'aria-labelledby' => $id,
+                // Name the panel by its header button (`{id}-tab`) rather than itself. The header is an `<ol>`
+                // stepper of plain buttons with `aria-current="step"`, not a `tablist` of `role="tab"` controls,
+                // so `role="tabpanel"` (which implies an owning tab) is incoherent — `role="group"` is honest.
+                // When the header is hidden, fall back to the step's own label so the panel keeps a name.
+                'aria-labelledby' => $hasHeaderReference ? "{$id}-tab" : null,
+                'aria-label' => (! $hasHeaderReference && filled($labelText)) ? e($labelText) : null,
                 'id' => $id,
-                'role' => 'tabpanel',
+                'role' => 'group',
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-wizard-step']);

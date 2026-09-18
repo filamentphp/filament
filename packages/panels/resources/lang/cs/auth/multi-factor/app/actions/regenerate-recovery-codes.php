@@ -14,7 +14,7 @@ return [
 
             'code' => [
 
-                'label' => 'Zadejte 6-místný kód z ověřovací aplikace',
+                'label' => 'Zadejte šestimístný kód z ověřovací aplikace',
 
                 'validation_attribute' => 'kód',
 
@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Nebo zadejte své aktuální heslo',
+                'label' => 'Zadejte své aktuální heslo',
 
                 'validation_attribute' => 'heslo',
 

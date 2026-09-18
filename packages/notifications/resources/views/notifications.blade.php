@@ -11,6 +11,7 @@
             'fi-vertical-align-' . static::$verticalAlignment->value,
         ])
         role="status"
+        aria-atomic="false"
     >
         @foreach ($notifications as $notification)
             {{ $notification }}

@@ -11,16 +11,11 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\BadgeComponent;
-use Filament\Support\View\SupportIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Js;
-
-use function Filament\Support\generate_icon_html;
 
 class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNestedRecursiveValidationRules, HasEmbeddedView
 {
@@ -294,12 +289,6 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
             ])
             ->color(BadgeComponent::class, $color);
 
-        $deleteIconHtml = generate_icon_html(
-            Heroicon::XMark,
-            alias: SupportIconAlias::BADGE_DELETE_BUTTON,
-            size: IconSize::ExtraSmall,
-        )?->toHtml();
-
         ob_start(); ?>
 
         <div
@@ -308,10 +297,14 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
             x-data="tagsInputFormComponent({
                         state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
                         splitKeys: <?= Js::from($this->getSplitKeys()) ?>,
+                        tagAddedMessage: <?= Js::from(__('filament-forms::components.tags_input.tag_added')) ?>,
+                        tagRemovedMessage: <?= Js::from(__('filament-forms::components.tags_input.tag_removed')) ?>,
                     })"
             <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
         >
             <input <?= $inputAttributes->toHtml() ?> />
+
+            <div x-ref="liveRegion" aria-live="polite" class="fi-sr-only"></div>
 
             <datalist id="<?= e($id) ?>-suggestions">
                 <?php foreach ($this->getSuggestions() as $suggestion) { ?>
@@ -361,7 +354,10 @@ class TagsInput extends Field implements Contracts\HasAffixes, Contracts\HasNest
                                     x-bind:aria-label="'<?= e($deleteLabel) ?>: ' + tag"
                                     class="fi-badge-delete-btn"
                                 >
-                                    <?= $deleteIconHtml ?>
+                                    <span
+                                        aria-hidden="true"
+                                        class="fi-badge-delete-btn-icon"
+                                    ></span>
                                 </button>
                             </span>
                         </template>

@@ -1,6 +1,12 @@
 .fi-ta-text {
     @apply w-full;
 
+    &.fi-numeric {
+        /* Numeric and money columns use tabular figures, so digits line up
+           down the column. */
+        @apply tabular-nums;
+    }
+
     &.fi-ta-text-has-descriptions,
     &.fi-ta-text-list-limited {
         /* Add space between content and descriptions / list limit message. */
@@ -126,7 +132,7 @@
     }
 
     & > .fi-copyable {
-        @apply cursor-pointer;
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 cursor-pointer rounded-md outline-none focus-visible:ring-2;
     }
 
     &.fi-size-xs {

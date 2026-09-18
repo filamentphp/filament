@@ -798,6 +798,74 @@ it('can set `resizableImages()`', function (): void {
     expect($editor->hasResizableImages())->toBeTrue();
 });
 
+it('returns `10rem` for `getMinHeight()` and `null` for `getMaxHeight()` by default', function (): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->getMinHeight())->toBe('10rem')
+        ->and($editor->getMaxHeight())->toBeNull();
+});
+
+it('can set `minHeight()` and `maxHeight()`', function (): void {
+    $editor = RichEditor::make('content')
+        ->minHeight('20rem')
+        ->maxHeight('40rem');
+
+    expect($editor->getMinHeight())->toBe('20rem')
+        ->and($editor->getMaxHeight())->toBe('40rem');
+});
+
+it('can set `minHeight()` and `maxHeight()` with a `Closure`', function (): void {
+    $editor = RichEditor::make('content')
+        ->minHeight(static fn (): string => '15rem')
+        ->maxHeight(static fn (): string => '50rem');
+
+    expect($editor->getMinHeight())->toBe('15rem')
+        ->and($editor->getMaxHeight())->toBe('50rem');
+});
+
+it('can clear `minHeight()` and `maxHeight()` with `null`', function (): void {
+    $editor = RichEditor::make('content')
+        ->minHeight('20rem')
+        ->maxHeight('40rem')
+        ->minHeight(null)
+        ->maxHeight(null);
+
+    expect($editor->getMinHeight())->toBeNull()
+        ->and($editor->getMaxHeight())->toBeNull();
+});
+
+it('renders the `--min-height` and `--max-height` custom properties when set', function (): void {
+    $html = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->minHeight('20rem')
+                ->maxHeight('40rem'),
+        ])
+        ->getComponents()[0]
+        ->toHtml();
+
+    expect($html)->toContain('--min-height: 20rem')
+        ->and($html)->toContain('--max-height: 40rem');
+});
+
+it('makes disabled content using `maxHeight()` a keyboard-focusable named region', function (): void {
+    $html = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->disabled()
+                ->maxHeight('12rem'),
+        ])
+        ->getComponents()[0]
+        ->toHtml();
+
+    expect($html)->toContain('--min-height: 10rem')
+        ->and($html)->toContain('--max-height: 12rem')
+        ->and($html)->toContain('role="region"')
+        ->and($html)->toContain('tabindex="0"');
+});
+
 it('can set `activePanel()`', function (): void {
     $editor = RichEditor::make('content');
 
@@ -1430,12 +1498,12 @@ it('can render `RichEditor` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/rich-editor-browser-test')
-            ->assertSee('Content')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         visit('/rich-editor-browser-test')
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

@@ -4,6 +4,10 @@ return [
 
     'direction' => 'ltr',
 
+    'skip_to_content' => [
+        'label' => 'រំលងទៅកាន់មាតិកា',
+    ],
+
     'actions' => [
 
         'billing' => [
@@ -15,7 +19,8 @@ return [
         ],
 
         'open_database_notifications' => [
-            'label' => 'បើកការជូនដំណឹង',
+            'label' => 'ការជូនដំណឹង',
+            'label_with_unread_count' => '{1} ការជូនដំណឹង, :count មិនទាន់អាន|[2,*] ការជូនដំណឹង, :count មិនទាន់អាន',
         ],
 
         'open_user_menu' => [
@@ -36,6 +41,8 @@ return [
 
         'theme_switcher' => [
 
+            'label' => 'រចនាបទ',
+
             'dark' => [
                 'label' => 'បើកដំណើរការរចនាបទងងឹត',
             ],
@@ -52,12 +59,20 @@ return [
 
     ],
 
+    'navigation' => [
+        'label' => 'ការរុករករបារចំហៀង',
+    ],
+
+    'topbar' => [
+        'label' => 'របារខាងលើ',
+    ],
+
     'avatar' => [
-        'alt' => 'រូបតំណាង នៃ :name',
+        'alt' => 'រូបតំណាងរបស់ :name',
     ],
 
     'logo' => [
-        'alt' => ':name និមិត្តសញ្ញា',
+        'alt' => 'និមិត្តសញ្ញា :name',
     ],
 
     'tenant_menu' => [

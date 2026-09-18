@@ -55,6 +55,11 @@ return [
             'title' => 'Kaydedildi',
         ],
 
+        'throttled' => [
+            'title' => 'Çok fazla istek. Lütfen :seconds saniye sonra tekrar deneyin.',
+            'body' => 'Lütfen :seconds saniye sonra tekrar deneyin.',
+        ],
+
     ],
 
     'actions' => [

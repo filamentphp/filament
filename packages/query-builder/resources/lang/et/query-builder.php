@@ -14,6 +14,10 @@ return [
 
             'label' => 'Rühmad',
 
+            'group' => [
+                'label' => 'Grupp',
+            ],
+
             'block' => [
                 'label' => 'VÕI tingimus',
                 'or' => 'VÕI',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(Reegleid pole)',
+
+    'max_rules_reached_tooltip' => 'Maksimaalne arv :count reegleid on ületatud.',
 
     'item_separators' => [
         'and' => 'JA',

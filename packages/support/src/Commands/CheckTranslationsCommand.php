@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands;
 
+use Composer\InstalledVersions;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
@@ -80,13 +81,15 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
     {
         $localeRootDirectory = match ($source = $this->option('source')) {
             'app' => lang_path("vendor/{$package}"),
-            'vendor' => base_path("vendor/filament/{$package}/resources/lang"),
+            'vendor' => InstalledVersions::isInstalled("filament/{$package}")
+                ? InstalledVersions::getInstallPath("filament/{$package}") . '/resources/lang'
+                : null,
             default => throw new InvalidOptionException("{$source} is not a valid translation source. Must be `vendor` or `app`.")
         };
 
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->exists($localeRootDirectory)) {
+        if (($localeRootDirectory === null) || (! $filesystem->exists($localeRootDirectory))) {
             return;
         }
 

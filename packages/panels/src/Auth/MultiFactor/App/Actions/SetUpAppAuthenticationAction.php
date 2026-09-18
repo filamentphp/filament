@@ -10,6 +10,7 @@ use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\OneTimeCodeInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Flex;
@@ -19,12 +20,15 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
@@ -32,16 +36,49 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use Illuminate\Validation\ValidationException;
+use LogicException;
 use SensitiveParameter;
 
 class SetUpAppAuthenticationAction
 {
     public static function make(AppAuthentication $appAuthentication): Action
     {
+        $rateLimitAuthenticationAttempt = static function (string $passwordStatePath): void {
+            $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::auth()->id();
+
+            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                throw ValidationException::withMessages([
+                    $passwordStatePath => __('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.rate_limited'),
+                ]);
+            }
+
+            RateLimiter::hit($rateLimitingKey);
+        };
+
+        $getPasswordInput = static function (Schema $schema): TextInput {
+            $passwordInput = $schema->getComponent('password');
+
+            if (! $passwordInput instanceof TextInput) {
+                throw new LogicException('The password input could not be found in the app authentication setup schema.');
+            }
+
+            return $passwordInput;
+        };
+
+        $passwordInput = TextInput::make('password')
+            ->label(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.password.label'))
+            ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.password.validation_attribute'))
+            ->currentPassword(guard: Filament::getAuthGuard())
+            ->password()
+            ->revealable(Filament::arePasswordsRevealable())
+            ->required()
+            ->dehydrated(false);
+
         return Action::make('setUpAppAuthentication')
             ->label(__('filament-panels::auth/multi-factor/app/actions/set-up.label'))
             ->color('primary')
-            ->icon(Heroicon::LockClosed)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP) ?? Heroicon::LockClosed)
             ->link()
             ->mountUsing(function (HasActions $livewire, Schema $schema) use ($appAuthentication): void {
                 $schema->fill();
@@ -59,13 +96,14 @@ class SetUpAppAuthenticationAction
             ->modalWidth(Width::Large)
             ->closeModalByClickingAway(false)
             ->closeModalByEscaping(false)
-            ->modalIcon(Heroicon::OutlinedLockClosed)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_MODAL) ?? Heroicon::OutlinedLockClosed)
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.heading'))
             ->modalDescription(new HtmlString(Blade::render(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.description'))))
             ->modifyWizardUsing(fn (Wizard $wizard) => $wizard->hiddenHeader())
             ->steps(fn (Action $action): array => [
                 Step::make('app')
+                    ->beforeValidation(fn (Step $component) => $rateLimitAuthenticationAttempt($getPasswordInput($component->getChildSchema())->getStatePath()))
                     ->schema([
                         Group::make([
                             Text::make(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.content.qr_code.instruction'))
@@ -96,16 +134,6 @@ class SetUpAppAuthenticationAction
                             ->required()
                             ->rule(function () use ($action, $appAuthentication): Closure {
                                 return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($action, $appAuthentication): void {
-                                    $rateLimitingKey = 'filament-set-up-app-authentication:' . Filament::auth()->id();
-
-                                    if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
-                                        $fail(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.rate_limited'));
-
-                                        return;
-                                    }
-
-                                    RateLimiter::hit($rateLimitingKey);
-
                                     if ($appAuthentication->verifyCode($value, decrypt($action->getArguments()['encrypted'])['secret'])) {
                                         return;
                                     }
@@ -113,6 +141,7 @@ class SetUpAppAuthenticationAction
                                     $fail(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.form.code.messages.invalid'));
                                 };
                             }),
+                        $passwordInput,
                     ]),
                 Step::make('recovery')
                     ->schema([
@@ -159,6 +188,21 @@ class SetUpAppAuthenticationAction
                     ])
                     ->visible($appAuthentication->isRecoverable()),
             ])
+            ->beforeFormValidated(function (HasActions & HasSchemas $livewire) use ($getPasswordInput, $rateLimitAuthenticationAttempt): void {
+                $mountedActionSchemaName = $livewire->getMountedActionSchemaName();
+
+                if ($mountedActionSchemaName === null) {
+                    throw new LogicException('The mounted app authentication setup schema could not be found.');
+                }
+
+                $mountedActionSchema = $livewire->getSchema($mountedActionSchemaName);
+
+                if ($mountedActionSchema === null) {
+                    throw new LogicException('The mounted app authentication setup schema could not be found.');
+                }
+
+                $rateLimitAuthenticationAttempt($getPasswordInput($mountedActionSchema)->getStatePath());
+            })
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/app/actions/set-up.modal.actions.submit.label')))
             ->action(function (array $arguments) use ($appAuthentication): void {
@@ -184,7 +228,7 @@ class SetUpAppAuthenticationAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/app/actions/set-up.notifications.enabled.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedLockClosed)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_SET_UP_NOTIFICATION) ?? Heroicon::OutlinedLockClosed)
                     ->send();
             })
             ->rateLimit(5);

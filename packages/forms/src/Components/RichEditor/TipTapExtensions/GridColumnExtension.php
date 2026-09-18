@@ -36,9 +36,15 @@ class GridColumnExtension extends Node
                 'renderHTML' => function ($attributes): array {
                     $attributes = (array) $attributes;
 
+                    // Security: `data-col-span` originates from stored rich content, so cast it to a
+                    // positive integer before interpolating it into the `style` attribute. The HTML
+                    // sanitizer does not sanitize CSS, so a raw value could otherwise inject extra
+                    // declarations (e.g. `position: fixed` / `background-image: url(...)`).
+                    $span = max(1, (int) ($attributes['data-col-span'] ?? 1));
+
                     return [
-                        'data-col-span' => $attributes['data-col-span'],
-                        'style' => "--col-span: span {$attributes['data-col-span']} / span {$attributes['data-col-span']}",
+                        'data-col-span' => $span,
+                        'style' => "--col-span: span {$span} / span {$span}",
                     ];
                 },
             ],

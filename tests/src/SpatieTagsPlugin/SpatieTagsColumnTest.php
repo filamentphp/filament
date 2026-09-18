@@ -102,6 +102,13 @@ describe('rendering with tags', function (): void {
             ->assertCanRenderTableColumn('tags');
     });
 
+    it('wraps a non-array custom state in an array', function (): void {
+        $record = Article::factory()->create();
+
+        livewire(SpatieTagsColumnTable::class, ['customState' => 'Laravel'])
+            ->assertTableColumnStateSet('tags', ['Laravel'], record: $record);
+    });
+
     it('can render column with typed tags', function (): void {
         $record = Article::factory()->create();
         $record->attachTag('Laravel', 'framework');

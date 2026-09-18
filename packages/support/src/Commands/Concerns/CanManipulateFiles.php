@@ -73,6 +73,90 @@ trait CanManipulateFiles
         return $filesystem->exists($path);
     }
 
+    protected function escapeCssString(string $value): string
+    {
+        return (string) preg_replace_callback(
+            '/[\x00-\x1F\x7F]/',
+            static fn (array $matches): string => '\\' . dechex(ord($matches[0])) . ' ',
+            str_replace(['\\', "'"], ['\\\\', "\\'"], $value),
+        );
+    }
+
+    protected function getRelativePath(string $path, string $from): string
+    {
+        $path = $this->normalizePath($path);
+        $from = $this->normalizePath($from);
+        $pathSegments = explode('/', ltrim($path, '/'));
+        $fromSegments = explode('/', ltrim($from, '/'));
+        $isPathOnWindowsDrive = preg_match('/^[a-z]:\//i', $path) === 1;
+        $isFromOnWindowsDrive = preg_match('/^[a-z]:\//i', $from) === 1;
+        $isPathOnNetworkShare = str_starts_with($path, '//');
+        $isFromOnNetworkShare = str_starts_with($from, '//');
+
+        if (
+            ($isPathOnWindowsDrive || $isFromOnWindowsDrive) &&
+            (
+                ! ($isPathOnWindowsDrive && $isFromOnWindowsDrive) ||
+                (strcasecmp($pathSegments[0], $fromSegments[0]) !== 0)
+            )
+        ) {
+            return $path;
+        }
+
+        if (
+            ($isPathOnNetworkShare || $isFromOnNetworkShare) &&
+            (
+                ! ($isPathOnNetworkShare && $isFromOnNetworkShare) ||
+                (strcasecmp($pathSegments[0], $fromSegments[0]) !== 0) ||
+                (strcasecmp($pathSegments[1], $fromSegments[1]) !== 0)
+            )
+        ) {
+            return $path;
+        }
+
+        if (str_starts_with($path, '/') !== str_starts_with($from, '/')) {
+            return $path;
+        }
+
+        $isCaseInsensitive = $isPathOnWindowsDrive || $isPathOnNetworkShare;
+
+        while (
+            filled($pathSegments) &&
+            filled($fromSegments) &&
+            ($isCaseInsensitive
+                ? (strcasecmp($pathSegments[0], $fromSegments[0]) === 0)
+                : ($pathSegments[0] === $fromSegments[0]))
+        ) {
+            array_shift($pathSegments);
+            array_shift($fromSegments);
+        }
+
+        return str_repeat('../', count($fromSegments)) . implode('/', $pathSegments);
+    }
+
+    protected function normalizePath(string $path): string
+    {
+        $isNetworkPath = str_starts_with($path, '\\\\') || str_starts_with($path, '//');
+        $isAbsolute = str_starts_with($path, '/') || str_starts_with($path, '\\');
+        $normalizedSegments = [];
+
+        foreach (explode('/', str_replace('\\', '/', $path)) as $segment) {
+            if (($segment === '') || ($segment === '.')) {
+                continue;
+            }
+
+            if (($segment === '..') && filled($normalizedSegments) && (array_last($normalizedSegments) !== '..')) {
+                array_pop($normalizedSegments);
+
+                continue;
+            }
+
+            $normalizedSegments[] = $segment;
+        }
+
+        return ($isNetworkPath ? '//' : ($isAbsolute ? '/' : '')) . implode('/', $normalizedSegments);
+    }
+
     protected function writeFile(string $path, string | FileGenerator $contents): void
     {
         $filesystem = app(Filesystem::class);

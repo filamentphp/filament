@@ -410,6 +410,33 @@ public function getFormats(): array
 }
 ```
 
+### Customizing how export files are downloaded
+
+By default, each export format uses its own downloader to return a streamed response. You may customize the downloader for an exporter by overriding the `getDownloader()` method:
+
+```php
+use App\Filament\Exports\Downloaders\CustomCsvDownloader;
+use App\Filament\Exports\Downloaders\CustomXlsxDownloader;
+use Filament\Actions\Exports\Downloaders\Contracts\Downloader;
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
+use Filament\Actions\Exports\Enums\ExportFormat;
+
+public static function getDownloader(ExportFormatInterface $format): Downloader
+{
+    return match ($format) {
+        ExportFormat::Csv => app(CustomCsvDownloader::class),
+        ExportFormat::Xlsx => app(CustomXlsxDownloader::class),
+        default => $format->getDownloader(),
+    };
+}
+```
+
+A downloader is an invokable class that accepts the `Export` model and returns a Symfony `Response`. This response may stream a download, return a file, or redirect the user to a temporary URL on a remote filesystem.
+
+Filament's built-in download route only resolves the `ExportFormat::Csv` and `ExportFormat::Xlsx` formats. If you use a custom `ExportFormatInterface` implementation, its `getDownloadNotificationAction()` method must link to a route that handles the custom format.
+
+If your custom downloader only changes how the generated content is delivered, you may use `CsvExportContentGenerator` to iterate over the generated CSV chunks, or `XlsxExportContentGenerator` to write the generated rows to an OpenSpout `Writer`. Filament resolves both classes from the container so that you can reuse the built-in content generation without duplicating it. You must open the `Writer` before passing it to `XlsxExportContentGenerator` and close it afterwards. `XlsxExportContentGenerator` mirrors Filament's on-demand XLSX download and does not apply the writer options, styles, custom row creation, or writer lifecycle hooks that are used when the queued XLSX file is generated.
+
 ## Modifying the export query
 
 By default, if you are using the `ExportAction` with a table, the action will use the table's currently filtered and sorted query to export the data. If you don't have a table, it will use the model's default query. To modify the query builder before exporting, you can use the `modifyQueryUsing()` method on the action:
@@ -1015,3 +1042,30 @@ You could also apply [global scopes](https://laravel.com/docs/eloquent#global-sc
 ### CSV formula injection
 
 Filament's export system writes data to CSV and XLSX files exactly as it is stored in the database, without any transformation. This means that if your database contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the exported file. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if your data includes untrusted or user-submitted content. You should ensure that your users are aware of this risk, or sanitize the data before export using the [`formatStateUsing()` method](export#formatting-the-value-of-an-export-column) on each column, for example by prefixing values with a single quote (`'`) to prevent formula interpretation.
+
+Alternatively, you may opt in to Filament's built-in protection. When enabled on a column, any value that begins with a formula-triggering character (`=`, `+`, `-`, `@`, a tab, or a carriage return) is automatically prefixed with a single quote (`'`) so that spreadsheet software treats it as plain text. Enable it using the `preventFormulaInjection()` method on the column:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('description')
+    ->preventFormulaInjection()
+```
+
+If you would like to enable this protection for every export column across your application, you can use the `configureUsing()` method inside the `boot()` method of a service provider. Since this is applied to all columns, you can opt an individual column back out by passing `false` to `preventFormulaInjection()`:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::configureUsing(function (ExportColumn $column): void {
+    $column->preventFormulaInjection();
+});
+
+// Opt a specific column back out:
+ExportColumn::make('temperature')
+    ->preventFormulaInjection(false)
+```
+
+<Aside variant="warning">
+    This protection is **opt in** and disabled by default, because prefixing a single quote alters legitimate data. For example, values such as `-5` or a phone number like `+44 1234 567890` are valid formula triggers and would be rewritten to `'-5` and `'+44 1234 567890`. Only enable it when you are exporting untrusted or user-submitted content, and make sure the transformation is acceptable for the columns you enable it on.
+</Aside>

@@ -55,6 +55,8 @@ trait HasColumns
      */
     public function pushColumns(array $components): static
     {
+        $this->cachedVisibleColumns = null;
+
         foreach ($components as $component) {
             $component->table($this);
 

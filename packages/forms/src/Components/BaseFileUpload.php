@@ -1024,6 +1024,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         if ($this->isReorderable && ($callback = $this->reorderUploadedFilesUsing)) {
             $rawState = $this->evaluate($callback, [
+                'rawState' => $rawState,
+                // The `state` injection is deprecated, as this value is raw state that
+                // has not been processed by state casts. It must remain uncast, since
+                // the callback's return value is written straight back to raw state.
                 'state' => $rawState,
             ]);
         }

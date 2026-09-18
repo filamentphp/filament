@@ -11,6 +11,10 @@ return [
         'description' => 'Doğrulama uygulamasını devre dışı bırakmak istediğinize emin misiniz? Bunu devre dışı bırakmak hesabınızda bulunan ekstra koruma katmanını kaldıracaktır.',
 
         'form' => [
+            'password' => [
+                'label' => 'Mevcut şifre',
+                'validation_attribute' => 'mevcut şifre',
+            ],
 
             'code' => [
 
@@ -30,6 +34,8 @@ return [
 
                     'invalid' => 'Girmiş olduğunuz kod geçersiz.',
 
+                    'rate_limited' => 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.',
+
                 ],
 
             ],
@@ -43,6 +49,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Girmiş olduğunuz kurtarma kodu geçersiz.',
+
+                    'rate_limited' => 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.',
 
                 ],
 

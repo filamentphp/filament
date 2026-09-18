@@ -36,7 +36,7 @@ class ContainsOperator extends Operator
                 'filament-query-builder::query-builder.operators.text.contains.summary.direct',
             [
                 'attribute' => $this->getConstraint()->getAttributeLabel(),
-                'text' => $this->getSettings()['text'],
+                'text' => $this->getStringSetting('text'),
             ],
         );
     }
@@ -56,7 +56,12 @@ class ContainsOperator extends Operator
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
-        $text = trim($this->getSettings()['text']);
+        // Security: skip applying the constraint when the tampered setting is not a scalar string.
+        $text = $this->getStringSetting('text');
+
+        if ($text === null) {
+            return $query;
+        }
 
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();

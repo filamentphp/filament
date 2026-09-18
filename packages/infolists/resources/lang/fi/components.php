@@ -15,6 +15,11 @@ return [
 
         ],
 
+        'icon' => [
+            'true' => 'Kyllä',
+            'false' => 'Ei',
+        ],
+
         'key_value' => [
 
             'columns' => [

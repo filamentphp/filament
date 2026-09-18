@@ -413,7 +413,9 @@ class KeyValue extends Field implements HasEmbeddedView
                                     scope="col"
                                     x-show="rows.length"
                                     class="fi-has-action"
-                                ></th>
+                                >
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.key_value.columns.reorder.label')) ?></span>
+                                </th>
                             <?php } ?>
 
                             <th scope="col">
@@ -429,7 +431,9 @@ class KeyValue extends Field implements HasEmbeddedView
                                     scope="col"
                                     x-show="rows.length"
                                     class="fi-has-action"
-                                ></th>
+                                >
+                                    <span class="fi-sr-only"><?= e(__('filament-forms::components.key_value.columns.actions.label')) ?></span>
+                                </th>
                             <?php } ?>
                         </tr>
                     </thead>
@@ -463,6 +467,7 @@ class KeyValue extends Field implements HasEmbeddedView
 
                                 <td>
                                     <input
+                                        aria-label="<?= e($this->getKeyLabel()) ?>"
                                         <?= ((! $canEditKeys) || $isDisabled) ? 'disabled' : '' ?>
                                         placeholder="<?= e($keyPlaceholder) ?>"
                                         type="text"
@@ -474,6 +479,7 @@ class KeyValue extends Field implements HasEmbeddedView
 
                                 <td>
                                     <input
+                                        aria-label="<?= e($this->getValueLabel()) ?>"
                                         <?= ((! $canEditValues) || $isDisabled) ? 'disabled' : '' ?>
                                         placeholder="<?= e($valuePlaceholder) ?>"
                                         type="text"

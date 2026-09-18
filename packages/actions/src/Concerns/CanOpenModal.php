@@ -93,6 +93,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalAutofocused = null;
 
+    protected bool | Closure | null $hasUnsavedChangesAlert = null;
+
     protected string | BackedEnum | Htmlable | Closure | null $modalIcon = null;
 
     /**
@@ -117,6 +119,13 @@ trait CanOpenModal
     public function closeModalByEscaping(bool | Closure | null $condition = true): static
     {
         $this->isModalClosedByEscaping = $condition;
+
+        return $this;
+    }
+
+    public function unsavedChangesAlert(bool | Closure | null $condition = true): static
+    {
+        $this->hasUnsavedChangesAlert = $condition;
 
         return $this;
     }
@@ -188,7 +197,7 @@ trait CanOpenModal
     /**
      * @param  array<Action> | Closure | null  $actions
      *
-     *@deprecated Use `modalFooterActions()` instead.
+     * @deprecated Use `modalFooterActions()` instead.
      */
     public function modalActions(array | Closure | null $actions = null): static
     {
@@ -217,7 +226,7 @@ trait CanOpenModal
     /**
      * @param  array<Action> | Closure  $actions
      *
-     *@deprecated Use `extraModalFooterActions()` instead.
+     * @deprecated Use `extraModalFooterActions()` instead.
      */
     public function extraModalActions(array | Closure $actions): static
     {
@@ -728,6 +737,11 @@ trait CanOpenModal
     public function isModalAutofocused(): bool
     {
         return $this->evaluate($this->isModalAutofocused) ?? ModalComponent::$isAutofocused;
+    }
+
+    public function hasUnsavedChangesAlert(): bool
+    {
+        return (bool) ($this->evaluate($this->hasUnsavedChangesAlert) ?? (! $this->isSchemaDisabled()));
     }
 
     /**

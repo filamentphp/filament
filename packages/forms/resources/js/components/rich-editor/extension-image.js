@@ -1,5 +1,8 @@
 import Image from '@tiptap/extension-image'
 
+const normalizeStyleLength = (value) =>
+    /^\d+(?:\.\d+)?$/.test(value) ? `${value}px` : value
+
 export default Image.extend({
     addAttributes() {
         return {
@@ -32,7 +35,7 @@ export default Image.extend({
 
                     return {
                         width: attributes.width,
-                        style: `width: ${attributes.width}`,
+                        style: `width: ${normalizeStyleLength(attributes.width)}`,
                     }
                 },
             },
@@ -50,7 +53,7 @@ export default Image.extend({
 
                     return {
                         height: attributes.height,
-                        style: `height: ${attributes.height}`,
+                        style: `height: ${normalizeStyleLength(attributes.height)}`,
                     }
                 },
             },

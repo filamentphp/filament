@@ -167,7 +167,7 @@ use Livewire\Component;
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | string | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
- * @method static void setTenant(Model | null $tenant = null, bool $isQuiet = false)
+ * @method static void setTenant(Model | null $tenant, bool $isQuiet = false)
  * @method static void setCurrentResourceConfigurationKey(string | null $key)
  * @method static string | null getCurrentResourceConfigurationKey()
  * @method static ResourceConfiguration | null getResourceConfiguration(string $resourceClass)

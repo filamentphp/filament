@@ -97,9 +97,11 @@ trait CanGenerateButtonHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
-                'aria-label' => $isLabelSrOnly ? trim(strip_tags(e($label))) : null,
+                // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
+                'aria-label' => $isLabelSrOnly ? e(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))), doubleEncode: false) : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
+                'tabindex' => (($tag === 'a') && $isDisabled && $hasTooltip) ? '0' : null,
                 'type' => match ($tag) {
                     'button' => $type,
                     'form' => 'submit',
@@ -108,7 +110,7 @@ trait CanGenerateButtonHtml
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
-                'x-bind:aria-label' => ($isLabelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags(e($label))))) : null,
+                'x-bind:aria-label' => ($isLabelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))))) : null,
             ], escape: false)
             ->when(
                 $isDisabled && $hasTooltip,

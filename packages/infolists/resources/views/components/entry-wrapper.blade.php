@@ -9,6 +9,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+    use Illuminate\View\ComponentSlot;
 
     if ($entry) {
         $action ??= $entry->getAction();
@@ -53,7 +54,7 @@
             <div
                 @class([
                     'fi-in-entry-label-ctn',
-                    ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
+                    ($label instanceof ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
                 {{ $beforeLabelContainer }}
@@ -62,7 +63,7 @@
                     <div
                         {{
                             (
-                                ($label instanceof \Illuminate\View\ComponentSlot)
+                                ($label instanceof ComponentSlot)
                                 ? $label->attributes
                                 : (new FilamentComponentAttributeBag)
                             )

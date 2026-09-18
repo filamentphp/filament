@@ -26,6 +26,18 @@ return [
 
                 ],
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Tümünü seç',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Tüm seçimleri kaldır',
+                    ],
+
+                ],
+
             ],
 
         ],
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Maksimum Satır Sayısı Aşıldı',
             'body' => 'Birden fazla satırı dışa aktaramazsınız.|:count satırı dışa aktaramazsınız.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Hiçbir sütun seçilmedi',
+            'body' => 'Lütfen dışa aktarmak için en az bir sütun seçin.',
         ],
 
         'started' => [

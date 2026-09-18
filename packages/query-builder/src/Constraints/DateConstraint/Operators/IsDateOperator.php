@@ -34,7 +34,7 @@ class IsDateOperator extends Operator
                 'filament-query-builder::query-builder.operators.date.is_date.summary.direct',
             [
                 'attribute' => $this->getConstraint()->getAttributeLabel(),
-                'date' => Carbon::parse($this->getSettings()['date'])->toFormattedDateString(),
+                'date' => ($date = $this->getDateSetting('date')) === null ? null : Carbon::parse($date)->toFormattedDateString(),
             ],
         );
     }
@@ -53,6 +53,13 @@ class IsDateOperator extends Operator
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
-        return $query->whereDate($qualifiedColumn, $this->isInverse() ? '!=' : '=', $this->getSettings()['date']);
+        $date = $this->getDateSetting('date');
+
+        // Security: skip applying the constraint when the tampered setting is not a scalar date.
+        if ($date === null) {
+            return $query;
+        }
+
+        return $query->whereDate($qualifiedColumn, $this->isInverse() ? '!=' : '=', $date);
     }
 }

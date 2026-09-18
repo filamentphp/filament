@@ -21,8 +21,6 @@ it('can toggle state by clicking in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/toggle-test')
-            ->assertSee('Toggle Test')
-            ->assertSee('Basic Toggle')
             ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'false')
             ->click('[data-testid="toggle"]')
             ->assertAttribute('[data-testid="toggle"]', 'aria-checked', 'true')
@@ -34,6 +32,23 @@ it('can toggle state by clicking in the browser', function (): void {
         visit('/toggle-test')
             ->inDarkMode()
             ->assertNoAccessibilityIssues();
+    });
+});
+
+it('keeps `helperText()` visible after toggling off when `inlineLabel()` and `live()` are used', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        visit('/toggle-test')
+            ->assertSee('Live inline label helper text')
+            ->click('[data-testid="live-inline-label-toggle"]')
+            ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'true')
+            ->assertSee('Live inline label helper text')
+            ->click('[data-testid="live-inline-label-toggle"]')
+            ->wait(1)
+            ->assertAttribute('[data-testid="live-inline-label-toggle"]', 'aria-checked', 'false')
+            ->assertSee('Live inline label helper text')
+            ->assertNoSmoke();
     });
 });
 

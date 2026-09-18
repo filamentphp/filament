@@ -1,8 +1,13 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Panel;
+use Filament\Tests\Fixtures\Models\ConfiguredTenantScopedUser;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Tenancy\ConfiguredTenantScopedUsers\ConfiguredTenantScopedUserResource;
+use Filament\Tests\Fixtures\Resources\Tenancy\HasOneThroughOwnedPosts\HasOneThroughOwnedPostResource;
 use Filament\Tests\Fixtures\Resources\Tenancy\NonTenantScopedUsers\NonTenantScopedUserResource;
 use Filament\Tests\Fixtures\Resources\Tenancy\TenantScopedUsers\TenantScopedUserResource;
 use Filament\Tests\Panels\Pages\TestCase;
@@ -56,6 +61,49 @@ it('can scope a resource to the current tenant', function (): void {
         ->not->toContain($userNotInTenant->id);
 });
 
+it('can register tenancy for a configured resource', function (): void {
+    $panel = Panel::make()
+        ->id('configured-resource-tenancy')
+        ->tenant(Team::class)
+        ->resources([
+            ConfiguredTenantScopedUserResource::make(),
+        ]);
+
+    Filament::setCurrentPanel($panel);
+
+    $team = Team::factory()->create();
+
+    $userInTenant = ConfiguredTenantScopedUser::create([
+        'name' => 'User in tenant',
+        'email' => 'user-in-tenant@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $userInTenant->teams()->attach($team);
+
+    $userNotInTenant = ConfiguredTenantScopedUser::create([
+        'name' => 'User not in tenant',
+        'email' => 'user-not-in-tenant@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    Filament::setTenant($team);
+    $panel->boot();
+
+    $results = ConfiguredTenantScopedUserResource::getEloquentQuery()->get();
+
+    expect($results->pluck('id')->toArray())
+        ->toContain($userInTenant->id)
+        ->not->toContain($userNotInTenant->id);
+
+    $newUser = ConfiguredTenantScopedUser::create([
+        'name' => 'New user',
+        'email' => 'new-user@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    expect($team->users()->where('user_id', $newUser->id)->exists())->toBeTrue();
+});
+
 it('can create a model when multiple resources observe tenancy model creation on the same model', function (): void {
     $adminUser = User::factory()->create();
     $team = Team::factory()->create();
@@ -76,4 +124,38 @@ it('can create a model when multiple resources observe tenancy model creation on
     $pivotCount = $team->users()->where('user_id', $newUser->id)->count();
 
     expect($pivotCount)->toBe(1);
+});
+
+it('can create a record whose tenant ownership relationship is a `HasOneThrough`', function (): void {
+    $team = Team::factory()->create();
+    $author = User::factory()->create(['team_id' => $team->getKey()]);
+
+    $this->actingAs($author);
+    Filament::setTenant($team);
+
+    HasOneThroughOwnedPostResource::observeTenancyModelCreation(Filament::getCurrentOrDefaultPanel());
+
+    $post = Post::factory()->create(['author_id' => $author->getKey()]);
+
+    expect($post->teamThroughAuthor)->toBeSameModel($team);
+});
+
+it('can scope a resource to the current tenant through a `HasOneThrough` ownership relationship', function (): void {
+    $team = Team::factory()->create();
+    $authorInTenant = User::factory()->create(['team_id' => $team->getKey()]);
+    $authorNotInTenant = User::factory()->create(['team_id' => Team::factory()->create()->getKey()]);
+
+    $postInTenant = Post::factory()->create(['author_id' => $authorInTenant->getKey()]);
+    $postNotInTenant = Post::factory()->create(['author_id' => $authorNotInTenant->getKey()]);
+
+    $this->actingAs($authorInTenant);
+    Filament::setTenant($team);
+
+    HasOneThroughOwnedPostResource::registerTenancyModelGlobalScope(Filament::getCurrentOrDefaultPanel());
+
+    $results = HasOneThroughOwnedPostResource::getEloquentQuery()->get();
+
+    expect($results->pluck('id')->toArray())
+        ->toContain($postInTenant->getKey())
+        ->not->toContain($postNotInTenant->getKey());
 });

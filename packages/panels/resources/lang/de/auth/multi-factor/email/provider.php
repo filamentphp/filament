@@ -41,6 +41,10 @@ return [
                             'title' => 'Wir haben Ihnen einen neuen Code per E-Mail gesendet',
                         ],
 
+                        'throttled' => [
+                            'title' => 'Zu viele Sendeversuche. Bitte warten Sie, bevor Sie einen neuen Code anfordern.',
+                        ],
+
                     ],
 
                 ],

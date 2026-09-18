@@ -100,6 +100,10 @@ trait CanGenerateLinkHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
+                // Security: These attributes are rendered without escaping, so the `aria-label` must be escaped here, otherwise an `Htmlable` label could break out of the attribute. `doubleEncode: false` preserves entities that Blade has already escaped in a string label.
+                'aria-label' => $isLabelSrOnly
+                    ? e(trim(strip_tags($label instanceof Htmlable ? $label->toHtml() : ($label ?? ''))), doubleEncode: false)
+                    : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
                 'type' => match ($tag) {
@@ -165,7 +169,9 @@ trait CanGenerateLinkHtml
             <?php } ?>
 
             <?php if (! $isLabelSrOnly) { ?>
-                <?= e($label) ?>
+                <span class="fi-link-label">
+                    <?= e($label) ?>
+                </span>
             <?php } ?>
 
             <?php if ($iconPosition === IconPosition::After) { ?>

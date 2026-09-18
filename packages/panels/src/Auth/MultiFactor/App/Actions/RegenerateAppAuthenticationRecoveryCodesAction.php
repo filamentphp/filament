@@ -17,24 +17,49 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\UnorderedList;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use Illuminate\Validation\ValidationException;
+use Livewire\Component as LivewireComponent;
 use SensitiveParameter;
 
 class RegenerateAppAuthenticationRecoveryCodesAction
 {
     public static function make(AppAuthentication $appAuthentication): Action
     {
+        $rateLimitAuthenticationAttempt = static function (string $passwordStatePath): void {
+            $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::auth()->id();
+
+            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                throw ValidationException::withMessages([
+                    $passwordStatePath => __('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'),
+                ]);
+            }
+
+            RateLimiter::hit($rateLimitingKey);
+        };
+
+        $passwordInput = TextInput::make('password')
+            ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.label'))
+            ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.validation_attribute'))
+            ->currentPassword(guard: Filament::getAuthGuard())
+            ->password()
+            ->revealable(filament()->arePasswordsRevealable())
+            ->required()
+            ->dehydrated(false);
+
         return Action::make('regenerateAppAuthenticationRecoveryCodes')
             ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.label'))
             ->color('gray')
-            ->icon(Heroicon::ArrowPath)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES) ?? Heroicon::ArrowPath)
             ->link()
             ->modalWidth(Width::Large)
-            ->modalIcon(Heroicon::OutlinedArrowPath)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_MODAL) ?? Heroicon::OutlinedArrowPath)
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.description'))
@@ -45,31 +70,26 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                     ->requiredWithout('password')
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($appAuthentication): void {
-                            $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::auth()->id();
-
-                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
-                                $fail(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'));
-
-                                return;
-                            }
-
-                            RateLimiter::hit($rateLimitingKey);
-
-                            if ($appAuthentication->verifyCode($value)) {
+                            if ($appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
                                 return;
                             }
 
                             $fail(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.invalid'));
                         };
                     }),
-                TextInput::make('password')
-                    ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.label'))
-                    ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.validation_attribute'))
-                    ->currentPassword(guard: Filament::getAuthGuard())
-                    ->password()
-                    ->revealable(filament()->arePasswordsRevealable())
-                    ->dehydrated(false),
+                $passwordInput,
             ])
+            ->beforeFormValidated(function (LivewireComponent $livewire) use ($passwordInput, $rateLimitAuthenticationAttempt): void {
+                $passwordStatePath = $passwordInput->getStatePath();
+
+                $rateLimitAuthenticationAttempt($passwordStatePath);
+
+                $livewire->validateOnly(
+                    $passwordStatePath,
+                    [$passwordStatePath => $passwordInput->getValidationRules()],
+                    attributes: [$passwordStatePath => $passwordInput->getValidationAttribute()],
+                );
+            })
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.actions.submit.label'))
                 ->color('danger'))
@@ -88,7 +108,7 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.notifications.regenerated.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedArrowPath)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_APP_ACTIONS_REGENERATE_RECOVERY_CODES_NOTIFICATION) ?? Heroicon::OutlinedArrowPath)
                     ->send();
             })
             ->registerModalActions([

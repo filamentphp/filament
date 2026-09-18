@@ -379,3 +379,21 @@ public function panel(Panel $panel): Panel
         ->favicon(asset('images/favicon.png'));
 }
 ```
+
+## Making a panel more compact
+
+Data-heavy panels can be easier to scan when tables and controls use less space. The [Compact theme](https://filamentphp.com/plugins/filament-compact-theme) provides a ready-made option that reduces the spacing throughout a panel while preserving Filament's default mobile spacing. It can also be combined with the [Sharp](https://filamentphp.com/plugins/filament-sharp-theme), [Soft](https://filamentphp.com/plugins/filament-soft-theme), or [Noir](https://filamentphp.com/plugins/filament-noir-theme) themes if you want to change the visual style as well as the density.
+
+If you only need to make a few elements more compact, you can add targeted rules to your [custom theme](#creating-a-custom-theme) instead. For example, these rules reduce the vertical padding of table text cells and the padding of default-sized buttons on larger screens:
+
+```css
+.fi-ta-text:not(.fi-inline) {
+    @apply sm:py-2;
+}
+
+.fi-btn {
+    @apply sm:px-2.5 sm:py-1.5;
+}
+```
+
+Using the `sm` breakpoint keeps Filament's default spacing on smaller screens, where table rows are often presented as stacked content. You can target other elements in the same way using [CSS hook classes](css-hooks).

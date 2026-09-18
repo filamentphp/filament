@@ -30,6 +30,12 @@ class ToggleTest extends Page
                 Toggle::make('toggle')
                     ->label('Basic Toggle')
                     ->extraAttributes(['data-testid' => 'toggle']),
+                Toggle::make('liveInlineLabelToggle')
+                    ->label('Live Inline Label Toggle')
+                    ->inlineLabel()
+                    ->helperText('Live inline label helper text')
+                    ->live()
+                    ->extraAttributes(['data-testid' => 'live-inline-label-toggle']),
             ])
             ->statePath('data');
     }

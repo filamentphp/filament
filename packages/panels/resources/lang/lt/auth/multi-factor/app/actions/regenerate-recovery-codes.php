@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Arba įveskite dabartinį slaptažodį',
+                'label' => 'Įveskite dabartinį slaptažodį',
 
                 'validation_attribute' => 'password',
 

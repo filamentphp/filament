@@ -12,6 +12,10 @@ return [
                 'label' => 'Spalten anwenden',
             ],
 
+            'reorder' => [
+                'label' => 'Spalte verschieben',
+            ],
+
             'reset' => [
                 'label' => 'Zurücksetzen',
             ],
@@ -24,6 +28,31 @@ return [
 
         'actions' => [
             'label' => 'Aktion|Aktionen',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Ja',
+                'false' => 'Nein',
+            ],
+
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Lädt...',
+
+            'no_options_message' => 'Keine Optionen verfügbar.',
+
+            'no_search_results_message' => 'Keine Optionen entsprechen Ihrer Suche.',
+
+            'placeholder' => 'Option auswählen',
+
+            'searching_message' => 'Sucht...',
+
+            'search_prompt' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
+
         ],
 
         'text' => [
@@ -99,6 +128,10 @@ return [
             'label' => 'Einträge sortieren',
         ],
 
+        'reorder_record' => [
+            'label' => 'Eintrag :key verschieben',
+        ],
+
         'filter' => [
             'label' => 'Filtern',
         ],
@@ -113,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Spalten auswählen',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Eintrag :key aus-/einklappen',
         ],
 
     ],
@@ -186,7 +223,6 @@ return [
 
             'group' => [
                 'label' => 'Gruppieren nach',
-                'placeholder' => 'Gruppieren nach',
             ],
 
             'direction' => [
@@ -204,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Lädt...',
+
     'reorder_indicator' => 'Zum Sortieren die Einträge per Drag & Drop in die richtige Reihenfolge ziehen.',
+
+    'result_count' => '{0} Keine Ergebnisse|{1} :count Ergebnis|[2,*] :count Ergebnisse',
 
     'selection_indicator' => [
 

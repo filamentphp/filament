@@ -349,6 +349,7 @@ class IconColumn extends Column implements HasEmbeddedView
                 $this->isBoolean() => __('filament-tables::table.columns.icon.boolean.' . ($stateItem ? 'true' : 'false')),
                 $stateItem instanceof LabelInterface => $stateItem->getLabel(),
                 $stateItem instanceof BackedEnum => $stateItem->value,
+                $stateItem instanceof Htmlable => strip_tags($stateItem->toHtml()),
                 is_scalar($stateItem) || $stateItem instanceof Stringable => $stateItem,
                 default => null,
             };

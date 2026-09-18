@@ -218,10 +218,10 @@ use Filament\Tables\Columns\SelectColumn;
 SelectColumn::make('author_id')
     ->optionsRelationship(name: 'author', titleAttribute: 'name')
     ->searchableOptions()
-    ->preload(FeatureFlag::active())
+    ->preloadOptions(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `preload()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `preloadOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Excluding the current record
 

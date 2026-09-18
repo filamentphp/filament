@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Moje aktualizace',
 
+        'unread_label' => 'Nepřečtené oznámení',
+
         'actions' => [
 
             'clear' => [

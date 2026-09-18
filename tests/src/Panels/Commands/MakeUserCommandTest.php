@@ -7,7 +7,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Hash;
 
-uses(TestCase::class)->group('commands');
+uses(TestCase::class)->group('serial');
 
 $removeDefaultPanel = function (): void {
     $registry = app(PanelRegistry::class);

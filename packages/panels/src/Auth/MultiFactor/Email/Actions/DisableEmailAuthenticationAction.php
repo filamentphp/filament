@@ -11,19 +11,69 @@ use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use SensitiveParameter;
 
 class DisableEmailAuthenticationAction
 {
     public static function make(EmailAuthentication $emailAuthentication): Action
     {
+        $rateLimitAuthenticationAttempt = static function (string $codeStatePath): void {
+            $rateLimitingKey = 'filament-disable-email-authentication:' . Filament::auth()->id();
+
+            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                throw ValidationException::withMessages([
+                    $codeStatePath => __('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.messages.rate_limited'),
+                ]);
+            }
+
+            RateLimiter::hit($rateLimitingKey);
+        };
+
+        $codeInput = OneTimeCodeInput::make('code')
+            ->label(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.label'))
+            ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.validation_attribute'))
+            ->belowContent(Action::make('resend')
+                ->label(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.label'))
+                ->link()
+                ->action(function () use ($emailAuthentication): void {
+                    /** @var HasEmailAuthentication $user */
+                    $user = Filament::auth()->user();
+
+                    if (! $emailAuthentication->sendCode($user)) {
+                        Notification::make()
+                            ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.throttled.title'))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    Notification::make()
+                        ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.resent.title'))
+                        ->success()
+                        ->send();
+                }))
+            ->required()
+            ->rule(function () use ($emailAuthentication): Closure {
+                return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($emailAuthentication): void {
+                    if (is_string($value) && $emailAuthentication->verifyCode($value)) {
+                        return;
+                    }
+
+                    $fail(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.messages.invalid'));
+                };
+            });
+
         return Action::make('disableEmailAuthentication')
             ->label(__('filament-panels::auth/multi-factor/email/actions/disable.label'))
             ->color('danger')
-            ->icon(Heroicon::LockOpen)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE) ?? Heroicon::LockOpen)
             ->link()
             ->mountUsing(function (Schema $schema) use ($emailAuthentication): void {
                 $schema->fill();
@@ -34,55 +84,13 @@ class DisableEmailAuthenticationAction
                 $emailAuthentication->sendCode($user);
             })
             ->modalWidth(Width::Medium)
-            ->modalIcon(Heroicon::OutlinedLockOpen)
+            ->modalIcon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_MODAL) ?? Heroicon::OutlinedLockOpen)
             ->modalHeading(__('filament-panels::auth/multi-factor/email/actions/disable.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/email/actions/disable.modal.description'))
             ->schema([
-                OneTimeCodeInput::make('code')
-                    ->label(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.label'))
-                    ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.validation_attribute'))
-                    ->belowContent(Action::make('resend')
-                        ->label(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.label'))
-                        ->link()
-                        ->action(function () use ($emailAuthentication): void {
-                            /** @var HasEmailAuthentication $user */
-                            $user = Filament::auth()->user();
-
-                            if (! $emailAuthentication->sendCode($user)) {
-                                Notification::make()
-                                    ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.throttled.title'))
-                                    ->danger()
-                                    ->send();
-
-                                return;
-                            }
-
-                            Notification::make()
-                                ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.resent.title'))
-                                ->success()
-                                ->send();
-                        }))
-                    ->required()
-                    ->rule(function () use ($emailAuthentication): Closure {
-                        return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($emailAuthentication): void {
-                            $rateLimitingKey = 'filament-disable-email-authentication:' . Filament::auth()->id();
-
-                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
-                                $fail(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.messages.rate_limited'));
-
-                                return;
-                            }
-
-                            RateLimiter::hit($rateLimitingKey);
-
-                            if (is_string($value) && $emailAuthentication->verifyCode($value)) {
-                                return;
-                            }
-
-                            $fail(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.messages.invalid'));
-                        };
-                    }),
+                $codeInput,
             ])
+            ->beforeFormValidated(fn () => $rateLimitAuthenticationAttempt($codeInput->getStatePath()))
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/email/actions/disable.modal.actions.submit.label')))
             ->action(function (): void {
@@ -96,7 +104,7 @@ class DisableEmailAuthenticationAction
                 Notification::make()
                     ->title(__('filament-panels::auth/multi-factor/email/actions/disable.notifications.disabled.title'))
                     ->success()
-                    ->icon(Heroicon::OutlinedLockOpen)
+                    ->icon(FilamentIcon::resolve(PanelsIconAlias::AUTH_MULTI_FACTOR_EMAIL_ACTIONS_DISABLE_NOTIFICATION) ?? Heroicon::OutlinedLockOpen)
                     ->send();
             })
             ->rateLimit(5);

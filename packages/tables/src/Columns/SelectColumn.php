@@ -947,6 +947,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     ariaLabel: ' . Js::from(trim(strip_tags((string) $this->getLabel()))) . ',
                     canOptionLabelsWrap: ' . Js::from($this->canOptionLabelsWrap()) . ',
                     canSelectPlaceholder: ' . Js::from($canSelectPlaceholder) . ',
+                    clearButtonLabel: ' . Js::from(__('filament-forms::components.select.actions.clear.label')) . ',
                     getOptionLabelUsing: async () => {
                         return await $wire.callTableColumnMethod(' . Js::from($name) . ', ' . Js::from($recordKey) . ', \'getOptionLabel\')
                     },
@@ -985,6 +986,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     searchableOptionFields: ' . Js::from($this->getSearchableOptionFields()) . ',
                     searchDebounce: ' . Js::from($this->getOptionsSearchDebounce()) . ',
                     searchingMessage: ' . Js::from($this->getOptionsSearchingMessage()) . ',
+                    searchLabel: ' . Js::from(__('filament-forms::components.select.search_label')) . ',
                     searchPrompt: ' . Js::from($this->getOptionsSearchPrompt()) . ',
                     state: ' . Js::from($state) . ',
                 })',
@@ -996,6 +998,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
         $inputAttributes = $this->getExtraInputAttributeBag()
             ->merge([
+                'aria-label' => e(trim(strip_tags(($ariaLabel = $this->getLabel()) instanceof Htmlable ? $ariaLabel->toHtml() : $ariaLabel)), doubleEncode: false),
                 'disabled' => $isDisabled,
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),

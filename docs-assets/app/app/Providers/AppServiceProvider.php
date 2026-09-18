@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (! request()?->query('no_auto_login')) {
+        if ((! $this->app->runningInConsole()) && (! request()->query('no_auto_login'))) {
             Auth::loginUsingId(1);
         }
 

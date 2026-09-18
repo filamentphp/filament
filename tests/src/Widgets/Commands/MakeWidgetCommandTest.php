@@ -42,6 +42,18 @@ it('can generate a custom widget view', function (): void {
         ->toMatchSnapshot();
 });
 
+it('can run `make:filament-widget` non-interactively to generate a custom widget', function (): void {
+    $this->withoutMockingConsoleOutput();
+
+    $this->artisan('make:filament-widget', [
+        'name' => 'NonInteractiveWidget',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists(app_path('Filament/Widgets/NonInteractiveWidget.php'));
+});
+
 it('can generate a chart widget class', function (): void {
     $this->withoutMockingConsoleOutput();
 

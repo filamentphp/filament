@@ -45,12 +45,13 @@ class Toggle extends Field implements HasEmbeddedView
         $onColor = $this->getOnColor() ?? 'primary';
         $onIcon = $this->getOnIcon();
         $isOn = (bool) $this->getState();
+        $livewireKey = $this->getLivewireKey();
 
         $stateExpression = '$wire.' . $this->applyStateBindingModifiers("\$entangle('{$statePath}')");
 
         $toggleAttributes = (new FilamentComponentAttributeBag)
             ->merge([
-                'aria-checked' => 'false',
+                'aria-checked' => $isOn ? 'true' : 'false',
                 'autofocus' => $this->isAutofocused(),
                 'disabled' => $this->isDisabled(),
                 'id' => $this->getId(),
@@ -78,7 +79,7 @@ class Toggle extends Field implements HasEmbeddedView
 
         <button
             x-data="{ state: <?= $stateExpression ?> }"
-            x-bind:aria-checked="state?.toString()"
+            x-bind:aria-checked="state ? 'true' : 'false'"
             x-on:click="state = ! state"
             x-bind:class="state ? <?= $onClasses ?> : <?= $offClasses ?>"
             <?php if ($isOn) { ?>
@@ -98,6 +99,7 @@ class Toggle extends Field implements HasEmbeddedView
             <div
                 x-cloak="inline-flex"
                 wire:ignore
+                wire:key="<?= e($livewireKey) ?>.placeholder"
                 <?= (new FilamentComponentAttributeBag)->class([
                     'fi-toggle fi-toggle-on fi-hidden',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),

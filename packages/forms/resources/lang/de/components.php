@@ -122,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Farbauswahl',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Monat',
+        ],
+
+        'year_input' => [
+            'label' => 'Jahr',
+        ],
+
+        'hour_input' => [
+            'label' => 'Stunde',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minute',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekunde',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Herunterladen',
+            ],
+
+            'open' => [
+                'label' => 'In neuem Tab öffnen',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Bildeditor',
 
             'actions' => [
 
@@ -268,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Aktionen',
+            ],
+
+            'reorder' => [
+                'label' => 'Verschieben',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Aktionen',
+            ],
+
+            'reorder' => [
+                'label' => 'Verschieben',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -548,6 +616,35 @@ return [
 
                         'color' => [
                             'label' => 'Farbe',
+
+                            'options' => [
+                                'slate' => 'Schiefer',
+                                'gray' => 'Grau',
+                                'zinc' => 'Zink',
+                                'neutral' => 'Neutral',
+                                'stone' => 'Stein',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Nebel',
+                                'taupe' => 'Taupe',
+                                'red' => 'Rot',
+                                'orange' => 'Orange',
+                                'amber' => 'Bernstein',
+                                'yellow' => 'Gelb',
+                                'lime' => 'Limette',
+                                'green' => 'Grün',
+                                'emerald' => 'Smaragd',
+                                'teal' => 'Blaugrün',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Himmel',
+                                'blue' => 'Blau',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violett',
+                                'purple' => 'Lila',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Pink',
+                                'rose' => 'Rose',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -575,6 +672,10 @@ return [
             'searching_message' => 'Sucht...',
         ],
 
+        'toolbar' => [
+            'label' => 'Editor-Werkzeugleiste',
+        ],
+
         'tools' => [
             'align_center' => 'Zentriert ausrichten',
             'align_end' => 'Rechts ausrichten',
@@ -592,6 +693,9 @@ return [
             'h1' => 'Titel',
             'h2' => 'Überschrift',
             'h3' => 'Unterüberschrift',
+            'h4' => 'Überschrift 4',
+            'h5' => 'Überschrift 5',
+            'h6' => 'Überschrift 6',
             'grid' => 'Raster',
             'grid_delete' => 'Raster löschen',
             'highlight' => 'Hervorheben',
@@ -601,6 +705,7 @@ return [
             'link' => 'Link',
             'merge_tags' => 'Merge-Tags',
             'ordered_list' => 'Nummerierte Aufzählung',
+            'paragraph' => 'Absatz',
             'redo' => 'Wiederherstellen',
             'small' => 'Kleiner Text',
             'strike' => 'Durchgestrichen',
@@ -709,6 +814,10 @@ return [
         ],
 
         'placeholder' => 'Neue Kennzeichnung',
+
+        'tag_added' => 'Hinzugefügt: :tag',
+
+        'tag_removed' => 'Entfernt: :tag',
 
     ],
 

@@ -11,6 +11,10 @@ return [
         'description' => 'Sind Sie sicher, dass Sie die Authenticator-App nicht mehr verwenden möchten? Das Deaktivieren entfernt eine zusätzliche Sicherheitsebene von Ihrem Konto.',
 
         'form' => [
+            'password' => [
+                'label' => 'Aktuelles Passwort',
+                'validation_attribute' => 'aktuelles Passwort',
+            ],
 
             'code' => [
 
@@ -30,6 +34,8 @@ return [
 
                     'invalid' => 'Der eingegebene Code ist ungültig.',
 
+                    'rate_limited' => 'Zu viele Versuche. Bitte versuchen Sie es später erneut.',
+
                 ],
 
             ],
@@ -43,6 +49,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Der eingegebene Wiederherstellungscode ist ungültig.',
+
+                    'rate_limited' => 'Zu viele Versuche. Bitte versuchen Sie es später erneut.',
 
                 ],
 

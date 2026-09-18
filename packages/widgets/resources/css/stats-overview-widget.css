@@ -1,5 +1,5 @@
 .fi-wi-stats-overview-stat {
-    @apply relative block h-full rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 relative block h-full rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 outline-none focus-visible:ring-2 dark:bg-gray-900 dark:ring-white/10;
 
     & .fi-icon {
         @apply shrink-0 text-gray-400 dark:text-gray-500;
@@ -18,7 +18,13 @@
     }
 
     & .fi-wi-stats-overview-stat-value {
-        @apply text-3xl font-semibold tracking-tight text-gray-950 dark:text-white;
+        /* Tabular figures: stat values are near-always numeric, and polled
+           widgets would otherwise reflow as digit widths change. */
+        @apply text-3xl font-semibold tracking-tight text-gray-950 tabular-nums dark:text-white;
+    }
+
+    & .fi-wi-stats-overview-stat-placeholder {
+        @apply text-3xl font-medium text-gray-500 dark:text-gray-400;
     }
 
     & .fi-wi-stats-overview-stat-description {

@@ -144,7 +144,6 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return Action::make('markAllNotificationsAsRead')
             ->link()
             ->label(__('filament-notifications::database.modal.actions.mark_all_as_read.label'))
-            ->extraAttributes(['tabindex' => '-1'])
             ->action('markAllNotificationsAsRead');
     }
 
@@ -154,7 +153,6 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
             ->link()
             ->color('danger')
             ->label(__('filament-notifications::database.modal.actions.clear.label'))
-            ->extraAttributes(['tabindex' => '-1'])
             ->action('clearNotifications')
             ->close();
     }

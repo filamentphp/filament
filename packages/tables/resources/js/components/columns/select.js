@@ -4,6 +4,7 @@ export default function selectTableColumn({
     ariaLabel,
     canOptionLabelsWrap,
     canSelectPlaceholder,
+    clearButtonLabel,
     getOptionLabelUsing,
     getOptionsUsing,
     getSearchResultsUsing,
@@ -27,6 +28,7 @@ export default function selectTableColumn({
     searchableOptionFields,
     searchDebounce,
     searchingMessage,
+    searchLabel,
     searchPrompt,
     state,
 }) {
@@ -47,6 +49,7 @@ export default function selectTableColumn({
                     ariaLabel,
                     canOptionLabelsWrap,
                     canSelectPlaceholder,
+                    clearButtonLabel,
                     element: this.$refs.select,
                     getOptionLabelUsing,
                     getOptionsUsing,
@@ -71,6 +74,7 @@ export default function selectTableColumn({
                     searchableOptionFields,
                     searchDebounce,
                     searchingMessage,
+                    searchLabel,
                     searchPrompt,
                     state: this.state,
                 })

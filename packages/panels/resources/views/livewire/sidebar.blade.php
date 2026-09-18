@@ -1,15 +1,19 @@
 <div>
     @php
+        use Filament\Enums\GlobalSearchPosition;
+
         $navigation = filament()->getNavigation();
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
         $hasNavigation = filament()->hasNavigation();
         $hasTopbar = filament()->hasTopbar();
+        $hasTenantMenu = filament()->hasTenancy() && filament()->hasTenantMenu();
+        $hasGlobalSearchInSidebar = filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === GlobalSearchPosition::Sidebar;
     @endphp
 
     {{-- format-ignore-start --}}
-    <aside
+    <div
         x-data="{}"
         @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
             x-cloak
@@ -17,6 +21,7 @@
             x-cloak="-lg"
         @endif
         x-bind:class="{ 'fi-sidebar-open': $store.sidebar.isOpen }"
+        id="fi-main-sidebar"
         class="fi-sidebar fi-main-sidebar"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_START) }}
@@ -42,6 +47,8 @@
                         :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                         x-cloak
                         x-data="{}"
+                        aria-controls="fi-main-sidebar"
+                        x-bind:aria-expanded="$store.sidebar.isOpen"
                         x-on:click="$store.sidebar.open()"
                         x-show="! $store.sidebar.isOpen"
                         class="fi-sidebar-open-collapse-sidebar-btn"
@@ -65,6 +72,8 @@
                         :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                         x-cloak
                         x-data="{}"
+                        aria-controls="fi-main-sidebar"
+                        x-bind:aria-expanded="$store.sidebar.isOpen"
                         x-on:click="$store.sidebar.close()"
                         x-show="$store.sidebar.isOpen"
                         class="fi-sidebar-close-collapse-sidebar-btn"
@@ -92,21 +101,33 @@
             </header>
         </div>
 
-        @if (filament()->hasTenancy() && filament()->hasTenantMenu())
-            <x-filament-panels::tenant-menu />
-        @endif
-
-        @if (filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Enums\GlobalSearchPosition::Sidebar)
+        @if ($hasTenantMenu || $hasGlobalSearchInSidebar)
             <div
-                @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                @if ((! $hasTenantMenu) && ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop))
                     x-show="$store.sidebar.isOpen"
                 @endif
+                class="fi-sidebar-header-controls"
             >
-                @livewire(Filament\Livewire\GlobalSearch::class)
+                @if ($hasTenantMenu)
+                    <x-filament-panels::tenant-menu />
+                @endif
+
+                @if ($hasGlobalSearchInSidebar)
+                    <div
+                        @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                            x-show="$store.sidebar.isOpen"
+                        @endif
+                    >
+                        @livewire(Filament\Livewire\GlobalSearch::class)
+                    </div>
+                @endif
             </div>
         @endif
 
-        <nav class="fi-sidebar-nav">
+        <nav
+            aria-label="{{ __('filament-panels::layout.navigation.label') }}"
+            class="fi-sidebar-nav"
+        >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
             <ul class="fi-sidebar-nav-groups">
@@ -196,7 +217,7 @@
         @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_FOOTER) }}
-    </aside>
+    </div>
     {{-- format-ignore-end --}}
 
     <x-filament-actions::modals />

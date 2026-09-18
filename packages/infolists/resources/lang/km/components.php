@@ -15,12 +15,17 @@ return [
 
         ],
 
+        'icon' => [
+            'true' => 'បាទ',
+            'false' => 'ទេ',
+        ],
+
         'key_value' => [
 
             'columns' => [
 
                 'key' => [
-                    'label' => 'សោ',
+                    'label' => 'គន្លឹះ',
                 ],
 
                 'value' => [
@@ -29,7 +34,7 @@ return [
 
             ],
 
-            'placeholder' => 'គ្មានទិន្ន័យទេ',
+            'placeholder' => 'គ្មានទិន្នន័យទេ',
 
         ],
 

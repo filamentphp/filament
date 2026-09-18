@@ -1,9 +1,23 @@
 @php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\Icons\Heroicon;
+    use Filament\View\PanelsIconAlias;
+    use Illuminate\Support\Number;
+
     $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+
+    $databaseNotificationsLabel = $unreadNotificationsCount
+        ? trans_choice('filament-panels::layout.actions.open_database_notifications.label_with_unread_count', $unreadNotificationsCount, ['count' => Number::format($unreadNotificationsCount, locale: app()->getLocale())])
+        : __('filament-panels::layout.actions.open_database_notifications.label');
 @endphp
 
-<button class="fi-sidebar-database-notifications-btn">
-    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::OutlinedBell, alias: \Filament\View\PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON, size: \Filament\Support\Enums\IconSize::Large) }}
+<button
+    @if ($isSidebarCollapsibleOnDesktop)
+        x-bind:aria-label="$store.sidebar.isOpen ? null : @js($databaseNotificationsLabel)"
+    @endif
+    class="fi-sidebar-database-notifications-btn"
+>
+    {{ \Filament\Support\generate_icon_html(Heroicon::OutlinedBell, alias: PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON, size: IconSize::Large) }}
 
     <span
         @if ($isSidebarCollapsibleOnDesktop)

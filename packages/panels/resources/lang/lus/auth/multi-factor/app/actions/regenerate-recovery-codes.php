@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Or, tun a I password enter rawh',
+                'label' => 'I password hman mek chhut lut rawh',
 
                 'validation_attribute' => 'password',
 

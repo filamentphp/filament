@@ -14,6 +14,7 @@ use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 
 class RepeatableEntry extends Entry implements HasEmbeddedView
@@ -26,10 +27,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     protected array | Closure | null $tableColumns = null;
 
-    /**
-     * @var array<Schema> | null
-     */
-    protected ?array $cachedItems = null;
+    protected mixed $cachedItemsState = null;
 
     /**
      * Configure table columns for display
@@ -66,13 +64,21 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
      */
     public function getItems(): array
     {
-        if ($this->cachedItems !== null) {
-            return $this->cachedItems;
-        }
+        return $this->getCachedDefaultChildSchemas();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $state = $this->getState() ?? [];
+
+        $this->cachedItemsState = $state instanceof Collection ? $state->all() : $state;
 
         $containers = [];
 
-        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
+        foreach ($state as $itemKey => $itemData) {
             $container = $this
                 ->getChildSchema()
                 ->getClone()
@@ -88,22 +94,14 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
             $containers[$itemKey] = $container;
         }
 
-        return $this->cachedItems = $containers;
+        return $containers;
     }
 
-    /**
-     * @return array<Schema>
-     */
-    public function getDefaultChildSchemas(): array
+    protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->getItems();
-    }
+        $state = $this->getState() ?? [];
 
-    public function clearCachedChildSchemas(): void
-    {
-        parent::clearCachedChildSchemas();
-
-        $this->cachedItems = null;
+        return $this->cachedItemsState === ($state instanceof Collection ? $state->all() : $state);
     }
 
     public function toEmbeddedHtml(): string
@@ -207,9 +205,10 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                     <tr>
                         <?php foreach ($tableColumns as $column) { ?>
                             <th
+                                scope="col"
                                 class="<?= Arr::toCssClasses([
                                     'fi-wrapped' => $column->canHeaderWrap(),
-                                    (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
+                                    (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : e($columnAlignment),
                                 ]) ?>"
                                 <?php if (filled($columnWidth = $column->getWidth())) { ?>
                                     style="width: <?= e($columnWidth) ?>"

@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Bildirimler',
 
+        'unread_label' => 'Okunmamış bildirim',
+
         'actions' => [
 
             'clear' => [

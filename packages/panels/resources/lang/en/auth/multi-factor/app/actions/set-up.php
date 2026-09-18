@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Current password',
+                'validation_attribute' => 'current password',
+            ],
+
             'code' => [
 
                 'label' => 'Enter the 6-digit code from the authenticator app',

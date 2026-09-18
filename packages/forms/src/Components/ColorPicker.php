@@ -66,7 +66,6 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
         $extraAttributeBag = $this->getExtraAttributeBag();
         $id = $this->getId();
         $isAutofocused = $this->isAutofocused();
-        $isConcealed = $this->isConcealed();
         $isDisabled = $this->isDisabled();
         $isLive = $this->isLive();
         $isLiveOnBlur = $this->isLiveOnBlur();
@@ -109,11 +108,14 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
 
         $inputAttributes = $this->getExtraInputAttributeBag()
             ->merge([
+                // `aria-expanded` / `aria-haspopup` are not supported on a plain textbox, so only
+                // `aria-controls` (a global ARIA attribute) associates the input with its panel.
+                'aria-controls' => "{$id}-panel",
                 'autocomplete' => 'off',
                 'disabled' => $isDisabled,
                 'id' => $id,
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
-                'required' => $this->isRequired() && (! $isConcealed),
+                'required' => $this->isRequired(),
                 'type' => 'text',
                 'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
                 'x-on:blur' => $isLiveOnBlur ? 'isOpen() ? null : commitState()' : null,
@@ -158,6 +160,7 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
             />
 
             <div
+                aria-hidden="true"
                 class="fi-fo-color-picker-preview my-auto me-3 size-5 shrink-0 rounded-full select-none"
                 x-on:click="togglePanelVisibility()"
                 x-bind:class="{
@@ -172,6 +175,9 @@ class ColorPicker extends Field implements Contracts\HasAffixes, HasEmbeddedView
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 x-ref="panel"
+                id="<?= e($id) ?>-panel"
+                role="dialog"
+                aria-label="<?= e(__('filament-forms::components.color_picker.panel_label')) ?>"
                 class="fi-fo-color-picker-panel"
             >
                 <<?= $tag ?> x-ref="picker" color="<?= e($this->getState()) ?>" />

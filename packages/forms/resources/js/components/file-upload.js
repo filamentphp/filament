@@ -35,6 +35,7 @@ export default function fileUploadFormComponent({
     confirmSvgEditingMessage,
     deleteUploadedFileUsing,
     disabledSvgEditingMessage,
+    downloadActionLabel,
     getUploadedFilesUsing,
     hasCircleCropper,
     hasImageEditor,
@@ -63,6 +64,7 @@ export default function fileUploadFormComponent({
     maxSize,
     mimeTypeMap,
     minSize,
+    openActionLabel,
     panelAspectRatio,
     panelLayout,
     placeholder,
@@ -135,7 +137,11 @@ export default function fileUploadFormComponent({
                     if (!this.pond) {
                         this.init()
                     } else {
-                        document.dispatchEvent(new Event('visibilitychange'))
+                        requestAnimationFrame(() =>
+                            document.dispatchEvent(
+                                new Event('visibilitychange'),
+                            ),
+                        )
                     }
                 }
 
@@ -330,6 +336,8 @@ export default function fileUploadFormComponent({
                 },
             })
 
+            this.lastState = JSON.stringify(this.state)
+
             this.$watch('state', async () => {
                 if (!this.pond) {
                     return
@@ -355,12 +363,44 @@ export default function fileUploadFormComponent({
                     return
                 }
 
+                const newState = JSON.stringify(this.state)
+
                 // Don't do anything if the state hasn't changed
-                if (JSON.stringify(this.state) === this.lastState) {
+                if (newState === this.lastState) {
                     return
                 }
 
-                this.lastState = JSON.stringify(this.state)
+                const previousState = JSON.parse(this.lastState ?? '{}') ?? {}
+
+                this.lastState = newState
+
+                // Skip refetching on a pure reorder: re-requesting file URLs here would
+                // regenerate a fresh signed URL per file on private disks, breaking browser caching.
+                const previousFileKeys = Object.keys(previousState)
+                const newFileKeys = Object.keys(this.state ?? {})
+
+                const isPureReorder =
+                    newFileKeys.length === previousFileKeys.length &&
+                    newFileKeys.length ===
+                        Object.keys(this.fileKeyIndex).length &&
+                    newFileKeys.every(
+                        (fileKey) =>
+                            previousState[fileKey] === this.state[fileKey] &&
+                            this.fileKeyIndex[fileKey],
+                    )
+
+                if (isPureReorder) {
+                    this.fileKeyIndex = Object.fromEntries(
+                        newFileKeys.map((fileKey) => [
+                            fileKey,
+                            this.fileKeyIndex[fileKey],
+                        ]),
+                    )
+
+                    this.pond.files = this.buildPondFiles()
+
+                    return
+                }
 
                 this.pond.files = await this.getFiles()
             })
@@ -523,6 +563,10 @@ export default function fileUploadFormComponent({
         async getFiles() {
             await this.getUploadedFiles()
 
+            return this.buildPondFiles()
+        },
+
+        buildPondFiles() {
             let files = []
 
             for (const uploadedFile of Object.values(this.fileKeyIndex)) {
@@ -605,6 +649,13 @@ export default function fileUploadFormComponent({
             anchor.href = downloadableUrl
             anchor.download = file.file.name
 
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (downloadActionLabel) {
+                anchor.setAttribute('aria-label', downloadActionLabel)
+                anchor.setAttribute('title', downloadActionLabel)
+            }
+
             return anchor
         },
 
@@ -619,6 +670,13 @@ export default function fileUploadFormComponent({
             anchor.className = 'filepond--open-icon'
             anchor.href = openableUrl
             anchor.target = '_blank'
+
+            // A published pre-change view override passes no label, so skip the attributes
+            // instead of rendering a literal "undefined".
+            if (openActionLabel) {
+                anchor.setAttribute('aria-label', openActionLabel)
+                anchor.setAttribute('title', openActionLabel)
+            }
 
             return anchor
         },

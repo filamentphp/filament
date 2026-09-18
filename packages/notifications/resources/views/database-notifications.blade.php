@@ -1,27 +1,37 @@
 @php
+    use Filament\Notifications\View\NotificationsIconAlias;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Support\View\Components\BadgeComponent;
+    use Illuminate\Contracts\Pagination\Paginator;
 
     $notifications = $this->getNotifications();
     $unreadNotificationsCount = $this->getUnreadNotificationsCount();
     $hasNotifications = $notifications->count();
-    $isPaginated = $notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages();
+    $isPaginated = $notifications instanceof Paginator && $notifications->hasPages();
     $pollingInterval = $this->getPollingInterval();
 @endphp
 
 <div class="fi-no-database">
+    {{-- The focus trap autofocuses the modal window itself when the slide-over opens, since the first tabbable element is the `Mark all as read` header action, which `Enter` would otherwise immediately (and irreversibly) trigger. The window must carry the `autofocus` attribute because the focus trap resolves it once, when the modal first initializes, and the window is always rendered. --}}
     <x-filament::modal
         :alignment="$hasNotifications ? null : Alignment::Center"
         aria-labelledby="database-notifications.heading"
         close-button
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
+        :extra-modal-window-attribute-bag="
+            new FilamentComponentAttributeBag([
+                'autofocus' => true,
+                'tabindex' => '-1',
+            ])
+        "
         :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
-        :icon="$hasNotifications ? null : \Filament\Support\Icons\Heroicon::OutlinedBellSlash"
+        :icon="$hasNotifications ? null : Heroicon::OutlinedBellSlash"
         :icon-alias="
             $hasNotifications
             ? null
-            : \Filament\Notifications\View\NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE
+            : NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE
         "
         :icon-color="$hasNotifications ? null : 'gray'"
         id="database-notifications"
@@ -31,7 +41,7 @@
         width="md"
         class="fi-no-database"
         :attributes="
-            new \Filament\Support\View\ComponentAttributeBag([
+            new FilamentComponentAttributeBag([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? '' : false,
             ])
         "
@@ -90,6 +100,12 @@
                             'fi-no-notification-unread-ctn' => $notification->unread(),
                         ])
                     >
+                        @if ($notification->unread())
+                            <span class="fi-sr-only">
+                                {{ __('filament-notifications::database.modal.unread_label') }}
+                            </span>
+                        @endif
+
                         {{ $this->getNotification($notification)->inline() }}
                     </div>
                 @endforeach

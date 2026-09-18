@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Notificações',
 
+        'unread_label' => 'Notificação não lida',
+
         'actions' => [
 
             'clear' => [

@@ -136,24 +136,6 @@ By default, global search will return up to 50 results per resource. You can cus
 protected static int $globalSearchResultsLimit = 20;
 ```
 
-## Moving the global search to the sidebar
-
-By default, the global search field is positioned in the topbar. If the topbar is disabled, it is added to the sidebar.
-
-You can choose to always move it to the sidebar by passing a `position` argument to the `globalSearch()` method in the [configuration](../panel-configuration):
-
-```php
-use Filament\Enums\GlobalSearchPosition;
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->globalSearch(position: GlobalSearchPosition::Sidebar);
-}
-```
-
 ## Sorting global search results
 
 By default, global search results are ordered alphabetically by resource name. You can customize this order by setting the `$globalSearchSort` property on your resource:
@@ -203,6 +185,24 @@ protected static bool $isGloballySearchable = true;
 ```
 
 Resources that do not declare this property will be excluded from global search, even if they have a title attribute set.
+
+## Moving the global search to the sidebar
+
+By default, the global search field is positioned in the topbar. If the topbar is disabled, it is added to the sidebar.
+
+You can choose to always move it to the sidebar by passing a `position` argument to the `globalSearch()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Enums\GlobalSearchPosition;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearch(position: GlobalSearchPosition::Sidebar);
+}
+```
 
 ## Registering global search key bindings
 

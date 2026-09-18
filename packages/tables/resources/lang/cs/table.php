@@ -12,6 +12,10 @@ return [
                 'label' => 'Použít sloupce',
             ],
 
+            'reorder' => [
+                'label' => 'Přesunout sloupec',
+            ],
+
             'reset' => [
                 'label' => 'Resetovat sloupce',
             ],
@@ -26,9 +30,18 @@ return [
             'label' => 'Akce|Akce',
         ],
 
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Ano',
+                'false' => 'Ne',
+            ],
+
+        ],
+
         'select' => [
 
-            'loading_message' => 'Načítává se...',
+            'loading_message' => 'Načítá se...',
 
             'no_options_message' => 'Nejsou dostupné žádné možnosti.',
 
@@ -49,7 +62,7 @@ return [
                 'expand_list' => 'Zobrazit o :count více',
             ],
 
-            'more_list_items' => 'a 1 další|a :count další| a :count dalších',
+            'more_list_items' => 'a 1 další|a :count další|a :count dalších',
         ],
 
     ],
@@ -82,7 +95,7 @@ return [
 
         'subheadings' => [
             'all' => 'Všechny :label',
-            'group' => ':group shrnutí',
+            'group' => 'Shrnutí: :group',
             'page' => 'Tato stránka',
         ],
 
@@ -114,6 +127,10 @@ return [
             'label' => 'Změnit pořadí položek',
         ],
 
+        'reorder_record' => [
+            'label' => 'Přesunout položku :key',
+        ],
+
         'filter' => [
             'label' => 'Filtrovat',
         ],
@@ -130,13 +147,17 @@ return [
             'label' => 'Skrýt/zobrazit sloupce',
         ],
 
+        'toggle_record_content' => [
+            'label' => 'Rozbalit/sbalit položku :key',
+        ],
+
     ],
 
     'empty' => [
 
         'heading' => 'Žádné záznamy nenalezeny',
 
-        'description' => 'Začněte vytvořením :modelu.',
+        'description' => 'Začněte vytvořením záznamu (:model).',
 
     ],
 
@@ -218,7 +239,11 @@ return [
 
     ],
 
+    'loading' => 'Načítá se...',
+
     'reorder_indicator' => 'Vyberte a přesuňte položky.',
+
+    'result_count' => '{0} Žádné výsledky|{1} :count výsledek|[2,4] :count výsledky|[5,*] :count výsledků',
 
     'selection_indicator' => [
 
@@ -227,7 +252,7 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => 'Označit všechny :count',
+                'label' => 'Vybrat vše (:count)',
             ],
 
             'deselect_all' => [

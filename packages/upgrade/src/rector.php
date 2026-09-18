@@ -1,5 +1,6 @@
 <?php
 
+use Composer\InstalledVersions;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -26,6 +27,10 @@ use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Transform\Rector\Class_\AddInterfaceByTraitRector;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->skip([
+        dirname((new ReflectionClass(InstalledVersions::class))->getFileName(), 2),
+    ]);
+
     $rectorConfig->importNames();
     $rectorConfig->importShortClasses();
 
@@ -89,7 +94,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Component' => 'Filament\\Schemas\\Components\\Component',
             'Filament\\Forms\\Components\\Concerns\\BelongsToContainer' => 'Filament\\Schemas\\Components\\Concerns\\BelongsToContainer',
             'Filament\\Forms\\Components\\Concerns\\BelongsToModel' => 'Filament\\Schemas\\Components\\Concerns\\BelongsToModel',
-            'Filament\\Forms\\Components\\Concerns\\CanBeConcealed' => 'Filament\\Schemas\\Components\\Concerns\\CanBeConcealed',
             'Filament\\Forms\\Components\\Concerns\\CanBeDisabled' => 'Filament\\Schemas\\Components\\Concerns\\CanBeDisabled',
             'Filament\\Forms\\Components\\Concerns\\CanBeHidden' => 'Filament\\Schemas\\Components\\Concerns\\CanBeHidden',
             'Filament\\Forms\\Components\\Concerns\\CanBeRepeated' => 'Filament\\Schemas\\Components\\Concerns\\CanBeRepeated',

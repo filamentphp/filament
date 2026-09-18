@@ -10,6 +10,10 @@ return [
 
     ],
 
+    'filter' => [
+        'label' => 'Filtruj dane wykresu',
+    ],
+
     'filters' => [
 
         'actions' => [

@@ -418,10 +418,10 @@ describe('file attachment visibility', function (): void {
 });
 
 describe('height constraints', function (): void {
-    it('defaults `getMinHeight()` to `11.25rem`', function (): void {
+    it('defaults `getMinHeight()` to `10rem`', function (): void {
         $editor = MarkdownEditor::make('content');
 
-        expect($editor->getMinHeight())->toBe('11.25rem');
+        expect($editor->getMinHeight())->toBe('10rem');
     });
 
     it('can set `minHeight()`', function (): void {
@@ -438,11 +438,15 @@ describe('height constraints', function (): void {
         expect($editor->getMinHeight())->toBe('15rem');
     });
 
-    it('can clear `minHeight()` with `null`', function (): void {
+    it('can clear `minHeight()` and `maxHeight()` with `null`', function (): void {
         $editor = MarkdownEditor::make('content')
-            ->minHeight(null);
+            ->minHeight('20rem')
+            ->maxHeight('40rem')
+            ->minHeight(null)
+            ->maxHeight(null);
 
-        expect($editor->getMinHeight())->toBeNull();
+        expect($editor->getMinHeight())->toBeNull()
+            ->and($editor->getMaxHeight())->toBeNull();
     });
 
     it('returns `null` for `getMaxHeight()` by default', function (): void {
@@ -463,6 +467,40 @@ describe('height constraints', function (): void {
             ->maxHeight(static fn (): string => '50rem');
 
         expect($editor->getMaxHeight())->toBe('50rem');
+    });
+
+    it('applies `minHeight()` and `maxHeight()` to disabled content', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight('8rem')
+                    ->maxHeight('12rem'),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->toContain('--min-height: 8rem')
+            ->and($html)->toContain('--max-height: 12rem')
+            ->and($html)->toContain('tabindex="0"');
+    });
+
+    it('does not constrain disabled content after clearing `minHeight()` and `maxHeight()`', function (): void {
+        $html = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                MarkdownEditor::make('content')
+                    ->disabled()
+                    ->minHeight(null)
+                    ->maxHeight(null),
+            ])
+            ->getComponents()[0]
+            ->toHtml();
+
+        expect($html)->not->toContain('--min-height')
+            ->and($html)->not->toContain('--max-height')
+            ->and($html)->not->toContain('tabindex="0"');
     });
 });
 
@@ -648,12 +686,17 @@ it('can render `MarkdownEditor` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/markdown-editor-browser-test')
-            ->assertSee('Content')
+            ->assertAttribute(
+                '[data-testid="null-min-height-with-max-height-markdown-editor"] .CodeMirror-scroll',
+                'tabindex',
+                '0',
+            )
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         visit('/markdown-editor-browser-test')
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

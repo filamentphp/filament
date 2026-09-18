@@ -22,13 +22,15 @@ return [
 
                     'invalid' => 'Girmiş olduğunuz kod geçersiz.',
 
+                    'rate_limited' => 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.',
+
                 ],
 
             ],
 
             'password' => [
 
-                'label' => 'Veya, geçerli şifrenizi girin',
+                'label' => 'Mevcut şifrenizi girin',
 
                 'validation_attribute' => 'şifre',
 

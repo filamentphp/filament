@@ -37,6 +37,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     protected bool | Closure $isEmail = false;
 
+    protected bool | Closure $isInteger = false;
+
     protected bool | Closure $isNumeric = false;
 
     protected bool | Closure $isPassword = false;
@@ -85,6 +87,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     public function integer(bool | Closure $condition = true): static
     {
+        $this->isInteger = $condition;
+
         $this->numeric($condition);
         $this->inputMode(static fn (): ?string => $condition ? 'numeric' : null);
         $this->step(static fn (): ?int => $condition ? 1 : null);
@@ -274,6 +278,11 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return (bool) $this->evaluate($this->isEmail);
     }
 
+    public function isInteger(): bool
+    {
+        return (bool) $this->evaluate($this->isInteger);
+    }
+
     public function isNumeric(): bool
     {
         return (bool) $this->evaluate($this->isNumeric);
@@ -302,7 +311,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return [
             ...parent::getDefaultStateCasts(),
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
-            ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true])] : []),
+            ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true, 'isInteger' => $this->isInteger()])] : []),
         ];
     }
 
@@ -311,7 +320,6 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $extraAlpineAttributes = $this->getExtraAlpineAttributes();
         $extraAttributeBag = $this->getExtraAttributeBag();
         $id = $this->getId();
-        $isConcealed = $this->isConcealed();
         $isDisabled = $this->isDisabled();
         $isPasswordRevealable = $this->isPasswordRevealable();
         $isPrefixInline = $this->isPrefixInline();
@@ -356,13 +364,13 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
                 'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                 'inputmode' => $this->getInputMode(),
                 'list' => ($datalistOptions = $this->getDatalistOptions()) ? $id . '-list' : null,
-                'max' => (! $isConcealed) ? $this->getMaxValue() : null,
-                'maxlength' => (! $isConcealed) ? $this->getMaxLength() : null,
-                'min' => (! $isConcealed) ? $this->getMinValue() : null,
-                'minlength' => (! $isConcealed) ? $this->getMinLength() : null,
+                'max' => $this->getMaxValue(),
+                'maxlength' => $this->getMaxLength(),
+                'min' => $this->getMinValue(),
+                'minlength' => $this->getMinLength(),
                 'placeholder' => filled($placeholder) ? e($placeholder) : null,
                 'readonly' => $this->isReadOnly(),
-                'required' => $this->isRequired() && (! $isConcealed),
+                'required' => $this->isRequired(),
                 'step' => $this->getStep(),
                 'type' => $type,
                 $this->applyStateBindingModifiers('wire:model') => $statePath,

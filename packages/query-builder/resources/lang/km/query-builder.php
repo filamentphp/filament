@@ -14,8 +14,12 @@ return [
 
             'label' => 'ក្រុម',
 
+            'group' => [
+                'label' => 'ក្រុម',
+            ],
+
             'block' => [
-                'label' => 'ការផ្តាច់ខ្លួន (ឬ)',
+                'label' => 'លក្ខខណ្ឌ "ឬ"',
                 'or' => 'ឬ',
             ],
 
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(មិន​មាន​ច្បាប់)',
+
+    'max_rules_reached_tooltip' => 'អ្នកបានឈានដល់ចំនួនច្បាប់អតិបរមា :count ហើយ។',
 
     'item_separators' => [
         'and' => 'និង',
@@ -474,13 +480,13 @@ return [
             'contains' => [
 
                 'label' => [
-                    'direct' => 'មាន',
-                    'inverse' => 'មិនមែន',
+                    'direct' => 'មានផ្ទុក',
+                    'inverse' => 'មិនមានផ្ទុក',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute មាន :text',
-                    'inverse' => ':attribute មិនមែន :text',
+                    'direct' => ':attribute មានផ្ទុក :text',
+                    'inverse' => ':attribute មិនមានផ្ទុក :text',
                 ],
 
             ],
@@ -546,7 +552,7 @@ return [
         ],
 
         'add_rule_group' => [
-            'label' => 'បន្ថែមក្រុមច្បាប់',
+            'label' => 'បន្ថែមលក្ខខណ្ឌ "ឬ"',
         ],
 
     ],

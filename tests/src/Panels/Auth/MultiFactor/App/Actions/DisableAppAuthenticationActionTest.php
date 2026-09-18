@@ -46,7 +46,10 @@ describe('disabling authentication', function (): void {
             ->callAction(
                 TestAction::make('disableAppAuthentication')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => $appAuthentication->getCurrentCode($user)],
+                [
+                    'code' => $appAuthentication->getCurrentCode($user),
+                    'password' => 'password',
+                ],
             )
             ->assertHasNoFormErrors();
 
@@ -79,6 +82,7 @@ describe('disabling authentication', function (): void {
             ->callAction(TestAction::make('useRecoveryCode')
                 ->schemaComponent('code'))
             ->fillForm([
+                'password' => 'password',
                 'recoveryCode' => Arr::first($this->recoveryCodes),
             ])
             ->callMountedAction()
@@ -92,6 +96,29 @@ describe('disabling authentication', function (): void {
 
         expect($user->getAppAuthenticationRecoveryCodes())
             ->toBeNull();
+    });
+
+    it('can disable authentication with a one-time code after enabling the recovery code field', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        // Having enabled the recovery code field, the user can still change their mind and confirm with
+        // their one-time code, leaving the recovery code blank.
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm([
+                'code' => $appAuthentication->getCurrentCode($user),
+                'password' => 'password',
+            ])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
     });
 
     it('will not disable authentication when an invalid code is used', function (): void {
@@ -113,7 +140,10 @@ describe('disabling authentication', function (): void {
             ->callAction(
                 TestAction::make('disableAppAuthentication')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => ($appAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000'],
+                [
+                    'code' => ($appAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000',
+                    'password' => 'password',
+                ],
             )
             ->assertHasFormErrors();
 
@@ -130,6 +160,101 @@ describe('disabling authentication', function (): void {
 });
 
 describe('validation', function (): void {
+    test('the user\'s current password is required', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['code' => $appAuthentication->getCurrentCode($user)],
+            )
+            ->assertHasFormErrors([
+                'password' => 'required',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
+
+    test('the user\'s current password must be valid', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                [
+                    'code' => $appAuthentication->getCurrentCode($user),
+                    'password' => 'incorrect-password',
+                ],
+            )
+            ->assertHasFormErrors([
+                'password' => 'current_password',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
+
+    test('a recovery code is not consumed when the user\'s current password is invalid', function (): void {
+        $user = auth()->user();
+
+        $recoveryCode = Arr::first($this->recoveryCodes);
+
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm([
+                'password' => 'incorrect-password',
+                'recoveryCode' => $recoveryCode,
+            ])
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'password' => 'current_password',
+            ]);
+
+        expect($user->fresh()->getAppAuthenticationRecoveryCodes())
+            ->toHaveCount(8);
+
+        $livewire
+            ->fillForm([
+                'password' => 'password',
+                'recoveryCode' => $recoveryCode,
+            ])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
+
+        expect($user->fresh()->getAppAuthenticationSecret())
+            ->toBeEmpty();
+    });
+
+    test('a one-time code is still required when the recovery code field is enabled but left blank', function (): void {
+        $user = auth()->user();
+
+        // Enabling the recovery code field does not force the user down the recovery path: with the
+        // recovery code left blank the one-time code is still required, so it can be used instead.
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm(['password' => 'password'])
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
+
     test('codes are required without a recovery code', function (): void {
         $user = auth()->user();
 
@@ -147,7 +272,10 @@ describe('validation', function (): void {
             ->callAction(
                 TestAction::make('disableAppAuthentication')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => ''],
+                [
+                    'code' => '',
+                    'password' => 'password',
+                ],
             )
             ->assertHasFormErrors([
                 'code' => 'required',
@@ -183,7 +311,10 @@ describe('validation', function (): void {
             ->callAction(
                 TestAction::make('disableAppAuthentication')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => Str::limit($appAuthentication->getCurrentCode($user), limit: 5, end: '')],
+                [
+                    'code' => Str::limit($appAuthentication->getCurrentCode($user), limit: 5, end: ''),
+                    'password' => 'password',
+                ],
             )
             ->assertHasFormErrors([
                 'code' => 'digits',
@@ -202,6 +333,62 @@ describe('validation', function (): void {
 });
 
 describe('recovery code failures', function (): void {
+    it('will not disable authentication when a recovery code is submitted without enabling the recovery code field', function (string $recoveryCode): void {
+        $user = auth()->user();
+
+        // The recovery code field is hidden until the user chooses to use a recovery code, so a value
+        // present in the field while it is hidden must be ignored and the one-time code remains required.
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                [
+                    'password' => 'password',
+                    'recoveryCode' => $recoveryCode,
+                ],
+            )
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    })->with([
+        'an arbitrary string' => 'invalid-recovery-code',
+        'a value that is not blank but resembles a falsy value' => '0',
+        'a single character' => 'x',
+    ]);
+
+    it('will not disable authentication with a valid recovery code that is submitted without enabling the recovery code field', function (): void {
+        $user = auth()->user();
+
+        // A valid recovery code should only be honored once the user has enabled the recovery code field;
+        // while it is hidden the code is neither validated nor consumed.
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                [
+                    'password' => 'password',
+                    'recoveryCode' => Arr::first($this->recoveryCodes),
+                ],
+            )
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    });
+
     it('will not disable authentication when an invalid recovery code is used', function (): void {
         $user = auth()->user();
 
@@ -221,6 +408,7 @@ describe('recovery code failures', function (): void {
             ->callAction(TestAction::make('useRecoveryCode')
                 ->schemaComponent('code'))
             ->fillForm([
+                'password' => 'password',
                 'recoveryCode' => 'invalid-recovery-code',
             ])
             ->callMountedAction()
@@ -257,7 +445,10 @@ describe('recovery code failures', function (): void {
             ->callAction(
                 TestAction::make('disableAppAuthentication')
                     ->schemaComponent('app', schema: 'content'),
-                ['recoveryCode' => Arr::first($this->recoveryCodes)],
+                [
+                    'password' => 'password',
+                    'recoveryCode' => Arr::first($this->recoveryCodes),
+                ],
             )
             ->assertHasFormErrors();
 
@@ -274,6 +465,42 @@ describe('recovery code failures', function (): void {
 });
 
 describe('throttling', function (): void {
+    it('cannot bypass password throttling by changing action arguments', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        foreach (range(1, 5) as $attempt) {
+            livewire(EditProfile::class)
+                ->callAction(
+                    TestAction::make('disableAppAuthentication')
+                        ->schemaComponent('app', schema: 'content')
+                        ->arguments(['nonce' => $attempt]),
+                    ['password' => "incorrect-password-{$attempt}"],
+                )
+                ->assertHasFormErrors([
+                    'password' => 'current_password',
+                ]);
+        }
+
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content')
+                    ->arguments(['nonce' => 6]),
+                [
+                    'code' => $appAuthentication->getCurrentCode($user),
+                    'password' => 'password',
+                ],
+            )
+            ->assertHasFormErrors([
+                'password' => __('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.messages.rate_limited'),
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
+
     it('can throttle code verification attempts per user', function (): void {
         $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
@@ -291,9 +518,14 @@ describe('throttling', function (): void {
             ->callAction(
                 TestAction::make('disableAppAuthentication')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => $appAuthentication->getCurrentCode($user)],
+                [
+                    'code' => $appAuthentication->getCurrentCode($user),
+                    'password' => 'password',
+                ],
             )
-            ->assertHasFormErrors(['code']);
+            ->assertHasFormErrors([
+                'password' => __('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.messages.rate_limited'),
+            ]);
 
         expect(filled($user->getAppAuthenticationSecret()))
             ->toBeTrue();
@@ -316,10 +548,13 @@ describe('throttling', function (): void {
             ->callAction(TestAction::make('useRecoveryCode')
                 ->schemaComponent('code'))
             ->fillForm([
+                'password' => 'password',
                 'recoveryCode' => Arr::first($this->recoveryCodes),
             ])
             ->callMountedAction()
-            ->assertHasFormErrors(['recoveryCode']);
+            ->assertHasFormErrors([
+                'password' => __('filament-panels::auth/multi-factor/app/actions/disable.modal.form.code.messages.rate_limited'),
+            ]);
 
         expect(filled($user->getAppAuthenticationSecret()))
             ->toBeTrue();

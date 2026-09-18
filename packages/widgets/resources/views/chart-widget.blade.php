@@ -1,6 +1,8 @@
 @php
+    use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Filament\Widgets\View\Components\ChartWidgetComponent;
+    use Illuminate\Contracts\Support\Htmlable;
 
     $color = $this->getColor();
     $heading = $this->getHeading();
@@ -11,6 +13,13 @@
     $maxHeight = $this->getMaxHeight();
     $hasMaxHeight = filled($maxHeight) && $maxHeight !== '100%';
     $isEmpty = $this->isEmpty();
+
+    // The chart paints onto a bare `<canvas>`, which exposes no accessible name, so build a text
+    // alternative from the widget's heading and description (WCAG 1.1.1) for `role="img"` + `aria-label`.
+    $chartAccessibleLabel = trim(implode('. ', array_filter([
+        $heading instanceof Htmlable ? strip_tags($heading->toHtml()) : $heading,
+        $description instanceof Htmlable ? strip_tags($description->toHtml()) : $description,
+    ], fn ($value): bool => filled($value))));
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -28,6 +37,7 @@
                         class="fi-wi-chart-filter"
                     >
                         <x-filament::input.select
+                            :aria-label="__('filament-widgets::chart.filter.label')"
                             inline-prefix
                             wire:model.live="filter"
                         >
@@ -79,7 +89,7 @@
         >
             <div
                 x-load
-                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                x-load-src="{{ FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
                 data-chart-type="{{ $type }}"
                 x-data="chart({
@@ -99,6 +109,10 @@
             >
                 <canvas
                     x-ref="canvas"
+                    @if (filled($chartAccessibleLabel))
+                        role="img"
+                        aria-label="{{ $chartAccessibleLabel }}"
+                    @endif
                     @style([
                         'width: 100%',
                         'height: 100%; max-height: 100%' => ! $hasMaxHeight,
@@ -106,24 +120,51 @@
                     ])
                 ></canvas>
 
+                {{--
+                    Chart.js paints the chart onto the canvas, where a stylesheet cannot reach it. These empty
+                    elements carry the colors it should use, so that a theme can set them with an ordinary
+                    `color` declaration and they follow light and dark mode like any other element.
+                --}}
                 <span
+                    aria-hidden="true"
                     x-ref="backgroundColorElement"
                     class="fi-wi-chart-bg-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="borderColorElement"
                     class="fi-wi-chart-border-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="gridColorElement"
                     class="fi-wi-chart-grid-color"
                 ></span>
 
                 <span
+                    aria-hidden="true"
                     x-ref="textColorElement"
                     class="fi-wi-chart-text-color"
+                ></span>
+
+                <span
+                    aria-hidden="true"
+                    x-ref="tooltipBackgroundColorElement"
+                    class="fi-wi-chart-tooltip-bg-color"
+                ></span>
+
+                <span
+                    aria-hidden="true"
+                    x-ref="tooltipTextColorElement"
+                    class="fi-wi-chart-tooltip-text-color"
+                ></span>
+
+                <span
+                    aria-hidden="true"
+                    x-ref="tooltipBorderColorElement"
+                    class="fi-wi-chart-tooltip-border-color"
                 ></span>
             </div>
         </div>

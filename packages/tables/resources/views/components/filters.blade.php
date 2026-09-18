@@ -1,13 +1,16 @@
-@php
-    use Filament\Tables\Enums\FiltersResetActionPosition;
-@endphp
-
 @props([
     'applyAction',
     'form',
     'headingTag' => 'h3',
-    'resetActionPosition' => FiltersResetActionPosition::Header,
+    'resetActionPosition' => null,
 ])
+
+@php
+    use Filament\Support\View\ComponentAttributeBag;
+    use Filament\Tables\Enums\FiltersResetActionPosition;
+
+    $resetActionPosition ??= FiltersResetActionPosition::Header;
+@endphp
 
 <div {{ $attributes->class(['fi-ta-filters']) }}>
     <div class="fi-ta-filters-header">
@@ -20,7 +23,7 @@
                 <x-filament::link
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
-                            new \Filament\Support\View\ComponentAttributeBag([
+                            new ComponentAttributeBag([
                                 'color' => 'danger',
                                 'tag' => 'button',
                                 'wire:click' => 'resetTableFiltersForm',

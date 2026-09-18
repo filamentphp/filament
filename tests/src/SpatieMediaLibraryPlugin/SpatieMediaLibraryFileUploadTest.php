@@ -2,10 +2,12 @@
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire as LivewireFixture;
 use Filament\Tests\Fixtures\Livewire\SpatieMediaLibraryFileUploadForm;
 use Filament\Tests\Fixtures\Models\MediaPost;
 use Filament\Tests\TestCase;
@@ -394,6 +396,22 @@ describe('integration', function (): void {
         expect($record->getMedia('avatars')->first()->file_name)->toEndWith('.jpg');
     });
 
+    it('does not reject the record\'s own media when `preventFilePathTampering()` is enabled globally', function (): void {
+        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
+
+        $record = MediaPost::factory()->create();
+
+        $record->addMediaFromString('test-content')
+            ->usingFileName('avatar.jpg')
+            ->toMediaCollection('avatars');
+
+        livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        expect($record->fresh()->getMedia('avatars'))->toHaveCount(1);
+    });
+
     it('can delete abandoned media on save', function (): void {
         $record = MediaPost::factory()->create();
 
@@ -507,6 +525,203 @@ describe('integration', function (): void {
         expect($doc1->fresh()->order_column)->toBe($originalDocumentsOrder[$doc1->uuid]);
         expect($doc2->fresh()->order_column)->toBe($originalDocumentsOrder[$doc2->uuid]);
     });
+
+    it('does not attach another record\'s media when its UUID is submitted', function (): void {
+        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
+
+        $recordA = MediaPost::factory()->create();
+        $recordB = MediaPost::factory()->create();
+
+        $bMedia = $recordB->addMediaFromString('b1')
+            ->usingFileName('b1.jpg')
+            ->toMediaCollection('avatars');
+
+        livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
+            ->set('data.avatar', [$bMedia->uuid => $bMedia->uuid])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        // The submitted UUID belongs to another record, so it must not be attached
+        // here, and the other record must keep its media intact.
+        expect($recordA->fresh()->getMedia('avatars'))->toHaveCount(0);
+        expect($recordB->fresh()->getMedia('avatars')->pluck('uuid')->all())->toBe([$bMedia->uuid]);
+    });
+
+    it('does not expose another record\'s media through the field when its UUID is submitted', function (): void {
+        FileUpload::configureUsing(fn (FileUpload $component): FileUpload => $component->preventFilePathTampering());
+
+        $recordA = MediaPost::factory()->create();
+        $recordB = MediaPost::factory()->create();
+
+        $bMedia = $recordB->addMediaFromString('b1')
+            ->usingFileName('b1.jpg')
+            ->toMediaCollection('avatars');
+
+        $component = livewire(SpatieMediaLibraryFileUploadForm::class, ['record' => $recordA->fresh()])
+            ->set('data.avatar', [$bMedia->uuid => $bMedia->uuid])
+            ->instance();
+
+        $field = $component->form->getComponents()[0];
+        $uploadedFiles = $field->getUploadedFiles();
+
+        // Resolving the file is scoped to the current record's media, so the other
+        // record's file name and URL are never resolved.
+        expect($uploadedFiles[$bMedia->uuid]['name'] ?? null)->toBeNull();
+        expect($uploadedFiles[$bMedia->uuid]['url'] ?? null)->toBeNull();
+    });
+});
+
+describe('reordering', function (): void {
+    beforeEach(function (): void {
+        Storage::fake('public');
+    });
+
+    it('can reorder existing media', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $firstMedia = $record->addMediaFromString('first-file')
+            ->usingFileName('first.jpg')
+            ->toMediaCollection('avatars');
+
+        $secondMedia = $record->addMediaFromString('second-file')
+            ->usingFileName('second.jpg')
+            ->toMediaCollection('avatars');
+
+        livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->set('data.avatar', [
+                $secondMedia->uuid => $secondMedia->uuid,
+                $firstMedia->uuid => $firstMedia->uuid,
+            ])
+            ->call('save');
+
+        expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
+            ->toBe([$secondMedia->uuid, $firstMedia->uuid]);
+    });
+
+    it('keeps the stored media UUID in the state of a `reorderable()` field after saving an upload', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $livewireComponent = livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record])
+            ->fillForm([
+                'avatar' => [$file],
+            ])
+            ->call('save');
+
+        $record->refresh();
+
+        expect($record->getMedia('avatars'))->toHaveCount(1);
+
+        $mediaUuid = $record->getMedia('avatars')->first()->uuid;
+
+        $livewireComponent->assertFormSet(function (array $state) use ($mediaUuid): array {
+            expect($state['avatar'])->toBeArray();
+            expect(array_values($state['avatar']))->toBe([$mediaUuid]);
+
+            return [];
+        });
+    });
+
+    it('replaces a consumed `TemporaryUploadedFile` with the stored media UUID in state when uploading alongside existing media in a `reorderable()` field', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $existingMedia = $record->addMediaFromString('existing-file')
+            ->usingFileName('existing.jpg')
+            ->toMediaCollection('avatars');
+
+        $file = UploadedFile::fake()->image('new-avatar.jpg');
+
+        $livewireComponent = livewire(ReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record->fresh()])
+            ->fillForm([
+                'avatar' => [
+                    $existingMedia->uuid => $existingMedia->uuid,
+                    'new-file-key' => $file,
+                ],
+            ])
+            ->call('save');
+
+        $record->refresh();
+
+        expect($record->getMedia('avatars'))->toHaveCount(2);
+
+        $newMediaUuid = $record->getMedia('avatars')
+            ->pluck('uuid')
+            ->first(static fn (string $uuid): bool => $uuid !== $existingMedia->uuid);
+
+        $livewireComponent->assertFormSet(function (array $state) use ($existingMedia, $newMediaUuid): array {
+            expect($state['avatar'])->toBeArray();
+            expect(array_values($state['avatar']))->toEqualCanonicalizing([$existingMedia->uuid, $newMediaUuid]);
+
+            return [];
+        });
+    });
+
+    // In a full form request, `Schema::getState()` reloads the state from the
+    // relationship immediately after saving, which hides any state corruption
+    // caused by the reorder callback. A `Repeater` validates its items against
+    // the state before any reload happens, so the state must already be correct
+    // when `saveUploadedFiles()` returns. This test asserts at that point.
+    it('keeps the stored media UUID in state when `saveUploadedFiles()` runs on a `reorderable()` field with a newly uploaded file', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $existingMedia = $record->addMediaFromString('existing-file')
+            ->usingFileName('existing.jpg')
+            ->toMediaCollection('avatars');
+
+        Storage::fake('tmp-for-tests');
+
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->image('new-avatar.jpg'),
+        );
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", 'new-file-content');
+
+        $temporaryFile = TemporaryUploadedFile::createFromLivewire($temporaryFileName);
+
+        $field = SpatieMediaLibraryFileUpload::make('avatar')
+            ->collection('avatars')
+            ->multiple()
+            ->reorderable()
+            ->container(
+                Schema::make(LivewireFixture::make())
+                    ->statePath('data')
+                    ->model($record),
+            );
+
+        $field->rawState([
+            $existingMedia->uuid => $existingMedia->uuid,
+            'new-file-key' => $temporaryFile,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        $record->refresh();
+
+        expect($record->getMedia('avatars'))->toHaveCount(2);
+
+        $newMediaUuid = $record->getMedia('avatars')
+            ->pluck('uuid')
+            ->first(static fn (string $uuid): bool => $uuid !== $existingMedia->uuid);
+
+        expect(array_values($field->getRawState()))->toBe([$existingMedia->uuid, $newMediaUuid]);
+    });
+
+    it('can save a single `reorderable()` file upload', function (): void {
+        $record = MediaPost::factory()->create();
+
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        livewire(SingleReorderableSpatieMediaLibraryFileUploadForm::class, ['record' => $record])
+            ->fillForm([
+                'avatar' => [$file],
+            ])
+            ->call('save');
+
+        $record->refresh();
+
+        expect($record->getMedia('avatars'))->toHaveCount(1);
+        expect($record->getMedia('avatars')->first()->file_name)->toEndWith('.jpg');
+    });
 });
 
 class ReorderableSpatieMediaLibraryFileUploadForm extends Component implements HasActions, HasSchemas
@@ -547,5 +762,20 @@ class ReorderableSpatieMediaLibraryFileUploadForm extends Component implements H
     public function render(): View
     {
         return view('livewire.form');
+    }
+}
+
+class SingleReorderableSpatieMediaLibraryFileUploadForm extends ReorderableSpatieMediaLibraryFileUploadForm
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->collection('avatars')
+                    ->reorderable(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
     }
 }

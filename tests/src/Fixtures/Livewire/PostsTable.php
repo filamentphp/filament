@@ -26,6 +26,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class PostsTable extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
@@ -33,6 +34,11 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
     use InteractsWithActions;
     use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
+
+    /**
+     * @var array<int>
+     */
+    public static array $authorizedRecordKeys = [];
 
     public function table(Table $table): Table
     {
@@ -400,6 +406,9 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->color('primary'),
                 BulkAction::make('exists'),
                 BulkAction::make('existsInOrder'),
+                BulkAction::make('individuallyAuthorized')
+                    ->authorizeIndividualRecords(fn (Post $record) => in_array($record->getKey(), static::$authorizedRecordKeys, true))
+                    ->action(fn (Collection $records) => $this->dispatch('individually-authorized-processed', keys: $records->pluck('id')->all())),
             ])
             ->emptyStateActions([
                 Action::make('emptyExists'),

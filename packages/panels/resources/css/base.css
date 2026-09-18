@@ -2,7 +2,12 @@
     color-scheme: dark;
 }
 
-/* When scrolling to validation error, do not hide element behind the top bar */
-[data-field-wrapper] {
-    scroll-margin-top: 8rem;
+/* When scrolling to a validation error, do not hide the element behind the top bar.
+   Server-side validation errors scroll to the wrapper, while native browser validation
+   scrolls to the focused control itself, which can be any focusable descendant, and
+   `scroll-margin` is not inherited. The clearance is the topbar height plus breathing
+   room, so it tracks a customized topbar. */
+[data-field-wrapper],
+[data-field-wrapper] * {
+    scroll-margin-top: calc(var(--topbar-height) + 4rem);
 }

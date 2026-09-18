@@ -352,6 +352,8 @@ trait HasComponents
             return $this;
         }
 
+        $this->modelResources = [];
+
         $this->resourceDirectories[] = $in;
         $this->resourceNamespaces[] = $for;
 
@@ -621,7 +623,10 @@ trait HasComponents
 
             $resourceClasses = array_unique([
                 ...$this->getResources(),
-                ...array_keys($this->resourceConfigurations),
+                ...array_map(
+                    static fn (ResourceConfiguration $configuration): string => $configuration->getResource(),
+                    $this->getResourceConfigurations(),
+                ),
             ]);
 
             foreach ($resourceClasses as $resource) {

@@ -188,7 +188,7 @@ export default ({ livewireId }) => ({
         requestAnimationFrame(() =>
             requestAnimationFrame(() =>
                 this.$nextTick(() => {
-                    previouslyFocusedElement.focus({ preventScroll: false })
+                    previouslyFocusedElement.focus({ preventScroll: true })
                 }),
             ),
         )

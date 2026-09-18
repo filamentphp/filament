@@ -54,6 +54,18 @@ return [
                 'title' => 'Einträge wiederhergestellt',
             ],
 
+            'restored_partial' => [
+                'title' => ':count von :total wiederhergestellt',
+                'missing_authorization_failure_message' => 'Sie sind nicht berechtigt, :count wiederherzustellen.',
+                'missing_processing_failure_message' => ':count konnte nicht wiederhergestellt werden.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Wiederherstellen fehlgeschlagen',
+                'missing_authorization_failure_message' => 'Sie sind nicht berechtigt, :count wiederherzustellen.',
+                'missing_processing_failure_message' => ':count konnte nicht wiederhergestellt werden.',
+            ],
+
         ],
 
     ],

@@ -22,6 +22,10 @@ trait HasExtraSidebarAttributes
         // pass unsanitized user input as attribute names or values.
 
         if ($merge) {
+            if (($attributes instanceof Closure) && in_array($attributes, $this->extraSidebarAttributes, strict: true)) {
+                return $this;
+            }
+
             $this->extraSidebarAttributes[] = $attributes;
         } else {
             $this->extraSidebarAttributes = [$attributes];

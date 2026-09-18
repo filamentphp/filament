@@ -1,8 +1,3 @@
-@php
-    use Filament\Support\View\Components\ToggleComponent;
-    use Illuminate\Support\Arr;
-@endphp
-
 @props([
     'state',
     'offColor' => 'gray',
@@ -11,9 +6,15 @@
     'onIcon' => null,
 ])
 
+@php
+    use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\Components\ToggleComponent;
+    use Illuminate\Support\Arr;
+@endphp
+
 <button
     x-data="{ state: {{ $state }} }"
-    x-bind:aria-checked="state?.toString()"
+    x-bind:aria-checked="state ? 'true' : 'false'"
     x-on:click="state = ! state"
     x-bind:class="
         state ? @js(Arr::toCssClasses([
@@ -30,6 +31,7 @@
     {{
         $attributes
             ->merge([
+                'aria-checked' => $state ? 'true' : 'false',
                 'role' => 'switch',
                 'type' => 'button',
             ], escape: false)
@@ -38,11 +40,11 @@
 >
     <div>
         <div aria-hidden="true">
-            {{ \Filament\Support\generate_icon_html($offIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
+            {{ \Filament\Support\generate_icon_html($offIcon, size: IconSize::ExtraSmall) }}
         </div>
 
         <div aria-hidden="true">
-            {{ \Filament\Support\generate_icon_html($onIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
+            {{ \Filament\Support\generate_icon_html($onIcon, size: IconSize::ExtraSmall) }}
         </div>
     </div>
 </button>
@@ -60,7 +62,7 @@
             <div aria-hidden="true"></div>
 
             <div aria-hidden="true">
-                {{ \Filament\Support\generate_icon_html($onIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
+                {{ \Filament\Support\generate_icon_html($onIcon, size: IconSize::ExtraSmall) }}
             </div>
         </div>
     </div>

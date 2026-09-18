@@ -120,7 +120,7 @@ trait InteractsWithForms /** @phpstan-ignore trait.unused */
     /**
      * @return array<string, Schema>
      *
-     *@deprecated Use `getCachedSchemas()` instead.
+     * @deprecated Use `getCachedSchemas()` instead.
      */
     public function getCachedForms(): array
     {

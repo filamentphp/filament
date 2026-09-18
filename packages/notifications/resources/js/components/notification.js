@@ -126,6 +126,19 @@ export default (Alpine) => {
                                         return
                                     }
 
+                                    // Honor `prefers-reduced-motion`: `element.animate()`
+                                    // (the Web Animations API) is not covered by the CSS
+                                    // reduced-motion reset, so skip the FLIP reposition
+                                    // entirely — the element is already at its final
+                                    // position after the morph.
+                                    if (
+                                        window.matchMedia(
+                                            '(prefers-reduced-motion: reduce)',
+                                        ).matches
+                                    ) {
+                                        return
+                                    }
+
                                     this.$el.animate(
                                         [
                                             {

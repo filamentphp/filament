@@ -7,7 +7,6 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
-use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -32,7 +31,7 @@ use function Filament\Forms\array_move_before;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_loading_indicator_html;
 
-class Builder extends Field implements CanConcealComponents, HasEmbeddedView, HasExtraItemActions
+class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
@@ -109,9 +108,9 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
     protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
     /**
-     * @var array<Schema> | null
+     * @var array<?string> | null
      */
-    protected ?array $cachedItems = null;
+    protected ?array $cachedItemsRawStateStructure = null;
 
     protected function setUp(): void
     {
@@ -705,7 +704,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
                 $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->icon(Heroicon::Cog6Tooth)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EDIT) ?? Heroicon::Cog6Tooth)
             ->size(Size::Small)
             ->visible(fn (Builder $component): bool => (! $component->isDisabled()) && $component->hasBlockPreviews());
 
@@ -927,9 +926,17 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
      */
     public function getItems(): array
     {
-        if ($this->cachedItems !== null) {
-            return $this->cachedItems;
-        }
+        return $this->getCachedDefaultChildSchemas();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $rawState = $this->getRawState();
+
+        $this->cachedItemsRawStateStructure = $this->getRawStateStructure($rawState);
 
         $blocks = [];
 
@@ -937,7 +944,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             $blocks[$block->getName()] = $block;
         }
 
-        return $this->cachedItems = collect($this->getRawState())
+        return collect($rawState)
             ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && array_key_exists($itemData['type'], $blocks))
             ->map(
                 fn (array $itemData, $itemIndex): Schema => $blocks[$itemData['type']]
@@ -951,18 +958,26 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
     }
 
     /**
-     * @return array<Schema>
+     * Item schemas only depend on the raw state's structure - the item keys, their
+     * order, and each item's block type - since fields inside the items read their
+     * values from the live raw state. Comparing a structural fingerprint instead of
+     * the item values keeps this check cheap when it runs often, and avoids
+     * rebuilding the item schemas every time a value inside an item changes.
      */
-    public function getDefaultChildSchemas(): array
+    protected function areCachedDefaultChildSchemasFresh(): bool
     {
-        return $this->getItems();
+        return $this->cachedItemsRawStateStructure === $this->getRawStateStructure($this->getRawState());
     }
 
-    public function clearCachedChildSchemas(): void
+    /**
+     * @return array<?string>
+     */
+    protected function getRawStateStructure(mixed $rawState): array
     {
-        parent::clearCachedChildSchemas();
-
-        $this->cachedItems = null;
+        return array_map(
+            static fn (mixed $itemData): ?string => is_array($itemData) ? ($itemData['type'] ?? null) : null,
+            is_array($rawState) ? $rawState : [],
+        );
     }
 
     public function getAddBetweenActionLabel(): string
@@ -1046,11 +1061,6 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
     public function hasInteractiveBlockPreviews(): bool
     {
         return (bool) $this->evaluate($this->hasInteractiveBlockPreviews);
-    }
-
-    public function canConcealComponents(): bool
-    {
-        return $this->isCollapsible();
     }
 
     public function getLabelBetweenItems(): ?string
@@ -1317,7 +1327,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             ->class([
                 'fi-dropdown',
                 'fi-fo-builder-block-picker',
-                $alignmentClass => filled($alignmentClass),
+                $alignmentClass,
             ]);
 
         $panelAttributes = (new FilamentComponentAttributeBag)
@@ -1330,7 +1340,7 @@ class Builder extends Field implements CanConcealComponents, HasEmbeddedView, Ha
             ], escape: false)
             ->class([
                 'fi-dropdown-panel',
-                $widthClass => filled($widthClass),
+                $widthClass,
             ]);
 
         $loadingDelay = config('filament.livewire_loading_delay', 'default');

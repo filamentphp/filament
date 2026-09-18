@@ -1,6 +1,10 @@
 .fi-sc {
     @apply text-sm;
 
+    &.fi-sc-loading {
+        @apply grid min-h-32 place-items-center text-gray-400 dark:text-gray-500;
+    }
+
     &.fi-inline {
         @apply flex grow flex-wrap items-center;
 
@@ -109,4 +113,13 @@
             @apply h-full;
         }
     }
+}
+
+/* The `<fieldset>` around a component with a client-side visibility condition exists to
+   be `disabled` while the component is hidden, not to group controls, so it must not
+   affect the layout like a fieldset. */
+fieldset.fi-sc-visibility-fieldset {
+    @apply m-0 min-w-0 border-0 p-0;
+
+    min-inline-size: 0;
 }

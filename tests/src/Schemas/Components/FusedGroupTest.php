@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -79,6 +80,18 @@ describe('required detection', function (): void {
     });
 });
 
+it('uses the plain field wrapper for a supplied `Schema`', function (): void {
+    $childSchema = Schema::make();
+
+    $group = FusedGroup::make()
+        ->schema($childSchema)
+        ->container(Schema::make(Livewire::make()));
+
+    expect($group->getChildSchema())
+        ->toBe($childSchema)
+        ->getCustomFieldWrapperView()->toBe('filament-forms::plain-field-wrapper');
+});
+
 describe('rendering', function (): void {
     it('can render', function (): void {
         livewire(RenderFusedGroup::class)->assertSuccessful();
@@ -121,6 +134,38 @@ describe('rendering', function (): void {
 
             expect($html)->toContain('fi-fo-field-wrp-error-message');
             expect($html)->not->toContain('fi-fo-field-wrp-error-list');
+        } finally {
+            view()->share('errors', new ViewErrorBag);
+        }
+    });
+
+    it('renders every per-element error from a child using `showAllValidationMessages()`', function (): void {
+        $errors = new ViewErrorBag;
+        $errors->put('default', new MessageBag([
+            'data.choices.0' => ['The first choice is invalid.'],
+            'data.choices.1' => ['The second choice is invalid.'],
+        ]));
+
+        view()->share('errors', $errors);
+
+        try {
+            $livewire = Livewire::make();
+
+            Schema::make($livewire)
+                ->statePath('data')
+                ->components([
+                    $group = FusedGroup::make()
+                        ->components([
+                            CheckboxList::make('choices')
+                                ->options(['alpha' => 'Alpha'])
+                                ->showAllValidationMessages(),
+                        ]),
+                ])
+                ->fill();
+
+            expect($group->toHtml())
+                ->toContain('The first choice is invalid.')
+                ->toContain('The second choice is invalid.');
         } finally {
             view()->share('errors', new ViewErrorBag);
         }

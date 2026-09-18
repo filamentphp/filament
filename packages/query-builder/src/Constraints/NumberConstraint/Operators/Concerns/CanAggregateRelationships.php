@@ -65,47 +65,33 @@ trait CanAggregateRelationships
         $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
 
         /** @var Relation $relationship */
-        $relationship = $query->getModel()->{$relationshipName}();
+        $relationship = Relation::noConstraints(
+            static fn (): Relation => $query->getModel()->{$relationshipName}(),
+        );
 
         $relatedModel = $relationship->getModel();
-        $attributeForQuery = $relatedModel->qualifyColumn($attributeForQuery);
         $castType = $this->getNumericCastType($query);
 
-        if ($relationship instanceof BelongsToMany) {
-            $pivotTable = $relationship->getTable();
-            $foreignPivotKey = $relationship->getQualifiedForeignPivotKeyName();
-            $relatedPivotKey = $relationship->getQualifiedRelatedPivotKeyName();
-            $parentKey = $relationship->getQualifiedParentKeyName();
-            $relatedKey = $relationship->getQualifiedRelatedKeyName();
-
-            $subQuery = $relatedModel->query()
-                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
-                ->join($pivotTable, $relatedKey, '=', $relatedPivotKey)
-                ->whereColumn($foreignPivotKey, $parentKey);
-
-            if ($modifyRelationshipQueryUsing) {
-                $subQuery = $this->evaluate($modifyRelationshipQueryUsing, ['query' => $subQuery]) ?? $subQuery;
-            }
-
-            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+        if (! ($relationship instanceof BelongsToMany) && ! ($relationship instanceof HasOneOrMany)) {
+            throw new LogicException('Relationship type [' . get_class($relationship) . '] is not supported for aggregate queries.');
         }
 
-        if ($relationship instanceof HasOneOrMany) {
-            $foreignKeyName = $relationship->getQualifiedForeignKeyName();
-            $parentKeyName = $relationship->getQualifiedParentKeyName();
+        $subQuery = $relationship->getRelationExistenceQuery(
+            $relatedModel->newQueryWithoutRelationships(),
+            $query,
+            [],
+        )->mergeConstraintsFrom($relationship->getQuery());
 
-            $subQuery = $relatedModel->query()
-                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
-                ->whereColumn($foreignKeyName, $parentKeyName);
+        $attributeForQuery = $subQuery->qualifyColumn($attributeForQuery);
+        $attributeForQuery = $subQuery->getQuery()->getGrammar()->wrap($attributeForQuery);
 
-            if ($modifyRelationshipQueryUsing) {
-                $subQuery = $this->evaluate($modifyRelationshipQueryUsing, ['query' => $subQuery]) ?? $subQuery;
-            }
+        $subQuery->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})");
 
-            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+        if ($modifyRelationshipQueryUsing) {
+            $subQuery = $this->evaluate($modifyRelationshipQueryUsing, ['query' => $subQuery]) ?? $subQuery;
         }
 
-        throw new LogicException('Relationship type [' . get_class($relationship) . '] is not supported for aggregate queries.');
+        return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
     }
 
     protected function getAggregateSelect(): Select
@@ -129,11 +115,18 @@ trait CanAggregateRelationships
             return null;
         }
 
+        // Security: a tampered request can set the aggregate to a non-scalar (e.g. an array),
+        // which would throw a `TypeError` at the `array_key_exists()` offset check below. Fail
+        // closed by treating anything that is not a recognised option as no aggregate.
+        if (! is_scalar($aggregate)) {
+            return null;
+        }
+
         if (! array_key_exists($aggregate, $this->getAggregateSelect()->getOptions())) {
             return null;
         }
 
-        return $aggregate;
+        return (string) $aggregate;
     }
 
     protected function getAttributeLabel(): string

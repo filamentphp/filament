@@ -43,6 +43,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => '現在のパスワード',
+                'validation_attribute' => '現在のパスワード',
+            ],
+
             'code' => [
 
                 'label' => '認証アプリで生成された6桁のコードを入力',

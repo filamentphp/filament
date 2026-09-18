@@ -12,7 +12,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
@@ -70,7 +69,7 @@ class IsRelatedToOperator extends Operator
     {
         $constraint = $this->getConstraint();
 
-        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
+        $values = $this->getValueSetting();
 
         $relationshipQuery = $this->getRelationshipQuery();
 
@@ -124,6 +123,7 @@ class IsRelatedToOperator extends Operator
                 $this->modifyRelationshipQueryUsing,
             )
             ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive())
+            ->dehydrated()
             ->columnSpanFull();
 
         if ($this->getOptionLabelUsing) {
@@ -184,7 +184,12 @@ class IsRelatedToOperator extends Operator
     {
         $constraint = $this->getConstraint();
 
-        $value = $this->getSettings()[$constraint->isMultiple() ? 'values' : 'value'];
+        $value = $this->getValueSetting();
+
+        // Security: nothing valid remains to filter by after discarding tampered values.
+        if (($value === null) || ($value === [])) {
+            return $query;
+        }
 
         return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
             $constraint->getRelationshipName(),
@@ -198,6 +203,21 @@ class IsRelatedToOperator extends Operator
                 return $query->whereKey($value);
             },
         );
+    }
+
+    protected function getValueSetting(): mixed
+    {
+        $value = $this->getSettings()[$this->getConstraint()->isMultiple() ? 'values' : 'value'] ?? null;
+
+        // Security: settings arrive from the request payload and can be tampered with. The value
+        // may be a scalar key or a list of scalar keys, depending on whether the operator is
+        // `multiple()`, but any other shape (e.g. a nested array) would reach `whereKey()`
+        // binding and crash the request. Fail closed by discarding non-scalar values.
+        if (is_array($value)) {
+            return array_values(array_filter($value, is_scalar(...)));
+        }
+
+        return is_scalar($value) ? $value : null;
     }
 
     public function getConstraint(): ?RelationshipConstraint

@@ -23,6 +23,8 @@ class SpatieTagsColumnTable extends Component implements HasActions, HasSchemas,
 
     public ?string $tagType = null;
 
+    public ?string $customState = null;
+
     protected function getTableQuery(): Builder
     {
         return Article::query();
@@ -34,6 +36,10 @@ class SpatieTagsColumnTable extends Component implements HasActions, HasSchemas,
 
         if ($this->tagType !== null) {
             $column->type($this->tagType);
+        }
+
+        if ($this->customState !== null) {
+            $column->state($this->customState);
         }
 
         return $table

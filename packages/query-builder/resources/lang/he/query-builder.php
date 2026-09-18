@@ -14,6 +14,10 @@ return [
 
             'label' => 'קבוצות',
 
+            'group' => [
+                'label' => 'קבוצה',
+            ],
+
             'block' => [
                 'label' => 'או (OR)',
                 'or' => 'או',
@@ -34,6 +38,8 @@ return [
     ],
 
     'no_rules' => '(אין כללים)',
+
+    'max_rules_reached_tooltip' => 'הגעת למספר המרבי של :count כללים.',
 
     'item_separators' => [
         'and' => 'וגם',
@@ -146,6 +152,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'שניות',
+                'minute' => 'דקות',
+                'hour' => 'שעות',
+                'day' => 'ימים',
+                'week' => 'שבועות',
+                'month' => 'חודשים',
+                'quarter' => 'רבעונים',
+                'year' => 'שנים',
+            ],
+
+            'presets' => [
+                'past_decade' => 'העשור האחרון',
+                'past_5_years' => '5 השנים האחרונות',
+                'past_2_years' => 'השנתיים האחרונות',
+                'past_year' => 'השנה האחרונה',
+                'past_6_months' => '6 החודשים האחרונים',
+                'past_quarter' => 'הרבעון האחרון',
+                'past_month' => 'החודש האחרון',
+                'past_2_weeks' => 'השבועיים האחרונים',
+                'past_week' => 'השבוע האחרון',
+                'past_hour' => 'השעה האחרונה',
+                'past_minute' => 'הדקה האחרונה',
+                'this_decade' => 'העשור הנוכחי',
+                'this_year' => 'השנה הנוכחית',
+                'this_quarter' => 'הרבעון הנוכחי',
+                'this_month' => 'החודש הנוכחי',
+                'today' => 'היום',
+                'this_hour' => 'השעה הנוכחית',
+                'this_minute' => 'הדקה הנוכחית',
+                'next_minute' => 'הדקה הבאה',
+                'next_hour' => 'השעה הבאה',
+                'next_week' => 'השבוע הבא',
+                'next_2_weeks' => 'השבועיים הבאים',
+                'next_month' => 'החודש הבא',
+                'next_quarter' => 'הרבעון הבא',
+                'next_6_months' => '6 החודשים הבאים',
+                'next_year' => 'השנה הבאה',
+                'next_2_years' => 'השנתיים הבאות',
+                'next_5_years' => '5 השנים הבאות',
+                'next_decade' => 'העשור הבא',
+                'custom' => 'מותאם אישית',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +208,40 @@ return [
 
                 'year' => [
                     'label' => 'שנה',
+                ],
+
+                'mode' => [
+
+                    'label' => 'סוג תאריך',
+
+                    'options' => [
+                        'absolute' => 'תאריך מסוים',
+                        'relative' => 'חלון מתגלגל',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'טווח זמן',
+                ],
+
+                'relative_value' => [
+                    'label' => 'כמה',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'יחידת זמן',
+                ],
+
+                'tense' => [
+
+                    'label' => 'עבר או עתיד',
+
+                    'options' => [
+                        'past' => 'עבר',
+                        'future' => 'עתיד',
+                    ],
+
                 ],
 
             ],

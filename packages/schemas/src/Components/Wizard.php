@@ -356,6 +356,22 @@ class Wizard extends Component implements HasEmbeddedView
             $this->getChildSchema()->getComponents(),
             static fn ($component): bool => $component instanceof Step,
         );
+
+        if (
+            (count($steps) > 1) &&
+            ($nextAction->getLivewireTarget() === 'callSchemaComponentMethod')
+        ) {
+            $nextActionLivewireTargetKey = Js::from($key)->toHtml();
+
+            $nextAction->livewireTarget(
+                collect(range(0, count($steps) - 2))
+                    ->map(static fn (int $stepIndex): string => "callSchemaComponentMethod({$nextActionLivewireTargetKey}, 'nextStep', " . Js::from([
+                        'currentStepIndex' => $stepIndex,
+                    ])->toHtml() . ')')
+                    ->implode(', '),
+            );
+        }
+
         $isHeaderHidden = $this->isHeaderHidden();
 
         $outerAttributes = (new FilamentComponentAttributeBag)
@@ -421,6 +437,10 @@ class Wizard extends Component implements HasEmbeddedView
                         >
                             <button
                                 type="button"
+                                <?php if (filled($stepId = $step->getId())) { ?>
+                                    id="<?= e($stepId) ?>-tab"
+                                    aria-controls="<?= e($stepId) ?>"
+                                <?php } ?>
                                 x-bind:aria-current="getStepIndex(step) === <?= $stepIndex ?> ? 'step' : null"
                                 x-on:click="step = <?= Js::from($step->getKey()) ?>"
                                 x-bind:disabled="! isStepAccessible(<?= Js::from($step->getKey()) ?>) || <?= Js::from($previousAction->isDisabled()) ?>"
@@ -451,6 +471,7 @@ class Wizard extends Component implements HasEmbeddedView
                                     <?php } else { ?>
                                         <span
                                             x-show="getStepIndex(step) <= <?= $stepIndex ?>"
+                                            aria-hidden="true"
                                             class="fi-sc-wizard-header-step-number"
                                         >
                                             <?= str_pad((string) ($stepIndex + 1), 2, '0', STR_PAD_LEFT) ?>
@@ -459,13 +480,18 @@ class Wizard extends Component implements HasEmbeddedView
                                 </div>
 
                                 <div class="fi-sc-wizard-header-step-text">
-                                    <?php if (! $step->isLabelHidden()) { ?>
-                                        <span class="fi-sc-wizard-header-step-label"><?= e($step->getLabel()) ?></span>
-                                    <?php } ?>
+                                    <?php // Always render the label so the button (and the panel it labels via `aria-labelledby`) keeps an accessible name; visually hide it when `hiddenLabel()` is set.?>
+                                    <span class="fi-sc-wizard-header-step-label<?= $step->isLabelHidden() ? ' fi-sr-only' : '' ?>"><?= e($step->getLabel()) ?></span>
 
                                     <?php if (filled($description = $step->getDescription())) { ?>
                                         <span class="fi-sc-wizard-header-step-description"><?= e($description) ?></span>
                                     <?php } ?>
+
+                                    <?php // Announce completed/upcoming state to screen readers. The current step is owned by `aria-current="step"`, so its status text stays empty to avoid a redundant, doubly-announced name.?>
+                                    <span
+                                        class="fi-sr-only"
+                                        x-text="getStepIndex(step) > <?= $stepIndex ?> ? <?= Js::from(__('filament-schemas::components.wizard.header.step.statuses.completed')) ?> : (getStepIndex(step) === <?= $stepIndex ?> ? '' : <?= Js::from(__('filament-schemas::components.wizard.header.step.statuses.upcoming')) ?>)"
+                                    ></span>
                                 </div>
                             </button>
 
@@ -505,7 +531,7 @@ class Wizard extends Component implements HasEmbeddedView
                         x-on:click="requestNextStep()"
                     <?php } ?>
                     x-bind:class="{ 'fi-hidden': isLastStep() }"
-                    wire:loading.class="fi-disabled"
+                    wire:loading.attr="inert"
                 >
                     <?= $nextAction->toHtml() ?>
                 </div>

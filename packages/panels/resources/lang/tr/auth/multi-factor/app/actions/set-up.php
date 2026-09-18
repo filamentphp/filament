@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Mevcut şifre',
+                'validation_attribute' => 'mevcut şifre',
+            ],
+
             'code' => [
 
                 'label' => 'Doğrulama uygulamanızdaki 6 haneli kodu girin',
@@ -53,6 +58,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Girmiş olduğunuz kod geçersiz.',
+
+                    'rate_limited' => 'Çok fazla deneme. Lütfen daha sonra tekrar deneyin.',
 
                 ],
 

@@ -163,7 +163,7 @@
 
             & > tr {
                 & > th {
-                    @apply border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-950 first-of-type:rounded-ss-xl last-of-type:rounded-se-xl dark:border-white/5 dark:bg-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
+                    @apply border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-950 first-of-type:rounded-ss-xl last-of-type:rounded-se-xl dark:border-white/5 dark:bg-white/5 dark:text-white [&:not(:last-of-type)]:border-e;
 
                     &.fi-align-start,
                     &.fi-align-left {
@@ -272,10 +272,6 @@
                     }
                 }
             }
-
-            & .fi-fo-table-repeater-actions {
-                @apply @xl:px-3 @xl:py-2;
-            }
         }
 
         &.fi-compact {
@@ -283,7 +279,7 @@
                 & > tbody {
                     & > tr {
                         & > td {
-                            @apply @xl:border-gray-200 @xl:px-0 @xl:py-1 @xl:dark:border-white/5 @xl:[&:not(:first-of-type)]:border-s @xl:[&:not(:last-of-type)]:border-e;
+                            @apply @xl:border-gray-200 @xl:px-0 @xl:py-1 @xl:dark:border-white/5 @xl:[&:not(:last-of-type)]:border-e;
                         }
                     }
                 }
@@ -291,6 +287,10 @@
 
             & .fi-input-wrp {
                 @apply @xl:bg-transparent! @xl:shadow-none @xl:ring-0!;
+            }
+
+            & .fi-fo-table-repeater-actions {
+                @apply @xl:px-3 @xl:py-2;
             }
 
             & .fi-fo-field-wrp-error-message {
@@ -350,10 +350,6 @@
                     }
                 }
             }
-
-            & .fi-fo-table-repeater-actions {
-                @apply lg:px-3 lg:py-2;
-            }
         }
 
         &.fi-compact {
@@ -361,7 +357,7 @@
                 & > tbody {
                     & > tr {
                         & > td {
-                            @apply lg:border-gray-200 lg:px-0 lg:py-1 lg:dark:border-white/5 lg:[&:not(:first-of-type)]:border-s lg:[&:not(:last-of-type)]:border-e;
+                            @apply lg:border-gray-200 lg:px-0 lg:py-1 lg:dark:border-white/5 lg:[&:not(:last-of-type)]:border-e;
                         }
                     }
                 }
@@ -369,6 +365,10 @@
 
             & .fi-input-wrp {
                 @apply lg:bg-transparent! lg:shadow-none lg:ring-0!;
+            }
+
+            & .fi-fo-table-repeater-actions {
+                @apply lg:px-3 lg:py-2;
             }
 
             & .fi-fo-field-wrp-error-message {

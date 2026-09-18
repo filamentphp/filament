@@ -2,11 +2,15 @@
 
 namespace Filament\Schemas\Components;
 
+use BackedEnum;
 use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Concerns\CanPersistTab;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
+use Filament\Schemas\Schema;
 use Filament\Schemas\View\SchemaIconAlias;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -96,6 +100,32 @@ class Tabs extends Component implements HasEmbeddedView
         $this->components($tabs);
 
         return $this;
+    }
+
+    /**
+     * @return array<Component | Action | ActionGroup | string | Htmlable> | Schema
+     */
+    public function getDefaultChildComponents(): array | Schema
+    {
+        $components = parent::getDefaultChildComponents();
+
+        if (blank($this->getLivewireProperty()) || (! is_array($components))) {
+            return $components;
+        }
+
+        // Each tab's key must match the array key written into the Livewire
+        // property, so `$set(...)` can activate it. This is done here rather than
+        // during rendering so the key is settled before any absolute keys (such
+        // as those of nested actions) are computed and cached.
+        foreach ($components as $tabKey => $tab) {
+            if (! $tab instanceof Tab) {
+                continue;
+            }
+
+            $tab->key(strval($tabKey));
+        }
+
+        return $components;
     }
 
     public function activeTab(int | Closure $activeTab): static
@@ -620,17 +650,13 @@ class Tabs extends Component implements HasEmbeddedView
         $renderHookScopes = $this->getRenderHookScopes();
         $tabsKey = $this->getKey();
 
+        // Tab keys are overridden with their array keys in
+        // `getDefaultChildComponents()`.
         /** @var array<array-key, Tab> $tabs */
         $tabs = array_filter(
             $this->getChildSchema()->getComponents(withOriginalKeys: true),
             static fn ($component): bool => $component instanceof Tab,
         );
-
-        // Override each tab's auto-generated key with its array key, so the
-        // tab's `getKey()` matches the value written into the Livewire property.
-        foreach ($tabs as $tabKey => $tab) {
-            $tab->key(strval($tabKey));
-        }
 
         $activeTab = strval($this->getLivewire()->{$livewireProperty});
 
@@ -760,7 +786,7 @@ class Tabs extends Component implements HasEmbeddedView
     protected function generateTabBadgeHtml(
         string | int | float $badge,
         string | array | null $color = null,
-        string | Htmlable | null $icon = null,
+        string | BackedEnum | Htmlable | null $icon = null,
         IconPosition | string | null $iconPosition = null,
         string | Htmlable | null $tooltip = null,
     ): string {

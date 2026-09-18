@@ -12,6 +12,10 @@ return [
                 'label' => 'Použiť stĺpce',
             ],
 
+            'reorder' => [
+                'label' => 'Presunúť stĺpec',
+            ],
+
             'reset' => [
                 'label' => 'Resetovať stĺpce',
             ],
@@ -24,6 +28,15 @@ return [
 
         'actions' => [
             'label' => 'Akcia|Akcie',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Áno',
+                'false' => 'Nie',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +128,10 @@ return [
             'label' => 'Zoradiť záznamy',
         ],
 
+        'reorder_record' => [
+            'label' => 'Presunúť položku :key',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -129,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Prepnúť stĺpce',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Rozbaliť/zbaliť položku :key',
         ],
 
     ],
@@ -219,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Načítava sa...',
+
     'reorder_indicator' => 'Ťahaním presuňte záznamy do požadovaného poradia.',
+
+    'result_count' => '{0} Žiadne výsledky|{1} :count výsledok|[2,*] :count výsledkov',
 
     'selection_indicator' => [
 

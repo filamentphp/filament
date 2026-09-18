@@ -11,8 +11,13 @@ return [
                 'expand_list' => 'Zobrazit o :count více',
             ],
 
-            'more_list_items' => 'a 1 další|a :count další| a :count dalších',
+            'more_list_items' => 'a 1 další|a :count další|a :count dalších',
 
+        ],
+
+        'icon' => [
+            'true' => 'Ano',
+            'false' => 'Ne',
         ],
 
         'key_value' => [

@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use BackedEnum;
 use BladeUI\Icons\Factory as BladeIconsFactory;
 use Composer\InstalledVersions;
 use Filament\Commands\CacheComponentsCommand;
@@ -150,7 +151,7 @@ class SupportServiceProvider extends PackageServiceProvider
             },
         );
 
-        $this->app->bind(DataStore::class, DataStoreOverride::class);
+        $this->app->singleton(DataStore::class, DataStoreOverride::class);
         $this->app->bind(LoadingIndicator::class, DefaultLoadingIndicator::class);
 
         $this->callAfterResolving(BladeIconsFactory::class, function (BladeIconsFactory $factory): void {
@@ -376,6 +377,43 @@ class SupportServiceProvider extends PackageServiceProvider
         Stringable::macro('sanitizeUrl', function (array $allowedSchemes = ['http', 'https']): Stringable {
             /** @phpstan-ignore-next-line */
             return new Stringable(Str::sanitizeUrl($this->value, $allowedSchemes));
+        });
+
+        Str::macro('sanitizeCssColor', function (string | BackedEnum | null $color): ?string {
+            if ($color instanceof BackedEnum) {
+                $color = $color->value;
+            }
+
+            if (blank($color)) {
+                return null;
+            }
+
+            $color = trim((string) $color);
+
+            // Accept hex colors: `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`.
+            if (preg_match('/^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $color)) {
+                return $color;
+            }
+
+            // Accept a bare CSS keyword such as `red` or `transparent`.
+            if (preg_match('/^[a-z]+$/i', $color)) {
+                return $color;
+            }
+
+            // Security: allow functional color notations, but forbid the CSS metacharacters
+            // `( ) ; : " '` inside the parentheses so the value cannot break out of the
+            // `background-color` declaration to inject additional properties (e.g.
+            // `red;position:fixed;background-image:url(//attacker)`) or extra function calls.
+            if (preg_match('/^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^();:"\']*\)$/i', $color)) {
+                return $color;
+            }
+
+            return null;
+        });
+
+        Stringable::macro('sanitizeCssColor', function (): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::sanitizeCssColor($this->value));
         });
 
         Str::macro('ucwords', function (string $value): string {

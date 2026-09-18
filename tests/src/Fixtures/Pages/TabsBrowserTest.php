@@ -32,6 +32,8 @@ class TabsBrowserTest extends Page
                 Tabs::make('Profile Tabs')
                     ->tabs([
                         Tab::make('Account')
+                            ->badge('Available')
+                            ->badgeIcon(Heroicon::OutlinedCheckCircle)
                             ->schema([
                                 TextInput::make('username')
                                     ->label('Username')
