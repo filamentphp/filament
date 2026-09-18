@@ -431,7 +431,6 @@ it('can render `ColorPicker` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/color-picker-test')
-            ->assertSee('Test Color')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

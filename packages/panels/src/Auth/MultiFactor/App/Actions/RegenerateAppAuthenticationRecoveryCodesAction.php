@@ -24,12 +24,35 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
+use Illuminate\Validation\ValidationException;
+use Livewire\Component as LivewireComponent;
 use SensitiveParameter;
 
 class RegenerateAppAuthenticationRecoveryCodesAction
 {
     public static function make(AppAuthentication $appAuthentication): Action
     {
+        $rateLimitAuthenticationAttempt = static function (string $passwordStatePath): void {
+            $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::auth()->id();
+
+            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                throw ValidationException::withMessages([
+                    $passwordStatePath => __('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'),
+                ]);
+            }
+
+            RateLimiter::hit($rateLimitingKey);
+        };
+
+        $passwordInput = TextInput::make('password')
+            ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.label'))
+            ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.validation_attribute'))
+            ->currentPassword(guard: Filament::getAuthGuard())
+            ->password()
+            ->revealable(filament()->arePasswordsRevealable())
+            ->required()
+            ->dehydrated(false);
+
         return Action::make('regenerateAppAuthenticationRecoveryCodes')
             ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.label'))
             ->color('gray')
@@ -47,16 +70,6 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                     ->requiredWithout('password')
                     ->rule(function () use ($appAuthentication): Closure {
                         return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($appAuthentication): void {
-                            $rateLimitingKey = 'filament-regenerate-recovery-codes:' . Filament::auth()->id();
-
-                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
-                                $fail(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'));
-
-                                return;
-                            }
-
-                            RateLimiter::hit($rateLimitingKey);
-
                             if ($appAuthentication->verifyCode($value, shouldPreventCodeReuse: true)) {
                                 return;
                             }
@@ -64,14 +77,19 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                             $fail(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.invalid'));
                         };
                     }),
-                TextInput::make('password')
-                    ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.label'))
-                    ->validationAttribute(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.password.validation_attribute'))
-                    ->currentPassword(guard: Filament::getAuthGuard())
-                    ->password()
-                    ->revealable(filament()->arePasswordsRevealable())
-                    ->dehydrated(false),
+                $passwordInput,
             ])
+            ->beforeFormValidated(function (LivewireComponent $livewire) use ($passwordInput, $rateLimitAuthenticationAttempt): void {
+                $passwordStatePath = $passwordInput->getStatePath();
+
+                $rateLimitAuthenticationAttempt($passwordStatePath);
+
+                $livewire->validateOnly(
+                    $passwordStatePath,
+                    [$passwordStatePath => $passwordInput->getValidationRules()],
+                    attributes: [$passwordStatePath => $passwordInput->getValidationAttribute()],
+                );
+            })
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.actions.submit.label'))
                 ->color('danger'))

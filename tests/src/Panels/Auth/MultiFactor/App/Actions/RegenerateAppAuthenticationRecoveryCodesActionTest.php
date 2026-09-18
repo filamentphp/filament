@@ -34,7 +34,10 @@ describe('regenerating codes', function (): void {
             ->callAction(
                 TestAction::make('regenerateAppAuthenticationRecoveryCodes')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => $appAuthentication->getCurrentCode($user)],
+                [
+                    'code' => $appAuthentication->getCurrentCode($user),
+                    'password' => 'password',
+                ],
             )
             ->assertHasNoFormErrors()
             ->assertActionMounted([
@@ -126,7 +129,10 @@ describe('regenerating codes', function (): void {
             ->callAction(
                 TestAction::make('regenerateAppAuthenticationRecoveryCodes')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => ($appAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000'],
+                [
+                    'code' => ($appAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000',
+                    'password' => 'password',
+                ],
             )
             ->assertHasFormErrors()
             ->assertActionNotMounted([
@@ -141,7 +147,9 @@ describe('regenerating codes', function (): void {
 });
 
 describe('validation', function (): void {
-    test('codes are required without the user\'s current password', function (): void {
+    test('the user\'s current password is required', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
         $user = auth()->user();
 
         $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
@@ -150,10 +158,10 @@ describe('validation', function (): void {
             ->callAction(
                 TestAction::make('regenerateAppAuthenticationRecoveryCodes')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => ''],
+                ['code' => $appAuthentication->getCurrentCode($user)],
             )
             ->assertHasFormErrors([
-                'code' => 'required_without',
+                'password' => 'required',
             ])
             ->assertActionNotMounted([
                 TestAction::make('regenerateAppAuthenticationRecoveryCodes')
@@ -176,7 +184,10 @@ describe('validation', function (): void {
             ->callAction(
                 TestAction::make('regenerateAppAuthenticationRecoveryCodes')
                     ->schemaComponent('app', schema: 'content'),
-                ['code' => Str::limit($appAuthentication->getCurrentCode($user), limit: 5, end: '')],
+                [
+                    'code' => Str::limit($appAuthentication->getCurrentCode($user), limit: 5, end: ''),
+                    'password' => 'password',
+                ],
             )
             ->assertHasFormErrors([
                 'code' => 'digits',
@@ -214,36 +225,109 @@ describe('validation', function (): void {
         expect($user->getAppAuthenticationRecoveryCodes())
             ->toBe($recoveryCodes);
     });
+
+    test('a one-time code is not consumed when the user\'s current password is invalid', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        $code = $appAuthentication->getCurrentCode($user);
+
+        $livewire = livewire(EditProfile::class)
+            ->mountAction(TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                ->schemaComponent('app', schema: 'content'))
+            ->fillForm([
+                'code' => $code,
+                'password' => 'incorrect-password',
+            ])
+            ->callMountedAction()
+            ->assertHasFormErrors([
+                'password' => 'current_password',
+            ]);
+
+        $livewire
+            ->fillForm([
+                'code' => $code,
+                'password' => 'password',
+            ])
+            ->callMountedAction()
+            ->assertHasNoFormErrors()
+            ->assertActionMounted([
+                TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                    ->schemaComponent('app', schema: 'content'),
+                TestAction::make('showNewRecoveryCodes'),
+            ]);
+    });
 });
 
-it('can throttle code verification attempts per user', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+describe('throttling', function (): void {
+    it('cannot bypass password throttling by changing action arguments', function (): void {
+        $user = auth()->user();
 
-    $user = auth()->user();
+        $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
 
-    $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
+        foreach (range(1, 5) as $attempt) {
+            livewire(EditProfile::class)
+                ->callAction(
+                    TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                        ->schemaComponent('app', schema: 'content')
+                        ->arguments(['nonce' => $attempt]),
+                    ['password' => "incorrect-password-{$attempt}"],
+                )
+                ->assertHasFormErrors([
+                    'password' => 'current_password',
+                ]);
+        }
 
-    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-    $rateLimitingKey = 'filament-regenerate-recovery-codes:' . $user->getAuthIdentifier();
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                    ->schemaComponent('app', schema: 'content')
+                    ->arguments(['nonce' => 6]),
+                ['password' => 'password'],
+            )
+            ->assertHasFormErrors([
+                'password' => __('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'),
+            ]);
 
-    foreach (range(1, 5) as $i) {
-        RateLimiter::hit($rateLimitingKey);
-    }
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBe($recoveryCodes);
+    });
 
-    // Even with a valid code, the rate limit should block the attempt
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('regenerateAppAuthenticationRecoveryCodes')
-                ->schemaComponent('app', schema: 'content'),
-            ['code' => $appAuthentication->getCurrentCode($user)],
-        )
-        ->assertHasFormErrors(['code'])
-        ->assertActionNotMounted([
-            TestAction::make('regenerateAppAuthenticationRecoveryCodes')
-                ->schemaComponent('app', schema: 'content'),
-            TestAction::make('showNewRecoveryCodes'),
-        ]);
+    it('can throttle code verification attempts per user', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBe($recoveryCodes);
+        $user = auth()->user();
+
+        $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
+
+        // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+        $rateLimitingKey = 'filament-regenerate-recovery-codes:' . $user->getAuthIdentifier();
+
+        foreach (range(1, 5) as $i) {
+            RateLimiter::hit($rateLimitingKey);
+        }
+
+        // Even with a valid code, the rate limit should block the attempt
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                    ->schemaComponent('app', schema: 'content'),
+                [
+                    'code' => $appAuthentication->getCurrentCode($user),
+                    'password' => 'password',
+                ],
+            )
+            ->assertHasFormErrors([
+                'password' => __('filament-panels::auth/multi-factor/app/actions/regenerate-recovery-codes.modal.form.code.messages.rate_limited'),
+            ])
+            ->assertActionNotMounted([
+                TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                    ->schemaComponent('app', schema: 'content'),
+                TestAction::make('showNewRecoveryCodes'),
+            ]);
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBe($recoveryCodes);
+    });
 });

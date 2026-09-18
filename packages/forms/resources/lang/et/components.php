@@ -122,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Värvi valik',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Kuu',
+        ],
+
+        'year_input' => [
+            'label' => 'Aasta',
+        ],
+
+        'hour_input' => [
+            'label' => 'Tund',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minut',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekund',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Lae alla',
+            ],
+
+            'open' => [
+                'label' => 'Ava uuel vahelehel',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Pildi redaktor',
 
             'actions' => [
 
@@ -268,6 +312,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Tegevused',
+            ],
+
+            'reorder' => [
+                'label' => 'Sorteeri',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Tegevused',
+            ],
+
+            'reorder' => [
+                'label' => 'Sorteeri',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -604,6 +672,10 @@ return [
             'searching_message' => 'Otsimine...',
         ],
 
+        'toolbar' => [
+            'label' => 'Tööriista redaktor',
+        ],
+
         'tools' => [
             'align_center' => 'Joonda keskele',
             'align_end' => 'Joonda lõppu',
@@ -664,6 +736,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'Tühjenda valitud',
+            ],
+
             'create_option' => [
 
                 'label' => 'Loo',
@@ -708,6 +784,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Eemalda :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -727,6 +807,8 @@ return [
 
         'searching_message' => 'Otsimine...',
 
+        'search_label' => 'Otsing',
+
         'search_prompt' => 'Otsimiseks alusta kirjutamist...',
 
     ],
@@ -742,6 +824,10 @@ return [
         ],
 
         'placeholder' => 'Uus silt',
+
+        'tag_added' => 'Lisatud: :tag',
+
+        'tag_removed' => 'Eemaldatud: :tag',
 
     ],
 

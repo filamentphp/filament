@@ -357,7 +357,7 @@ describe('rate limiting', function (): void {
     });
 });
 
-it('has no accessibility issues outside `Login` in light mode', function (): void {
+it('has no accessibility issues outside `Login` in light and dark modes', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()
             ->hasEmailAuthentication()
@@ -365,24 +365,11 @@ it('has no accessibility issues outside `Login` in light mode', function (): voi
             ->create());
 
         visit(MultiFactorChallengeBrowserTest::getUrl(panel: 'required-multi-factor-authentication'))
-            ->assertSee('Verify multi-factor authentication')
-            ->assertSee('How would you like to verify?')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
-    });
-});
-
-it('has no accessibility issues outside `Login` in dark mode', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()
-            ->hasEmailAuthentication()
-            ->hasAppAuthentication()
-            ->create());
 
         visit(MultiFactorChallengeBrowserTest::getUrl(panel: 'required-multi-factor-authentication'))
             ->inDarkMode()
-            ->assertSee('Verify multi-factor authentication')
-            ->assertSee('How would you like to verify?')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });

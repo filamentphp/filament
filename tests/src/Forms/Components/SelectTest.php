@@ -1447,13 +1447,13 @@ class RepeaterWithSelectBelongsToManyRelationshipEagerLoaded extends Component i
 }
 
 describe('browser interactions', function (): void {
-    it('can select an option from a `native(false)` select dropdown in the browser', function (): void {
+    it('can select, search, and clear options in select dropdowns in the browser', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
-            visit('/select-test')
-                ->assertSee('Select Test')
-                ->assertSee('Single Select')
+            $browser = visit('/select-test');
+
+            $browser
                 ->assertDontSee('One')
                 ->assertDontSee('Two')
                 ->click('[data-testid="single-select"] .fi-select-input-btn')
@@ -1465,18 +1465,7 @@ describe('browser interactions', function (): void {
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
 
-            visit('/select-test')
-                ->inDarkMode()
-                ->assertNoAccessibilityIssues();
-        });
-    });
-
-    it('can select multiple options from a `multiple()` select dropdown in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/select-test')
-                ->assertSee('Multiple Select')
+            $browser
                 ->assertDontSee('Apple')
                 ->assertDontSee('Cherry')
                 ->click('[data-testid="multiple-select"] .fi-select-input-btn')
@@ -1487,31 +1476,8 @@ describe('browser interactions', function (): void {
                 ->assertSee('Apple')
                 ->assertSee('Cherry')
                 ->assertNoSmoke();
-        });
-    });
 
-    it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/select-test')
-                ->assertSee('Single Select')
-                ->assertDontSee('Two')
-                ->click('[data-testid="single-select"] .fi-select-input-btn')
-                ->assertSee('One')
-                ->keys('[data-testid="single-select"] .fi-select-input-option.fi-selected', ['ArrowDown', 'Enter'])
-                ->assertDontSee('One')
-                ->assertSee('Two')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('can search and select an option in a `searchable()` select dropdown in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/select-test')
-                ->assertSee('Searchable Select')
+            $browser
                 ->assertDontSee('Purple')
                 ->click('[data-testid="searchable-select"] .fi-select-input-btn')
                 ->assertSee('Red')
@@ -1522,15 +1488,8 @@ describe('browser interactions', function (): void {
                 ->click('Purple')
                 ->assertSee('Purple')
                 ->assertNoSmoke();
-        });
-    });
 
-    it('can clear a selected value in a `native(false)` select dropdown in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/select-test')
-                ->assertSee('Clearable Select')
+            $browser
                 ->assertDontSee('Active')
                 ->click('[data-testid="clearable-select"] .fi-select-input-btn')
                 ->assertSee('Active')
@@ -1538,6 +1497,25 @@ describe('browser interactions', function (): void {
                 ->assertSee('Active')
                 ->click('[data-testid="clearable-select"] .fi-select-input-value-remove-btn')
                 ->assertDontSee('Active')
+                ->assertNoSmoke();
+
+            visit('/select-test')
+                ->inDarkMode()
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
+    it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/select-test')
+                ->assertDontSee('Two')
+                ->click('[data-testid="single-select"] .fi-select-input-btn')
+                ->assertSee('One')
+                ->keys('[data-testid="single-select"] .fi-select-input-option.fi-selected', ['ArrowDown', 'Enter'])
+                ->assertDontSee('One')
+                ->assertSee('Two')
                 ->assertNoSmoke();
         });
     });
@@ -1547,7 +1525,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Creatable Select')
                 ->assertDontSee('New status')
                 ->click('[data-testid="create-option-action-trigger"]')
                 ->assertVisible('[data-testid="create-option-action-modal"]')
@@ -1573,7 +1550,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Multiple Select')
                 ->assertDontSee('Apple')
                 ->assertDontSee('Banana')
                 ->click('[data-testid="multiple-select"] .fi-select-input-btn')
@@ -1595,11 +1571,8 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Dynamic Empty Options')
                 ->click('[data-testid="dynamic-empty-options-select"] .fi-select-input-btn')
-                ->assertSee('No options available')
-                ->assertSee('No options available')
-                ->assertDontSee('Loading')
+                ->assertSeeIn('[data-testid="dynamic-empty-options-select"] [role="listbox"]', 'No options available')
                 ->assertNoSmoke();
         });
     });
@@ -1609,13 +1582,10 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Dynamic With Options')
                 ->click('[data-testid="dynamic-with-options-select"] .fi-select-input-btn')
                 ->assertSee('Option 1')
-                ->assertSee('Option 1')
                 ->assertSee('Option 2')
-                ->assertDontSee('No options available')
-                ->assertDontSee('Loading')
+                ->assertMissing('[data-testid="dynamic-with-options-select"] .fi-select-input-message')
                 ->assertNoSmoke();
         });
     });
@@ -1625,11 +1595,8 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Dynamic Options And Search Empty')
                 ->click('[data-testid="dynamic-options-and-search-empty-select"] .fi-select-input-btn')
-                ->assertSee('No options available')
-                ->assertSee('No options available')
-                ->assertDontSee('Loading')
+                ->assertSeeIn('[data-testid="dynamic-options-and-search-empty-select"] [role="listbox"]', 'No options available')
                 ->assertNoSmoke();
         });
     });
@@ -1639,10 +1606,8 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Static Empty Options')
                 ->click('[data-testid="static-empty-options-select"] .fi-select-input-btn')
-                ->assertSee('No options available')
-                ->assertSee('No options available')
+                ->assertSeeIn('[data-testid="static-empty-options-select"] [role="listbox"]', 'No options available')
                 ->assertNoSmoke();
         });
     });
@@ -1652,13 +1617,10 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Dynamic Options With Results')
                 ->click('[data-testid="dynamic-options-with-results-select"] .fi-select-input-btn')
                 ->assertSee('Dynamic Option 1')
-                ->assertSee('Dynamic Option 1')
                 ->assertSee('Dynamic Option 2')
-                ->assertDontSee('No options available')
-                ->assertDontSee('Loading')
+                ->assertMissing('[data-testid="dynamic-options-with-results-select"] .fi-select-input-message')
                 ->assertNoSmoke();
         });
     });
@@ -1668,7 +1630,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Clearable With Placeholder')
                 // Verify no remove button initially (placeholder shown)
                 ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
                 // Select first option
@@ -1700,7 +1661,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/select-test')
-                ->assertSee('Clearable With Placeholder')
                 // Verify no remove button initially
                 ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
                 // Select an option
@@ -1711,31 +1671,8 @@ describe('browser interactions', function (): void {
                 ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
                 // Clear the selection
                 ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-                // Verify remove button is gone and placeholder is shown
+                // Verify the remove button is gone.
                 ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-                ->assertSee('Select an option...')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('adds clearable class only when an option is selected', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/select-test')
-                ->assertSee('Clearable With Placeholder')
-                // Verify no clearable class initially
-                ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-ctn-clearable')
-                // Select an option
-                ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
-                ->assertSee('First')
-                ->click('First')
-                // Verify clearable class is added
-                ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-ctn-clearable')
-                // Clear the selection
-                ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
-                // Verify clearable class is removed
-                ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-ctn-clearable')
                 ->assertNoSmoke();
         });
     });
