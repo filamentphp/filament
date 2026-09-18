@@ -105,6 +105,7 @@ export default Node.create({
                 deleteButton.addEventListener('click', () =>
                     editor
                         .chain()
+                        .focus()
                         .setNodeSelection(getPos())
                         .deleteSelection()
                         .run(),

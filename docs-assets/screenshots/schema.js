@@ -1779,6 +1779,24 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/rich-editor/custom-block-previews': {
+        url: 'forms/fields/rich-editor',
+        selector: '#richEditorCustomBlockPreviews',
+        viewport: {
+            width: 1920,
+            height: 1000,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/rich-editor/minimal-custom-block-controls': {
+        url: 'forms/fields/rich-editor',
+        selector: '#richEditorMinimalCustomBlockControls',
+        viewport: {
+            width: 1920,
+            height: 1000,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/rich-editor/grouped-custom-blocks': {
         url: 'forms/fields/rich-editor',
         selector: '#richEditorGroupedCustomBlocks',

@@ -29,9 +29,6 @@ class RichEditorMinimalControlsBrowserTest extends Page
                     ->label('Minimal controls')
                     ->minimalCustomBlockControls()
                     ->extraAttributes(['data-testid' => 'minimal-controls-editor']),
-                $this->makeEditor('defaultContent')
-                    ->label('Default controls')
-                    ->extraAttributes(['data-testid' => 'default-controls-editor']),
                 $this->makeEditor('disabledContent')
                     ->label('Disabled editor')
                     ->minimalCustomBlockControls()
@@ -47,24 +44,16 @@ class RichEditorMinimalControlsBrowserTest extends Page
             ->json()
             ->toolbarButtons([['undo', 'redo']])
             ->customBlocks([MinimalControlsCalloutBlock::class, MinimalControlsDividerBlock::class])
-            ->default(static::getDocument());
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public static function getDocument(): array
-    {
-        return [
-            'type' => 'doc',
-            'content' => [
-                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Opening paragraph.']]],
-                ['type' => 'customBlock', 'attrs' => ['id' => 'callout', 'config' => ['message' => 'First callout.']]],
-                ['type' => 'customBlock', 'attrs' => ['id' => 'callout', 'config' => ['message' => 'Second callout.']]],
-                ['type' => 'customBlock', 'attrs' => ['id' => 'divider', 'config' => []]],
-                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Closing paragraph.']]],
-            ],
-        ];
+            ->default([
+                'type' => 'doc',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Opening paragraph.']]],
+                    ['type' => 'customBlock', 'attrs' => ['id' => 'callout', 'config' => ['message' => 'First callout.']]],
+                    ['type' => 'customBlock', 'attrs' => ['id' => 'callout', 'config' => ['message' => 'Second callout.']]],
+                    ['type' => 'customBlock', 'attrs' => ['id' => 'divider', 'config' => []]],
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Closing paragraph.']]],
+                ],
+            ]);
     }
 
     public function save(): void

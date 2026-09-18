@@ -600,6 +600,8 @@ class HeroBlock extends RichContentCustomBlock
 }
 ```
 
+<AutoScreenshot name="forms/fields/rich-editor/custom-block-previews" alt="Rich editor with custom block previews and normal controls" version="4.x" />
+
 The `getPreviewLabel()` can be defined if you would like to customize the label that is displayed above the preview in the editor. By default, it will use the label defined in the `getLabel()` method, but the `getPreviewLabel()` is able to access the `$config` for the block, allowing you to display dynamic information in the label:
 
 ```php
@@ -621,7 +623,7 @@ class HeroBlock extends RichContentCustomBlock
 
 #### Using minimal custom block controls
 
-You can reduce the framing around custom block previews to make the content look closer to how it would render on the frontend using `minimalCustomBlockControls()`. This places compact edit and delete buttons beside the preview and visually hides the block's label, while keeping it available to screen readers:
+You can reduce the framing around custom block previews to make the content look closer to how it would render on the frontend using `minimalCustomBlockControls()`. This stacks compact edit and delete buttons beside the preview and visually hides the block's label, while keeping it available to screen readers:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -634,7 +636,11 @@ RichEditor::make('content')
     ->minimalCustomBlockControls()
 ```
 
+<AutoScreenshot name="forms/fields/rich-editor/minimal-custom-block-controls" alt="Rich editor with minimal controls beside short and tall custom block previews" version="4.x" />
+
 This setting applies to all custom blocks with previews in the editor. Blocks without a preview keep their usual header and label. Disabled editors do not display edit or delete buttons.
+
+The buttons stay at the top beside tall previews. Previews shorter than the buttons are vertically centered, with enough space for both buttons.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `minimalCustomBlockControls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

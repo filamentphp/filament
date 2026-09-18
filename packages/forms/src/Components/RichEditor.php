@@ -1589,9 +1589,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             activePanel: <?= Js::from($this->getActivePanel()) ?>,
                             canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
                             deleteCustomBlockButtonIconHtml: <?= Js::from($deleteIconHtml?->toHtml()) ?>,
-                            deleteCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.delete_label')) ?>,
+                            deleteCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.actions.delete.label')) ?>,
                             editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
-                            editCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.edit_label')) ?>,
+                            editCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.actions.edit.label')) ?>,
                             extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
                             floatingToolbars: <?= Js::from($floatingToolbars) ?>,
                             getMentionLabelsUsing: async (mentions) => {

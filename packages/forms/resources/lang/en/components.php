@@ -659,16 +659,27 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Delete block',
+                ],
+
+                'edit' => [
+                    'label' => 'Edit block',
+                ],
+
+            ],
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'Uploaded files must be of type: :values.',
 
         'file_attachments_max_size_message' => 'Uploaded files must not be greater than :max kilobytes.',
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
-
-        'custom_blocks' => [
-            'delete_label' => 'Delete block',
-            'edit_label' => 'Edit block',
-        ],
 
         'mentions' => [
             'no_options_message' => 'No options available.',

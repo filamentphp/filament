@@ -422,7 +422,7 @@
         }
 
         & > .fi-fo-rich-editor-custom-block-header {
-            @apply col-start-2 row-start-1 gap-1 self-start border-0 bg-transparent p-0;
+            @apply col-start-2 row-start-1 flex-col gap-1 self-start border-0 bg-transparent p-0;
 
             &:not(:has(.fi-icon-btn)) {
                 @apply sr-only;
@@ -449,7 +449,7 @@
         }
 
         & > .fi-fo-rich-editor-custom-block-preview {
-            @apply col-start-1 row-start-1 min-w-0 border-0 p-0;
+            @apply col-start-1 row-start-1 min-w-0 self-center border-0 p-0;
         }
     }
 
