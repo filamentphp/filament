@@ -14,7 +14,9 @@
             @apply flex flex-wrap;
 
             &.fi-width-full {
-                @apply grid grid-cols-[repeat(auto-fit,minmax(0,1fr))];
+                & .fi-fo-toggle-buttons-btn-ctn {
+                    @apply grow;
+                }
             }
         }
 

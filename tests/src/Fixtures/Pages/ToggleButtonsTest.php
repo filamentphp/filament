@@ -31,6 +31,31 @@ class ToggleButtonsTest extends Page
                     ->label('Test ToggleButtons')
                     ->options(['a' => 'Option A', 'b' => 'Option B'])
                     ->extraAttributes(['data-testid' => 'toggle-buttons']),
+                ToggleButtons::make('fullWidthStacked')
+                    ->label('Full-width stacked ToggleButtons')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->fullWidth()
+                    ->extraAttributes(['data-testid' => 'full-width-stacked-toggle-buttons'])
+                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
+                ToggleButtons::make('fullWidthInline')
+                    ->label('Full-width inline ToggleButtons')
+                    ->options([
+                        'draft' => 'Draft',
+                        'review' => 'Needs additional review',
+                        'response' => 'Awaiting customer response',
+                        'published' => 'Published publicly',
+                    ])
+                    ->inline()
+                    ->fullWidth()
+                    ->extraAttributes(['data-testid' => 'full-width-inline-toggle-buttons'])
+                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
+                ToggleButtons::make('fullWidthGrouped')
+                    ->label('Full-width grouped ToggleButtons')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->grouped()
+                    ->fullWidth()
+                    ->extraAttributes(['data-testid' => 'full-width-grouped-toggle-buttons'])
+                    ->extraFieldWrapperAttributes(['style' => 'width: 18rem']),
             ])
             ->statePath('data');
     }

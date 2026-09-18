@@ -484,13 +484,52 @@ it('can render `ToggleButtons` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
+        $assertFullWidthLayouts = <<<'JS'
+            (() => {
+                const stacked = document.querySelector('[data-testid="full-width-stacked-toggle-buttons"]')
+                const stackedButtons = [...stacked.querySelectorAll('.fi-btn')]
+                const inline = document.querySelector('[data-testid="full-width-inline-toggle-buttons"]')
+                const inlineButtonContainers = [...inline.querySelectorAll('.fi-fo-toggle-buttons-btn-ctn')]
+                const grouped = document.querySelector('[data-testid="full-width-grouped-toggle-buttons"]')
+
+                const stackedWidth = stacked.getBoundingClientRect().width
+                const groupedWidth = grouped.getBoundingClientRect().width
+                const inlineBounds = inline.getBoundingClientRect()
+                const inlineRows = [...inlineButtonContainers.reduce((rows, container) => {
+                    const row = rows.get(container.offsetTop) ?? []
+                    row.push(container)
+                    rows.set(container.offsetTop, row)
+
+                    return rows
+                }, new Map()).values()]
+                const inlineRowsFillWidth = inlineRows.every((row) => {
+                    const firstButtonBounds = row.at(0).getBoundingClientRect()
+                    const lastButtonBounds = row.at(-1).getBoundingClientRect()
+
+                    return Math.abs(firstButtonBounds.left - inlineBounds.left) < 1 &&
+                        Math.abs(lastButtonBounds.right - inlineBounds.right) < 1
+                })
+                const inlineButtonsFillContainers = inlineButtonContainers.every((container) => {
+                    return Math.abs(container.querySelector('.fi-btn').getBoundingClientRect().width - container.getBoundingClientRect().width) < 1
+                })
+
+                return stackedButtons.every((button) => Math.abs(button.getBoundingClientRect().width - stackedWidth) < 1) &&
+                    inlineRows.length > 1 &&
+                    inlineRowsFillWidth &&
+                    inlineButtonsFillContainers &&
+                    Math.abs(groupedWidth - 288) < 1
+            })()
+            JS;
+
         visit('/toggle-buttons-test')
             ->assertSee('Test ToggleButtons')
             ->assertNoSmoke()
+            ->assertScript($assertFullWidthLayouts)
             ->assertNoAccessibilityIssues();
 
         visit('/toggle-buttons-test')
             ->inDarkMode()
+            ->assertScript($assertFullWidthLayouts)
             ->assertNoAccessibilityIssues();
     });
 });
