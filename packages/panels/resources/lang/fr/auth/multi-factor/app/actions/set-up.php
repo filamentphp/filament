@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Mot de passe actuel',
+                'validation_attribute' => 'mot de passe actuel',
+            ],
+
             'code' => [
 
                 'label' => 'Entrez le code à 6 chiffres de l\'application d\'authentification',

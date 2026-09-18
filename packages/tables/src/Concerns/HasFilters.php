@@ -170,14 +170,7 @@ trait HasFilters
     {
         $table = $this->getTable();
 
-        if ($table->hasDeferredFilters()) {
-            $filtersForm = $this->getTableFiltersForm()->statePath('tableFilters');
-
-            $filtersForm->flushCachedAbsoluteStatePaths();
-            $filtersForm->clearCachedChildSchemas();
-        }
-
-        try {
+        return $table->withAppliedFiltersFormState(function () use ($query, $table, $isResolvingRecord): Builder {
             foreach ($table->getFilters() as $filter) {
                 $filter->applyToBaseQuery(
                     $query,
@@ -197,14 +190,7 @@ trait HasFilters
                     );
                 }
             });
-        } finally {
-            if ($table->hasDeferredFilters()) {
-                $filtersForm = $this->getTableFiltersForm()->statePath('tableDeferredFilters');
-
-                $filtersForm->flushCachedAbsoluteStatePaths();
-                $filtersForm->clearCachedChildSchemas();
-            }
-        }
+        });
     }
 
     public function getTableFilterState(string $name): ?array

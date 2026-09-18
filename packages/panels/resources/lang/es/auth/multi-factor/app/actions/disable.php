@@ -11,6 +11,10 @@ return [
         'description' => '¿Seguro que quiere dejar de usar la aplicación de autenticación? Deshabilitarla eliminará una capa adicional de seguridad de su cuenta.',
 
         'form' => [
+            'password' => [
+                'label' => 'Contraseña actual',
+                'validation_attribute' => 'contraseña actual',
+            ],
 
             'code' => [
 

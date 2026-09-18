@@ -79,7 +79,8 @@ class QueryBuilder extends BaseFilter
                 return [];
             }
 
-            return $this->getRuleSummaries($state['rules'], $this->getRuleBuilder());
+            // The summaries describe the applied rules, so the rule builder must be resolved from the applied state too. Otherwise a rule that has been removed from the filters form without applying it has no matching block.
+            return $this->getTable()->withAppliedFiltersFormState(fn (): array => $this->getRuleSummaries($state['rules'], $this->getRuleBuilder()));
         });
 
         $this->columnSpanFull();
@@ -152,14 +153,14 @@ class QueryBuilder extends BaseFilter
 
     public function getActiveCount(): int
     {
-        $rules = $this->getFormState()['rules'];
+        $rules = $this->getState()['rules'];
 
         // Security: See the note in `query()` above — an over-limit tree is treated as no active filter here too, rather than traversing the whole tampered tree to count rules.
         if ($this->exceedsRuleLimits($rules)) {
             return 0;
         }
 
-        return $this->countRules($rules, $this->getRuleBuilder());
+        return $this->getTable()->withAppliedFiltersFormState(fn (): int => $this->countRules($rules, $this->getRuleBuilder()));
     }
 
     /**

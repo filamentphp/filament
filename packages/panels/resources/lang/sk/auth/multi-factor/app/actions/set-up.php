@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Aktuálne heslo',
+                'validation_attribute' => 'aktuálne heslo',
+            ],
+
             'code' => [
 
                 'label' => 'Zadajte 6-miestny kód z overovacej aplikácie',

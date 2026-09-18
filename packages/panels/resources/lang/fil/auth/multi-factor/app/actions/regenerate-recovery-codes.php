@@ -15,7 +15,7 @@ return [
                 ],
             ],
             'password' => [
-                'label' => 'O, ilagay ang kasalukuyan mong password',
+                'label' => 'Ilagay ang kasalukuyan mong password',
                 'validation_attribute' => 'kasalukuyang password',
             ],
         ],

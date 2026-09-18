@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'សហការី',
+        'label' => 'ភ្ជាប់ទំនាក់ទំនង',
 
         'modal' => [
 
-            'heading' => 'សហការី :label',
+            'heading' => 'ភ្ជាប់ទំនាក់ទំនង :label',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'សហការី',
+                    'label' => 'ភ្ជាប់ទំនាក់ទំនង',
                 ],
 
                 'associate_another' => [
-                    'label' => 'សេពគប់ & សេពគប់អ្នកដទៃ',
+                    'label' => 'ភ្ជាប់ទំនាក់ទំនង & ភ្ជាប់ទំនាក់ទំនងមួយទៀត',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'ពាក់ព័ន្ធ',
+                'title' => 'បានភ្ជាប់ទំនាក់ទំនង',
             ],
 
         ],

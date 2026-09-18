@@ -886,6 +886,8 @@ RichEditor::make('content')
 
 <AutoScreenshot name="forms/fields/rich-editor/mentions" alt="Rich editor with mention suggestions" version="4.x" />
 
+Items passed to `items()` are sent to the browser along with the editor, so typing after the trigger character filters them client-side without making any requests to the server.
+
 Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
 
 ```php
