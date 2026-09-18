@@ -220,11 +220,11 @@ abstract class Page extends BasePage
                 $navigationGroupKey = $navigationGroupKey->name;
             }
 
-            $navigationGroup = $subNavigation[$navigationGroupKey ?? 0];
+            $navigationGroup = $subNavigation[$navigationGroupKey ?? 0] ?? null;
         } else {
             $panelNavigation = Filament::getCurrentOrDefaultPanel()->getNavigation();
 
-            $navigationGroup = $panelNavigation[serialize($navigationGroupKey)];
+            $navigationGroup = $panelNavigation[serialize($navigationGroupKey)] ?? null;
         }
 
         $navigationParentItem = collect($navigationGroup?->getItems() ?? [])

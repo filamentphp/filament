@@ -48,7 +48,7 @@ class Cluster extends Page
 
         $panelNavigation = Filament::getCurrentOrDefaultPanel()->getNavigation();
 
-        $navigationGroup = $panelNavigation[serialize($navigationGroupKey)];
+        $navigationGroup = $panelNavigation[serialize($navigationGroupKey)] ?? null;
         $navigationParentItem = collect($navigationGroup?->getItems() ?? [])
             ->first(fn (NavigationItem $item): bool => $item->getKey() === $navigationParentItemKey || $item->getLabel() === $navigationParentItemKey);
 
