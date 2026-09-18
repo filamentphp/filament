@@ -2,6 +2,8 @@
 
 use Dotenv\Dotenv;
 
+define('TESTBENCH_WORKING_PATH', dirname(__DIR__));
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Load .env.testing file if it exists
