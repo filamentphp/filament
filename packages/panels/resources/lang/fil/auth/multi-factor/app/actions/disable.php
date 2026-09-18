@@ -6,6 +6,10 @@ return [
         'heading' => 'I-disable ang authenticator app',
         'description' => 'Sigurado ka bang gusto mong ihinto ang paggamit ng authenticator app? Kapag na-disable ito, mawawala ang dagdag na proteksiyon sa account mo.',
         'form' => [
+            'password' => [
+                'label' => 'Kasalukuyang password',
+                'validation_attribute' => 'kasalukuyang password',
+            ],
             'code' => [
                 'label' => 'Ilagay ang 6-digit code mula sa authenticator app',
                 'validation_attribute' => 'verification code',

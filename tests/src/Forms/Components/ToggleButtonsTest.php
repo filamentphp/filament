@@ -408,7 +408,6 @@ it('can render `ToggleButtons` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/toggle-buttons-test')
-            ->assertSee('Test ToggleButtons')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

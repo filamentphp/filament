@@ -11,6 +11,10 @@ return [
         'description' => 'Tem certeza de que deseja parar de usar o app autenticador? Desativar isso removerá uma camada extra de segurança da sua conta.',
 
         'form' => [
+            'password' => [
+                'label' => 'Senha atual',
+                'validation_attribute' => 'senha atual',
+            ],
 
             'code' => [
 

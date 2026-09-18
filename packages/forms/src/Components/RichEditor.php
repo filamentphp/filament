@@ -1828,6 +1828,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                             <button
                                                 draggable="true"
                                                 type="button"
+                                                data-block-id="<?= e($blockId) ?>"
                                                 x-data="{ isLoading: false }"
                                                 <?php if ($hasSearchableCustomBlocks) { ?>
                                                     x-show="matchesCustomBlockSearch(<?= Js::from([$customBlockGroupLabel, $block::getLabel()]) ?>)"

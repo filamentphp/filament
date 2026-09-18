@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
@@ -198,7 +199,11 @@ trait BelongsToTenant
 
             $relationship = static::getTenantOwnershipRelationship($record);
 
-            if ($relationship instanceof BelongsTo || $relationship instanceof BelongsToThrough) {
+            if (
+                ($relationship instanceof BelongsTo) ||
+                ($relationship instanceof BelongsToThrough) ||
+                ($relationship instanceof HasOneOrManyThrough)
+            ) {
                 return;
             }
 

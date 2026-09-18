@@ -11,6 +11,10 @@ return [
         'description' => 'Sei sicuro di voler smettere di utilizzare l\'app di autenticazione? Disabilitare questa opzione rimuoverà un ulteriore livello di sicurezza dal tuo account.',
 
         'form' => [
+            'password' => [
+                'label' => 'Password attuale',
+                'validation_attribute' => 'password attuale',
+            ],
 
             'code' => [
 

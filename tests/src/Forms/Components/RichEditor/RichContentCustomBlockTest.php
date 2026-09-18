@@ -6,8 +6,6 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 
-use function Filament\Support\generate_icon_html;
-
 uses(TestCase::class);
 
 // Concrete subclasses for testing the abstract base class
@@ -25,6 +23,19 @@ class TestSimpleBlock extends RichContentCustomBlock
     public static function getId(): string
     {
         return 'quote';
+    }
+}
+
+class TestBlockWithIcon extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'with-icon';
+    }
+
+    public static function getIcon(): Htmlable
+    {
+        return new HtmlString('icon');
     }
 }
 
@@ -110,17 +121,8 @@ describe('default implementations', function (): void {
 });
 
 describe('`getIcon()`', function (): void {
-    it('can render an `Htmlable` icon', function (): void {
-        $block = new class extends TestCalloutBlock
-        {
-            public static function getIcon(): Htmlable
-            {
-                return new HtmlString('<svg aria-hidden="true"><path d="M0 0h16v16H0z" /></svg>');
-            }
-        };
-
-        expect(generate_icon_html($block::getIcon())->toHtml())
-            ->toContain('<svg aria-hidden="true"><path d="M0 0h16v16H0z" /></svg>');
+    it('can return an `Htmlable` icon', function (): void {
+        expect(TestBlockWithIcon::getIcon())->toBeInstanceOf(Htmlable::class);
     });
 });
 

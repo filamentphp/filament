@@ -11,6 +11,10 @@ return [
         'description' => '您確定要停止使用信箱驗證嗎？停用此功能將會降低安全性。',
 
         'form' => [
+            'password' => [
+                'label' => '目前密碼',
+                'validation_attribute' => '目前密碼',
+            ],
 
             'code' => [
 

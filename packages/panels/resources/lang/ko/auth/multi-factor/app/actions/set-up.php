@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => '현재 비밀번호',
+                'validation_attribute' => '현재 비밀번호',
+            ],
+
             'code' => [
 
                 'label' => '인증 앱에서 6자리 코드를 입력하세요',

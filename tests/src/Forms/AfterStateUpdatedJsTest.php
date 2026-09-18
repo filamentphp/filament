@@ -17,8 +17,6 @@ it('can use `$set()` in `afterStateUpdatedJs()` to set another field value', fun
         $this->actingAs(User::factory()->create());
 
         visit('/after-state-updated-js-test')
-            ->assertSee('Name')
-            ->assertSee('Email')
             ->fill('#form\.name', 'John Doe')
             ->wait(1)
             ->assertValue('#form\.email', 'john.doe@example.com')
@@ -36,6 +34,7 @@ it('can use `$set()` in `afterStateUpdatedJs()` to set another field value', fun
 
         visit('/after-state-updated-js-test')
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

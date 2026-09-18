@@ -22,7 +22,7 @@ return [
             ],
 
             'password' => [
-                'label' => 'Au, weka nenosiri lako la sasa',
+                'label' => 'Ingiza nenosiri lako la sasa',
                 'validation_attribute' => 'nenosiri',
             ],
         ],

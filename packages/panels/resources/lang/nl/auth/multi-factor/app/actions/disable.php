@@ -11,6 +11,10 @@ return [
         'description' => 'Weet je zeker dat je wilt stoppen met het gebruik van de authenticator-app? Door dit uit te schakelen, verwijder je een extra beveiligingslaag van je account.',
 
         'form' => [
+            'password' => [
+                'label' => 'Huidig wachtwoord',
+                'validation_attribute' => 'huidig wachtwoord',
+            ],
 
             'code' => [
 

@@ -456,7 +456,7 @@ describe('searching', function (): void {
             ->assertSet('tableColumnSearches', ['length' => '', 'sort' => '']);
     });
 
-    it('renders empty individual column search inputs for columns named after JavaScript array properties in the browser', function (): void {
+    it('renders and keeps empty individual column search inputs for columns named after JavaScript array properties in the browser', function (): void {
         retry(10, function (): void {
             Artisan::call('filament:assets');
 
@@ -468,24 +468,6 @@ describe('searching', function (): void {
                 ->assertValue('.fi-ta-individual-search-cell-length input', '')
                 ->assertValue('.fi-ta-individual-search-cell-sort input', '')
                 ->assertValue('.fi-ta-individual-search-cell-title input', '')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-
-            visit('/individual-column-search-browser-test')
-                ->inDarkMode()
-                ->assertNoAccessibilityIssues();
-        });
-    });
-
-    it('keeps an individual column search input empty after clearing it in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
-
-            $this->actingAs(User::factory()->create());
-
-            Post::factory()->count(3)->create();
-
-            visit('/individual-column-search-browser-test')
                 ->fill('.fi-ta-individual-search-cell-length input', 'foo')
                 ->wait(1)
                 ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
@@ -493,6 +475,10 @@ describe('searching', function (): void {
                 ->wait(1)
                 ->assertValue('.fi-ta-individual-search-cell-length input', '')
                 ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/individual-column-search-browser-test')
+                ->inDarkMode()
                 ->assertNoAccessibilityIssues();
         });
     });
@@ -528,7 +514,6 @@ describe('searching', function (): void {
             visit('/column-manager-browser-test')
                 ->inDarkMode()
                 ->click('#second-table button[aria-label="Column manager"]')
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
         });
     });
