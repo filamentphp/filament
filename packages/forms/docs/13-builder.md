@@ -550,6 +550,23 @@ Builder::make()
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `searchable()`, `searchPrompt()` and `noSearchResultsMessage()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
+#### Tweaking the search debounce
+
+By default, the block picker filters blocks immediately as the user types. You may debounce the search using the `searchDebounce()` method, which accepts the number of milliseconds to wait:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make()
+    ->searchable()
+    ->searchDebounce(500)
+    ->blocks([
+        // ...
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Limiting the number of times a block can be used
 
 By default, each block can be used in the builder an unlimited number of times. You may limit this using the `maxItems()` method on a block:

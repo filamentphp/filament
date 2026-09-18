@@ -729,20 +729,21 @@ it('can search blocks in the picker in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         $addBlockAction = '[data-testid="add-block"]';
-        $searchInput = 'input[type="search"]';
+        $noSearchResultsMessage = '[data-testid="builder"] [role="status"]';
+        $searchInput = '[data-testid="builder"] input[type="search"]';
 
         visit('/builder-searchable-test')
             ->click($addBlockAction)
             ->wait(1)
             ->assertVisible($searchInput)
-            ->assertScript('document.activeElement.matches(\'input[type="search"]\')', true)
+            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true)
             ->type($searchInput, 'research & development')
             ->wait(1)
             ->assertVisible('[data-block-label="research & development"]')
             ->assertMissing('[data-block-label="paragraph"]')
             ->type($searchInput, 'zzz')
             ->wait(1)
-            ->assertVisible('[role="status"]')
+            ->assertVisible($noSearchResultsMessage)
             ->keys($searchInput, 'Escape')
             ->wait(1)
             ->assertValue($searchInput, '')
@@ -762,7 +763,7 @@ it('can search blocks in the picker in the browser', function (): void {
             ->wait(1)
             ->type($searchInput, 'video')
             ->wait(1)
-            ->assertVisible('[role="status"]')
+            ->assertVisible($noSearchResultsMessage)
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
