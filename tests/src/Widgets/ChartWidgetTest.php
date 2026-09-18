@@ -133,30 +133,37 @@ it('returns `null` from `getDescription()` by default', function (): void {
     expect($widget->instance()->getDescription())->toBeNull();
 });
 
-it('returns `5s` from `getPollingInterval()` by default', function (): void {
-    $widget = Livewire::test(TestChartWidgetDefault::class);
+describe('polling', function (): void {
+    it('returns `5s` from `getPollingInterval()` by default', function (): void {
+        $widget = Livewire::test(TestChartWidgetDefault::class);
 
-    expect($widget->instance()->getPollingInterval())->toBe('5s');
-});
+        expect($widget->instance()->getPollingInterval())->toBe('5s');
 
-it('can override `getPollingInterval()` via `poll()`', function (): void {
-    $widget = Livewire::test(TestChartWidgetWithCustomPolling::class);
+        $widget->assertSeeHtml('wire:poll.5s="updateChartData"');
+    });
 
-    expect($widget->instance()->getPollingInterval())->toBe('30s');
-});
+    it('can evaluate a `Closure` passed to `poll()`', function (): void {
+        $widget = Livewire::test(TestChartWidgetWithCustomPolling::class);
 
-it('can disable or alter polling for all widgets via `Widget::configureUsing()`', function (): void {
-    $undo = ChartWidget::configureUsing(fn (ChartWidget $chartWidget) => $chartWidget->poll(null));
+        expect($widget->instance()->getPollingInterval())->toBe('30s');
 
-    $widget = Livewire::test(TestChartWidgetDefault::class);
+        $widget->assertSeeHtml('wire:poll.30s="updateChartData"');
+    });
 
-    expect($widget->instance()->getPollingInterval())->toBeNull();
+    it('can disable polling globally via `ChartWidget::configureUsing()`', function (): void {
+        ChartWidget::configureUsing(
+            fn (ChartWidget $chartWidget) => $chartWidget->poll(null),
+            during: function (): void {
+                $widget = Livewire::test(TestChartWidgetDefault::class);
 
-    $undo();
+                expect($widget->instance()->getPollingInterval())->toBeNull();
 
-    $widget = Livewire::test(TestChartWidgetDefault::class);
+                $widget->assertDontSeeHtml('wire:poll');
+            },
+        );
 
-    expect($widget->instance()->getPollingInterval())->toBe('5s');
+        expect(Livewire::test(TestChartWidgetDefault::class)->instance()->getPollingInterval())->toBe('5s');
+    });
 });
 
 class TestChartWidgetDefault extends ChartWidget
@@ -286,7 +293,7 @@ class TestChartWidgetWithCustomPolling extends ChartWidget
     {
         parent::setUp();
 
-        $this->poll('30s');
+        $this->poll(fn (): string => '30s');
     }
 }
 

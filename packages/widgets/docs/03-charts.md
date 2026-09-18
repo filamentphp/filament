@@ -442,7 +442,7 @@ ChartWidget::configureUsing(function (ChartWidget $widget): void {
 });
 ```
 
-Of course, you are still able to overwrite this behavior on each widget individually, either by overriding the `$pollingInterval` property or by calling `poll()` in the widget's `setUp()` method.
+You may still override this behavior on an individual widget by calling `poll()` in the widget's `setUp()` method.
 
 ## Setting a maximum chart height
 
