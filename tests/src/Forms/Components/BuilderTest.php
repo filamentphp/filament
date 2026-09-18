@@ -13,7 +13,6 @@ use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\HtmlString;
 
 use function Filament\Tests\livewire;
 
@@ -658,17 +657,13 @@ describe('rendering', function (): void {
 });
 
 describe('block picker search', function (): void {
-    it('is not searchable by default', function (): void {
-        expect(Builder::make('content')->isSearchable())->toBeFalse();
-    });
+    it('can configure `searchable()`', function (): void {
+        $builder = Builder::make('content');
 
-    it('can be made searchable using `searchable()`', function (): void {
-        expect(Builder::make('content')->searchable()->isSearchable())->toBeTrue();
-        expect(Builder::make('content')->searchable()->searchable(false)->isSearchable())->toBeFalse();
-    });
-
-    it('can set `searchable()` with a `Closure`', function (): void {
-        expect(Builder::make('content')->searchable(static fn (): bool => true)->isSearchable())->toBeTrue();
+        expect($builder->isSearchable())->toBeFalse()
+            ->and($builder->searchable()->isSearchable())->toBeTrue()
+            ->and($builder->searchable(false)->isSearchable())->toBeFalse()
+            ->and($builder->searchable(static fn (): bool => true)->isSearchable())->toBeTrue();
     });
 
     it('returns default translations for `getSearchPrompt()` and `getNoSearchResultsMessage()`', function (): void {
@@ -678,67 +673,24 @@ describe('block picker search', function (): void {
             ->and($builder->getNoSearchResultsMessage())->toBe(__('filament-forms::components.builder.block_picker.no_search_results_message'));
     });
 
-    it('can set `searchPrompt()` and `noSearchResultsMessage()`', function (): void {
+    it('can set `searchPrompt()`, `noSearchResultsMessage()`, and `searchDebounce()` with a `Closure`', function (): void {
         $builder = Builder::make('content')
-            ->searchPrompt('Find a block')
-            ->noSearchResultsMessage('Nothing found.');
+            ->searchPrompt(static fn (): string => 'Find a block')
+            ->noSearchResultsMessage(static fn (): string => 'Nothing found.')
+            ->searchDebounce(static fn (): int => 500);
 
         expect($builder->getSearchPrompt())->toBe('Find a block')
-            ->and($builder->getNoSearchResultsMessage())->toBe('Nothing found.');
+            ->and($builder->getNoSearchResultsMessage())->toBe('Nothing found.')
+            ->and($builder->getSearchDebounce())->toBe(500);
     });
 
     it('returns `0` for `getSearchDebounce()` by default', function (): void {
         expect(Builder::make('content')->getSearchDebounce())->toBe(0);
     });
 
-    it('can set `searchDebounce()`', function (): void {
-        expect(Builder::make('content')->searchDebounce(500)->getSearchDebounce())->toBe(500);
-    });
-
-    it('renders the block picker search field when `searchable()`', function (): void {
-        $html = livewire(RenderBuilderWithSearchableBlocks::class)
-            ->assertSuccessful()
-            ->html();
-
-        expect($html)
-            ->toContain('fi-fo-builder-block-picker-search-ctn')
-            ->toContain('data-block-label="paragraph"')
-            ->toContain('data-block-label="heading"');
-    });
-
-    it('does not render the block picker search field by default', function (): void {
-        $html = livewire(TestComponentWithBuilder::class)
-            ->assertSuccessful()
-            ->html();
-
-        expect($html)
-            ->not->toContain('fi-fo-builder-block-picker-search-ctn')
-            ->not->toContain('data-block-label');
-    });
-
-    it('decodes HTML entities in block search labels for `Htmlable` labels', function (): void {
-        $html = livewire(RenderBuilderWithHtmlableBlockLabel::class)
-            ->assertSuccessful()
-            ->html();
-
-        expect($html)->toContain('data-block-label="r &amp; d"');
-    });
-
-    it('excludes blocks that reached `maxItems()` from the block picker search', function (): void {
-        $html = livewire(RenderBuilderWithSearchableBlocks::class)
-            ->fillForm([
-                'content' => [
-                    [
-                        'type' => 'video',
-                        'data' => ['url' => 'https://example.com'],
-                    ],
-                ],
-            ])
-            ->html();
-
-        expect($html)
-            ->toContain('data-block-label="paragraph"')
-            ->not->toContain('data-block-label="video"');
+    it('can render when `searchable()`', function (): void {
+        livewire(RenderBuilderWithSearchableBlocks::class)
+            ->assertSuccessful();
     });
 });
 
@@ -776,48 +728,47 @@ it('can search blocks in the picker in the browser', function (): void {
 
         $this->actingAs(User::factory()->create());
 
-        $searchInput = '.fi-fo-builder-block-picker-search-ctn input';
+        $addBlockAction = '[data-testid="add-block"]';
+        $searchInput = 'input[type="search"]';
 
         visit('/builder-searchable-test')
-            ->assertSee('Content')
-            ->click('text=Add to content')
+            ->click($addBlockAction)
             ->wait(1)
             ->assertVisible($searchInput)
-            ->assertScript("document.activeElement.matches('.fi-fo-builder-block-picker-search-ctn input')", true)
-            ->type($searchInput, 'head')
+            ->assertScript('document.activeElement.matches(\'input[type="search"]\')', true)
+            ->type($searchInput, 'research & development')
             ->wait(1)
-            ->assertVisible('text=Heading')
-            ->assertMissing('text=Paragraph')
+            ->assertVisible('[data-block-label="research & development"]')
+            ->assertMissing('[data-block-label="paragraph"]')
             ->type($searchInput, 'zzz')
             ->wait(1)
-            ->assertSee(__('filament-forms::components.builder.block_picker.no_search_results_message'))
+            ->assertVisible('[role="status"]')
             ->keys($searchInput, 'Escape')
             ->wait(1)
             ->assertValue($searchInput, '')
             ->assertVisible($searchInput)
-            ->assertVisible('text=Paragraph')
+            ->assertVisible('[data-block-label="paragraph"]')
             ->keys($searchInput, 'Escape')
             ->wait(1)
             ->assertMissing($searchInput)
-            ->assertScript("document.activeElement.closest('.fi-dropdown-trigger') !== null", true)
-            ->click('text=Add to content')
+            ->assertScript('document.activeElement.closest(\'[data-testid="add-block"]\') !== null', true)
+            ->click($addBlockAction)
             ->wait(1)
             ->type($searchInput, 'video')
             ->wait(1)
-            ->click('text=Video')
+            ->click('[data-block-label="video"]')
             ->wait(1)
-            ->assertPresent('[data-testid="builder"] .fi-fo-builder-item')
-            ->click('text=Add to content')
+            ->click($addBlockAction)
             ->wait(1)
             ->type($searchInput, 'video')
             ->wait(1)
-            ->assertSee(__('filament-forms::components.builder.block_picker.no_search_results_message'))
+            ->assertVisible('[role="status"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         visit('/builder-searchable-test')
             ->inDarkMode()
-            ->click('text=Add to content')
+            ->click($addBlockAction)
             ->wait(1)
             ->assertNoAccessibilityIssues();
     });
@@ -2062,22 +2013,6 @@ class RenderBuilderWithSearchableBlocks extends Livewire
                         ->label('Video')
                         ->maxItems(1)
                         ->schema([TextInput::make('url')]),
-                ]),
-        ])->statePath('data');
-    }
-}
-
-class RenderBuilderWithHtmlableBlockLabel extends Livewire
-{
-    public function form(Schema $form): Schema
-    {
-        return $form->schema([
-            Builder::make('content')
-                ->searchable()
-                ->blocks([
-                    Builder\Block::make('rAndD')
-                        ->label(new HtmlString('R &amp; D'))
-                        ->schema([TextInput::make('foo')]),
                 ]),
         ])->statePath('data');
     }

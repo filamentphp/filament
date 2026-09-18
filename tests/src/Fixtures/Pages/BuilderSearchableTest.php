@@ -3,11 +3,13 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\HtmlString;
 
 class BuilderSearchableTest extends Page
 {
@@ -31,6 +33,7 @@ class BuilderSearchableTest extends Page
                 Builder::make('content')
                     ->label('Content')
                     ->searchable()
+                    ->addAction(fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-block']))
                     ->blocks([
                         Builder\Block::make('paragraph')
                             ->label('Paragraph')
@@ -39,7 +42,7 @@ class BuilderSearchableTest extends Page
                                     ->label('Text'),
                             ]),
                         Builder\Block::make('heading')
-                            ->label('Heading')
+                            ->label(new HtmlString('Research &amp; Development'))
                             ->schema([
                                 TextInput::make('title')
                                     ->label('Title'),
