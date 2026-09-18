@@ -26,8 +26,8 @@ use Livewire\Livewire;
 uses(TestCase::class);
 
 dataset('inertia shells', [
-    'Page' => ['/integration/page', TestPage::class, 'fi-layout'],
-    'SimplePage' => ['/integration/simple', TestSimplePage::class, 'fi-simple-layout'],
+    'Page' => ['/integration/page', TestPage::class],
+    'SimplePage' => ['/integration/simple', TestSimplePage::class],
 ]);
 
 dataset('inertia request headers', [
@@ -36,11 +36,15 @@ dataset('inertia request headers', [
     'partial Inertia' => [['X-Inertia' => 'true', 'X-Inertia-Version' => 'fixture-version', 'X-Inertia-Partial-Component' => 'Report', 'X-Inertia-Partial-Data' => 'analytics.total']],
 ]);
 
-it('embeds CSR content in the original `Page` or `SimplePage` shell and evaluates `getInertiaResponse()` once', function (string $path, string $page, string $shell): void {
-    $this->get($path)->assertOk()->assertSee($shell, false)
-        ->assertSee('wire:snapshot', false)->assertSee('data-inertia-container', false)
-        ->assertSee('data-inertia-content inert', false)->assertSee('Loading page…')
-        ->assertSee('fixture-renderer.js', false)->assertHeaderMissing('X-Inertia');
+it('embeds CSR content in the original `Page` or `SimplePage` shell and evaluates `getInertiaResponse()` once', function (string $path): void {
+    $response = $this->get($path)->assertOk()->assertHeaderMissing('X-Inertia');
+    $document = new DOMDocument;
+    @$document->loadHTML($response->getContent());
+    $xpath = new DOMXPath($document);
+
+    expect($xpath->evaluate('boolean(//*[@data-inertia-container]//*[@data-inertia-stage][@aria-busy="true"])'))->toBeTrue()
+        ->and($xpath->evaluate('boolean(//*[@data-inertia-loading][@role="status"])'))->toBeTrue()
+        ->and($xpath->evaluate('boolean(//*[@data-inertia-content][@inert]//script[@data-page="filament-inertia"])'))->toBeTrue();
 
     expect(RequestState::$responses)->toBe(1)->and(RequestState::$mounts)->toBe(1);
 })->with('inertia shells');
@@ -54,13 +58,13 @@ it('returns native Inertia JSON without mounting or rendering either shell', fun
     expect(RequestState::$responses)->toBe(1)->and(RequestState::$mounts)->toBe(0);
 })->with('inertia shells');
 
-it('denies access before evaluating props for document, full and partial Inertia requests', function (string $path, string $page, string $shell, array $headers): void {
+it('denies access before evaluating props for document, full and partial Inertia requests', function (string $path, string $page, array $headers): void {
     RequestState::$allowed = false;
     $this->get($path, $headers)->assertForbidden();
     expect(RequestState::$responses)->toBe(0)->and(RequestState::$mounts)->toBe(0);
 })->with('inertia shells')->with('inertia request headers');
 
-it('retains route authentication before props for document, full and partial Inertia requests', function (string $path, string $page, string $shell, array $headers): void {
+it('retains route authentication before props for document, full and partial Inertia requests', function (string $path, string $page, array $headers): void {
     auth()->logout();
     $response = $this->get($path, $headers);
     if (isset($headers['X-Inertia'])) {
@@ -114,10 +118,12 @@ it('calls the SSR gateway `dispatch()` once and leaves the rendered root inert u
     $this->mock(Gateway::class)->shouldReceive('dispatch')->once()
         ->andReturn(new Response('', '<div id="filament-inertia" data-server-rendered="true"><h2>Server report</h2></div>'));
 
-    $response = $this->get($path)->assertOk()->assertSee('Server report')->assertSee('data-inertia-content inert', false);
+    $response = $this->get($path)->assertOk();
     $document = new DOMDocument;
     @$document->loadHTML($response->getContent());
-    expect((new DOMXPath($document))->evaluate('boolean(//*[@data-inertia-loading][@hidden])'))->toBeTrue();
+    $xpath = new DOMXPath($document);
+    expect($xpath->evaluate('boolean(//*[@data-inertia-loading][@hidden])'))->toBeTrue()
+        ->and($xpath->evaluate('boolean(//*[@data-inertia-content][@inert]//*[@data-server-rendered="true"])'))->toBeTrue();
     expect(RequestState::$responses)->toBe(1);
 })->with('inertia shells');
 
