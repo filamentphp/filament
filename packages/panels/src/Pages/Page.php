@@ -54,6 +54,8 @@ abstract class Page extends BasePage
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
+    protected static ?int $navigationGroupSort = null;
+
     protected static string | Htmlable | null $navigationBadgeTooltip = null;
 
     protected static ?string $navigationParentItem = null;
@@ -150,6 +152,7 @@ abstract class Page extends BasePage
             NavigationItem::make(static::getNavigationLabel())
                 ->key(static::class)
                 ->group(static::getNavigationGroup())
+                ->groupSort(static::getNavigationGroupSort())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
@@ -196,9 +199,19 @@ abstract class Page extends BasePage
         return static::$navigationGroup;
     }
 
+    public static function getNavigationGroupSort(): ?int
+    {
+        return static::$navigationGroupSort;
+    }
+
     public static function navigationGroup(string | UnitEnum | null $group): void
     {
         static::$navigationGroup = $group;
+    }
+
+    public static function navigationGroupSort(?int $sort): void
+    {
+        static::$navigationGroupSort = $sort;
     }
 
     public static function getNavigationParentItem(): ?string

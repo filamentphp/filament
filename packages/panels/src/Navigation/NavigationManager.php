@@ -125,6 +125,15 @@ class NavigationManager
 
                 $group = NavigationGroup::make($registeredGroup ?? $groupName);
 
+                $groupSort = $items
+                    ->map(fn (NavigationItem $item): ?int => $item->getGroupSort())
+                    ->filter(fn (?int $sort): bool => $sort !== null)
+                    ->max();
+
+                if ($groupSort !== null) {
+                    $group->sort($groupSort);
+                }
+
                 if ($groupEnum instanceof HasLabel) {
                     $group->label($groupEnum->getLabel());
                 }
@@ -172,7 +181,7 @@ class NavigationManager
                     }
 
                     if ($sort === false) {
-                        return count($registeredGroups);
+                        return count($registeredGroups) + $group->getSort();
                     }
 
                     return $sort;

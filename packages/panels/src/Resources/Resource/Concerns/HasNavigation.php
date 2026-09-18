@@ -23,6 +23,8 @@ trait HasNavigation
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
+    protected static ?int $navigationGroupSort = null;
+
     protected static ?string $navigationParentItem = null;
 
     protected static string | BackedEnum | null $navigationIcon = null;
@@ -70,6 +72,7 @@ trait HasNavigation
             NavigationItem::make(static::getNavigationLabel())
                 ->key(static::class)
                 ->group(static::getNavigationGroup())
+                ->groupSort(static::getNavigationGroupSort())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
@@ -107,6 +110,11 @@ trait HasNavigation
         return static::$navigationGroup;
     }
 
+    public static function getNavigationGroupSort(): ?int
+    {
+        return static::$navigationGroupSort;
+    }
+
     public static function getNavigationParentItem(): ?string
     {
         return static::$navigationParentItem;
@@ -115,6 +123,11 @@ trait HasNavigation
     public static function navigationGroup(string | UnitEnum | null $group): void
     {
         static::$navigationGroup = $group;
+    }
+
+    public static function navigationGroupSort(?int $sort): void
+    {
+        static::$navigationGroupSort = $sort;
     }
 
     public static function navigationParentItem(?string $item): void

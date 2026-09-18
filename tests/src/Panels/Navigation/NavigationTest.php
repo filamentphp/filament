@@ -138,6 +138,32 @@ describe('registration and ordering', function (): void {
         expect($groupLabels)->toBe([null, 'Reports', 'Shop', 'Blog']);
     });
 
+    it('can sort unregistered navigation groups using `NavigationItem::groupSort()`', function (): void {
+        // `Late Group`'s item has the lowest item `sort()`, so without
+        // `groupSort()` it would win the accidental "first item wins" order
+        // and appear before `Early Group`.
+        Filament::getCurrentOrDefaultPanel()
+            ->navigationItems([
+                NavigationItem::make('Alpha')
+                    ->group('Late Group')
+                    ->groupSort(100)
+                    ->sort(1)
+                    ->url('#'),
+                NavigationItem::make('Beta')
+                    ->group('Early Group')
+                    ->sort(2)
+                    ->url('#'),
+            ]);
+
+        $groupLabels = collect(Filament::getNavigation())
+            ->map(fn (NavigationGroup $group): ?string => $group->getLabel())
+            ->filter(fn (?string $label): bool => in_array($label, ['Late Group', 'Early Group'], strict: true))
+            ->values()
+            ->all();
+
+        expect($groupLabels)->toBe(['Early Group', 'Late Group']);
+    });
+
     it('orders navigation groups registered from a `UnitEnum` by their `cases()` order', function (): void {
         // Items are registered in reverse `cases()` order to prove the sort
         // follows enum order, not registration order.

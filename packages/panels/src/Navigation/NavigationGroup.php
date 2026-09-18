@@ -32,6 +32,8 @@ class NavigationGroup extends Component
 
     protected string | Closure | null $label = null;
 
+    protected int | Closure | null $sort = null;
+
     final public function __construct(string | Closure | null $label = null)
     {
         $this->label($label);
@@ -85,6 +87,13 @@ class NavigationGroup extends Component
         return $this;
     }
 
+    public function sort(int | Closure | null $sort): static
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
     public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->icon);
@@ -101,6 +110,17 @@ class NavigationGroup extends Component
     public function getLabel(): ?string
     {
         return $this->evaluate($this->label);
+    }
+
+    /**
+     * Only used to break ties between navigation groups that are not
+     * registered in `Panel::navigationGroups()`. Defaults to `0` (not `-1`
+     * like `NavigationItem::getSort()`), so groups without an explicit sort
+     * keep their existing relative order.
+     */
+    public function getSort(): int
+    {
+        return $this->evaluate($this->sort) ?? 0;
     }
 
     public function isCollapsed(): bool

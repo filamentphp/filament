@@ -21,6 +21,8 @@ class NavigationItem extends Component
 
     protected string | UnitEnum | Closure | null $group = null;
 
+    protected int | Closure | null $groupSort = null;
+
     protected string | Closure | null $parentItem = null;
 
     protected bool | Closure | null $isActive = null;
@@ -89,6 +91,13 @@ class NavigationItem extends Component
     public function group(string | UnitEnum | Closure | null $group): static
     {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function groupSort(int | Closure | null $sort): static
+    {
+        $this->groupSort = $sort;
 
         return $this;
     }
@@ -194,6 +203,11 @@ class NavigationItem extends Component
     public function getGroup(): string | UnitEnum | null
     {
         return $this->evaluate($this->group);
+    }
+
+    public function getGroupSort(): ?int
+    {
+        return $this->evaluate($this->groupSort);
     }
 
     public function getParentItem(): ?string

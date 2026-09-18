@@ -214,6 +214,16 @@ $panel
     ])
 ```
 
+If a group is never registered with `navigationGroups()` at all, for example a group that only exists because a package's resource sets a `$navigationGroup` property, it's positioned after all registered groups, in the order its items happen to be discovered. If you want to control that order without registering the group in the panel configuration, you may set `$navigationGroupSort` on the resource or page instead:
+
+```php
+protected static string | UnitEnum | null $navigationGroup = 'Support';
+
+protected static ?int $navigationGroupSort = 100;
+```
+
+Groups with a lower `$navigationGroupSort` appear before those with a higher one. This only affects the order of unregistered groups relative to each other; it has no effect on a group that's already listed in `navigationGroups()`, since that array's order always wins.
+
 #### Making navigation groups not collapsible
 
 By default, navigation groups are collapsible.
