@@ -19,11 +19,9 @@ enum ImportColumnEnumTestStatus: string
     case Published = 'published';
 }
 
-enum ImportColumnEnumTestPriority
+enum ImportColumnEnumTestPureStatus
 {
-    case Low;
-
-    case High;
+    case Draft;
 }
 
 class ImportColumnEnumTestImporter extends Importer
@@ -63,13 +61,6 @@ it('uses the cases of the enum as examples when none are set', function (): void
         ->enum(ImportColumnEnumTestStatus::class);
 
     expect($column->getExamples())->toBe(['draft', 'published']);
-});
-
-it('uses the case names as examples for a pure enum', function (): void {
-    $column = ImportColumn::make('priority')
-        ->enum(ImportColumnEnumTestPriority::class);
-
-    expect($column->getExamples())->toBe(['Low', 'High']);
 });
 
 it('keeps `examples()` when they are set alongside `enum()`', function (): void {
@@ -138,14 +129,12 @@ it('validates the state against the enum', function (): void {
     expect(Validator::make(['status' => 'unknown'], $rules)->fails())->toBeTrue();
 });
 
-it('validates the state against a pure enum', function (): void {
-    $column = ImportColumn::make('priority')
-        ->enum(ImportColumnEnumTestPriority::class);
-
-    $rules = ['priority' => $column->getDataValidationRules()];
-
-    expect(Validator::make(['priority' => 'Low'], $rules)->fails())->toBeFalse();
-    expect(Validator::make(['priority' => 'Unknown'], $rules)->fails())->toBeTrue();
+it('rejects a pure enum', function (): void {
+    expect(
+        static fn (): array => ImportColumn::make('status')
+            ->enum(ImportColumnEnumTestPureStatus::class)
+            ->getDataValidationRules(),
+    )->toThrow(InvalidArgumentException::class, 'must be a backed enum');
 });
 
 it('does not validate against the enum when `enum()` is not used', function (): void {

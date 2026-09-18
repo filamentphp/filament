@@ -17,10 +17,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Enum;
-use Illuminate\Validation\Rules\In;
 use InvalidArgumentException;
-use UnitEnum;
 
 class ImportColumn extends Component
 {
@@ -441,8 +438,8 @@ class ImportColumn extends Component
             };
         }
 
-        if ((! $this->isMultiple()) && filled($enumRule = $this->getEnumValidationRule())) {
-            $rules[] = $enumRule;
+        if (filled($enum = $this->getBackedEnum()) && (! $this->isMultiple())) {
+            $rules[] = Rule::enum($enum);
         }
 
         return $rules;
@@ -560,8 +557,8 @@ class ImportColumn extends Component
     {
         $rules = $this->evaluate($this->nestedRecursiveDataValidationRules);
 
-        if ($this->isMultiple() && filled($enumRule = $this->getEnumValidationRule())) {
-            $rules[] = $enumRule;
+        if (filled($enum = $this->getBackedEnum()) && $this->isMultiple()) {
+            $rules[] = Rule::enum($enum);
         }
 
         return $rules;
@@ -623,32 +620,30 @@ class ImportColumn extends Component
             return [];
         }
 
-        if (blank($enum = $this->getEnum())) {
+        if (blank($enum = $this->getBackedEnum())) {
             return [];
         }
 
         return array_map(
-            static fn (UnitEnum $case): string | int => ($case instanceof BackedEnum)
-                ? $case->value
-                : $case->name,
+            static fn (BackedEnum $case): string | int => $case->value,
             $enum::cases(),
         );
     }
 
-    protected function getEnumValidationRule(): Enum | In | null
+    /**
+     * @return class-string<BackedEnum> | null
+     */
+    protected function getBackedEnum(): ?string
     {
         if (blank($enum = $this->getEnum())) {
             return null;
         }
 
-        if (is_a($enum, BackedEnum::class, allow_string: true)) {
-            return Rule::enum($enum);
+        if (! is_a($enum, BackedEnum::class, allow_string: true)) {
+            throw new InvalidArgumentException("Enum [$enum] must be a backed enum.");
         }
 
-        return Rule::in(array_map(
-            static fn (UnitEnum $case): string => $case->name,
-            $enum::cases(),
-        ));
+        return $enum;
     }
 
     /**

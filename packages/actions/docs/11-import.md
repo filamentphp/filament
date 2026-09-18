@@ -177,9 +177,7 @@ ImportColumn::make('status')
     ->enum(Status::class)
 ```
 
-The cases of the enum are also used as the [example CSV data](#providing-example-csv-data) for the column, so the user can see which values are accepted without you listing them by hand. Passing `examples()` yourself overrides this, and passing an empty array prevents example rows from being generated.
-
-Pure enums are supported too, in which case the case names are validated and used as the example data.
+The backing values of the enum are also used as the [example CSV data](#providing-example-csv-data) for the column, so the user can see which values are accepted without you listing them by hand. Passing `examples()` yourself overrides this, and passing an empty array prevents example rows from being generated for that column.
 
 <Aside variant="info">
     If the column [handles multiple values](#handling-multiple-values-in-a-single-column), each item in the array is validated against the enum.
