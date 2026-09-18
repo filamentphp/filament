@@ -122,9 +122,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Färgväljare',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Månad',
+        ],
+
+        'year_input' => [
+            'label' => 'År',
+        ],
+
+        'hour_input' => [
+            'label' => 'Timme',
+        ],
+
+        'minute_input' => [
+            'label' => 'Minut',
+        ],
+
+        'second_input' => [
+            'label' => 'Sekund',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Ladda ner',
+            ],
+
+            'open' => [
+                'label' => 'Öppna i ny flik',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Bildredigerare',
 
             'actions' => [
 
@@ -252,6 +296,18 @@ return [
 
     'key_value' => [
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Åtgärder',
+            ],
+
+            'reorder' => [
+                'label' => 'Ändra ordning',
+            ],
+
+        ],
+
         'actions' => [
 
             'add' => [
@@ -338,6 +394,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Åtgärder',
+            ],
+
+            'reorder' => [
+                'label' => 'Flytta',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -548,6 +616,35 @@ return [
 
                         'color' => [
                             'label' => 'Färg',
+
+                            'options' => [
+                                'slate' => 'Skiffer',
+                                'gray' => 'Grå',
+                                'zinc' => 'Zink',
+                                'neutral' => 'Neutral',
+                                'stone' => 'Sten',
+                                'mauve' => 'Malva',
+                                'olive' => 'Oliv',
+                                'mist' => 'Dis',
+                                'taupe' => 'Taupe',
+                                'red' => 'Röd',
+                                'orange' => 'Orange',
+                                'amber' => 'Bärnsten',
+                                'yellow' => 'Gul',
+                                'lime' => 'Lime',
+                                'green' => 'Grön',
+                                'emerald' => 'Smaragd',
+                                'teal' => 'Blågrön',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Himmelsblå',
+                                'blue' => 'Blå',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violett',
+                                'purple' => 'Lila',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Rosa',
+                                'rose' => 'Rosenröd',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -571,8 +668,12 @@ return [
         'mentions' => [
             'no_options_message' => 'Inga alternativ tillgängliga.',
             'no_search_results_message' => 'Inga resultat matchar din sökning.',
-            'search_prompt' => 'Börja skriva för att söka...',
-            'searching_message' => 'Söker...',
+            'search_prompt' => 'Börja skriva för att söka…',
+            'searching_message' => 'Söker…',
+        ],
+
+        'toolbar' => [
+            'label' => 'Redigerarens verktygsfält',
         ],
 
         'tools' => [
@@ -592,6 +693,9 @@ return [
             'h1' => 'Titel',
             'h2' => 'Rubrik',
             'h3' => 'Underrubrik',
+            'h4' => 'Rubrik 4',
+            'h5' => 'Rubrik 5',
+            'h6' => 'Rubrik 6',
             'grid' => 'Rutnät',
             'grid_delete' => 'Ta bort rutnät',
             'highlight' => 'Markera',
@@ -601,6 +705,7 @@ return [
             'link' => 'Länk',
             'merge_tags' => 'Mallvariabel',
             'ordered_list' => 'Nummerlista',
+            'paragraph' => 'Stycke',
             'redo' => 'Gör om',
             'small' => 'Liten text',
             'strike' => 'Genomstruken',
@@ -623,13 +728,17 @@ return [
             'undo' => 'Ångra',
         ],
 
-        'uploading_file_message' => 'Laddar upp fil...',
+        'uploading_file_message' => 'Laddar upp fil…',
 
     ],
 
     'select' => [
 
         'actions' => [
+
+            'clear' => [
+                'label' => 'Rensa',
+            ],
 
             'create_option' => [
 
@@ -675,6 +784,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Ta bort :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -682,7 +795,7 @@ return [
             'false' => 'Nej',
         ],
 
-        'loading_message' => 'Laddar...',
+        'loading_message' => 'Laddar…',
 
         'max_items_message' => 'Kan endast välja :count st.',
 
@@ -692,9 +805,11 @@ return [
 
         'placeholder' => 'Välj ett alternativ',
 
-        'searching_message' => 'Söker...',
+        'searching_message' => 'Söker…',
 
-        'search_prompt' => 'Börja skriva för att söka...',
+        'search_label' => 'Sök',
+
+        'search_prompt' => 'Börja skriva för att söka…',
 
     ],
 
@@ -709,6 +824,11 @@ return [
         ],
 
         'placeholder' => 'Ny tagg',
+
+        'tag_added' => 'Tillagd: :tag',
+
+        'tag_removed' => 'Borttagen: :tag',
+
     ],
 
     'text_input' => [

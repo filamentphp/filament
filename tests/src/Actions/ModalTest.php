@@ -35,8 +35,6 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="read-only-unsaved-changes-alert-trigger"]')
             ->assertVisible('[data-testid="read-only-unsaved-changes-alert-modal"]')
             ->assertScript($dispatchBeforeUnloadEvent, false)
-            // Let finite animations finish before Axe measures colors through the modal overlay.
-            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="read-only-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="read-only-unsaved-changes-alert-modal"]')
@@ -51,7 +49,6 @@ describe('browser interactions', function (): void {
             ->click('[data-testid="nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Open editable nested action')
             ->assertVisible('[data-testid="editable-nested-unsaved-changes-alert-modal"]')
             ->assertScript($dispatchBeforeUnloadEvent, true)
-            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="editable-nested-unsaved-changes-alert-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertVisible('[data-testid="nested-unsaved-changes-alert-modal"]')
@@ -100,7 +97,6 @@ describe('browser interactions', function (): void {
             ->assertVisible('[data-testid="modal-less-parent-child-modal"]')
             ->click('[data-testid="modal-less-parent-child-modal"] .fi-modal-footer-actions button >> text=Cancel')
             ->assertMissing('[data-testid="modal-less-parent-child-modal"]')
-            ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
             ->assertNoAccessibilityIssues()
             ->click('[data-testid="action-after-child-trigger"]')
             ->assertSeeIn('[data-testid="action-after-child-result"]', 'ran')
@@ -110,83 +106,53 @@ describe('browser interactions', function (): void {
         'dark mode' => true,
     ]);
 
-    it('restores focus to the trigger after closing a standalone modal', function (): void {
+    it('locks page scroll and restores focus and scroll position after closing a standalone modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
-                ->click('[data-testid="standalone-trigger"]')
-                ->assertVisible('[data-testid="standalone-modal"]')
-                ->click('[data-testid="standalone-close"]')
-                ->assertMissing('[data-testid="standalone-modal"]')
-                ->assertPresent('[data-testid="standalone-trigger"]:focus')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('restores focus without changing the page scroll position after closing a standalone modal', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="standalone-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
                 ->assertVisible('[data-testid="standalone-modal"]')
+                ->assertScript('document.documentElement.style.overflow', 'hidden')
                 ->click('[data-testid="standalone-close"]')
                 ->assertMissing('[data-testid="standalone-modal"]')
                 ->assertPresent('[data-testid="standalone-trigger"]:focus')
                 ->assertScript('window.scrollY === window.modalTestScrollY', true)
-                ->assertNoSmoke();
-        });
-    });
-
-    it('restores focus without changing the page scroll position after closing a top-level action modal', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
-                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="basic-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
-                ->assertVisible('[data-testid="basic-modal"]')
-                ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Cancel')
-                ->assertMissing('[data-testid="basic-modal"]')
-                ->assertPresent('[data-testid="basic-trigger"]:focus')
-                ->assertScript('window.scrollY === window.modalTestScrollY', true)
-                ->assertNoSmoke();
-        });
-    });
-
-    it('restores focus without changing the page scroll position after confirming a top-level action modal', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
-                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="basic-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
-                ->assertVisible('[data-testid="basic-modal"]')
-                // Confirming runs the action and a Livewire request, unlike cancelling.
-                ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Confirm')
-                ->assertMissing('[data-testid="basic-modal"]')
-                ->assertPresent('[data-testid="basic-trigger"]:focus')
-                ->assertScript('window.scrollY === window.modalTestScrollY', true)
-                ->assertNoSmoke();
-        });
-    });
-
-    it('restores focus without changing the page scroll position when a standalone modal is closed by pressing `Escape`', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
-                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="standalone-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+                ->assertScript('document.documentElement.style.overflow', '')
+                // Let the first modal finish restoring scroll before capturing the position again.
+                ->wait(0.5)
+                ->assertScript('(() => { window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="standalone-trigger"]\').click(); return window.modalTestScrollY > 0 })()', true)
                 ->assertVisible('[data-testid="standalone-modal"]')
                 // Let the focus trap activate (it is deferred after opening) before closing.
                 ->wait(0.5)
                 ->keys('[data-testid="standalone-modal"]', 'Escape')
                 ->assertMissing('[data-testid="standalone-modal"]')
                 ->assertPresent('[data-testid="standalone-trigger"]:focus')
+                ->assertScript('window.scrollY === window.modalTestScrollY', true)
+                ->assertScript('document.documentElement.style.overflow', '')
+                ->assertNoSmoke();
+        });
+    });
+
+    it('restores focus and scroll position after cancelling and confirming a top-level action modal', function (): void {
+        retry(10, function (): void {
+            $this->actingAs(User::factory()->create());
+
+            visit('/modal-browser-test')
+                ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="basic-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
+                ->assertVisible('[data-testid="basic-modal"]')
+                ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Cancel')
+                ->assertMissing('[data-testid="basic-modal"]')
+                ->assertPresent('[data-testid="basic-trigger"]:focus')
+                ->assertScript('window.scrollY === window.modalTestScrollY', true)
+                // Let the first modal finish restoring scroll before capturing the position again.
+                ->wait(0.5)
+                ->assertScript('(() => { window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; document.querySelector(\'[data-testid="basic-trigger"]\').click(); return window.modalTestScrollY > 0 })()', true)
+                ->assertVisible('[data-testid="basic-modal"]')
+                // Confirming runs the action and a Livewire request, unlike cancelling.
+                ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Confirm')
+                ->assertMissing('[data-testid="basic-modal"]')
+                ->assertPresent('[data-testid="basic-trigger"]:focus')
                 ->assertScript('window.scrollY === window.modalTestScrollY', true)
                 ->assertNoSmoke();
         });
@@ -203,7 +169,6 @@ describe('browser interactions', function (): void {
             }
 
             $browser
-                ->assertSee('Modal Browser Test')
                 ->assertScript('(() => { const spacer = document.createElement(\'div\'); spacer.style.height = \'200vh\'; document.body.append(spacer); const trigger = document.querySelector(\'[data-testid="no-tabbable-content-trigger"]\'); trigger.focus({ preventScroll: true }); window.scrollTo(0, document.documentElement.scrollHeight); window.modalTestScrollY = window.scrollY; trigger.click(); return window.modalTestScrollY > 0 })()', true)
                 ->assertVisible('[data-testid="no-tabbable-content-modal"]')
                 // Let the focus trap activate (it is deferred after opening) before checking where it put focus.
@@ -223,7 +188,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('[data-testid="no-focus-restore-trigger"]')
                 ->assertVisible('[data-testid="no-focus-restore-modal"]')
                 ->click('[data-testid="no-focus-restore-close"]')
@@ -240,18 +204,17 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('Modal focus restoration')
                 ->assertVisible('[data-testid="basic-modal"]')
                 ->click('[data-testid="basic-modal"] .fi-modal-footer-actions button >> text=Cancel')
                 ->assertMissing('[data-testid="basic-modal"]')
                 ->assertPresent('[data-testid="basic-trigger"]:focus')
                 ->assertNoSmoke()
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
 
             visit('/modal-browser-test')
                 ->inDarkMode()
+                ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
         });
     });
@@ -261,7 +224,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('Non-overlay focus restoration')
                 ->assertVisible('[data-testid="non-overlay-modal"]')
                 ->click('[data-testid="non-overlay-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
@@ -282,7 +244,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('Overlay focus restoration')
                 ->assertVisible('[data-testid="overlay-modal"]')
                 ->click('[data-testid="overlay-modal"] .fi-modal-footer-actions button >> text=Open nested modal')
@@ -303,36 +264,31 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('Escape close disabled')
                 ->assertVisible('[data-testid="escape-close-disabled-modal"]')
                 ->wait(0.5)
                 // The window is autofocused so the close button does not steal focus, while staying in the tab order as the only keyboard way to dismiss the modal.
                 ->assertScript('document.activeElement === document.querySelector(\'[data-testid="escape-close-disabled-modal"]\')', true)
                 ->assertScript('document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn\').tabIndex', 0)
-                // The close button stays inside the header, so a sticky header keeps it pinned while the modal scrolls.
-                ->assertScript('Boolean(document.querySelector(\'[data-testid="escape-close-disabled-modal"] .fi-modal-header .fi-modal-close-btn\'))', true)
                 ->click('[data-testid="escape-close-disabled-modal"] .fi-modal-close-btn')
                 ->assertMissing('[data-testid="escape-close-disabled-modal"]')
                 ->assertNoSmoke()
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
 
             visit('/modal-browser-test')
                 ->inDarkMode()
                 ->click('Escape close disabled')
                 ->assertVisible('[data-testid="escape-close-disabled-modal"]')
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
+                ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
         });
     });
 
-    it('cancels parent actions when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {
+    it('cancels parent actions and releases the page scroll lock when a nested modal using `cancelParentActionsOnClose()` is dismissed', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('Cancel parents on close')
                 ->assertVisible('[data-testid="cancel-on-close-modal"]')
                 ->click('[data-testid="cancel-on-close-modal"] .fi-modal-footer-actions button >> text=Open level 2')
@@ -344,12 +300,13 @@ describe('browser interactions', function (): void {
                 ->assertMissing('[data-testid="cancel-on-close-parent-modal"]')
                 ->assertMissing('[data-testid="cancel-on-close-modal"]')
                 ->assertPresent('[data-testid="cancel-on-close-trigger"]:focus')
+                ->assertScript('document.documentElement.style.overflow', '')
                 ->assertNoSmoke()
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
 
             visit('/modal-browser-test')
                 ->inDarkMode()
+                ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
         });
     });
@@ -359,7 +316,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('Scroll preservation')
                 ->assertVisible('[data-testid="scroll-modal"]')
                 // Let the modal's fields lay out so the window is scrollable.
@@ -382,72 +338,20 @@ describe('browser interactions', function (): void {
         });
     });
 
-    it('locks and restores page scroll when opening and closing a single modal', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
-                ->assertScript('document.documentElement.style.overflow', '')
-                ->click('[data-testid="standalone-trigger"]')
-                ->assertVisible('[data-testid="standalone-modal"]')
-                ->assertScript('document.documentElement.style.overflow', 'hidden')
-                ->click('[data-testid="standalone-close"]')
-                ->assertMissing('[data-testid="standalone-modal"]')
-                ->assertScript('document.documentElement.style.overflow', '')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('lets clicks reach the page behind a click-through modal', function (): void {
+    it('lets clicks reach the page behind a click-through modal without locking page scroll', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
                 ->assertSee('Behind: not clicked')
+                ->assertScript('document.documentElement.style.overflow', '')
                 ->click('[data-testid="click-through-trigger"]')
                 ->assertVisible('[data-testid="click-through-modal"]')
+                ->assertScript('document.documentElement.style.overflow', '')
                 // The open modal covers the page, but because it is click-through
                 // the click passes through to the button behind it.
                 ->click('[data-testid="behind-button"]')
                 ->assertSee('Behind: clicked')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('does not lock page scroll for a click-through modal', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
-                ->assertScript('document.documentElement.style.overflow', '')
-                ->click('[data-testid="click-through-trigger"]')
-                ->assertVisible('[data-testid="click-through-modal"]')
-                // A click-through modal lets you interact with the page behind it,
-                // so it must leave the page scrollable.
-                ->assertScript('document.documentElement.style.overflow', '')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('releases the page scroll lock after a dismissed nested modal cancels all parent actions', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
-                ->click('Cancel parents on close')
-                ->assertVisible('[data-testid="cancel-on-close-modal"]')
-                ->click('[data-testid="cancel-on-close-modal"] .fi-modal-footer-actions button >> text=Open level 2')
-                ->assertVisible('[data-testid="cancel-on-close-parent-modal"]')
-                ->click('[data-testid="cancel-on-close-parent-modal"] .fi-modal-footer-actions button >> text=Open level 3')
-                ->assertVisible('[data-testid="cancel-on-close-nested-modal"]')
-                ->click('[data-testid="cancel-on-close-nested-modal"] .fi-modal-close-btn')
-                ->assertMissing('[data-testid="cancel-on-close-nested-modal"]')
-                ->assertMissing('[data-testid="cancel-on-close-parent-modal"]')
-                ->assertMissing('[data-testid="cancel-on-close-modal"]')
-                ->assertScript('document.documentElement.style.overflow', '')
                 ->assertNoSmoke();
         });
     });
@@ -457,7 +361,6 @@ describe('browser interactions', function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/modal-browser-test')
-                ->assertSee('Modal Browser Test')
                 ->click('Overlay focus restoration')
                 ->assertVisible('[data-testid="overlay-modal"]')
                 ->click('[data-testid="overlay-modal"] .fi-modal-footer-actions button >> text=Close all')

@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Veya, geçerli şifrenizi girin',
+                'label' => 'Mevcut şifrenizi girin',
 
                 'validation_attribute' => 'şifre',
 

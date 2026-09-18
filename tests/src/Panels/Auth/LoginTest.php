@@ -540,24 +540,24 @@ it('can fill the login form, authenticate, and redirect to the dashboard in the 
         $user = User::factory()->create();
 
         visit(Filament::getLoginUrl())
-            ->assertSee('Sign in')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues()
             ->type('input[type="email"]', $user->email)
             ->type('input[type="password"]', 'password')
             ->click('button[type="submit"]')
-            ->assertSee('Dashboard')
+            ->assertVisible('.fi-page')
             ->assertPathIs('/')
-            ->assertSee('Dashboard')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         visit(Filament::getLoginUrl())
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         visit(Filament::getUrl())
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Atau, masukkan kata laluan semasa anda',
+                'label' => 'Masukkan kata laluan semasa anda',
 
                 'validation_attribute' => 'kata laluan',
 

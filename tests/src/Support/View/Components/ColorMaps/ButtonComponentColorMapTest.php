@@ -5,20 +5,18 @@ use Filament\Support\View\Components\ColorMaps\ButtonComponentColorMap;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
-
 /**
  * @param  array<int, string>  $palette
  */
-function defaultButtonColorMap(array $palette): ButtonComponentColorMap
-{
+$defaultButtonColorMap = function (array $palette): ButtonComponentColorMap {
     return ButtonComponentColorMap::make($palette)
         ->lightBackground(bg: 600, hover: 500)
         ->lightBackground(bg: 400, hover: 300, alternateHover: 500)
         ->darkBackground(bg: 600, hover: 500, alternateHover: 700);
-}
+};
 
-it('produces all eight slots when fully configured for a vibrant palette', function (): void {
-    $map = defaultButtonColorMap(Color::Red)->get();
+it('produces all eight slots when fully configured for a vibrant palette', function () use ($defaultButtonColorMap): void {
+    $map = $defaultButtonColorMap(Color::Red)->get();
 
     expect($map)
         ->toHaveKeys(['bg', 'hover:bg', 'dark:bg', 'dark:hover:bg', 'text', 'hover:text', 'dark:text', 'dark:hover:text']);
@@ -80,11 +78,11 @@ it('falls through to a later `lightBackground()` candidate when the first does n
         ]);
 });
 
-it('uses the last `lightBackground()` candidate as the fallback when no candidate produces light text on its bg', function (): void {
+it('uses the last `lightBackground()` candidate as the fallback when no candidate produces light text on its bg', function () use ($defaultButtonColorMap): void {
     // Yellow is pale enough that shade 600 takes dark text, so the first candidate
     // (600, 500) is rejected and the resolver falls through to the last candidate
     // (400, 300, 500), which is used unconditionally as the fallback.
-    $map = defaultButtonColorMap(Color::Yellow)->get();
+    $map = $defaultButtonColorMap(Color::Yellow)->get();
 
     expect($map['bg'])->toBe(400);
 });
@@ -123,8 +121,8 @@ it('uses the last `darkBackground()` candidate as the fallback when no candidate
     expect($map['dark:bg'])->toBe(400);
 });
 
-it('falls back to white text for every slot when `minContrastRatio()` is unreachable', function (): void {
-    $map = defaultButtonColorMap(Color::Red)
+it('falls back to white text for every slot when `minContrastRatio()` is unreachable', function () use ($defaultButtonColorMap): void {
+    $map = $defaultButtonColorMap(Color::Red)
         ->minContrastRatio(50.0) // never satisfiable: forces every bg → white text
         ->get();
 

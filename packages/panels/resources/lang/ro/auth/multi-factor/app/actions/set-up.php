@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Parola curentă',
+                'validation_attribute' => 'parola curentă',
+            ],
+
             'code' => [
 
                 'label' => 'Introduceți codul din 6 cifre din aplicația de autentificare',

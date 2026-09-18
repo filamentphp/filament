@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Notiser',
 
+        'unread_label' => 'Oläst notis',
+
         'actions' => [
 
             'clear' => [

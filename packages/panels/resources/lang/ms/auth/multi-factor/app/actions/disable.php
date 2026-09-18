@@ -11,6 +11,10 @@ return [
         'description' => 'Adakah anda pasti ingin berhenti menggunakan aplikasi authenticator? Menyahaktifkan ini akan mengeluarkan lapisan keselamatan tambahan dari akaun anda.',
 
         'form' => [
+            'password' => [
+                'label' => 'Kata laluan semasa',
+                'validation_attribute' => 'kata laluan semasa',
+            ],
 
             'code' => [
 

@@ -235,25 +235,19 @@ describe('rendering', function (): void {
     });
 });
 
-it('has no accessibility issues in light mode', function (): void {
+it('has no accessibility issues in light and dark modes', function (): void {
     retry(10, function (): void {
         Post::factory()->create();
 
         $this->actingAs(User::factory()->create());
 
         visit('/infolist-entries-browser-test')
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
-    });
-});
-
-it('has no accessibility issues in dark mode', function (): void {
-    retry(10, function (): void {
-        Post::factory()->create();
-
-        $this->actingAs(User::factory()->create());
 
         visit('/infolist-entries-browser-test')
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });
