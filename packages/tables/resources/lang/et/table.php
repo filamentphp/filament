@@ -12,6 +12,10 @@ return [
                 'label' => 'Rakenda',
             ],
 
+            'reorder' => [
+                'label' => 'Muuda järjestust',
+            ],
+
             'reset' => [
                 'label' => 'Lähtesta',
             ],
@@ -24,6 +28,15 @@ return [
 
         'actions' => [
             'label' => 'Tegevus|Tegevused',
+        ],
+
+        'icon' => [
+
+            'boolean' => [
+                'true' => 'Jah',
+                'false' => 'Ei',
+            ],
+
         ],
 
         'select' => [
@@ -115,6 +128,10 @@ return [
             'label' => 'Reasta kirjed',
         ],
 
+        'reorder_record' => [
+            'label' => 'Järjesta kirje :key',
+        ],
+
         'filter' => [
             'label' => 'Filtreeri',
         ],
@@ -129,6 +146,10 @@ return [
 
         'column_manager' => [
             'label' => 'Veeruhaldur',
+        ],
+
+        'toggle_record_content' => [
+            'label' => 'Ava/Peida kirje :key',
         ],
 
     ],
@@ -219,7 +240,11 @@ return [
 
     ],
 
+    'loading' => 'Laen...',
+
     'reorder_indicator' => 'Lohista kirjed järjekorda.',
+
+    'result_count' => '{0} Kirjed puuduvad|{1} :count kirjed|[2,*] :count kirjed',
 
     'selection_indicator' => [
 

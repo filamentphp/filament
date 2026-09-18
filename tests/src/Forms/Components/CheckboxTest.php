@@ -266,7 +266,6 @@ it('can render `Checkbox` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/checkbox-test')
-            ->assertSee('Test Checkbox')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

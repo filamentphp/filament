@@ -11,6 +11,10 @@ return [
         'description' => 'Da li ste sigurni da želite da isključite aplikaciju za autentifikaciju? Isključivanje će ukloniti dodatni nivo zaštite vašeg naloga.',
 
         'form' => [
+            'password' => [
+                'label' => 'Trenutna lozinka',
+                'validation_attribute' => 'trenutna lozinka',
+            ],
 
             'code' => [
 

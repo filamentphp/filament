@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Atau, gunakan kata sandi',
+                'label' => 'Masukkan kata sandi Anda saat ini',
 
                 'validation_attribute' => 'kata sandi',
 

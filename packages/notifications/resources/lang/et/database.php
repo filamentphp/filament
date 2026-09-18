@@ -6,6 +6,8 @@ return [
 
         'heading' => 'Teated',
 
+        'unread_label' => 'Lugemata teated',
+
         'actions' => [
 
             'clear' => [

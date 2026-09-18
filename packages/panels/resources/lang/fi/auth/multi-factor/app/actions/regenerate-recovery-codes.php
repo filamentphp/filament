@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Tai anna nykyinen salasana',
+                'label' => 'Syötä nykyinen salasanasi',
 
                 'validation_attribute' => 'salasana',
 

@@ -11,6 +11,10 @@ return [
         'description' => 'Naozaj chcete prestať používať overovaciu aplikáciu? Vypnutím odstránite ďalšiu vrstvu zabezpečenia Vášho účtu.',
 
         'form' => [
+            'password' => [
+                'label' => 'Aktuálne heslo',
+                'validation_attribute' => 'aktuálne heslo',
+            ],
 
             'code' => [
 

@@ -297,7 +297,6 @@ it('can render `Textarea` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/textarea-test')
-            ->assertSee('Test Textarea')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

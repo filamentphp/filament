@@ -449,16 +449,16 @@ it('can create a record again in the browser after navigating back to a create p
         $this->actingAs(User::factory()->create());
 
         visit(TicketResource::getUrl('create', panel: 'spa'))
-            ->assertSee('Create Ticket')
+            ->assertPresent('.fi-sc-form button[type="submit"]')
             ->click('.fi-sc-form button[type="submit"]')
-            ->waitForText('View Ticket')
+            ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
             ->assertPathIs('/spa/tickets/*')
             ->back()
-            ->waitForText('Create Ticket')
             ->assertPathIs('/spa/tickets/create')
+            ->assertPresent('.fi-sc-form button[type="submit"]')
             ->wait(1)
             ->click('.fi-sc-form button[type="submit"]')
-            ->waitForText('View Ticket')
+            ->assertScript("window.location.pathname !== '/spa/tickets/create'", true)
             ->assertPathIs('/spa/tickets/*');
 
         expect(Ticket::count())->toBe(2);

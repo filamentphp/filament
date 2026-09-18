@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Tests\Rector\Rules\MovePestTestClassesToEndRector;
+use Filament\Tests\Rector\Rules\ScopePestTestHelpersRector;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
 
@@ -19,4 +21,8 @@ return RectorConfig::configure()
     )
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
-    ->withCodeQualityLevel(0);
+    ->withCodeQualityLevel(0)
+    ->withRules([
+        ScopePestTestHelpersRector::class,
+        MovePestTestClassesToEndRector::class,
+    ]);
