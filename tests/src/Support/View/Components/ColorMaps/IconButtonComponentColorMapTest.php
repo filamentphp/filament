@@ -5,19 +5,17 @@ use Filament\Support\View\Components\ColorMaps\IconButtonComponentColorMap;
 use Filament\Tests\TestCase;
 
 uses(TestCase::class);
-
 /**
  * @param  array<int, string>  $palette
  */
-function defaultIconButtonColorMap(array $palette): IconButtonComponentColorMap
-{
+$defaultIconButtonColorMap = function (array $palette): IconButtonComponentColorMap {
     return IconButtonComponentColorMap::make($palette)
         ->lightSurface(Color::Gray[50])
         ->darkSurface(Color::Gray[700]);
-}
+};
 
-it('produces text/hover/dark slots when fully configured', function (): void {
-    $map = defaultIconButtonColorMap(Color::Red)->get();
+it('produces text/hover/dark slots when fully configured', function () use ($defaultIconButtonColorMap): void {
+    $map = $defaultIconButtonColorMap(Color::Red)->get();
 
     expect($map)->toHaveKeys(['text', 'hover:text', 'dark:text', 'dark:hover:text']);
 });
@@ -34,16 +32,16 @@ it('throws when no `darkSurface()` is configured', function (): void {
         ->get();
 })->throws(LogicException::class, '`darkSurface()`');
 
-it('caps dark search at `darkMaxShade()`', function (): void {
-    $map = defaultIconButtonColorMap(Color::Red)
+it('caps dark search at `darkMaxShade()`', function () use ($defaultIconButtonColorMap): void {
+    $map = $defaultIconButtonColorMap(Color::Red)
         ->darkMaxShade(300)
         ->get();
 
     expect($map['dark:text'])->toBeLessThanOrEqual(300);
 });
 
-it('shifts the matched shade when `lightSurface()` is changed', function (): void {
-    $defaultMap = defaultIconButtonColorMap(Color::Red)->get();
+it('shifts the matched shade when `lightSurface()` is changed', function () use ($defaultIconButtonColorMap): void {
+    $defaultMap = $defaultIconButtonColorMap(Color::Red)->get();
 
     $darkerLightSurfaceMap = IconButtonComponentColorMap::make(Color::Red)
         ->lightSurface(Color::Gray[300])
@@ -53,8 +51,8 @@ it('shifts the matched shade when `lightSurface()` is changed', function (): voi
     expect($darkerLightSurfaceMap)->not->toBe($defaultMap);
 });
 
-it('shifts the matched shade when `darkSurface()` is changed', function (): void {
-    $defaultMap = defaultIconButtonColorMap(Color::Red)->get();
+it('shifts the matched shade when `darkSurface()` is changed', function () use ($defaultIconButtonColorMap): void {
+    $defaultMap = $defaultIconButtonColorMap(Color::Red)->get();
 
     $lighterDarkSurfaceMap = IconButtonComponentColorMap::make(Color::Red)
         ->lightSurface(Color::Gray[50])
@@ -64,12 +62,12 @@ it('shifts the matched shade when `darkSurface()` is changed', function (): void
     expect($lighterDarkSurfaceMap)->not->toBe($defaultMap);
 });
 
-it('picks more contrasty shades when `minContrastRatio()` is bumped to AAA', function (): void {
-    $relaxedMap = defaultIconButtonColorMap(Color::Red)
+it('picks more contrasty shades when `minContrastRatio()` is bumped to AAA', function () use ($defaultIconButtonColorMap): void {
+    $relaxedMap = $defaultIconButtonColorMap(Color::Red)
         ->minContrastRatio(Color::WCAG_AA_NON_TEXT)
         ->get();
 
-    $strictMap = defaultIconButtonColorMap(Color::Red)
+    $strictMap = $defaultIconButtonColorMap(Color::Red)
         ->minContrastRatio(Color::WCAG_AAA_TEXT)
         ->get();
 
