@@ -71,7 +71,26 @@ You can omit the calls to `relationship()` and `inverseRelationship()` if you wa
 
 ## Customizing the nested resource index URL
 
-By default, Filament uses the parent resource page whose key matches the kebab-cased relationship name for the nested resource's index URL. This URL is used for breadcrumbs and redirects back to the relation page. If you register the relation page under a different key in the parent resource's `getPages()` method, you can pass that key to the `page()` method:
+The nested resource's index URL is used for breadcrumbs and redirects back to the relation manager or page.
+
+### Registering a relation manager with the correct URL
+
+When dealing with a nested resource that is listed by a relation manager, and the relation manager is amongst others on that page, you may notice that the URL to it is not correct when you redirect from the nested resource back to it. This is because each relation manager registered on a resource is assigned an integer, which is used to identify it in the URL when switching between multiple relation managers. For example, `?relation=0` might represent one relation manager in the URL, and `?relation=1` might represent another.
+
+When redirecting from a nested resource back to a relation manager, Filament will assume that the relationship name is used to identify that relation manager in the URL. For example, if you have a nested `LessonResource` and a `LessonsRelationManager`, the relationship name is `lessons`, and should be used as the [URL parameter key](managing-relationships#customizing-the-relation-managers-url-parameter) for that relation manager when it is registered:
+
+```php
+public static function getRelations(): array
+{
+    return [
+        'lessons' => LessonsRelationManager::class,
+    ];
+}
+```
+
+### Registering a relation page with a custom key
+
+By default, Filament uses the parent resource page whose key matches the kebab-cased relationship name for the nested resource's index URL. If you register the relation page under a different key in the parent resource's `getPages()` method, you can pass that key to the `page()` method:
 
 ```php
 use App\Filament\Resources\Courses\CourseResource;
@@ -87,18 +106,3 @@ public static function getParentResourceRegistration(): ?ParentResourceRegistrat
 ```
 
 If the configured page is not registered, Filament falls back to the parent resource's view, edit, or index page.
-
-## Registering a relation manager with the correct URL
-
-When dealing with a nested resource that is listed by a relation manager, and the relation manager is amongst others on that page, you may notice that the URL to it is not correct when you redirect from the nested resource back to it. This is because each relation manager registered on a resource is assigned an integer, which is used to identify it in the URL when switching between multiple relation managers. For example, `?relation=0` might represent one relation manager in the URL, and `?relation=1` might represent another.
-
-When redirecting from a nested resource back to a relation manager, Filament will assume that the relationship name is used to identify that relation manager in the URL. For example, if you have a nested `LessonResource` and a `LessonsRelationManager`, the relationship name is `lessons`, and should be used as the [URL parameter key](managing-relationships#customizing-the-relation-managers-url-parameter) for that relation manager when it is registered:
-
-```php
-public static function getRelations(): array
-{
-    return [
-        'lessons' => LessonsRelationManager::class,
-    ];
-}
-```
