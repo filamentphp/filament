@@ -41,8 +41,7 @@ class ToggleButtonsTest extends Page
                         'b' => Heroicon::XMark,
                     ])
                     ->size(Size::ExtraSmall)
-                    ->grouped()
-                    ->extraAttributes(['data-testid' => 'grouped-toggle-buttons']),
+                    ->grouped(),
             ])
             ->statePath('data');
     }
