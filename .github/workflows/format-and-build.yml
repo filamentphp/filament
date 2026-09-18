@@ -85,6 +85,10 @@ jobs:
       - name: Install npm dependencies
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
+      - name: Correct documentation versions
+        env:
+          DOCS_VERSION: ${{ github.ref_name }}
+        run: npm run docs:fix-version -- "$DOCS_VERSION"
       - name: Run code style fixes
         run: composer cs
       - name: Build assets

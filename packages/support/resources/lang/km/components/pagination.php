@@ -2,9 +2,9 @@
 
 return [
 
-    'label' => 'ការរុករក Pagination',
+    'label' => 'ការរុករកទំព័រ',
 
-    'overview' => '{1} ការបង្កាញលទ្ធផល ១ |[2,*] ការបង្ហាញ :first ដល់ :last នៃ :total លទ្ធផល',
+    'overview' => '{1} បង្ហាញលទ្ធផល ១ |[2,*] បង្ហាញពី :first ដល់ :last នៃ :total លទ្ធផល',
 
     'fields' => [
 
