@@ -177,7 +177,7 @@ ImportColumn::make('status')
     ->enum(Status::class)
 ```
 
-The cases of the enum are also used as the [example CSV data](#providing-example-csv-data) for the column, so the user can see which values are accepted without you listing them by hand. Passing `examples()` yourself overrides this.
+The cases of the enum are also used as the [example CSV data](#providing-example-csv-data) for the column, so the user can see which values are accepted without you listing them by hand. Passing `examples()` yourself overrides this, and passing an empty array prevents example rows from being generated.
 
 Pure enums are supported too, in which case the case names are validated and used as the example data.
 
@@ -186,6 +186,8 @@ Pure enums are supported too, in which case the case names are validated and use
 </Aside>
 
 <UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `enum()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+When the enum is calculated dynamically, its cases are not automatically used as example CSV data, since the function may depend on the current row being imported. You can pass the example data to `examples()` yourself if required.
 
 ### Casting state
 

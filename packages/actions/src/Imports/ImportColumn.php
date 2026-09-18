@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\In;
 use InvalidArgumentException;
 use UnitEnum;
 
@@ -69,6 +71,8 @@ class ImportColumn extends Component
      * @var array<mixed> | Closure
      */
     protected array | Closure $examples = [];
+
+    protected bool $hasExamples = false;
 
     protected string | Closure | null $exampleHeader = null;
 
@@ -158,6 +162,7 @@ class ImportColumn extends Component
         }
 
         $this->examples = $examples;
+        $this->hasExamples = true;
 
         return $this;
     }
@@ -436,8 +441,8 @@ class ImportColumn extends Component
             };
         }
 
-        if (filled($enum = $this->getEnum()) && (! $this->isMultiple())) {
-            $rules[] = Rule::enum($enum);
+        if ((! $this->isMultiple()) && filled($enumRule = $this->getEnumValidationRule())) {
+            $rules[] = $enumRule;
         }
 
         return $rules;
@@ -555,8 +560,8 @@ class ImportColumn extends Component
     {
         $rules = $this->evaluate($this->nestedRecursiveDataValidationRules);
 
-        if (filled($enum = $this->getEnum()) && $this->isMultiple()) {
-            $rules[] = Rule::enum($enum);
+        if ($this->isMultiple() && filled($enumRule = $this->getEnumValidationRule())) {
+            $rules[] = $enumRule;
         }
 
         return $rules;
@@ -610,24 +615,40 @@ class ImportColumn extends Component
      */
     public function getExamples(): array
     {
-        $examples = Arr::wrap($this->evaluate($this->examples));
-
-        if (filled($examples)) {
-            return $examples;
+        if ($this->hasExamples) {
+            return Arr::wrap($this->evaluate($this->examples));
         }
 
-        $enum = $this->getEnum();
+        if ($this->enum instanceof Closure) {
+            return [];
+        }
 
-        if (blank($enum)) {
-            return $examples;
+        if (blank($enum = $this->getEnum())) {
+            return [];
         }
 
         return array_map(
-            fn (BackedEnum | UnitEnum $case): string | int => ($case instanceof BackedEnum)
+            static fn (UnitEnum $case): string | int => ($case instanceof BackedEnum)
                 ? $case->value
                 : $case->name,
             $enum::cases(),
         );
+    }
+
+    protected function getEnumValidationRule(): Enum | In | null
+    {
+        if (blank($enum = $this->getEnum())) {
+            return null;
+        }
+
+        if (is_a($enum, BackedEnum::class, allow_string: true)) {
+            return Rule::enum($enum);
+        }
+
+        return Rule::in(array_map(
+            static fn (UnitEnum $case): string => $case->name,
+            $enum::cases(),
+        ));
     }
 
     /**
