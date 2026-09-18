@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => '或輸入您目前的密碼',
+                'label' => '輸入您目前的密碼',
 
                 'validation_attribute' => '密碼',
 

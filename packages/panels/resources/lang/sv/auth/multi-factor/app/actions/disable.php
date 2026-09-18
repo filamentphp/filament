@@ -11,6 +11,10 @@ return [
         'description' => 'Är du säker på att du vill sluta använda autentiseringsappen? Att inaktivera detta tar bort ett extra säkerhetsskikt från ditt konto.',
 
         'form' => [
+            'password' => [
+                'label' => 'Nuvarande lösenord',
+                'validation_attribute' => 'nuvarande lösenord',
+            ],
 
             'code' => [
 

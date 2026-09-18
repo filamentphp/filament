@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'បង្ខំការលុបដែលបានជ្រើសរើស',
+        'label' => 'បង្ខំលុបអ្វីដែលបានជ្រើសរើស',
 
         'modal' => [
 
-            'heading' => 'បង្ខំការលុបដែលបានជ្រើសរើស :label',
+            'heading' => 'បង្ខំលុប :label ដែលបានជ្រើសរើស',
 
             'actions' => [
 
@@ -55,15 +55,15 @@ return [
             ],
 
             'deleted_partial' => [
-                'title' => 'Deleted :count of :total',
-                'missing_authorization_failure_message' => 'You don\'t have permission to delete :count.',
-                'missing_processing_failure_message' => ':count could not be deleted.',
+                'title' => 'បានលុប :count នៃ :total',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានសិទ្ធិលុប :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចលុបបានទេ។',
             ],
 
             'deleted_none' => [
-                'title' => 'Failed to delete',
-                'missing_authorization_failure_message' => 'You don\'t have permission to delete :count.',
-                'missing_processing_failure_message' => ':count could not be deleted.',
+                'title' => 'បរាជ័យក្នុងការលុប',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានសិទ្ធិលុប :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចលុបបានទេ។',
             ],
         ],
 

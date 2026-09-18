@@ -6,11 +6,15 @@ return [
     'modal' => [
         'heading' => 'Vypnout ověřovací aplikaci',
 
-        'description' => 'Opravdu chcete přestat používat ověřovací aplikaci? Vypnutím odstraníte další vrstvu zabezpečení Vašeho účtu.',
+        'description' => 'Opravdu chcete přestat používat ověřovací aplikaci? Vypnutím odstraníte další vrstvu zabezpečení vašeho účtu.',
 
         'form' => [
+            'password' => [
+                'label' => 'Aktuální heslo',
+                'validation_attribute' => 'aktuální heslo',
+            ],
             'code' => [
-                'label' => 'Zadejte 6-místný kód z ověřovací aplikace',
+                'label' => 'Zadejte šestimístný kód z ověřovací aplikace',
 
                 'validation_attribute' => 'kód',
 

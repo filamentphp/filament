@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => '目前密碼',
+                'validation_attribute' => '目前密碼',
+            ],
+
             'code' => [
 
                 'label' => '輸入來自驗證器應用程式的 6 位數驗證碼',

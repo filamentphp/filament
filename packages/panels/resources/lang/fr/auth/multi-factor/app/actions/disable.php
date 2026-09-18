@@ -11,6 +11,10 @@ return [
         'description' => 'Êtes-vous sûr de vouloir arrêter d\'utiliser l\'application d\'authentification ? Désactiver cela supprimera une couche de sécurité supplémentaire de votre compte.',
 
         'form' => [
+            'password' => [
+                'label' => 'Mot de passe actuel',
+                'validation_attribute' => 'mot de passe actuel',
+            ],
 
             'code' => [
 

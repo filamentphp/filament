@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Password hman mek',
+                'validation_attribute' => 'password hman mek',
+            ],
+
             'code' => [
 
                 'label' => '6-digit code authenticator app ami enter rawh',

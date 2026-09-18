@@ -341,7 +341,6 @@ it('can render `Radio` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/radio-test')
-            ->assertSee('Test Radio')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

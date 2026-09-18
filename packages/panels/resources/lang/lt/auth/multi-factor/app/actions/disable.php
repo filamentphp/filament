@@ -11,6 +11,10 @@ return [
         'description' => 'Ar tikrai norite sustabdyti autentifikavimo programos naudojimą? Išjungus šią funkciją, jūsų paskyrai bus pašalintas papildomas saugos lygis.',
 
         'form' => [
+            'password' => [
+                'label' => 'Dabartinis slaptažodis',
+                'validation_attribute' => 'dabartinis slaptažodis',
+            ],
 
             'code' => [
 

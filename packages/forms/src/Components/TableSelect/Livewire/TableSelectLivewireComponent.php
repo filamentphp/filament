@@ -87,6 +87,7 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             ->maxSelectableRecords(is_array($this->state) ? $this->maxSelectableRecords : 1)
             ->deselectAllRecordsWhenFiltered(false)
             ->disabledSelection($this->isDisabled)
+            ->persistInSession(false)
             ->arguments($this->getTableArguments());
 
         if (filled($this->relationshipName)) {
