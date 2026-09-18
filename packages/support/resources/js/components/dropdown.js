@@ -1,74 +1,56 @@
-// Both keys live on the root element rather than on the Alpine instance, so a
-// second initialisation on the same element (Alpine re-running `initTree` after a
-// Livewire morph) reuses the panel `id` and replaces the observer instead of
-// competing with the first instance.
-const PANEL_ID_KEY = '_fiDropdownPanelId'
-const OBSERVER_KEY = '_fiDropdownObserver'
-
 export default () => ({
     panelId: null,
 
-    _onNavigate: null,
+    observer: null,
+
+    navigateListener: null,
 
     init() {
-        this._onNavigate = () => this.close()
+        this.navigateListener = () => this.close()
 
-        document.addEventListener('livewire:navigate', this._onNavigate)
+        document.addEventListener('livewire:navigate', this.navigateListener)
 
         this.setUpAria()
     },
 
     destroy() {
-        this.$el[OBSERVER_KEY]?.disconnect()
-        delete this.$el[OBSERVER_KEY]
+        this.observer?.disconnect()
+        this.observer = null
 
-        if (this._onNavigate) {
-            document.removeEventListener('livewire:navigate', this._onNavigate)
-            this._onNavigate = null
-        }
+        document.removeEventListener('livewire:navigate', this.navigateListener)
+        this.navigateListener = null
     },
 
     setUpAria() {
         const trigger = this.getTrigger()
         const panel = this.$refs.panel
 
-        // Never leave two observers on the same element: an earlier instance that was
-        // destroyed without a `destroy()` call would keep re-applying its own `id`, and
-        // the two would trigger each other endlessly.
-        this.$el[OBSERVER_KEY]?.disconnect()
-
         if (!trigger || !panel) {
             return
         }
 
-        // Generate the panel `id` once per element, so `aria-controls` stays stable for
-        // the lifetime of the page even when it is re-applied, and so a re-initialised
-        // instance on the same element writes the same value instead of a new one.
-        this.$el[PANEL_ID_KEY] ??=
+        // Generate the panel `id` once per component instance, so `aria-controls`
+        // stays stable for the lifetime of the page even when it is re-applied.
+        this.panelId ??=
             panel.id ||
             'fi-dropdown-panel-' + Math.random().toString(36).slice(2, 10)
 
-        this.panelId = this.$el[PANEL_ID_KEY]
-
         this.syncAria()
 
-        const observer = new MutationObserver(() => this.syncAria())
-
-        this.$el[OBSERVER_KEY] = observer
+        this.observer = new MutationObserver(() => this.syncAria())
 
         // The floating UI plugin toggles the panel's `display` for open and close paths this
         // component does not drive itself (click-away, the plugin's own Escape handler), so observe
         // it directly to keep `aria-expanded` on the real trigger correct in every case. A Livewire
         // morph also strips the client-applied panel `id`, so observe that too and re-apply it.
-        observer.observe(panel, {
+        this.observer.observe(panel, {
             attributeFilter: ['id', 'style'],
         })
 
         // A Livewire morph re-renders the trigger from server HTML, stripping the client-applied
         // ARIA attributes, so observe them and re-apply. `syncAria()` only writes attributes whose
-        // values have changed, so re-applying does not retrigger the observer in a loop as long
-        // as every instance on this element agrees on the `id` (see `PANEL_ID_KEY` above).
-        observer.observe(trigger, {
+        // values have changed, so re-applying does not retrigger the observer in a loop.
+        this.observer.observe(trigger, {
             attributeFilter: [
                 'aria-controls',
                 'aria-expanded',
