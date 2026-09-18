@@ -153,14 +153,14 @@ class QueryBuilder extends BaseFilter
 
     public function getActiveCount(): int
     {
-        $rules = $this->getFormState()['rules'];
+        $rules = $this->getState()['rules'];
 
         // Security: See the note in `query()` above — an over-limit tree is treated as no active filter here too, rather than traversing the whole tampered tree to count rules.
         if ($this->exceedsRuleLimits($rules)) {
             return 0;
         }
 
-        return $this->countRules($rules, $this->getRuleBuilder());
+        return $this->withAppliedFiltersFormState(fn (): int => $this->countRules($rules, $this->getRuleBuilder()));
     }
 
     /**

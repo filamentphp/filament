@@ -33,6 +33,7 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use Livewire\Features\SupportTesting\Testable;
 
 use function Filament\Tests\livewire;
 
@@ -4047,7 +4048,7 @@ describe('absolute and relative date filtering', function (): void {
             ->assertCanSeeTableRecords([$earlyPost, $latePost])
             // Apply a rule that only matches the late post.
             ->tap(applyQueryBuilderFilter([
-                [
+                'rule-uuid' => [
                     'type' => 'published_at',
                     'data' => [
                         'operator' => 'isAfter',
@@ -4061,9 +4062,9 @@ describe('absolute and relative date filtering', function (): void {
             ->assertCanSeeTableRecords([$latePost])
             ->assertCanNotSeeTableRecords([$earlyPost])
             ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
-            // Edit the deferred form to a looser threshold that would match both posts, *without* applying it.
+            // Edit the deferred rule and add another rule, *without* applying either change.
             ->set('tableDeferredFilters.query_builder.rules', [
-                [
+                'rule-uuid' => [
                     'type' => 'published_at',
                     'data' => [
                         'operator' => 'isAfter',
@@ -4073,16 +4074,30 @@ describe('absolute and relative date filtering', function (): void {
                         ],
                     ],
                 ],
+                'additional-rule-uuid' => [
+                    'type' => 'published_at',
+                    'data' => [
+                        'operator' => 'isBefore',
+                        'settings' => [
+                            'mode' => 'absolute',
+                            'date' => '2026-07-13 23:00:00',
+                        ],
+                    ],
+                ],
             ])
-            // The query and the summary must still reflect the applied threshold (`15:00:00`),
-            // not the unapplied deferred edit (`05:00:00`).
+            // The query, summary, and active count must still reflect the one applied rule,
+            // not either unapplied deferred change.
             ->assertCanSeeTableRecords([$latePost])
             ->assertCanNotSeeTableRecords([$earlyPost])
             ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
-            ->assertDontSee('Published at is after Mon, Jul 13, 2026 05:00:00');
+            ->assertDontSee('Published at is after Mon, Jul 13, 2026 05:00:00')
+            ->assertDontSee('Published at is before Mon, Jul 13, 2026 23:00:00')
+            ->tap(function (Testable $testable): void {
+                expect($testable->instance()->getTable()->getActiveFiltersCount())->toBe(1);
+            });
     });
 
-    it('applies datetime constraints and summaries from the applied state after the rule has been deleted from the unapplied deferred form', function (): void {
+    it('uses the applied state after a rule has been deleted from the unapplied deferred form', function (): void {
         $earlyPost = Post::factory()->create([
             'published_at' => '2026-07-13 10:00:00',
         ]);
@@ -4120,7 +4135,102 @@ describe('absolute and relative date filtering', function (): void {
             // form no longer has a block for it.
             ->assertCanSeeTableRecords([$latePost])
             ->assertCanNotSeeTableRecords([$earlyPost])
-            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00');
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            ->tap(function (Testable $testable): void {
+                $livewire = $testable->instance();
+
+                expect($livewire->getTable()->getActiveFiltersCount())
+                    ->toBe(1)
+                    ->and($livewire->getTableFiltersForm()->getStatePath())
+                    ->toBe('tableDeferredFilters');
+            })
+            // Applying the empty deferred state removes the applied rule everywhere.
+            ->call('applyTableFilters')
+            ->assertCanSeeTableRecords([$earlyPost, $latePost])
+            ->assertDontSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            ->tap(function (Testable $testable): void {
+                expect($testable->instance()->getTable()->getActiveFiltersCount())->toBe(0);
+            });
+    });
+
+    it('uses the applied state after a nested rule has been deleted from the unapplied deferred form', function (): void {
+        $earlyPost = Post::factory()->create([
+            'published_at' => '2026-07-13 10:00:00',
+        ]);
+
+        $middlePost = Post::factory()->create([
+            'published_at' => '2026-07-13 13:00:00',
+        ]);
+
+        $latePost = Post::factory()->create([
+            'published_at' => '2026-07-13 20:00:00',
+        ]);
+
+        $appliedRules = [
+            'or-rule-uuid' => [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        'after-group-uuid' => [
+                            'rules' => [
+                                'after-rule-uuid' => [
+                                    'type' => 'published_at',
+                                    'data' => [
+                                        'operator' => 'isAfter',
+                                        'settings' => [
+                                            'mode' => 'absolute',
+                                            'date' => '2026-07-13 15:00:00',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'before-group-uuid' => [
+                            'rules' => [
+                                'before-rule-uuid' => [
+                                    'type' => 'published_at',
+                                    'data' => [
+                                        'operator' => 'isBefore',
+                                        'settings' => [
+                                            'mode' => 'absolute',
+                                            'date' => '2026-07-13 12:00:00',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        livewire(PostsQueryBuilderTable::class)
+            ->assertCanSeeTableRecords([$earlyPost, $middlePost, $latePost])
+            ->set('tableDeferredFilters.query_builder.rules', $appliedRules)
+            ->call('applyTableFilters')
+            ->assertCanSeeTableRecords([$earlyPost, $latePost])
+            ->assertCanNotSeeTableRecords([$middlePost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            ->assertSee('Published at is before Mon, Jul 13, 2026 12:00:00')
+            ->set('tableDeferredFilters.query_builder.rules', [
+                'or-rule-uuid' => [
+                    'type' => 'or',
+                    'data' => [
+                        'groups' => [
+                            'after-group-uuid' => ['rules' => []],
+                            'before-group-uuid' => $appliedRules['or-rule-uuid']['data']['groups']['before-group-uuid'],
+                        ],
+                    ],
+                ],
+            ])
+            ->sortTable('rating')
+            ->assertCanSeeTableRecords([$earlyPost, $latePost])
+            ->assertCanNotSeeTableRecords([$middlePost])
+            ->assertSee('Published at is after Mon, Jul 13, 2026 15:00:00')
+            ->assertSee('Published at is before Mon, Jul 13, 2026 12:00:00')
+            ->tap(function (Testable $testable): void {
+                expect($testable->instance()->getTable()->getActiveFiltersCount())->toBe(2);
+            });
     });
 
     it('can filter records using datetime constraint with is after operator with `this_minute` preset', function (): void {
