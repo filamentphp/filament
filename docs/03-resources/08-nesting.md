@@ -69,29 +69,9 @@ public static function getParentResourceRegistration(): ?ParentResourceRegistrat
 
 You can omit the calls to `relationship()` and `inverseRelationship()` if you want to use the default names.
 
-## Nested resource breadcrumbs and index URLs
+## Customizing the nested resource index URL
 
-When you open a nested create/edit page, Filament builds breadcrumbs for the nested resource. The nested resource’s plural label (for example “Lessons”) links to the nested resource **index URL**.
-
-For nested resources, that index URL is resolved from the **parent** resource:
-
-1. An explicit page name set with `ParentResourceRegistration::page()`
-2. A parent page keyed like the relationship name (for example `lessons`)
-3. Otherwise the parent view/edit page (legacy fallback)
-
-When registering a relation page that lists the nested resource, use the **relationship name** as the `getPages()` key:
-
-```php
-public static function getPages(): array
-{
-    return [
-        // ...
-        'lessons' => Pages\ManageCourseLessons::route('/{record}/lessons'),
-    ];
-}
-```
-
-If you register the page under a different key (for example `manageLessons`), set the page name explicitly on the nested resource:
+By default, Filament uses the parent resource page whose key matches the kebab-cased relationship name for the nested resource's index URL. This URL is used for breadcrumbs and redirects back to the relation page. If you register the relation page under a different key in the parent resource's `getPages()` method, you can pass that key to the `page()` method:
 
 ```php
 use App\Filament\Resources\Courses\CourseResource;
@@ -105,6 +85,8 @@ public static function getParentResourceRegistration(): ?ParentResourceRegistrat
         ->page('manageLessons');
 }
 ```
+
+If the configured page is not registered, Filament falls back to the parent resource's view, edit, or index page.
 
 ## Registering a relation manager with the correct URL
 

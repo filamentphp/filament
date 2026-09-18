@@ -55,14 +55,7 @@ class ParentResourceRegistration
         return $this;
     }
 
-    /**
-     * Set the parent resource page name used as the nested resource index URL.
-     *
-     * By default, Filament looks for a page keyed like the relationship name
-     * (for example `lessons`). Use this when the relation page is registered
-     * under a different key (for example `manageLessons`).
-     */
-    public function page(string $name): static
+    public function page(?string $name): static
     {
         $this->pageName = $name;
 
@@ -111,17 +104,7 @@ class ParentResourceRegistration
         return Str::kebab($this->relationshipName);
     }
 
-    public function getPageName(): ?string
-    {
-        return $this->pageName;
-    }
-
-    /**
-     * Resolve which parent page should be used as the nested resource index.
-     *
-     * Order: explicit `page()` → page keyed like the relationship.
-     */
-    public function resolveRelationshipPageName(): string
+    public function getPageName(): string
     {
         return $this->pageName ?? $this->getRouteName();
     }
