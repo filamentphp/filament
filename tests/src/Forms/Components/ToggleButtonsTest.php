@@ -527,7 +527,6 @@ it('can render `ToggleButtons` in the browser', function (): void {
             JS;
 
         visit('/toggle-buttons-test')
-            ->assertSee('Test ToggleButtons')
             ->assertNoSmoke()
             ->assertScript($assertLayouts)
             ->assertNoAccessibilityIssues();

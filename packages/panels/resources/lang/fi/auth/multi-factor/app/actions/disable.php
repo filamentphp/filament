@@ -11,6 +11,10 @@ return [
         'description' => 'Oletko varma että haluat lopettaa todennussovelluksen käytön? Sen ottaminen pois päältä heikentää tilisi turvallisuutta.',
 
         'form' => [
+            'password' => [
+                'label' => 'Nykyinen salasana',
+                'validation_attribute' => 'nykyinen salasana',
+            ],
 
             'code' => [
 

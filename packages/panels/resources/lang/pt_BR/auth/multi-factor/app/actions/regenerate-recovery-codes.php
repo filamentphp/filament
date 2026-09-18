@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Ou, digite sua senha atual',
+                'label' => 'Digite sua senha atual',
 
                 'validation_attribute' => 'senha',
 

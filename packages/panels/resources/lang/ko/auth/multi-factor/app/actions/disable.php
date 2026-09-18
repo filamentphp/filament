@@ -11,6 +11,10 @@ return [
         'description' => '인증 앱 사용을 중단하시겠습니까? 이를 비활성화하면 계정에서 추가 보안 계층이 제거됩니다.',
 
         'form' => [
+            'password' => [
+                'label' => '현재 비밀번호',
+                'validation_attribute' => '현재 비밀번호',
+            ],
 
             'code' => [
 

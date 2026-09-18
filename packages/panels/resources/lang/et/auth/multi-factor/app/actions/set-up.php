@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Praegune parool',
+                'validation_attribute' => 'praegune parool',
+            ],
+
             'code' => [
 
                 'label' => 'Sisestage autentimise rakendusest saadud 6-kohaline kood',
