@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => '또는 현재 비밀번호를 입력하세요',
+                'label' => '현재 비밀번호를 입력하세요',
 
                 'validation_attribute' => '비밀번호',
 
