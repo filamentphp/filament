@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Або введіть поточний пароль',
+                'label' => 'Введіть поточний пароль',
 
                 'validation_attribute' => 'пароль',
 

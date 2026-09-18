@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'ភ្ជាប់ & ភ្ជាប់ឡើងវិញ',
+                    'label' => 'ភ្ជាប់ & ភ្ជាប់មួយទៀត',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'attached' => [
-                'title' => 'បានភ្ជាប់ជោគជ័យ',
+                'title' => 'បានភ្ជាប់',
             ],
 
         ],

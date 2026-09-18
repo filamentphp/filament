@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Přidat & přidat další',
+                    'label' => 'Přidat a přidat další',
                 ],
 
             ],

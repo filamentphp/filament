@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'または、現在のパスワードを入力',
+                'label' => '現在のパスワードを入力',
 
                 'validation_attribute' => 'パスワード',
 

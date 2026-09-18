@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Eller, ange ditt nuvarande lösenord',
+                'label' => 'Ange ditt nuvarande lösenord',
 
                 'validation_attribute' => 'lösenord',
 

@@ -58,7 +58,6 @@ return [
         ],
 
     ],
-
     'navigation' => [
         'label' => 'Sidebar navigation',
     ],

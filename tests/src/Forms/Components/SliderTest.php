@@ -575,12 +575,13 @@ it('can render `Slider` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/slider-browser-test')
-            ->assertSee('Test Slider')
-            ->assertNoSmoke();
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
 
         visit('/slider-browser-test')
             ->inDarkMode()
-            ->assertNoSmoke();
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
     });
 });
 
