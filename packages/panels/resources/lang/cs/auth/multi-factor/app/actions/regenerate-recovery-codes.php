@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Nebo zadejte své aktuální heslo',
+                'label' => 'Zadejte své aktuální heslo',
 
                 'validation_attribute' => 'heslo',
 

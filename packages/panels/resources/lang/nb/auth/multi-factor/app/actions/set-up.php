@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Nåværende passord',
+                'validation_attribute' => 'nåværende passord',
+            ],
+
             'code' => [
 
                 'label' => 'Skriv inn 6‑sifret kode fra autentiseringsappen',

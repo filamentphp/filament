@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Aktualne hasło',
+                'validation_attribute' => 'aktualne hasło',
+            ],
+
             'code' => [
 
                 'label' => 'Wprowadź 6-cyfrowy kod z aplikacji uwierzytelniającej',

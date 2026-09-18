@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Mật khẩu hiện tại',
+                'validation_attribute' => 'mật khẩu hiện tại',
+            ],
+
             'code' => [
 
                 'label' => 'Nhập mã 6 số từ ứng dụng xác thực',

@@ -11,6 +11,10 @@ return [
         'description' => 'Doğrulama uygulamasını devre dışı bırakmak istediğinize emin misiniz? Bunu devre dışı bırakmak hesabınızda bulunan ekstra koruma katmanını kaldıracaktır.',
 
         'form' => [
+            'password' => [
+                'label' => 'Mevcut şifre',
+                'validation_attribute' => 'mevcut şifre',
+            ],
 
             'code' => [
 

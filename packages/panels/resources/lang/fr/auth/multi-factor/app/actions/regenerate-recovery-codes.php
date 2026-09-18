@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Ou, entrez votre mot de passe actuel',
+                'label' => 'Entrez votre mot de passe actuel',
 
                 'validation_attribute' => 'mot de passe',
 
