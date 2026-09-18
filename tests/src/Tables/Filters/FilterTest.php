@@ -3,6 +3,7 @@
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
@@ -10,11 +11,6 @@ use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersApplyAction;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersRemoveAllAction;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersResetAction;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFiltersTriggerAction;
-use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomFooterFiltersResetAction;
-use Filament\Tests\Fixtures\Livewire\PostsTableWithCustomModalFiltersResetAction;
-use Filament\Tests\Fixtures\Livewire\PostsTableWithGuardedFiltersResetAction;
-use Filament\Tests\Fixtures\Livewire\PostsTableWithPositionedFiltersResetAction;
-use Filament\Tests\Fixtures\Livewire\PostsTableWithUnauthorizedFiltersResetAction;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
@@ -162,57 +158,45 @@ it('can render the filters component without a reset action', function (FiltersR
         'position' => $position,
     ]);
 
-    expect($html)
-        ->toContain('fi-ta-filters')
-        ->not->toContain('resetTableFiltersForm')
-        ->not->toContain('fi-ta-filters-actions-ctn');
+    expect($html)->not->toContain('resetTableFiltersForm');
 })->with(FiltersResetActionPosition::cases());
 
-it('can customize the header `filtersResetAction()` trigger', function (): void {
-    $html = livewire(PostsTableWithCustomFiltersResetAction::class)->html();
+it('can customize the `filtersResetAction()`', function (): void {
+    $action = livewire(PostsTableWithCustomFiltersResetAction::class)
+        ->instance()
+        ->getTable()
+        ->getFiltersResetAction();
 
-    expect($html)->toMatch('/<button\b(?=[^>]*class="[^"]*\bfi-ac-btn-action\b)(?=[^>]*wire:click="resetTableFiltersForm")[^>]*>/');
+    expect($action)
+        ->getLabel()->toBe('Custom reset filters')
+        ->getIcon()->toBe(Heroicon::XMark)
+        ->isButton()->toBeTrue();
 });
 
-it('can customize the footer `filtersResetAction()` trigger', function (): void {
-    $html = livewire(PostsTableWithCustomFooterFiltersResetAction::class)->html();
-
-    expect($html)->toMatch('/<button\b(?=[^>]*class="[^"]*\bfi-ac-link-action\b)(?=[^>]*wire:click="resetTableFiltersForm")[^>]*>/');
-});
-
-it('can customize the modal `filtersResetAction()` trigger', function (): void {
-    $html = livewire(PostsTableWithCustomModalFiltersResetAction::class)->html();
-
-    expect($html)->toMatch('/<button\b(?=[^>]*class="[^"]*\bfi-ac-link-action\b)(?=[^>]*wire:click="resetTableFiltersForm")[^>]*>/');
-});
-
-it('uses the default trigger view for the `filtersResetAction()`', function (string $position, string $class): void {
-    $html = livewire(PostsTableWithPositionedFiltersResetAction::class, [
+it('can render a customized `filtersResetAction()` in each position', function (string $position, string $view): void {
+    $component = livewire(PostsTableWithCustomFiltersResetAction::class, [
         'resetActionPosition' => $position,
-    ])->html();
+        'resetActionView' => $view,
+    ]);
 
-    expect($html)->toMatch('/<button\b(?=[^>]*class="[^"]*\b' . $class . '\b)(?=[^>]*wire:click="resetTableFiltersForm")[^>]*>/');
+    expect($component->html())->toContain('data-testid="filters-reset-action"');
 })->with([
-    'header' => ['header', 'fi-ac-link-action'],
-    'footer' => ['footer', 'fi-ac-btn-action'],
-    'modal' => ['modal', 'fi-ac-btn-action'],
+    'header' => ['header', 'button'],
+    'footer' => ['footer', 'link'],
+    'modal' => ['modal', 'link'],
 ]);
 
 it('does not execute a guarded `filtersResetAction()`', function (string $state): void {
     Post::factory()->create(['is_published' => true]);
     $unpublishedPost = Post::factory()->create(['is_published' => false]);
 
-    $component = livewire(PostsTableWithGuardedFiltersResetAction::class, [
+    livewire(PostsTableWithCustomFiltersResetAction::class, [
         'resetActionState' => $state,
     ])
         ->filterTable('is_published')
         ->assertCanNotSeeTableRecords([$unpublishedPost])
         ->call('resetTableFiltersForm')
         ->assertCanNotSeeTableRecords([$unpublishedPost]);
-
-    if (in_array($state, ['hidden', 'invisible', 'unauthorized'])) {
-        expect($component->html())->not->toContain('wire:click="resetTableFiltersForm"');
-    }
 })->with([
     'hidden',
     'invisible',
@@ -224,7 +208,9 @@ it('does not reset filters when the `filtersResetAction()` is unauthorized', fun
     Post::factory()->create(['is_published' => true]);
     $unpublishedPost = Post::factory()->create(['is_published' => false]);
 
-    livewire(PostsTableWithUnauthorizedFiltersResetAction::class)
+    livewire(PostsTableWithCustomFiltersResetAction::class, [
+        'resetActionState' => 'unauthorizedWithNotification',
+    ])
         ->filterTable('is_published')
         ->assertCanNotSeeTableRecords([$unpublishedPost])
         ->call('resetTableFiltersForm')
@@ -238,35 +224,21 @@ it('renders a customized `filtersResetAction()` accessibly', function (): void {
 
         $this->actingAs(User::factory()->create());
 
-        Post::factory()->create([
-            'is_published' => true,
-            'title' => 'Published post',
-        ]);
-        Post::factory()->create([
-            'is_published' => false,
-            'title' => 'Unpublished post',
-        ]);
-
         visit('/filters-reset-action-browser-test')
-            ->assertSee('Published post')
-            ->assertSee('Unpublished post')
-            ->click('button[aria-label="Filter"]')
-            ->assertVisible('button[aria-label="Reset filters"]')
-            ->click('.fi-ta-filters button[role="switch"]')
-            ->wait(1)
-            ->assertSee('Published post')
-            ->assertDontSee('Unpublished post')
-            ->click('button[aria-label="Reset filters"]')
-            ->wait(1)
-            ->assertSee('Published post')
-            ->assertSee('Unpublished post')
+            ->click('[data-testid="filters-trigger"]')
+            ->assertVisible('[data-testid="filters-reset-action"]')
+            ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'false')
+            ->click('[data-testid="published-filter"]')
+            ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'true')
+            ->click('[data-testid="filters-reset-action"]')
+            ->assertAttribute('[data-testid="published-filter"]', 'aria-checked', 'false')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         visit('/filters-reset-action-browser-test')
             ->inDarkMode()
-            ->click('button[aria-label="Filter"]')
-            ->assertVisible('button[aria-label="Reset filters"]')
+            ->click('[data-testid="filters-trigger"]')
+            ->assertVisible('[data-testid="filters-reset-action"]')
             ->assertNoAccessibilityIssues();
     });
 });

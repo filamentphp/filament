@@ -4,6 +4,7 @@ namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Schema;
@@ -32,14 +33,23 @@ class FiltersResetActionBrowserTest extends Page implements HasTable
             ->filters([
                 Tables\Filters\Filter::make('is_published')
                     ->query(static fn (Builder $query): Builder => $query->where('is_published', true))
-                    ->toggle(),
+                    ->schema([
+                        Toggle::make('isActive')
+                            ->label('Published')
+                            ->extraAttributes(['data-testid' => 'published-filter']),
+                    ]),
             ])
             ->deferFilters(false)
+            ->filtersTriggerAction(
+                static fn (Action $action) => $action
+                    ->extraAttributes(['data-testid' => 'filters-trigger']),
+            )
             ->filtersResetAction(
                 static fn (Action $action) => $action
                     ->label('Reset filters')
                     ->icon(Heroicon::XMark)
-                    ->iconButton(),
+                    ->iconButton()
+                    ->extraAttributes(['data-testid' => 'filters-reset-action']),
             );
     }
 
