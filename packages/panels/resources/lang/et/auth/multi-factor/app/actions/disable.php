@@ -11,6 +11,10 @@ return [
         'description' => 'Kas olete kindel, et soovite autentimise rakenduse kasutamise lõpetada? Selle keelamine eemaldab teie kontolt täiendava turvakihi.',
 
         'form' => [
+            'password' => [
+                'label' => 'Praegune parool',
+                'validation_attribute' => 'praegune parool',
+            ],
 
             'code' => [
 

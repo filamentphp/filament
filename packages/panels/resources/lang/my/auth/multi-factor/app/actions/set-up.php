@@ -21,6 +21,10 @@ return [
             ],
         ],
         'form' => [
+            'password' => [
+                'label' => 'လက်ရှိစကားဝှက်',
+                'validation_attribute' => 'လက်ရှိစကားဝှက်',
+            ],
             'code' => [
                 'label' => 'အထောက်အထားစစ်ဆေးသည့် အက်ပ်မှ ဂဏန်း ၆ လုံးပါ ကုဒ်ကို ထည့်ပါ',
                 'validation_attribute' => 'ကုဒ်',

@@ -215,3 +215,40 @@ it('can throttle code verification attempts per user', function (): void {
     expect($user->hasEmailAuthentication())
         ->toBeTrue();
 });
+
+it('cannot bypass code throttling with blank submissions and changing action arguments', function (): void {
+    /** @var EmailAuthentication $emailAuthentication */
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $user = auth()->user();
+
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+
+    foreach (range(1, 5) as $attempt) {
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableEmailAuthentication')
+                    ->schemaComponent('email_code', schema: 'content')
+                    ->arguments(['nonce' => $attempt]),
+                ['code' => ''],
+            )
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
+    }
+
+    livewire(EditProfile::class)
+        ->callAction(
+            TestAction::make('disableEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content')
+                ->arguments(['nonce' => 6]),
+            ['code' => $code],
+        )
+        ->assertHasFormErrors([
+            'code' => __('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.messages.rate_limited'),
+        ]);
+
+    expect($user->hasEmailAuthentication())
+        ->toBeTrue();
+});

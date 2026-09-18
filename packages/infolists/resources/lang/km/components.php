@@ -25,7 +25,7 @@ return [
             'columns' => [
 
                 'key' => [
-                    'label' => 'សោ',
+                    'label' => 'គន្លឹះ',
                 ],
 
                 'value' => [
@@ -34,7 +34,7 @@ return [
 
             ],
 
-            'placeholder' => 'គ្មានទិន្ន័យទេ',
+            'placeholder' => 'គ្មានទិន្នន័យទេ',
 
         ],
 

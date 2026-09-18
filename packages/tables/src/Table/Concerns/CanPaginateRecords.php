@@ -14,6 +14,8 @@ trait CanPaginateRecords
 
     protected bool | Closure $isPaginatedWhileReordering = false;
 
+    protected bool | Closure $persistsRecordsPerPageInSession = true;
+
     /**
      * @var array<int | string> | Closure | null
      */
@@ -78,6 +80,13 @@ trait CanPaginateRecords
         return $this;
     }
 
+    public function persistRecordsPerPageInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsRecordsPerPageInSession = $condition;
+
+        return $this;
+    }
+
     /**
      * @param  array<int | string> | Closure | null  $options
      */
@@ -128,6 +137,11 @@ trait CanPaginateRecords
     public function isPaginatedWhileReordering(): bool
     {
         return (bool) $this->evaluate($this->isPaginatedWhileReordering);
+    }
+
+    public function persistsRecordsPerPageInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsRecordsPerPageInSession);
     }
 
     public function hasExtremePaginationLinks(): bool

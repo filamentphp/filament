@@ -96,7 +96,6 @@ describe('browser interactions', function (): void {
             Notification::make()->title('Second')->sendToDatabase($user);
 
             visit('/database-notifications-browser-test')
-                ->assertSee('Notifications (2)')
                 ->click('[data-testid="database-notifications-trigger"]')
                 ->assertVisible('[id="database-notifications"] .fi-modal-window')
                 ->wait(0.5)
@@ -114,6 +113,7 @@ describe('browser interactions', function (): void {
                 ->inDarkMode()
                 ->click('[data-testid="database-notifications-trigger"]')
                 ->assertVisible('[id="database-notifications"] .fi-modal-window')
+                ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
         });
     });

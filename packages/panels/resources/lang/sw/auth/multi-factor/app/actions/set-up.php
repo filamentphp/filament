@@ -29,6 +29,10 @@ return [
         ],
 
         'form' => [
+            'password' => [
+                'label' => 'Nenosiri la sasa',
+                'validation_attribute' => 'nenosiri la sasa',
+            ],
             'code' => [
                 'label' => 'Weka msimbo wa tarakimu 6 kutoka programu ya uthibitishaji',
 

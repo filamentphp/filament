@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'O bien, introduzca su contraseña actual',
+                'label' => 'Introduzca su contraseña actual',
 
                 'validation_attribute' => 'contraseña',
 

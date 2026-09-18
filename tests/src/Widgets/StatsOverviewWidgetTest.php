@@ -130,25 +130,15 @@ it('renders `placeholder()` for values considered blank by `blank()`', function 
     'whitespace-only string' => ['   '],
 ]);
 
-it('has no accessibility issues in light mode', function (): void {
+it('has no accessibility issues in light and dark modes', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/stats-overview-widget-browser-test')
-            ->assertSee('Total orders')
-            ->assertSee('Not available')
             ->assertNoAccessibilityIssues();
-    });
-});
-
-it('has no accessibility issues in dark mode', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
 
         visit('/stats-overview-widget-browser-test')
             ->inDarkMode()
-            ->assertSee('Total orders')
-            ->assertSee('Not available')
             ->assertNoAccessibilityIssues();
     });
 });

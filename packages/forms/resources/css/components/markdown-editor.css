@@ -32,7 +32,8 @@
         }
 
         &[style*='--max-height'] {
-            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 scrollbar-gutter-stable overflow-y-auto outline-none focus-visible:ring-2 focus-visible:ring-inset;
+            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 overflow-y-auto outline-none focus-visible:ring-2 focus-visible:ring-inset;
+            scrollbar-gutter: stable;
             max-height: var(--max-height);
         }
     }

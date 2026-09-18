@@ -736,6 +736,10 @@ return [
 
         'actions' => [
 
+            'clear' => [
+                'label' => 'Limpiar selección',
+            ],
+
             'create_option' => [
 
                 'label' => 'Crear',
@@ -780,6 +784,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Quitar :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -799,7 +807,9 @@ return [
 
         'searching_message' => 'Buscando...',
 
-        'search_prompt' => 'Teclee para buscar...',
+        'search_label' => ' Buscar',
+
+        'search_prompt' => 'Empiece a escribir para buscar...',
 
     ],
 

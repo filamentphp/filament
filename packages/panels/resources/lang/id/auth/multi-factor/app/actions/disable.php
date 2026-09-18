@@ -11,6 +11,10 @@ return [
         'description' => 'Apakah Anda yakin ingin berhenti menggunakan aplikasi Autenticator? Menonaktifkan fitur ini akan mengurangi keamanan dari akun Anda.',
 
         'form' => [
+            'password' => [
+                'label' => 'Kata sandi saat ini',
+                'validation_attribute' => 'kata sandi saat ini',
+            ],
 
             'code' => [
 

@@ -10,6 +10,10 @@ return [
         'description' => 'Una uhakika unataka kuacha kutumia programu ya uthibitishaji? Kuzima hii kutatondoa tabaka zaidi la usalama kwenye akaunti yako.',
 
         'form' => [
+            'password' => [
+                'label' => 'Nenosiri la sasa',
+                'validation_attribute' => 'nenosiri la sasa',
+            ],
             'code' => [
                 'label' => 'Weka msimbo wa tarakimu 6 kutoka programu ya uthibitishaji',
 

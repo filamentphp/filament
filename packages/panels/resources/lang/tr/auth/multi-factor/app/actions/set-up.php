@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Mevcut şifre',
+                'validation_attribute' => 'mevcut şifre',
+            ],
+
             'code' => [
 
                 'label' => 'Doğrulama uygulamanızdaki 6 haneli kodu girin',
