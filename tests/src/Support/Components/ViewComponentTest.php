@@ -181,7 +181,7 @@ describe('HTML rendering', function (): void {
         };
 
         expect($component->hasView())->toBeFalse()
-            ->and($component->toHtml())->toBe("<div>Simple component view</div>\n");
+            ->and($component->toHtml())->toBe(view('simple-component')->render());
     });
 
     it('preserves the missing-view exception when no renderer is provided', function (): void {
@@ -251,7 +251,7 @@ describe('published view override', function (): void {
         writePublishedOverride('filament-forms/test-override.blade.php', 'PUBLISHED OVERRIDE');
         $component = (new $componentClass)->{$setter}('simple-component');
 
-        expect($component->toHtml())->toBe("<div>Simple component view</div>\n");
+        expect($component->toHtml())->toBe(view('simple-component')->render());
     })->with([[EmbeddedViewComponent::class], [LegacyEmbeddedViewComponent::class]])->with(['view', 'defaultView']);
 
     it('caches the override-detection result by view path', function (): void {

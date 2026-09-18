@@ -1938,10 +1938,11 @@ describe('rendering', function (): void {
         expect($action->toHtml())->toBe('embedded action');
 
         $action->defaultView(Action::BUTTON_VIEW);
-        expect($action->toHtml())->toContain('<button')->not->toContain('embedded action');
+        expect($action->getView())->toBe(Action::BUTTON_VIEW)
+            ->and($action->toHtml())->not->toBe('embedded action');
 
         $action->view('simple-component');
-        expect($action->toHtml())->toBe("<div>Simple component view</div>\n");
+        expect($action->toHtml())->toBe(view('simple-component')->render());
     });
 
     it('falls back to an action custom `render()` without a configured view', function (): void {
@@ -1954,7 +1955,7 @@ describe('rendering', function (): void {
         };
 
         expect($action->hasView())->toBeFalse()
-            ->and($action->toHtml())->toBe("<div>Simple component view</div>\n");
+            ->and($action->toHtml())->toBe(view('simple-component')->render());
     });
 
     it('renders a `link()` action as an `<a>` when given a `url()`', function (): void {

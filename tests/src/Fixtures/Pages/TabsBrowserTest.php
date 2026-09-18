@@ -44,6 +44,7 @@ class TabsBrowserTest extends Page
                             ->badge('Available')
                             ->deferBadge($this->deferredBadges)
                             ->badgeIcon(Heroicon::OutlinedCheckCircle)
+                            ->extraAttributes(['data-testid' => 'deferred-tab'])
                             ->schema([
                                 TextInput::make('username')
                                     ->label('Username')

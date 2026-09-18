@@ -13,13 +13,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 uses(TestCase::class);
-
-beforeEach(function (): void {
-    $this->withoutMockingConsoleOutput();
-});
-
-function createJavaScriptPackageCommand(?string $packageManager = null, bool $skipInstall = false, bool $skipBuild = false): Command
-{
+$createJavaScriptPackageCommand = function (?string $packageManager = null, bool $skipInstall = false, bool $skipBuild = false): Command {
     $command = new class($packageManager, $skipInstall, $skipBuild) extends Command
     {
         use CanManageJavaScriptPackages;
@@ -57,23 +51,25 @@ function createJavaScriptPackageCommand(?string $packageManager = null, bool $sk
             return $this->buildJavaScriptAssets($subject);
         }
     };
-
     $output = new OutputStyle(new ArrayInput([]), new BufferedOutput);
     $command->setOutput($output);
-
     $reflection = new ReflectionClass($command);
     $reflection->getProperty('components')->setValue($command, new ComponentsFactory($output));
 
     return $command;
-}
+};
 
-it('uses npm arguments and the application working directory', function (): void {
+beforeEach(function (): void {
+    $this->withoutMockingConsoleOutput();
+});
+
+it('uses npm arguments and the application working directory', function () use ($createJavaScriptPackageCommand): void {
     Process::fake([
         '*' => Process::result(output: '10.0.0'),
     ]);
     Process::preventStrayProcesses();
 
-    $command = createJavaScriptPackageCommand();
+    $command = $createJavaScriptPackageCommand();
     $command->configurePackages();
     $command->installPackages(['example-package']);
 
@@ -81,13 +77,13 @@ it('uses npm arguments and the application working directory', function (): void
     Process::assertRan(static fn (PendingProcess $process): bool => ($process->command === ['npm', 'install', 'example-package', '--save-dev']) && ($process->path === base_path()));
 });
 
-it('uses yarn arguments and the application working directory', function (): void {
+it('uses yarn arguments and the application working directory', function () use ($createJavaScriptPackageCommand): void {
     Process::fake([
         '*' => Process::result(output: '1.22.0'),
     ]);
     Process::preventStrayProcesses();
 
-    $command = createJavaScriptPackageCommand('yarn');
+    $command = $createJavaScriptPackageCommand('yarn');
     $command->configurePackages();
     $command->installPackages(['first-package', 'second-package']);
 
@@ -95,22 +91,22 @@ it('uses yarn arguments and the application working directory', function (): voi
     Process::assertRan(static fn (PendingProcess $process): bool => ($process->command === ['yarn', 'add', 'first-package', 'second-package', '--dev']) && ($process->path === base_path()));
 });
 
-it('throws `FailureCommandOutput` when the package manager is unavailable', function (): void {
+it('throws `FailureCommandOutput` when the package manager is unavailable', function () use ($createJavaScriptPackageCommand): void {
     Process::fake([
         '*' => Process::result(exitCode: 1),
     ]);
     Process::preventStrayProcesses();
 
-    createJavaScriptPackageCommand('yarn')->configurePackages();
+    $createJavaScriptPackageCommand('yarn')->configurePackages();
 })->throws(FailureCommandOutput::class);
 
-it('throws `FailureCommandOutput` when dependency installation fails', function (): void {
+it('throws `FailureCommandOutput` when dependency installation fails', function () use ($createJavaScriptPackageCommand): void {
     Process::fake([
         '*' => Process::result(exitCode: 1),
     ]);
     Process::preventStrayProcesses();
 
-    $command = createJavaScriptPackageCommand();
+    $command = $createJavaScriptPackageCommand();
 
     $reflection = new ReflectionClass($command);
     $reflection->getProperty('packageManager')->setValue($command, 'npm');
@@ -118,14 +114,14 @@ it('throws `FailureCommandOutput` when dependency installation fails', function 
     $command->installPackages(['example-package']);
 })->throws(FailureCommandOutput::class);
 
-it('returns `false` when the asset build fails', function (): void {
+it('returns `false` when the asset build fails', function () use ($createJavaScriptPackageCommand): void {
     Process::fake([
         '*' => Process::result(exitCode: 1),
     ]);
     Process::preventStrayProcesses();
     ConfirmPrompt::fallbackUsing(static fn (): bool => true);
 
-    $command = createJavaScriptPackageCommand();
+    $command = $createJavaScriptPackageCommand();
     $reflection = new ReflectionClass($command);
     $reflection->getProperty('packageManager')->setValue($command, 'npm');
 
@@ -134,12 +130,12 @@ it('returns `false` when the asset build fails', function (): void {
     Process::assertRan(static fn (PendingProcess $process): bool => ($process->command === ['npm', 'run', 'build']) && ($process->path === base_path()));
 });
 
-it('prints the manual build instruction when the asset build is declined', function (): void {
+it('prints the manual build instruction when the asset build is declined', function () use ($createJavaScriptPackageCommand): void {
     Process::fake();
     Process::preventStrayProcesses();
     ConfirmPrompt::fallbackUsing(static fn (): bool => false);
 
-    $command = createJavaScriptPackageCommand('yarn');
+    $command = $createJavaScriptPackageCommand('yarn');
     $reflection = new ReflectionClass($command);
     $reflection->getProperty('packageManager')->setValue($command, 'yarn');
 
@@ -149,7 +145,7 @@ it('prints the manual build instruction when the asset build is declined', funct
     expect($command->getOutput()->getOutput()->fetch())->toContain('Run `yarn run build` to compile the field.');
 });
 
-it('skips all package manager processes when installation and building are skipped', function (): void {
+it('skips all package manager processes when installation and building are skipped', function () use ($createJavaScriptPackageCommand): void {
     Process::fake();
     Process::preventStrayProcesses();
     $promptCount = 0;
@@ -159,7 +155,7 @@ it('skips all package manager processes when installation and building are skipp
         return true;
     });
 
-    $command = createJavaScriptPackageCommand('yarn', skipInstall: true, skipBuild: true);
+    $command = $createJavaScriptPackageCommand('yarn', skipInstall: true, skipBuild: true);
     $command->configurePackages();
     $command->installPackages(['example-package']);
 
@@ -172,14 +168,14 @@ it('skips all package manager processes when installation and building are skipp
         ->toContain('Run `yarn run build` to compile the theme.');
 });
 
-it('only skips dependency installation when requested', function (): void {
+it('only skips dependency installation when requested', function () use ($createJavaScriptPackageCommand): void {
     Process::fake([
         '*' => Process::result(output: '10.0.0'),
     ]);
     Process::preventStrayProcesses();
     ConfirmPrompt::fallbackUsing(static fn (): bool => true);
 
-    $command = createJavaScriptPackageCommand(skipInstall: true);
+    $command = $createJavaScriptPackageCommand(skipInstall: true);
     $command->configurePackages();
     $command->installPackages(['example-package']);
 
@@ -191,7 +187,7 @@ it('only skips dependency installation when requested', function (): void {
     expect($command->getOutput()->getOutput()->fetch())->toContain('Run `npm install example-package --save-dev` to install the JavaScript dependencies.');
 });
 
-it('only skips building without prompting when requested', function (): void {
+it('only skips building without prompting when requested', function () use ($createJavaScriptPackageCommand): void {
     Process::fake([
         '*' => Process::result(output: '10.0.0'),
     ]);
@@ -203,7 +199,7 @@ it('only skips building without prompting when requested', function (): void {
         return true;
     });
 
-    $command = createJavaScriptPackageCommand(skipBuild: true);
+    $command = $createJavaScriptPackageCommand(skipBuild: true);
     $command->configurePackages();
     $command->installPackages(['example-package']);
 
@@ -216,11 +212,11 @@ it('only skips building without prompting when requested', function (): void {
     expect($command->getOutput()->getOutput()->fetch())->toContain('Run `npm run build` to compile the theme.');
 });
 
-it('does not run an install command for empty dependencies', function (): void {
+it('does not run an install command for empty dependencies', function () use ($createJavaScriptPackageCommand): void {
     Process::fake();
     Process::preventStrayProcesses();
 
-    $command = createJavaScriptPackageCommand();
+    $command = $createJavaScriptPackageCommand();
     $reflection = new ReflectionClass($command);
     $reflection->getProperty('packageManager')->setValue($command, 'npm');
 

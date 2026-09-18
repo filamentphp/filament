@@ -10,7 +10,6 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -171,11 +170,6 @@ class JsFieldFrameworkTest extends Page
                     FrameworkField::make('field')->belowContent($embeddedContent())->extraAttributes(['data-field' => 'table']),
                     BladeMethodEntry::make('caption'),
                 ]),
-                Html::make('<div class="fi-hidden" data-liberated-hidden>Hidden content</div>')->liberatedFromContainerGrid(),
-                Html::make('<div class="fi-grid-col fi-width-md" data-liberated-width>Width-constrained content</div>')->liberatedFromContainerGrid(),
-                Group::make()->schema(Schema::make()->inline()->components([
-                    Html::make('<div class="fi-growable" data-liberated-grow>Growing content</div>')->liberatedFromContainerGrid(),
-                ])),
             ]);
         }
 

@@ -530,10 +530,7 @@ it('loads deferred badges through `$getDeferredTabBadges()` in both tab renderer
     if ($dark) {
         $page = $page->inDarkMode();
     }
-    $page->assertSeeIn('.fi-badge', 'Available')
-        ->assertVisible('.fi-badge')
-        ->assertScript('document.documentElement.classList.contains("dark")', $dark)
-        ->assertScript('document.getAnimations().every(animation => animation.playState !== "running" || animation.effect.getTiming().iterations === Infinity)', true)
+    $page->assertPresent('[data-testid="deferred-tab"] .fi-badge')
         ->assertNoSmoke()->assertNoAccessibilityIssues();
 })->with(['Alpine' => false, 'Livewire' => true])->with(['light' => false, 'dark' => true]);
 

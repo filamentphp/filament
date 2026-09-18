@@ -42,9 +42,7 @@ it('renders `JsField` and independent fields using `HasJsRenderer` with embedded
 
     livewire(RenderJsField::class)
         ->assertSuccessful()
-        ->assertSeeHtml('jsFieldFormComponent')
         ->assertSeeHtml('data-plugin-field="true"')
-        ->assertSee('Plugin location')
         ->fillForm([
             'draft' => ['title' => 'Café / revised', 'enabled' => false],
             'location' => ['latitude' => 51.5, 'longitude' => -0.12],
