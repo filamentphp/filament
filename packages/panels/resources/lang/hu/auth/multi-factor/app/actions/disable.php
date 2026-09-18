@@ -11,6 +11,10 @@ return [
         'description' => 'Biztosan ki szeretnéd kapcsolni a hitelesítő alkalmazás használatát? Ennek kikapcsolása eltávolít egy plusz biztonsági réteget a fiókodból.',
 
         'form' => [
+            'password' => [
+                'label' => 'Jelenlegi jelszó',
+                'validation_attribute' => 'jelenlegi jelszó',
+            ],
 
             'code' => [
 
