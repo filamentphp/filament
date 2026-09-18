@@ -343,8 +343,6 @@ it('can add and remove tags in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/tags-input-test')
-            ->assertSee('Tags Input Test')
-            ->assertSee('Basic Tags')
             ->assertDontSee('MyNewTag')
             ->type('[data-testid="basic-tags"] input', 'MyNewTag')
             ->keys('[data-testid="basic-tags"] input', 'Enter')

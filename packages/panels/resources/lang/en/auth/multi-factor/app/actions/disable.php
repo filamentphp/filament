@@ -11,6 +11,10 @@ return [
         'description' => 'Are you sure you want to stop using the authenticator app? Disabling this will remove an extra layer of security from your account.',
 
         'form' => [
+            'password' => [
+                'label' => 'Current password',
+                'validation_attribute' => 'current password',
+            ],
 
             'code' => [
 

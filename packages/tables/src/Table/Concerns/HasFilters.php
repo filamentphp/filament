@@ -202,6 +202,37 @@ trait HasFilters
         return $this->getLivewire()->getTableFiltersForm();
     }
 
+    /**
+     * @template TReturn
+     *
+     * @param  Closure(): TReturn  $callback
+     * @return TReturn
+     *
+     * @internal
+     */
+    public function withAppliedFiltersFormState(Closure $callback): mixed
+    {
+        if (! $this->hasDeferredFilters()) {
+            return $callback();
+        }
+
+        $this->setFiltersFormStatePath('tableFilters');
+
+        try {
+            return $callback();
+        } finally {
+            $this->setFiltersFormStatePath('tableDeferredFilters');
+        }
+    }
+
+    protected function setFiltersFormStatePath(string $statePath): void
+    {
+        $filtersForm = $this->getFiltersForm()->statePath($statePath);
+
+        $filtersForm->flushCachedAbsoluteStatePaths();
+        $filtersForm->clearCachedChildSchemas();
+    }
+
     public function filtersFormSchema(?Closure $schema): static
     {
         $this->filtersFormSchema = $schema;

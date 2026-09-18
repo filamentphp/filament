@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Edo, sartu zure uneko pasahitza',
+                'label' => 'Sartu zure uneko pasahitza',
 
                 'validation_attribute' => 'pasahitza',
 

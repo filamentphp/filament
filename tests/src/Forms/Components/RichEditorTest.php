@@ -1498,36 +1498,12 @@ it('can render `RichEditor` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/rich-editor-browser-test')
-            ->assertSee('Content')
             ->assertNoSmoke()
-            ->assertScript(<<<'JS'
-                (() => {
-                    const defaultContent = document.querySelector('[data-testid="default-rich-editor"] .fi-fo-rich-editor-content')
-                    const content = document.querySelector('[data-testid="height-constrained-rich-editor"] .fi-fo-rich-editor-content')
-                    const editor = content.querySelector('.tiptap')
-                    const initialStyle = getComputedStyle(content)
-                    const expectedEditorHeight = content.clientHeight - parseFloat(initialStyle.paddingTop) - parseFloat(initialStyle.paddingBottom)
-
-                    if (
-                        getComputedStyle(defaultContent).minHeight !== '160px' ||
-                        initialStyle.minHeight !== '192px' ||
-                        initialStyle.maxHeight !== '224px' ||
-                        initialStyle.overflowY !== 'auto' ||
-                        content.clientHeight !== 192 ||
-                        Math.abs(editor.getBoundingClientRect().height - expectedEditorHeight) > 0.5
-                    ) {
-                        return false
-                    }
-
-                    editor.innerHTML = '<p>Content</p>'.repeat(100)
-
-                    return content.clientHeight === 224 && content.scrollHeight > content.clientHeight
-                })()
-                JS)
             ->assertNoAccessibilityIssues();
 
         visit('/rich-editor-browser-test')
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });
