@@ -2,7 +2,7 @@
     'applyAction',
     'form',
     'headingTag' => 'h3',
-    'resetAction',
+    'resetAction' => null,
     'resetActionPosition' => null,
 ])
 
@@ -18,23 +18,23 @@
             {{ __('filament-tables::table.filters.heading') }}
         </{{ $headingTag }}>
 
-        @if ($resetActionPosition === FiltersResetActionPosition::Header)
+        @if (($resetActionPosition === FiltersResetActionPosition::Header) && $resetAction?->isVisible())
             <div>
-                {{ $resetAction->link() }}
+                {{ $resetAction->defaultView($resetAction::LINK_VIEW) }}
             </div>
         @endif
     </div>
 
     {{ $form }}
 
-    @if ($applyAction->isVisible() || $resetActionPosition === FiltersResetActionPosition::Footer)
+    @if ($applyAction->isVisible() || (($resetActionPosition === FiltersResetActionPosition::Footer) && $resetAction?->isVisible()))
         <div class="fi-ta-filters-actions-ctn">
             @if ($applyAction->isVisible())
                 {{ $applyAction }}
             @endif
 
-            @if ($resetActionPosition === FiltersResetActionPosition::Footer)
-                {{ $resetAction->button() }}
+            @if (($resetActionPosition === FiltersResetActionPosition::Footer) && $resetAction?->isVisible())
+                {{ $resetAction }}
             @endif
         </div>
     @endif

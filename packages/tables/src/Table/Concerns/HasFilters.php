@@ -241,8 +241,7 @@ trait HasFilters
             ->extraModalFooterActions([
                 $this->getFiltersApplyAction()
                     ->close(),
-                $this->getFiltersResetAction()
-                    ->button(),
+                $this->getFiltersResetAction(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
             ->table($this)
