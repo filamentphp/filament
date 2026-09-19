@@ -209,6 +209,50 @@ it('does not render the trailing group summary with cursor pagination when the n
         ->assertDontSee('A summary');
 });
 
+it('renders summaries with unsupported responsive breakpoints', function (): void {
+    Post::factory()->create();
+
+    livewire(TestTableWithResponsiveSummaryFallbacks::class)
+        ->assertOk();
+});
+
+it('renders summaries when all columns use `hidden()`', function (): void {
+    Post::factory()->create();
+
+    livewire(TestTableWithResponsiveSummaryFallbacks::class)
+        ->set('hideAllColumns', true)
+        ->assertOk();
+});
+
+class TestTableWithResponsiveSummaryFallbacks extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public bool $hideAllColumns = false;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title')
+                    ->hidden(fn (): bool => $this->hideAllColumns)
+                    ->visibleFrom('unknown'),
+                Tables\Columns\TextColumn::make('rating')
+                    ->hidden(fn (): bool => $this->hideAllColumns)
+                    ->hiddenFrom('base')
+                    ->summarize(Tables\Columns\Summarizers\Count::make()),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
 class TestTableWithGroupSummariesOnly extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
