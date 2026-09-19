@@ -2,7 +2,9 @@
 
 namespace Filament\Actions\Imports;
 
+use BackedEnum;
 use Closure;
+use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
@@ -14,10 +16,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class ImportColumn extends Component
 {
+    use HasEnum;
+
     protected string $name;
 
     protected string | Closure | null $label = null;
@@ -60,9 +65,9 @@ class ImportColumn extends Component
     protected ?Importer $importer = null;
 
     /**
-     * @var array<mixed> | Closure
+     * @var array<mixed> | Closure | null
      */
-    protected array | Closure $examples = [];
+    protected array | Closure | null $examples = null;
 
     protected string | Closure | null $exampleHeader = null;
 
@@ -430,6 +435,11 @@ class ImportColumn extends Component
             };
         }
 
+        if ((! $this->isMultiple()) && filled($enum = $this->getBackedEnum())) {
+            $rules[] = 'nullable';
+            $rules[] = Rule::enum($enum);
+        }
+
         return $rules;
     }
 
@@ -543,7 +553,13 @@ class ImportColumn extends Component
      */
     public function getNestedRecursiveDataValidationRules(): array
     {
-        return $this->evaluate($this->nestedRecursiveDataValidationRules);
+        $rules = $this->evaluate($this->nestedRecursiveDataValidationRules);
+
+        if ($this->isMultiple() && filled($enum = $this->getBackedEnum())) {
+            $rules[] = Rule::enum($enum);
+        }
+
+        return $rules;
     }
 
     public function isNumeric(): bool
@@ -594,7 +610,38 @@ class ImportColumn extends Component
      */
     public function getExamples(): array
     {
-        return Arr::wrap($this->evaluate($this->examples));
+        if ($this->examples !== null) {
+            return Arr::wrap($this->evaluate($this->examples));
+        }
+
+        if ($this->enum instanceof Closure) {
+            return [];
+        }
+
+        if (blank($enum = $this->getBackedEnum())) {
+            return [];
+        }
+
+        return array_map(
+            static fn (BackedEnum $case): string | int => $case->value,
+            $enum::cases(),
+        );
+    }
+
+    /**
+     * @return class-string<BackedEnum> | null
+     */
+    protected function getBackedEnum(): ?string
+    {
+        if (blank($enum = $this->getEnum())) {
+            return null;
+        }
+
+        if (! is_a($enum, BackedEnum::class, allow_string: true)) {
+            throw new InvalidArgumentException("Enum [$enum] must be a backed enum.");
+        }
+
+        return $enum;
     }
 
     /**
