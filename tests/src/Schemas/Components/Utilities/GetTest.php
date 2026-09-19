@@ -2,6 +2,7 @@
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -121,6 +122,56 @@ describe('state retrieval with `Get`', function (): void {
 
         expect($placeholder)
             ->getContent()->toBe($state);
+    });
+
+    test('cast state can be retrieved when queried by the containing component itself for its own descendant', function (): void {
+        // Mirrors `Tab::badge()`/`visible()` reading a field in that same tab's
+        // own `schema()`: the container itself (no `statePath()` of its own,
+        // like `Tab`) is the one calling `$get()`, which excludes its own
+        // children from the normal search to prevent infinite loops when
+        // computing dynamic child schemas. The target field here is a normal,
+        // already-defined descendant, so its cast should still be applied
+        // rather than falling back to raw state.
+        $container = (new Component)
+            ->schema([
+                (new Component)
+                    ->statePath($statePath = Str::random())
+                    ->default(GetTestStatus::Active->value)
+                    ->stateCast(new EnumStateCast(GetTestStatus::class)),
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$container])
+            ->fill();
+
+        $get = new Get($container);
+
+        expect($get($statePath))->toBe(GetTestStatus::Active);
+    });
+
+    test('cast state is retrieved identically whether queried by the field\'s own container or a sibling container', function (): void {
+        $sibling = (new Component)->schema([]);
+
+        $container = (new Component)
+            ->schema([
+                (new Component)
+                    ->statePath($statePath = Str::random())
+                    ->default(GetTestStatus::Active->value)
+                    ->stateCast(new EnumStateCast(GetTestStatus::class)),
+            ]);
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$container, $sibling])
+            ->fill();
+
+        $fromOwnContainer = (new Get($container))($statePath);
+        $fromSibling = (new Get($sibling))($statePath);
+
+        expect($fromOwnContainer)
+            ->toBe(GetTestStatus::Active)
+            ->toEqual($fromSibling);
     });
 });
 

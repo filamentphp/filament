@@ -39,7 +39,29 @@ class Get
 
         try {
             if (! $component) {
-                return data_get($livewire, $path);
+                // The component may not have been found because it is a descendant of
+                // `$this->component` itself (e.g. a field queried from that same
+                // component's own `badge()`/`label()` closure), which is excluded from
+                // the search above to protect against infinite loops when computing
+                // dynamic child schemas. Retry without excluding this component's own
+                // children specifically — other components already on the exclusion
+                // stack (still being computed further up the call chain) stay excluded,
+                // so that protection is unaffected.
+                $component = $this->component->getRootContainer()->getComponentByStatePath(
+                    $path,
+                    withHidden: true,
+                    withAbsoluteStatePath: true,
+                    skipComponentsChildContainersWhileSearching: $this->shouldSkipComponentsChildContainersWhileSearching
+                        ? array_values(array_filter(
+                            static::$skipComponentsChildContainersWhileSearching,
+                            fn (Component $skippedComponent): bool => $skippedComponent !== $this->component,
+                        ))
+                        : [],
+                );
+
+                if (! $component) {
+                    return data_get($livewire, $path);
+                }
             }
 
             return $component->getState();
