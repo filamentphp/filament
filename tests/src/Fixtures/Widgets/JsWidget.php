@@ -54,7 +54,7 @@ class JsWidget extends Widget
             return RawJs::make('() => { throw new Error("Unavailable renderer") }');
         }
 
-        return FilamentAsset::getScriptSrc('generated-' . $this->framework, 'tests/js-widgets');
+        return FilamentAsset::getScriptSrc('widget-' . $this->framework, 'tests/js-widgets');
     }
 
     /** @return array<string, mixed> */
