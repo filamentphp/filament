@@ -90,7 +90,18 @@ class ModalBrowserTest extends Page
                     TextInput::make('name')
                         ->required()
                         ->extraInputAttributes(['data-testid' => 'validated-parent-data-input'])
-                        ->extraFieldWrapperAttributes(['data-testid' => 'validated-parent-data-field']),
+                        ->extraFieldWrapperAttributes(['data-testid' => 'validated-parent-data-field'])
+                        ->suffixAction(
+                            Action::make('generateValidatedParentDataName')
+                                ->action(function (Action $parentAction): void {
+                                    $parentAction->fillData([
+                                        'name' => blank($parentAction->getRawData()['name'] ?? null)
+                                            ? 'First generated name'
+                                            : 'Second generated name',
+                                    ]);
+                                })
+                                ->extraAttributes(['data-testid' => 'validated-parent-data-suffix-action']),
+                        ),
                 ])
                 ->action(static fn () => null)
                 ->extraAttributes(['data-testid' => 'validated-parent-data-trigger'])
@@ -101,8 +112,8 @@ class ModalBrowserTest extends Page
                         ->schema([
                             TextInput::make('confirmation'),
                         ])
-                        ->mountUsing(function (array $mountedActions, Schema $schema): void {
-                            $mountedActions[0]->getValidatedData();
+                        ->mountUsing(function (Action $parentAction, Schema $schema): void {
+                            $parentAction->getValidatedData();
 
                             $schema->fill();
                         })

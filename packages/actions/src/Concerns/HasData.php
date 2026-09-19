@@ -101,7 +101,11 @@ trait HasData
      */
     public function getRawData(): array
     {
-        return $this->getLivewire()->mountedActions[$this->getNestingIndex()]['data'] ?? [];
+        if (($nestingIndex = $this->getMountedDataNestingIndex()) === null) {
+            return [];
+        }
+
+        return $this->getLivewire()->mountedActions[$nestingIndex]['data'] ?? [];
     }
 
     /**
@@ -204,6 +208,7 @@ trait HasData
         }
 
         $schema->fillPartially($data, $statePaths, shouldLoadStateFromRelationships: false);
+        $schema->flushCachedHierarchy();
     }
 
     protected function getMountedDataNestingIndex(): ?int
@@ -212,7 +217,7 @@ trait HasData
 
         if (
             ($nestingIndex === null) ||
-            ($this->getLivewire()->getMountedAction($nestingIndex) !== $this)
+            (! $this->getLivewire()->isActionMounted($this))
         ) {
             return null;
         }

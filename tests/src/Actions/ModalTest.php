@@ -118,6 +118,11 @@ describe('browser interactions', function (): void {
             $browser
                 ->click('[data-testid="validated-parent-data-trigger"]')
                 ->assertVisible('[data-testid="validated-parent-data-modal"]')
+                ->click('[data-testid="validated-parent-data-suffix-action"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'First generated name')
+                ->click('[data-testid="validated-parent-data-suffix-action"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'Second generated name')
+                ->fill('[data-testid="validated-parent-data-input"]', '')
                 ->click('[data-testid="validated-parent-data-nested-trigger"]')
                 ->assertVisible('[data-testid="validated-parent-data-modal"]')
                 ->assertMissing('[data-testid="validated-parent-data-nested-modal"]')

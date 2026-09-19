@@ -616,9 +616,7 @@ In this example, if the `fourth` action is run, the `second` action is canceled,
 
 ## Accessing information about parent actions from a child
 
-You can access every action that is currently mounted by injecting the `$mountedActions` array in a function used by your nested action. The exact contents of the array depend on when the function is evaluated. Inside the nested action's `mountUsing()` or `action()` function, the current action is the final item, and any parent actions appear before it. You can access the top-most parent action using `$mountedActions[0]`, or the direct parent using `$mountedActions[count($mountedActions) - 2]`.
-
-You can get the raw data of an action by calling `getRawData()` on it. Please be aware that raw data is not validated since the action has not been submitted yet:
+You can access the parent action instance by injecting `$parentAction` into the `action()` or `mountUsing()` function of your nested action. From there, you can get the raw data for that action by calling `getRawData()`. Please be aware that raw data is not validated since the action has not been submitted yet:
 
 ```php
 use Filament\Actions\Action;
@@ -634,17 +632,17 @@ Action::make('first')
     ->extraModalFooterActions([
         Action::make('second')
             ->requiresConfirmation()
-            ->action(function (array $mountedActions) {
-                dd($mountedActions[0]->getRawData());
-            
+            ->action(function (Action $parentAction) {
+                dd($parentAction->getRawData());
+
                 // ...
             }),
     ])
 ```
 
-You can do similar with the current arguments for a parent action, with the `$mountedActions[0]->getArguments()` method.
+You can do similar with the current arguments for a parent action, with the `$parentAction->getArguments()` method.
 
-Even if you have multiple layers of nesting, the `$mountedActions` array will contain every action that is currently active, so you can access information about them:
+If you need to access an action other than the direct parent, you can inject the `$mountedActions` array, which contains every action that is currently active:
 
 ```php
 use Filament\Actions\Action;
@@ -711,8 +709,8 @@ Action::make('first')
     })
     ->extraModalFooterActions([
         Action::make('second')
-            ->action(function (array $mountedActions) {
-                $data = $mountedActions[0]->getValidatedData();
+            ->action(function (Action $parentAction) {
+                $data = $parentAction->getValidatedData();
 
                 // ...
             }),
@@ -729,8 +727,8 @@ Action::make('second')
     ->schema([
         // ...
     ])
-    ->mountUsing(function (array $mountedActions, Schema $schema) {
-        $data = $mountedActions[0]->getValidatedData();
+    ->mountUsing(function (Action $parentAction, Schema $schema) {
+        $data = $parentAction->getValidatedData();
 
         // ...
 
@@ -766,8 +764,8 @@ Action::make('createInvoice')
                 TextInput::make('prefix')
                     ->required(),
             ])
-            ->action(function (array $data, array $mountedActions) {
-                $mountedActions[0]->fillData([
+            ->action(function (array $data, Action $parentAction) {
+                $parentAction->fillData([
                     'reference' => "{$data['prefix']}-123",
                 ]);
             }),
