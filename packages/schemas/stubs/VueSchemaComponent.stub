@@ -1,0 +1,9 @@
+<script setup>
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps(['id', 'config'])
+</script>
+
+<template>
+    <p>{{ props.config.message ?? 'Your component is ready.' }}</p>
+</template>
