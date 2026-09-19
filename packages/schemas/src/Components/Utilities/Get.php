@@ -38,38 +38,26 @@ class Get
             );
 
         try {
-            if (! $component) {
-                // The component may not have been found because it is a descendant of
-                // `$this->component` itself (e.g. a field queried from that same
-                // component's own `badge()`/`label()` closure), which is excluded from
-                // the search above to protect against infinite loops when computing
-                // dynamic child schemas. Retry without excluding this component's own
-                // children specifically — other components already on the exclusion
-                // stack (still being computed further up the call chain) stay excluded,
-                // so that protection is unaffected.
-                $component = $this->shouldSkipComponentsChildContainersWhileSearching
-                    ? $this->component->getRootContainer()->getComponentByStatePath(
-                        $path,
-                        withHidden: true,
-                        withAbsoluteStatePath: true,
-                        // Drop only the entry this call pushed above (the last one),
-                        // not every occurrence of `$this->component` in the stack -
-                        // the same component can legitimately appear more than once
-                        // (e.g. a self-referential or mutually-recursive dynamic
-                        // schema), and removing an earlier occurrence pushed by a
-                        // still-active outer call would defeat the infinite-loop
-                        // protection that stack exists for.
-                        skipComponentsChildContainersWhileSearching: array_slice(
-                            static::$skipComponentsChildContainersWhileSearching,
-                            0,
-                            -1,
-                        ),
-                    )
-                    : null;
+            // The primary search above may have missed a field that is a descendant of
+            // `$this->component` itself (e.g. read from that same component's own
+            // `badge()`/`label()` closure). Retry dropping only the entry this call
+            // pushed, so a re-entrant `$get()` from this component's own dynamic child
+            // schema still sees the component excluded.
+            if ((! $component) && $this->shouldSkipComponentsChildContainersWhileSearching) {
+                $component = $this->component->getRootContainer()->getComponentByStatePath(
+                    $path,
+                    withHidden: true,
+                    withAbsoluteStatePath: true,
+                    skipComponentsChildContainersWhileSearching: array_slice(
+                        static::$skipComponentsChildContainersWhileSearching,
+                        0,
+                        -1,
+                    ),
+                );
+            }
 
-                if (! $component) {
-                    return data_get($livewire, $path);
-                }
+            if (! $component) {
+                return data_get($livewire, $path);
             }
 
             return $component->getState();
