@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 
 trait HasData
 {
@@ -109,5 +110,46 @@ trait HasData
     public function getRawFormData(): array
     {
         return $this->getRawData();
+    }
+
+    /**
+     * Validates the action's schema and returns the validated data, without running the
+     * action itself. A nested action that consumes the data of the action it was mounted
+     * from uses this rather than `getRawData()`, which is whatever the browser last sent
+     * and has been validated by nothing.
+     *
+     * Throws a `ValidationException` when the schema is invalid.
+     *
+     * @return array<string, mixed>
+     */
+    public function getValidatedData(): array
+    {
+        $nestingIndex = $this->getNestingIndex();
+
+        if (blank($nestingIndex)) {
+            return [];
+        }
+
+        $data = [];
+
+        if (($actionComponent = $this->getSchemaComponent()) instanceof ExposesStateToActionData) {
+            foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
+                $data = [
+                    ...$data,
+                    ...$actionComponentChildSchema->getState(shouldCallHooksBefore: false),
+                ];
+            }
+        }
+
+        $schema = $this->getLivewire()->getSchema("mountedActionSchema{$nestingIndex}");
+
+        if (! $schema) {
+            return $data;
+        }
+
+        return [
+            ...$data,
+            ...$schema->getState(shouldCallHooksBefore: false),
+        ];
     }
 }

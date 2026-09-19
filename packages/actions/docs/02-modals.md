@@ -691,6 +691,102 @@ Action::make('first')
     ])
 ```
 
+### Validating the data of a parent action
+
+`getRawData()` returns the current unvalidated data. When a nested action relies on that data being valid, use `getValidatedData()` instead, which validates it with the rules of the action it belongs to and returns the result:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('first')
+    ->schema([
+        TextInput::make('foo')
+            ->required(),
+    ])
+    ->action(function () {
+        // ...
+    })
+    ->extraModalFooterActions([
+        Action::make('second')
+            ->action(function (array $mountedActions) {
+                $data = $mountedActions[0]->getValidatedData();
+
+                // ...
+            }),
+    ])
+```
+
+A nested action that only needs the action it was mounted from can use `getValidatedParentActionData()` instead of reaching into `$mountedActions`:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('second')
+    ->action(function (Action $action) {
+        $data = $action->getValidatedParentActionData();
+
+        // ...
+    })
+```
+
+Unlike `getParentAction()`, this works for an action registered on a component inside the modal as well as one registered on the modal itself. A `LogicException` is thrown when the action was not mounted from another action.
+
+If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedParentActionData()` from `mountUsing()` so that the errors are reported before the nested action's modal opens:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+
+Action::make('second')
+    ->schema([
+        // ...
+    ])
+    ->mountUsing(function (Action $action, Schema $schema) {
+        $data = $action->getValidatedParentActionData();
+
+        // ...
+
+        $schema->fill();
+    })
+```
+
+<Aside variant="warning">
+    Reading an action's data must not have the side effects of submitting it, so the hooks that run before dehydration are skipped, as they are for the repeater's `getItemState()`. A newly uploaded file can therefore remain a `TemporaryUploadedFile` instead of becoming a stored path. `mutateDataUsing()` is not applied either, and the action's `beforeFormValidated()` and `afterFormValidated()` hooks do not run.
+</Aside>
+
+### Filling in the data of a parent action
+
+A nested action can write into the schema data of the action it was mounted from, using `fillParentActionData()`. Only keys for fields in the parent action's schema are filled, and other keys are ignored. The data is hydrated by the parent action's schema, so nested state and dot-notation keys land where the action reads them, and the parent validates it with its own rules when it is submitted:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+Action::make('createInvoice')
+    ->schema([
+        TextInput::make('title')
+            ->required(),
+        TextInput::make('reference')
+            ->required(),
+    ])
+    ->action(function (array $data) {
+        // `$data['reference']` is filled in.
+    })
+    ->extraModalFooterActions([
+        Action::make('generateReference')
+            ->schema([
+                TextInput::make('prefix')
+                    ->required(),
+            ])
+            ->action(function (Action $action, array $data) {
+                $action->fillParentActionData([
+                    'reference' => "{$data['prefix']}-123",
+                ]);
+            }),
+    ])
+```
+
 ## Closing the modal
 
 ### Closing the modal by clicking away

@@ -346,7 +346,21 @@ trait HasState
      */
     public function fillPartially(array $state, array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
     {
-        $this->partialRawState(collect($state)->dot()->only($statePaths)->all());
+        $partialState = [];
+
+        foreach ($statePaths as $statePath) {
+            if (array_key_exists($statePath, $state)) {
+                $partialState[$statePath] = $state[$statePath];
+
+                continue;
+            }
+
+            if (Arr::has($state, $statePath)) {
+                $partialState[$statePath] = data_get($state, $statePath);
+            }
+        }
+
+        $this->partialRawState($partialState);
 
         if ($schemaStatePath = $this->getStatePath()) {
             $statePaths = array_map(
