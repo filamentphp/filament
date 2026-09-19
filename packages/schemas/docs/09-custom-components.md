@@ -24,6 +24,8 @@ Then customize the generated view, following [custom component classes](#custom-
 
 ### Generating a JavaScript component
 
+Install your application's existing JavaScript dependencies, including Vite, before running the generator, for example with `npm install`. The command reads the installed Vite version to select compatible compiler plugins, including when you use `--skip-install`.
+
 Add one renderer flag to generate a component using React, Vue, Svelte, or framework-free JavaScript:
 
 ```bash
@@ -33,7 +35,7 @@ php artisan make:filament-schema-component Chart --svelte
 php artisan make:filament-schema-component Chart --js
 ```
 
-The command creates a PHP component class and a renderer in `resources/js/filament/schemas/components/`, without a Blade view. It installs any required development dependencies, updates recognizable Vite configurations, and offers to compile your assets. Use the generated class in your schema as shown above, then replace the starter paragraph with your own UI.
+The command creates a PHP component class and a renderer in `resources/js/filament/schemas/components/`, without a Blade view. It installs missing development dependencies, updates recognizable Vite configurations, and offers to compile your assets. Existing compatible dependency declarations keep their version constraints and their `package.json` sections. Incompatible dependencies require a manual upgrade instead of being replaced automatically. Use the generated class in your schema as shown above, then replace the starter paragraph with your own UI.
 
 For TypeScript, add `--typescript` or its alias `--ts`:
 
@@ -745,7 +747,7 @@ For methods on the owning Livewire component rather than the schema component, u
 
 ### Typing renderers
 
-Use `--typescript` or `--ts` to generate typed starters. The generator installs TypeScript 6 because Vue and Svelte tooling still requires its JavaScript compiler API, which TypeScript 7 does not provide. If you use `--skip-install`, install `typescript@^6.0` yourself.
+Use `--typescript` or `--ts` to generate typed starters. When TypeScript is not already declared, the generator installs `typescript@^6.0` because Vue and Svelte tooling still requires its JavaScript compiler API, which TypeScript 7 does not provide. Existing compatible TypeScript 5 or 6 installations are preserved. If you use `--skip-install`, follow the printed installation command for missing dependencies.
 
 New TypeScript configurations use `"jsx": "react-jsx"` so Vite compiles React renderers. Existing configurations are preserved. If your configuration uses `"jsx": "preserve"`, switch it to `"react-jsx"` or configure a React JSX transform in Vite; Vite 8 otherwise leaves JSX uncompiled and the production build fails.
 

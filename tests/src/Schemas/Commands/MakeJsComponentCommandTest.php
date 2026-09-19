@@ -12,9 +12,13 @@ beforeEach(function (): void {
     Process::preventStrayProcesses();
     $this->originalSetupFiles = [];
 
-    foreach (['vite.config.js', 'tsconfig.json'] as $path) {
+    foreach (['vite.config.js', 'tsconfig.json', 'package.json', 'node_modules/vite/package.json'] as $path) {
         $this->originalSetupFiles[$path] = File::exists(base_path($path)) ? File::get(base_path($path)) : null;
     }
+
+    File::put(base_path('package.json'), '{}');
+    File::ensureDirectoryExists(base_path('node_modules/vite'));
+    File::put(base_path('node_modules/vite/package.json'), '{"version":"8.0.0"}');
 });
 
 afterEach(function (): void {
@@ -69,7 +73,7 @@ it('installs dependencies and configures Vite for a typed React component', func
         ->expectsConfirmation('Would you like to compile the component now?', 'yes')
         ->assertSuccessful();
 
-    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'add', 'react', 'react-dom', 'typescript@^6.0', '@types/react', '@types/react-dom', '--dev']);
+    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'add', 'react@^19.0', 'react-dom@^19.0', 'typescript@^6.0', '@types/react@^19.0', '@types/react-dom@^19.0', '--dev']);
     expect(File::get(base_path('vite.config.js')))->toContain('preserveEntrySignatures', 'resources/js/filament/schemas/components/sales-chart.tsx');
 });
 
@@ -112,6 +116,64 @@ it('overwrites existing renderers with `--force`', function (): void {
     $this->artisan('make:filament-schema-component', [...$options, '--force' => true])->assertSuccessful();
     expect(File::get($path))->toContain('export default function mountExistingChart');
 });
+
+it('preserves every component file when a renderer overwrite is declined', function (): void {
+    $paths = [
+        app_path('Filament/Schemas/Components/CancelledChart.php'),
+        resource_path('js/filament/schemas/components/cancelled-chart.js'),
+        resource_path('js/filament/schemas/components/CancelledChart.vue'),
+    ];
+
+    foreach ($paths as $path) {
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, 'Original ' . basename($path));
+    }
+
+    $environment = app()['env'];
+
+    try {
+        app()['env'] = 'local';
+
+        $this->artisan('make:filament-schema-component', [
+            'name' => 'CancelledChart',
+            '--vue' => true,
+            '--skip-install' => true,
+            '--skip-build' => true,
+        ])
+            ->expectsConfirmation('CancelledChart.php already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('cancelled-chart.js already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('CancelledChart.vue already exists, do you want to overwrite it?', 'no')
+            ->assertFailed();
+
+        foreach ($paths as $path) {
+            expect(File::get($path))->toBe('Original ' . basename($path));
+        }
+    } finally {
+        app()['env'] = $environment;
+        File::delete($paths);
+    }
+});
+
+it('requires installed Vite before selecting renderer dependencies', function (bool $skipInstall): void {
+    File::delete(base_path('node_modules/vite/package.json'));
+    $componentPath = app_path('Filament/Schemas/Components/UninstalledViteChart.php');
+    $rendererPath = resource_path('js/filament/schemas/components/uninstalled-vite-chart.svelte.js');
+    File::delete([$componentPath, $rendererPath]);
+
+    $this->artisan('make:filament-schema-component', [
+        'name' => 'UninstalledViteChart',
+        '--svelte' => true,
+        '--skip-install' => $skipInstall,
+        '--skip-build' => true,
+        '--no-interaction' => true,
+    ])
+        ->expectsOutputToContain('Install your application\'s existing JavaScript dependencies, including Vite, before generating a JavaScript renderer.')
+        ->assertFailed();
+
+    expect(File::exists($componentPath))->toBeFalse();
+    expect(File::exists($rendererPath))->toBeFalse();
+    Process::assertNotRan(static fn (PendingProcess $process): bool => in_array('install', $process->command));
+})->with([false, true]);
 
 it('returns failure when compiling the generated component fails', function (): void {
     File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixture/MakeThemeCommandTest/vite-config/standard.js'));
