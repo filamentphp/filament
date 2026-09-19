@@ -3,6 +3,9 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Arr;
 use LogicException;
 
 trait HasParentActions
@@ -85,11 +88,11 @@ trait HasParentActions
      *
      * @return array<string, mixed>
      */
-    public function getParentActionValidatedData(): array
+    public function getValidatedParentActionData(): array
     {
-        return $this->getLivewire()->getValidatedMountedActionData(
-            $this->getParentActionNestingIndex(),
-        );
+        return $this->getLivewire()
+            ->getMountedAction($this->getParentActionNestingIndex())
+            ?->getValidatedData() ?? [];
     }
 
     /**
@@ -104,9 +107,50 @@ trait HasParentActions
      */
     public function fillParentActionData(array $data): static
     {
-        $this->getLivewire()->fillMountedActionData($data, $this->getParentActionNestingIndex());
+        $parentActionNestingIndex = $this->getParentActionNestingIndex();
+        $livewire = $this->getLivewire();
+        $parentAction = $livewire->getMountedAction($parentActionNestingIndex);
+
+        if (($parentActionComponent = $parentAction?->getSchemaComponent()) instanceof ExposesStateToActionData) {
+            foreach ($parentActionComponent->getChildSchemas() as $parentActionComponentChildSchema) {
+                $this->fillSchemaData($parentActionComponentChildSchema, $data);
+            }
+        }
+
+        if ($parentActionSchema = $livewire->getSchema("mountedActionSchema{$parentActionNestingIndex}")) {
+            $this->fillSchemaData($parentActionSchema, $data);
+        }
 
         return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function fillSchemaData(Schema $schema, array $data): void
+    {
+        $schemaStatePath = $schema->getStatePath();
+        $statePaths = [];
+
+        foreach ($schema->getFlatFields(withHidden: true) as $field) {
+            $fieldStatePath = $field->getStatePath();
+
+            if (filled($schemaStatePath) && str($fieldStatePath)->startsWith("{$schemaStatePath}.")) {
+                $fieldStatePath = (string) str($fieldStatePath)->after("{$schemaStatePath}.");
+            }
+
+            if ((! array_key_exists($fieldStatePath, $data)) && (! Arr::has($data, $fieldStatePath))) {
+                continue;
+            }
+
+            $statePaths[] = $fieldStatePath;
+        }
+
+        if (blank($statePaths)) {
+            return;
+        }
+
+        $schema->fillPartially($data, $statePaths);
     }
 
     protected function getParentActionNestingIndex(): int

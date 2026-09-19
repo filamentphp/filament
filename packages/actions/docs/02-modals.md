@@ -717,34 +717,37 @@ Action::make('first')
     ])
 ```
 
-A nested action that only needs the action it was mounted from can use `getParentActionValidatedData()` instead of reaching into `$mountedActions`:
+A nested action that only needs the action it was mounted from can use `getValidatedParentActionData()` instead of reaching into `$mountedActions`:
 
 ```php
 use Filament\Actions\Action;
 
 Action::make('second')
     ->action(function (Action $action) {
-        $data = $action->getParentActionValidatedData();
+        $data = $action->getValidatedParentActionData();
 
         // ...
     })
 ```
 
-Unlike `$mountedActions`, this works for an action registered on a component inside the modal as well as one registered on the modal itself. A `LogicException` is thrown when the action was not mounted from another action.
+Unlike `getParentAction()`, this works for an action registered on a component inside the modal as well as one registered on the modal itself. A `LogicException` is thrown when the action was not mounted from another action.
 
-If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedData()` from `mountUsing()` instead, so that the errors are reported before the nested action's modal opens:
+If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedParentActionData()` from `mountUsing()` so that the errors are reported before the nested action's modal opens:
 
 ```php
 use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 
 Action::make('second')
     ->schema([
         // ...
     ])
-    ->mountUsing(function (array $mountedActions) {
-        $data = $mountedActions[0]->getValidatedData();
+    ->mountUsing(function (Action $action, Schema $schema) {
+        $data = $action->getValidatedParentActionData();
 
         // ...
+
+        $schema->fill();
     })
 ```
 

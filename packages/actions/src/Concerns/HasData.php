@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
 
 trait HasData
 {
@@ -129,6 +130,26 @@ trait HasData
             return [];
         }
 
-        return $this->getLivewire()->getValidatedMountedActionData($nestingIndex);
+        $data = [];
+
+        if (($actionComponent = $this->getSchemaComponent()) instanceof ExposesStateToActionData) {
+            foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
+                $data = [
+                    ...$data,
+                    ...$actionComponentChildSchema->getState(shouldCallHooksBefore: false),
+                ];
+            }
+        }
+
+        $schema = $this->getLivewire()->getSchema("mountedActionSchema{$nestingIndex}");
+
+        if (! $schema) {
+            return $data;
+        }
+
+        return [
+            ...$data,
+            ...$schema->getState(shouldCallHooksBefore: false),
+        ];
     }
 }
