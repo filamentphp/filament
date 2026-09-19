@@ -2,6 +2,10 @@
 
 return [
 
+    'js_component' => [
+        'failed_to_load' => 'This component could not be loaded. Please reload the page to try again.',
+    ],
+
     'callout' => [
 
         'statuses' => [
