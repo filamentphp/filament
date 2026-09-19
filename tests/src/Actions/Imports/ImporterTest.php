@@ -65,6 +65,13 @@ enum ImporterTestStatus: string
     case Published = 'published';
 }
 
+enum ImporterTestIntegerStatus: int
+{
+    case Draft = 0;
+
+    case Published = 1;
+}
+
 enum ImporterTestPureStatus
 {
     case Draft;
@@ -77,6 +84,8 @@ class EnumTestImporter extends Importer
         return [
             ImportColumn::make('status')
                 ->enum(ImporterTestStatus::class),
+            ImportColumn::make('priority')
+                ->enum(ImporterTestIntegerStatus::class),
         ];
     }
 
@@ -202,6 +211,18 @@ describe('enum columns', function (): void {
         expect($column->getExamples())->toBe(['draft', 'published']);
     });
 
+    it('supports integer-backed enums including a backing value of `0`', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(ImporterTestIntegerStatus::class)
+            ->rules(['required']);
+
+        $rules = ['status' => $column->getDataValidationRules()];
+
+        expect($column->getExamples())->toBe([0, 1])
+            ->and(Validator::make(['status' => $column->castState('0')], $rules)->fails())->toBeFalse()
+            ->and(Validator::make(['status' => $column->castState('2')], $rules)->fails())->toBeTrue();
+    });
+
     it('keeps `examples()` when it is used with `enum()`', function (): void {
         $column = ImportColumn::make('status')
             ->enum(ImporterTestStatus::class)
@@ -222,8 +243,8 @@ describe('enum columns', function (): void {
         $reader = $downloadExampleCsv(EnumTestImporter::class);
 
         expect(iterator_to_array($reader->getRecords()))->toBe([
-            1 => ['status' => 'draft'],
-            2 => ['status' => 'published'],
+            1 => ['status' => 'draft', 'priority' => '0'],
+            2 => ['status' => 'published', 'priority' => '1'],
         ]);
     });
 
@@ -244,7 +265,7 @@ describe('enum columns', function (): void {
         expect(Validator::make(['status' => 'unknown'], $rules)->fails())->toBeTrue();
     });
 
-    it('does not validate a blank state against the enum', function (): void {
+    it('does not validate a blank optional state against the enum', function (): void {
         $column = ImportColumn::make('status')
             ->enum(ImporterTestStatus::class);
 
@@ -253,14 +274,31 @@ describe('enum columns', function (): void {
             ->enum(ImporterTestStatus::class);
 
         $rules = ['status' => $column->getDataValidationRules()];
-        $nestedRules = ['statuses.*' => $multipleColumn->getNestedRecursiveDataValidationRules()];
 
-        // A blank CSV cell is cast to `null` before the data is validated, so an
-        // optional column must not be failed by the enum rule.
         expect($column->castState(''))->toBeNull()
             ->and(Validator::make(['status' => $column->castState('')], $rules)->fails())->toBeFalse()
             ->and(Validator::make(['status' => ''], $rules)->fails())->toBeFalse()
-            ->and(Validator::make(['statuses' => ['draft', null]], $nestedRules)->fails())->toBeFalse();
+            ->and($multipleColumn->castState(''))->toBe([])
+            ->and($multipleColumn->castState('draft,'))->toBe(['draft']);
+    });
+
+    it('still validates blank states against `required`', function (): void {
+        $column = ImportColumn::make('status')
+            ->enum(ImporterTestStatus::class)
+            ->rules(['required']);
+
+        $multipleColumn = ImportColumn::make('statuses')
+            ->multiple()
+            ->enum(ImporterTestStatus::class)
+            ->rules(['required']);
+
+        $rules = ['status' => $column->getDataValidationRules()];
+        $multipleRules = ['statuses' => $multipleColumn->getDataValidationRules()];
+
+        expect(Validator::make(['status' => $column->castState('')], $rules)->fails())->toBeTrue()
+            ->and(Validator::make(['status' => 'draft'], $rules)->fails())->toBeFalse()
+            ->and(Validator::make(['statuses' => $multipleColumn->castState('')], $multipleRules)->fails())->toBeTrue()
+            ->and(Validator::make(['statuses' => $multipleColumn->castState('draft')], $multipleRules)->fails())->toBeFalse();
     });
 
     it('rejects a pure enum', function (): void {
@@ -315,6 +353,23 @@ describe('enum columns', function (): void {
 
         expect(Validator::make(['statuses' => ['draft', 'published']], $rules)->fails())->toBeFalse();
         expect(Validator::make(['statuses' => ['draft', 'unknown']], $rules)->fails())->toBeTrue();
+    });
+
+    it('evaluates a dynamic `enum()` once when building rules for a `multiple()` column', function (): void {
+        $evaluations = 0;
+
+        $column = ImportColumn::make('statuses')
+            ->multiple()
+            ->enum(function () use (&$evaluations): string {
+                $evaluations++;
+
+                return ImporterTestStatus::class;
+            });
+
+        $column->getDataValidationRules();
+        $column->getNestedRecursiveDataValidationRules();
+
+        expect($evaluations)->toBe(1);
     });
 
     it('imports a row whose optional enum column is a blank CSV cell', function (): void {
