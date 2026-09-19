@@ -4,6 +4,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -491,7 +492,7 @@ describe('state retrieval with `Get`', function (): void {
         expect($get('/data.content.0.data.status'))->toBe(StringBackedEnum::One->value);
     });
 
-    test('cached builder item lookups validate only the requested item', function (): void {
+    test('cached `Builder` item lookups validate only the requested item', function (): void {
         $livewire = Livewire::make();
         $builder = (new class('content') extends Builder
         {
@@ -556,6 +557,71 @@ describe('state retrieval with `Get`', function (): void {
         expect($builder->fullFreshnessCheckCount)
             ->toBe(0)
             ->and($builder->itemFreshnessCheckCount)
+            ->toBe(10);
+    });
+
+    test('cached `Repeater` item lookups validate only the requested item', function (): void {
+        $livewire = Livewire::make();
+        $repeater = (new class('items') extends Repeater
+        {
+            public int $fullFreshnessCheckCount = 0;
+
+            public int $itemFreshnessCheckCount = 0;
+
+            protected function areCachedDefaultChildSchemasFresh(): bool
+            {
+                $this->fullFreshnessCheckCount++;
+
+                return parent::areCachedDefaultChildSchemasFresh();
+            }
+
+            protected function isCachedDefaultChildSchemaFresh(string | int $key): bool
+            {
+                $this->itemFreshnessCheckCount++;
+
+                return parent::isCachedDefaultChildSchemaFresh($key);
+            }
+        })
+            ->generateUuidUsing(false)
+            ->schema([
+                Select::make('status')->options(StringBackedEnum::class),
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                Tabs::make()
+                    ->tabs([
+                        $parentTab = Tab::make('Parent')
+                            ->schema([$repeater]),
+                    ]),
+            ])
+            ->fill([
+                'items' => array_fill(0, 10, [
+                    'status' => StringBackedEnum::One->value,
+                ]),
+            ]);
+
+        foreach ($repeater->getItems() as $item) {
+            $item->getComponents();
+        }
+
+        $get = $parentTab->makeGetUtility();
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/data.items.{$itemIndex}.status"))->toBe(StringBackedEnum::One);
+        }
+
+        $repeater->fullFreshnessCheckCount = 0;
+        $repeater->itemFreshnessCheckCount = 0;
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/data.items.{$itemIndex}.status"))->toBe(StringBackedEnum::One);
+        }
+
+        expect($repeater->fullFreshnessCheckCount)
+            ->toBe(0)
+            ->and($repeater->itemFreshnessCheckCount)
             ->toBe(10);
     });
 
