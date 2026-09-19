@@ -264,6 +264,10 @@ class MakeComponentCommand extends Command
 
     protected function createComponent(): void
     {
+        if (! $this->option('force') && $this->checkForCollision([$this->path, ...array_keys($this->rendererFiles)])) {
+            throw new FailureCommandOutput;
+        }
+
         $this->writeFile($this->path, app(ComponentClassGenerator::class, [
             'fqn' => $this->fqn,
             'view' => $this->framework ? '' : $this->view,
@@ -299,10 +303,6 @@ class MakeComponentCommand extends Command
 
     protected function createRenderer(): void
     {
-        if (! $this->option('force') && $this->checkForCollision(array_keys($this->rendererFiles))) {
-            throw new FailureCommandOutput;
-        }
-
         foreach ($this->rendererFiles as $path => $stub) {
             $this->copyStubToApp($stub, $path, [
                 'componentName' => class_basename($this->fqn),
