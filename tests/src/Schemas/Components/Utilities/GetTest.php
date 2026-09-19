@@ -175,6 +175,102 @@ describe('state retrieval with `Get`', function (): void {
     });
 });
 
+describe('infinite loop protection when a dynamic schema is queried via its own `Get()` call', function (): void {
+    // Regression coverage for the fallback introduced above: it must retry
+    // the search with only the *calling* component's own most recent stack
+    // entry removed, never every occurrence of that component. A component
+    // can legitimately appear more than once on the exclusion stack (e.g.
+    // a schema closure whose evaluation is itself triggered by another
+    // `Get()` call further up the stack), and blanket-removing every
+    // occurrence (as a naive `array_filter` would) strips the protection an
+    // outer, still-active call still relies on, causing the schema closure
+    // to be re-evaluated forever.
+    //
+    // Each closure below throws once it has run more than 10 times, so a
+    // regression fails fast instead of hanging the test run.
+
+    test('does not hang when a component\'s own dynamic `schema()` closure calls `Get()` for a field defined inside that same closure', function (): void {
+        $statePath = Str::random();
+        $schemaEvaluationCount = 0;
+
+        // There is no sibling value for this closure to resolve to: the
+        // field it asks for is the one it is in the middle of defining, so
+        // there is no correct value to assert here beyond "this returns
+        // without hanging". Whatever is returned (currently `null`, via the
+        // raw-state fallback) is incidental to this test.
+        $container = (new Component)
+            ->schema(function (Get $get) use (&$schemaEvaluationCount, $statePath): array {
+                if (++$schemaEvaluationCount > 10) {
+                    throw new Exception('Resolving the schema\'s own descendant via `Get()` caused the schema closure to be evaluated recursively.');
+                }
+
+                $get($statePath);
+
+                return [
+                    (new Component)
+                        ->statePath($statePath)
+                        ->default('value'),
+                ];
+            });
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$container])
+            ->fill();
+
+        $get = new Get($container);
+
+        expect(fn () => $get($statePath))->not->toThrow(Exception::class);
+    });
+
+    test('does not hang when two sibling components\' dynamic `schema()` closures call `Get()` on each other', function (): void {
+        $fieldAStatePath = Str::random();
+        $fieldBStatePath = Str::random();
+        $containerASchemaEvaluationCount = 0;
+        $containerBSchemaEvaluationCount = 0;
+
+        $containerA = new Component;
+        $containerB = new Component;
+
+        $containerA->schema(function (Get $get) use (&$containerASchemaEvaluationCount, $fieldBStatePath, $fieldAStatePath): array {
+            if (++$containerASchemaEvaluationCount > 10) {
+                throw new Exception('Resolving container B\'s field from container A\'s schema caused container A\'s schema closure to be evaluated recursively.');
+            }
+
+            $get("data.{$fieldBStatePath}", isAbsolute: true);
+
+            return [
+                (new Component)
+                    ->statePath($fieldAStatePath)
+                    ->default('a-value'),
+            ];
+        });
+
+        $containerB->schema(function (Get $get) use (&$containerBSchemaEvaluationCount, $fieldAStatePath, $fieldBStatePath): array {
+            if (++$containerBSchemaEvaluationCount > 10) {
+                throw new Exception('Resolving container A\'s field from container B\'s schema caused container B\'s schema closure to be evaluated recursively.');
+            }
+
+            $get("data.{$fieldAStatePath}", isAbsolute: true);
+
+            return [
+                (new Component)
+                    ->statePath($fieldBStatePath)
+                    ->default('b-value'),
+            ];
+        });
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$containerA, $containerB])
+            ->fill();
+
+        $get = new Get($containerA);
+
+        expect(fn () => $get("data.{$fieldBStatePath}", isAbsolute: true))->not->toThrow(Exception::class);
+    });
+});
+
 describe('typed accessors', function (): void {
     it('can retrieve state as string via `string()`', function (): void {
         Schema::make(Livewire::make())

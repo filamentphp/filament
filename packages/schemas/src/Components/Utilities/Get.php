@@ -47,17 +47,25 @@ class Get
                 // children specifically — other components already on the exclusion
                 // stack (still being computed further up the call chain) stay excluded,
                 // so that protection is unaffected.
-                $component = $this->component->getRootContainer()->getComponentByStatePath(
-                    $path,
-                    withHidden: true,
-                    withAbsoluteStatePath: true,
-                    skipComponentsChildContainersWhileSearching: $this->shouldSkipComponentsChildContainersWhileSearching
-                        ? array_values(array_filter(
+                $component = $this->shouldSkipComponentsChildContainersWhileSearching
+                    ? $this->component->getRootContainer()->getComponentByStatePath(
+                        $path,
+                        withHidden: true,
+                        withAbsoluteStatePath: true,
+                        // Drop only the entry this call pushed above (the last one),
+                        // not every occurrence of `$this->component` in the stack -
+                        // the same component can legitimately appear more than once
+                        // (e.g. a self-referential or mutually-recursive dynamic
+                        // schema), and removing an earlier occurrence pushed by a
+                        // still-active outer call would defeat the infinite-loop
+                        // protection that stack exists for.
+                        skipComponentsChildContainersWhileSearching: array_slice(
                             static::$skipComponentsChildContainersWhileSearching,
-                            fn (Component $skippedComponent): bool => $skippedComponent !== $this->component,
-                        ))
-                        : [],
-                );
+                            0,
+                            -1,
+                        ),
+                    )
+                    : null;
 
                 if (! $component) {
                     return data_get($livewire, $path);
