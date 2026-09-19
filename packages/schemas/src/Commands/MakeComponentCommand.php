@@ -5,9 +5,12 @@ namespace Filament\Schemas\Commands;
 use Filament\Schemas\Commands\FileGenerators\ComponentClassGenerator;
 use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanAskForViewLocation;
+use Filament\Support\Commands\Concerns\CanConfigureVite;
+use Filament\Support\Commands\Concerns\CanManageJavaScriptPackages;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,21 +38,13 @@ class MakeComponentCommand extends Command
 {
     use CanAskForComponentLocation;
     use CanAskForViewLocation;
+    use CanConfigureVite;
+    use CanManageJavaScriptPackages;
     use CanManipulateFiles;
 
-    protected $description = 'Create a new schema component class and view';
+    protected $description = 'Create a new schema component class and view or JavaScript renderer';
 
     protected $name = 'make:filament-schema-component';
-
-    protected string $fqnEnd;
-
-    protected string $fqn;
-
-    protected string $path;
-
-    protected string $view;
-
-    protected string $viewPath;
 
     /**
      * @var array<string>
@@ -71,6 +66,27 @@ class MakeComponentCommand extends Command
         'make:form-layout',
     ];
 
+    protected string $fqnEnd;
+
+    protected string $fqn;
+
+    protected string $path;
+
+    protected string $view;
+
+    protected string $viewPath;
+
+    protected ?string $framework = null;
+
+    protected bool $isTypeScript = false;
+
+    protected string $renderer;
+
+    /** @var array<string, string> */
+    protected array $rendererFiles = [];
+
+    protected Filesystem $filesystem;
+
     /**
      * @return array<InputArgument>
      */
@@ -91,6 +107,15 @@ class MakeComponentCommand extends Command
     protected function getOptions(): array
     {
         return [
+            new InputOption('js', mode: InputOption::VALUE_NONE, description: 'Generate a framework-free JavaScript component'),
+            new InputOption('react', mode: InputOption::VALUE_NONE, description: 'Generate a React component'),
+            new InputOption('vue', mode: InputOption::VALUE_NONE, description: 'Generate a Vue component'),
+            new InputOption('svelte', mode: InputOption::VALUE_NONE, description: 'Generate a Svelte 5 component'),
+            new InputOption('typescript', mode: InputOption::VALUE_NONE, description: 'Generate a typed JavaScript component'),
+            new InputOption('ts', mode: InputOption::VALUE_NONE, description: 'Alias for --typescript'),
+            new InputOption('pm', mode: InputOption::VALUE_REQUIRED, description: 'The package manager to use (npm, yarn)'),
+            new InputOption('skip-install', mode: InputOption::VALUE_NONE, description: 'Do not install JavaScript dependencies'),
+            new InputOption('skip-build', mode: InputOption::VALUE_NONE, description: 'Do not offer to compile assets'),
             new InputOption(
                 name: 'force',
                 shortcut: 'F',
@@ -100,20 +125,81 @@ class MakeComponentCommand extends Command
         ];
     }
 
-    public function handle(): int
+    public function handle(Filesystem $filesystem): int
     {
+        $this->filesystem = $filesystem;
+
         try {
+            $frameworks = array_values(array_filter(['js', 'react', 'vue', 'svelte'], fn (string $framework): bool => (bool) $this->option($framework)));
+
+            if (count($frameworks) > 1) {
+                $this->components->error('Only one of --js, --react, --vue, or --svelte may be specified.');
+
+                return static::FAILURE;
+            }
+
+            $this->framework = $framework = $frameworks[0] ?? null;
+            $this->isTypeScript = $this->option('typescript') || $this->option('ts');
+            $this->rendererFiles = [];
+
+            if ($this->isTypeScript && ! $framework) {
+                $this->components->error('Use --typescript or --ts with --js, --react, --vue, or --svelte.');
+
+                return static::FAILURE;
+            }
+
             $this->configureFqnEnd();
 
             $this->configureLocation();
 
+            if ($framework) {
+                $this->configurePackageManager();
+                $this->installJavaScriptDependencies($this->getJavaScriptRendererDependencies(
+                    $framework,
+                    $this->isTypeScript,
+                    $this->getViteVersion(),
+                ));
+            }
+
             $this->createComponent();
-            $this->createView();
+
+            if ($this->framework) {
+                $this->createRenderer();
+            } else {
+                $this->createView();
+            }
         } catch (FailureCommandOutput) {
             return static::FAILURE;
         }
 
         $this->components->info("Filament component [{$this->fqn}] created successfully.");
+
+        if ($this->framework) {
+            $pendingActions = [];
+
+            if ($this->isTypeScript && ! $this->configureTypeScript()) {
+                $pendingActions[] = 'Configure the @filament/schemas/js-component type alias in tsconfig.json: https://filamentphp.com/docs/4.x/schemas/custom-components#typing-renderers';
+            }
+
+            if (! $this->registerViteInput($this->renderer)) {
+                $pendingActions[] = "Add [{$this->renderer}] to the Laravel plugin's input array in your Vite config.";
+            }
+
+            if (! $this->configureRendererViteConfig()) {
+                $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/4.x/advanced/assets#building-lazy-loaded-es-modules";
+            }
+
+            if (filled($pendingActions)) {
+                $this->components->warn('Action is required to complete the component setup:');
+                $this->components->bulletList($pendingActions);
+            }
+
+            if (! glob(base_path('vite.config.*s'))) {
+                return static::SUCCESS;
+            }
+
+            return $this->buildJavaScriptAssets('component') ? static::SUCCESS : static::FAILURE;
+        }
 
         return static::SUCCESS;
     }
@@ -148,6 +234,12 @@ class MakeComponentCommand extends Command
             ->replace('\\', '/')
             ->replace('//', '/');
 
+        if ($this->framework) {
+            $this->configureRendererLocation();
+
+            return;
+        }
+
         [
             $this->view,
             $this->viewPath,
@@ -171,8 +263,61 @@ class MakeComponentCommand extends Command
 
         $this->writeFile($this->path, app(ComponentClassGenerator::class, [
             'fqn' => $this->fqn,
-            'view' => $this->view,
+            'view' => $this->framework ? '' : $this->view,
+            ...($this->framework ? ['renderer' => $this->renderer] : []),
         ]));
+    }
+
+    protected function configureRendererLocation(): void
+    {
+        $directory = 'js/filament/schemas/components';
+        $name = str($this->fqnEnd)->replace('\\', '/');
+
+        if ($name->contains('/')) {
+            $directory .= '/' . $name->beforeLast('/')->explode('/')->map(Str::kebab(...))->implode('/');
+        }
+
+        $basename = $name->afterLast('/')->toString();
+        $extension = match ($this->framework) {
+            'react' => $this->isTypeScript ? 'tsx' : 'jsx',
+            'svelte' => $this->isTypeScript ? 'svelte.ts' : 'svelte.js',
+            default => $this->isTypeScript ? 'ts' : 'js',
+        };
+
+        $entry = "{$directory}/" . Str::kebab($basename) . ".{$extension}";
+        $this->renderer = 'resources/' . $entry;
+        $stubPrefix = ucfirst($this->framework) . ($this->isTypeScript ? 'TypeScript' : '');
+        $this->rendererFiles = [resource_path($entry) => $stubPrefix . 'SchemaComponentRenderer'];
+
+        if (in_array($this->framework, ['vue', 'svelte'])) {
+            $this->rendererFiles[resource_path("{$directory}/{$basename}.{$this->framework}")] = $stubPrefix . 'SchemaComponent';
+        }
+    }
+
+    protected function createRenderer(): void
+    {
+        if (! $this->option('force') && $this->checkForCollision(array_keys($this->rendererFiles))) {
+            throw new FailureCommandOutput;
+        }
+
+        foreach ($this->rendererFiles as $path => $stub) {
+            $this->copyStubToApp($stub, $path, [
+                'componentName' => class_basename($this->fqn),
+            ]);
+        }
+    }
+
+    protected function configureRendererViteConfig(): bool
+    {
+        return $this->configureJavaScriptRendererVite($this->framework);
+    }
+
+    protected function configureTypeScript(): bool
+    {
+        return $this->configureJavaScriptRendererTypeScript(
+            '@filament/schemas/js-component',
+            'vendor/filament/schemas/resources/js/types/js-component.d.ts',
+        );
     }
 
     protected function createView(): void

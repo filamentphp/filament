@@ -1,0 +1,20 @@
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import type { JsComponentProps, JsComponentRenderer } from '@filament/schemas/js-component'
+
+type Config = { message?: string }
+
+function {{ componentName }}(props: JsComponentProps<Config>) {
+    return <p>{props.config.message ?? 'Your component is ready.'}</p>
+}
+
+const mount{{ componentName }}: JsComponentRenderer<Config> = ({ host, props: initialProps }) => {
+    const root = createRoot(host)
+    const update = (props: JsComponentProps<Config>) => root.render(<{{ componentName }} {...props} />)
+
+    update(initialProps)
+
+    return { update, destroy: () => root.unmount() }
+}
+
+export default mount{{ componentName }}

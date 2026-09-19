@@ -1,0 +1,5 @@
+<script>
+    let { config } = $props()
+</script>
+
+<p>{config.message ?? 'Your component is ready.'}</p>

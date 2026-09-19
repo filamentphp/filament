@@ -139,7 +139,7 @@ formComponents.forEach((component) => {
     })
 })
 
-const schemaComponents = ['actions', 'tabs', 'wizard']
+const schemaComponents = ['actions', 'js-component', 'tabs', 'wizard']
 
 schemaComponents.forEach((component) => {
     compile({
