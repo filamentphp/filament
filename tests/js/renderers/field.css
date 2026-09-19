@@ -1,0 +1,19 @@
+[data-field] [x-ref='host'] > div {
+    display: grid;
+    gap: 0.5rem;
+}
+[data-field] input:not([type='checkbox']),
+[data-field] button {
+    border: 1px solid currentColor;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    background: transparent;
+    color: inherit;
+}
+[data-field] output {
+    overflow-wrap: anywhere;
+}
+#framework-server-state {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}

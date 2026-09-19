@@ -37,6 +37,7 @@ class FormsServiceProvider extends PackageServiceProvider
             AlpineComponent::make('color-picker', __DIR__ . '/../dist/components/color-picker.js'),
             AlpineComponent::make('date-time-picker', __DIR__ . '/../dist/components/date-time-picker.js'),
             AlpineComponent::make('file-upload', __DIR__ . '/../dist/components/file-upload.js'),
+            AlpineComponent::make('js-field', __DIR__ . '/../dist/components/js-field.js'),
             AlpineComponent::make('key-value', __DIR__ . '/../dist/components/key-value.js'),
             AlpineComponent::make('markdown-editor', __DIR__ . '/../dist/components/markdown-editor.js'),
             AlpineComponent::make('rich-editor', __DIR__ . '/../dist/components/rich-editor.js'),

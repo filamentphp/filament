@@ -5,10 +5,14 @@ namespace Filament\Forms\Commands;
 use Filament\Forms\Commands\FileGenerators\FieldClassGenerator;
 use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanAskForViewLocation;
+use Filament\Support\Commands\Concerns\CanConfigureVite;
+use Filament\Support\Commands\Concerns\CanManageJavaScriptPackages;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use JsonException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,9 +31,11 @@ class MakeFieldCommand extends Command
 {
     use CanAskForComponentLocation;
     use CanAskForViewLocation;
+    use CanConfigureVite;
+    use CanManageJavaScriptPackages;
     use CanManipulateFiles;
 
-    protected $description = 'Create a new form field class and view';
+    protected $description = 'Create a new form field class and view or JavaScript renderer';
 
     protected $name = 'make:filament-form-field';
 
@@ -55,6 +61,17 @@ class MakeFieldCommand extends Command
 
     protected string $viewPath;
 
+    protected ?string $framework = null;
+
+    protected bool $isTypeScript = false;
+
+    protected string $renderer;
+
+    /** @var array<string, string> */
+    protected array $rendererFiles = [];
+
+    protected Filesystem $filesystem;
+
     /**
      * @return array<InputArgument>
      */
@@ -75,6 +92,15 @@ class MakeFieldCommand extends Command
     protected function getOptions(): array
     {
         return [
+            new InputOption('js', mode: InputOption::VALUE_NONE, description: 'Generate a framework-free JavaScript field'),
+            new InputOption('react', mode: InputOption::VALUE_NONE, description: 'Generate a React field'),
+            new InputOption('vue', mode: InputOption::VALUE_NONE, description: 'Generate a Vue field'),
+            new InputOption('svelte', mode: InputOption::VALUE_NONE, description: 'Generate a Svelte 5 field'),
+            new InputOption('typescript', mode: InputOption::VALUE_NONE, description: 'Generate a typed JavaScript field'),
+            new InputOption('ts', mode: InputOption::VALUE_NONE, description: 'Alias for --typescript'),
+            new InputOption('pm', mode: InputOption::VALUE_REQUIRED, description: 'The package manager to use (npm, yarn)'),
+            new InputOption('skip-install', mode: InputOption::VALUE_NONE, description: 'Do not install JavaScript dependencies'),
+            new InputOption('skip-build', mode: InputOption::VALUE_NONE, description: 'Do not offer to compile assets'),
             new InputOption(
                 name: 'force',
                 shortcut: 'F',
@@ -84,20 +110,98 @@ class MakeFieldCommand extends Command
         ];
     }
 
-    public function handle(): int
+    public function handle(Filesystem $filesystem): int
     {
+        $this->filesystem = $filesystem;
+
         try {
+            $frameworks = array_values(array_filter(['js', 'react', 'vue', 'svelte'], fn (string $framework): bool => (bool) $this->option($framework)));
+
+            if (count($frameworks) > 1) {
+                $this->components->error('Only one of --js, --react, --vue, or --svelte may be specified.');
+
+                return static::FAILURE;
+            }
+
+            $this->framework = $framework = $frameworks[0] ?? null;
+            $this->isTypeScript = $this->option('typescript') || $this->option('ts');
+            $this->rendererFiles = [];
+
+            if ($this->isTypeScript && ! $framework) {
+                $this->components->error('Use --typescript or --ts with --js, --react, --vue, or --svelte.');
+
+                return static::FAILURE;
+            }
+
             $this->configureFqnEnd();
 
             $this->configureLocation();
 
+            if ($framework) {
+                $this->configurePackageManager();
+                $dependencies = match ($framework) {
+                    'js' => [],
+                    'react' => ['react', 'react-dom'],
+                    'vue' => ['vue', '@vitejs/plugin-vue'],
+                    'svelte' => ['svelte', '@sveltejs/vite-plugin-svelte' . match (true) {
+                        version_compare($this->getViteVersion(), '8.0.0', '>=') => '',
+                        version_compare($this->getViteVersion(), '6.3.0', '>=') => '@^6.0',
+                        version_compare($this->getViteVersion(), '6.0.0', '>=') => '@^5.0',
+                        version_compare($this->getViteVersion(), '5.0.0', '>=') => '@^4.0',
+                        default => '',
+                    }],
+                };
+
+                if ($this->isTypeScript) {
+                    $dependencies = [...$dependencies, 'typescript'];
+
+                    if ($framework === 'react') {
+                        $dependencies = [...$dependencies, '@types/react', '@types/react-dom'];
+                    }
+                }
+
+                $this->installJavaScriptDependencies($dependencies);
+            }
+
             $this->createField();
-            $this->createView();
+
+            if ($this->framework) {
+                $this->createRenderer();
+            } else {
+                $this->createView();
+            }
         } catch (FailureCommandOutput) {
             return static::FAILURE;
         }
 
         $this->components->info("Filament form field [{$this->fqn}] created successfully.");
+
+        if ($this->framework) {
+            $pendingActions = [];
+
+            if ($this->isTypeScript && ! $this->configureTypeScript()) {
+                $pendingActions[] = 'Configure the @filament/forms/js-field type alias in tsconfig.json: https://filamentphp.com/docs/4.x/forms/custom-fields#typing-renderers';
+            }
+
+            if (! $this->registerViteInput($this->renderer)) {
+                $pendingActions[] = "Add [{$this->renderer}] to the Laravel plugin's input array in your Vite config.";
+            }
+
+            if (! $this->configureRendererViteConfig()) {
+                $pendingActions[] = "Configure Vite to compile {$this->framework} and preserve the renderer's default export: https://filamentphp.com/docs/4.x/advanced/assets#building-lazy-loaded-es-modules";
+            }
+
+            if (filled($pendingActions)) {
+                $this->components->warn('Action is required to complete the field setup:');
+                $this->components->bulletList($pendingActions);
+            }
+
+            if (! glob(base_path('vite.config.*s'))) {
+                return static::SUCCESS;
+            }
+
+            return $this->buildJavaScriptAssets('field') ? static::SUCCESS : static::FAILURE;
+        }
 
         return static::SUCCESS;
     }
@@ -132,6 +236,12 @@ class MakeFieldCommand extends Command
             ->replace('\\', '/')
             ->replace('//', '/');
 
+        if ($this->framework) {
+            $this->configureRendererLocation();
+
+            return;
+        }
+
         [
             $this->view,
             $this->viewPath,
@@ -155,8 +265,163 @@ class MakeFieldCommand extends Command
 
         $this->writeFile($this->path, app(FieldClassGenerator::class, [
             'fqn' => $this->fqn,
-            'view' => $this->view,
+            'view' => $this->framework ? '' : $this->view,
+            ...($this->framework ? ['renderer' => $this->renderer] : []),
         ]));
+    }
+
+    protected function configureRendererLocation(): void
+    {
+        $directory = 'js/filament/forms/components';
+        $name = str($this->fqnEnd)->replace('\\', '/');
+
+        if ($name->contains('/')) {
+            $directory .= '/' . $name->beforeLast('/')->explode('/')->map(Str::kebab(...))->implode('/');
+        }
+
+        $basename = $name->afterLast('/')->toString();
+        $extension = match ($this->framework) {
+            'react' => $this->isTypeScript ? 'tsx' : 'jsx',
+            'svelte' => $this->isTypeScript ? 'svelte.ts' : 'svelte.js',
+            default => $this->isTypeScript ? 'ts' : 'js',
+        };
+
+        $entry = "{$directory}/" . Str::kebab($basename) . ".{$extension}";
+        $this->renderer = 'resources/' . $entry;
+        $stubPrefix = ucfirst($this->framework) . ($this->isTypeScript ? 'TypeScript' : '');
+        $this->rendererFiles = [resource_path($entry) => $stubPrefix . 'FieldRenderer'];
+
+        if (in_array($this->framework, ['vue', 'svelte'])) {
+            $this->rendererFiles[resource_path("{$directory}/{$basename}.{$this->framework}")] = $stubPrefix . 'FieldComponent';
+        }
+    }
+
+    protected function createRenderer(): void
+    {
+        if (! $this->option('force') && $this->checkForCollision(array_keys($this->rendererFiles))) {
+            throw new FailureCommandOutput;
+        }
+
+        foreach ($this->rendererFiles as $path => $stub) {
+            $this->copyStubToApp($stub, $path, [
+                'componentName' => class_basename($this->fqn),
+            ]);
+        }
+    }
+
+    protected function configureRendererViteConfig(): bool
+    {
+        $path = base_path('vite.config.js');
+
+        if (! $this->filesystem->exists($path)) {
+            return false;
+        }
+
+        $contents = $this->filesystem->get($path);
+        $configPattern = '/\bexport\s+default\s+defineConfig\(\s*\{/';
+
+        // Leave computed configurations and existing build customization to the user.
+        if (! preg_match($configPattern, $contents)) {
+            return false;
+        }
+
+        if (preg_match('/\bbuild\s*:/', $contents)) {
+            if (! preg_match('/\bpreserveEntrySignatures\s*:\s*[\'"](?:exports-only|strict)[\'"]/', $contents)) {
+                return false;
+            }
+        } else {
+            $options = version_compare($this->getViteVersion(), '8.0.0', '>=') ? 'rolldownOptions' : 'rollupOptions';
+            $contents = preg_replace($configPattern, '$0' . "\n    build: {\n        {$options}: { preserveEntrySignatures: 'exports-only' },\n    },", $contents, 1);
+        }
+
+        if (in_array($this->framework, ['vue', 'svelte'])) {
+            $package = $this->framework === 'vue' ? '@vitejs/plugin-vue' : '@sveltejs/vite-plugin-svelte';
+            $importPattern = $this->framework === 'vue'
+                ? '/import\s+(\w+)\s+from\s+[\'"]@vitejs\/plugin-vue[\'"]/'
+                : '/import\s*\{\s*(svelte)(?:\s+as\s+(\w+))?\s*\}\s*from\s*[\'"]@sveltejs\/vite-plugin-svelte[\'"]/';
+
+            if (preg_match($importPattern, $contents, $matches)) {
+                $plugin = $matches[2] ?? $matches[1];
+                $import = '';
+            } else {
+                $plugin = $this->framework === 'vue' ? 'filamentVue' : 'filamentSvelte';
+
+                if (str_contains($contents, $package) || preg_match('/\b' . $plugin . '\b/', $contents)) {
+                    return false;
+                }
+
+                $import = $this->framework === 'vue'
+                    ? "import {$plugin} from '{$package}'\n"
+                    : "import { svelte as {$plugin} } from '{$package}'\n";
+            }
+
+            // Match nested arrays, such as the Laravel plugin's `input` array.
+            if (preg_match_all('/\bplugins\s*:\s*(?<plugins>\[(?:[^\[\]]|(?&plugins))*\])/', $contents, $pluginArrays) !== 1) {
+                return false;
+            }
+
+            if (! preg_match('/\b' . preg_quote($plugin, '/') . '\s*\(/', $pluginArrays['plugins'][0])) {
+                $contents = preg_replace('/\bplugins\s*:\s*\[/', '$0' . "\n        {$plugin}(),", $contents, 1);
+            }
+
+            $contents = $import . $contents;
+        }
+
+        $this->filesystem->put($path, $contents);
+
+        return true;
+    }
+
+    protected function configureTypeScript(): bool
+    {
+        $path = base_path('tsconfig.json');
+
+        try {
+            $configuration = $this->filesystem->exists($path)
+                ? json_decode($this->filesystem->get($path), associative: true, flags: JSON_THROW_ON_ERROR)
+                : [
+                    'compilerOptions' => [
+                        'target' => 'ES2020',
+                        'module' => 'ESNext',
+                        'moduleResolution' => 'Bundler',
+                        'jsx' => 'preserve',
+                        'strict' => true,
+                        'noEmit' => true,
+                    ],
+                    'include' => ['resources/js/**/*'],
+                ];
+        } catch (JsonException) {
+            return false;
+        }
+
+        // Leave JSONC, inherited configurations and existing aliases to the user.
+        if (! is_array($configuration) || isset($configuration['extends'])) {
+            return false;
+        }
+
+        if (isset($configuration['compilerOptions']['paths']['@filament/forms/js-field'])) {
+            return true;
+        }
+
+        $configuration['compilerOptions']['paths']['@filament/forms/js-field'] = [
+            './' . $this->getRelativePath(
+                base_path('vendor/filament/forms/resources/js/types/js-field.d.ts'),
+                base_path($configuration['compilerOptions']['baseUrl'] ?? ''),
+            ),
+        ];
+
+        $this->filesystem->put($path, json_encode($configuration, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+
+        return true;
+    }
+
+    protected function getViteVersion(): string
+    {
+        $path = base_path('node_modules/vite/package.json');
+
+        return $this->filesystem->exists($path)
+            ? ($this->filesystem->json($path)['version'] ?? '0')
+            : '0';
     }
 
     protected function createView(): void

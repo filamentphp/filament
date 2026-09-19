@@ -3,7 +3,6 @@
 namespace Filament\Support\Components;
 
 use Closure;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -128,7 +127,7 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function toHtml(): string
     {
-        if ((! ($this instanceof HasEmbeddedView)) || $this->hasView()) {
+        if ($this->hasView()) {
             return $this->render()->render();
         }
 
@@ -139,6 +138,11 @@ abstract class ViewComponent extends Component implements Htmlable
         }
 
         return $this->toEmbeddedHtml();
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        return $this->render()->render();
     }
 
     public function getPublishedViewOverrideCheckPath(): ?string

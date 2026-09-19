@@ -1,6 +1,10 @@
 .fi-sc {
     @apply text-sm;
 
+    & > .fi-sc-liberated {
+        @apply contents;
+    }
+
     &.fi-sc-loading {
         @apply grid min-h-32 place-items-center text-gray-400 dark:text-gray-500;
     }
@@ -8,7 +12,8 @@
     &.fi-inline {
         @apply flex grow flex-wrap items-center;
 
-        & > .fi-growable {
+        & > .fi-growable,
+        & > .fi-sc-liberated > .fi-growable {
             @apply w-full flex-1;
         }
 
@@ -44,11 +49,13 @@
         @apply justify-between;
     }
 
-    & > .fi-hidden {
+    & > .fi-hidden,
+    & > .fi-sc-liberated > .fi-hidden {
         @apply hidden;
     }
 
-    & > .fi-grid-col {
+    & > .fi-grid-col,
+    & > .fi-sc-liberated > .fi-grid-col {
         &.fi-width-3xs {
             @apply max-w-3xs;
         }

@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Schemas\Components\StateCasts\FileUploadStateCast;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -784,7 +784,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return in_array($ruleName, static::ARRAY_VALIDATION_RULES, strict: true);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function deleteUploadedFile(string $fileKey): static
     {
@@ -807,7 +807,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
     {
@@ -882,7 +882,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @param  array<array-key>  $fileKeys
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function reorderUploadedFiles(array $fileKeys): void
     {
@@ -907,7 +907,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @return array<array{name: string, size: int, type: string, url: string, openableUrl?: string, downloadableUrl?: string} | null> | null
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getUploadedFiles(): ?array
     {
