@@ -141,6 +141,19 @@ class ToggleButtonsSchema
                         ->default(false),
                 ]),
             Group::make()
+                ->id('toggleButtonsFullWidth')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-xl',
+                ])
+                ->schema([
+                    ToggleButtons::make('toggleButtonsFullWidth')
+                        ->label('Like this post?')
+                        ->boolean()
+                        ->inline()
+                        ->fullWidth()
+                        ->default(true),
+                ]),
+            Group::make()
                 ->id('toggleButtonsGrouped')
                 ->extraAttributes([
                     'class' => 'p-16 max-w-xl',
