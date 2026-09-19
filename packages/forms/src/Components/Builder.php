@@ -16,11 +16,13 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent;
 use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
@@ -104,6 +106,14 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
     protected ?array $blockPickerColumns = [];
 
     protected Width | string | Closure | null $blockPickerWidth = null;
+
+    protected bool | Closure $isSearchable = false;
+
+    protected string | Htmlable | Closure | null $searchPrompt = null;
+
+    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
+
+    protected int | Closure $searchDebounce = 0;
 
     protected bool | Closure | null $shouldPartiallyRenderAfterActionsCalled = null;
 
@@ -1207,6 +1217,54 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         };
     }
 
+    public function searchable(bool | Closure $condition = true): static
+    {
+        $this->isSearchable = $condition;
+
+        return $this;
+    }
+
+    public function isSearchable(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function searchPrompt(string | Htmlable | Closure | null $prompt): static
+    {
+        $this->searchPrompt = $prompt;
+
+        return $this;
+    }
+
+    public function getSearchPrompt(): string | Htmlable
+    {
+        return $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
+    }
+
+    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
+    {
+        $this->noSearchResultsMessage = $message;
+
+        return $this;
+    }
+
+    public function getNoSearchResultsMessage(): string | Htmlable
+    {
+        return $this->evaluate($this->noSearchResultsMessage) ?? __('filament-forms::components.builder.block_picker.no_search_results_message');
+    }
+
+    public function searchDebounce(int | Closure $debounce): static
+    {
+        $this->searchDebounce = $debounce;
+
+        return $this;
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return $this->evaluate($this->searchDebounce);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -1286,6 +1344,12 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         array | int | null $columns = null,
         Width | string | null $width = null,
     ): string {
+        $blocks = array_values($blocks);
+
+        $isSearchable = $this->isSearchable();
+        $searchPrompt = $isSearchable ? $this->getSearchPrompt() : null;
+        $searchDebounce = $this->getSearchDebounce();
+
         /** @var view-string $publishedView */
         $publishedView = 'filament-forms::components.builder.block-picker';
 
@@ -1296,7 +1360,11 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 'afterItem' => $afterItem,
                 'blocks' => $blocks,
                 'columns' => $columns,
+                'isSearchable' => $isSearchable,
                 'key' => $key,
+                'noSearchResultsMessage' => $isSearchable ? $this->getNoSearchResultsMessage() : null,
+                'searchDebounce' => $searchDebounce,
+                'searchPrompt' => $searchPrompt,
                 'trigger' => new HtmlString($triggerHtml),
                 'width' => $width,
             ])->render();
@@ -1343,6 +1411,14 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 $widthClass,
             ]);
 
+        $listAttributes = (new FilamentComponentAttributeBag)
+            ->merge([
+                'x-load' => $isSearchable ? true : null,
+                'x-load-src' => $isSearchable ? FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms') : null,
+                'x-data' => $isSearchable ? 'builderBlockPickerFormComponent()' : null,
+            ], escape: false)
+            ->class(['fi-dropdown-list']);
+
         $loadingDelay = config('filament.livewire_loading_delay', 'default');
 
         ob_start(); ?>
@@ -1359,10 +1435,40 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
             <?php if (filled($blocks)) { ?>
                 <div <?= $panelAttributes->toHtml() ?>>
-                    <div class="fi-dropdown-list">
+                    <div <?= $listAttributes->toHtml() ?>>
+                        <?php if ($isSearchable) { ?>
+                            <div class="fi-fo-builder-block-picker-search-ctn">
+                                <?= generate_icon_html(
+                                    Heroicon::MagnifyingGlass,
+                                    FormsIconAlias::COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD,
+                                )?->toHtml() ?>
+
+                                <input
+                                    aria-label="<?= e($searchPrompt) ?>"
+                                    placeholder="<?= e($searchPrompt) ?>"
+                                    type="search"
+                                    data-dropdown-autofocus
+                                    x-model.debounce.<?= $searchDebounce ?>="search"
+                                    x-on:dropdown-autofocus="clearSearch()"
+                                    class="fi-input"
+                                />
+                            </div>
+                        <?php } ?>
                         <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
                             <?php foreach ($blocks as $block) {
                                 $blockIcon = $block->getIcon();
+
+                                $blockSearchLabel = null;
+
+                                if ($isSearchable) {
+                                    $blockSearchLabel = $block->getLabel();
+
+                                    if ($blockSearchLabel instanceof Htmlable) {
+                                        $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES);
+                                    }
+
+                                    $blockSearchLabel = Str::lower($blockSearchLabel);
+                                }
 
                                 $wireClickArguments = ['block' => $block->getName()];
 
@@ -1379,6 +1485,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
                                         'wire:target' => $wireClick,
+                                        'data-block-label' => $isSearchable ? e($blockSearchLabel) : null,
+                                        'x-show' => $isSearchable ? 'isBlockVisible($el)' : null,
                                     ], escape: false)
                                     ->class(['fi-dropdown-list-item'])
                                     ->color(ItemComponent::class, 'gray');
@@ -1403,6 +1511,18 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                             </button>
                             <?php } ?>
                         </div>
+
+                        <?php if ($isSearchable) { ?>
+                            <div
+                                x-cloak
+                                x-show="hasNoSearchResults"
+                                role="status"
+                                aria-live="polite"
+                                class="fi-fo-builder-block-picker-no-search-results-message"
+                            >
+                                <?= e($this->getNoSearchResultsMessage()) ?>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             <?php } ?>

@@ -656,6 +656,44 @@ describe('rendering', function (): void {
     });
 });
 
+describe('block picker search', function (): void {
+    it('can configure `searchable()`', function (): void {
+        $builder = Builder::make('content');
+
+        expect($builder->isSearchable())->toBeFalse()
+            ->and($builder->searchable()->isSearchable())->toBeTrue()
+            ->and($builder->searchable(false)->isSearchable())->toBeFalse()
+            ->and($builder->searchable(static fn (): bool => true)->isSearchable())->toBeTrue();
+    });
+
+    it('returns default translations for `getSearchPrompt()` and `getNoSearchResultsMessage()`', function (): void {
+        $builder = Builder::make('content');
+
+        expect($builder->getSearchPrompt())->toBe(__('filament-forms::components.builder.block_picker.search_prompt'))
+            ->and($builder->getNoSearchResultsMessage())->toBe(__('filament-forms::components.builder.block_picker.no_search_results_message'));
+    });
+
+    it('can set `searchPrompt()`, `noSearchResultsMessage()`, and `searchDebounce()` with a `Closure`', function (): void {
+        $builder = Builder::make('content')
+            ->searchPrompt(static fn (): string => 'Find a block')
+            ->noSearchResultsMessage(static fn (): string => 'Nothing found.')
+            ->searchDebounce(static fn (): int => 500);
+
+        expect($builder->getSearchPrompt())->toBe('Find a block')
+            ->and($builder->getNoSearchResultsMessage())->toBe('Nothing found.')
+            ->and($builder->getSearchDebounce())->toBe(500);
+    });
+
+    it('returns `0` for `getSearchDebounce()` by default', function (): void {
+        expect(Builder::make('content')->getSearchDebounce())->toBe(0);
+    });
+
+    it('can render when `searchable()`', function (): void {
+        livewire(RenderBuilderWithSearchableBlocks::class)
+            ->assertSuccessful();
+    });
+});
+
 it('can add and delete blocks in the browser', function (): void {
     retry(10, function (): void {
         Artisan::call('filament:assets');
@@ -680,6 +718,59 @@ it('can add and delete blocks in the browser', function (): void {
 
         visit('/builder-test')
             ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('can search blocks in the picker in the browser', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        $addBlockAction = '[data-testid="add-block"]';
+        $noSearchResultsMessage = '[data-testid="builder"] [role="status"]';
+        $searchInput = '[data-testid="builder"] input[type="search"]';
+
+        visit('/builder-searchable-test')
+            ->click($addBlockAction)
+            ->wait(1)
+            ->assertVisible($searchInput)
+            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true)
+            ->type($searchInput, 'research & development')
+            ->wait(1)
+            ->assertVisible('[data-block-label="research & development"]')
+            ->assertMissing('[data-block-label="paragraph"]')
+            ->type($searchInput, 'zzz')
+            ->wait(1)
+            ->assertVisible($noSearchResultsMessage)
+            ->keys($searchInput, 'Escape')
+            ->wait(1)
+            ->assertValue($searchInput, '')
+            ->assertVisible($searchInput)
+            ->assertVisible('[data-block-label="paragraph"]')
+            ->keys($searchInput, 'Escape')
+            ->wait(1)
+            ->assertMissing($searchInput)
+            ->assertScript('document.activeElement.closest(\'[data-testid="add-block"]\') !== null', true)
+            ->click($addBlockAction)
+            ->wait(1)
+            ->type($searchInput, 'video')
+            ->wait(1)
+            ->click('[data-block-label="video"]')
+            ->wait(1)
+            ->click($addBlockAction)
+            ->wait(1)
+            ->type($searchInput, 'video')
+            ->wait(1)
+            ->assertVisible($noSearchResultsMessage)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/builder-searchable-test')
+            ->inDarkMode()
+            ->click($addBlockAction)
+            ->wait(1)
             ->assertNoAccessibilityIssues();
     });
 });
@@ -1902,5 +1993,28 @@ class BuilderInStatePathAncestorSetByHook extends Livewire
                     }),
             ])
             ->statePath('data');
+    }
+}
+
+class RenderBuilderWithSearchableBlocks extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Builder::make('content')
+                ->searchable()
+                ->blocks([
+                    Builder\Block::make('paragraph')
+                        ->label('Paragraph')
+                        ->schema([TextInput::make('text')]),
+                    Builder\Block::make('heading')
+                        ->label('Heading')
+                        ->schema([TextInput::make('title')]),
+                    Builder\Block::make('video')
+                        ->label('Video')
+                        ->maxItems(1)
+                        ->schema([TextInput::make('url')]),
+                ]),
+        ])->statePath('data');
     }
 }

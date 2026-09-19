@@ -20,6 +20,8 @@ class FormsIconAlias
 
     const COMPONENTS_BUILDER_ACTIONS_REORDER = 'forms::components.builder.actions.reorder';
 
+    const COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD = 'forms::components.builder.block-picker.search-field';
+
     const COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD = 'forms::components.checkbox-list.search-field';
 
     const COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_CROP = 'forms::components.file-upload.editor.actions.drag-crop';
