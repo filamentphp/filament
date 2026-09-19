@@ -16,6 +16,8 @@ Choose **Custom**, then edit the generated view. Widgets are Livewire components
 
 ### Generating a JavaScript widget
 
+Install your application's existing JavaScript dependencies, including Vite, before running the generator, for example with `npm install`. The command reads the installed Vite version to select compatible compiler plugins, including when you use `--skip-install`.
+
 Add one renderer flag to the command:
 
 ```bash
@@ -25,7 +27,7 @@ php artisan make:filament-widget RevenueOverview --svelte
 php artisan make:filament-widget RevenueOverview --js
 ```
 
-The command creates a PHP widget class and a renderer in `resources/js/filament/widgets/`, without a Blade view. It installs any required development dependencies, updates recognizable Vite configurations, and offers to compile your assets. Replace the starter heading and description with your own UI. The renderer appears inside a standard Filament widget section.
+The command creates a PHP widget class and a renderer in `resources/js/filament/widgets/`, without a Blade view. It installs missing development dependencies, updates recognizable Vite configurations, and offers to compile your assets. Existing compatible dependency declarations keep their version constraints and their `package.json` sections. Incompatible dependencies require a manual upgrade instead of being replaced automatically. Replace the starter heading and description with your own UI. The renderer appears inside a standard Filament widget section.
 
 For TypeScript, add `--typescript` or its alias `--ts`:
 
@@ -48,7 +50,7 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 
 Nested names, such as `Reports/RevenueOverview`, place the JavaScript files in a `reports/` subdirectory. TypeScript generation also configures the `@filament/widgets/js-widget` [type alias](#typing-renderers).
 
-Typed starters install TypeScript 6. Vue and Svelte tooling currently require its JavaScript compiler API, which TypeScript 7 does not provide. Keep TypeScript 6 in applications using these frameworks, including applications that also contain React or framework-free renderers.
+Typed starters install TypeScript 6 when TypeScript is missing, and preserve an existing compatible TypeScript 5 or 6 installation. Vue and Svelte tooling require the JavaScript compiler API provided by these versions, which TypeScript 7 does not provide.
 
 The command adds the renderer to the Laravel Vite plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support. If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them.
 
