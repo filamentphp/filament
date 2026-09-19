@@ -1,0 +1,28 @@
+body:has([data-inertia-container]) .fi-main-ctn {
+    @apply flex! opacity-100!;
+}
+
+.fi-inertia-stage[aria-busy='true'] {
+    @apply min-h-48;
+}
+
+.fi-inertia-loading,
+.fi-inertia-error {
+    @apply min-h-48 items-center justify-center gap-3 p-6 text-gray-600 dark:text-gray-300;
+
+    &:not([hidden]) {
+        @apply flex;
+    }
+
+    &[hidden] {
+        @apply hidden;
+    }
+}
+
+.fi-inertia-loading .fi-loading-indicator {
+    @apply size-6;
+}
+
+.fi-inertia-error {
+    @apply flex-col;
+}
