@@ -72,6 +72,31 @@ it('returns `full` as the default `$columnSpan`', function (): void {
     expect($widget->instance()->getColumnSpan())->toBe('full');
 });
 
+describe('polling', function (): void {
+    it('renders with a `5s` polling interval by default', function (): void {
+        $widget = Livewire::test(TestStatsOverviewWidgetDefault::class);
+
+        expect($widget->instance()->getPollingInterval())->toBe('5s');
+
+        $widget->assertSeeHtml('wire:poll.5s');
+    });
+
+    it('can disable polling globally via `StatsOverviewWidget::configureUsing()`', function (): void {
+        StatsOverviewWidget::configureUsing(
+            fn (StatsOverviewWidget $statsOverviewWidget) => $statsOverviewWidget->poll(null),
+            during: function (): void {
+                $widget = Livewire::test(TestStatsOverviewWidgetDefault::class);
+
+                expect($widget->instance()->getPollingInterval())->toBeNull();
+
+                $widget->assertDontSeeHtml('wire:poll');
+            },
+        );
+
+        expect(Livewire::test(TestStatsOverviewWidgetDefault::class)->instance()->getPollingInterval())->toBe('5s');
+    });
+});
+
 it('initializes `$chartDataChecksums` on mount via `mountHasChartData()`', function (): void {
     TestStatsOverviewWidgetWithChart::$chartData = [1, 2, 3];
 

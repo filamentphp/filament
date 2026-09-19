@@ -133,6 +133,39 @@ it('returns `null` from `getDescription()` by default', function (): void {
     expect($widget->instance()->getDescription())->toBeNull();
 });
 
+describe('polling', function (): void {
+    it('returns `5s` from `getPollingInterval()` by default', function (): void {
+        $widget = Livewire::test(TestChartWidgetDefault::class);
+
+        expect($widget->instance()->getPollingInterval())->toBe('5s');
+
+        $widget->assertSeeHtml('wire:poll.5s="updateChartData"');
+    });
+
+    it('can evaluate a `Closure` passed to `poll()`', function (): void {
+        $widget = Livewire::test(TestChartWidgetWithCustomPolling::class);
+
+        expect($widget->instance()->getPollingInterval())->toBe('30s');
+
+        $widget->assertSeeHtml('wire:poll.30s="updateChartData"');
+    });
+
+    it('can disable polling globally via `ChartWidget::configureUsing()`', function (): void {
+        ChartWidget::configureUsing(
+            fn (ChartWidget $chartWidget) => $chartWidget->poll(null),
+            during: function (): void {
+                $widget = Livewire::test(TestChartWidgetDefault::class);
+
+                expect($widget->instance()->getPollingInterval())->toBeNull();
+
+                $widget->assertDontSeeHtml('wire:poll');
+            },
+        );
+
+        expect(Livewire::test(TestChartWidgetDefault::class)->instance()->getPollingInterval())->toBe('5s');
+    });
+});
+
 class TestChartWidgetDefault extends ChartWidget
 {
     use ChartWidget\Concerns\HasFiltersSchema;
@@ -241,6 +274,26 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
             ->components([
                 Select::make('year')->options(['2024' => '2024', '2023' => '2023'])->default('2024'),
             ]);
+    }
+}
+
+class TestChartWidgetWithCustomPolling extends ChartWidget
+{
+    protected function getType(): string
+    {
+        return 'bar';
+    }
+
+    protected function getData(): array
+    {
+        return ['datasets' => [], 'labels' => []];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->poll(fn (): string => '30s');
     }
 }
 

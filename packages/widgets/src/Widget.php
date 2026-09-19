@@ -3,6 +3,8 @@
 namespace Filament\Widgets;
 
 use Filament\Support\Concerns\CanBeLazy;
+use Filament\Support\Concerns\Configurable;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\Concerns\CanAuthorizeAccess;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -11,6 +13,8 @@ abstract class Widget extends Component
 {
     use CanAuthorizeAccess;
     use CanBeLazy;
+    use Configurable;
+    use EvaluatesClosures;
 
     protected static bool $isDiscovered = true;
 
@@ -30,6 +34,11 @@ abstract class Widget extends Component
      * @var int | string | array<string, int | null>
      */
     protected int | string | array $columnStart = [];
+
+    public function boot(): void
+    {
+        $this->configure();
+    }
 
     public static function canView(): bool
     {
