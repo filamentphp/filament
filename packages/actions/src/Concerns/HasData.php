@@ -4,6 +4,8 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Schemas\Components\Contracts\ExposesStateToActionData;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Arr;
 
 trait HasData
 {
@@ -115,8 +117,7 @@ trait HasData
     /**
      * Validates the action's schema and returns the validated data, without running the
      * action itself. A nested action that consumes the data of the action it was mounted
-     * from uses this rather than `getRawData()`, which is whatever the browser last sent
-     * and has been validated by nothing.
+     * from uses this rather than the unvalidated data from `getRawData()`.
      *
      * Throws a `ValidationException` when the schema is invalid.
      *
@@ -124,9 +125,7 @@ trait HasData
      */
     public function getValidatedData(): array
     {
-        $nestingIndex = $this->getNestingIndex();
-
-        if (blank($nestingIndex)) {
+        if (($nestingIndex = $this->getMountedDataNestingIndex()) === null) {
             return [];
         }
 
@@ -151,5 +150,73 @@ trait HasData
             ...$data,
             ...$schema->getState(shouldCallHooksBefore: false),
         ];
+    }
+
+    /**
+     * Fills the action's mounted schema data. Only state paths belonging to fields in the
+     * action's schemas are filled.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function fillData(array $data): static
+    {
+        if (($nestingIndex = $this->getMountedDataNestingIndex()) === null) {
+            return $this;
+        }
+
+        if (($actionComponent = $this->getSchemaComponent()) instanceof ExposesStateToActionData) {
+            foreach ($actionComponent->getChildSchemas() as $actionComponentChildSchema) {
+                $this->fillSchemaData($actionComponentChildSchema, $data);
+            }
+        }
+
+        if ($schema = $this->getLivewire()->getSchema("mountedActionSchema{$nestingIndex}")) {
+            $this->fillSchemaData($schema, $data);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function fillSchemaData(Schema $schema, array $data): void
+    {
+        $schemaStatePath = $schema->getStatePath();
+        $statePaths = [];
+
+        foreach ($schema->getFlatFields(withHidden: true) as $field) {
+            $fieldStatePath = $field->getStatePath();
+
+            if (filled($schemaStatePath) && str($fieldStatePath)->startsWith("{$schemaStatePath}.")) {
+                $fieldStatePath = (string) str($fieldStatePath)->after("{$schemaStatePath}.");
+            }
+
+            if ((! array_key_exists($fieldStatePath, $data)) && (! Arr::has($data, $fieldStatePath))) {
+                continue;
+            }
+
+            $statePaths[] = $fieldStatePath;
+        }
+
+        if (blank($statePaths)) {
+            return;
+        }
+
+        $schema->fillPartially($data, $statePaths, shouldLoadStateFromRelationships: false);
+    }
+
+    protected function getMountedDataNestingIndex(): ?int
+    {
+        $nestingIndex = $this->getNestingIndex();
+
+        if (
+            ($nestingIndex === null) ||
+            ($this->getLivewire()->getMountedAction($nestingIndex) !== $this)
+        ) {
+            return null;
+        }
+
+        return $nestingIndex;
     }
 }

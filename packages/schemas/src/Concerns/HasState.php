@@ -344,7 +344,7 @@ trait HasState
      * @param  array<string, mixed>  $state
      * @param  array<string>  $statePaths
      */
-    public function fillPartially(array $state, array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
+    public function fillPartially(array $state, array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true, bool $shouldLoadStateFromRelationships = true): static
     {
         $partialState = [];
 
@@ -372,6 +372,7 @@ trait HasState
         $this->hydrateStatePartially(
             $statePaths,
             $shouldCallHydrationHooks,
+            $shouldLoadStateFromRelationships,
         );
 
         if ($shouldFillStateWithNull) {
@@ -399,14 +400,14 @@ trait HasState
     /**
      * @param  array<string>  $statePaths
      */
-    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true): void
+    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldLoadStateFromRelationships = true): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component instanceof Entry) {
                 continue;
             }
 
-            $component->hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
+            $component->hydrateStatePartially($statePaths, $shouldCallHydrationHooks, $shouldLoadStateFromRelationships);
         }
     }
 

@@ -717,22 +717,7 @@ Action::make('first')
     ])
 ```
 
-A nested action that only needs the action it was mounted from can use `getValidatedParentActionData()` instead of reaching into `$mountedActions`:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('second')
-    ->action(function (Action $action) {
-        $data = $action->getValidatedParentActionData();
-
-        // ...
-    })
-```
-
-Unlike `getParentAction()`, this works for an action registered on a component inside the modal as well as one registered on the modal itself. A `LogicException` is thrown when the action was not mounted from another action.
-
-If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedParentActionData()` from `mountUsing()` so that the errors are reported before the nested action's modal opens:
+If the parent action's schema is invalid, a `ValidationException` is thrown. When the nested action has no modal of its own, the parent action's modal reports the errors as it would for any other failed validation. When it does have a modal, call `getValidatedData()` from `mountUsing()` so that the errors are reported before the nested action's modal opens:
 
 ```php
 use Filament\Actions\Action;
@@ -742,8 +727,8 @@ Action::make('second')
     ->schema([
         // ...
     ])
-    ->mountUsing(function (Action $action, Schema $schema) {
-        $data = $action->getValidatedParentActionData();
+    ->mountUsing(function (array $mountedActions, Schema $schema) {
+        $data = $mountedActions[0]->getValidatedData();
 
         // ...
 
@@ -757,7 +742,7 @@ Action::make('second')
 
 ### Filling in the data of a parent action
 
-A nested action can write into the schema data of the action it was mounted from, using `fillParentActionData()`. Only keys for fields in the parent action's schema are filled, and other keys are ignored. The data is hydrated by the parent action's schema, so nested state and dot-notation keys land where the action reads them, and the parent validates it with its own rules when it is submitted:
+A nested action can write into the schema data of a mounted parent action, using `fillData()`. Only keys for fields in that action's schema are filled, and other keys are ignored. The data is hydrated by the action's schema, so nested state and dot-notation keys land where the action reads them, and the action validates it with its own rules when it is submitted:
 
 ```php
 use Filament\Actions\Action;
@@ -779,8 +764,8 @@ Action::make('createInvoice')
                 TextInput::make('prefix')
                     ->required(),
             ])
-            ->action(function (Action $action, array $data) {
-                $action->fillParentActionData([
+            ->action(function (array $data, array $mountedActions) {
+                $mountedActions[0]->fillData([
                     'reference' => "{$data['prefix']}-123",
                 ]);
             }),

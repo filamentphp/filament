@@ -4,6 +4,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Form;
@@ -12,6 +13,9 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -78,8 +82,8 @@ describe('reading the data of a parent action', function (): void {
     });
 });
 
-describe('filling the data of a parent action', function (): void {
-    it('can use `fillParentActionData()` to write into a parent action', function (): void {
+describe('filling the data of a mounted action', function (): void {
+    it('can use `fillData()` to write into a parent action', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
             ->setActionData([
@@ -123,8 +127,35 @@ describe('filling the data of a parent action', function (): void {
     });
 });
 
+describe('accessing the data of an unmounted action', function (): void {
+    it('does not use an action that was resolved without being mounted', function (): void {
+        livewire(ParentActionData::class)
+            ->call('fillUnmountedActionData')
+            ->assertSet('mountedActions', [])
+            ->assertDispatched('read-unmounted-action-data', data: []);
+    });
+
+    it('does not use an action after it is unmounted', function (): void {
+        livewire(ParentActionData::class)
+            ->call('fillUnmountedSchemaComponentActionData')
+            ->assertSet('foo', 'original')
+            ->assertSet('emails', [
+                ['email' => 'old@example.com'],
+                ['email' => 'stale@example.com'],
+            ])
+            ->assertSet('mountedActions', []);
+    });
+
+    it('does not use a stale action after another action replaces its nesting index', function (): void {
+        livewire(ParentActionData::class)
+            ->call('fillStaleActionDataAfterReplacement')
+            ->assertSet('mountedActions.0.data.reference', 'replacement')
+            ->assertDispatched('read-stale-action-data', data: []);
+    });
+});
+
 describe('reading a parent action from an action that is not registered on its modal', function (): void {
-    it('can use `getValidatedParentActionData()` from an action registered on a schema component', function (): void {
+    it('can use `getValidatedData()` from an action registered on a schema component', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
             ->setActionData([
@@ -139,13 +170,9 @@ describe('reading a parent action from an action that is not registered on its m
                 'dotted' => ['postcode' => null],
             ]);
     });
+});
 
-    it('throws from `getValidatedParentActionData()` when the action was not mounted from a parent action', function (): void {
-        livewire(ParentActionData::class)
-            ->callAction('readWithoutParent')
-            ->assertNotDispatched('read-without-parent-called');
-    })->throws(LogicException::class);
-
+describe('validating parent data before mounting a nested action', function (): void {
     it('reports invalid parent data before opening a nested action modal', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
@@ -161,7 +188,7 @@ describe('reading a parent action from an action that is not registered on its m
 });
 
 describe('filling a parent action from an action that is not registered on its modal', function (): void {
-    it('can use `fillParentActionData()` from an action registered on a schema component', function (): void {
+    it('can use `fillData()` from an action registered on a schema component', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
             ->setActionData([
@@ -178,12 +205,6 @@ describe('filling a parent action from an action that is not registered on its m
                 'dotted' => ['postcode' => null],
             ]);
     });
-
-    it('throws when the action was not mounted from a parent action', function (): void {
-        livewire(ParentActionData::class)
-            ->callAction('fillWithoutParent')
-            ->assertNotDispatched('fill-without-parent-called');
-    })->throws(LogicException::class);
 });
 
 describe('filling nested state of a parent action', function (): void {
@@ -206,6 +227,50 @@ describe('filling nested state of a parent action', function (): void {
     });
 });
 
+describe('filling relationship state of a parent action', function (): void {
+    it('replaces relationship selections and repeater items', function (): void {
+        $user = User::factory()->create();
+        $existingTeam = Team::factory()->create();
+        $replacementTeam = Team::factory()->create();
+        $user->teams()->attach($existingTeam);
+        $existingPost = Post::factory()->create([
+            'author_id' => $user->getKey(),
+            'title' => 'Existing post',
+        ]);
+
+        livewire(ParentActionRelationshipData::class, ['record' => $user])
+            ->mountAction('relationshipData')
+            ->callAction(TestAction::make('replaceRelationshipData'))
+            ->assertSet('mountedActions.0.data.teams', [(string) $replacementTeam->getKey()])
+            ->assertSet('mountedActions.0.data.posts', function (array $posts): bool {
+                $post = array_values($posts)[0] ?? null;
+
+                return (count($posts) === 1) && ($post['title'] === 'Replacement post');
+            })
+            ->callMountedAction()
+            ->assertHasNoErrors();
+
+        expect($user->fresh()->teams->modelKeys())->toBe([$replacementTeam->getKey()])
+            ->and($existingPost->fresh()->trashed())->toBeTrue()
+            ->and($user->fresh()->posts()->pluck('title')->all())->toBe(['Replacement post']);
+    });
+
+    it('clears a relationship selection', function (): void {
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+        $user->teams()->attach($team);
+
+        livewire(ParentActionRelationshipData::class, ['record' => $user])
+            ->mountAction('relationshipData')
+            ->callAction(TestAction::make('clearRelationshipData'))
+            ->assertSet('mountedActions.0.data.teams', [])
+            ->callMountedAction()
+            ->assertHasNoErrors();
+
+        expect($user->fresh()->teams)->toBeEmpty();
+    });
+});
+
 class ParentActionData extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
@@ -224,22 +289,62 @@ class ParentActionData extends Component implements HasActions, HasSchemas
 
     public int $parentDataDehydrationCount = 0;
 
-    public function fillWithoutParentAction(): Action
+    public function fillUnmountedActionData(): void
     {
-        return Action::make('fillWithoutParent')
-            ->action(function (Action $action): void {
-                $action->fillParentActionData(['reference' => 'nowhere']);
+        $action = $this->getAction('parentData');
 
-                $this->dispatch('fill-without-parent-called');
-            });
+        $action->fillData(['reference' => 'unexpected']);
+
+        $this->dispatch('read-unmounted-action-data', data: $action->getValidatedData());
     }
 
-    public function readWithoutParentAction(): Action
+    public function fillUnmountedSchemaComponentActionData(): void
     {
-        return Action::make('readWithoutParent')
-            ->action(function (Action $action): void {
-                $this->dispatch('read-without-parent-called', data: $action->getValidatedParentActionData());
-            });
+        $schema = $this->getSchema('form');
+        $action = $schema?->getAction('submit', 'embeddedForm');
+
+        if (! $action) {
+            return;
+        }
+
+        $this->mountAction($action->getName(), context: $action->getContext());
+
+        $action = $this->getMountedAction();
+
+        if (! $action) {
+            return;
+        }
+
+        $this->unmountAction();
+
+        $action->fillData([
+            'foo' => 'unexpected',
+            'emails' => ['unexpected@example.com'],
+        ]);
+    }
+
+    public function fillStaleActionDataAfterReplacement(): void
+    {
+        $this->mountAction('parentData');
+
+        $staleAction = $this->getMountedAction();
+
+        $this->unmountAction();
+        $this->mountAction('replacementData');
+        $this->mountedActions[0]['data']['reference'] = 'replacement';
+
+        $staleAction->fillData(['reference' => 'unexpected']);
+
+        $this->dispatch('read-stale-action-data', data: $staleAction->getValidatedData());
+    }
+
+    public function replacementDataAction(): Action
+    {
+        return Action::make('replacementData')
+            ->schema([
+                TextInput::make('reference'),
+            ])
+            ->action(static fn () => null);
     }
 
     public function parentDataAction(): Action
@@ -256,12 +361,12 @@ class ParentActionData extends Component implements HasActions, HasSchemas
                     ->maxLength(15)
                     ->registerActions([
                         Action::make('fillParentDataFromComponent')
-                            ->action(function (Action $action): void {
-                                $action->fillParentActionData(['reference' => 'from component']);
+                            ->action(function (array $mountedActions): void {
+                                $mountedActions[0]->fillData(['reference' => 'from component']);
                             }),
                         Action::make('readParentDataFromComponent')
-                            ->action(function (Action $action): void {
-                                $this->dispatch('read-parent-data', data: $action->getValidatedParentActionData());
+                            ->action(function (array $mountedActions): void {
+                                $this->dispatch('read-parent-data', data: $mountedActions[0]->getValidatedData());
                             }),
                     ]),
                 Group::make([
@@ -276,8 +381,8 @@ class ParentActionData extends Component implements HasActions, HasSchemas
             })
             ->extraModalFooterActions(fn (): array => [
                 Action::make('fillParentDataWithNesting')
-                    ->action(function (Action $action): void {
-                        $action->fillParentActionData([
+                    ->action(function (array $mountedActions): void {
+                        $mountedActions[0]->fillData([
                             'nested' => ['city' => 'generated city'],
                             'dotted.postcode' => 'generated postcode',
                         ]);
@@ -290,19 +395,19 @@ class ParentActionData extends Component implements HasActions, HasSchemas
                     ->schema([
                         TextInput::make('confirmation'),
                     ])
-                    ->mountUsing(function (Action $action, Schema $schema): void {
-                        $action->getValidatedParentActionData();
+                    ->mountUsing(function (array $mountedActions, Schema $schema): void {
+                        $mountedActions[0]->getValidatedData();
 
                         $schema->fill();
                     })
                     ->action(static fn (): null => null),
                 Action::make('fillParentData')
-                    ->action(function (Action $action): void {
-                        $action->fillParentActionData(['reference' => 'generated']);
+                    ->action(function (array $mountedActions): void {
+                        $mountedActions[0]->fillData(['reference' => 'generated']);
                     }),
                 Action::make('fillParentDataWithInvalidValue')
-                    ->action(function (Action $action): void {
-                        $action->fillParentActionData(['reference' => 'value that is too long']);
+                    ->action(function (array $mountedActions): void {
+                        $mountedActions[0]->fillData(['reference' => 'value that is too long']);
                     }),
             ]);
     }
@@ -322,7 +427,7 @@ class ParentActionData extends Component implements HasActions, HasSchemas
                             ->requiresConfirmation()
                             ->extraModalFooterActions([
                                 Action::make('fillParentFormData')
-                                    ->action(fn (Action $action) => $action->fillParentActionData([
+                                    ->action(fn (array $mountedActions) => $mountedActions[0]->fillData([
                                         'foo' => 'filled',
                                         'emails' => ['alice@example.com'],
                                         'recordId' => 2,
@@ -338,5 +443,53 @@ class ParentActionData extends Component implements HasActions, HasSchemas
     public function render(): string
     {
         return '<div>{{ $this->form }}</div>';
+    }
+}
+
+class ParentActionRelationshipData extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public User $record;
+
+    public function relationshipDataAction(): Action
+    {
+        return Action::make('relationshipData')
+            ->record($this->record)
+            ->schema([
+                CheckboxList::make('teams')
+                    ->relationship('teams', 'name'),
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->defaultItems(0)
+                    ->schema([
+                        TextInput::make('title')
+                            ->required(),
+                    ]),
+            ])
+            ->extraModalFooterActions([
+                Action::make('replaceRelationshipData')
+                    ->action(function (array $mountedActions): void {
+                        $replacementTeam = Team::query()
+                            ->whereKeyNot($this->record->teams()->first()->getKey())
+                            ->firstOrFail();
+
+                        $mountedActions[0]->fillData([
+                            'teams' => [(string) $replacementTeam->getKey()],
+                            'posts' => [
+                                ['title' => 'Replacement post'],
+                            ],
+                        ]);
+                    }),
+                Action::make('clearRelationshipData')
+                    ->action(fn (array $mountedActions) => $mountedActions[0]->fillData(['teams' => []])),
+            ])
+            ->action(static fn () => null);
+    }
+
+    public function render(): string
+    {
+        return '<div></div>';
     }
 }

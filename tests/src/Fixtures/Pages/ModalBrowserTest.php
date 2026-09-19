@@ -6,6 +6,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 
@@ -83,6 +84,32 @@ class ModalBrowserTest extends Page
                 ->action(static fn () => null)
                 ->extraAttributes(['data-testid' => 'escape-close-disabled-trigger'])
                 ->extraModalWindowAttributes(['data-testid' => 'escape-close-disabled-modal']),
+            Action::make('validatedParentData')
+                ->label('Validated parent data')
+                ->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->extraInputAttributes(['data-testid' => 'validated-parent-data-input'])
+                        ->extraFieldWrapperAttributes(['data-testid' => 'validated-parent-data-field']),
+                ])
+                ->action(static fn () => null)
+                ->extraAttributes(['data-testid' => 'validated-parent-data-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'validated-parent-data-modal'])
+                ->extraModalFooterActions([
+                    Action::make('validateParentDataBeforeOpening')
+                        ->label('Open nested modal')
+                        ->schema([
+                            TextInput::make('confirmation'),
+                        ])
+                        ->mountUsing(function (array $mountedActions, Schema $schema): void {
+                            $mountedActions[0]->getValidatedData();
+
+                            $schema->fill();
+                        })
+                        ->action(static fn () => null)
+                        ->extraAttributes(['data-testid' => 'validated-parent-data-nested-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'validated-parent-data-nested-modal']),
+                ]),
             Action::make('scrollPreservation')
                 ->label('Scroll preservation')
                 ->modalSubmitAction(false)
