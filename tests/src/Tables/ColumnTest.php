@@ -456,7 +456,7 @@ describe('searching', function (): void {
             ->assertSet('tableColumnSearches', ['length' => '', 'sort' => '']);
     });
 
-    it('renders and keeps empty individual column search inputs for columns named after JavaScript array properties in the browser', function (): void {
+    it('renders, responsively hides, and clears individual column search inputs with associated labels for columns named after JavaScript array properties in the browser', function (): void {
         retry(10, function (): void {
             Artisan::call('filament:assets');
 
@@ -468,17 +468,24 @@ describe('searching', function (): void {
                 ->assertValue('.fi-ta-individual-search-cell-length input', '')
                 ->assertValue('.fi-ta-individual-search-cell-sort input', '')
                 ->assertValue('.fi-ta-individual-search-cell-title input', '')
+                ->resize(375, 812)
+                ->assertScript("(() => { const expectedLabels = { length: 'Length', sort: 'Sort', title: 'Title' }; return Object.entries(expectedLabels).every(([column, label]) => document.querySelector('.fi-ta-individual-search-cell-' + column + ' input').labels[0]?.textContent.trim() === label) })()", true)
                 ->fill('.fi-ta-individual-search-cell-length input', 'foo')
                 ->wait(1)
                 ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
                 ->fill('.fi-ta-individual-search-cell-length input', '')
                 ->wait(1)
                 ->assertValue('.fi-ta-individual-search-cell-length input', '')
+                ->resize(700, 812)
+                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
+                ->resize(800, 812)
+                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", true)
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
 
             visit('/individual-column-search-browser-test')
                 ->inDarkMode()
+                ->resize(375, 812)
                 ->assertNoAccessibilityIssues();
         });
     });
