@@ -29,13 +29,17 @@ class IndividualColumnSearchBrowserTest extends Page implements HasTable
                 // `length` and `sort` collide with built-in JavaScript array properties. They are
                 // not real database columns, so they use a no-op search query to avoid SQL errors.
                 Tables\Columns\TextColumn::make('length')
-                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false),
+                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false)
+                    ->hiddenFrom('sm'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false),
+                    ->searchable(query: fn (Builder $query): Builder => $query, isIndividual: true, isGlobal: false)
+                    ->hiddenFrom('sm'),
                 // `title` is a normal column name that has never collided.
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(isIndividual: true, isGlobal: false),
-            ]);
+                    ->searchable(isIndividual: true, isGlobal: false)
+                    ->visibleFrom('md'),
+            ])
+            ->stackedOnMobile();
     }
 
     public function content(Schema $schema): Schema
