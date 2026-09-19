@@ -1,9 +1,10 @@
-const snapshot = (value) => JSON.parse(JSON.stringify(value))
+import createJsRenderer, {
+    snapshot,
+} from '../../../../support/resources/js/js-renderer.js'
 
 export default function jsWidgetComponent({ renderer, rendererProps = {} }) {
-    let instance
+    let lifecycle
     let destroyed = false
-    let initializationPhase = typeof renderer === 'string' ? 'import' : 'mount'
     const props = () => ({ config: snapshot(rendererProps) })
 
     return {
@@ -23,70 +24,32 @@ export default function jsWidgetComponent({ renderer, rendererProps = {} }) {
             )
         },
 
-        disposeRenderer(mounted) {
-            try {
-                Promise.resolve(mounted?.destroy()).catch((error) =>
-                    this.reportError('cleanup', error),
-                )
-            } catch (error) {
-                this.reportError('cleanup', error)
-            }
-        },
-
-        fail(phase, error) {
-            if (destroyed) return
-            destroyed = true
-            this.reportError(phase, error)
-            const mounted = instance
-            instance = undefined
-            this.disposeRenderer(mounted)
-            this.$refs.host.replaceChildren()
-            this.hasError = true
-        },
-
         updateRenderer() {
-            if (destroyed || !instance) return
-            try {
-                Promise.resolve(instance.update(props())).catch((error) =>
-                    this.fail('update', error),
-                )
-            } catch (error) {
-                this.fail('update', error)
-            }
+            lifecycle?.update()
         },
 
         async init() {
-            try {
-                await this.mountRenderer()
-            } catch (error) {
-                this.fail(initializationPhase, error)
-            }
+            lifecycle = createJsRenderer({
+                renderer,
+                getBaseUrl: () => this.$el.ownerDocument.baseURI,
+                getContext: () => this.getRendererContext(),
+                getProps: props,
+                onError: (phase, error) => this.reportError(phase, error),
+                onFailure: () => {
+                    this.$refs.host.replaceChildren()
+                    this.hasError = true
+                },
+                onDestroy: () => {
+                    destroyed = true
+                },
+            })
+            await lifecycle.init()
         },
 
-        async mountRenderer() {
-            if (!renderer) return
-
-            const mount =
-                typeof renderer === 'string'
-                    ? (
-                          await import(
-                              new URL(renderer, this.$el.ownerDocument.baseURI)
-                                  .href
-                          )
-                      ).default
-                    : renderer
-
-            if (destroyed) return
-
-            if (typeof mount !== 'function') {
-                throw new TypeError(
-                    'The renderer module must default-export a mount function.',
-                )
-            }
-
-            initializationPhase = 'mount'
+        getRendererContext() {
             const scope = this
-            const mounted = await mount({
+
+            return {
                 host: this.$refs.host,
                 props: props(),
                 utilities: {
@@ -95,33 +58,11 @@ export default function jsWidgetComponent({ renderer, rendererProps = {} }) {
                         return scope.$wire
                     },
                 },
-            })
-
-            if (
-                typeof mounted?.update !== 'function' ||
-                typeof mounted?.destroy !== 'function'
-            ) {
-                if (typeof mounted?.destroy === 'function')
-                    this.disposeRenderer(mounted)
-                throw new TypeError(
-                    'The renderer must return update() and destroy() methods.',
-                )
             }
-
-            if (destroyed) {
-                this.disposeRenderer(mounted)
-                return
-            }
-
-            instance = mounted
-            this.updateRenderer()
         },
 
         destroy() {
-            destroyed = true
-            const mounted = instance
-            instance = undefined
-            this.disposeRenderer(mounted)
+            lifecycle?.destroy()
         },
     }
 }

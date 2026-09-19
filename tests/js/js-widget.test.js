@@ -35,6 +35,9 @@ test('PHP props update independently without remounting and preserve the owning 
     assert.deepEqual(updates.at(-1), { filters: { startDate: null }, total: 0 })
     assert.equal(utilities.$wire, widget.$wire)
     assert.equal(utilities.$wire.refreshTotal(), 'refreshed')
+    widget.$wire = { refreshTotal: () => 'replacement' }
+    assert.equal(utilities.$wire, widget.$wire)
+    assert.equal(utilities.$wire.refreshTotal(), 'replacement')
     assert.equal(mounts, 1)
     widget.destroy()
     widget.destroy()

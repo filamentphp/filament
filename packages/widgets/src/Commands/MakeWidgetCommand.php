@@ -28,7 +28,6 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-use JsonException;
 use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -224,22 +223,11 @@ class MakeWidgetCommand extends Command
             if ($framework) {
                 $this->type = Widget::class;
                 $this->configurePackageManager();
-                $dependencies = match ($framework) {
-                    'js' => [],
-                    'react' => ['react', 'react-dom'],
-                    'vue' => ['vue', '@vitejs/plugin-vue'],
-                    'svelte' => ['svelte', '@sveltejs/vite-plugin-svelte' . match (true) {
-                        version_compare($this->getViteVersion(), '8.0.0', '>=') => '',
-                        version_compare($this->getViteVersion(), '6.3.0', '>=') => '@^6.0',
-                        version_compare($this->getViteVersion(), '6.0.0', '>=') => '@^5.0',
-                        version_compare($this->getViteVersion(), '5.0.0', '>=') => '@^4.0',
-                        default => '',
-                    }],
-                };
-                if ($this->isTypeScript) {
-                    $dependencies = [...$dependencies, 'typescript@^6.0', ...($framework === 'react' ? ['@types/react', '@types/react-dom'] : [])];
-                }
-                $this->installJavaScriptDependencies($dependencies);
+                $this->installJavaScriptDependencies($this->getJavaScriptRendererDependencies(
+                    $framework,
+                    $this->isTypeScript,
+                    $this->getViteVersion(),
+                ));
             }
             $this->configurePanel(
                 question: 'Which panel would you like to create this widget in?',
@@ -665,86 +653,14 @@ class MakeWidgetCommand extends Command
 
     protected function configureTypeScript(): bool
     {
-        $path = base_path('tsconfig.json');
-
-        try {
-            $configuration = $this->filesystem->exists($path) ? json_decode($this->filesystem->get($path), true, flags: JSON_THROW_ON_ERROR) : [
-                'compilerOptions' => ['target' => 'ES2020', 'module' => 'ESNext', 'moduleResolution' => 'Bundler', 'jsx' => 'react-jsx', 'strict' => true, 'noEmit' => true],
-                'include' => ['resources/js/**/*'],
-            ];
-        } catch (JsonException) {
-            return false;
-        }
-        if (! is_array($configuration) || isset($configuration['extends'])) {
-            return false;
-        }
-        if (isset($configuration['compilerOptions']['paths']['@filament/widgets/js-widget'])) {
-            return true;
-        }
-        $configuration['compilerOptions']['paths']['@filament/widgets/js-widget'] = ['./' . $this->getRelativePath(base_path('vendor/filament/widgets/resources/js/types/js-widget.d.ts'), base_path($configuration['compilerOptions']['baseUrl'] ?? ''))];
-        $this->filesystem->put($path, json_encode($configuration, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
-
-        return true;
+        return $this->configureJavaScriptRendererTypeScript(
+            '@filament/widgets/js-widget',
+            'vendor/filament/widgets/resources/js/types/js-widget.d.ts',
+        );
     }
 
     protected function configureRendererViteConfig(): bool
     {
-        $path = base_path('vite.config.js');
-        if (! $this->filesystem->exists($path)) {
-            return false;
-        }
-        $contents = $this->filesystem->get($path);
-        $configPattern = '/\bexport\s+default\s+defineConfig\(\s*\{/';
-        if (! preg_match($configPattern, $contents)) {
-            return false;
-        }
-        if (preg_match('/\bbuild\s*:/', $contents)) {
-            if (! preg_match('/\bpreserveEntrySignatures\s*:\s*[\'"](?:exports-only|strict)[\'"]/', $contents)) {
-                return false;
-            }
-        } else {
-            $options = version_compare($this->getViteVersion(), '8.0.0', '>=') ? 'rolldownOptions' : 'rollupOptions';
-            $contents = preg_replace($configPattern, '$0' . "\n    build: {\n        {$options}: { preserveEntrySignatures: 'exports-only' },\n    },", $contents, 1);
-        }
-        if (in_array($this->framework, ['vue', 'svelte'])) {
-            $package = $this->framework === 'vue' ? '@vitejs/plugin-vue' : '@sveltejs/vite-plugin-svelte';
-            $importPattern = $this->framework === 'vue'
-                ? '/import\s+(\w+)\s+from\s+[\'"]@vitejs\/plugin-vue[\'"]/'
-                : '/import\s*\{\s*(svelte)(?:\s+as\s+(\w+))?\s*\}\s*from\s+[\'"]@sveltejs\/vite-plugin-svelte[\'"]/';
-
-            if (preg_match($importPattern, $contents, $matches)) {
-                $plugin = $matches[2] ?? $matches[1];
-                $import = '';
-            } else {
-                $plugin = $this->framework === 'vue' ? 'filamentVue' : 'filamentSvelte';
-
-                if (str_contains($contents, $package) || preg_match('/\b' . $plugin . '\b/', $contents)) {
-                    return false;
-                }
-
-                $import = $this->framework === 'vue'
-                    ? "import {$plugin} from '{$package}'\n"
-                    : "import { svelte as {$plugin} } from '{$package}'\n";
-            }
-
-            // Match nested arrays, such as the Laravel plugin's `input` array.
-            if (preg_match_all('/\bplugins\s*:\s*(?<plugins>\[(?:[^\[\]]|(?&plugins))*\])/', $contents, $pluginArrays) !== 1) {
-                return false;
-            }
-            if (! preg_match('/\b' . preg_quote($plugin, '/') . '\s*\(/', $pluginArrays['plugins'][0])) {
-                $contents = preg_replace('/\bplugins\s*:\s*\[/', '$0' . "\n        {$plugin}(),", $contents, 1);
-            }
-            $contents = $import . $contents;
-        }
-        $this->filesystem->put($path, $contents);
-
-        return true;
-    }
-
-    protected function getViteVersion(): string
-    {
-        $path = base_path('node_modules/vite/package.json');
-
-        return $this->filesystem->exists($path) ? ($this->filesystem->json($path)['version'] ?? '0') : '0';
+        return $this->configureJavaScriptRendererVite($this->framework);
     }
 }
