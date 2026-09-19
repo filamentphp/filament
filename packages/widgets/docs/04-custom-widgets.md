@@ -48,7 +48,11 @@ The generated PHP class uses `HasJsRenderer` and loads its entry through `Vite::
 
 Nested names, such as `Reports/RevenueOverview`, place the JavaScript files in a `reports/` subdirectory. TypeScript generation also configures the `@filament/widgets/js-widget` [type alias](#typing-renderers).
 
+Typed starters install TypeScript 6. Vue and Svelte tooling currently require its JavaScript compiler API, which TypeScript 7 does not provide. Keep TypeScript 6 in applications using these frameworks, including applications that also contain React or framework-free renderers.
+
 The command adds the renderer to the Laravel Vite plugin's `input` array, enables the Vue or Svelte compiler plugin when needed, and preserves the renderer's default export in production builds. React uses Vite's built-in JSX support. If your configuration cannot be updated automatically, the command prints the remaining manual steps instead of replacing it. Follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to complete them.
+
+New TypeScript configurations use `"jsx": "react-jsx"` so Vite transforms React JSX. Existing configurations are preserved. If yours uses `"jsx": "preserve"`, change it to `"react-jsx"` or configure a React JSX transformer in Vite; otherwise Vite 8 can fail with `Unexpected JSX expression`.
 
 ## Passing configuration from PHP
 
@@ -265,6 +269,12 @@ const mountRevenueOverview: JsWidgetRenderer<Config, Methods> = ({ host, props, 
 
 export default mountRevenueOverview
 ```
+
+#### Checking types
+
+`npm run build` compiles the renderers but does not check their types. For JavaScript/React TypeScript entries, run `npx tsc --noEmit`. For Vue single-file components, install `vue-tsc` and run `npx vue-tsc --noEmit`; plain `tsc` cannot resolve `.vue` imports. For Svelte components, install `svelte-check` and run `npx svelte-check --tsconfig ./tsconfig.json`.
+
+In a mixed-framework application, use separate TypeScript configurations with `include` patterns for each framework and pass the appropriate configuration to each checker. Keep the Filament type alias in each configuration or inherit it from a shared configuration.
 
 ### Synchronizing and disposing renderers
 
