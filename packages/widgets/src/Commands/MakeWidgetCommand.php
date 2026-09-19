@@ -237,7 +237,7 @@ class MakeWidgetCommand extends Command
                     }],
                 };
                 if ($this->isTypeScript) {
-                    $dependencies = [...$dependencies, 'typescript', ...($framework === 'react' ? ['@types/react', '@types/react-dom'] : [])];
+                    $dependencies = [...$dependencies, 'typescript@^6.0', ...($framework === 'react' ? ['@types/react', '@types/react-dom'] : [])];
                 }
                 $this->installJavaScriptDependencies($dependencies);
             }
@@ -669,7 +669,7 @@ class MakeWidgetCommand extends Command
 
         try {
             $configuration = $this->filesystem->exists($path) ? json_decode($this->filesystem->get($path), true, flags: JSON_THROW_ON_ERROR) : [
-                'compilerOptions' => ['target' => 'ES2020', 'module' => 'ESNext', 'moduleResolution' => 'Bundler', 'jsx' => 'preserve', 'strict' => true, 'noEmit' => true],
+                'compilerOptions' => ['target' => 'ES2020', 'module' => 'ESNext', 'moduleResolution' => 'Bundler', 'jsx' => 'react-jsx', 'strict' => true, 'noEmit' => true],
                 'include' => ['resources/js/**/*'],
             ];
         } catch (JsonException) {

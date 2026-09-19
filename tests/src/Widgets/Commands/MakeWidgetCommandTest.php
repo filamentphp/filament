@@ -285,6 +285,7 @@ it('preserves renderer collisions unless `--force` is specified', function (): v
 });
 
 it('installs typed React widget dependencies with the chosen package manager and reports build failures', function (): void {
+    File::delete(base_path('tsconfig.json'));
     File::put(base_path('vite.config.js'), "export default defineConfig({ plugins: [laravel({ input: ['resources/js/app.js'] })] })");
     Process::fake(static fn (PendingProcess $process) => Process::result(exitCode: ($process->command === ['yarn', 'run', 'build']) ? 1 : 0));
 
@@ -296,6 +297,7 @@ it('installs typed React widget dependencies with the chosen package manager and
         ->expectsConfirmation('Would you like to compile the widget now?', 'yes')
         ->assertFailed();
 
-    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'add', 'react', 'react-dom', 'typescript', '@types/react', '@types/react-dom', '--dev']);
+    expect(File::json(base_path('tsconfig.json')))->toHaveKey('compilerOptions.jsx', 'react-jsx');
+    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'add', 'react', 'react-dom', 'typescript@^6.0', '@types/react', '@types/react-dom', '--dev']);
     Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'run', 'build']);
 });
