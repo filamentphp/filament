@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\File;
 uses(TestCase::class)->group('serial');
 
 beforeEach(function (): void {
-    $directory = dirname(__DIR__, 3) . '/build/js-widget-renderers';
+    $directory = dirname(__DIR__, 3) . '/build/js-renderer-starters';
     foreach (File::allFiles($directory) as $file) {
         $id = substr(str_replace('\\', '/', $file->getRelativePathname()), 0, -3);
         FilamentAsset::register([
