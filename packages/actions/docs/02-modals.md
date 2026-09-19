@@ -693,7 +693,7 @@ Action::make('first')
 
 ### Validating the data of a parent action
 
-`getRawData()` returns whatever the browser last sent, which nothing has validated. When a nested action acts on that data, use `getValidatedData()` instead, which validates it with the rules of the action it belongs to and returns the result:
+`getRawData()` returns the current unvalidated data. When a nested action relies on that data being valid, use `getValidatedData()` instead, which validates it with the rules of the action it belongs to and returns the result:
 
 ```php
 use Filament\Actions\Action;
@@ -752,12 +752,12 @@ Action::make('second')
 ```
 
 <Aside variant="warning">
-    Reading an action's data must not have the side effects of submitting it, so the hooks that run before dehydration are skipped, as they are for the repeater's `getItemState()`. A file upload is therefore returned as it was sent, rather than as the path it is stored at once the action is submitted. `mutateDataUsing()` is not applied either, and the action's `beforeFormValidated()` and `afterFormValidated()` hooks do not run.
+    Reading an action's data must not have the side effects of submitting it, so the hooks that run before dehydration are skipped, as they are for the repeater's `getItemState()`. A newly uploaded file can therefore remain a `TemporaryUploadedFile` instead of becoming a stored path. `mutateDataUsing()` is not applied either, and the action's `beforeFormValidated()` and `afterFormValidated()` hooks do not run.
 </Aside>
 
 ### Filling in the data of a parent action
 
-A nested action can write into the schema data of the action it was mounted from, using `fillParentActionData()`. The data is hydrated by the parent action's schema, so nested state and dot-notation keys land where the action reads them, and the parent validates it with its own rules when it is submitted:
+A nested action can write into the schema data of the action it was mounted from, using `fillParentActionData()`. Only keys for fields in the parent action's schema are filled, and other keys are ignored. The data is hydrated by the parent action's schema, so nested state and dot-notation keys land where the action reads them, and the parent validates it with its own rules when it is submitted:
 
 ```php
 use Filament\Actions\Action;
