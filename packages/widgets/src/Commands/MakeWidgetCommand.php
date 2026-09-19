@@ -492,7 +492,7 @@ class MakeWidgetCommand extends Command
             ->replace('\\', '/')
             ->replace('//', '/');
 
-        if (! $this->option('force') && $this->checkForCollision($path)) {
+        if (! $this->option('force') && $this->checkForCollision([$path, ...array_keys($this->rendererFiles)])) {
             throw new FailureCommandOutput;
         }
 
@@ -643,9 +643,6 @@ class MakeWidgetCommand extends Command
 
     protected function createRenderer(): void
     {
-        if (! $this->option('force') && $this->checkForCollision(array_keys($this->rendererFiles))) {
-            throw new FailureCommandOutput;
-        }
         foreach ($this->rendererFiles as $path => $stub) {
             $this->copyStubToApp($stub, $path, ['componentName' => class_basename($this->fqn)]);
         }

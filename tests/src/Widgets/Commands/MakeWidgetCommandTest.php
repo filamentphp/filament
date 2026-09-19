@@ -15,9 +15,13 @@ beforeEach(function (): void {
 
     $this->originalSetupFiles = [];
 
-    foreach (['vite.config.js', 'node_modules/vite/package.json', 'tsconfig.json'] as $path) {
+    foreach (['vite.config.js', 'node_modules/vite/package.json', 'tsconfig.json', 'package.json'] as $path) {
         $this->originalSetupFiles[$path] = File::exists(base_path($path)) ? File::get(base_path($path)) : null;
     }
+
+    File::put(base_path('package.json'), '{}');
+    File::ensureDirectoryExists(base_path('node_modules/vite'));
+    File::put(base_path('node_modules/vite/package.json'), '{"version":"8.0.0"}');
 });
 
 afterEach(function (): void {
@@ -284,6 +288,45 @@ it('preserves renderer collisions unless `--force` is specified', function (): v
     expect(File::get($path))->toContain('export default function mountExistingWidget');
 });
 
+it('preserves every widget file when a renderer overwrite is declined', function (): void {
+    $paths = [
+        app_path('Filament/Widgets/CancelledWidget.php'),
+        resource_path('js/filament/widgets/cancelled-widget.js'),
+        resource_path('js/filament/widgets/CancelledWidget.vue'),
+    ];
+
+    foreach ($paths as $path) {
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, 'Original ' . basename($path));
+    }
+
+    $environment = app()['env'];
+
+    try {
+        app()['env'] = 'local';
+
+        $this->artisan('make:filament-widget', [
+            'name' => 'CancelledWidget',
+            '--panel' => 'admin',
+            '--vue' => true,
+            '--skip-install' => true,
+            '--skip-build' => true,
+        ])
+            ->expectsQuestion('Would you like to create this widget in a resource?', false)
+            ->expectsConfirmation('CancelledWidget.php already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('cancelled-widget.js already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('CancelledWidget.vue already exists, do you want to overwrite it?', 'no')
+            ->assertFailed();
+
+        foreach ($paths as $path) {
+            expect(File::get($path))->toBe('Original ' . basename($path));
+        }
+    } finally {
+        app()['env'] = $environment;
+        File::delete($paths);
+    }
+});
+
 it('installs typed React widget dependencies with the chosen package manager and reports build failures', function (): void {
     File::delete(base_path('tsconfig.json'));
     File::put(base_path('vite.config.js'), "export default defineConfig({ plugins: [laravel({ input: ['resources/js/app.js'] })] })");
@@ -298,6 +341,6 @@ it('installs typed React widget dependencies with the chosen package manager and
         ->assertFailed();
 
     expect(File::json(base_path('tsconfig.json')))->toHaveKey('compilerOptions.jsx', 'react-jsx');
-    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'add', 'react', 'react-dom', 'typescript@^6.0', '@types/react', '@types/react-dom', '--dev']);
+    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'add', 'react@^19.0', 'react-dom@^19.0', 'typescript@^6.0', '@types/react@^19.0', '@types/react-dom@^19.0', '--dev']);
     Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'run', 'build']);
 });
