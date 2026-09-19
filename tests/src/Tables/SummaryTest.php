@@ -162,7 +162,7 @@ it('can sum subset of values in a column on this pagination page', function (): 
 });
 
 it('renders group summaries when page and all-table summaries are disabled', function (): void {
-    Post::factory()->count(5)->create();
+    Post::factory()->count(5)->create(['is_published' => true]);
 
     livewire(TestTableWithGroupSummariesOnly::class)
         ->assertSeeHtml('fi-ta-summary-row')
