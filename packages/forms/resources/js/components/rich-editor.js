@@ -25,10 +25,13 @@ export default function richEditorFormComponent({
     activePanel,
     canAttachFiles,
     deleteCustomBlockButtonIconHtml,
+    deleteCustomBlockButtonLabel,
     editCustomBlockButtonIconHtml,
+    editCustomBlockButtonLabel,
     extensions,
     floatingToolbars,
     hasResizableImages,
+    hasMinimalCustomBlockControls = false,
     isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
@@ -76,6 +79,7 @@ export default function richEditorFormComponent({
                 editorProps: {
                     attributes: {
                         ...(label ? { 'aria-label': label } : {}),
+                        'data-testid': 'rich-editor-content',
                     },
                 },
                 extensions: await getExtensions({
@@ -84,7 +88,9 @@ export default function richEditorFormComponent({
                     canAttachFiles,
                     customExtensionUrls: extensions,
                     deleteCustomBlockButtonIconHtml,
+                    deleteCustomBlockButtonLabel,
                     editCustomBlockButtonIconHtml,
+                    editCustomBlockButtonLabel,
                     editCustomBlockUsing: (id, config) =>
                         this.$wire.mountAction(
                             'customBlock',
@@ -98,6 +104,7 @@ export default function richEditorFormComponent({
                         ),
                     floatingToolbars,
                     hasResizableImages,
+                    hasMinimalCustomBlockControls,
                     insertCustomBlockUsing: (id, dragPosition = null) =>
                         this.$wire.mountAction(
                             'customBlock',
