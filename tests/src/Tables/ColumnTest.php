@@ -490,6 +490,58 @@ describe('searching', function (): void {
         });
     });
 
+    it('removes table event listeners when the table is destroyed', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            $this->actingAs(User::factory()->create());
+
+            $page = visit('/individual-column-search-browser-test');
+
+            $page->script(<<<'JS'
+                window.tableScrollCount = 0
+                if (! window.originalScrollIntoView) {
+                    window.originalScrollIntoView = Element.prototype.scrollIntoView
+                    Element.prototype.scrollIntoView = function (...arguments) {
+                        if (this.matches?.('.fi-ta')) {
+                            window.tableScrollCount++
+                        }
+
+                        return window.originalScrollIntoView.apply(this, arguments)
+                    }
+                }
+                JS);
+
+            $page
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertMissing('.fi-ta')
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertPresent('.fi-ta')
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertMissing('.fi-ta')
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertPresent('.fi-ta');
+
+            $page->script(<<<'JS'
+                window.tableScrollCount = 0
+                document.querySelector('.fi-ta').closest('[wire\\:id]').dispatchEvent(new CustomEvent('scrollToTopOfTable'))
+                JS);
+
+            $page
+                ->assertScript('window.tableScrollCount', 1)
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/individual-column-search-browser-test')
+                ->inDarkMode()
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
     it('scopes column manager checkbox ids to each table in the browser', function (): void {
         retry(10, function (): void {
             Artisan::call('filament:assets');

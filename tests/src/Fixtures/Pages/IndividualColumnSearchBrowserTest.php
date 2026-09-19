@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Schema;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 class IndividualColumnSearchBrowserTest extends Page implements HasTable
 {
     use Tables\Concerns\InteractsWithTable;
+
+    public bool $showTable = true;
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedMagnifyingGlass;
 
@@ -46,7 +49,17 @@ class IndividualColumnSearchBrowserTest extends Page implements HasTable
     {
         return $schema
             ->components([
-                EmbeddedTable::make(),
+                EmbeddedTable::make()
+                    ->visible(fn (): bool => $this->showTable),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('toggleTable')
+                ->action(fn () => $this->showTable = ! $this->showTable)
+                ->extraAttributes(['data-testid' => 'toggle-table']),
+        ];
     }
 }
