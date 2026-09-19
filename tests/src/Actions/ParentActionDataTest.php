@@ -101,6 +101,34 @@ describe('filling the data of a mounted action', function (): void {
             ]);
     });
 
+    it('can access different mounted ancestors', function (): void {
+        livewire(ParentActionData::class)
+            ->mountAction('parentData')
+            ->setActionData([
+                'payload' => 'foo',
+                'reference' => null,
+            ])
+            ->mountAction('intermediateData')
+            ->setActionData([
+                'intermediate' => null,
+            ])
+            ->callAction(TestAction::make('fillAncestorData'))
+            ->assertSet('mountedActions.0.data.reference', 'top-generated')
+            ->assertSet('mountedActions.1.data.intermediate', 'direct parent generated')
+            ->assertDispatched(
+                'read-ancestor-data',
+                topMost: [
+                    'payload' => 'foo',
+                    'reference' => 'top-generated',
+                    'nested' => ['city' => null],
+                    'dotted' => ['postcode' => null],
+                ],
+                directParent: [
+                    'intermediate' => 'direct parent generated',
+                ],
+            );
+    });
+
     it('validates what was written with the rules of the parent action', function (): void {
         livewire(ParentActionData::class)
             ->mountAction('parentData')
@@ -387,6 +415,31 @@ class ParentActionData extends Component implements HasActions, HasSchemas
                             'dotted.postcode' => 'generated postcode',
                         ]);
                     }),
+                Action::make('intermediateData')
+                    ->schema([
+                        TextInput::make('intermediate')
+                            ->required(),
+                    ])
+                    ->extraModalFooterActions([
+                        Action::make('fillAncestorData')
+                            ->action(function (array $mountedActions): void {
+                                $directParent = $mountedActions[count($mountedActions) - 2];
+
+                                $mountedActions[0]->fillData([
+                                    'reference' => 'top-generated',
+                                ]);
+                                $directParent->fillData([
+                                    'intermediate' => 'direct parent generated',
+                                ]);
+
+                                $this->dispatch(
+                                    'read-ancestor-data',
+                                    topMost: $mountedActions[0]->getValidatedData(),
+                                    directParent: $directParent->getValidatedData(),
+                                );
+                            }),
+                    ])
+                    ->action(static fn (): null => null),
                 Action::make('readParentData')
                     ->action(function (array $mountedActions): void {
                         $this->dispatch('read-parent-data', data: $mountedActions[0]->getValidatedData());

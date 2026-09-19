@@ -616,7 +616,9 @@ In this example, if the `fourth` action is run, the `second` action is canceled,
 
 ## Accessing information about parent actions from a child
 
-You can access the instances of parent actions and their raw data and arguments by injecting the `$mountedActions` array in a function used by your nested action. For example, to get the top-most parent action currently active on the page, you can use `$mountedActions[0]`. From there, you can get the raw data for that action by calling `$mountedActions[0]->getRawData()`. Please be aware that raw data is not validated since the action has not been submitted yet:
+You can access every action that is currently mounted by injecting the `$mountedActions` array in a function used by your nested action. The exact contents of the array depend on when the function is evaluated. Inside the nested action's `mountUsing()` or `action()` function, the current action is the final item, and any parent actions appear before it. You can access the top-most parent action using `$mountedActions[0]`, or the direct parent using `$mountedActions[count($mountedActions) - 2]`.
+
+You can get the raw data of an action by calling `getRawData()` on it. Please be aware that raw data is not validated since the action has not been submitted yet:
 
 ```php
 use Filament\Actions\Action;
