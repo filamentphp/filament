@@ -1,9 +1,20 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -45,6 +56,573 @@ describe('state retrieval with `Get`', function (): void {
 
         expect($placeholder)
             ->getContent()->toBe($state);
+    });
+
+    test('casted state can be retrieved from a child component', function (): void {
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                Tabs::make()
+                    ->tabs([
+                        $parentTab = Tab::make('Parent')
+                            ->badge(fn (Get $get): string => get_debug_type($get('status')))
+                            ->schema([
+                                Select::make('status')
+                                    ->options(StringBackedEnum::class),
+                            ]),
+                        $siblingTab = Tab::make('Sibling')
+                            ->badge(fn (Get $get): string => get_debug_type($get('status'))),
+                    ]),
+            ])
+            ->fill(['status' => StringBackedEnum::One->value]);
+
+        expect($parentTab->getBadge())
+            ->toBe(StringBackedEnum::class)
+            ->and($siblingTab->getBadge())
+            ->toBe(StringBackedEnum::class);
+    });
+
+    test('component lookups are cached while child schemas remain unchanged', function (): void {
+        $targetComponent = new class('target') extends TextInput
+        {
+            public int $statePathRetrievalCount = 0;
+
+            public function getStatePath(bool $isAbsolute = true): ?string
+            {
+                $this->statePathRetrievalCount++;
+
+                return parent::getStatePath($isAbsolute);
+            }
+        };
+
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                $sourceComponent = TextInput::make('source'),
+                $targetComponent,
+                TextInput::make('unrelated'),
+            ])
+            ->fill([
+                'target' => 'value',
+            ]);
+
+        $targetComponent->statePathRetrievalCount = 0;
+        $get = $sourceComponent->makeGetUtility();
+
+        expect($get('target'))->toBe('value');
+
+        $statePathRetrievalCount = $targetComponent->statePathRetrievalCount;
+
+        $sourceComponent->makeSetUtility()('unrelated', 'updated');
+        $statePathRetrievalCountAfterUnrelatedWrite = $targetComponent->statePathRetrievalCount;
+
+        expect($get('target'))
+            ->toBe('value')
+            ->and($targetComponent->statePathRetrievalCount)
+            ->toBe($statePathRetrievalCountAfterUnrelatedWrite + 1)
+            ->and($statePathRetrievalCountAfterUnrelatedWrite)
+            ->toBe($statePathRetrievalCount + 1);
+    });
+
+    test('uncached dynamic child schemas are skipped while retrieving state', function (): void {
+        $firstSchemaEvaluationCount = 0;
+        $secondSchemaEvaluationCount = 0;
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                (new Component)
+                    ->schema(function (Get $get) use (&$firstSchemaEvaluationCount): array {
+                        $firstSchemaEvaluationCount++;
+                        $get('firstMissingState');
+                        $get('secondMissingState');
+
+                        return [];
+                    }),
+                (new Component)
+                    ->schema(function (Get $get) use (&$secondSchemaEvaluationCount): array {
+                        $secondSchemaEvaluationCount++;
+                        $get('thirdMissingState');
+                        $get('fourthMissingState');
+
+                        return [];
+                    }),
+            ]);
+
+        $schema->getComponents()[0]->getChildSchemas();
+
+        expect($firstSchemaEvaluationCount)
+            ->toBe(1)
+            ->and($secondSchemaEvaluationCount)
+            ->toBe(1);
+    });
+
+    test('uncached nested child schemas are skipped while retrieving state', function (): void {
+        $schemaEvaluationCount = 0;
+
+        $parentComponent = Tab::make('Parent')
+            ->badge(fn (Get $get): mixed => $get('missingState'))
+            ->schema([
+                (new Component)
+                    ->hiddenWhenAllChildComponentsHidden()
+                    ->schema(function (Get $get) use (&$schemaEvaluationCount): array {
+                        $schemaEvaluationCount++;
+                        $get('missingState');
+
+                        return [];
+                    }),
+            ]);
+
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([$parentComponent]);
+
+        $schema->getComponents();
+        $parentComponent->getChildSchemas(withHidden: true)['default']->getComponents(withHidden: true);
+        $parentComponent->getBadge();
+
+        expect($schemaEvaluationCount)->toBe(0);
+    });
+
+    test('cached child schemas with uncached components are skipped while retrieving state', function (): void {
+        $schemaEvaluationCount = 0;
+        $livewire = Livewire::make();
+        $childSchema = Schema::make($livewire)
+            ->components(function () use (&$schemaEvaluationCount): array {
+                $schemaEvaluationCount++;
+
+                return [];
+            });
+
+        $parentComponent = Tab::make('Parent')
+            ->badge(fn (Get $get): mixed => $get('missingState'))
+            ->schema($childSchema);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([$parentComponent])
+            ->getComponents();
+
+        $parentComponent->getChildSchemas(withHidden: true);
+        $parentComponent->getBadge();
+
+        expect($schemaEvaluationCount)->toBe(0);
+    });
+
+    test('direct default child schema construction does not expose previously cached children to its schema `Closure`', function (): void {
+        $livewire = Livewire::make();
+        $retrievedStates = [];
+
+        $group = Group::make()
+            ->schema(function (Get $get) use (&$retrievedStates): array {
+                $retrievedStates[] = $get('status');
+
+                return [
+                    Select::make('status')->options(StringBackedEnum::class),
+                ];
+            });
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([$group])
+            ->fill(['status' => StringBackedEnum::One->value]);
+
+        $group->getChildSchema()->getComponents();
+
+        expect($retrievedStates)
+            ->not->toBeEmpty()
+            ->each->toBe(StringBackedEnum::One->value);
+    });
+
+    test('default child schema construction can retry after its schema `Closure` throws', function (): void {
+        $shouldThrow = true;
+        $group = Group::make()
+            ->schema(function () use (&$shouldThrow): array {
+                if ($shouldThrow) {
+                    $shouldThrow = false;
+
+                    throw new RuntimeException('The first schema evaluation failed.');
+                }
+
+                return [
+                    TextInput::make('name'),
+                ];
+            })
+            ->container(Schema::make(Livewire::make()));
+
+        expect(fn () => $group->getChildSchema())
+            ->toThrow(RuntimeException::class, 'The first schema evaluation failed.')
+            ->and($group->getChildSchema()?->getComponents())
+            ->toHaveCount(1);
+    });
+
+    test('casted state is retrieved from rebuilt child components', function (): void {
+        $livewire = Livewire::make();
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                $parentComponent = (new Component)
+                    ->schema([
+                        Select::make('status')->options(StringBackedEnum::class),
+                    ]),
+            ])
+            ->fill(['status' => StringBackedEnum::One->value]);
+
+        $get = $parentComponent->makeGetUtility();
+
+        expect($get('status'))->toBe(StringBackedEnum::One);
+
+        $parentComponent->schema([
+            Select::make('status')->options(IntegerBackedEnum::class),
+        ]);
+        $livewire->data['status'] = IntegerBackedEnum::One->value;
+        $parentComponent->getChildSchemas(withHidden: true)['default']->getComponents(withHidden: true);
+
+        expect($get('status'))->toBe(IntegerBackedEnum::One);
+    });
+
+    test('action-injected `Get` uses rebuilt nested child components', function (): void {
+        $livewire = Livewire::make();
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                (new Component)
+                    ->schema([
+                        $parentComponent = (new Component)
+                            ->schema([
+                                Select::make('status')->options(StringBackedEnum::class),
+                            ]),
+                    ]),
+            ])
+            ->fill(['status' => StringBackedEnum::One->value]);
+
+        $action = Action::make('readStatus')
+            ->schemaComponent($parentComponent)
+            ->action(fn (Get $get): mixed => $get('status'));
+
+        expect($action->call())->toBe(StringBackedEnum::One);
+
+        $parentComponent->schema([
+            Select::make('status')->options(IntegerBackedEnum::class),
+        ]);
+        $livewire->data['status'] = IntegerBackedEnum::One->value;
+
+        expect($action->call())->toBe(IntegerBackedEnum::One);
+    });
+
+    test('stale builder item schemas are skipped while rebuilding items', function (): void {
+        $livewire = Livewire::make();
+        $shouldReadState = false;
+        $stateDuringRebuild = null;
+
+        $builder = Builder::make('content')
+            ->generateUuidUsing(false)
+            ->blocks(function (Get $get) use (&$shouldReadState, &$stateDuringRebuild): array {
+                if ($shouldReadState) {
+                    $stateDuringRebuild = $get('/data.content.0.data.status');
+                }
+
+                return [
+                    Block::make('enum')->schema([
+                        Select::make('status')->options(StringBackedEnum::class),
+                    ]),
+                    Block::make('text')->schema([
+                        Placeholder::make('status'),
+                    ]),
+                ];
+            });
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([$builder])
+            ->fill([
+                'content' => [[
+                    'type' => 'enum',
+                    'data' => ['status' => StringBackedEnum::One->value],
+                ]],
+            ]);
+
+        $builder->getItems()[0]->getComponents();
+        $livewire->data['content'][0]['type'] = 'text';
+        $shouldReadState = true;
+        $builder->getItems();
+
+        expect($stateDuringRebuild)
+            ->toBe(StringBackedEnum::One->value);
+    });
+
+    test('builder item schemas do not recursively rebuild when a block schema retrieves state', function (): void {
+        $livewire = Livewire::make();
+        $schemaEvaluationCount = 0;
+        $stateDuringRebuild = null;
+
+        $builder = Builder::make('content')
+            ->generateUuidUsing(false)
+            ->blocks([
+                Block::make('enum')->schema([
+                    Select::make('status')->options(StringBackedEnum::class),
+                ]),
+                Block::make('text')->schema(function (Get $get) use (&$schemaEvaluationCount, &$stateDuringRebuild): array {
+                    $schemaEvaluationCount++;
+
+                    if ($schemaEvaluationCount > 5) {
+                        throw new RuntimeException('The block schema was evaluated recursively.');
+                    }
+
+                    $stateDuringRebuild = $get('/data.content.0.data.status');
+
+                    return [
+                        TextInput::make('status'),
+                    ];
+                }),
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([$builder])
+            ->fill([
+                'content' => [[
+                    'type' => 'enum',
+                    'data' => ['status' => StringBackedEnum::One->value],
+                ]],
+            ]);
+
+        $builder->getItems()[0]->getComponents();
+        $livewire->data['content'][0]['type'] = 'text';
+        $builder->getItems();
+
+        expect($schemaEvaluationCount)
+            ->toBe(1)
+            ->and($stateDuringRebuild)
+            ->toBe(StringBackedEnum::One->value);
+    });
+
+    test('cached state lookups skip stale builder item schemas before rebuilding items', function (): void {
+        $livewire = Livewire::make();
+        $targetComponentPrototype = new class('status') extends Select
+        {
+            public int $statePathRetrievalCount = 0;
+
+            public function getStatePath(bool $isAbsolute = true): ?string
+            {
+                $this->statePathRetrievalCount++;
+
+                return parent::getStatePath($isAbsolute);
+            }
+        };
+        $builder = Builder::make('content')
+            ->generateUuidUsing(false)
+            ->blocks([
+                Block::make('enum')->schema([
+                    $targetComponentPrototype->options(StringBackedEnum::class),
+                ]),
+                Block::make('text')->schema([
+                    Placeholder::make('status'),
+                ]),
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                Tabs::make()
+                    ->tabs([
+                        $parentTab = Tab::make('Parent')
+                            ->schema([$builder]),
+                    ]),
+            ])
+            ->fill([
+                'content' => [[
+                    'type' => 'enum',
+                    'data' => ['status' => StringBackedEnum::One->value],
+                ]],
+            ]);
+
+        $targetComponent = $builder->getItems()[0]->getComponents()[0];
+        $get = $parentTab->makeGetUtility();
+
+        expect($get('/data.content.0.data.status'))->toBe(StringBackedEnum::One);
+
+        $statePathRetrievalCount = invade($targetComponent)->statePathRetrievalCount;
+
+        expect($get('/data.content.0.data.status'))
+            ->toBe(StringBackedEnum::One)
+            ->and(invade($targetComponent)->statePathRetrievalCount)
+            ->toBe($statePathRetrievalCount + 1);
+
+        $livewire->data['content'][0]['type'] = 'text';
+
+        expect($get('/data.content.0.data.status'))->toBe(StringBackedEnum::One->value);
+    });
+
+    test('cached sibling state lookups skip stale builder item schemas before rebuilding items', function (): void {
+        $livewire = Livewire::make();
+        $builder = Builder::make('content')
+            ->generateUuidUsing(false)
+            ->blocks([
+                Block::make('enum')->schema([
+                    Select::make('status')->options(StringBackedEnum::class),
+                ]),
+                Block::make('text')->schema([
+                    TextInput::make('status'),
+                ]),
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                $source = TextInput::make('source'),
+                $builder,
+            ])
+            ->fill([
+                'content' => [[
+                    'type' => 'enum',
+                    'data' => ['status' => StringBackedEnum::One->value],
+                ]],
+            ]);
+
+        $builder->getItems()[0]->getComponents();
+        $get = $source->makeGetUtility();
+
+        expect($get('/data.content.0.data.status'))->toBe(StringBackedEnum::One);
+
+        $livewire->data['content'][0]['type'] = 'text';
+
+        expect($get('/data.content.0.data.status'))->toBe(StringBackedEnum::One->value);
+    });
+
+    test('cached `Builder` item lookups validate only the requested item', function (): void {
+        $livewire = Livewire::make();
+        $builder = (new class('content') extends Builder
+        {
+            public int $fullFreshnessCheckCount = 0;
+
+            public int $itemFreshnessCheckCount = 0;
+
+            protected function areCachedDefaultChildSchemasFresh(): bool
+            {
+                $this->fullFreshnessCheckCount++;
+
+                return parent::areCachedDefaultChildSchemasFresh();
+            }
+
+            protected function isCachedDefaultChildSchemaFresh(string | int $key): bool
+            {
+                $this->itemFreshnessCheckCount++;
+
+                return parent::isCachedDefaultChildSchemaFresh($key);
+            }
+        })
+            ->generateUuidUsing(false)
+            ->blocks([
+                Block::make('enum')->schema([
+                    Select::make('status')->options(StringBackedEnum::class),
+                ]),
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                Tabs::make()
+                    ->tabs([
+                        $parentTab = Tab::make('Parent')
+                            ->schema([$builder]),
+                    ]),
+            ])
+            ->fill([
+                'content' => array_fill(0, 10, [
+                    'type' => 'enum',
+                    'data' => ['status' => StringBackedEnum::One->value],
+                ]),
+            ]);
+
+        foreach ($builder->getItems() as $item) {
+            $item->getComponents();
+        }
+
+        $get = $parentTab->makeGetUtility();
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/data.content.{$itemIndex}.data.status"))->toBe(StringBackedEnum::One);
+        }
+
+        $builder->fullFreshnessCheckCount = 0;
+        $builder->itemFreshnessCheckCount = 0;
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/data.content.{$itemIndex}.data.status"))->toBe(StringBackedEnum::One);
+        }
+
+        expect($builder->fullFreshnessCheckCount)
+            ->toBe(0)
+            ->and($builder->itemFreshnessCheckCount)
+            ->toBe(10);
+    });
+
+    test('cached `Repeater` item lookups validate only the requested item', function (): void {
+        $livewire = Livewire::make();
+        $repeater = (new class('items') extends Repeater
+        {
+            public int $fullFreshnessCheckCount = 0;
+
+            public int $itemFreshnessCheckCount = 0;
+
+            protected function areCachedDefaultChildSchemasFresh(): bool
+            {
+                $this->fullFreshnessCheckCount++;
+
+                return parent::areCachedDefaultChildSchemasFresh();
+            }
+
+            protected function isCachedDefaultChildSchemaFresh(string | int $key): bool
+            {
+                $this->itemFreshnessCheckCount++;
+
+                return parent::isCachedDefaultChildSchemaFresh($key);
+            }
+        })
+            ->generateUuidUsing(false)
+            ->schema([
+                Select::make('status')->options(StringBackedEnum::class),
+            ]);
+
+        Schema::make($livewire)
+            ->statePath('data')
+            ->components([
+                Tabs::make()
+                    ->tabs([
+                        $parentTab = Tab::make('Parent')
+                            ->schema([$repeater]),
+                    ]),
+            ])
+            ->fill([
+                'items' => array_fill(0, 10, [
+                    'status' => StringBackedEnum::One->value,
+                ]),
+            ]);
+
+        foreach ($repeater->getItems() as $item) {
+            $item->getComponents();
+        }
+
+        $get = $parentTab->makeGetUtility();
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/data.items.{$itemIndex}.status"))->toBe(StringBackedEnum::One);
+        }
+
+        $repeater->fullFreshnessCheckCount = 0;
+        $repeater->itemFreshnessCheckCount = 0;
+
+        foreach (range(0, 9) as $itemIndex) {
+            expect($get("/data.items.{$itemIndex}.status"))->toBe(StringBackedEnum::One);
+        }
+
+        expect($repeater->fullFreshnessCheckCount)
+            ->toBe(0)
+            ->and($repeater->itemFreshnessCheckCount)
+            ->toBe(10);
     });
 
     test('parent sibling state can be retrieved relatively from another component', function (): void {
