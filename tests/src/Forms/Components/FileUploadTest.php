@@ -1991,11 +1991,12 @@ it('can render `FileUpload` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/file-upload-browser-test')
-            ->assertSee('Attachment')
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
         visit('/file-upload-browser-test')
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

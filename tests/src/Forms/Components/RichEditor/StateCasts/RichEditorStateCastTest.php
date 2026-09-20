@@ -263,6 +263,28 @@ describe('`set()`', function (): void {
         expect($label)->toBe('Alice');
     });
 
+    it('preserves a mention with a `data-id` of `0` when hydrating HTML', function (): void {
+        $editor = makeStateCastEditor()
+            ->mentions([
+                MentionProvider::make('@')->items([0 => 'Alice']),
+            ]);
+
+        $cast = new RichEditorStateCast($editor);
+
+        $result = $cast->set('<p><span data-type="mention" data-id="0" data-char="@"></span></p>');
+
+        $mention = null;
+
+        walkStateCastResult($result, function (array $node) use (&$mention): void {
+            if (($node['type'] ?? null) === 'mention') {
+                $mention = $node;
+            }
+        });
+
+        expect($mention['attrs']['id'] ?? null)->toBe('0')
+            ->and($mention['attrs']['label'] ?? null)->toBe('Alice');
+    });
+
     it('sets the mention label to an empty string when the id is not in the provider results', function (): void {
         $editor = makeStateCastEditor()
             ->mentions([

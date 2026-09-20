@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'O bé, introdueix la teva contrasenya actual',
+                'label' => 'Introdueix la teva contrasenya actual',
 
                 'validation_attribute' => 'contrasenya',
 

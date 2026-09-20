@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Kata laluan semasa',
+                'validation_attribute' => 'kata laluan semasa',
+            ],
+
             'code' => [
 
                 'label' => 'Masukkan kod 6-digit dari aplikasi authenticator',

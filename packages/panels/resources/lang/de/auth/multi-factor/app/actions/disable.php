@@ -11,6 +11,10 @@ return [
         'description' => 'Sind Sie sicher, dass Sie die Authenticator-App nicht mehr verwenden möchten? Das Deaktivieren entfernt eine zusätzliche Sicherheitsebene von Ihrem Konto.',
 
         'form' => [
+            'password' => [
+                'label' => 'Aktuelles Passwort',
+                'validation_attribute' => 'aktuelles Passwort',
+            ],
 
             'code' => [
 

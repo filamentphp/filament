@@ -42,6 +42,11 @@ return [
 
         'form' => [
 
+            'password' => [
+                'label' => 'Aktuální heslo',
+                'validation_attribute' => 'aktuální heslo',
+            ],
+
             'code' => [
 
                 'label' => 'Zadejte šestimístný kód z ověřovací aplikace',

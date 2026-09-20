@@ -11,6 +11,10 @@ return [
         'description' => 'Ziur zaude autentifikazio-aplikazioa erabiltzeari utzi nahi diozula? Hau desgaitzeak segurtasun-geruza gehigarri bat kenduko du zure kontutik.',
 
         'form' => [
+            'password' => [
+                'label' => 'Uneko pasahitza',
+                'validation_attribute' => 'uneko pasahitza',
+            ],
 
             'code' => [
 

@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Или унесите тренутну лозинку',
+                'label' => 'Унесите тренутну лозинку',
 
                 'validation_attribute' => 'лозинка',
 

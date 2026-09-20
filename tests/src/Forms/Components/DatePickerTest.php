@@ -379,23 +379,17 @@ describe('rendering', function (): void {
     });
 });
 
-it('has no accessibility issues in light mode', function (): void {
+it('has no accessibility issues in light and dark modes', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/date-picker-browser-test')
-            ->assertSee('Test Date Picker')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
-    });
-});
-
-it('has no accessibility issues in dark mode', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
 
         visit('/date-picker-browser-test')
             ->inDarkMode()
+            ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
 });

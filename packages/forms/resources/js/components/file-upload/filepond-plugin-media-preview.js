@@ -3,6 +3,11 @@
  * Changes:
  * - Merged all source modules into a single file.
  * - Fixed upstream PR #33 `mediaPreviewHeight` implementation.
+ * - Prevented audio controls from initiating file reordering.
+ * - Corrected audio timeline positioning when the preview is transformed or resized.
+ * - Added stable references for global audio drag listeners and an `AudioPlayer.destroy()` method to remove them.
+ * - Retained the `AudioPlayer` on the FilePond view and destroyed it through the view's `destroy` callback.
+ * - Tracked generated media object URLs and revoked them before replacement and when the view is destroyed.
  */
 
 const isPreviewableVideo = (file) => /^video/.test(file.type)
@@ -15,10 +20,8 @@ class AudioPlayer {
         this.audioElements = audioElements
         this.onPlayhead = false
         this.duration = 0
-        this.timelineWidth =
-            this.audioElements.timeline.offsetWidth -
-            this.audioElements.playhead.offsetWidth
         this.movePlayheadHandler = this.movePlayhead.bind(this)
+        this.mouseUpHandler = this.mouseUp.bind(this)
 
         this.registerListeners()
     }
@@ -43,12 +46,17 @@ class AudioPlayer {
             'click',
             this.play.bind(this),
         )
+        this.audioElements.container.addEventListener(
+            'pointerdown',
+            (event) => event.stopPropagation(),
+            false,
+        )
         this.audioElements.playhead.addEventListener(
             'mousedown',
             this.mouseDown.bind(this),
             false,
         )
-        window.addEventListener('mouseup', this.mouseUp.bind(this), false)
+        window.addEventListener('mouseup', this.mouseUpHandler, false)
     }
 
     play() {
@@ -74,20 +82,7 @@ class AudioPlayer {
     }
 
     movePlayhead(event) {
-        const newMarginLeft =
-            event.clientX - this.getPosition(this.audioElements.timeline)
-
-        if (newMarginLeft >= 0 && newMarginLeft <= this.timelineWidth) {
-            this.audioElements.playhead.style.marginLeft = `${newMarginLeft}px`
-        }
-
-        if (newMarginLeft < 0) {
-            this.audioElements.playhead.style.marginLeft = '0px'
-        }
-
-        if (newMarginLeft > this.timelineWidth) {
-            this.audioElements.playhead.style.marginLeft = `${this.timelineWidth - 4}px`
-        }
+        this.audioElements.playhead.style.marginLeft = `${this.clickPercent(event) * 100}%`
     }
 
     timelineClicked(event) {
@@ -122,14 +117,21 @@ class AudioPlayer {
     }
 
     clickPercent(event) {
-        return (
-            (event.clientX - this.getPosition(this.audioElements.timeline)) /
-            this.timelineWidth
+        const timelineBounds =
+            this.audioElements.timeline.getBoundingClientRect()
+
+        return Math.max(
+            0,
+            Math.min(
+                1,
+                (event.clientX - timelineBounds.left) / timelineBounds.width,
+            ),
         )
     }
 
-    getPosition(element) {
-        return element.getBoundingClientRect().left
+    destroy() {
+        window.removeEventListener('mousemove', this.movePlayheadHandler, true)
+        window.removeEventListener('mouseup', this.mouseUpHandler, false)
     }
 }
 
@@ -178,15 +180,28 @@ const createMediaView = (_) =>
                 }
 
                 const url = window.URL || window.webkitURL
-                const blob = new Blob([item.file], { type: item.file.type })
+
+                if (root.ref.objectUrl) {
+                    url.revokeObjectURL(root.ref.objectUrl)
+                    root.ref.objectUrl = null
+                }
 
                 root.ref.media.type = item.file.type
-                root.ref.media.src =
-                    (item.file.mock && item.file.url) ||
-                    url.createObjectURL(blob)
+
+                if (item.file.mock && item.file.url) {
+                    root.ref.media.src = item.file.url
+                } else {
+                    const blob = new Blob([item.file], { type: item.file.type })
+
+                    root.ref.objectUrl = url.createObjectURL(blob)
+                    root.ref.media.src = root.ref.objectUrl
+                }
 
                 if (isPreviewableAudio(item.file)) {
-                    new AudioPlayer(root.ref.media, root.ref.audio)
+                    root.ref.audioPlayer = new AudioPlayer(
+                        root.ref.media,
+                        root.ref.audio,
+                    )
                 }
 
                 root.ref.media.addEventListener(
@@ -218,6 +233,16 @@ const createMediaView = (_) =>
                 )
             },
         }),
+        destroy: ({ root }) => {
+            root.ref.audioPlayer?.destroy()
+
+            if (root.ref.objectUrl) {
+                const url = window.URL || window.webkitURL
+
+                url.revokeObjectURL(root.ref.objectUrl)
+                root.ref.objectUrl = null
+            }
+        },
     })
 
 const createMediaWrapperView = (_) => {

@@ -127,7 +127,7 @@ class ComponentAttributeBag extends BaseComponentAttributeBag
 
         $start = array_filter($start);
 
-        $order = array_filter($order);
+        $order = Arr::whereNotNull($order);
 
         return $this
             ->class([

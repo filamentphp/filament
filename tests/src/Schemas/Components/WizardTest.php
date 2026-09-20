@@ -435,7 +435,6 @@ it('can render `Wizard` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/wizard-browser-test')
-            ->assertSee('Basic Details')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

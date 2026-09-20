@@ -1182,12 +1182,14 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `Section` in the browser', function (): void {
+it('can render and collapse a `contained(false)` section in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/section-browser-test')
-            ->assertSee('Personal Information')
+            ->assertVisible('#form\.shipping_address')
+            ->click('.fi-section-collapse-btn')
+            ->assertMissing('#form\.shipping_address')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

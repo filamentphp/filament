@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Alebo zadajte svoje aktuálne heslo',
+                'label' => 'Zadajte svoje aktuálne heslo',
 
                 'validation_attribute' => 'heslo',
 

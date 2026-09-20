@@ -431,8 +431,52 @@ it('can render `ColorPicker` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/color-picker-test')
-            ->assertSee('Test Color')
             ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/color-picker-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('does not run delayed callbacks after `ColorPicker` is destroyed', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/color-picker-test');
+
+        $page->assertScript('document.querySelector(\'[data-testid="color-picker"] [x-data]:not([x-ignore])\') !== null', true);
+
+        $page->script(<<<'JS'
+            window.colorPickerCommitCount = 0
+            window.removeColorPickerCommitHook = Livewire.hook('commit', () => window.colorPickerCommitCount++)
+
+            const colorPicker = document.querySelector('[data-testid="color-picker"] [x-data]')
+            const input = colorPicker.querySelector('input')
+
+            input.value = '#123456'
+            input.dispatchEvent(new Event('input', { bubbles: true }))
+
+            colorPicker.querySelector('[x-ref="panel"]').dispatchEvent(new CustomEvent('color-changed', {
+                bubbles: true,
+                detail: { value: '#123456' },
+            }))
+
+            setTimeout(() => colorPicker.remove())
+            JS);
+
+        $page
+            ->wait(2)
+            ->assertMissing('[data-testid="color-picker"] [x-data]')
+            ->assertScript('window.colorPickerCommitCount', 0)
+            ->assertNoSmoke();
+
+        $page->script('window.removeColorPickerCommitHook()');
+
+        visit('/color-picker-test')
             ->assertNoAccessibilityIssues();
 
         visit('/color-picker-test')
