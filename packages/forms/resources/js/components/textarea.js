@@ -6,6 +6,8 @@ export default function textareaFormComponent({
     return {
         state,
 
+        resizeObserver: null,
+
         wrapperEl: null,
 
         init() {
@@ -54,11 +56,15 @@ export default function textareaFormComponent({
         },
 
         setUpResizeObserver() {
-            const observer = new ResizeObserver(() => {
+            this.resizeObserver = new ResizeObserver(() => {
                 this.wrapperEl.style.height = this.$el.style.height
             })
 
-            observer.observe(this.$el)
+            this.resizeObserver.observe(this.$el)
+        },
+
+        destroy() {
+            this.resizeObserver?.disconnect()
         },
     }
 }

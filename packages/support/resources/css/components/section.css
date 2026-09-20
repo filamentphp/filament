@@ -95,8 +95,10 @@
         &:not(.fi-aside) {
             @apply grid gap-y-4;
 
-            & > .fi-section-content-ctn {
-                @apply grid gap-y-4;
+            &:not(.fi-collapsed) {
+                & > .fi-section-content-ctn {
+                    @apply grid gap-y-4;
+                }
             }
 
             &.fi-divided {
