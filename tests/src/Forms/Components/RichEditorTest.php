@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
@@ -917,6 +918,89 @@ it('returns `false` for `hasMentions()` by default', function (): void {
     $editor = RichEditor::make('content');
 
     expect($editor->hasMentions())->toBeFalse();
+});
+
+describe('mention options', function (): void {
+    // JavaScript objects order integer-like keys in ascending numeric order, so mention
+    // items must be sent as an ordered list of `id` and `label` pairs instead of an
+    // object keyed by ID, otherwise the order of the items is silently discarded.
+
+    it('preserves the declared order of `items()` in `getMentionsForJs()`', function (): void {
+        $mentions = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->items([30 => 'Alice', 10 => 'Bob', 20 => 'Carol']),
+                    ]),
+            ])
+            ->getComponents()[0]
+            ->getMentionsForJs();
+
+        expect($mentions[0]['items'])->toBe([
+            ['id' => '30', 'label' => 'Alice'],
+            ['id' => '10', 'label' => 'Bob'],
+            ['id' => '20', 'label' => 'Carol'],
+        ]);
+    });
+
+    it('preserves sequential IDs from `items()` in `getMentionsForJs()`', function (): void {
+        $mentions = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->items([0 => 'Alice', 1 => 'Bob']),
+                    ]),
+            ])
+            ->getComponents()[0]
+            ->getMentionsForJs();
+
+        // Without the `id` and `label` pairs, sequential IDs serialise to a JSON array of
+        // bare labels, and the inserted mention takes its label as its `id`.
+        expect($mentions[0]['items'])->toBe([
+            ['id' => '0', 'label' => 'Alice'],
+            ['id' => '1', 'label' => 'Bob'],
+        ]);
+    });
+
+    it('preserves result order in `getMentionSearchResultsForJs()`', function (): void {
+        $results = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->getSearchResultsUsing(static fn (string $search): array => [
+                                3 => 'Alice',
+                                1 => 'Carol',
+                                2 => 'Bob',
+                            ]),
+                    ]),
+            ])
+            ->getComponents()[0]
+            ->getMentionSearchResultsForJs('a');
+
+        expect($results)->toBe([
+            ['id' => '3', 'label' => 'Alice'],
+            ['id' => '1', 'label' => 'Carol'],
+            ['id' => '2', 'label' => 'Bob'],
+        ]);
+    });
+
+    it('returns an empty array from `getMentionSearchResultsForJs()` when no mention providers are configured', function (): void {
+        $results = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0]
+            ->getMentionSearchResultsForJs('a');
+
+        expect($results)->toBe([]);
+    });
 });
 
 it('returns fluent `$this` from `tools()`', function (): void {
