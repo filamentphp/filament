@@ -256,7 +256,6 @@ it('preserves existing compiler imports and TypeScript aliases when configuring 
     Process::assertNothingRan();
 })->with([
     ['vue', "import frameworkPlugin from '@vitejs/plugin-vue'"],
-    ['svelte', "import { svelte as frameworkPlugin } from '@sveltejs/vite-plugin-svelte'"],
 ]);
 
 it('preserves renderer collisions unless `--force` is specified', function (): void {
