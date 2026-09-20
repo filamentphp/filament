@@ -2,6 +2,8 @@
 
 namespace Filament\Forms;
 
+use Faker\Generator;
+use Filament\Forms\Components\RichEditor\RichContentFakerProvider;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Forms\Testing\TestsFormComponentActions;
 use Filament\Forms\Testing\TestsForms;
@@ -15,6 +17,41 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FormsServiceProvider extends PackageServiceProvider
 {
+    public function packageRegistered(): void
+    {
+        if (! class_exists(Generator::class)) {
+            return;
+        }
+
+        $registerRichContentFakerProvider = static function (Generator $faker): void {
+            foreach ($faker->getProviders() as $provider) {
+                if ($provider instanceof RichContentFakerProvider) {
+                    return;
+                }
+            }
+
+            $faker->addProvider(new RichContentFakerProvider($faker));
+        };
+
+        $fakerBindings = [
+            Generator::class,
+            ...array_filter(
+                array_keys($this->app->getBindings()),
+                static fn (string $binding): bool => str_starts_with($binding, Generator::class . ':'),
+            ),
+        ];
+
+        foreach ($fakerBindings as $fakerBinding) {
+            if (! $this->app->resolved($fakerBinding)) {
+                continue;
+            }
+
+            $registerRichContentFakerProvider($this->app->make($fakerBinding));
+        }
+
+        $this->app->afterResolving(Generator::class, $registerRichContentFakerProvider);
+    }
+
     public function configurePackage(Package $package): void
     {
         $package

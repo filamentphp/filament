@@ -780,6 +780,52 @@ it('can set `linkProtocols()`', function (): void {
     expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
 });
 
+it('returns default link protocols before the editor is attached to a schema', function (): void {
+    expect(RichEditor::make('content')->getLinkProtocols())->toBe([
+        'http',
+        'https',
+        'ftp',
+        'ftps',
+        'mailto',
+        'tel',
+        'callto',
+        'sms',
+        'cid',
+        'xmpp',
+    ]);
+});
+
+it('inherits `linkProtocols()` from the rich content attribute', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
+});
+
+it('can override rich content attribute `linkProtocols()`', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content')
+                ->linkProtocols(['tel']),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['tel']);
+});
+
 it('can set `textColors()`', function (): void {
     $editor = RichEditor::make('content')
         ->textColors(['red' => '#ff0000', 'blue' => '#0000ff']);
