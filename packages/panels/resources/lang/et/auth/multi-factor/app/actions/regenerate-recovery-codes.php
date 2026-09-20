@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Või sisestage oma praegune parool',
+                'label' => 'Sisestage oma praegune parool',
 
                 'validation_attribute' => 'parool',
 

@@ -30,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Lub wprowadź swoje aktualne hasło',
+                'label' => 'Wprowadź swoje aktualne hasło',
 
                 'validation_attribute' => 'hasło',
 

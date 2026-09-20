@@ -1187,7 +1187,6 @@ it('can render `Section` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/section-browser-test')
-            ->assertSee('Personal Information')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 

@@ -11,6 +11,10 @@ return [
         'description' => 'Sigur doriți să nu mai folosiți aplicația de autentificare? Dezactivarea acesteia va elimina un nivel suplimentar de securitate din contul dumneavoastră.',
 
         'form' => [
+            'password' => [
+                'label' => 'Parola curentă',
+                'validation_attribute' => 'parola curentă',
+            ],
 
             'code' => [
 

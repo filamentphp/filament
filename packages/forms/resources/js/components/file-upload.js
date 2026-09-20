@@ -81,8 +81,12 @@ export default function fileUploadFormComponent({
     uploadProgressIndicatorPosition,
     uploadUsing,
 }) {
+    let isDestroyed = false
+
     return {
         fileKeyIndex: {},
+
+        form: null,
 
         pond: null,
 
@@ -102,6 +106,8 @@ export default function fileUploadFormComponent({
 
         isEditorOpenedForAspectRatio: false,
 
+        isProcessingFiles: false,
+
         editingFile: {},
 
         currentRatio: '',
@@ -115,11 +121,12 @@ export default function fileUploadFormComponent({
         isInitializing: false,
 
         async init() {
-            if (this.pond || this.isInitializing) {
+            if (isDestroyed || this.pond || this.isInitializing) {
                 return
             }
 
             this.isInitializing = true
+            this.form = this.$el.closest('form')
 
             // https://github.com/filamentphp/filament/issues/15394
             // https://github.com/filamentphp/filament/issues/16253
@@ -171,6 +178,14 @@ export default function fileUploadFormComponent({
 
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
+            const files = await this.getFiles()
+
+            if (isDestroyed) {
+                this.isInitializing = false
+
+                return
+            }
+
             this.pond = FilePond.create(this.$refs.input, {
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
@@ -205,7 +220,7 @@ export default function fileUploadFormComponent({
                     return false
                 },
                 credits: false,
-                files: await this.getFiles(),
+                files,
                 imageCropAspectRatio: automaticallyCropImagesAspectRatio,
                 imagePreviewHeight,
                 imageResizeTargetHeight: automaticallyResizeImagesHeight,
@@ -402,7 +417,13 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                this.pond.files = await this.getFiles()
+                const files = await this.getFiles()
+
+                if (isDestroyed || !this.pond) {
+                    return
+                }
+
+                this.pond.files = files
             })
 
             this.pond.on('reorderfiles', async (files) => {
@@ -422,6 +443,10 @@ export default function fileUploadFormComponent({
             })
 
             this.pond.on('initfile', async (fileItem) => {
+                if (isDestroyed) {
+                    return
+                }
+
                 if (!isDownloadable) {
                     return
                 }
@@ -434,6 +459,10 @@ export default function fileUploadFormComponent({
             })
 
             this.pond.on('initfile', async (fileItem) => {
+                if (isDestroyed) {
+                    return
+                }
+
                 if (!isOpenable) {
                     return
                 }
@@ -445,20 +474,22 @@ export default function fileUploadFormComponent({
                 this.insertOpenLink(fileItem)
             })
 
-            let isProcessingFiles = false
-
             this.pond.on('addfilestart', async (file) => {
+                if (isDestroyed) {
+                    return
+                }
+
                 this.error = null
 
                 if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
                     return
                 }
 
-                if (isProcessingFiles) {
+                if (this.isProcessingFiles) {
                     return
                 }
 
-                isProcessingFiles = true
+                this.isProcessingFiles = true
 
                 this.dispatchFormEvent('form-processing-started', {
                     message: uploadingMessage,
@@ -466,6 +497,10 @@ export default function fileUploadFormComponent({
             })
 
             const handleFileProcessing = async () => {
+                if (isDestroyed || !this.pond) {
+                    return
+                }
+
                 if (
                     this.pond
                         .getFiles()
@@ -480,11 +515,11 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                if (!isProcessingFiles) {
+                if (!this.isProcessingFiles) {
                     return
                 }
 
-                isProcessingFiles = false
+                this.isProcessingFiles = false
 
                 this.dispatchFormEvent('form-processing-finished')
             }
@@ -525,19 +560,27 @@ export default function fileUploadFormComponent({
         },
 
         destroy() {
+            isDestroyed = true
+            this.isInitializing = false
+
+            if (this.isProcessingFiles) {
+                this.isProcessingFiles = false
+                this.dispatchFormEvent('form-processing-finished')
+            }
+
             this.visibilityObserver?.disconnect()
             this.intersectionObserver?.disconnect()
 
             this.destroyEditor()
 
             if (this.pond) {
-                FilePond.destroy(this.$refs.input)
+                this.pond.destroy()
                 this.pond = null
             }
         },
 
         dispatchFormEvent(name, detail = {}) {
-            this.$el.closest('form')?.dispatchEvent(
+            this.form?.dispatchEvent(
                 new CustomEvent(name, {
                     composed: true,
                     cancelable: true,
@@ -832,6 +875,10 @@ export default function fileUploadFormComponent({
             }
 
             this.fixImageDimensions(file, (editingFile) => {
+                if (isDestroyed) {
+                    return
+                }
+
                 this.editingFile = editingFile
 
                 this.initEditor()
@@ -839,12 +886,19 @@ export default function fileUploadFormComponent({
                 const reader = new FileReader()
 
                 reader.onload = (event) => {
+                    if (isDestroyed) {
+                        return
+                    }
+
                     this.isEditorOpen = true
 
-                    setTimeout(
-                        () => this.editor.replace(event.target.result),
-                        200,
-                    )
+                    setTimeout(() => {
+                        if (isDestroyed) {
+                            return
+                        }
+
+                        this.editor.replace(event.target.result)
+                    }, 200)
                 }
 
                 reader.readAsDataURL(file)
@@ -903,6 +957,10 @@ export default function fileUploadFormComponent({
 
             croppedCanvas.toBlob(
                 (croppedImage) => {
+                    if (isDestroyed || !this.pond) {
+                        return
+                    }
+
                     const editingFileItem = this.pond
                         .getFiles()
                         .find(
@@ -917,6 +975,10 @@ export default function fileUploadFormComponent({
                     }
 
                     this.$nextTick(() => {
+                        if (isDestroyed || !this.pond) {
+                            return
+                        }
+
                         this.shouldUpdateState = false
 
                         let editingFileName = this.editingFile.name.slice(

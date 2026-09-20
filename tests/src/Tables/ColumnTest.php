@@ -456,7 +456,7 @@ describe('searching', function (): void {
             ->assertSet('tableColumnSearches', ['length' => '', 'sort' => '']);
     });
 
-    it('renders empty individual column search inputs for columns named after JavaScript array properties in the browser', function (): void {
+    it('renders, responsively hides, and clears individual column search inputs with associated labels for columns named after JavaScript array properties in the browser', function (): void {
         retry(10, function (): void {
             Artisan::call('filament:assets');
 
@@ -468,31 +468,76 @@ describe('searching', function (): void {
                 ->assertValue('.fi-ta-individual-search-cell-length input', '')
                 ->assertValue('.fi-ta-individual-search-cell-sort input', '')
                 ->assertValue('.fi-ta-individual-search-cell-title input', '')
-                ->assertNoSmoke()
-                ->assertNoAccessibilityIssues();
-
-            visit('/individual-column-search-browser-test')
-                ->inDarkMode()
-                ->assertNoAccessibilityIssues();
-        });
-    });
-
-    it('keeps an individual column search input empty after clearing it in the browser', function (): void {
-        retry(10, function (): void {
-            Artisan::call('filament:assets');
-
-            $this->actingAs(User::factory()->create());
-
-            Post::factory()->count(3)->create();
-
-            visit('/individual-column-search-browser-test')
+                ->resize(375, 812)
+                ->assertScript("(() => { const expectedLabels = { length: 'Length', sort: 'Sort', title: 'Title' }; return Object.entries(expectedLabels).every(([column, label]) => document.querySelector('.fi-ta-individual-search-cell-' + column + ' input').labels[0]?.textContent.trim() === label) })()", true)
                 ->fill('.fi-ta-individual-search-cell-length input', 'foo')
                 ->wait(1)
                 ->assertValue('.fi-ta-individual-search-cell-length input', 'foo')
                 ->fill('.fi-ta-individual-search-cell-length input', '')
                 ->wait(1)
                 ->assertValue('.fi-ta-individual-search-cell-length input', '')
+                ->resize(700, 812)
+                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", false)
+                ->resize(800, 812)
+                ->assertScript("document.querySelector('.fi-ta-individual-search-row').checkVisibility()", true)
                 ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/individual-column-search-browser-test')
+                ->inDarkMode()
+                ->resize(375, 812)
+                ->assertNoAccessibilityIssues();
+        });
+    });
+
+    it('removes table event listeners when the table is destroyed', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            $this->actingAs(User::factory()->create());
+
+            $page = visit('/individual-column-search-browser-test');
+
+            $page->script(<<<'JS'
+                window.tableScrollCount = 0
+                if (! window.originalScrollIntoView) {
+                    window.originalScrollIntoView = Element.prototype.scrollIntoView
+                    Element.prototype.scrollIntoView = function (...arguments) {
+                        if (this.matches?.('.fi-ta')) {
+                            window.tableScrollCount++
+                        }
+
+                        return window.originalScrollIntoView.apply(this, arguments)
+                    }
+                }
+                JS);
+
+            $page
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertMissing('.fi-ta')
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertPresent('.fi-ta')
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertMissing('.fi-ta')
+                ->click('[data-testid="toggle-table"]')
+                ->wait(1)
+                ->assertPresent('.fi-ta');
+
+            $page->script(<<<'JS'
+                window.tableScrollCount = 0
+                document.querySelector('.fi-ta').closest('[wire\\:id]').dispatchEvent(new CustomEvent('scrollToTopOfTable'))
+                JS);
+
+            $page
+                ->assertScript('window.tableScrollCount', 1)
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+
+            visit('/individual-column-search-browser-test')
+                ->inDarkMode()
                 ->assertNoAccessibilityIssues();
         });
     });
@@ -528,7 +573,6 @@ describe('searching', function (): void {
             visit('/column-manager-browser-test')
                 ->inDarkMode()
                 ->click('#second-table button[aria-label="Column manager"]')
-                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
                 ->assertNoAccessibilityIssues();
         });
     });

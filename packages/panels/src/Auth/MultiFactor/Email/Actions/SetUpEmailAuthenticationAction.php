@@ -17,12 +17,60 @@ use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use SensitiveParameter;
 
 class SetUpEmailAuthenticationAction
 {
     public static function make(EmailAuthentication $emailAuthentication): Action
     {
+        $rateLimitAuthenticationAttempt = static function (string $codeStatePath): void {
+            $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::auth()->id();
+
+            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                throw ValidationException::withMessages([
+                    $codeStatePath => __('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.rate_limited'),
+                ]);
+            }
+
+            RateLimiter::hit($rateLimitingKey);
+        };
+
+        $codeInput = OneTimeCodeInput::make('code')
+            ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.label'))
+            ->belowContent(Action::make('resend')
+                ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.label'))
+                ->link()
+                ->action(function () use ($emailAuthentication): void {
+                    /** @var HasEmailAuthentication $user */
+                    $user = Filament::auth()->user();
+
+                    if (! $emailAuthentication->sendCode($user)) {
+                        Notification::make()
+                            ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+
+                    Notification::make()
+                        ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
+                        ->success()
+                        ->send();
+                }))
+            ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.validation_attribute'))
+            ->required()
+            ->rule(function () use ($emailAuthentication): Closure {
+                return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($emailAuthentication): void {
+                    if ($emailAuthentication->verifyCode($value)) {
+                        return;
+                    }
+
+                    $fail(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.invalid'));
+                };
+            });
+
         return Action::make('setUpEmailAuthentication')
             ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.label'))
             ->color('primary')
@@ -42,51 +90,9 @@ class SetUpEmailAuthenticationAction
             ->modalHeading(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.description'))
             ->schema([
-                OneTimeCodeInput::make('code')
-                    ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.label'))
-                    ->belowContent(Action::make('resend')
-                        ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.label'))
-                        ->link()
-                        ->action(function () use ($emailAuthentication): void {
-                            /** @var HasEmailAuthentication $user */
-                            $user = Filament::auth()->user();
-
-                            if (! $emailAuthentication->sendCode($user)) {
-                                Notification::make()
-                                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
-                                    ->danger()
-                                    ->send();
-
-                                return;
-                            }
-
-                            Notification::make()
-                                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
-                                ->success()
-                                ->send();
-                        }))
-                    ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.validation_attribute'))
-                    ->required()
-                    ->rule(function () use ($emailAuthentication): Closure {
-                        return function (string $attribute, #[SensitiveParameter] $value, Closure $fail) use ($emailAuthentication): void {
-                            $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::auth()->id();
-
-                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
-                                $fail(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.rate_limited'));
-
-                                return;
-                            }
-
-                            RateLimiter::hit($rateLimitingKey);
-
-                            if ($emailAuthentication->verifyCode($value)) {
-                                return;
-                            }
-
-                            $fail(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.invalid'));
-                        };
-                    }),
+                $codeInput,
             ])
+            ->beforeFormValidated(fn () => $rateLimitAuthenticationAttempt($codeInput->getStatePath()))
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.actions.submit.label')))
             ->action(function (): void {

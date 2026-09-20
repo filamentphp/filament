@@ -117,6 +117,7 @@ export class Select {
         this.searchTimeout = null
         this.isSearching = false
         this.maxItemsMessageElement = null
+        this.badgesSortable = null
         // Version token to prevent race conditions when updating the selected display
         this.selectedDisplayVersion = 0
 
@@ -643,6 +644,12 @@ export class Select {
 
             // Commit if still current
             if (renderVersion === this.selectedDisplayVersion) {
+                if (
+                    !fragment.querySelector('.fi-select-input-value-badges-ctn')
+                ) {
+                    this.destroyBadgesSortable()
+                }
+
                 this.selectedDisplay.replaceChildren(fragment)
                 if (this.isOpen) {
                     this.deferPositionDropdown()
@@ -659,6 +666,7 @@ export class Select {
             fragment.appendChild(placeholderSpan)
 
             if (renderVersion === this.selectedDisplayVersion) {
+                this.destroyBadgesSortable()
                 this.selectedDisplay.replaceChildren(fragment)
 
                 // Remove the remove button since there's no selection
@@ -679,6 +687,7 @@ export class Select {
         this.addSingleSelectionDisplay(selectedLabel, fragment)
 
         if (renderVersion === this.selectedDisplayVersion) {
+            this.destroyBadgesSortable()
             this.selectedDisplay.replaceChildren(fragment)
         }
     }
@@ -881,7 +890,9 @@ export class Select {
                 event.stopPropagation()
             })
 
-            new Sortable(badgesContainer, {
+            this.destroyBadgesSortable()
+
+            this.badgesSortable = new Sortable(badgesContainer, {
                 animation: 150,
                 onEnd: () => {
                     const newState = []
@@ -897,6 +908,11 @@ export class Select {
                 },
             })
         }
+    }
+
+    destroyBadgesSortable() {
+        this.badgesSortable?.destroy()
+        this.badgesSortable = null
     }
 
     // Helper method to get label for single selection
@@ -2369,6 +2385,9 @@ export class Select {
     }
 
     destroy() {
+        this.selectedDisplayVersion++
+        this.destroyBadgesSortable()
+
         // Remove button click event listener
         if (this.selectButton && this.buttonClickListener) {
             this.selectButton.removeEventListener(

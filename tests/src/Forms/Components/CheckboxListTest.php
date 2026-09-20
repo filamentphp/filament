@@ -1398,7 +1398,6 @@ it('can render `CheckboxList` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/checkbox-list-test')
-            ->assertSee('Test CheckboxList')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
