@@ -71,7 +71,10 @@ describe('browser interactions', function (): void {
                         resolveLivewireComponentUsing: () => ({}),
                         $wire: {
                             mountedActions: [{}],
-                            __instance: { effects: {} },
+                            __instance: {
+                                effects: {},
+                                addCleanup: () => {},
+                            },
                         },
                     })
 
