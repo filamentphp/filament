@@ -43,6 +43,13 @@ class SectionBrowserTest extends Page
                             ->label('Email Address')
                             ->email(),
                     ]),
+
+                Section::make('Shipping Address')
+                    ->contained(false)
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('shipping_address'),
+                    ]),
             ])
             ->statePath('data');
     }
