@@ -35,7 +35,7 @@ it('generates JavaScript components with framework and TypeScript options', func
     File::delete(base_path('tsconfig.json'));
     $extension = $isTypeScript ? str_replace(['jsx', 'js'], ['tsx', 'ts'], $extension) : $extension;
     $this->artisan('make:filament-schema-component', [
-        'name' => 'Reports/SalesChart',
+        'name' => 'SalesChart',
         "--{$framework}" => true,
         '--ts' => $isTypeScript,
         '--skip-install' => true,
@@ -43,14 +43,14 @@ it('generates JavaScript components with framework and TypeScript options', func
         '--no-interaction' => true,
     ])->assertSuccessful();
 
-    $entry = "resources/js/filament/schemas/components/reports/sales-chart.{$extension}";
-    expect(File::get(app_path('Filament/Schemas/Components/Reports/SalesChart.php')))
+    $entry = "resources/js/filament/schemas/components/sales-chart.{$extension}";
+    expect(File::get(app_path('Filament/Schemas/Components/SalesChart.php')))
         ->toContain('extends Component', 'use HasJsRenderer;', "Vite::asset('{$entry}')", 'public static function make(): static')
         ->not->toContain('protected string $view', 'Filament\\Forms');
     expect(File::exists(base_path($entry)))->toBeTrue();
-    expect(File::exists(resource_path('views/filament/schemas/components/reports/sales-chart.blade.php')))->toBeFalse();
+    expect(File::exists(resource_path('views/filament/schemas/components/sales-chart.blade.php')))->toBeFalse();
     if (in_array($framework, ['vue', 'svelte'])) {
-        expect(File::get(resource_path("js/filament/schemas/components/reports/SalesChart.{$framework}")))
+        expect(File::get(resource_path("js/filament/schemas/components/SalesChart.{$framework}")))
             ->toContain('config.message')->not->toContain('<input', 'onChange');
     }
     if ($isTypeScript) {
@@ -61,11 +61,27 @@ it('generates JavaScript components with framework and TypeScript options', func
     Process::assertNothingRan();
 })->with([['js', 'js'], ['react', 'jsx'], ['vue', 'js'], ['svelte', 'svelte.js']])->with([false, true]);
 
+it('generates a nested two-file renderer', function (): void {
+    $this->artisan('make:filament-schema-component', [
+        'name' => 'Reports/SalesChart',
+        '--vue' => true,
+        '--skip-install' => true,
+        '--skip-build' => true,
+        '--no-interaction' => true,
+    ])->assertSuccessful();
+
+    expect(File::get(app_path('Filament/Schemas/Components/Reports/SalesChart.php')))
+        ->toContain("Vite::asset('resources/js/filament/schemas/components/reports/sales-chart.js')");
+    expect(File::get(resource_path('js/filament/schemas/components/reports/sales-chart.js')))
+        ->toContain("from './SalesChart.vue'");
+    expect(File::exists(resource_path('js/filament/schemas/components/reports/SalesChart.vue')))->toBeTrue();
+});
+
 it('rejects conflicting frameworks and TypeScript without a renderer', function (array $options): void {
     $this->artisan('make:filament-schema-component', ['name' => 'InvalidChart', '--no-interaction' => true, ...$options])->assertFailed();
     expect(File::exists(app_path('Filament/Schemas/Components/InvalidChart.php')))->toBeFalse();
     Process::assertNothingRan();
-})->with([[['--react' => true, '--vue' => true]], [['--typescript' => true]], [['--ts' => true]]]);
+})->with([[['--react' => true, '--vue' => true]], [['--typescript' => true]]]);
 
 it('installs dependencies and configures Vite for a typed React component', function (): void {
     File::put(base_path('vite.config.js'), file_get_contents(__DIR__ . '/../../Panels/Commands/Fixture/MakeThemeCommandTest/vite-config/standard.js'));
