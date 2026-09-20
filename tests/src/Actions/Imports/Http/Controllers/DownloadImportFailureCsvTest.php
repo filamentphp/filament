@@ -71,9 +71,7 @@ class DenyImportViewPolicy
         return false;
     }
 }
-
-function createImportForOwner(User $owner, string $importer = DownloadFailureTestImporter::class): Import
-{
+$createImportForOwner = function (User $owner, string $importer = DownloadFailureTestImporter::class): Import {
     return Import::create([
         'file_name' => 'import.csv',
         'file_path' => 'imports/import.csv',
@@ -82,76 +80,75 @@ function createImportForOwner(User $owner, string $importer = DownloadFailureTes
         'successful_rows' => 0,
         'user_id' => $owner->getKey(),
     ]);
-}
+};
 
-function signedImportFailureDownloadUrl(Import $import): string
-{
+$signedImportFailureDownloadUrl = function (Import $import): string {
     return URL::signedRoute('filament.imports.failed-rows.download', [
         'import' => $import,
     ], absolute: false);
-}
+};
 
-it('aborts with `401` when the user is not authenticated', function (): void {
+it('aborts with `401` when the user is not authenticated', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
     $owner = User::factory()->create();
 
-    $import = createImportForOwner($owner);
+    $import = $createImportForOwner($owner);
 
-    $this->get(signedImportFailureDownloadUrl($import))
+    $this->get($signedImportFailureDownloadUrl($import))
         ->assertStatus(401);
 });
 
-it('aborts with `403` when an authenticated non-owner has no `view` policy', function (): void {
+it('aborts with `403` when an authenticated non-owner has no `view` policy', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
     $owner = User::factory()->create();
     $nonOwner = User::factory()->create();
 
-    $import = createImportForOwner($owner);
+    $import = $createImportForOwner($owner);
 
     $this->actingAs($nonOwner)
-        ->get(signedImportFailureDownloadUrl($import))
+        ->get($signedImportFailureDownloadUrl($import))
         ->assertStatus(403);
 });
 
-it('streams with `200` when the authenticated owner has no `view` policy', function (): void {
+it('streams with `200` when the authenticated owner has no `view` policy', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
     $owner = User::factory()->create();
 
-    $import = createImportForOwner($owner);
+    $import = $createImportForOwner($owner);
 
     $this->actingAs($owner)
-        ->get(signedImportFailureDownloadUrl($import))
+        ->get($signedImportFailureDownloadUrl($import))
         ->assertStatus(200);
 });
 
-it('streams with `200` when a `view` policy allows a non-owner', function (): void {
+it('streams with `200` when a `view` policy allows a non-owner', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
     Gate::policy(Import::class, AllowImportViewPolicy::class);
 
     $owner = User::factory()->create();
     $nonOwner = User::factory()->create();
 
-    $import = createImportForOwner($owner);
+    $import = $createImportForOwner($owner);
 
     $this->actingAs($nonOwner)
-        ->get(signedImportFailureDownloadUrl($import))
+        ->get($signedImportFailureDownloadUrl($import))
         ->assertStatus(200);
 });
 
-it('aborts with `403` when a `view` policy denies the user', function (): void {
+it('aborts with `403` when a `view` policy denies the user', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
     Gate::policy(Import::class, DenyImportViewPolicy::class);
 
     $owner = User::factory()->create();
 
-    $import = createImportForOwner($owner);
+    $import = $createImportForOwner($owner);
 
     $this->actingAs($owner)
-        ->get(signedImportFailureDownloadUrl($import))
+        ->get($signedImportFailureDownloadUrl($import))
         ->assertStatus(403);
 });
 
-it('uses the importer\'s `getFailedRowsDownloader()` override', function (): void {
+it('uses the importer\'s `getFailedRowsDownloader()` override', function () use ($createImportForOwner, $signedImportFailureDownloadUrl): void {
     $owner = User::factory()->create();
 
-    $import = createImportForOwner($owner, importer: TestCustomDownloadFailureImporter::class);
+    $import = $createImportForOwner($owner, importer: TestCustomDownloadFailureImporter::class);
 
     $this->actingAs($owner)
-        ->get(signedImportFailureDownloadUrl($import))
+        ->get($signedImportFailureDownloadUrl($import))
         ->assertRedirect('https://example.com/import-failures.csv');
 });

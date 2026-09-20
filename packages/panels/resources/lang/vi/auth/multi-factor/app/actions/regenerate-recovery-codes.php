@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Hoặc, nhập mật khẩu hiện tại của bạn',
+                'label' => 'Nhập mật khẩu hiện tại của bạn',
 
                 'validation_attribute' => 'mật khẩu',
 

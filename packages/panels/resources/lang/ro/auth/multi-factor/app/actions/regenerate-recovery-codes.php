@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Sau, introduceți parola curentă',
+                'label' => 'Introduceți parola curentă',
 
                 'validation_attribute' => 'parolă',
 

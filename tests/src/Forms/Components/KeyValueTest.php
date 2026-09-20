@@ -513,103 +513,27 @@ describe('rendering', function (): void {
 });
 
 describe('browser interactions', function (): void {
-    it('can add a new row in the browser', function (): void {
+    it('supports row actions and configured controls in the browser', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
 
             visit('/key-value-test')
-                ->assertSee('Key Value Test')
-                ->assertSee('Basic Key-Value')
-                ->assertSee('Add row')
+                ->assertPresent('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
+                ->assertCount('[data-testid="basic-key-value"] tbody tr', 1)
                 ->click('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
+                ->assertCount('[data-testid="basic-key-value"] tbody tr', 2)
+                ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
+                ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
+                ->assertCount('[data-testid="reorderable-key-value"] .fi-fo-key-value-table-row-sortable-handle', 3)
+                ->assertMissing('[data-testid="not-addable-key-value"] .fi-fo-key-value-add-action-ctn')
+                ->assertMissing('[data-testid="not-deletable-key-value"] tbody .fi-has-action')
+                ->assertMissing('[data-testid="disabled-key-value"] .fi-fo-key-value-add-action-ctn')
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
 
             visit('/key-value-test')
                 ->inDarkMode()
                 ->assertNoAccessibilityIssues();
-        });
-    });
-
-    it('can click add row button multiple times in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/key-value-test')
-                ->assertSee('Reorderable Key-Value')
-                ->assertSee('Add row')
-                ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertSee('Key')
-                ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('does not show add button when `addable(false)` in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/key-value-test')
-                ->assertSee('Not Addable')
-                ->assertMissing('[data-testid="not-addable-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('does not show delete button when `deletable(false)` in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/key-value-test')
-                ->assertSee('Not Deletable')
-                ->assertMissing('[data-testid="not-deletable-key-value"] tbody .fi-has-action')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('shows custom add action label in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/key-value-test')
-                ->assertSee('Custom Labels')
-                ->assertSee('Add New Setting')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('displays custom key and value labels in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/key-value-test')
-                ->assertSee('Setting Name')
-                ->assertSee('Setting Value')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('does not show add button when component is disabled in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/key-value-test')
-                ->assertSee('Disabled Key-Value')
-                ->assertMissing('[data-testid="disabled-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertNoSmoke();
-        });
-    });
-
-    it('shows reorder handles when `reorderable()` in the browser', function (): void {
-        retry(10, function (): void {
-            $this->actingAs(User::factory()->create());
-
-            visit('/key-value-test')
-                ->assertSee('Reorderable Key-Value')
-                ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
-                ->assertSee('Key')
-                ->assertPresent('[data-testid="reorderable-key-value"] .fi-fo-key-value-table-row-sortable-handle')
-                ->assertNoSmoke();
         });
     });
 });

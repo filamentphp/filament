@@ -665,16 +665,12 @@ it('can add and delete blocks in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/builder-test')
-            ->assertSee('Builder Test')
-            ->assertSee('Content')
             ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
             ->click('text=Add to content')
-            ->assertSee('Paragraph')
             ->click('text=Paragraph')
             ->wait(1)
             ->assertPresent('[data-testid="builder"] .fi-fo-builder-item')
             ->click('text=Add to content')
-            ->assertSee('Heading')
             ->click('text=Heading')
             ->wait(1)
             ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)

@@ -563,9 +563,6 @@ it('can render and type in `TextInput` in the browser', function (): void {
         $this->actingAs(User::factory()->create());
 
         $page = visit('/text-input-test')
-            ->assertSee('Name')
-            ->assertSee('Email')
-            ->assertSee('Password')
             ->type('[data-testid="text-input"] input', 'John Doe');
 
         $page->script("Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: async (value) => { window.__copiedText = value } } })");

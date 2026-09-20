@@ -28,7 +28,7 @@ return [
 
             'password' => [
 
-                'label' => 'Eller, skriv inn ditt nåværende passord',
+                'label' => 'Skriv inn det nåværende passordet ditt',
 
                 'validation_attribute' => 'passord',
 

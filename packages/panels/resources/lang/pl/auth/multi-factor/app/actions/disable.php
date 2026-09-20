@@ -11,6 +11,10 @@ return [
         'description' => 'Czy na pewno chcesz przestać używać aplikacji uwierzytelniającej? Wyłączenie jej usunie dodatkowe zabezpieczenie z Twojego konta.',
 
         'form' => [
+            'password' => [
+                'label' => 'Aktualne hasło',
+                'validation_attribute' => 'aktualne hasło',
+            ],
 
             'code' => [
 

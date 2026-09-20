@@ -54,6 +54,13 @@ it('returns null for getImageCropAspectRatio by default')
 
 **Always update tests when making changes.** For UI components, add browser tests using Pest Browser with `visit()`. Always call `assertNoAccessibilityIssues()` in both light and dark modes (`->inDarkMode()`).
 
+- Keep inexpensive non-browser coverage of supported configuration and rendering paths, including setters, getters, `Closure` evaluation, and successful rendering.
+- In browser tests, do not assert exact translated copy, CSS classes, inline styles, utility classes, incidental HTML, or computed visual styling unless that output proves the behavior under test.
+- Prefer stable semantic selectors or `data-testid` hooks for browser interactions. Do not use presentation classes or visible copy merely as readiness checks.
+- Before adding a browser test, search the file for the same route and setup. Combine related assertions into one coherently named test and reuse the page; use another visit only when isolation or a state reset is required.
+- Keep light- and dark-mode accessibility checks for the same scenario together. Do not repeat database, authentication, or browser setup solely to split those checks into separate tests.
+- Keep each test focused on one behavior and each test file focused on its owning component or feature. Separate scenarios only when combining them would obscure the behavior or introduce order-dependent state.
+
 ```bash
 composer test              # Run all tests (SQLite + commands + PHPStan)
 composer test:sqlite       # Run tests with SQLite
@@ -149,6 +156,12 @@ Traits in `Concerns/` directories: `Can*` (capabilities), `Has*` (properties).
 Interfaces in `Contracts/` directories.
 
 ## Coding Standards
+
+### JavaScript lifecycle cleanup
+
+- Alpine components and directives must release resources they own in `destroy()` or `cleanup()`, including listeners on surviving ancestors or global objects, observers, animation loops, and third-party instances. Listeners attached only to removed subtree elements do not need separate cleanup.
+- Guard asynchronous initialization and callbacks when they could create surviving resources or cause observable stale behavior after destruction. Use the third-party instance's real teardown API, verified against its source when necessary.
+- Do not add cleanup solely for short-lived timers; cancel or guard them when their callback could still cause stale behavior after destruction.
 
 ### PHPDoc
 
