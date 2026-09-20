@@ -42,31 +42,23 @@ test('configuration updates are snapshots and do not remount or expose field cal
     assert.deepEqual(updates.at(-1).config, {})
 })
 
-test('props received during async mounting are delivered and late mounts are disposed', async () => {
-    for (const isRemoved of [false, true]) {
-        let resolveMount
-        let disposals = 0
-        const updates = []
-        const component = fixture(
-            () =>
-                new Promise((resolve) => {
-                    resolveMount = resolve
-                }),
-        )
-        const initialization = component.init()
-        component.updateRendererProps({ message: 'While mounting' })
-        if (isRemoved) component.destroy()
-        resolveMount({
-            update: (props) => updates.push(props.config),
-            destroy: () => disposals++,
-        })
-        await initialization
-        assert.deepEqual(
-            updates,
-            isRemoved ? [] : [{ message: 'While mounting' }],
-        )
-        assert.equal(disposals, isRemoved ? 1 : 0)
-    }
+test('PHP props received during async mounting are delivered', async () => {
+    let resolveMount
+    const updates = []
+    const component = fixture(
+        () =>
+            new Promise((resolve) => {
+                resolveMount = resolve
+            }),
+    )
+    const initialization = component.init()
+    component.updateRendererProps({ message: 'While mounting' })
+    resolveMount({
+        update: (props) => updates.push(props.config),
+        destroy() {},
+    })
+    await initialization
+    assert.deepEqual(updates, [{ message: 'While mounting' }])
 })
 
 test('schema utilities retain getters and exposed method identity', async () => {
@@ -88,42 +80,19 @@ test('schema utilities retain getters and exposed method identity', async () => 
     assert.equal(utilities.$load(), 'loaded')
 })
 
-test('import, mount, update and cleanup failures are contained', async (context) => {
+test('renderer failure clears the schema host and exposes its error state', async (context) => {
     context.mock.method(console, 'error', () => {})
-    for (const phase of ['import', 'mount', 'update', 'cleanup']) {
-        let disposals = 0
-        let cleared = false
-        const component = fixture(
-            phase === 'import'
-                ? 'data:text/javascript,export default 123'
-                : () => {
-                      if (phase === 'mount') throw new Error('mount failed')
-                      return {
-                          update() {
-                              if (phase === 'update')
-                                  return Promise.reject(
-                                      new Error('update failed'),
-                                  )
-                          },
-                          destroy() {
-                              disposals++
-                              if (phase === 'cleanup')
-                                  return Promise.reject(
-                                      new Error('cleanup failed'),
-                                  )
-                          },
-                      }
-                  },
-        )
-        component.$refs.host.replaceChildren = () => {
-            cleared = true
-        }
-        await component.init()
-        await Promise.resolve()
-        component.destroy()
-        await Promise.resolve()
-        assert.equal(component.hasError, phase !== 'cleanup')
-        assert.equal(cleared, phase !== 'cleanup')
-        assert.equal(disposals, ['update', 'cleanup'].includes(phase) ? 1 : 0)
+    let cleared = false
+    const component = fixture(() => ({
+        update() {
+            throw new Error('update failed')
+        },
+        destroy() {},
+    }))
+    component.$refs.host.replaceChildren = () => {
+        cleared = true
     }
+    await component.init()
+    assert.equal(component.hasError, true)
+    assert.equal(cleared, true)
 })

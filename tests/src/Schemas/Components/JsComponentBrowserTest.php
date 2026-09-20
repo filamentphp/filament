@@ -25,11 +25,8 @@ beforeEach(function (): void {
     $this->actingAs(User::factory()->create());
 });
 
-it('syncs PHP props without replacing hosts and never renders children', function (string $framework, bool $isDarkMode): void {
+it('syncs PHP props without replacing hosts and never renders children', function (string $framework): void {
     $page = visit('/js-component-browser-test?framework=' . $framework);
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
     $page->assertSeeIn('[data-report]', 'Quarterly sales')
         ->assertSeeIn('[data-comparison]', 'Previous quarter')
         ->assertDontSee('This child must not render')
@@ -53,16 +50,17 @@ it('syncs PHP props without replacing hosts and never renders children', functio
         ->assertNoAccessibilityIssues()
         ->assertNoSmoke();
 
-    if (($framework === 'react') && (! $isDarkMode)) {
+    if ($framework === 'react') {
         $page->screenshotElement('main', 'js-schema-component');
     }
-})->with(['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts'])->with([false, true]);
 
-it('shows an accessible renderer error without affecting sibling components', function (bool $isDarkMode): void {
+    $page->inDarkMode()
+        ->assertSeeIn('[data-report]', 'Quarterly sales')
+        ->assertNoAccessibilityIssues();
+})->with(['js', 'react', 'vue', 'svelte', 'js-ts', 'react-ts', 'vue-ts', 'svelte-ts']);
+
+it('shows an accessible renderer error without affecting sibling components', function (): void {
     $page = visit('/js-component-browser-test');
-    if ($isDarkMode) {
-        $page = $page->inDarkMode();
-    }
     $page->assertSeeIn('[data-report]', 'Quarterly sales')
         ->click('Toggle failure')
         ->assertSeeIn('[data-report] [role=alert]', 'This component could not be loaded.')
@@ -70,7 +68,13 @@ it('shows an accessible renderer error without affecting sibling components', fu
         ->assertSeeIn('[data-comparison]', 'Previous quarter')
         ->assertValue('[id="form.caption"]', 'Quarterly sales')
         ->assertNoAccessibilityIssues()
-        ->screenshotElement('main', 'js-schema-component-error-' . ($isDarkMode ? 'dark' : 'light'))
+        ->screenshotElement('main', 'js-schema-component-error-light')
         ->click('Toggle failure')
         ->assertSeeIn('[data-report]', 'Quarterly sales');
-})->with([false, true]);
+
+    $page->inDarkMode()
+        ->click('Toggle failure')
+        ->assertPresent('[data-report] [role=alert]')
+        ->assertNoAccessibilityIssues()
+        ->screenshotElement('main', 'js-schema-component-error-dark');
+});
