@@ -10,6 +10,10 @@ export default (Alpine) => {
 
         transitionEasing: null,
 
+        closeTimeout: null,
+
+        durationTimeout: null,
+
         unsubscribeLivewireHook: null,
 
         init() {
@@ -27,7 +31,7 @@ export default (Alpine) => {
                 notification.duration &&
                 notification.duration !== 'persistent'
             ) {
-                setTimeout(() => {
+                this.durationTimeout = setTimeout(() => {
                     if (!this.$el.matches(':hover')) {
                         this.close()
 
@@ -160,6 +164,9 @@ export default (Alpine) => {
         },
 
         close(isImmediate = false) {
+            clearTimeout(this.closeTimeout)
+            clearTimeout(this.durationTimeout)
+
             const dispatchClosedEvent = () =>
                 window.dispatchEvent(
                     new CustomEvent('notificationClosed', {
@@ -188,7 +195,10 @@ export default (Alpine) => {
 
             this.isShown = false
 
-            setTimeout(dispatchClosedEvent, this.transitionDuration)
+            this.closeTimeout = setTimeout(
+                dispatchClosedEvent,
+                this.transitionDuration,
+            )
         },
 
         markAsRead() {
@@ -212,6 +222,8 @@ export default (Alpine) => {
         },
 
         destroy() {
+            clearTimeout(this.closeTimeout)
+            clearTimeout(this.durationTimeout)
             this.unsubscribeLivewireHook?.()
         },
     }))

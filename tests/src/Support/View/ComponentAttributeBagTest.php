@@ -267,6 +267,27 @@ describe('`gridColumn()`', function (): void {
             ->toContain('--col-start-md: 2')
             ->toContain('--col-order-sm: 1');
     });
+
+    it('renders a column order reset at a larger breakpoint using `0`', function (BaseComponentAttributeBag $bag): void {
+        $bag = $bag->gridColumn(order: [
+            'default' => 1,
+            'sm' => null,
+            'md' => null,
+            'lg' => 0,
+            'xl' => null,
+            '2xl' => null,
+        ]);
+
+        expect($bag->get('class'))
+            ->toContain('fi-grid-col-order')
+            ->toContain('lg:fi-grid-col-order');
+        expect($bag->get('style'))
+            ->toContain('--col-order-default: 1')
+            ->toContain('--col-order-lg: 0');
+    })->with([
+        'optimized attribute bag' => new ComponentAttributeBag,
+        'base attribute bag macro' => new BaseComponentAttributeBag,
+    ]);
 });
 
 describe('macros via `__call` / `hasMacro`', function (): void {
