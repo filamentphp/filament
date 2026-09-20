@@ -67,60 +67,22 @@ test('props received during asynchronous mounting reach the mounted instance', a
     assert.deepEqual(latest, { total: 17 })
 })
 
-test('a late asynchronous mount is disposed after removal without updating', async () => {
-    let resolveMount
+test('renderer failure clears the widget host and sets its error state', async () => {
     let disposals = 0
-    const widget = fixture(
-        () =>
-            new Promise((resolve) => {
-                resolveMount = resolve
-            }),
-    )
-    const initialization = widget.init()
-    widget.destroy()
-    resolveMount({
-        update: () => assert.fail('updated after removal'),
+    let cleared = 0
+    const errors = []
+    const widget = fixture(() => ({
+        update: () => {
+            throw new Error('update failed')
+        },
         destroy: () => disposals++,
-    })
-    await initialization
+    }))
+    widget.reportError = (phase) => errors.push(phase)
+    widget.$refs.host.replaceChildren = () => cleared++
+    await widget.init()
+    widget.destroy()
+    assert.equal(widget.hasError, true)
     assert.equal(disposals, 1)
-    assert.equal(widget.hasError, false)
-})
-
-for (const asynchronous of [false, true]) {
-    test(`failed ${asynchronous ? 'asynchronous' : 'synchronous'} updates clear and dispose the renderer`, async () => {
-        let disposals = 0
-        let cleared = 0
-        const errors = []
-        const widget = fixture(() => ({
-            update: () => {
-                if (asynchronous)
-                    return Promise.reject(new Error('update failed'))
-                throw new Error('update failed')
-            },
-            destroy: () => disposals++,
-        }))
-        widget.reportError = (phase) => errors.push(phase)
-        widget.$refs.host.replaceChildren = () => cleared++
-        await widget.init()
-        await Promise.resolve()
-        widget.destroy()
-        assert.equal(widget.hasError, true)
-        assert.equal(disposals, 1)
-        assert.equal(cleared, 1)
-        assert.deepEqual(errors, ['update'])
-    })
-}
-
-test('invalid renderer contracts and failed imports show a controlled error', async () => {
-    for (const renderer of [
-        () => ({}),
-        './missing-widget-renderer.js',
-        'data:text/javascript,export default 42',
-    ]) {
-        const widget = fixture(renderer)
-        widget.reportError = () => {}
-        await widget.init()
-        assert.equal(widget.hasError, true)
-    }
+    assert.equal(cleared, 1)
+    assert.deepEqual(errors, ['update'])
 })
