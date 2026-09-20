@@ -920,7 +920,7 @@ it('returns `false` for `hasMentions()` by default', function (): void {
     expect($editor->hasMentions())->toBeFalse();
 });
 
-describe('mentions for JavaScript', function (): void {
+describe('mention options', function (): void {
     // JavaScript objects order integer-like keys in ascending numeric order, so mention
     // items must be sent as an ordered list of `id` and `label` pairs instead of an
     // object keyed by ID, otherwise the order of the items is silently discarded.
@@ -945,7 +945,7 @@ describe('mentions for JavaScript', function (): void {
         ]);
     });
 
-    it('formats `items()` with sequential IDs as a list of `id` and `label` pairs', function (): void {
+    it('preserves sequential IDs from `items()` in `getMentionsForJs()`', function (): void {
         $mentions = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -966,7 +966,7 @@ describe('mentions for JavaScript', function (): void {
         ]);
     });
 
-    it('preserves the order of results from `getMentionSearchResultsForJs()`', function (): void {
+    it('preserves result order in `getMentionSearchResultsForJs()`', function (): void {
         $results = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
@@ -990,7 +990,7 @@ describe('mentions for JavaScript', function (): void {
         ]);
     });
 
-    it('returns an empty array from `getMentionSearchResultsForJs()` when there is no provider', function (): void {
+    it('returns an empty array from `getMentionSearchResultsForJs()` when no mention providers are configured', function (): void {
         $results = Schema::make(Livewire::make())
             ->statePath('data')
             ->components([

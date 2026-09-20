@@ -1126,7 +1126,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                     'char' => $provider->getChar(),
                     'extraAttributes' => $provider->getExtraAttributes(),
                     'isSearchable' => $provider->hasSearchResultsUsing(),
-                    'items' => static::formatMentionItemsForJs($provider->getItems()),
+                    'items' => $this->transformMentionItemsForJs($provider->getItems()),
                     'noOptionsMessage' => $provider->getNoItemsMessage(),
                     'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
                     'searchPrompt' => $provider->getSearchPrompt(),
@@ -1156,7 +1156,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
             return [];
         }
 
-        return static::formatMentionItemsForJs($provider->getSearchResults($search ?? ''));
+        return $this->transformMentionItemsForJs($provider->getSearchResults($search ?? ''));
     }
 
     /**
@@ -1167,10 +1167,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      * @param  array<string, string>  $items
      * @return array<int, array{id: string, label: string}>
      */
-    protected static function formatMentionItemsForJs(array $items): array
+    protected function transformMentionItemsForJs(array $items): array
     {
         return array_map(
-            fn (string $label, string $id): array => ['id' => $id, 'label' => $label],
+            static fn (string $label, string $id): array => ['id' => $id, 'label' => $label],
             $items,
             array_keys($items),
         );
