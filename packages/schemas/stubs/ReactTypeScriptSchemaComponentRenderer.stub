@@ -2,15 +2,15 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import type { JsComponentProps, JsComponentRenderer } from '@filament/schemas/js-component'
 
-type Config = { message?: string }
+type Configuration = { message?: string }
 
-function {{ componentName }}(props: JsComponentProps<Config>) {
-    return <p>{props.config.message ?? 'Your component is ready.'}</p>
+function {{ componentName }}(props: JsComponentProps<Configuration>) {
+    return <p>{props.configuration.message ?? 'Your component is ready.'}</p>
 }
 
-const mount{{ componentName }}: JsComponentRenderer<Config> = ({ host, props: initialProps }) => {
+const mount{{ componentName }}: JsComponentRenderer<Configuration> = ({ host, props: initialProps }) => {
     const root = createRoot(host)
-    const update = (props: JsComponentProps<Config>) => root.render(<{{ componentName }} {...props} />)
+    const update = (props: JsComponentProps<Configuration>) => root.render(<{{ componentName }} {...props} />)
 
     update(initialProps)
 

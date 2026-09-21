@@ -12,7 +12,7 @@ class JsComponent extends Component
     protected string | RawJs | Closure | null $renderer = null;
 
     /** @var array<string, mixed> | Closure | null */
-    protected array | Closure | null $rendererProps = null;
+    protected array | Closure | null $rendererConfiguration = null;
 
     public static function make(): static
     {
@@ -22,18 +22,18 @@ class JsComponent extends Component
         return $static;
     }
 
-    /** @param array<string, mixed> | Closure | null $props */
-    public function rendererProps(array | Closure | null $props): static
+    /** @param array<string, mixed> | Closure | null $configuration */
+    public function rendererConfiguration(array | Closure | null $configuration): static
     {
-        $this->rendererProps = $props;
+        $this->rendererConfiguration = $configuration;
 
         return $this;
     }
 
     /** @return array<string, mixed> */
-    public function getRendererProps(): array
+    public function getRendererConfiguration(): array
     {
-        return $this->evaluate($this->rendererProps) ?? [];
+        return $this->evaluate($this->rendererConfiguration) ?? [];
     }
 
     public function renderer(string | RawJs | Closure | null $renderer): static

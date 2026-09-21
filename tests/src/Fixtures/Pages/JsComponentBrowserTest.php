@@ -40,12 +40,12 @@ class JsComponentBrowserTest extends Page
             TextInput::make('caption')->live(),
             JsComponent::make()->key('report')
                 ->renderer($this->failed ? RawJs::make('() => { throw new Error("Expected test failure") }') : FilamentAsset::getScriptSrc('component-' . $this->framework, 'tests/js-components'))
-                ->rendererProps(fn (Get $get): array => $this->cleared ? [] : ['message' => $get('caption')])
+                ->rendererConfiguration(fn (Get $get): array => $this->cleared ? [] : ['message' => $get('caption')])
                 ->extraAttributes(['data-report' => 'true'])
                 ->schema([Text::make('This child must not render')]),
             JsComponent::make()->key('comparison')
                 ->renderer(FilamentAsset::getScriptSrc('component-' . $this->framework, 'tests/js-components'))
-                ->rendererProps(['message' => 'Previous quarter'])
+                ->rendererConfiguration(['message' => 'Previous quarter'])
                 ->extraAttributes(['data-comparison' => 'true']),
         ]);
     }

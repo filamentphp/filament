@@ -11,7 +11,7 @@ trait HasJsRenderer
     abstract public function getRenderer(): string | RawJs | null;
 
     /** @return array<string, mixed> */
-    public function getRendererProps(): array
+    public function getRendererConfiguration(): array
     {
         return [];
     }
@@ -19,29 +19,29 @@ trait HasJsRenderer
     public function toEmbeddedHtml(): string
     {
         $renderer = $this->getRenderer();
-        $rendererProps = $this->getRendererProps();
-        $configuration = ['id' => $this->getId()];
+        $rendererConfiguration = $this->getRendererConfiguration();
+        $componentConfiguration = ['id' => $this->getId()];
 
         // Keep `x-data` stable when props change. Only the keyed props node is
         // replaced, so its `x-init` updates the renderer without remounting it.
         ob_start(); ?>
 
         <div
-            wire:key="<?= e($this->getLivewireKey() . '.' . md5(json_encode($configuration) . $renderer)) ?>"
+            wire:key="<?= e($this->getLivewireKey() . '.' . md5(json_encode($componentConfiguration) . $renderer)) ?>"
             x-load
             x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('js-component', 'filament/schemas')) ?>"
             x-data="jsSchemaComponent({
                 renderer: <?= e((string) Js::from($renderer)) ?>,
-                rendererProps: JSON.parse($el.querySelector('[data-renderer-props]').dataset.rendererProps),
-                configuration: <?= Js::from($configuration) ?>,
+                rendererConfiguration: JSON.parse($el.querySelector('[data-renderer-configuration]').dataset.rendererConfiguration),
+                componentConfiguration: <?= Js::from($componentConfiguration) ?>,
             })"
             <?= $this->getExtraAttributeBag()->toHtml() ?>
         >
             <span
                 hidden
-                wire:key="<?= e($this->getLivewireKey() . '.renderer-props.' . md5(json_encode($rendererProps))) ?>"
-                data-renderer-props="<?= e(json_encode($rendererProps)) ?>"
-                x-init="updateRendererProps(JSON.parse($el.dataset.rendererProps))"
+                wire:key="<?= e($this->getLivewireKey() . '.renderer-configuration.' . md5(json_encode($rendererConfiguration))) ?>"
+                data-renderer-configuration="<?= e(json_encode($rendererConfiguration)) ?>"
+                x-init="updateRendererConfiguration(JSON.parse($el.dataset.rendererConfiguration))"
             ></span>
             <div wire:ignore x-ref="host"></div>
             <p x-cloak x-show="hasError" role="alert">

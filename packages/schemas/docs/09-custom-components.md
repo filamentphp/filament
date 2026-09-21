@@ -578,7 +578,7 @@ use Illuminate\Support\Facades\Vite;
 JsComponent::make()
     ->key('sales-summary')
     ->renderer(Vite::asset('resources/js/components/sales-summary.jsx'))
-    ->rendererProps(['message' => 'Sales increased by 12% this quarter.'])
+    ->rendererConfiguration(['message' => 'Sales increased by 12% this quarter.'])
 ```
 
 Give each instance a unique `key()`, especially when using the same renderer more than once. Filament loads the module when the component initializes. Each component gets its own mounted instance, even when the browser has already loaded the module for another component.
@@ -587,7 +587,7 @@ Give each instance a unique `key()`, especially when using the same renderer mor
 
 ### Writing a renderer
 
-Each renderer exports a mount function that receives `host`, `props`, and schema `utilities`. Render inside `host`, then return `update(props)` to receive changes and `destroy()` to clean up. Both initial and updated props contain `config`, your PHP configuration, and `id`, the component's nullable ID. There are no field-specific `value`, `onChange()`, or `onBlur()` props.
+Each renderer exports a mount function that receives `host`, `props`, and schema `utilities`. Render inside `host`, then return `update(props)` to receive changes and `destroy()` to clean up. Both initial and updated props contain `configuration`, your PHP configuration, and `id`, the component's nullable ID. There are no field-specific `value`, `onChange()`, or `onBlur()` props.
 
 If you create the files manually, follow the [Vite module setup](../advanced/assets#building-lazy-loaded-es-modules) to compile the entry file. The examples leave styling to your application; see [registering CSS files](../advanced/assets#registering-css-files).
 
@@ -600,7 +600,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 function SalesSummary(props) {
-    return <p>{props.config.message}</p>
+    return <p>{props.configuration.message}</p>
 }
 
 export default function mountSalesSummary({ host, props: initialProps }) {
@@ -621,11 +621,11 @@ Create `resources/js/components/SalesSummary.vue`:
 <script setup>
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps(['id', 'config'])
+const props = defineProps(['id', 'configuration'])
 </script>
 
 <template>
-    <p>{{ props.config.message }}</p>
+    <p>{{ props.configuration.message }}</p>
 </template>
 ```
 
@@ -658,10 +658,10 @@ For Svelte 5, create `resources/js/components/SalesSummary.svelte`:
 
 ```svelte
 <script>
-    let { config } = $props()
+    let { configuration } = $props()
 </script>
 
-<p>{config.message}</p>
+<p>{configuration.message}</p>
 ```
 
 Create `resources/js/components/sales-summary.svelte.js` to mount it. The `.svelte.js` extension allows the Svelte compiler to process `$state`. Use this entry's URL in `renderer()`:
@@ -689,7 +689,7 @@ Create `resources/js/components/sales-summary.js`:
 export default function mountSalesSummary({ host, props: initialProps }) {
     const paragraph = document.createElement('p')
     const update = (props) => {
-        paragraph.textContent = props.config.message ?? ''
+        paragraph.textContent = props.configuration.message ?? ''
     }
 
     update(initialProps)
@@ -701,9 +701,9 @@ export default function mountSalesSummary({ host, props: initialProps }) {
 
 ### Passing configuration from PHP
 
-Use `rendererProps()` to supply JSON-serializable data intended for the browser, not secrets. Read it from `props.config`. Configuration is separate from built-in props such as `id`; modifying it in JavaScript does not write back to PHP.
+Use `rendererConfiguration()` to supply JSON-serializable data intended for the browser, not secrets. Read it from `props.configuration`. Configuration is separate from built-in props such as `id`; modifying it in JavaScript does not write back to PHP.
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `rendererProps()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `rendererConfiguration()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 For example, configure your renderer using another field's state:
 
@@ -715,14 +715,14 @@ use Illuminate\Support\Facades\Vite;
 JsComponent::make()
     ->key('sales-summary')
     ->renderer(Vite::asset('resources/js/components/sales-summary.jsx'))
-    ->rendererProps(static fn (Get $get): array => [
+    ->rendererConfiguration(static fn (Get $get): array => [
         'message' => $get('summary'),
     ])
 ```
 
-When the component renders on the server, Filament reevaluates the closure and passes changed configuration to `update(props)`. This preserves the mounted component and its local state. A deferred edit reaches `props.config` on the next server render; use [`live()`](../forms/overview#the-basics-of-reactivity) on the source field if you need it sooner. A request that skips rendering this component does not update its PHP-derived props.
+When the component renders on the server, Filament reevaluates the closure and passes changed configuration to `update(props)`. This preserves the mounted component and its local state. A deferred edit reaches `props.configuration` on the next server render; use [`live()`](../forms/overview#the-basics-of-reactivity) on the source field if you need it sooner. A request that skips rendering this component does not update its PHP-derived props.
 
-Treat configuration as immutable. Pass `null` to `rendererProps()` to clear it. For a reusable component using `HasJsRenderer`, override `getRendererProps(): array` instead; its default is `[]`.
+Treat configuration as immutable. Pass `null` to `rendererConfiguration()` to clear it. For a reusable component using `HasJsRenderer`, override `getRendererConfiguration(): array` instead; its default is `[]`.
 
 ### Accessing schema utilities
 
@@ -763,24 +763,24 @@ Filament includes declarations in its Composer package, without a JavaScript run
 }
 ```
 
-Use `JsComponentRenderer<Config, Methods>` to type your PHP configuration and exposed methods:
+Use `JsComponentRenderer<Configuration, Methods>` to type your PHP configuration and exposed methods:
 
 ```ts
 import type { JsComponentRenderer } from '@filament/schemas/js-component'
 
-type Config = { message: string }
+type Configuration = { message: string }
 interface Methods {
     $getChartData(argumentsObject: { dateRange: string }): Promise<number[]>
 }
 
-const mountSalesSummary: JsComponentRenderer<Config, Methods> = ({ host, props, utilities }) => {
+const mountSalesSummary: JsComponentRenderer<Configuration, Methods> = ({ host, props, utilities }) => {
     const paragraph = document.createElement('p')
-    paragraph.textContent = props.config.message
+    paragraph.textContent = props.configuration.message
     host.append(paragraph)
 
     return {
         update(nextProps) {
-            paragraph.textContent = nextProps.config.message
+            paragraph.textContent = nextProps.configuration.message
         },
         destroy() {
             paragraph.remove()
@@ -801,13 +801,13 @@ If you mix frameworks in one application, use separate TypeScript configurations
 
 ### Synchronizing and disposing renderers
 
-Return `update(props)` and `destroy()` from your mount function, or return a promise for that object. PHP prop changes update the existing instance. Removal calls `destroy()`. A renderer that finishes initializing after removal is immediately destroyed. Changes to the renderer URL or component ID remount the renderer; changes to `rendererProps()` update it in place.
+Return `update(props)` and `destroy()` from your mount function, or return a promise for that object. PHP prop changes update the existing instance. Removal calls `destroy()`. A renderer that finishes initializing after removal is immediately destroyed. Changes to the renderer URL or component ID remount the renderer; changes to `rendererConfiguration()` update it in place.
 
 Clean up subscriptions, event listeners, and framework roots in `destroy()`, including when the host is already detached. Stop DOM work synchronously even if cleanup returns a promise. Filament does not serialize updates or wait for asynchronous cleanup before remounting; order or cancel asynchronous work inside your renderer.
 
 #### Understanding the boundary with Blade and Alpine
 
-Render only inside `host`, whose contents are ignored by Livewire. Do not change its parent or siblings. JavaScript components do not render their child schemas, including children passed to `schema()`. Keep child components and server-rendered actions outside this component. PHP records, operations, closures, and Blade slots are not automatically available in the host; compute serializable data in `rendererProps()` instead.
+Render only inside `host`, whose contents are ignored by Livewire. Do not change its parent or siblings. JavaScript components do not render their child schemas, including children passed to `schema()`. Keep child components and server-rendered actions outside this component. PHP records, operations, closures, and Blade slots are not automatically available in the host; compute serializable data in `rendererConfiguration()` instead.
 
 Alpine directives and magic properties are not injected into React, Vue, or Svelte templates. Use the framework's lifecycle and event APIs, native DOM events, or the supplied utilities. Access to `$wire` does not automatically make uploads, actions, modals, or sibling state reactive in your framework. Filament and Livewire still own validation, authorization, and HTTP responses.
 
@@ -825,7 +825,7 @@ Reload the page after correcting the implementation. If mounting allocates resou
 
 ### Building reusable plugin components
 
-Extend `Component` and use `Filament\Schemas\Components\Concerns\HasJsRenderer` for a reusable component. Implement `getRenderer()` and optionally `getRendererProps()`. You do not need a Blade view or to extend `JsComponent`:
+Extend `Component` and use `Filament\Schemas\Components\Concerns\HasJsRenderer` for a reusable component. Implement `getRenderer()` and optionally `getRendererConfiguration()`. You do not need a Blade view or to extend `JsComponent`:
 
 ```php
 use Filament\Schemas\Components\Component;
@@ -846,7 +846,7 @@ class SalesSummary extends Component
         return FilamentAsset::getScriptSrc('sales-summary', 'acme/reports');
     }
 
-    public function getRendererProps(): array
+    public function getRendererConfiguration(): array
     {
         return ['message' => 'Sales increased by 12% this quarter.'];
     }

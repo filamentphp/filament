@@ -7,5 +7,5 @@ const props = defineProps<JsComponentProps<{ message?: string }>>()
 </script>
 
 <template>
-    <p>{{ props.config.message ?? 'Your component is ready.' }}</p>
+    <p>{{ props.configuration.message ?? 'Your component is ready.' }}</p>
 </template>

@@ -1,5 +1,5 @@
 <script>
-    let { config } = $props()
+    let { configuration } = $props()
 </script>
 
-<p>{config.message ?? 'Your component is ready.'}</p>
+<p>{configuration.message ?? 'Your component is ready.'}</p>
