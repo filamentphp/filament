@@ -2,17 +2,20 @@ import createJsRenderer, {
     snapshot,
 } from '../../../../support/resources/js/js-renderer.js'
 
-export default function jsWidgetComponent({ renderer, rendererProps = {} }) {
+export default function jsWidgetComponent({
+    renderer,
+    rendererConfiguration = {},
+}) {
     let lifecycle
     let destroyed = false
-    const props = () => ({ config: snapshot(rendererProps) })
+    const props = () => ({ configuration: snapshot(rendererConfiguration) })
 
     return {
         hasError: false,
 
-        updateRendererProps(value) {
+        updateRendererConfiguration(value) {
             if (destroyed) return
-            rendererProps = snapshot(value)
+            rendererConfiguration = snapshot(value)
             this.updateRenderer()
         },
 
