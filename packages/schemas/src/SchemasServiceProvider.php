@@ -33,6 +33,7 @@ class SchemasServiceProvider extends PackageServiceProvider
     {
         FilamentAsset::register([
             AlpineComponent::make('actions', __DIR__ . '/../dist/components/actions.js'),
+            AlpineComponent::make('js-component', __DIR__ . '/../dist/components/js-component.js'),
             AlpineComponent::make('tabs', __DIR__ . '/../dist/components/tabs.js'),
             AlpineComponent::make('wizard', __DIR__ . '/../dist/components/wizard.js'),
             Js::make('schemas', __DIR__ . '/../dist/index.js'),

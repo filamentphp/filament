@@ -1,0 +1,19 @@
+import { mount, unmount } from 'svelte'
+import type { JsComponentProps, JsComponentRenderer } from '@filament/schemas/js-component'
+import {{ componentName }} from './{{ componentName }}.svelte'
+
+type Configuration = { message?: string }
+
+const mount{{ componentName }}: JsComponentRenderer<Configuration> = ({ host, props: initialProps }) => {
+    const props = $state<JsComponentProps<Configuration>>({ ...initialProps })
+    const component = mount({{ componentName }}, { target: host, props })
+
+    return {
+        update: (nextProps) => {
+            Object.assign(props, nextProps)
+        },
+        destroy: () => unmount(component),
+    }
+}
+
+export default mount{{ componentName }}

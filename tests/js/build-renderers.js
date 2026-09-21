@@ -6,6 +6,11 @@ import { buildViteRenderers } from './build-vite-renderers.js'
 
 const { field: generatedEntryPoints } = await buildRendererStarters({
     field: 'forms',
+    component: {
+        packageName: 'schemas',
+        stubName: 'SchemaComponent',
+        componentStubName: 'SchemaComponent',
+    },
 })
 
 execFileSync(
