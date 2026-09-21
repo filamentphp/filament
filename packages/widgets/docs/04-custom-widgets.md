@@ -58,7 +58,7 @@ New TypeScript configurations use `"jsx": "react-jsx"` so Vite transforms React 
 
 ## Passing configuration from PHP
 
-Use `getRendererProps()` to return JSON-serializable data. The renderer receives this data as `props.config`:
+Use `getRendererConfiguration()` to return JSON-serializable data. The renderer receives this data as `props.configuration`:
 
 ```php
 namespace App\Filament\Widgets;
@@ -77,7 +77,7 @@ class RevenueOverview extends Widget
         return Vite::asset('resources/js/filament/widgets/revenue-overview.js');
     }
 
-    public function getRendererProps(): array
+    public function getRendererConfiguration(): array
     {
         return [
             'heading' => 'Revenue overview',
@@ -87,11 +87,11 @@ class RevenueOverview extends Widget
 }
 ```
 
-Use the entry extension generated for your chosen framework. Only include data that the current user is authorized to see. Props are snapshots, not writable Livewire state: changing `props.config` does not update PHP. When a Livewire request re-renders the widget, Filament sends changed props to the existing renderer's `update()` method without remounting it.
+Use the entry extension generated for your chosen framework. Only include data that the current user is authorized to see. Props are snapshots, not writable Livewire state: changing `props.configuration` does not update PHP. When a Livewire request re-renders the widget, Filament sends changed props to the existing renderer's `update()` method without remounting it.
 
 ### Receiving dashboard filter values
 
-Add `InteractsWithPageFilters` to read the dashboard's reactive `$pageFilters`, just as you would in any other widget. Include the filter values, or data calculated from them, in `getRendererProps()`:
+Add `InteractsWithPageFilters` to read the dashboard's reactive `$pageFilters`, just as you would in any other widget. Include the filter values, or data calculated from them, in `getRendererConfiguration()`:
 
 ```php
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -99,7 +99,7 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 // Inside your widget class:
 use InteractsWithPageFilters;
 
-public function getRendererProps(): array
+public function getRendererConfiguration(): array
 {
     return [
         'heading' => 'Revenue overview',
@@ -109,7 +109,7 @@ public function getRendererProps(): array
 }
 ```
 
-Set up the dashboard's [filters form or filter action](overview#filtering-widget-data) as usual. Filter updates re-render the widget, so both raw filter values and query results returned by `getRendererProps()` reach JavaScript. Filters from a live form are not validated; validate values before using them in a query. Only pass the filter values the renderer needs.
+Set up the dashboard's [filters form or filter action](overview#filtering-widget-data) as usual. Filter updates re-render the widget, so both raw filter values and query results returned by `getRendererConfiguration()` reach JavaScript. Filters from a live form are not validated; validate values before using them in a query. Only pass the filter values the renderer needs.
 
 The same pattern works with other reactive Livewire properties. Props are recalculated when the widget itself renders, not whenever arbitrary PHP or parent-page state changes. Mark custom parent-provided properties with Livewire's `#[Reactive]` attribute when they should trigger widget updates.
 
@@ -124,9 +124,9 @@ export default function mountRevenueOverview({ host, props: initialProps }) {
     const heading = document.createElement('h2')
     const description = document.createElement('p')
 
-    const update = ({ config }) => {
-        heading.textContent = config.heading
-        description.textContent = config.description
+    const update = ({ configuration }) => {
+        heading.textContent = configuration.heading
+        description.textContent = configuration.description
     }
 
     update(initialProps)
@@ -142,8 +142,8 @@ export default function mountRevenueOverview({ host, props: initialProps }) {
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
-function RevenueOverview({ config }) {
-    return <><h2>{config.heading}</h2><p>{config.description}</p></>
+function RevenueOverview({ configuration }) {
+    return <><h2>{configuration.heading}</h2><p>{configuration.description}</p></>
 }
 
 export default function mountRevenueOverview({ host, props: initialProps }) {
@@ -179,12 +179,12 @@ In `RevenueOverview.vue`:
 
 ```vue
 <script setup>
-defineProps(['config'])
+defineProps(['configuration'])
 </script>
 
 <template>
-    <h2>{{ config.heading }}</h2>
-    <p>{{ config.description }}</p>
+    <h2>{{ configuration.heading }}</h2>
+    <p>{{ configuration.description }}</p>
 </template>
 ```
 
@@ -211,11 +211,11 @@ In `RevenueOverview.svelte`:
 
 ```svelte
 <script>
-    let { config } = $props()
+    let { configuration } = $props()
 </script>
 
-<h2>{config.heading}</h2>
-<p>{config.description}</p>
+<h2>{configuration.heading}</h2>
+<p>{configuration.description}</p>
 ```
 
 ### Calling PHP methods
@@ -252,17 +252,17 @@ The declarations ship at `vendor/filament/widgets/resources/js/types/js-widget.d
 }
 ```
 
-`JsWidgetRenderer<Config, Methods>` types the PHP configuration and optional public widget methods. `JsWidgetProps<Config>`, `JsWidgetRendererContext<Config, Methods>`, and `JsWidgetRendererInstance<Config>` are also available:
+`JsWidgetRenderer<Configuration, Methods>` types the PHP configuration and optional public widget methods. `JsWidgetProps<Configuration>`, `JsWidgetRendererContext<Configuration, Methods>`, and `JsWidgetRendererInstance<Configuration>` are also available:
 
 ```typescript
 import type { JsWidgetRenderer } from '@filament/widgets/js-widget'
 
-type Config = { heading: string; total: number }
+type Configuration = { heading: string; total: number }
 type Methods = { refreshRevenue(): Promise<void> }
 
-const mountRevenueOverview: JsWidgetRenderer<Config, Methods> = ({ host, props, utilities }) => {
-    const update = ({ config }: typeof props) => {
-        host.textContent = `${config.heading}: ${config.total}`
+const mountRevenueOverview: JsWidgetRenderer<Configuration, Methods> = ({ host, props, utilities }) => {
+    const update = ({ configuration }: typeof props) => {
+        host.textContent = `${configuration.heading}: ${configuration.total}`
     }
     update(props)
 
@@ -282,7 +282,7 @@ In a mixed-framework application, use separate TypeScript configurations with `i
 
 Filament owns the outer widget and section. Your renderer owns only the ignored `host` subtree. Livewire does not morph that subtree, and you should not render Blade, Livewire, or Alpine components inside it. Preserve local UI state in your renderer while applying the latest PHP snapshots in `update()`.
 
-Mounting may be asynchronous. If PHP props change while mounting, the latest snapshot is delivered after mounting completes. If the widget is removed before mounting completes, the returned instance is disposed. Changing `getRenderer()` replaces the renderer; changing only `getRendererProps()` updates it in place.
+Mounting may be asynchronous. If PHP props change while mounting, the latest snapshot is delivered after mounting completes. If the widget is removed before mounting completes, the returned instance is disposed. Changing `getRenderer()` replaces the renderer; changing only `getRendererConfiguration()` updates it in place.
 
 Return `destroy()` to unmount your framework and remove event listeners, observers, timers, and subscriptions. Stop DOM work immediately. Asynchronous updates may overlap, so cancel or order requests inside your renderer. Cleanup promise failures are logged, but remounting does not wait for cleanup.
 

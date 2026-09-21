@@ -10,8 +10,8 @@ export type {
     Snapshot,
 } from '../../../../support/resources/js/types/js-renderer'
 
-export interface JsWidgetProps<Config = Record<string, unknown>> {
-    readonly config: Snapshot<Config>
+export interface JsWidgetProps<Configuration = Record<string, unknown>> {
+    readonly configuration: Snapshot<Configuration>
 }
 
 /** Common proxy methods. The runtime object is Livewire's unmodified `$wire`. */
@@ -22,22 +22,22 @@ export interface JsWidgetUtilities<Methods = Record<never, never>> {
 }
 
 export interface JsWidgetRendererContext<
-    Config = Record<string, unknown>,
+    Configuration = Record<string, unknown>,
     Methods = Record<never, never>,
 > extends JsRendererContext<
-    JsWidgetProps<Config>,
+    JsWidgetProps<Configuration>,
     JsWidgetUtilities<Methods>
 > {}
 
 export interface JsWidgetRendererInstance<
-    Config = Record<string, unknown>,
-> extends JsRendererInstance<JsWidgetProps<Config>> {}
+    Configuration = Record<string, unknown>,
+> extends JsRendererInstance<JsWidgetProps<Configuration>> {}
 
 export type JsWidgetRenderer<
-    Config = Record<string, unknown>,
+    Configuration = Record<string, unknown>,
     Methods = Record<never, never>,
 > = (
-    context: JsWidgetRendererContext<Config, Methods>,
+    context: JsWidgetRendererContext<Configuration, Methods>,
 ) =>
-    | JsWidgetRendererInstance<Config>
-    | Promise<JsWidgetRendererInstance<Config>>
+    | JsWidgetRendererInstance<Configuration>
+    | Promise<JsWidgetRendererInstance<Configuration>>

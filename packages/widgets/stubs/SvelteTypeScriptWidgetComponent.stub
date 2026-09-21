@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { JsWidgetProps } from '@filament/widgets/js-widget'
 
-    let { config }: JsWidgetProps<{ heading?: string; description?: string }> = $props()
+    let { configuration }: JsWidgetProps<{ heading?: string; description?: string }> = $props()
 </script>
 
-<h2>{config.heading ?? 'Widget heading'}</h2>
-<p>{config.description ?? 'Widget description'}</p>
+<h2>{configuration.heading ?? 'Widget heading'}</h2>
+<p>{configuration.description ?? 'Widget description'}</p>

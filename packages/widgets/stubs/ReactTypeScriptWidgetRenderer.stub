@@ -2,15 +2,15 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import type { JsWidgetProps, JsWidgetRenderer } from '@filament/widgets/js-widget'
 
-type Config = { heading?: string; description?: string }
+type Configuration = { heading?: string; description?: string }
 
-function {{ componentName }}({ config }: JsWidgetProps<Config>) {
-    return <><h2>{config.heading ?? 'Widget heading'}</h2><p>{config.description ?? 'Widget description'}</p></>
+function {{ componentName }}({ configuration }: JsWidgetProps<Configuration>) {
+    return <><h2>{configuration.heading ?? 'Widget heading'}</h2><p>{configuration.description ?? 'Widget description'}</p></>
 }
 
-const mount{{ componentName }}: JsWidgetRenderer<Config> = ({ host, props: initialProps }) => {
+const mount{{ componentName }}: JsWidgetRenderer<Configuration> = ({ host, props: initialProps }) => {
     const root = createRoot(host)
-    const update = (props: JsWidgetProps<Config>) => root.render(<{{ componentName }} {...props} />)
+    const update = (props: JsWidgetProps<Configuration>) => root.render(<{{ componentName }} {...props} />)
     update(initialProps)
 
     return { update, destroy: () => root.unmount() }

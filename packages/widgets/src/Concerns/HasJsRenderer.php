@@ -10,7 +10,7 @@ trait HasJsRenderer /** @phpstan-ignore trait.unused */
     abstract public function getRenderer(): string | RawJs | null;
 
     /** @return array<string, mixed> */
-    public function getRendererProps(): array
+    public function getRendererConfiguration(): array
     {
         return [];
     }

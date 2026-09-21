@@ -5,6 +5,6 @@ defineProps<JsWidgetProps<{ heading?: string; description?: string }>>()
 </script>
 
 <template>
-    <h2>{{ config.heading ?? 'Widget heading' }}</h2>
-    <p>{{ config.description ?? 'Widget description' }}</p>
+    <h2>{{ configuration.heading ?? 'Widget heading' }}</h2>
+    <p>{{ configuration.description ?? 'Widget description' }}</p>
 </template>

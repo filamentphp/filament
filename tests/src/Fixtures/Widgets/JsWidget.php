@@ -34,9 +34,9 @@ class JsWidget extends Widget
                     button.textContent = 'Refresh total'
                     button.onclick = () => utilities.$wire.$call('refreshTotal')
                     host.append(heading, description, button)
-                    const update = ({ config }) => {
-                        heading.textContent = config.heading
-                        description.textContent = config.description
+                    const update = ({ configuration }) => {
+                        heading.textContent = configuration.heading
+                        description.textContent = configuration.description
                     }
                     update(props)
                     return {
@@ -58,7 +58,7 @@ class JsWidget extends Widget
     }
 
     /** @return array<string, mixed> */
-    public function getRendererProps(): array
+    public function getRendererConfiguration(): array
     {
         return [
             'heading' => 'Revenue overview',

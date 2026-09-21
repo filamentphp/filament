@@ -2,10 +2,10 @@ import { createApp, h, shallowRef } from 'vue'
 import type { JsWidgetProps, JsWidgetRenderer } from '@filament/widgets/js-widget'
 import {{ componentName }} from './{{ componentName }}.vue'
 
-type Config = { heading?: string; description?: string }
+type Configuration = { heading?: string; description?: string }
 
-const mount{{ componentName }}: JsWidgetRenderer<Config> = ({ host, props: initialProps }) => {
-    const props = shallowRef<JsWidgetProps<Config>>(initialProps)
+const mount{{ componentName }}: JsWidgetRenderer<Configuration> = ({ host, props: initialProps }) => {
+    const props = shallowRef<JsWidgetProps<Configuration>>(initialProps)
     const application = createApp({ setup: () => () => h({{ componentName }}, props.value) })
     application.mount(host)
 

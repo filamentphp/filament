@@ -2,8 +2,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import jsWidget from '../../packages/widgets/resources/js/components/js-widget.js'
 
-function fixture(renderer, rendererProps = {}) {
-    const widget = jsWidget({ renderer, rendererProps })
+function fixture(renderer, rendererConfiguration = {}) {
+    const widget = jsWidget({ renderer, rendererConfiguration })
     widget.$refs = { host: { replaceChildren() {} } }
     widget.$el = { ownerDocument: { baseURI: import.meta.url } }
     widget.$wire = { refreshTotal: () => 'refreshed' }
@@ -19,9 +19,10 @@ test('PHP props update independently without remounting and preserve the owning 
         (context) => {
             mounts++
             utilities = context.utilities
-            context.props.config.filters.startDate = 'mutated'
+            assert.deepEqual(Object.keys(context.props), ['configuration'])
+            context.props.configuration.filters.startDate = 'mutated'
             return {
-                update: (props) => updates.push(props.config),
+                update: (props) => updates.push(props.configuration),
                 destroy: () => disposals++,
             }
         },
@@ -30,7 +31,7 @@ test('PHP props update independently without remounting and preserve the owning 
     await widget.init()
     assert.equal(updates[0].filters.startDate, '2026-01-01')
     const next = { filters: { startDate: null }, total: 0 }
-    widget.updateRendererProps(next)
+    widget.updateRendererConfiguration(next)
     next.total = 999
     assert.deepEqual(updates.at(-1), { filters: { startDate: null }, total: 0 })
     assert.equal(utilities.$wire, widget.$wire)
@@ -41,7 +42,7 @@ test('PHP props update independently without remounting and preserve the owning 
     assert.equal(mounts, 1)
     widget.destroy()
     widget.destroy()
-    widget.updateRendererProps({ total: 32 })
+    widget.updateRendererConfiguration({ total: 32 })
     assert.equal(disposals, 1)
     assert.equal(updates.length, 2)
 })
@@ -56,10 +57,10 @@ test('props received during asynchronous mounting reach the mounted instance', a
             }),
     )
     const initialization = widget.init()
-    widget.updateRendererProps({ total: 17 })
+    widget.updateRendererConfiguration({ total: 17 })
     resolveMount({
         update: (props) => {
-            latest = props.config
+            latest = props.configuration
         },
         destroy() {},
     })
