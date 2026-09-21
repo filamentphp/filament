@@ -14,11 +14,9 @@
 ])
 
 @php
-    use Filament\Forms\View\FormsIconAlias;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
     use Filament\Support\Facades\FilamentAsset;
-    use Filament\Support\Icons\Heroicon;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Js;
@@ -65,10 +63,8 @@
         >
             @if ($isSearchable)
                 <div class="fi-fo-builder-block-picker-search-ctn">
-                    {{ \Filament\Support\generate_icon_html(Heroicon::MagnifyingGlass, FormsIconAlias::COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD) }}
-
                     <x-filament::input
-                        type="search"
+                        type="text"
                         data-dropdown-autofocus
                         x-ref="searchInput"
                         x-on:dropdown-autofocus="clearSearch()"

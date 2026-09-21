@@ -786,7 +786,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
 
     $addBlockAction = '[data-testid="add-block"]';
     $noSearchResultsMessage = '[data-testid="builder"] [role="status"]';
-    $searchInput = '[data-testid="builder"] input[type="search"]';
+    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
     $page = visit('/builder-searchable-test');
 
     if ($isDarkMode) {
@@ -796,7 +796,10 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
     $page
         ->click($addBlockAction)
         ->assertVisible($searchInput)
-        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true)
+        ->assertAttribute($searchInput, 'type', 'text')
+        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
+        ->assertScript('getComputedStyle(document.activeElement.parentElement).boxShadow', 'none')
+        ->assertScript('document.activeElement.parentElement.querySelector("svg") === null', true)
         ->type($searchInput, 'ReSeArCh & DEVELOPMENT')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
@@ -826,7 +829,7 @@ it('does not submit the surrounding form when `Enter` is pressed in the block pi
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="builder"] input[type="search"]';
+    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
 
     visit('/builder-searchable-test')
         ->assertScript('(() => { window.builderFormSubmitCount = 0; document.querySelector(\'[data-testid="builder"]\').closest(\'form\').addEventListener(\'submit\', () => window.builderFormSubmitCount++); return window.builderFormSubmitCount })()', 0)
@@ -846,7 +849,7 @@ it('clears a debounced block picker search with `Escape` before the debounce ela
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="debounced-builder"] input[type="search"]';
+    $searchInput = '[data-testid="debounced-builder"] input[data-dropdown-autofocus]';
 
     visit('/builder-searchable-test')
         ->click('[data-testid="add-debounced-block"]')
@@ -871,7 +874,7 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
 
     $modal = '[data-testid="builder-modal"]';
     $addBlockAction = '[data-testid="add-modal-block"]';
-    $searchInput = '[data-testid="modal-builder"] input[type="search"]';
+    $searchInput = '[data-testid="modal-builder"] input[data-dropdown-autofocus]';
     $page = visit('/builder-searchable-test');
 
     if ($isDarkMode) {
@@ -905,7 +908,7 @@ it('clears and focuses the block picker search after clicking away and reopening
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="builder"] input[type="search"]';
+    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
     $page = visit('/builder-searchable-test');
 
     if ($isDarkMode) {
@@ -922,7 +925,7 @@ it('clears and focuses the block picker search after clicking away and reopening
         ->click('[data-testid="add-block"]')
         ->assertVisible($searchInput)
         ->assertValue($searchInput, '')
-        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true)
+        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
         ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
@@ -948,14 +951,14 @@ it('searches independently in the add-between picker and inserts the selected bl
         ->click($endPicker . ' [data-block-label="research & development"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)
         ->click('[data-testid="add-block"]')
-        ->type($endPicker . ' input[type="search"]', 'paragraph')
+        ->type($endPicker . ' input[data-dropdown-autofocus]', 'paragraph')
         ->click('[data-testid="outside-picker"]')
         ->hover('[data-testid="builder"] .fi-fo-builder-item:first-child')
         ->click($betweenPicker . ' .fi-dropdown-trigger button')
-        ->assertValue($betweenPicker . ' input[type="search"]', '')
-        ->type($betweenPicker . ' input[type="search"]', 'video')
+        ->assertValue($betweenPicker . ' input[data-dropdown-autofocus]', '')
+        ->type($betweenPicker . ' input[data-dropdown-autofocus]', 'video')
         ->assertMissing($betweenPicker . ' [data-block-label="paragraph"]')
-        ->assertValue($endPicker . ' input[type="search"]', 'paragraph')
+        ->assertValue($endPicker . ' input[data-dropdown-autofocus]', 'paragraph')
         ->click($betweenPicker . ' [data-block-label="video"]')
         ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 3)
         ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="builder"] .fi-fo-builder-item input\'), input => input.id.split(\'.\').pop())', ['text', 'url', 'title'])
@@ -967,7 +970,7 @@ it('preserves an active search when the block catalog changes', function (): voi
 
     $this->actingAs(User::factory()->create());
 
-    $searchInput = '[data-testid="builder"] input[type="search"]';
+    $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
     $page = visit('/builder-searchable-test')
         ->click('[data-testid="add-block"]')
         ->type($searchInput, 'video')
@@ -982,7 +985,7 @@ it('preserves an active search when the block catalog changes', function (): voi
         ->assertNotPresent('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="introduction"]')
         ->assertMissing('[data-testid="builder"] [role="status"]')
-        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true);
+        ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true);
 
     $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasUpdatedBlocks\', false)');
 
@@ -1016,7 +1019,7 @@ it('focuses the search when blocks become available and after deleting the last 
 
         $this->actingAs(User::factory()->create());
 
-        $searchInput = '[data-testid="builder"] input[type="search"]';
+        $searchInput = '[data-testid="builder"] input[data-dropdown-autofocus]';
         $page = visit('/builder-searchable-test?empty=1&limited=1')
             ->assertNotPresent($searchInput);
 
@@ -1026,7 +1029,7 @@ it('focuses the search when blocks become available and after deleting the last 
             ->click('[data-testid="add-block"]')
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true)
+            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
             ->click('[data-testid="builder"] [data-block-label="video"]')
             ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
             ->assertNotPresent($searchInput)
@@ -1035,7 +1038,7 @@ it('focuses the search when blocks become available and after deleting the last 
             ->click('[data-testid="add-block"]')
             ->assertVisible($searchInput)
             ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
-            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true)
+            ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
             ->assertNoSmoke();
     } finally {
         $cache->setValue(null, $originalCache);

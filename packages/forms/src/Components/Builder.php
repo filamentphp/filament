@@ -1461,15 +1461,10 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                     <div <?= $listAttributes->toHtml() ?>>
                         <?php if ($isSearchable) { ?>
                             <div class="fi-fo-builder-block-picker-search-ctn">
-                                <?= generate_icon_html(
-                                    Heroicon::MagnifyingGlass,
-                                    FormsIconAlias::COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD,
-                                )?->toHtml() ?>
-
                                 <input
                                     aria-label="<?= e($searchPrompt) ?>"
                                     placeholder="<?= e($searchPrompt) ?>"
-                                    type="search"
+                                    type="text"
                                     data-dropdown-autofocus
                                     x-ref="searchInput"
                                     x-model.debounce.<?= $searchDebounce ?>="search"
