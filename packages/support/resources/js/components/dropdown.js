@@ -76,6 +76,13 @@ export default () => ({
                 'aria-haspopup',
             ],
         })
+
+        this.observer.observe(
+            this.$el.querySelector(':scope > .fi-dropdown-trigger'),
+            {
+                attributeFilter: ['aria-expanded'],
+            },
+        )
     },
 
     getTrigger() {
@@ -179,38 +186,18 @@ export default () => ({
             return
         }
 
-        // An ancestor's listener may run first. Route to the closest open owner before
-        // consuming the event, including panels moved outside their dropdown by teleporting.
-        let ownerElement = event.target.closest(
-            '.fi-dropdown, .fi-dropdown-panel',
-        )
-
-        while (ownerElement) {
-            const owner = Alpine.$data(ownerElement)
-
-            if (owner.$refs.panel?.style.display === 'block') {
-                if (owner.$refs.panel !== this.$refs.panel) {
-                    owner.handleEscape(event)
-
-                    return
-                }
-
-                break
-            }
-
-            ownerElement = ownerElement.parentElement?.closest(
-                '.fi-dropdown, .fi-dropdown-panel',
-            )
-        }
-
         const panel = this.$refs.panel
 
-        if (!panel || panel.style.display !== 'block') {
-            return
-        }
-
-        // A teleported panel is not a descendant of its dropdown.
-        if (!this.$el.contains(event.target) && !panel.contains(event.target)) {
+        // Only intercept for content that explicitly opts into staged Escape handling.
+        // Other controls, such as searchable selects, need the original keydown event
+        // to reach their own listeners before the floating UI plugin closes the panel.
+        if (
+            !panel ||
+            panel.style.display !== 'block' ||
+            event.target
+                .closest('[data-dropdown-escape]')
+                ?.closest('.fi-dropdown-panel') !== panel
+        ) {
             return
         }
 

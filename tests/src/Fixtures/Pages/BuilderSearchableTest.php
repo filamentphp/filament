@@ -8,6 +8,7 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 
@@ -21,8 +22,22 @@ class BuilderSearchableTest extends Page
 
     public ?array $data = [];
 
+    public bool $hasUpdatedBlocks = false;
+
+    public bool $hasNoBlocks = false;
+
+    public bool $hasOnlyVideoBlock = false;
+
+    public bool $hasWidePicker = false;
+
+    public bool $isPickerSearchable = true;
+
     public function mount(): void
     {
+        $this->hasNoBlocks = request()->boolean('empty');
+        $this->hasOnlyVideoBlock = request()->boolean('limited');
+        $this->isPickerSearchable = ! request()->boolean('notSearchable');
+
         $this->form->fill();
     }
 
@@ -51,7 +66,8 @@ class BuilderSearchableTest extends Page
             ->schema([
                 Builder::make('content')
                     ->label('Content')
-                    ->searchable()
+                    ->searchable(fn (): bool => $this->isPickerSearchable)
+                    ->blockPickerWidth(fn (): Width => $this->hasWidePicker ? Width::Large : Width::Small)
                     ->addAction(fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-block']))
                     ->blocks($this->getBlocks())
                     ->extraAttributes(['data-testid' => 'builder']),
@@ -71,7 +87,25 @@ class BuilderSearchableTest extends Page
      */
     protected function getBlocks(): array
     {
-        return [
+        if ($this->hasNoBlocks) {
+            return [];
+        }
+
+        if ($this->hasUpdatedBlocks) {
+            return [
+                Builder\Block::make('heading')
+                    ->label('Video heading')
+                    ->schema([TextInput::make('title')]),
+                Builder\Block::make('paragraph')
+                    ->label('Introduction')
+                    ->schema([TextInput::make('text')]),
+                Builder\Block::make('quote')
+                    ->label('Video quote')
+                    ->schema([TextInput::make('quotation')]),
+            ];
+        }
+
+        $blocks = [
             Builder\Block::make('paragraph')
                 ->label('Paragraph')
                 ->schema([
@@ -92,6 +126,8 @@ class BuilderSearchableTest extends Page
                         ->label('URL'),
                 ]),
         ];
+
+        return $this->hasOnlyVideoBlock ? [$blocks[2]] : $blocks;
     }
 
     public function save(): void

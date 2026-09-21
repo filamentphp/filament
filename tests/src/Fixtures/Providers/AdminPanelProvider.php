@@ -38,6 +38,7 @@ use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
 use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
+use Filament\Tests\Fixtures\Pages\DropdownTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
@@ -123,6 +124,7 @@ class AdminPanelProvider extends PanelProvider
                 AutofocusWizardBrowserTest::class,
                 BuilderSearchableTest::class,
                 BuilderTest::class,
+                DropdownTest::class,
                 CalloutBrowserTest::class,
                 CheckboxListTest::class,
                 CodeEditorBrowserTest::class,

@@ -1404,8 +1404,15 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
         $xFloatDirective = 'x-float' . ($placement ? ".placement.{$placement}" : '') . '.flip.shift.offset';
 
+        // Reinitialize when the panel appears or its ignored layout attributes change.
+        // Ordinary block catalog updates must preserve the active search and focus.
+        $blockPickerKey = "{$key}.{$action->getName()}.{$afterItem}.block-picker." . md5(serialize([$widthClass, $placement, filled($blocks), $isSearchable]));
+
         $dropdownAttributes = (new FilamentComponentAttributeBag)
-            ->merge(['x-data' => 'filamentDropdown'], escape: false)
+            ->merge([
+                'x-data' => 'filamentDropdown',
+                'wire:key' => $blockPickerKey,
+            ], escape: false)
             ->class([
                 'fi-dropdown',
                 'fi-fo-builder-block-picker',
@@ -1416,6 +1423,8 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
             ->merge([
                 'x-cloak' => true,
                 'x-ref' => 'panel',
+                'wire:key' => "{$blockPickerKey}.panel",
+                'wire:ignore.self' => true,
                 'x-transition:enter-start' => 'fi-opacity-0',
                 'x-transition:leave-end' => 'fi-opacity-0',
                 $xFloatDirective => '{ offset: 8 }',
@@ -1431,6 +1440,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                 'x-load-src' => $isSearchable ? FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms') : null,
                 'x-data' => $isSearchable ? 'builderBlockPickerFormComponent()' : null,
                 'x-on:dropdown-escape' => $isSearchable ? 'handleEscape($event)' : null,
+                'data-dropdown-escape' => $isSearchable ? true : null,
             ], escape: false)
             ->class(['fi-dropdown-list']);
 
@@ -1481,7 +1491,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                     $blockSearchLabel = $block->getLabel();
 
                                     if ($blockSearchLabel instanceof Htmlable) {
-                                        $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES);
+                                        $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                                     }
 
                                     $blockSearchLabel = Str::lower($blockSearchLabel);
@@ -1502,6 +1512,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                         'type' => 'button',
                                         'wire:loading.attr' => 'disabled',
                                         'wire:target' => $wireClick,
+                                        'wire:key' => $isSearchable ? md5($wireClick . $blockSearchLabel) : null,
                                         'data-block-label' => $isSearchable ? e($blockSearchLabel) : null,
                                         'x-show' => $isSearchable ? 'isBlockVisible($el)' : null,
                                     ], escape: false)

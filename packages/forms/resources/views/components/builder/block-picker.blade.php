@@ -32,6 +32,7 @@
             'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
             'x-data' => 'builderBlockPickerFormComponent()',
             'x-on:dropdown-escape' => 'handleEscape($event)',
+            'data-dropdown-escape' => true,
         ])
         : new FilamentComponentAttributeBag;
 @endphp
@@ -46,6 +47,7 @@
     "
     shift
     :width="$width"
+    :wire:key="$key . '.' . $action->getName() . '.' . $afterItem . '.block-picker.' . md5(serialize([$width, $actionAlignment, filled($blocks), $isSearchable]))"
     :attributes="
         \Filament\Support\prepare_inherited_attributes(
             $attributes->class([
@@ -59,84 +61,87 @@
         {{ $trigger }}
     </x-slot>
 
-    <x-filament::dropdown.list
-        :attributes="\Filament\Support\prepare_inherited_attributes($listAttributes)"
-    >
-        @if ($isSearchable)
-            <div class="fi-fo-builder-block-picker-search-ctn">
-                {{ \Filament\Support\generate_icon_html(Heroicon::MagnifyingGlass, FormsIconAlias::COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD) }}
-
-                <x-filament::input
-                    type="search"
-                    data-dropdown-autofocus
-                    x-ref="searchInput"
-                    x-on:dropdown-autofocus="clearSearch()"
-                    x-on:keydown.enter.prevent=""
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new FilamentComponentAttributeBag([
-                                'aria-label' => e($searchPrompt),
-                                'placeholder' => e($searchPrompt),
-                                'x-model.debounce.' . $searchDebounce => 'search',
-                            ]),
-                        )
-                    "
-                />
-            </div>
-        @endif
-
-        <div
-            {{ (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column) }}
+    @if (filled($blocks))
+        <x-filament::dropdown.list
+            :attributes="\Filament\Support\prepare_inherited_attributes($listAttributes)"
         >
-            @foreach ($blocks as $block)
-                @php
-                    $blockIcon = $block->getIcon();
+            @if ($isSearchable)
+                <div class="fi-fo-builder-block-picker-search-ctn">
+                    {{ \Filament\Support\generate_icon_html(Heroicon::MagnifyingGlass, FormsIconAlias::COMPONENTS_BUILDER_BLOCK_PICKER_SEARCH_FIELD) }}
 
-                    $blockSearchLabel = null;
+                    <x-filament::input
+                        type="search"
+                        data-dropdown-autofocus
+                        x-ref="searchInput"
+                        x-on:dropdown-autofocus="clearSearch()"
+                        x-on:keydown.enter.prevent=""
+                        :attributes="
+                            \Filament\Support\prepare_inherited_attributes(
+                                new FilamentComponentAttributeBag([
+                                    'aria-label' => e($searchPrompt),
+                                    'placeholder' => e($searchPrompt),
+                                    'x-model.debounce.' . $searchDebounce => 'search',
+                                ]),
+                            )
+                        "
+                    />
+                </div>
+            @endif
 
-                    if ($isSearchable) {
-                        $blockSearchLabel = $block->getLabel();
+            <div
+                {{ (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column) }}
+            >
+                @foreach ($blocks as $block)
+                    @php
+                        $blockIcon = $block->getIcon();
 
-                        if ($blockSearchLabel instanceof Htmlable) {
-                            $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES);
+                        $blockSearchLabel = null;
+
+                        if ($isSearchable) {
+                            $blockSearchLabel = $block->getLabel();
+
+                            if ($blockSearchLabel instanceof Htmlable) {
+                                $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                            }
+
+                            $blockSearchLabel = Str::lower($blockSearchLabel);
                         }
 
-                        $blockSearchLabel = Str::lower($blockSearchLabel);
-                    }
+                        $wireClickActionArguments = ['block' => $block->getName()];
 
-                    $wireClickActionArguments = ['block' => $block->getName()];
+                        if (filled($afterItem)) {
+                            $wireClickActionArguments['afterItem'] = $afterItem;
+                        }
 
-                    if (filled($afterItem)) {
-                        $wireClickActionArguments['afterItem'] = $afterItem;
-                    }
+                        $wireClickActionArguments = Js::from($wireClickActionArguments);
 
-                    $wireClickActionArguments = Js::from($wireClickActionArguments);
+                        $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
+                    @endphp
 
-                    $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
-                @endphp
-
-                <x-filament::dropdown.list.item
-                    :icon="$blockIcon"
-                    x-on:click="close"
-                    :wire:click="$wireClickAction"
-                    :data-block-label="$blockSearchLabel"
-                    :x-show="$isSearchable ? 'isBlockVisible($el)' : null"
-                >
-                    {{ $block->getLabel() }}
-                </x-filament::dropdown.list.item>
-            @endforeach
-        </div>
-
-        @if ($isSearchable)
-            <div
-                x-cloak
-                x-show="hasNoSearchResults"
-                role="status"
-                aria-live="polite"
-                class="fi-fo-builder-block-picker-no-search-results-message"
-            >
-                {{ $noSearchResultsMessage }}
+                    <x-filament::dropdown.list.item
+                        :icon="$blockIcon"
+                        x-on:click="close"
+                        :wire:click="$wireClickAction"
+                        :wire:key="$isSearchable ? md5($wireClickAction . $blockSearchLabel) : null"
+                        :data-block-label="$blockSearchLabel"
+                        :x-show="$isSearchable ? 'isBlockVisible($el)' : null"
+                    >
+                        {{ $block->getLabel() }}
+                    </x-filament::dropdown.list.item>
+                @endforeach
             </div>
-        @endif
-    </x-filament::dropdown.list>
+
+            @if ($isSearchable)
+                <div
+                    x-cloak
+                    x-show="hasNoSearchResults"
+                    role="status"
+                    aria-live="polite"
+                    class="fi-fo-builder-block-picker-no-search-results-message"
+                >
+                    {{ $noSearchResultsMessage }}
+                </div>
+            @endif
+        </x-filament::dropdown.list>
+    @endif
 </x-filament::dropdown>

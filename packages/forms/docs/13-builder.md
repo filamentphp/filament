@@ -527,19 +527,19 @@ If you have many blocks, you may allow users to search them in the block picker 
 ```php
 use Filament\Forms\Components\Builder;
 
-Builder::make()
+Builder::make('content')
     ->searchable()
     ->blocks([
         // ...
     ])
 ```
 
-The search matches the labels of the blocks. You may customize the placeholder of the search field using the `searchPrompt()` method, and the message displayed when no blocks match the search using the `noSearchResultsMessage()` method:
+The search matches block labels in the browser, without making a server request, and is case-insensitive. You may customize the placeholder of the search field using the `searchPrompt()` method, and the message displayed when no blocks match the search using the `noSearchResultsMessage()` method:
 
 ```php
 use Filament\Forms\Components\Builder;
 
-Builder::make()
+Builder::make('content')
     ->searchable()
     ->searchPrompt('Search for a block')
     ->noSearchResultsMessage('No blocks found.')
@@ -559,7 +559,7 @@ By default, the block picker filters blocks immediately as the user types. You m
 ```php
 use Filament\Forms\Components\Builder;
 
-Builder::make()
+Builder::make('content')
     ->searchable()
     ->searchDebounce(500)
     ->blocks([

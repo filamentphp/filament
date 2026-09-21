@@ -2,6 +2,33 @@ export default function builderBlockPickerFormComponent() {
     return {
         search: '',
 
+        blockLabels: [],
+
+        observer: null,
+
+        init() {
+            const syncBlockLabels = () => {
+                this.blockLabels = Array.from(
+                    this.$root.querySelectorAll('[data-block-label]'),
+                    (element) => element.dataset.blockLabel,
+                )
+            }
+
+            syncBlockLabels()
+
+            this.observer = new MutationObserver(syncBlockLabels)
+            this.observer.observe(this.$root, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['data-block-label'],
+            })
+        },
+
+        destroy() {
+            this.observer?.disconnect()
+        },
+
         clearSearch() {
             this.search = ''
 
@@ -38,9 +65,9 @@ export default function builderBlockPickerFormComponent() {
                 return false
             }
 
-            return !Array.from(
-                this.$root.querySelectorAll('[data-block-label]'),
-            ).some((blockElement) => this.isBlockVisible(blockElement))
+            return !this.blockLabels.some((label) =>
+                label.includes(this.search.toLowerCase()),
+            )
         },
     }
 }
