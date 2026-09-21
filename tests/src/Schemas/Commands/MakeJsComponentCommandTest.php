@@ -133,7 +133,7 @@ it('overwrites existing renderers with `--force`', function (): void {
     expect(File::get($path))->toContain('export default function mountExistingChart');
 });
 
-it('preserves every component file when a renderer overwrite is declined', function (): void {
+it('preserves every component file without installing dependencies when an overwrite is declined', function (): void {
     $paths = [
         app_path('Filament/Schemas/Components/CancelledChart.php'),
         resource_path('js/filament/schemas/components/cancelled-chart.js'),
@@ -153,7 +153,6 @@ it('preserves every component file when a renderer overwrite is declined', funct
         $this->artisan('make:filament-schema-component', [
             'name' => 'CancelledChart',
             '--vue' => true,
-            '--skip-install' => true,
             '--skip-build' => true,
         ])
             ->expectsConfirmation('CancelledChart.php already exists, do you want to overwrite it?', 'yes')
@@ -164,6 +163,48 @@ it('preserves every component file when a renderer overwrite is declined', funct
         foreach ($paths as $path) {
             expect(File::get($path))->toBe('Original ' . basename($path));
         }
+
+        Process::assertNothingRan();
+    } finally {
+        app()['env'] = $environment;
+        File::delete($paths);
+    }
+});
+
+it('preserves approved component files when dependency installation fails', function (): void {
+    $paths = [
+        app_path('Filament/Schemas/Components/FailedInstallChart.php'),
+        resource_path('js/filament/schemas/components/failed-install-chart.js'),
+        resource_path('js/filament/schemas/components/FailedInstallChart.vue'),
+    ];
+
+    foreach ($paths as $path) {
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, 'Original ' . basename($path));
+    }
+
+    Process::fake(static fn (PendingProcess $process) => Process::result(exitCode: ($process->command === ['npm', '--version']) ? 0 : 1));
+    $environment = app()['env'];
+
+    try {
+        app()['env'] = 'local';
+
+        $this->artisan('make:filament-schema-component', [
+            'name' => 'FailedInstallChart',
+            '--vue' => true,
+            '--skip-build' => true,
+        ])
+            ->expectsConfirmation('FailedInstallChart.php already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('failed-install-chart.js already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('FailedInstallChart.vue already exists, do you want to overwrite it?', 'yes')
+            ->expectsOutputToContain('Failed to install JavaScript dependencies.')
+            ->assertFailed();
+
+        foreach ($paths as $path) {
+            expect(File::get($path))->toBe('Original ' . basename($path));
+        }
+
+        Process::assertRan(static fn (PendingProcess $process): bool => in_array('install', $process->command));
     } finally {
         app()['env'] = $environment;
         File::delete($paths);

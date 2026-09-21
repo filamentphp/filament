@@ -16,6 +16,8 @@ class JsComponentBrowserTest extends Page
 {
     protected string $view = 'pages.js-component-browser-test';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     #[Locked]
     public string $framework = 'js';
 
