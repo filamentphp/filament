@@ -17,7 +17,7 @@ jobs:
         with:
           persist-credentials: false
       - id: previous-tag
-        uses: WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de # v2.0.0
+        uses: WyriHaximus/github-action-get-previous-tag@83f26fea93bc7efcbca2eb5591f5eaaf66b8f206 # v2.1.0
       - name: Monorepo Split of admin
         uses: danharrin/monorepo-split-github-action@14e42e2437f674b8987c1f50ca3689116aea1893 # v2.4.5
         env:
@@ -49,7 +49,7 @@ jobs:
         with:
           persist-credentials: false
       - id: previous-tag
-        uses: WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de # v2.0.0
+        uses: WyriHaximus/github-action-get-previous-tag@83f26fea93bc7efcbca2eb5591f5eaaf66b8f206 # v2.1.0
       - name: Monorepo Split of ${{ matrix.package }}
         uses: danharrin/monorepo-split-github-action@14e42e2437f674b8987c1f50ca3689116aea1893 # v2.4.5
         env:
