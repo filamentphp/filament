@@ -739,8 +739,8 @@ it('can search blocks in the picker in the browser', function (): void {
             ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[type="search"]\')', true)
             ->type($searchInput, 'research & development')
             ->wait(1)
-            ->assertVisible('[data-block-label="research & development"]')
-            ->assertMissing('[data-block-label="paragraph"]')
+            ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
+            ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
             ->type($searchInput, 'zzz')
             ->wait(1)
             ->assertVisible($noSearchResultsMessage)
@@ -748,7 +748,7 @@ it('can search blocks in the picker in the browser', function (): void {
             ->wait(1)
             ->assertValue($searchInput, '')
             ->assertVisible($searchInput)
-            ->assertVisible('[data-block-label="paragraph"]')
+            ->assertVisible('[data-testid="builder"] [data-block-label="paragraph"]')
             ->keys($searchInput, 'Escape')
             ->wait(1)
             ->assertMissing($searchInput)
@@ -757,7 +757,7 @@ it('can search blocks in the picker in the browser', function (): void {
             ->wait(1)
             ->type($searchInput, 'video')
             ->wait(1)
-            ->click('[data-block-label="video"]')
+            ->click('[data-testid="builder"] [data-block-label="video"]')
             ->wait(1)
             ->click($addBlockAction)
             ->wait(1)
@@ -771,6 +771,101 @@ it('can search blocks in the picker in the browser', function (): void {
             ->inDarkMode()
             ->click($addBlockAction)
             ->wait(1)
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('does not submit the surrounding form when `Enter` is pressed in the block picker search input', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        $searchInput = '[data-testid="builder"] input[type="search"]';
+
+        visit('/builder-searchable-test')
+            ->assertScript('(() => { window.builderFormSubmitCount = 0; document.querySelector(\'[data-testid="builder"]\').closest(\'form\').addEventListener(\'submit\', () => window.builderFormSubmitCount++); return window.builderFormSubmitCount })()', 0)
+            ->click('[data-testid="add-block"]')
+            ->wait(1)
+            ->type($searchInput, 'para')
+            ->keys($searchInput, 'Enter')
+            ->wait(1)
+            ->assertScript('window.builderFormSubmitCount', 0)
+            ->assertVisible($searchInput)
+            ->assertValue($searchInput, 'para')
+            ->assertNoSmoke();
+    });
+});
+
+it('clears a debounced block picker search with `Escape` before the debounce elapses', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        $searchInput = '[data-testid="debounced-builder"] input[type="search"]';
+
+        visit('/builder-searchable-test')
+            ->click('[data-testid="add-debounced-block"]')
+            ->wait(1)
+            ->type($searchInput, 'zzz')
+            ->keys($searchInput, 'Escape')
+            ->assertVisible($searchInput)
+            ->assertValue($searchInput, '')
+            // Wait for the debounce to elapse, so the cleared input is not overwritten by the stale search.
+            ->wait(1.5)
+            ->assertVisible($searchInput)
+            ->assertValue($searchInput, '')
+            ->assertVisible('[data-testid="debounced-builder"] [data-block-label="paragraph"]')
+            ->assertMissing('[data-testid="debounced-builder"] [role="status"]')
+            ->assertNoSmoke();
+    });
+});
+
+it('closes only the block picker with `Escape` when it is inside a modal', function (): void {
+    retry(10, function (): void {
+        Artisan::call('filament:assets');
+
+        $this->actingAs(User::factory()->create());
+
+        $modal = '[data-testid="builder-modal"]';
+        $addBlockAction = '[data-testid="add-modal-block"]';
+        $searchInput = '[data-testid="modal-builder"] input[type="search"]';
+
+        visit('/builder-searchable-test')
+            ->click('[data-testid="modal-builder-trigger"]')
+            ->assertVisible($modal)
+            // Let the focus trap activate (it is deferred after opening) before interacting.
+            ->wait(0.5)
+            ->click($addBlockAction)
+            ->wait(1)
+            ->assertVisible($searchInput)
+            ->type($searchInput, 'zzz')
+            ->wait(1)
+            ->keys($searchInput, 'Escape')
+            ->wait(1)
+            ->assertValue($searchInput, '')
+            ->assertVisible($searchInput)
+            ->assertVisible($modal)
+            ->keys($searchInput, 'Escape')
+            ->wait(1)
+            ->assertMissing($searchInput)
+            ->assertVisible($modal)
+            ->assertScript('document.activeElement.closest(\'[data-testid="add-modal-block"]\') !== null', true)
+            ->keys($addBlockAction, 'Escape')
+            ->wait(1)
+            ->assertMissing($modal)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        visit('/builder-searchable-test')
+            ->inDarkMode()
+            ->click('[data-testid="modal-builder-trigger"]')
+            ->assertVisible($modal)
+            ->wait(0.5)
+            ->click($addBlockAction)
+            ->wait(1)
+            ->assertVisible($searchInput)
             ->assertNoAccessibilityIssues();
     });
 });

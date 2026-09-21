@@ -26,6 +26,25 @@ class BuilderSearchableTest extends Page
         $this->form->fill();
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('modalBuilder')
+                ->label('Modal builder')
+                ->schema([
+                    Builder::make('content')
+                        ->label('Content')
+                        ->searchable()
+                        ->addAction(fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-modal-block']))
+                        ->blocks($this->getBlocks())
+                        ->extraAttributes(['data-testid' => 'modal-builder']),
+                ])
+                ->action(static fn () => null)
+                ->extraAttributes(['data-testid' => 'modal-builder-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'builder-modal']),
+        ];
+    }
+
     public function form(Schema $form): Schema
     {
         return $form
@@ -34,30 +53,45 @@ class BuilderSearchableTest extends Page
                     ->label('Content')
                     ->searchable()
                     ->addAction(fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-block']))
-                    ->blocks([
-                        Builder\Block::make('paragraph')
-                            ->label('Paragraph')
-                            ->schema([
-                                TextInput::make('text')
-                                    ->label('Text'),
-                            ]),
-                        Builder\Block::make('heading')
-                            ->label(new HtmlString('Research &amp; Development'))
-                            ->schema([
-                                TextInput::make('title')
-                                    ->label('Title'),
-                            ]),
-                        Builder\Block::make('video')
-                            ->label('Video')
-                            ->maxItems(1)
-                            ->schema([
-                                TextInput::make('url')
-                                    ->label('URL'),
-                            ]),
-                    ])
+                    ->blocks($this->getBlocks())
                     ->extraAttributes(['data-testid' => 'builder']),
+                Builder::make('debouncedContent')
+                    ->label('Debounced content')
+                    ->searchable()
+                    ->searchDebounce(1000)
+                    ->addAction(fn (Action $action): Action => $action->extraAttributes(['data-testid' => 'add-debounced-block']))
+                    ->blocks($this->getBlocks())
+                    ->extraAttributes(['data-testid' => 'debounced-builder']),
             ])
             ->statePath('data');
+    }
+
+    /**
+     * @return array<Builder\Block>
+     */
+    protected function getBlocks(): array
+    {
+        return [
+            Builder\Block::make('paragraph')
+                ->label('Paragraph')
+                ->schema([
+                    TextInput::make('text')
+                        ->label('Text'),
+                ]),
+            Builder\Block::make('heading')
+                ->label(new HtmlString('Research &amp; Development'))
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Title'),
+                ]),
+            Builder\Block::make('video')
+                ->label('Video')
+                ->maxItems(1)
+                ->schema([
+                    TextInput::make('url')
+                        ->label('URL'),
+                ]),
+        ];
     }
 
     public function save(): void

@@ -7,10 +7,21 @@ export default () => ({
 
     navigateListener: null,
 
+    escapeListener: null,
+
+    isAutofocusPending: false,
+
     init() {
         this.navigateListener = () => this.close()
 
         document.addEventListener('livewire:navigate', this.navigateListener)
+
+        // The floating UI plugin only adds its own window `keydown` listener when the panel
+        // first opens, so registering here guarantees this listener runs before it and before
+        // any enclosing modal's `Escape` handler.
+        this.escapeListener = (event) => this.handleEscape(event)
+
+        window.addEventListener('keydown', this.escapeListener, true)
 
         this.setUpAria()
     },
@@ -21,6 +32,9 @@ export default () => ({
 
         document.removeEventListener('livewire:navigate', this.navigateListener)
         this.navigateListener = null
+
+        window.removeEventListener('keydown', this.escapeListener, true)
+        this.escapeListener = null
     },
 
     setUpAria() {
@@ -39,7 +53,10 @@ export default () => ({
 
         this.syncAria()
 
-        this.observer = new MutationObserver(() => this.syncAria())
+        this.observer = new MutationObserver(() => {
+            this.syncAria()
+            this.focusAutofocusable()
+        })
 
         // The floating UI plugin toggles the panel's `display` for open and close paths this
         // component does not drive itself (click-away, the plugin's own Escape handler), so observe
@@ -125,31 +142,99 @@ export default () => ({
     },
 
     autofocus() {
-        // At this point the panel is not visible yet, since the floating UI
-        // plugin makes it visible asynchronously. A `setTimeout` waits for
-        // that, as focus only works on visible elements.
-        setTimeout(() => {
-            const panel = this.$refs.panel
+        // The floating UI plugin makes the panel visible asynchronously and focus only works
+        // on visible elements, so the `MutationObserver` on the panel's `style` retries this
+        // once `display` actually changes.
+        this.isAutofocusPending = true
 
-            if (!panel || panel.style.display !== 'block') {
-                return
-            }
+        this.focusAutofocusable()
+    },
 
-            const autofocusable = panel.querySelector(
-                '[data-dropdown-autofocus]',
-            )
+    focusAutofocusable() {
+        if (!this.isAutofocusPending) {
+            return
+        }
 
-            if (!autofocusable) {
-                return
-            }
+        const panel = this.$refs.panel
 
-            autofocusable.dispatchEvent(new CustomEvent('dropdown-autofocus'))
+        if (!panel || panel.style.display !== 'block') {
+            return
+        }
 
-            autofocusable.focus()
-        })
+        this.isAutofocusPending = false
+
+        const autofocusable = panel.querySelector('[data-dropdown-autofocus]')
+
+        if (!autofocusable) {
+            return
+        }
+
+        autofocusable.dispatchEvent(new CustomEvent('dropdown-autofocus'))
+
+        autofocusable.focus()
+    },
+
+    handleEscape(event) {
+        if (event.key !== 'Escape') {
+            return
+        }
+
+        const panel = this.$refs.panel
+
+        if (!panel || panel.style.display !== 'block') {
+            return
+        }
+
+        if (
+            !(event.target instanceof Element) ||
+            this.getInnermostOpenDropdown(event.target) !== this.$el
+        ) {
+            return
+        }
+
+        // Content inside the panel may cancel this to keep the panel open, e.g. a search
+        // input that clears its value first.
+        const shouldClose = event.target.dispatchEvent(
+            new CustomEvent('dropdown-escape', {
+                bubbles: true,
+                cancelable: true,
+            }),
+        )
+
+        // Stop the floating UI plugin and any enclosing modal from also acting on this `Escape`.
+        event.stopImmediatePropagation()
+
+        if (!shouldClose) {
+            return
+        }
+
+        this.close()
+
+        this.getTrigger()?.focus()
+    },
+
+    getInnermostOpenDropdown(element) {
+        let dropdown = element.closest('.fi-dropdown')
+
+        while (
+            dropdown &&
+            dropdown.querySelector(':scope > .fi-dropdown-panel')?.style
+                .display !== 'block'
+        ) {
+            dropdown = dropdown.parentElement?.closest('.fi-dropdown')
+        }
+
+        if (dropdown) {
+            return dropdown
+        }
+
+        // A teleported panel is not a descendant of its dropdown.
+        return this.$refs.panel.contains(element) ? this.$el : null
     },
 
     close(event) {
+        this.isAutofocusPending = false
+
         this.$refs.panel?.close(event)
         this.syncAria()
     },

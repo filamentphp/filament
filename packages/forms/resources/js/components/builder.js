@@ -2,49 +2,25 @@ export default function builderBlockPickerFormComponent() {
     return {
         search: '',
 
-        init() {
-            // Registered before the floating UI plugin's own window `keydown`
-            // listener, so a nonempty search is cleared before the panel closes.
-            this.handleKeydownCapture = (event) => {
-                if (event.key !== 'Escape') {
-                    return
-                }
-
-                if (!this.$root.contains(event.target)) {
-                    return
-                }
-
-                if (this.search) {
-                    this.search = ''
-
-                    event.stopImmediatePropagation()
-
-                    return
-                }
-
-                // Let the panel close, then return focus to its trigger.
-                const trigger = this.$root
-                    .closest('.fi-dropdown')
-                    ?.querySelector(
-                        '.fi-dropdown-trigger button, .fi-dropdown-trigger a, .fi-dropdown-trigger [tabindex]',
-                    )
-
-                setTimeout(() => trigger?.focus())
-            }
-
-            window.addEventListener('keydown', this.handleKeydownCapture, true)
-        },
-
-        destroy() {
-            window.removeEventListener(
-                'keydown',
-                this.handleKeydownCapture,
-                true,
-            )
-        },
-
         clearSearch() {
             this.search = ''
+
+            // With a debounce, `search` may still be empty while the input already
+            // has text, so clear the input directly instead of relying on `x-model`.
+            if (this.$refs.searchInput) {
+                this.$refs.searchInput.value = ''
+            }
+        },
+
+        handleEscape(event) {
+            if (!this.search && !this.$refs.searchInput?.value) {
+                return
+            }
+
+            // Keep the picker open and clear the search instead.
+            event.preventDefault()
+
+            this.clearSearch()
         },
 
         isBlockVisible(blockElement) {

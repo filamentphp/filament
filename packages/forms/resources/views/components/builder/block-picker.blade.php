@@ -31,6 +31,7 @@
             'x-load' => true,
             'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
             'x-data' => 'builderBlockPickerFormComponent()',
+            'x-on:dropdown-escape' => 'handleEscape($event)',
         ])
         : new FilamentComponentAttributeBag;
 @endphp
@@ -68,7 +69,9 @@
                 <x-filament::input
                     type="search"
                     data-dropdown-autofocus
+                    x-ref="searchInput"
                     x-on:dropdown-autofocus="clearSearch()"
+                    x-on:keydown.enter.prevent=""
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new FilamentComponentAttributeBag([
