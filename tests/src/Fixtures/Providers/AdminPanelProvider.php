@@ -40,6 +40,7 @@ use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
+use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
@@ -135,6 +136,7 @@ class AdminPanelProvider extends PanelProvider
                 FileUploadBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
+                JsFieldFrameworkTest::class,
                 KeyValueTest::class,
                 ManageSiteSettings::class,
                 MarkdownEditorBrowserTest::class,

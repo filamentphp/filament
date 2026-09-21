@@ -7,6 +7,14 @@ import Aside from "@components/Aside.astro"
 
 All packages in the Filament ecosystem share an asset management system. This allows both official plugins and third-party plugins to register CSS and JavaScript files that can then be consumed by Blade views.
 
+Register your files in a service provider, then publish them with:
+
+```bash
+php artisan filament:assets
+```
+
+Start with [CSS registration](#registering-css-files) or [JavaScript registration](#registering-javascript-files). For a generated [JavaScript custom field](../forms/custom-fields#generating-a-javascript-field), the generator configures Vite for you; use [building lazy-loaded ES modules](#building-lazy-loaded-es-modules) when setting up a renderer manually.
+
 ## The `FilamentAsset` facade
 
 The `FilamentAsset` facade is used to register files into the asset system. These files may be sourced from anywhere in the filesystem, but are then copied into the `/public` directory of the application when the `php artisan filament:assets` command is run. By copying them into the `/public` directory for you, we can predictably load them in Blade views, and also ensure that third party packages are able to load their assets without having to worry about where they are located.
@@ -65,23 +73,37 @@ In this example, we use `__DIR__` to generate a relative path to the asset from 
 
 Now, when the `php artisan filament:assets` command is run, this CSS file is copied into the `/public` directory. In addition, it is now loaded into all Blade views that use Filament. If you're interested in only loading the CSS when it is required by an element on the page, check out the [Lazy loading CSS](#lazy-loading-css) section.
 
-### Using Tailwind CSS in plugins
+### Registering CSS files from a URL
 
-Typically, registering CSS files is used to register custom stylesheets for your application. If you want to process these files using Tailwind CSS, you need to consider the implications of that, especially if you are a plugin developer.
+If you want to register a CSS file from a URL, you may do so. These assets will be loaded on every page as normal, but not copied into the `/public` directory when the `php artisan filament:assets` command is run. This is useful for registering external stylesheets from a CDN, or stylesheets that you are already compiling directly into the `/public` directory:
 
-Tailwind builds are unique to every application - they contain a minimal set of utility classes, only the ones that you are actually using in your application. This means that if you are a plugin developer, you probably should not be building your Tailwind CSS files into your plugin. Instead, you should provide the raw CSS files and instruct the user that they should build the Tailwind CSS file themselves. To do this, they need to add your vendor directory to their custom theme's CSS file using the `@source` directive. In their [custom theme](../styling#creating-a-custom-theme) CSS file (e.g., `resources/css/filament/admin/theme.css`), they should add:
+```php
+use Filament\Support\Assets\Css;
+use Filament\Support\Facades\FilamentAsset;
 
-```css
-@import "tailwindcss";
-
-@source '../../../../app/Filament/**/*';
-@source '../../../../resources/views/filament/**/*';
-@source '../../../../vendor/danharrin/filament-blog/resources/views/**/*'; /* Your plugin's vendor directory */
+FilamentAsset::register([
+    Css::make('example-external-stylesheet', 'https://example.com/external.css'),
+    Css::make('example-local-stylesheet', asset('css/local.css')),
+]);
 ```
 
-This means that when they build their Tailwind CSS file, it will include all the utility classes that are used in your plugin's views, as well as the utility classes that are used in their application and the Filament core.
+### Registering CSS variables
 
-However, with this technique, there might be extra complications for users who use your plugin with the [Panel Builder](../panel-configuration). If they have a [custom theme](../styling#creating-a-custom-theme), they will be fine, since they are building their own CSS file anyway using Tailwind CSS. However, if they are using the default stylesheet which is shipped with the Panel Builder, you might have to be careful about the utility classes that you use in your plugin's views. For instance, if you use a utility class that is not included in the default stylesheet, the user is not compiling it themselves, and it will not be included in the final CSS file. This means that your plugin's views might not look as expected. This is one of the few situations where I would recommend compiling and [registering](#registering-css-files) a Tailwind CSS-compiled stylesheet in your plugin.
+Sometimes, you may wish to use dynamic data from the backend in CSS files. To do this, you can use the `FilamentAsset::registerCssVariables()` method in the `boot()` method of a service provider:
+
+```php
+use Filament\Support\Facades\FilamentAsset;
+
+FilamentAsset::registerCssVariables([
+    'background-image' => asset('images/background.jpg'),
+]);
+```
+
+Now, you can access these variables from any CSS file:
+
+```css
+background-image: var(--background-image);
+```
 
 ### Lazy loading CSS
 
@@ -118,37 +140,23 @@ If your CSS file was [registered to a plugin](#registering-assets-for-a-plugin),
 </div>
 ```
 
-### Registering CSS files from a URL
+### Using Tailwind CSS in plugins
 
-If you want to register a CSS file from a URL, you may do so. These assets will be loaded on every page as normal, but not copied into the `/public` directory when the `php artisan filament:assets` command is run. This is useful for registering external stylesheets from a CDN, or stylesheets that you are already compiling directly into the `/public` directory:
+Typically, registering CSS files is used to register custom stylesheets for your application. If you want to process these files using Tailwind CSS, you need to consider the implications of that, especially if you are a plugin developer.
 
-```php
-use Filament\Support\Assets\Css;
-use Filament\Support\Facades\FilamentAsset;
-
-FilamentAsset::register([
-    Css::make('example-external-stylesheet', 'https://example.com/external.css'),
-    Css::make('example-local-stylesheet', asset('css/local.css')),
-]);
-```
-
-### Registering CSS variables
-
-Sometimes, you may wish to use dynamic data from the backend in CSS files. To do this, you can use the `FilamentAsset::registerCssVariables()` method in the `boot()` method of a service provider:
-
-```php
-use Filament\Support\Facades\FilamentAsset;
-
-FilamentAsset::registerCssVariables([
-    'background-image' => asset('images/background.jpg'),
-]);
-```
-
-Now, you can access these variables from any CSS file:
+Tailwind builds are unique to every application - they contain a minimal set of utility classes, only the ones that you are actually using in your application. This means that if you are a plugin developer, you probably should not be building your Tailwind CSS files into your plugin. Instead, you should provide the raw CSS files and instruct the user that they should build the Tailwind CSS file themselves. To do this, they need to add your vendor directory to their custom theme's CSS file using the `@source` directive. In their [custom theme](../styling#creating-a-custom-theme) CSS file (e.g., `resources/css/filament/admin/theme.css`), they should add:
 
 ```css
-background-image: var(--background-image);
+@import "tailwindcss";
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/danharrin/filament-blog/resources/views/**/*'; /* Your plugin's vendor directory */
 ```
+
+This means that when they build their Tailwind CSS file, it will include all the utility classes that are used in your plugin's views, as well as the utility classes that are used in their application and the Filament core.
+
+However, with this technique, there might be extra complications for users who use your plugin with the [Panel Builder](../panel-configuration). If they have a [custom theme](../styling#creating-a-custom-theme), they will be fine, since they are building their own CSS file anyway using Tailwind CSS. However, if they are using the default stylesheet which is shipped with the Panel Builder, you might have to be careful about the utility classes that you use in your plugin's views. For instance, if you use a utility class that is not included in the default stylesheet, the user is not compiling it themselves, and it will not be included in the final CSS file. This means that your plugin's views might not look as expected. This is one of the few situations where I would recommend compiling and [registering](#registering-css-files) a Tailwind CSS-compiled stylesheet in your plugin.
 
 ## Registering JavaScript files
 
@@ -167,6 +175,87 @@ FilamentAsset::register([
 In this example, we use `__DIR__` to generate a relative path to the asset from the current file. For instance, if you were adding this code to `/app/Providers/AppServiceProvider.php`, then the JavaScript file should exist in `/resources/js/custom.js`.
 
 Now, when the `php artisan filament:assets` command is run, this JavaScript file is copied into the `/public` directory. In addition, it is now loaded into all Blade views that use Filament. If you're interested in only loading the JavaScript when it is required by an element on the page, check out the [Lazy loading JavaScript](#lazy-loading-javascript) section.
+
+### Registering JavaScript files from a URL
+
+If you want to register a JavaScript file from a URL, you may do so. These assets will be loaded on every page as normal, but not copied into the `/public` directory when the `php artisan filament:assets` command is run. This is useful for registering external scripts from a CDN, or scripts that you are already compiling directly into the `/public` directory:
+
+```php
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Js;
+
+FilamentAsset::register([
+    Js::make('example-external-script', 'https://example.com/external.js'),
+    Js::make('example-local-script', asset('js/local.js')),
+]);
+```
+
+### Registering script data
+
+Sometimes, you may wish to make data from the backend available to JavaScript files. To do this, you can use the `FilamentAsset::registerScriptData()` method in the `boot()` method of a service provider:
+
+```php
+use Filament\Support\Facades\FilamentAsset;
+
+FilamentAsset::registerScriptData([
+    'user' => [
+        'name' => auth()->user()?->name,
+    ],
+]);
+```
+
+Now, you can access that data from any JavaScript file at runtime, using the `window.filamentData` object:
+
+```js
+window.filamentData.user.name // 'Dan Harrin'
+```
+
+### Using Vite-compiled JavaScript files
+
+The `php artisan filament:assets` command copies files as-is into the `/public` directory without bundling or resolving dependencies. This means that if your JavaScript file uses `import` statements to pull in npm packages, the browser will not be able to resolve them. To use JavaScript files that require bundling, you should compile them with [Vite](https://vitejs.dev) first, and then register the compiled output as a URL-based asset.
+
+First, add your JavaScript file as an entry point in your `vite.config.js`:
+
+```js
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/js/timezone.js', // Your custom script
+            ],
+        }),
+    ],
+})
+```
+
+Then, compile the assets using Vite:
+
+```bash
+npm run build
+```
+
+Finally, register the compiled asset using `Vite::asset()` to resolve the versioned URL:
+
+```php
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\Vite;
+
+FilamentAsset::register([
+    Js::make('timezone', Vite::asset('resources/js/timezone.js')),
+]);
+```
+
+This approach also works for TypeScript files or any other JavaScript that needs a build step. Since `Vite::asset()` returns a URL, the asset will not be copied by `php artisan filament:assets` — it is served directly from Vite's build output.
+
+<Aside variant="info">
+    If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
+</Aside>
 
 ### Lazy loading JavaScript
 
@@ -335,45 +424,28 @@ This example is for a [custom form field](../forms/custom-fields). It passes the
 
 The `x-load` attributes come from the [Async Alpine](https://async-alpine.dev/docs/strategies) package, and any features of that package can be used here.
 
-### Registering script data
+### Building lazy-loaded ES modules
 
-Sometimes, you may wish to make data from the backend available to JavaScript files. To do this, you can use the `FilamentAsset::registerScriptData()` method in the `boot()` method of a service provider:
+Some components, such as [JavaScript custom fields](../forms/custom-fields#rendering-fields-with-javascript-frameworks), load an ES module on demand rather than running a script on every page. The module must preserve the exports expected by the component. For `JsField`, this is the default mount function shown in the field guide.
 
-```php
-use Filament\Support\Facades\FilamentAsset;
+The generated renderers target React 18 or later, Vue 3.3 or later within Vue 3, or Svelte 5. The React generator defaults to React 19 when React is not already installed. Svelte renderers use runes and the `mount()` / `unmount()` APIs, so they are not compatible with Svelte 4.
 
-FilamentAsset::registerScriptData([
-    'user' => [
-        'name' => auth()->user()?->name,
-    ],
-]);
+If you create a renderer manually, install its framework dependencies in the application that builds it. The JavaScript component generators install these for you unless you use `--skip-install`. For a Vite 8 application, run the command for your chosen framework:
+
+```bash
+# React
+npm install --save-dev react react-dom
+
+# Vue
+npm install --save-dev vue @vitejs/plugin-vue
+
+# Svelte
+npm install --save-dev svelte @sveltejs/vite-plugin-svelte
 ```
 
-Now, you can access that data from any JavaScript file at runtime, using the `window.filamentData` object:
+Framework-free JavaScript renderers need no additional framework packages. Use plugin versions compatible with your installed Vite version. For TypeScript renderers, also install `typescript@^6.0`; React additionally needs `@types/react` and `@types/react-dom`. Vue and Svelte tooling currently require the JavaScript compiler API provided by TypeScript 6, which TypeScript 7 does not provide.
 
-```js
-window.filamentData.user.name // 'Dan Harrin'
-```
-
-### Registering JavaScript files from a URL
-
-If you want to register a JavaScript file from a URL, you may do so. These assets will be loaded on every page as normal, but not copied into the `/public` directory when the `php artisan filament:assets` command is run. This is useful for registering external scripts from a CDN, or scripts that you are already compiling directly into the `/public` directory:
-
-```php
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Assets\Js;
-
-FilamentAsset::register([
-    Js::make('example-external-script', 'https://example.com/external.js'),
-    Js::make('example-local-script', asset('js/local.js')),
-]);
-```
-
-### Using Vite-compiled JavaScript files
-
-The `php artisan filament:assets` command copies files as-is into the `/public` directory without bundling or resolving dependencies. This means that if your JavaScript file uses `import` statements to pull in npm packages, the browser will not be able to resolve them. To use JavaScript files that require bundling, you should compile them with [Vite](https://vitejs.dev) first, and then register the compiled output as a URL-based asset.
-
-First, add your JavaScript file as an entry point in your `vite.config.js`:
+Add the module to your Laravel Vite plugin's `input` list and preserve entry exports in the production build:
 
 ```js
 import { defineConfig } from 'vite'
@@ -385,36 +457,106 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/timezone.js', // Your custom script
+                'resources/js/fields/location-picker.jsx',
             ],
         }),
     ],
+    build: {
+        rolldownOptions: { preserveEntrySignatures: 'exports-only' },
+    },
 })
 ```
 
-Then, compile the assets using Vite:
+For Vite versions using Rollup, use `rollupOptions` instead of `rolldownOptions`. Adapt your existing configuration rather than replacing its plugins or entry points. For Vue, enable `@vitejs/plugin-vue` and use the `.js` entry from the [Vue field example](../forms/custom-fields#creating-a-vue-field). For Svelte, enable `@sveltejs/vite-plugin-svelte` and use the `.svelte.js` entry from the [Svelte field example](../forms/custom-fields#creating-a-svelte-field). Use framework plugins compatible with your Vite version.
 
-```bash
-npm run build
+Do not import the renderer from your main application entry or include it with `@vite()`, as that would load it eagerly. Pass its URL to the field instead:
+
+```php
+use Filament\Forms\Components\JsField;
+use Illuminate\Support\Facades\Vite;
+
+JsField::make('location')
+    ->renderer(Vite::asset('resources/js/fields/location-picker.jsx'))
 ```
 
-Finally, register the compiled asset using `Vite::asset()` to resolve the versioned URL:
+`Vite::asset()` resolves the development URL or the production manifest's hashed URL. Include the Vite client through your normal application layout during development. Lazy loading does not provide automatic state-preserving hot replacement for an already mounted field.
+
+<Aside variant="info">
+    Importing a built JavaScript URL does not load CSS listed only in Vite's manifest. Include the field's CSS through your application's stylesheet or [register it separately](#registering-css-files). The browser caches imported modules by URL, so use versioned or hashed URLs when deploying changes.
+</Aside>
+
+#### Building modules with esbuild
+
+You can use esbuild instead of Vite. For the [React field example](../forms/custom-fields#creating-a-react-field), install `esbuild`, `react`, and `react-dom` as development dependencies in the project that builds the renderer. Create `build.mjs`:
+
+```js
+import { build } from 'esbuild'
+
+await build({
+    entryPoints: { 'location-picker': 'resources/js/fields/location-picker.jsx' },
+    outdir: 'dist',
+    bundle: true,
+    format: 'esm',
+    minify: true,
+    define: { 'process.env.NODE_ENV': '"production"' },
+})
+```
+
+Run `node build.mjs`. This bundles React into the renderer without requiring globals or an import map. The example imports React for esbuild's classic JSX transform; you may alternatively configure `jsx: 'automatic'`.
+
+Vue single-file components and Svelte components require their framework compilers, which esbuild does not include. Use a build integration that supports your component syntax, styles, and TypeScript requirements, or use the Vite plugins described above. The resulting module must bundle its runtime dependencies and retain its default export, whichever build tool you choose.
+
+### Publishing ES modules in plugins
+
+For a [reusable JavaScript field](../forms/custom-fields#building-reusable-plugin-fields), build the renderer in your plugin repository and include the generated `dist/` directory in your Composer release. Consumers should not need npm dependencies or Vite configuration to use your field.
+
+Register the prebuilt entry in your [plugin's service provider](../plugins/getting-started#registering-assets), using `loadedOnRequest()` to prevent Filament from loading it on every page:
 
 ```php
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
-use Illuminate\Support\Facades\Vite;
 
 FilamentAsset::register([
-    Js::make('timezone', Vite::asset('resources/js/timezone.js')),
-]);
+    Js::make('location-picker', __DIR__ . '/../dist/location-picker.js')
+        ->loadedOnRequest(),
+], package: 'vendor/location-picker');
 ```
 
-This approach also works for TypeScript files or any other JavaScript that needs a build step. Since `Vite::asset()` returns a URL, the asset will not be copied by `php artisan filament:assets` — it is served directly from Vite's build output.
+Use `FilamentAsset::getScriptSrc('location-picker', 'vendor/location-picker')` to obtain the URL, as shown in the reusable field example. Consumers run `php artisan filament:assets` after installing or upgrading your package. `getScriptSrc()` includes the Composer package version in the entry URL. See [creating a plugin](../plugins/getting-started#creating-a-plugin) for package and service-provider setup.
 
-<Aside variant="info">
-    If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
-</Aside>
+#### Publishing stylesheets and shared chunks
+
+If your build produces separate CSS, [register it explicitly](#registering-css-files). Importing the JavaScript URL does not attach esbuild's CSS output. Keep selectors package-specific.
+
+For several renderers sharing dependencies, you can add `splitting: true` and `chunkNames: 'chunks/[name]-[hash]'` to esbuild. Publish every chunk at the relative path used by the entry. Chunk filenames need content hashes because relative imports do not inherit the entry URL's version query.
+
+For a build that emits JavaScript and CSS in subdirectories, replace the single-entry registration above with this in your service provider:
+
+```php
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\File;
+
+foreach (File::allFiles(__DIR__ . '/../dist') as $file) {
+    $extension = $file->getExtension();
+
+    if (! in_array($extension, ['js', 'css'])) {
+        continue;
+    }
+
+    $id = str_replace('\\', '/', $file->getRelativePathname());
+    $id = substr($id, 0, -(strlen($extension) + 1));
+
+    FilamentAsset::register([
+        $extension === 'css'
+            ? Css::make($id, $file->getPathname())
+            : Js::make($id, $file->getPathname())->loadedOnRequest(),
+    ], package: 'vendor/location-picker');
+}
+```
+
+This preserves relative paths for JavaScript chunks and registers generated stylesheets. If your CSS references fonts or images, publish those files separately at the URLs your stylesheet expects.
 
 ## Ignoring published assets in version control
 

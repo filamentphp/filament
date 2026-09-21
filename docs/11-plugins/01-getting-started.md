@@ -7,7 +7,23 @@ import Aside from "@components/Aside.astro"
 
 While Filament comes with virtually any tool you'll need to build great apps, sometimes you'll need to add your own functionality either for just your app or as redistributable packages that other developers can include in their own apps. This is why Filament offers a plugin system that allows you to extend its functionality.
 
-Before we dive in, it's important to understand the different contexts in which plugins can be used. There are two main contexts:
+## Creating a plugin
+
+While you can certainly build plugins from scratch, we recommend using the [Filament Plugin Skeleton](https://github.com/filamentphp/plugin-skeleton) to quickly get started. This skeleton includes all the necessary boilerplate to get you up and running quickly.
+
+### Usage
+
+To use the skeleton, go to the GitHub repository and click the "Use this template" button. This creates a new repository in your account with the skeleton code. Clone the repository to your machine, navigate to its root directory, and run:
+
+```bash
+php ./configure.php
+```
+
+The command asks you a series of questions, then configures the new plugin so you can begin building it.
+
+## Understanding plugin types
+
+Plugins can be used in two main contexts:
 
 1. **Panel Plugins**: These are plugins that are used with [Panel Builders](../introduction/installation). They are typically used only to add functionality when used inside a Panel or as a complete Panel in and of itself. Examples of this are:
    1. A plugin that adds specific functionality to the dashboard in the form of Widgets.
@@ -40,19 +56,7 @@ While the plugin object is extremely helpful, it is not required to build a plug
 
 All [asset registration](../advanced/assets), including CSS, JS and Alpine Components, should be done through the plugin's service provider in the `packageBooted()` method. This allows Filament to register the assets with the Asset Manager and load them when needed.
 
-## Creating a plugin
-
-While you can certainly build plugins from scratch, we recommend using the [Filament Plugin Skeleton](https://github.com/filamentphp/plugin-skeleton) to quickly get started. This skeleton includes all the necessary boilerplate to get you up and running quickly.
-
-### Usage
-
-To use the skeleton, simply go to the GitHub repo and click the "Use this template" button. This will create a new repo in your account with the skeleton code. After that, you can clone the repo to your machine. Once you have the code on your machine, navigate to the root of the project and run the following command:
-
-```bash
-php ./configure.php
-```
-
-This will ask you a series of questions to configure the plugin. Once you've answered all the questions, the script will stub out a new plugin for you, and you can begin to build your amazing new extension for Filament.
+For a field built with React, Vue, Svelte, or native JavaScript, follow [building reusable JavaScript fields](../forms/custom-fields#building-reusable-plugin-fields) and [publishing ES modules in plugins](../advanced/assets#publishing-es-modules-in-plugins). Build and include any framework dependencies in your plugin's assets so consumers do not need to change their application's Vite configuration.
 
 ## Upgrading existing plugins
 

@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import type { JsFieldInitialProps } from '@filament/forms/js-field'
+
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps<JsFieldInitialProps<string | null>>()
+</script>
+
+<template>
+    <input
+        :id="props.id"
+        type="text"
+        :value="props.value ?? ''"
+        :disabled="props.isDisabled"
+        :readonly="props.isReadOnly"
+        :required="props.isRequired"
+        :aria-invalid="props.isInvalid"
+        :aria-describedby="props.ariaDescribedBy"
+        @input="props.onChange(($event.target as HTMLInputElement).value)"
+        @blur="props.onBlur()"
+    />
+</template>
