@@ -222,12 +222,6 @@ class MakeWidgetCommand extends Command
 
             if ($framework) {
                 $this->type = Widget::class;
-                $this->configurePackageManager();
-                $this->installJavaScriptDependencies($this->getJavaScriptRendererDependencies(
-                    $framework,
-                    $this->isTypeScript,
-                    $this->getViteVersion(),
-                ));
             }
             $this->configurePanel(
                 question: 'Which panel would you like to create this widget in?',
@@ -494,6 +488,15 @@ class MakeWidgetCommand extends Command
 
         if (! $this->option('force') && $this->checkForCollision([$path, ...array_keys($this->rendererFiles)])) {
             throw new FailureCommandOutput;
+        }
+
+        if ($this->framework) {
+            $this->configurePackageManager();
+            $this->installJavaScriptDependencies($this->getJavaScriptRendererDependencies(
+                $this->framework,
+                $this->isTypeScript,
+                $this->getViteVersion(),
+            ));
         }
 
         $this->writeFile($path, app(CustomWidgetClassGenerator::class, [

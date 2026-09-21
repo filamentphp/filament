@@ -287,7 +287,7 @@ it('preserves renderer collisions unless `--force` is specified', function (): v
     expect(File::get($path))->toContain('export default function mountExistingWidget');
 });
 
-it('preserves every widget file when a renderer overwrite is declined', function (): void {
+it('preserves every widget file without installing dependencies when a renderer overwrite is declined', function (): void {
     $paths = [
         app_path('Filament/Widgets/CancelledWidget.php'),
         resource_path('js/filament/widgets/cancelled-widget.js'),
@@ -308,7 +308,6 @@ it('preserves every widget file when a renderer overwrite is declined', function
             'name' => 'CancelledWidget',
             '--panel' => 'admin',
             '--vue' => true,
-            '--skip-install' => true,
             '--skip-build' => true,
         ])
             ->expectsQuestion('Would you like to create this widget in a resource?', false)
@@ -316,6 +315,49 @@ it('preserves every widget file when a renderer overwrite is declined', function
             ->expectsConfirmation('cancelled-widget.js already exists, do you want to overwrite it?', 'yes')
             ->expectsConfirmation('CancelledWidget.vue already exists, do you want to overwrite it?', 'no')
             ->assertFailed();
+
+        foreach ($paths as $path) {
+            expect(File::get($path))->toBe('Original ' . basename($path));
+        }
+
+        Process::assertNothingRan();
+    } finally {
+        app()['env'] = $environment;
+        File::delete($paths);
+    }
+});
+
+it('preserves approved widget outputs when dependency installation fails', function (): void {
+    $paths = [
+        app_path('Filament/Widgets/FailedInstallWidget.php'),
+        resource_path('js/filament/widgets/failed-install-widget.js'),
+        resource_path('js/filament/widgets/FailedInstallWidget.vue'),
+    ];
+
+    foreach ($paths as $path) {
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, 'Original ' . basename($path));
+    }
+
+    Process::fake(static fn (PendingProcess $process) => Process::result(output: '10.0.0', exitCode: in_array('install', $process->command, true) ? 1 : 0));
+    $environment = app()['env'];
+
+    try {
+        app()['env'] = 'local';
+
+        $this->artisan('make:filament-widget', [
+            'name' => 'FailedInstallWidget',
+            '--panel' => 'admin',
+            '--vue' => true,
+            '--skip-build' => true,
+        ])
+            ->expectsQuestion('Would you like to create this widget in a resource?', false)
+            ->expectsConfirmation('FailedInstallWidget.php already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('failed-install-widget.js already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('FailedInstallWidget.vue already exists, do you want to overwrite it?', 'yes')
+            ->assertFailed();
+
+        Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['npm', 'install', 'vue@^3.3', '@vitejs/plugin-vue@^6.0', '--save-dev']);
 
         foreach ($paths as $path) {
             expect(File::get($path))->toBe('Original ' . basename($path));
