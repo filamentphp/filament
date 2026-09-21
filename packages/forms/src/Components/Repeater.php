@@ -892,6 +892,16 @@ class Repeater extends Field implements HasEmbeddedView, HasExtraItemActions
         return $this->cachedItemsRawStateStructure === array_map(is_array(...), $this->getRawState() ?? []);
     }
 
+    protected function isCachedDefaultChildSchemaFresh(string | int $key): bool
+    {
+        $rawState = $this->getRawState();
+
+        return is_array($rawState)
+            && array_key_exists($key, $rawState)
+            && array_key_exists($key, $this->cachedItemsRawStateStructure ?? [])
+            && ($this->cachedItemsRawStateStructure[$key] === is_array($rawState[$key]));
+    }
+
     public function getAddActionLabel(): string
     {
         return $this->evaluate($this->addActionLabel) ?? __('filament-forms::components.repeater.actions.add.label', [

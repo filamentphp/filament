@@ -6,6 +6,7 @@
  * - Wrapped the indent/outdent operations in `toggleCodeBlock()` in `cm.operation()` so they group into a single CodeMirror undo step. See https://github.com/filamentphp/filament/pull/19890.
  * - Changed `minHeight` and `maxHeight` to apply independently when both options are set. See https://github.com/Ionaru/easy-markdown-editor/issues/413.
  * - Made the `CodeMirror` scroller keyboard-focusable when `maxHeight` is set so overflowing content can be scrolled with a keyboard. See https://github.com/filamentphp/filament/pull/20258.
+ * - Prevented `CodeMirror` from wrapping the ancestor form's `submit()` method, so detached editors can fully release their form listener during teardown.
  */
 
 // Some variables
@@ -2531,6 +2532,7 @@ EasyMDE.prototype.render = function (el) {
                 : true,
         autoRefresh:
             options.autoRefresh != undefined ? options.autoRefresh : false,
+        leaveSubmitMethodAlone: true,
     })
 
     var scrollerElement = this.codemirror.getScrollerElement()

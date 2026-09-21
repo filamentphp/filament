@@ -20,8 +20,9 @@ uses(TestCase::class);
 it('discovers application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
     $filesystem = app(Filesystem::class);
     $repositoryDirectory = dirname(__DIR__, 3);
-    $temporaryDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-' . bin2hex(random_bytes(8));
-    $vendorDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-vendor-' . bin2hex(random_bytes(8));
+    $temporaryRootDirectory = realpath(sys_get_temp_dir());
+    $temporaryDirectory = $temporaryRootDirectory . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-' . bin2hex(random_bytes(8));
+    $vendorDirectory = $temporaryRootDirectory . DIRECTORY_SEPARATOR . 'filament-discover-app-classes-vendor-' . bin2hex(random_bytes(8));
     $composerDirectory = $vendorDirectory . DIRECTORY_SEPARATOR . 'composer';
     $dependencySourceDirectory = $temporaryDirectory . DIRECTORY_SEPARATOR . 'packages/dependency';
     $linkedDependencyDirectory = $vendorDirectory . DIRECTORY_SEPARATOR . 'fixture/dependency';
