@@ -13,6 +13,7 @@
         "filament/actions": "self.version",
         "filament/schemas": "self.version",
         "filament/support": "self.version",
+        "league/mime-type-detection": "^1.0",
         "ueberdosis/tiptap-php": "^2.0"
     },
     "autoload": {

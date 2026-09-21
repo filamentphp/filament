@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Services\TemporaryUploadedFileMimeTypeDetector;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
@@ -104,7 +105,10 @@ trait HasFileAttachments
             return $savedFile;
         }
 
-        $path = $file->store($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
+        $path = $file->store($this->getFileAttachmentsDirectory(), [
+            'disk' => $this->getFileAttachmentsDiskName(),
+            'mimetype' => app(TemporaryUploadedFileMimeTypeDetector::class)->detect($file),
+        ]);
 
         if ($this->getFileAttachmentsVisibility() === 'public') {
             rescue(fn () => $this->getFileAttachmentsDisk()->setVisibility($path, 'public'), report: false);

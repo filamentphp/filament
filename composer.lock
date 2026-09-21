@@ -2906,10 +2906,11 @@
             "dist": {
                 "type": "path",
                 "url": "packages/support",
-                "reference": "3d327e9683c1900792db64dfd884084ababa2f30"
+                "reference": "d8f933ac05604ab926835a040d1a4d83b2289796"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
+                "composer-runtime-api": "^2.1",
                 "danharrin/livewire-rate-limiting": "^2.0",
                 "ext-intl": "*",
                 "illuminate/contracts": "^11.28|^12.0|^13.0",
@@ -5289,16 +5290,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v4.3.1",
+            "version": "v4.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "6a9dd03f45a4b200abfd0ff644745b23fa7baaaa"
+                "reference": "c6b7db7a92103ac2738e8fdc926cecc93eb67853"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/6a9dd03f45a4b200abfd0ff644745b23fa7baaaa",
-                "reference": "6a9dd03f45a4b200abfd0ff644745b23fa7baaaa",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/c6b7db7a92103ac2738e8fdc926cecc93eb67853",
+                "reference": "c6b7db7a92103ac2738e8fdc926cecc93eb67853",
                 "shasum": ""
             },
             "require": {
@@ -5353,7 +5354,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.3.1"
+                "source": "https://github.com/livewire/livewire/tree/v4.4.6"
             },
             "funding": [
                 {
@@ -5361,7 +5362,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-02T08:58:52+00:00"
+            "time": "2026-09-21T18:51:23+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
