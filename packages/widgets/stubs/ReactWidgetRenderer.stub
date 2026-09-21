@@ -1,0 +1,14 @@
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+
+function {{ componentName }}({ configuration }) {
+    return <><h2>{configuration.heading ?? 'Widget heading'}</h2><p>{configuration.description ?? 'Widget description'}</p></>
+}
+
+export default function mount{{ componentName }}({ host, props: initialProps }) {
+    const root = createRoot(host)
+    const update = (props) => root.render(<{{ componentName }} {...props} />)
+    update(initialProps)
+
+    return { update, destroy: () => root.unmount() }
+}

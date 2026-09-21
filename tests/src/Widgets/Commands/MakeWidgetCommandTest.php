@@ -1,10 +1,38 @@
 <?php
 
 use Filament\Tests\TestCase;
+use Illuminate\Process\PendingProcess;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 
 use function PHPUnit\Framework\assertFileExists;
 
 uses(TestCase::class)->group('serial');
+
+beforeEach(function (): void {
+    Process::fake(['*' => Process::result(output: '10.0.0')]);
+    Process::preventStrayProcesses();
+
+    $this->originalSetupFiles = [];
+
+    foreach (['vite.config.js', 'node_modules/vite/package.json', 'tsconfig.json', 'package.json'] as $path) {
+        $this->originalSetupFiles[$path] = File::exists(base_path($path)) ? File::get(base_path($path)) : null;
+    }
+
+    File::put(base_path('package.json'), '{}');
+    File::ensureDirectoryExists(base_path('node_modules/vite'));
+    File::put(base_path('node_modules/vite/package.json'), '{"version":"8.0.0"}');
+});
+
+afterEach(function (): void {
+    foreach ($this->originalSetupFiles as $path => $contents) {
+        if ($contents === null) {
+            File::delete(base_path($path));
+        } else {
+            File::put(base_path($path), $contents);
+        }
+    }
+});
 
 it('can generate a custom widget class', function (): void {
     $this->withoutMockingConsoleOutput();
@@ -145,4 +173,215 @@ it('can generate a widget view in a nested directory', function (): void {
     assertFileExists($path = resource_path('views/filament/widgets/custom/nested-widget.blade.php'));
     expect(file_get_contents($path))
         ->toMatchSnapshot();
+});
+
+it('can generate JavaScript widget renderers', function (string $framework, bool $isTypeScript, string $extension, array $additionalFiles): void {
+    $arguments = [
+        'name' => 'RenderedWidget',
+        '--panel' => 'admin',
+        "--{$framework}" => true,
+        '--skip-install' => true,
+        '--skip-build' => true,
+        '--no-interaction' => true,
+    ];
+
+    if ($isTypeScript) {
+        $arguments['--typescript'] = true;
+    }
+
+    $this->artisan('make:filament-widget', $arguments)
+        ->expectsQuestion('Would you like to create this widget in a resource?', false)
+        ->assertSuccessful();
+
+    $classPath = app_path('Filament/Widgets/RenderedWidget.php');
+    assertFileExists($classPath);
+    expect(file_get_contents($classPath))
+        ->toContain('use HasJsRenderer;')
+        ->toContain("return Vite::asset('resources/js/filament/widgets/rendered-widget.{$extension}');")
+        ->not->toContain('$view');
+    assertFileExists(resource_path("js/filament/widgets/rendered-widget.{$extension}"));
+    foreach ($additionalFiles as $additionalFile) {
+        assertFileExists(resource_path("js/filament/widgets/{$additionalFile}"));
+    }
+})->with([
+    'JavaScript' => ['js', false, 'js', []],
+    'JavaScript with TypeScript' => ['js', true, 'ts', []],
+    'React' => ['react', false, 'jsx', []],
+    'React with TypeScript' => ['react', true, 'tsx', []],
+    'Vue' => ['vue', false, 'js', ['RenderedWidget.vue']],
+    'Vue with TypeScript' => ['vue', true, 'ts', ['RenderedWidget.vue']],
+    'Svelte' => ['svelte', false, 'svelte.js', ['RenderedWidget.svelte']],
+    'Svelte with TypeScript' => ['svelte', true, 'svelte.ts', ['RenderedWidget.svelte']],
+]);
+
+it('rejects incompatible JavaScript widget renderer options', function (array $options): void {
+    $this->artisan('make:filament-widget', [
+        'name' => 'InvalidWidget',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+        ...$options,
+    ])->assertFailed();
+})->with([
+    'multiple frameworks' => [['--react' => true, '--vue' => true]],
+    'TypeScript without a framework' => [['--typescript' => true]],
+    'chart renderer' => [['--js' => true, '--chart' => true]],
+    'stats renderer' => [['--js' => true, '--stats-overview' => true]],
+    'table renderer' => [['--js' => true, '--table' => true]],
+]);
+
+it('preserves existing compiler imports and TypeScript aliases when configuring a widget', function (string $framework, string $import): void {
+    File::put(base_path('vite.config.js'), $import . "\nexport default defineConfig({ plugins: [laravel({ input: ['resources/js/app.js'] }), frameworkPlugin()] })");
+    File::put(base_path('tsconfig.json'), json_encode([
+        'compilerOptions' => ['baseUrl' => 'resources/js', 'paths' => ['@/*' => ['./*']]],
+    ]));
+
+    $this->artisan('make:filament-widget', [
+        'name' => 'Reports/RevenueOverview',
+        '--panel' => 'admin',
+        "--{$framework}" => true,
+        '--ts' => true,
+        '--skip-install' => true,
+        '--skip-build' => true,
+        '--no-interaction' => true,
+    ])
+        ->expectsQuestion('Would you like to create this widget in a resource?', false)
+        ->assertSuccessful();
+
+    expect(File::get(base_path('vite.config.js')))
+        ->toContain($import, "preserveEntrySignatures: 'exports-only'", 'resources/js/filament/widgets/reports/revenue-overview.')
+        ->not->toContain('filamentVue', 'filamentSvelte');
+    expect(File::json(base_path('tsconfig.json')))
+        ->toHaveKey('compilerOptions.paths.@/*', ['./*'])
+        ->toHaveKey('compilerOptions.paths.@filament/widgets/js-widget', ['./../../vendor/filament/widgets/resources/js/types/js-widget.d.ts']);
+    Process::assertNothingRan();
+})->with([
+    ['vue', "import frameworkPlugin from '@vitejs/plugin-vue'"],
+]);
+
+it('preserves renderer collisions unless `--force` is specified', function (): void {
+    $path = resource_path('js/filament/widgets/existing-widget.js');
+    File::ensureDirectoryExists(dirname($path));
+    File::put($path, 'Existing renderer');
+    $arguments = [
+        'name' => 'ExistingWidget', '--panel' => 'admin', '--js' => true,
+        '--skip-install' => true, '--skip-build' => true, '--no-interaction' => true,
+    ];
+
+    File::delete(app_path('Filament/Widgets/ExistingWidget.php'));
+    $environment = $this->app['env'];
+    $this->app['env'] = 'production';
+
+    try {
+        $this->artisan('make:filament-widget', $arguments)
+            ->expectsQuestion('Would you like to create this widget in a resource?', false)
+            ->expectsConfirmation('existing-widget.js already exists, do you want to overwrite it?', 'no')
+            ->assertFailed();
+    } finally {
+        $this->app['env'] = $environment;
+    }
+
+    expect(File::get($path))->toBe('Existing renderer');
+    $this->artisan('make:filament-widget', [...$arguments, '--force' => true])
+        ->expectsQuestion('Would you like to create this widget in a resource?', false)
+        ->assertSuccessful();
+    expect(File::get($path))->toContain('export default function mountExistingWidget');
+});
+
+it('preserves every widget file without installing dependencies when a renderer overwrite is declined', function (): void {
+    $paths = [
+        app_path('Filament/Widgets/CancelledWidget.php'),
+        resource_path('js/filament/widgets/cancelled-widget.js'),
+        resource_path('js/filament/widgets/CancelledWidget.vue'),
+    ];
+
+    foreach ($paths as $path) {
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, 'Original ' . basename($path));
+    }
+
+    $environment = app()['env'];
+
+    try {
+        app()['env'] = 'local';
+
+        $this->artisan('make:filament-widget', [
+            'name' => 'CancelledWidget',
+            '--panel' => 'admin',
+            '--vue' => true,
+            '--skip-build' => true,
+        ])
+            ->expectsQuestion('Would you like to create this widget in a resource?', false)
+            ->expectsConfirmation('CancelledWidget.php already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('cancelled-widget.js already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('CancelledWidget.vue already exists, do you want to overwrite it?', 'no')
+            ->assertFailed();
+
+        foreach ($paths as $path) {
+            expect(File::get($path))->toBe('Original ' . basename($path));
+        }
+
+        Process::assertNothingRan();
+    } finally {
+        app()['env'] = $environment;
+        File::delete($paths);
+    }
+});
+
+it('preserves approved widget outputs when dependency installation fails', function (): void {
+    $paths = [
+        app_path('Filament/Widgets/FailedInstallWidget.php'),
+        resource_path('js/filament/widgets/failed-install-widget.js'),
+        resource_path('js/filament/widgets/FailedInstallWidget.vue'),
+    ];
+
+    foreach ($paths as $path) {
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, 'Original ' . basename($path));
+    }
+
+    Process::fake(static fn (PendingProcess $process) => Process::result(output: '10.0.0', exitCode: in_array('install', $process->command, true) ? 1 : 0));
+    $environment = app()['env'];
+
+    try {
+        app()['env'] = 'local';
+
+        $this->artisan('make:filament-widget', [
+            'name' => 'FailedInstallWidget',
+            '--panel' => 'admin',
+            '--vue' => true,
+            '--skip-build' => true,
+        ])
+            ->expectsQuestion('Would you like to create this widget in a resource?', false)
+            ->expectsConfirmation('FailedInstallWidget.php already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('failed-install-widget.js already exists, do you want to overwrite it?', 'yes')
+            ->expectsConfirmation('FailedInstallWidget.vue already exists, do you want to overwrite it?', 'yes')
+            ->assertFailed();
+
+        Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['npm', 'install', 'vue@^3.3', '@vitejs/plugin-vue@^6.0', '--save-dev']);
+
+        foreach ($paths as $path) {
+            expect(File::get($path))->toBe('Original ' . basename($path));
+        }
+    } finally {
+        app()['env'] = $environment;
+        File::delete($paths);
+    }
+});
+
+it('installs typed React widget dependencies with the chosen package manager and reports build failures', function (): void {
+    File::delete(base_path('tsconfig.json'));
+    File::put(base_path('vite.config.js'), "export default defineConfig({ plugins: [laravel({ input: ['resources/js/app.js'] })] })");
+    Process::fake(static fn (PendingProcess $process) => Process::result(exitCode: ($process->command === ['yarn', 'run', 'build']) ? 1 : 0));
+
+    $this->artisan('make:filament-widget', [
+        'name' => 'TypedReactWidget', '--panel' => 'admin', '--react' => true, '--typescript' => true,
+        '--pm' => 'yarn', '--no-interaction' => true,
+    ])
+        ->expectsQuestion('Would you like to create this widget in a resource?', false)
+        ->expectsConfirmation('Would you like to compile the widget now?', 'yes')
+        ->assertFailed();
+
+    expect(File::json(base_path('tsconfig.json')))->toHaveKey('compilerOptions.jsx', 'react-jsx');
+    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'add', 'react@^19.0', 'react-dom@^19.0', 'typescript@^6.0', '@types/react@^19.0', '@types/react-dom@^19.0', '--dev']);
+    Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['yarn', 'run', 'build']);
 });

@@ -1,0 +1,13 @@
+import { createApp, h, shallowRef } from 'vue'
+import {{ componentName }} from './{{ componentName }}.vue'
+
+export default function mount{{ componentName }}({ host, props: initialProps }) {
+    const props = shallowRef(initialProps)
+    const application = createApp({ setup: () => () => h({{ componentName }}, props.value) })
+    application.mount(host)
+
+    return {
+        update: (nextProps) => { props.value = nextProps },
+        destroy: () => application.unmount(),
+    }
+}
