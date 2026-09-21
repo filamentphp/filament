@@ -108,11 +108,11 @@ export default function richEditorFormComponent({
                     ),
                 floatingToolbars,
                 getCustomBlockPreviewsUsing: (customBlocks) =>
-                    this.$wire.callSchemaComponentMethod(
-                        key,
-                        'getCustomBlockPreviewsForJs',
-                        { customBlocks },
-                    ),
+                    this.$getCustomBlockPreviewsForJs({ customBlocks }),
+                getFileAttachmentUrlUsing: (attachment) =>
+                    this.$getUploadedFileAttachmentTemporaryUrl({
+                        attachment,
+                    }),
                 hasResizableImages,
                 hasMinimalCustomBlockControls,
                 insertCustomBlockUsing: (id, dragPosition = null) =>

@@ -3,12 +3,13 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Renderless;
+use ReflectionAttribute;
 use ReflectionMethod;
 
 trait HasColumns
@@ -86,7 +87,7 @@ trait HasColumns
     public function callTableColumnMethod(string $name, string $recordKey, string $method, array $arguments = []): mixed
     {
         // Security: This method is callable from the frontend and dispatches
-        // to `#[ExposedLivewireMethod]` methods on table columns. It does
+        // to `#[Exposed]` methods on table columns. It does
         // not perform per-record policy checks. Inline editable columns
         // called through here bypass Model Policies.
 
@@ -106,7 +107,7 @@ trait HasColumns
 
         $methodReflection = new ReflectionMethod($column, $method);
 
-        if (! $methodReflection->getAttributes(ExposedLivewireMethod::class)) {
+        if (! $methodReflection->getAttributes(Exposed::class, ReflectionAttribute::IS_INSTANCEOF)) {
             return null;
         }
 

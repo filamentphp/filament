@@ -636,6 +636,20 @@ it('can render `Tabs` in the browser', function (): void {
         ->assertNoAccessibilityIssues();
 });
 
+it('loads deferred badges through `$getDeferredTabBadges()` in both tab renderers', function (bool $livewireTabs): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/tabs-browser-test?deferred=1&livewire=' . (int) $livewireTabs);
+
+    $page->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    $page->inDarkMode()
+        ->assertSeeIn('[data-testid="deferred-tab"]', 'Available')
+        ->assertNoAccessibilityIssues();
+})->with(['Alpine' => false, 'Livewire' => true]);
+
 it('keeps non-scrollable `Tabs` in one keyboard sequence and accessible tablist', function (): void {
     $this->actingAs(User::factory()->create());
 

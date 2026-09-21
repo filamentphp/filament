@@ -202,6 +202,7 @@ class Tab extends Component implements HasEmbeddedView
                 'x-show' => $this->getTabVisibilityJs(),
                 'x-bind:class' => "{ 'fi-active': isTabSelected(" . Js::from($key) . ') }',
                 'x-on:expand' => 'revealTab(' . Js::from($key) . ')',
+                'x-data' => 'filamentSchemaComponent({ ...' . Js::from($this->getAlpineScopeConfiguration()) . ', $wire })',
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-tabs-tab']);

@@ -3,6 +3,8 @@
 use Filament\PanelRegistry;
 use Filament\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Process\PendingProcess;
+use Illuminate\Support\Facades\Process;
 
 uses(TestCase::class);
 
@@ -52,6 +54,47 @@ describe('Package manager prerequisites', function (): void {
         'panel argument' => [['panel' => 'admin']],
         'panel option' => [['--panel' => 'admin']],
     ]);
+
+    it('preserves an existing theme when overwrite is declined or installation fails', function (bool $shouldOverwrite): void {
+        $path = resource_path('css/filament/admin/theme.css');
+        $filesystem = app(Filesystem::class);
+        $filesystem->ensureDirectoryExists(dirname($path));
+        $filesystem->put($path, '/* Existing custom theme */');
+        $viteConfig = $filesystem->get(base_path('vite.config.js'));
+        $panelProvider = $filesystem->get(app_path('Providers/Filament/AdminPanelProvider.php'));
+        $environment = app()['env'];
+
+        Process::fake(static fn (PendingProcess $process) => Process::result(exitCode: ($process->command === ['npm', '--version']) ? 0 : 1));
+        Process::preventStrayProcesses();
+
+        try {
+            app()['env'] = 'local';
+
+            $command = $this->artisan('make:filament-theme', [
+                '--panel' => 'admin',
+                '--skip-build' => true,
+            ])->expectsConfirmation('theme.css already exists, do you want to overwrite it?', $shouldOverwrite ? 'yes' : 'no');
+
+            if ($shouldOverwrite) {
+                $command->expectsOutputToContain('Failed to install JavaScript dependencies.');
+            }
+
+            $command->assertFailed();
+            $command->run();
+
+            expect($filesystem->get($path))->toBe('/* Existing custom theme */')
+                ->and($filesystem->get(base_path('vite.config.js')))->toBe($viteConfig)
+                ->and($filesystem->get(app_path('Providers/Filament/AdminPanelProvider.php')))->toBe($panelProvider);
+
+            if ($shouldOverwrite) {
+                Process::assertRan(static fn (PendingProcess $process): bool => $process->command === ['npm', 'install', 'tailwindcss@latest', '@tailwindcss/vite', '--save-dev']);
+            } else {
+                Process::assertNothingRan();
+            }
+        } finally {
+            app()['env'] = $environment;
+        }
+    })->with([false, true]);
 });
 
 describe('Panel prerequisites', function (): void {
