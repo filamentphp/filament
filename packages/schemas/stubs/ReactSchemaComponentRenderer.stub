@@ -2,7 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 function {{ componentName }}(props) {
-    return <p>{props.config.message ?? 'Your component is ready.'}</p>
+    return <p>{props.configuration.message ?? 'Your component is ready.'}</p>
 }
 
 export default function mount{{ componentName }}({ host, props: initialProps }) {

@@ -4,20 +4,20 @@ import createJsRenderer, {
 
 export default function jsSchemaComponent({
     renderer,
-    rendererProps = {},
-    configuration,
+    rendererConfiguration = {},
+    componentConfiguration,
 }) {
     let controller
     const props = () => ({
-        ...configuration,
-        config: snapshot(rendererProps),
+        ...componentConfiguration,
+        configuration: snapshot(rendererConfiguration),
     })
 
     return {
         hasError: false,
 
-        updateRendererProps(value) {
-            rendererProps = snapshot(value)
+        updateRendererConfiguration(value) {
+            rendererConfiguration = snapshot(value)
             controller?.update()
         },
 
