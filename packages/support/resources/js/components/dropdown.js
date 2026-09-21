@@ -185,10 +185,8 @@ export default () => ({
             return
         }
 
-        if (
-            !(event.target instanceof Element) ||
-            this.getInnermostOpenDropdown(event.target) !== this.$el
-        ) {
+        // A teleported panel is not a descendant of its dropdown.
+        if (!this.$el.contains(event.target) && !panel.contains(event.target)) {
             return
         }
 
@@ -211,25 +209,6 @@ export default () => ({
         this.close()
 
         this.getTrigger()?.focus()
-    },
-
-    getInnermostOpenDropdown(element) {
-        let dropdown = element.closest('.fi-dropdown')
-
-        while (
-            dropdown &&
-            dropdown.querySelector(':scope > .fi-dropdown-panel')?.style
-                .display !== 'block'
-        ) {
-            dropdown = dropdown.parentElement?.closest('.fi-dropdown')
-        }
-
-        if (dropdown) {
-            return dropdown
-        }
-
-        // A teleported panel is not a descendant of its dropdown.
-        return this.$refs.panel.contains(element) ? this.$el : null
     },
 
     close(event) {
