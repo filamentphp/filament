@@ -9,7 +9,7 @@ use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Services\RelationshipJoiner;
@@ -373,7 +373,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionsForJs(): array
     {
@@ -387,7 +387,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionLabel(bool $withDefault = true): ?string
     {
@@ -476,7 +476,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getOptionsSearchResultsForJs(string $search): array
     {

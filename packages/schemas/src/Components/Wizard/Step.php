@@ -178,6 +178,7 @@ class Step extends Component implements HasEmbeddedView
                 'aria-label' => (! $hasHeaderReference && filled($labelText)) ? e($labelText) : null,
                 'id' => $id,
                 'role' => 'group',
+                'x-data' => 'filamentSchemaComponent({ ...' . Js::from($this->getAlpineScopeConfiguration()) . ', $wire })',
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-wizard-step']);

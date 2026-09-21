@@ -10,7 +10,7 @@ use Filament\Forms\Components\Concerns\HasFileAttachments;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Support\Arr;
@@ -20,6 +20,7 @@ use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 use LogicException;
+use ReflectionAttribute;
 use ReflectionMethod;
 use ReflectionNamedType;
 
@@ -83,7 +84,7 @@ trait InteractsWithSchemas
     public function callSchemaComponentMethod(string $componentKey, string $method, array $arguments = []): mixed
     {
         // Security: This method is callable from the frontend and dispatches
-        // to `#[ExposedLivewireMethod]` methods on schema components.
+        // to `#[Exposed]` methods on schema components.
         // Only methods marked with that attribute are allowed.
 
         $component = $this->getSchemaComponent($componentKey);
@@ -98,7 +99,7 @@ trait InteractsWithSchemas
 
         $methodReflection = new ReflectionMethod($component, $method);
 
-        if (! $methodReflection->getAttributes(ExposedLivewireMethod::class)) {
+        if (! $methodReflection->getAttributes(Exposed::class, ReflectionAttribute::IS_INSTANCEOF)) {
             return null;
         }
 
