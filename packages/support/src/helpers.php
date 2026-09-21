@@ -3,7 +3,9 @@
 namespace Filament\Support;
 
 use BackedEnum;
+use Closure;
 use Composer\Autoload\ClassLoader;
+use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\InstalledVersions;
 use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
@@ -431,11 +433,37 @@ if (! function_exists('Filament\Support\discover_app_classes')) {
     /**
      * @return array<class-string>
      */
-    function discover_app_classes(?string $parentClass = null): array
+    function discover_app_classes(?string $parentClass = null, ?Closure $onIndexingFailure = null): array
     {
         $vendorDirectory = get_composer_vendor_directory();
         $classLoader = ClassLoader::getRegisteredLoaders()[$vendorDirectory];
         $applicationPath = (string) InstalledVersions::getRootPackage()['install_path'];
+
+        try {
+            $classMapGenerator = (new ClassMapGenerator)->avoidDuplicateScans();
+
+            foreach ([...$classLoader->getPrefixesPsr4(), '' => $classLoader->getFallbackDirsPsr4()] as $namespace => $directories) {
+                foreach ($directories as $directory) {
+                    if (
+                        (! is_path_within_directory($directory, $applicationPath)) ||
+                        is_path_within_vendor_directory($directory, $applicationPath)
+                    ) {
+                        continue;
+                    }
+
+                    $classMapGenerator->scanPaths(
+                        path: $directory,
+                        autoloadType: 'psr-4',
+                        namespace: $namespace,
+                        excludedDirs: ['vendor'],
+                    );
+                }
+            }
+
+            $classLoader->addClassMap($classMapGenerator->getClassMap()->getMap());
+        } catch (Throwable $exception) {
+            $onIndexingFailure?->__invoke($exception);
+        }
 
         return collect($classLoader->getClassMap())
             ->filter(function (string $file, string $class) use ($applicationPath, $parentClass): bool {
