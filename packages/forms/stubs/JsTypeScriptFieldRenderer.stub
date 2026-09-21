@@ -1,0 +1,34 @@
+import type { JsFieldProps, JsFieldRenderer } from '@filament/forms/js-field'
+
+const mount{{ componentName }}: JsFieldRenderer<string | null> = ({ host, props: initialProps }) => {
+    const input = document.createElement('input')
+    input.type = 'text'
+
+    const onInput = () => initialProps.onChange(input.value)
+    input.addEventListener('input', onInput)
+    input.addEventListener('blur', initialProps.onBlur)
+
+    const update = (props: JsFieldProps<string | null>) => {
+        input.id = props.id
+        input.value = props.value ?? ''
+        input.disabled = props.isDisabled
+        input.readOnly = props.isReadOnly
+        input.required = props.isRequired
+        input.setAttribute('aria-invalid', String(props.isInvalid))
+        input.setAttribute('aria-describedby', props.ariaDescribedBy)
+    }
+
+    update(initialProps)
+    host.append(input)
+
+    return {
+        update,
+        destroy() {
+            input.removeEventListener('input', onInput)
+            input.removeEventListener('blur', initialProps.onBlur)
+            input.remove()
+        },
+    }
+}
+
+export default mount{{ componentName }}

@@ -2,7 +2,7 @@
     "name": "filament",
     "type": "module",
     "scripts": {
-        "test:js": "node --test tests/js/*.test.js",
+        "test:js": "node --test tests/js/*.test.js && node tests/js/build-renderers.js",
         "dev:js": "node bin/build.js --dev",
         "dev:forms-css": "cp ./packages/forms/dist/index.css ./packages/forms/dist/tmp.css && npx @tailwindcss/cli -i ./packages/forms/dist/tmp.css -o ./packages/forms/dist/index.css --watch && rm ./packages/forms/dist/tmp.css",
         "dev:panels-css": "npx @tailwindcss/cli -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --watch",
