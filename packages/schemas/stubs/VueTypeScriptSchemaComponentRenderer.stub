@@ -2,10 +2,10 @@ import { createApp, h, shallowRef } from 'vue'
 import type { JsComponentProps, JsComponentRenderer } from '@filament/schemas/js-component'
 import {{ componentName }} from './{{ componentName }}.vue'
 
-type Config = { message?: string }
+type Configuration = { message?: string }
 
-const mount{{ componentName }}: JsComponentRenderer<Config> = ({ host, props: initialProps }) => {
-    const props = shallowRef<JsComponentProps<Config>>(initialProps)
+const mount{{ componentName }}: JsComponentRenderer<Configuration> = ({ host, props: initialProps }) => {
+    const props = shallowRef<JsComponentProps<Configuration>>(initialProps)
     const application = createApp({
         setup: () => () => h({{ componentName }}, props.value),
     })

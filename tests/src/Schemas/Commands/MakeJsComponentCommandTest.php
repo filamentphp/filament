@@ -51,7 +51,7 @@ it('generates JavaScript components with framework and TypeScript options', func
     expect(File::exists(resource_path('views/filament/schemas/components/sales-chart.blade.php')))->toBeFalse();
     if (in_array($framework, ['vue', 'svelte'])) {
         expect(File::get(resource_path("js/filament/schemas/components/SalesChart.{$framework}")))
-            ->toContain('config.message')->not->toContain('<input', 'onChange');
+            ->toContain('configuration.message')->not->toContain('<input', 'onChange');
     }
     if ($isTypeScript) {
         expect(File::json(base_path('tsconfig.json')))
