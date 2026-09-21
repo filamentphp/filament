@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Services\TemporaryUploadedFileMimeTypeDetector;
 use Filament\Schemas\Components\StateCasts\FileUploadStateCast;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -242,7 +243,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         $path = $file->storeAs(
             $this->getDirectory(),
             $this->getUploadedFileNameForStorage($file),
-            $this->getDiskName(),
+            [
+                'disk' => $this->getDiskName(),
+                'mimetype' => app(TemporaryUploadedFileMimeTypeDetector::class)->detect($file),
+            ],
         );
 
         if ($this->getVisibility() === 'public') {
