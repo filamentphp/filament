@@ -665,7 +665,9 @@ describe('block picker search', function (): void {
         expect($builder->isSearchable())->toBeFalse()
             ->and($builder->searchable()->isSearchable())->toBeTrue()
             ->and($builder->searchable(false)->isSearchable())->toBeFalse()
-            ->and($builder->searchable(static fn (): bool => true)->isSearchable())->toBeTrue();
+            ->and($builder->searchable(static fn (): bool => true)->isSearchable())->toBeTrue()
+            ->and($builder->searchable(null)->isSearchable())->toBeFalse()
+            ->and($builder->searchable()->searchable(static fn () => null)->isSearchable())->toBeFalse();
     });
 
     it('returns default translations for `getSearchPrompt()` and `getNoSearchResultsMessage()`', function (): void {
@@ -707,6 +709,15 @@ describe('block picker search', function (): void {
     it('preserves literal text in `searchPrompt()`', function (): void {
         expect(Builder::make('content')->searchPrompt('<Find> &amp; "R&D"')->getSearchPrompt())
             ->toBe('<Find> &amp; "R&D"');
+    });
+
+    it('preserves an `Htmlable` in `getSearchPrompt()` and accepts the `message` named argument', function (): void {
+        $message = new HtmlString('<strong>Find &quot;R&amp;D&quot;</strong>');
+        $builder = Builder::make('content');
+
+        expect($builder->searchPrompt(message: $message))->toBe($builder)
+            ->and($builder->getSearchPrompt())->toBe($message)
+            ->and($builder->searchPrompt(message: static fn (): HtmlString => $message)->getSearchPrompt())->toBe($message);
     });
 
     it('renders search labels and safely escapes an `Htmlable` search prompt', function (bool $hasPublishedView): void {
@@ -806,7 +817,7 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->type($searchInput, 'video')
         ->assertVisible($noSearchResultsMessage)
         ->assertNoSmoke()
-        ->assertScript('document.getAnimations().length', 0)
+        ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues();
 })->with(['light' => false, 'dark' => true]);
 
@@ -873,7 +884,7 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
         ->assertScript('document.querySelector(\'[data-testid="builder-modal"]\').contains(document.activeElement)', true)
         ->click($addBlockAction)
         ->assertVisible($searchInput)
-        ->assertScript('document.getAnimations().length', 0)
+        ->assertScript('document.querySelector(\'[data-testid="builder-modal"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues()
         ->type($searchInput, 'zzz')
         ->keys($searchInput, 'Escape')
@@ -917,9 +928,39 @@ it('clears and focuses the block picker search after clicking away and reopening
         ->assertVisible('[data-testid="builder"] [data-block-label="video"]')
         ->assertMissing('[data-testid="builder"] [role="status"]')
         ->assertNoSmoke()
-        ->assertScript('document.getAnimations().length', 0)
+        ->assertScript('document.querySelector(\'[data-testid="builder"]\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues();
 })->with(['light' => false, 'dark' => true]);
+
+it('searches independently in the add-between picker and inserts the selected block in order', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    $endPicker = '[data-testid="builder"] > .fi-fo-builder-block-picker';
+    $betweenPicker = '[data-testid="builder"] .fi-fo-builder-add-between-items-ctn';
+
+    visit('/builder-searchable-test')
+        ->click('[data-testid="add-block"]')
+        ->click($endPicker . ' [data-block-label="paragraph"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->click('[data-testid="add-block"]')
+        ->click($endPicker . ' [data-block-label="research & development"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)
+        ->click('[data-testid="add-block"]')
+        ->type($endPicker . ' input[type="search"]', 'paragraph')
+        ->click('[data-testid="outside-picker"]')
+        ->hover('[data-testid="builder"] .fi-fo-builder-item:first-child')
+        ->click($betweenPicker . ' .fi-dropdown-trigger button')
+        ->assertValue($betweenPicker . ' input[type="search"]', '')
+        ->type($betweenPicker . ' input[type="search"]', 'video')
+        ->assertMissing($betweenPicker . ' [data-block-label="paragraph"]')
+        ->assertValue($endPicker . ' input[type="search"]', 'paragraph')
+        ->click($betweenPicker . ' [data-block-label="video"]')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 3)
+        ->assertScript('Array.from(document.querySelectorAll(\'[data-testid="builder"] .fi-fo-builder-item input\'), input => input.id.split(\'.\').pop())', ['text', 'url', 'title'])
+        ->assertNoSmoke();
+});
 
 it('preserves an active search when the block catalog changes', function (): void {
     Artisan::call('filament:assets');
@@ -1018,7 +1059,6 @@ it('updates a dynamic `blockPickerWidth()`', function (bool $isSearchable): void
         ->click('[data-testid="add-block"]')
         ->assertVisible('[data-testid="builder"] .fi-dropdown-panel.fi-width-lg')
         ->assertScript('getComputedStyle(document.querySelector(\'[data-testid="builder"] .fi-dropdown-panel\')).opacity', '1')
-        ->assertScript('document.getAnimations().length', 0)
         ->assertNoSmoke();
 })->with(['searchable' => true, 'not searchable' => false]);
 

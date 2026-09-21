@@ -24,8 +24,6 @@
     use Illuminate\Support\Js;
     use Illuminate\Support\Str;
 
-    $blocks = array_values($blocks);
-
     $listAttributes = $isSearchable
         ? new FilamentComponentAttributeBag([
             'x-load' => true,
@@ -94,11 +92,12 @@
                 @foreach ($blocks as $block)
                     @php
                         $blockIcon = $block->getIcon();
+                        $blockLabel = $block->getLabel();
 
                         $blockSearchLabel = null;
 
                         if ($isSearchable) {
-                            $blockSearchLabel = $block->getLabel();
+                            $blockSearchLabel = $blockLabel;
 
                             if ($blockSearchLabel instanceof Htmlable) {
                                 $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -126,7 +125,7 @@
                         :data-block-label="$blockSearchLabel"
                         :x-show="$isSearchable ? 'isBlockVisible($el)' : null"
                     >
-                        {{ $block->getLabel() }}
+                        {{ $blockLabel }}
                     </x-filament::dropdown.list.item>
                 @endforeach
             </div>

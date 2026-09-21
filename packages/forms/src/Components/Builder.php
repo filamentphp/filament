@@ -107,7 +107,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
 
     protected Width | string | Closure | null $blockPickerWidth = null;
 
-    protected bool | Closure $isSearchable = false;
+    protected bool | Closure | null $isSearchable = false;
 
     protected string | Htmlable | Closure | null $searchPrompt = null;
 
@@ -1227,7 +1227,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         };
     }
 
-    public function searchable(bool | Closure $condition = true): static
+    public function searchable(bool | Closure | null $condition = true): static
     {
         $this->isSearchable = $condition;
 
@@ -1239,20 +1239,16 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         return (bool) $this->evaluate($this->isSearchable);
     }
 
-    public function searchPrompt(string | Htmlable | Closure | null $prompt): static
+    public function searchPrompt(string | Htmlable | Closure | null $message): static
     {
-        $this->searchPrompt = $prompt;
+        $this->searchPrompt = $message;
 
         return $this;
     }
 
-    public function getSearchPrompt(): string
+    public function getSearchPrompt(): string | Htmlable
     {
-        $prompt = $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
-
-        return ($prompt instanceof Htmlable)
-            ? html_entity_decode(strip_tags($prompt->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8')
-            : $prompt;
+        return $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
     }
 
     public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
@@ -1358,11 +1354,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         array | int | null $columns = null,
         Width | string | null $width = null,
     ): string {
-        $blocks = array_values($blocks);
-
         $isSearchable = $this->isSearchable();
         $searchPrompt = $isSearchable ? $this->getSearchPrompt() : null;
         $searchDebounce = $this->getSearchDebounce();
+
+        if ($searchPrompt instanceof Htmlable) {
+            $searchPrompt = html_entity_decode(strip_tags($searchPrompt->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
 
         /** @var view-string $publishedView */
         $publishedView = 'filament-forms::components.builder.block-picker';
@@ -1484,11 +1482,12 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                         <div <?= (new FilamentComponentAttributeBag)->grid($columns, GridDirection::Column)->toHtml() ?>>
                             <?php foreach ($blocks as $block) {
                                 $blockIcon = $block->getIcon();
+                                $blockLabel = $block->getLabel();
 
                                 $blockSearchLabel = null;
 
                                 if ($isSearchable) {
-                                    $blockSearchLabel = $block->getLabel();
+                                    $blockSearchLabel = $blockLabel;
 
                                     if ($blockSearchLabel instanceof Htmlable) {
                                         $blockSearchLabel = html_entity_decode(strip_tags($blockSearchLabel->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -1534,7 +1533,7 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
                                 ]))->color(IconComponent::class, 'gray'))->toHtml() ?>
 
                                 <span class="fi-dropdown-list-item-label">
-                                    <?= e($block->getLabel()) ?>
+                                    <?= e($blockLabel) ?>
                                 </span>
                             </button>
                             <?php } ?>

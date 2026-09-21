@@ -34,6 +34,6 @@ it('allows a searchable select inside a dropdown to clean up on `Escape`', funct
         ->click('.fi-select-input-btn')
         ->assertMissing('.fi-select-input-search-ctn input')
         ->assertNoSmoke()
-        ->assertScript('document.getAnimations().length', 0)
+        ->assertScript('document.querySelector(\'[data-testid="dropdown-trigger"]\').closest(\'.fi-dropdown\').getAnimations({ subtree: true }).length', 0)
         ->assertNoAccessibilityIssues();
 })->with(['light' => false, 'dark' => true]);

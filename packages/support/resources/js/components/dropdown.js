@@ -9,8 +9,6 @@ export default () => ({
 
     escapeListener: null,
 
-    isAutofocusPending: false,
-
     init() {
         this.navigateListener = () => this.close()
 
@@ -19,9 +17,11 @@ export default () => ({
         // The floating UI plugin only adds its own window `keydown` listener when the panel
         // first opens, so registering here guarantees this listener runs before it and before
         // any enclosing modal's `Escape` handler.
-        this.escapeListener = (event) => this.handleEscape(event)
+        if (this.$refs.panel?.querySelector('[data-dropdown-escape]')) {
+            this.escapeListener = (event) => this.handleEscape(event)
 
-        window.addEventListener('keydown', this.escapeListener, true)
+            window.addEventListener('keydown', this.escapeListener, true)
+        }
 
         this.setUpAria()
     },
@@ -55,7 +55,6 @@ export default () => ({
 
         this.observer = new MutationObserver(() => {
             this.syncAria()
-            this.focusAutofocusable()
         })
 
         // The floating UI plugin toggles the panel's `display` for open and close paths this
@@ -103,6 +102,8 @@ export default () => ({
             panel.id = this.panelId
         }
 
+        const wasOpen = this.isOpen
+
         this.isOpen = panel.style.display === 'block'
 
         this.setAttributeIfChanged(trigger, 'aria-haspopup', 'true')
@@ -118,6 +119,17 @@ export default () => ({
         this.$el
             .querySelector(':scope > .fi-dropdown-trigger')
             ?.removeAttribute('aria-expanded')
+
+        // The floating UI plugin opens asynchronously, so focus only after the panel
+        // actually becomes visible. Later attribute updates must not reset the search.
+        if (this.isOpen && !wasOpen) {
+            const autofocusable = panel.querySelector(
+                '[data-dropdown-autofocus]',
+            )
+
+            autofocusable?.dispatchEvent(new CustomEvent('dropdown-autofocus'))
+            autofocusable?.focus()
+        }
     },
 
     setAttributeIfChanged(element, attribute, value) {
@@ -127,58 +139,13 @@ export default () => ({
     },
 
     toggle(event) {
-        const wasOpen = this.$refs.panel?.style.display === 'block'
-
         this.$refs.panel?.toggle(event)
         this.syncAria()
-
-        if (!wasOpen) {
-            this.autofocus()
-        }
     },
 
     open(event) {
-        const wasOpen = this.$refs.panel?.style.display === 'block'
-
         this.$refs.panel?.open(event)
         this.syncAria()
-
-        if (!wasOpen) {
-            this.autofocus()
-        }
-    },
-
-    autofocus() {
-        // The floating UI plugin makes the panel visible asynchronously and focus only works
-        // on visible elements, so the `MutationObserver` on the panel's `style` retries this
-        // once `display` actually changes.
-        this.isAutofocusPending = true
-
-        this.focusAutofocusable()
-    },
-
-    focusAutofocusable() {
-        if (!this.isAutofocusPending) {
-            return
-        }
-
-        const panel = this.$refs.panel
-
-        if (!panel || panel.style.display !== 'block') {
-            return
-        }
-
-        this.isAutofocusPending = false
-
-        const autofocusable = panel.querySelector('[data-dropdown-autofocus]')
-
-        if (!autofocusable) {
-            return
-        }
-
-        autofocusable.dispatchEvent(new CustomEvent('dropdown-autofocus'))
-
-        autofocusable.focus()
     },
 
     handleEscape(event) {
@@ -223,8 +190,6 @@ export default () => ({
     },
 
     close(event) {
-        this.isAutofocusPending = false
-
         this.$refs.panel?.close(event)
         this.syncAria()
     },
