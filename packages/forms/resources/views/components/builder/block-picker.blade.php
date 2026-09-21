@@ -75,8 +75,8 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new FilamentComponentAttributeBag([
-                                'aria-label' => $searchPrompt,
-                                'placeholder' => $searchPrompt,
+                                'aria-label' => e($searchPrompt),
+                                'placeholder' => e($searchPrompt),
                                 'x-model.debounce.' . $searchDebounce => 'search',
                             ]),
                         )

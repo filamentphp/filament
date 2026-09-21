@@ -550,6 +550,8 @@ Builder::make()
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `searchable()`, `searchPrompt()` and `noSearchResultsMessage()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
+The search prompt is displayed as plain text. If you pass an `HtmlString` to `searchPrompt()`, its tags are removed and its HTML entities are decoded.
+
 #### Tweaking the search debounce
 
 By default, the block picker filters blocks immediately as the user types. You may debounce the search using the `searchDebounce()` method, which accepts the number of milliseconds to wait:

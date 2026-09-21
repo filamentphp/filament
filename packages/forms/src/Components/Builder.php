@@ -1236,9 +1236,13 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         return $this;
     }
 
-    public function getSearchPrompt(): string | Htmlable
+    public function getSearchPrompt(): string
     {
-        return $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
+        $prompt = $this->evaluate($this->searchPrompt) ?? __('filament-forms::components.builder.block_picker.search_prompt');
+
+        return ($prompt instanceof Htmlable)
+            ? html_entity_decode(strip_tags($prompt->toHtml()), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            : $prompt;
     }
 
     public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
