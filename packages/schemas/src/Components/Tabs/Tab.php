@@ -164,6 +164,7 @@ class Tab extends Component implements HasEmbeddedView
                 'id' => $id,
                 'role' => 'tabpanel',
                 'wire:key' => $this->getLivewireKey() . '.container',
+                'x-data' => 'filamentSchemaComponent({ ...' . Js::from($this->getAlpineScopeConfiguration()) . ', $wire })',
             ], escape: false)
             ->merge($this->getExtraAttributes(), escape: false)
             ->class(['fi-sc-tabs-tab']);

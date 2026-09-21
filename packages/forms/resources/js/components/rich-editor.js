@@ -89,6 +89,10 @@ export default function richEditorFormComponent({
                         { schemaComponent: key },
                     ),
                 floatingToolbars,
+                getFileAttachmentUrlUsing: (attachment) =>
+                    this.$getUploadedFileAttachmentTemporaryUrl({
+                        attachment,
+                    }),
                 hasResizableImages,
                 insertCustomBlockUsing: (id, dragPosition = null) =>
                     this.$wire.mountAction(

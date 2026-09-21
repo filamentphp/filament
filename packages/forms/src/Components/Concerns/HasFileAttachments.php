@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -50,7 +50,7 @@ trait HasFileAttachments
         return $this;
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getUploadedFileAttachmentTemporaryUrl(TemporaryUploadedFile | string | null $attachment = null): ?string
     {
@@ -121,7 +121,7 @@ trait HasFileAttachments
         return null;
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function saveUploadedFileAttachmentAndGetUrl(): ?string
     {
