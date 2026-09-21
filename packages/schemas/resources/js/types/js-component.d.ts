@@ -11,8 +11,8 @@ export type {
     Snapshot,
 } from '../../../../support/resources/js/types/js-renderer'
 
-export interface JsComponentProps<Config = Record<string, unknown>> {
-    readonly config: Snapshot<Config>
+export interface JsComponentProps<Configuration = Record<string, unknown>> {
+    readonly configuration: Snapshot<Configuration>
     readonly id: string | null
 }
 
@@ -41,22 +41,22 @@ export interface JsComponentUtilities {
 }
 
 export interface JsComponentRendererContext<
-    Config = Record<string, unknown>,
+    Configuration = Record<string, unknown>,
     Methods = Record<never, never>,
 > extends JsRendererContext<
-    JsComponentProps<Config>,
+    JsComponentProps<Configuration>,
     JsComponentUtilities & Methods
 > {}
 
 export interface JsComponentRendererInstance<
-    Config = Record<string, unknown>,
-> extends JsRendererInstance<JsComponentProps<Config>> {}
+    Configuration = Record<string, unknown>,
+> extends JsRendererInstance<JsComponentProps<Configuration>> {}
 
 export type JsComponentRenderer<
-    Config = Record<string, unknown>,
+    Configuration = Record<string, unknown>,
     Methods = Record<never, never>,
 > = (
-    context: JsComponentRendererContext<Config, Methods>,
+    context: JsComponentRendererContext<Configuration, Methods>,
 ) =>
-    | JsComponentRendererInstance<Config>
-    | Promise<JsComponentRendererInstance<Config>>
+    | JsComponentRendererInstance<Configuration>
+    | Promise<JsComponentRendererInstance<Configuration>>

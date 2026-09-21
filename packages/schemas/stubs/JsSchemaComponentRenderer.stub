@@ -1,7 +1,7 @@
 export default function mount{{ componentName }}({ host, props: initialProps }) {
     const paragraph = document.createElement('p')
     const update = (props) => {
-        paragraph.textContent = props.config.message ?? 'Your component is ready.'
+        paragraph.textContent = props.configuration.message ?? 'Your component is ready.'
     }
 
     update(initialProps)
