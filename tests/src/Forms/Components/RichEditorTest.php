@@ -327,10 +327,7 @@ describe('file attachments', function (): void {
             ->getComponents()[0];
 
         $file = Mockery::mock(TemporaryUploadedFile::class);
-        $stream = fopen('php://memory', 'r+');
-        fwrite($stream, UploadedFile::fake()->image('image.png')->getContent());
-        rewind($stream);
-        $file->shouldReceive('readStream')->once()->andReturn($stream);
+        $file->shouldReceive('getMimeType')->once()->andReturn('image/png');
         $file->shouldReceive('store')
             ->once()
             ->with('attachments', [

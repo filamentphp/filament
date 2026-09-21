@@ -17,6 +17,7 @@
         "laravel/prompts": "^0.3.5",
         "league/csv": "^9.27",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "livewire/livewire": "^4.4.2",
         "nunomaduro/termwind": "^2.0",
         "openspout/openspout": "^4.23",
         "orchestra/testbench": "^9.0|^10.0|^11.0",
