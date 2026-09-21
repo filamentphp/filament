@@ -152,10 +152,13 @@ class MakeComponentCommand extends Command
 
             $this->configureLocation();
 
-            if (! $this->option('force') && $this->checkForCollision([
-                $this->path,
-                ...((! $framework && filled($this->view)) ? [$this->viewPath] : []),
-            ])) {
+            $paths = [$this->path, ...array_keys($this->rendererFiles)];
+
+            if (! $framework && filled($this->view)) {
+                $paths[] = $this->viewPath;
+            }
+
+            if (! $this->option('force') && $this->checkForCollision($paths)) {
                 throw new FailureCommandOutput;
             }
 
@@ -264,10 +267,6 @@ class MakeComponentCommand extends Command
 
     protected function createComponent(): void
     {
-        if (! $this->option('force') && $this->checkForCollision([$this->path, ...array_keys($this->rendererFiles)])) {
-            throw new FailureCommandOutput;
-        }
-
         $this->writeFile($this->path, app(ComponentClassGenerator::class, [
             'fqn' => $this->fqn,
             'view' => $this->framework ? '' : $this->view,
