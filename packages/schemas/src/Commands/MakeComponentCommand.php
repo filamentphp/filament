@@ -152,6 +152,16 @@ class MakeComponentCommand extends Command
 
             $this->configureLocation();
 
+            $paths = [$this->path, ...array_keys($this->rendererFiles)];
+
+            if (! $framework && filled($this->view)) {
+                $paths[] = $this->viewPath;
+            }
+
+            if (! $this->option('force') && $this->checkForCollision($paths)) {
+                throw new FailureCommandOutput;
+            }
+
             if ($framework) {
                 $this->configurePackageManager();
                 $this->installJavaScriptDependencies($this->getJavaScriptRendererDependencies(
@@ -257,10 +267,6 @@ class MakeComponentCommand extends Command
 
     protected function createComponent(): void
     {
-        if (! $this->option('force') && $this->checkForCollision([$this->path, ...array_keys($this->rendererFiles)])) {
-            throw new FailureCommandOutput;
-        }
-
         $this->writeFile($this->path, app(ComponentClassGenerator::class, [
             'fqn' => $this->fqn,
             'view' => $this->framework ? '' : $this->view,
@@ -320,10 +326,6 @@ class MakeComponentCommand extends Command
     {
         if (blank($this->view)) {
             return;
-        }
-
-        if (! $this->option('force') && $this->checkForCollision($this->viewPath)) {
-            throw new FailureCommandOutput;
         }
 
         $this->copyStubToApp('ComponentView', $this->viewPath);
