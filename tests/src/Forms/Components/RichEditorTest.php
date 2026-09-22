@@ -2252,6 +2252,21 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke();
     });
 
+    it('can search and insert a mention through the Alpine scope', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-browser-test');
+
+        $page
+            ->fill('[data-testid="default-rich-editor"] [role="textbox"]', '@Ali')
+            ->click('Alice Chen')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $page->inDarkMode()->assertNoAccessibilityIssues();
+    });
+
     it('can search custom blocks and insert one at the preserved editor selection', function (): void {
         $this->actingAs(User::factory()->create());
 

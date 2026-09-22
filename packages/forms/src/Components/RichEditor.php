@@ -1770,12 +1770,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             editCustomBlockButtonLabel: <?= Js::from(__('filament-forms::components.rich_editor.custom_blocks.actions.edit.label')) ?>,
                             extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
                             floatingToolbars: <?= Js::from($floatingToolbars) ?>,
-                            getMentionLabelsUsing: async (mentions) => {
-                                return await $getMentionLabelsForJs({ mentions })
-                            },
-                            getMentionSearchResultsUsing: async (query, char) => {
-                                return await $getMentionSearchResultsForJs({ search: query, char })
-                            },
                             hasResizableImages: <?= Js::from((! $isDisabled) && $this->hasResizableImages()) ?>,
                             hasMinimalCustomBlockControls: <?= Js::from($this->hasMinimalCustomBlockControls()) ?>,
                             hasStickyToolbar: <?= Js::from($this->hasStickyToolbar()) ?>,

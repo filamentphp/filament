@@ -2185,6 +2185,40 @@ describe('browser rendering', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     });
+
+    it('can remove a stored file through the Alpine scope', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $deletedFiles = [];
+        $remainingFiles = [];
+
+        FileUpload::configureUsing(
+            static function (FileUpload $component) use (&$deletedFiles, &$remainingFiles): void {
+                $component
+                    ->default(['first.txt', 'second.txt'])
+                    ->deleteUploadedFileUsing(static function (FileUpload $component, string $file) use (&$deletedFiles, &$remainingFiles): void {
+                        $deletedFiles[] = $file;
+                        $remainingFiles = array_values($component->getRawState());
+                    });
+            },
+            during: static function () use (&$deletedFiles, &$remainingFiles): void {
+                $page = visit('/file-upload-browser-test');
+
+                $page
+                    ->assertSeeIn('[data-testid="attachment-upload"]', 'first.txt')
+                    ->click('[data-testid="attachment-upload"] li:has-text("second.txt") button:enabled')
+                    ->assertDontSeeIn('[data-testid="attachment-upload"]', 'second.txt')
+                    ->assertSeeIn('[data-testid="attachment-upload"]', 'first.txt')
+                    ->assertNoSmoke()
+                    ->assertNoAccessibilityIssues();
+
+                expect($deletedFiles)->toBe(['second.txt'])
+                    ->and($remainingFiles)->toBe(['first.txt']);
+
+                $page->inDarkMode()->assertNoAccessibilityIssues();
+            },
+        );
+    });
 });
 
 class RenderFileUploadWithAvatar extends Livewire

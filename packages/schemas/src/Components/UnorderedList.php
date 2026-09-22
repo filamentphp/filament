@@ -83,10 +83,7 @@ class UnorderedList extends Component implements HasEmbeddedView
                 <li
                     <?php if ($schemaComponent instanceof Component) { ?>
                         wire:key="<?= e($schemaComponent->getLivewireKey()) ?>"
-                        x-data="filamentSchemaComponent({
-                            ...<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>,
-                            $wire,
-                        })"
+                        x-data="filamentSchemaComponent(<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>)"
                     <?php } ?>
                 ><?= $schemaComponent->toHtml() ?></li>
             <?php } ?>

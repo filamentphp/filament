@@ -248,10 +248,7 @@ class Component extends ViewComponent
                 wire:partial="schema-component::<?= $key ?>"
             <?php } ?>
             <?php if ($isVisible) { ?>
-                x-data="filamentSchemaComponent({
-                    ...<?= Js::from($alpineScopeConfiguration) ?>,
-                    $wire,
-                })"
+                x-data="filamentSchemaComponent(<?= Js::from($alpineScopeConfiguration) ?>)"
                 <?php if ($afterStateUpdatedJs = $this->getAfterStateUpdatedJs()) { ?>
                     x-init="<?= implode(';', array_map(
                         fn (string $js): string => '$wire.watch(' . Js::from($statePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',

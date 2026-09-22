@@ -147,7 +147,7 @@ describe('rendering', function (): void {
             'containerPath' => $isEmbedded ? 'data' : 'data.layout.details',
         ]);
 
-        expect($flex->toEmbeddedHtml())->toContain("...{$configuration},");
+        expect($flex->toEmbeddedHtml())->toContain("filamentSchemaComponent({$configuration})");
     })->with([false, true]);
 
     it('can render', function (): void {
