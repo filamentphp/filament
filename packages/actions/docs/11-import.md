@@ -1100,6 +1100,10 @@ TestImporter::make(ProductImporter::class)->import([
 
 Without arguments, `assertHasErrors()` checks for any validation errors and `assertHasNoErrors()` checks for none. Pass a field list such as `['price', 'name']` to check those fields, or a field-to-rule map such as `['price' => ['numeric', 'min']]` to check specific rules. These are subset assertions: errors on other fields do not cause `assertHasErrors(['price'])` or `assertHasNoErrors(['name'])` to fail. Rule parameters are not compared; use the rule name, such as `'min'`.
 
+For column validation, assertion keys are the internal importer column names, not CSV headers or display labels. For example, use `'price'` even when that column is mapped to a CSV header named `'Unit price'`.
+
+Exceptions created with `ValidationException::withMessages()` contain messages but no failed-rule metadata. Assert their field keys or exact messages using `assertHasErrors(['custom'])` or `assertHasErrors(['custom' => 'Rejected by the hook.'])`. To establish that errors are absent, use `assertHasNoErrors()` or a field list such as `assertHasNoErrors(['custom'])`; a rule-qualified negative assertion only checks failed-rule metadata and may pass even when that field has a message.
+
 Each `import()` call clears the previous row's captured validation errors. `RowImportFailedException` and unexpected exceptions still propagate to your test; assert them using Pest's `toThrow()` or PHPUnit's `expectException()`. If your importer's `resolveRecord()` returns `null`, `getRecord()` returns `null` without treating the row as an error. A resolved record may exist even when validation fails, so use `assertHasNoErrors()` before treating it as successfully imported.
 
 <Aside variant="info">

@@ -119,9 +119,12 @@ it('clears captured validation errors and failed rules when reused for successfu
 it('captures a `ValidationException` raised in a lifecycle hook', function (): void {
     $exception = ValidationException::withMessages(['custom' => 'Rejected by the hook.']);
 
-    TestImporter::make(UserRowTestImporter::class, options: ['exception' => $exception])
+    $importer = TestImporter::make(UserRowTestImporter::class, options: ['exception' => $exception])
         ->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com'])
+        ->assertHasErrors(['custom'])
         ->assertHasErrors(['custom' => 'Rejected by the hook.']);
+
+    expect($importer->failedRules())->toBe([]);
 
     $this->assertDatabaseCount('users', 0);
 });
