@@ -639,11 +639,11 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Strict hierarchical breadcrumbs
+## Including the navigation hierarchy in breadcrumbs
 
-By default, breadcrumbs for a page are built from its resource and parent record relationships - for example, an `EditRecord` page's breadcrumbs are derived from its resource's list and view pages, and any parent resources in the case of nested resources.
+By default, breadcrumbs for a page are built from its resource and parent record relationships. For example, an `EditRecord` page's breadcrumbs are derived from its resource's list and view pages, and any parent resources in the case of nested resources.
 
-If you'd prefer breadcrumbs to reflect the full navigational hierarchy of a page instead - including its [cluster](clusters), [navigation group](#grouping-navigation-items), and [navigation parent item](#grouping-navigation-items-under-other-items) - you can enable strict hierarchical breadcrumbs in your [configuration](../05-panel-configuration):
+If you would also like breadcrumbs to reflect the full navigation hierarchy of a page, including its [cluster](clusters), [navigation group](#grouping-navigation-items), and [navigation parent item](#grouping-navigation-items-under-other-items), you can enable this behavior in your [configuration](../panel-configuration):
 
 ```php
 use Filament\Panel;
@@ -652,11 +652,11 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->breadcrumbs(strictHierarchical: true);
+        ->breadcrumbs(hasNavigationHierarchy: true);
 }
 ```
 
-When enabled, a page's breadcrumbs will be built by walking up through its cluster, its navigation group, and its navigation parent item, before falling back to the page's own breadcrumb. This is particularly useful if you rely heavily on [navigation parent items](#grouping-navigation-items-under-other-items) to create deep, third-level navigation, and want the breadcrumb trail to mirror that structure exactly.
+When enabled, the navigation hierarchy is prepended to the page's existing breadcrumbs. If the page is not present in the navigation, its existing breadcrumbs are used instead.
 
 ## Reloading the sidebar and topbar
 

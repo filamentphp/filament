@@ -9,6 +9,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Schemas\Components\Component;
@@ -186,13 +187,20 @@ abstract class Page extends BasePage
         return static::$breadcrumb ?? static::getTitle();
     }
 
+    /**
+     * @return array<string>
+     */
     public function getBreadcrumbs(): array
     {
-        if (Filament::getCurrentOrDefaultPanel()->hasStrictHierarchicalBreadcrumbs()) {
-            return [
-                ...$this->getHierarchicalBreadcrumbs(),
-                $this->getBreadcrumb(),
-            ];
+        if (Filament::getCurrentOrDefaultPanel()->hasNavigationHierarchyInBreadcrumbs()) {
+            $navigationHierarchyBreadcrumbs = $this->getNavigationHierarchyBreadcrumbs();
+
+            if ($navigationHierarchyBreadcrumbs !== null) {
+                return [
+                    ...$navigationHierarchyBreadcrumbs,
+                    $this->getBreadcrumb(),
+                ];
+            }
         }
 
         if (filled($cluster = static::getCluster())) {
@@ -202,47 +210,131 @@ abstract class Page extends BasePage
         return [];
     }
 
-    public function getHierarchicalBreadcrumbs(): array
+    /**
+     * @return array<string> | null
+     */
+    protected function getNavigationHierarchyBreadcrumbs(): ?array
     {
-        $breadcrumbs = [];
+        if (filled($cluster = static::getCluster())) {
+            $clusterBreadcrumbs = $this->getNavigationBreadcrumbs(
+                $cluster,
+                static fn (): string => $cluster::getNavigationUrl(),
+            );
+            $pageBreadcrumbs = $this->getNavigationBreadcrumbs(
+                $this->getNavigationBreadcrumbItemKey(),
+                fn (): ?string => $this->getNavigationBreadcrumbItemUrl(),
+                $this->getCachedSubNavigation(),
+            );
 
-        $cluster = static::getCluster();
-        $navigationGroupKey = static::getNavigationGroup();
-        $navigationParentItemKey = static::getNavigationParentItem();
-
-        if (filled($cluster)) {
-            $breadcrumbs = $cluster::getClusterHierarchicalBreadcrumbs();
-            $breadcrumbs[$cluster::getUrl()] = $cluster::getClusterBreadcrumb();
-
-            $subNavigation = $this->getCachedSubNavigation();
-
-            if ($navigationGroupKey instanceof UnitEnum) {
-                $navigationGroupKey = $navigationGroupKey->name;
+            if (($clusterBreadcrumbs === null) || ($pageBreadcrumbs === null)) {
+                return null;
             }
 
-            $navigationGroup = $subNavigation[$navigationGroupKey ?? 0] ?? null;
-        } else {
-            $panelNavigation = Filament::getCurrentOrDefaultPanel()->getNavigation();
-
-            $navigationGroup = $panelNavigation[serialize($navigationGroupKey)] ?? null;
+            return [
+                ...$clusterBreadcrumbs,
+                $cluster::getUrl() => $cluster::getClusterBreadcrumb(),
+                ...$pageBreadcrumbs,
+            ];
         }
 
-        $navigationParentItem = collect($navigationGroup?->getItems() ?? [])
-            ->first(fn (NavigationItem $item): bool => $item->getKey() === $navigationParentItemKey || $item->getLabel() === $navigationParentItemKey);
+        return $this->getNavigationBreadcrumbs(
+            $this->getNavigationBreadcrumbItemKey(),
+            fn (): ?string => $this->getNavigationBreadcrumbItemUrl(),
+        );
+    }
 
-        if (filled($navigationGroup) && filled($navigationGroup->getLabel())) {
-            $breadcrumbs[] = $navigationGroup->getLabel();
+    protected function getNavigationBreadcrumbItemKey(): string
+    {
+        return static::class;
+    }
+
+    protected function getNavigationBreadcrumbItemUrl(): ?string
+    {
+        if (! static::shouldRegisterNavigation()) {
+            return null;
         }
 
-        if (filled($navigationParentItem)) {
-            $navigationParentItemUrl = $navigationParentItem->getUrl();
+        return static::getNavigationUrl();
+    }
 
-            filled($navigationParentItemUrl)
-                ? $breadcrumbs[$navigationParentItemUrl] = $navigationParentItem->getLabel()
-                : $breadcrumbs[] = $navigationParentItem->getLabel();
+    /**
+     * @param  Closure(): ?string  $navigationItemUrl
+     * @param  ?array<NavigationGroup>  $navigation
+     * @return array<string> | null
+     */
+    protected function getNavigationBreadcrumbs(string $navigationItemKey, Closure $navigationItemUrl, ?array $navigation = null): ?array
+    {
+        if ($navigation === null) {
+            $panel = Filament::getCurrentOrDefaultPanel();
+
+            if (! $panel->hasNavigation()) {
+                return null;
+            }
+
+            $navigation = $panel->getNavigation();
         }
 
-        return $breadcrumbs;
+        foreach ($navigation as $navigationGroup) {
+            $breadcrumbs = $this->getNavigationItemBreadcrumbs(
+                $navigationItemKey,
+                $navigationItemUrl,
+                $navigationGroup->getItems(),
+            );
+
+            if ($breadcrumbs === null) {
+                continue;
+            }
+
+            if (filled($navigationGroupLabel = $navigationGroup->getLabel())) {
+                $breadcrumbs = [
+                    $navigationGroupLabel,
+                    ...$breadcrumbs,
+                ];
+            }
+
+            return $breadcrumbs;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  Closure(): ?string  $navigationItemUrl
+     * @param  iterable<NavigationItem>  $navigationItems
+     * @return array<string> | null
+     */
+    protected function getNavigationItemBreadcrumbs(string $navigationItemKey, Closure $navigationItemUrl, iterable $navigationItems): ?array
+    {
+        foreach ($navigationItems as $navigationItem) {
+            if ($navigationItem->getKey() === $navigationItemKey) {
+                $resolvedNavigationItemUrl = $navigationItemUrl();
+
+                if (filled($resolvedNavigationItemUrl) && ($navigationItem->getUrl() === $resolvedNavigationItemUrl)) {
+                    return [];
+                }
+            }
+
+            $breadcrumbs = $this->getNavigationItemBreadcrumbs(
+                $navigationItemKey,
+                $navigationItemUrl,
+                $navigationItem->getChildItems(),
+            );
+
+            if ($breadcrumbs === null) {
+                continue;
+            }
+
+            $navigationItemUrl = $navigationItem->getUrl();
+
+            return [
+                ...(filled($navigationItemUrl)
+                    ? [$navigationItemUrl => $navigationItem->getLabel()]
+                    : [$navigationItem->getLabel()]),
+                ...$breadcrumbs,
+            ];
+        }
+
+        return null;
     }
 
     public static function getNavigationGroup(): string | UnitEnum | null

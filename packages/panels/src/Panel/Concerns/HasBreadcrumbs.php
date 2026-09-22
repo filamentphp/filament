@@ -8,12 +8,12 @@ trait HasBreadcrumbs
 {
     protected bool | Closure $hasBreadcrumbs = true;
 
-    protected bool | Closure $hasStrictHierarchicalBreadcrumbs = false;
+    protected bool | Closure $hasNavigationHierarchyInBreadcrumbs = false;
 
-    public function breadcrumbs(bool | Closure $condition = true, bool | Closure $strictHierarchical = false): static
+    public function breadcrumbs(bool | Closure $condition = true, bool | Closure $hasNavigationHierarchy = false): static
     {
         $this->hasBreadcrumbs = $condition;
-        $this->hasStrictHierarchicalBreadcrumbs = $strictHierarchical;
+        $this->hasNavigationHierarchyInBreadcrumbs = $hasNavigationHierarchy;
 
         return $this;
     }
@@ -23,8 +23,8 @@ trait HasBreadcrumbs
         return (bool) $this->evaluate($this->hasBreadcrumbs);
     }
 
-    public function hasStrictHierarchicalBreadcrumbs(): bool
+    public function hasNavigationHierarchyInBreadcrumbs(): bool
     {
-        return (bool) $this->evaluate($this->hasStrictHierarchicalBreadcrumbs);
+        return (bool) $this->evaluate($this->hasNavigationHierarchyInBreadcrumbs);
     }
 }

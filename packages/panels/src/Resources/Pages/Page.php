@@ -32,7 +32,6 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use LogicException;
-use UnitEnum;
 
 use function Filament\Support\original_request;
 
@@ -167,6 +166,9 @@ abstract class Page extends BasePage
         return true;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getResourceBreadcrumbs(): array
     {
         $breadcrumbs = [];
@@ -218,18 +220,27 @@ abstract class Page extends BasePage
             }
         }
 
-        if (Filament::getCurrentOrDefaultPanel()->hasStrictHierarchicalBreadcrumbs()) {
-            return [
-                ...$this->getHierarchicalBreadcrumbs(),
-                ...$breadcrumbs,
-            ];
-        } elseif (filled($cluster = static::getCluster())) {
+        if (Filament::getCurrentOrDefaultPanel()->hasNavigationHierarchyInBreadcrumbs()) {
+            $navigationHierarchyBreadcrumbs = $this->getNavigationHierarchyBreadcrumbs();
+
+            if ($navigationHierarchyBreadcrumbs !== null) {
+                return [
+                    ...$navigationHierarchyBreadcrumbs,
+                    ...$breadcrumbs,
+                ];
+            }
+        }
+
+        if (filled($cluster = static::getCluster())) {
             return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
         }
 
         return $breadcrumbs;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getBreadcrumbs(): array
     {
         return [
@@ -238,47 +249,20 @@ abstract class Page extends BasePage
         ];
     }
 
-    public function getHierarchicalBreadcrumbs(): array
+    protected function getNavigationBreadcrumbItemKey(): string
     {
-        $breadcrumbs = [];
+        return static::getResource();
+    }
 
-        $cluster = static::getCluster();
-        $navigationGroupKey = static::getResource()::getNavigationGroup();
-        $navigationParentItemKey = static::getResource()::getNavigationParentItem();
+    protected function getNavigationBreadcrumbItemUrl(): ?string
+    {
+        $resource = static::getResource();
 
-        if (filled($cluster)) {
-            $breadcrumbs = $cluster::getClusterHierarchicalBreadcrumbs();
-            $breadcrumbs[$cluster::getUrl()] = $cluster::getClusterBreadcrumb();
-
-            $subNavigation = $this->getCachedSubNavigation();
-
-            if ($navigationGroupKey instanceof UnitEnum) {
-                $navigationGroupKey = $navigationGroupKey->name;
-            }
-
-            $navigationGroup = $subNavigation[$navigationGroupKey ?? 0] ?? null;
-        } else {
-            $panelNavigation = Filament::getCurrentOrDefaultPanel()->getNavigation();
-
-            $navigationGroup = $panelNavigation[serialize($navigationGroupKey)] ?? null;
+        if ((! $resource::shouldRegisterNavigation()) || $resource::getParentResourceRegistration()) {
+            return null;
         }
 
-        $navigationParentItem = collect($navigationGroup?->getItems() ?? [])
-            ->first(fn (NavigationItem $item): bool => $item->getKey() === $navigationParentItemKey || $item->getLabel() === $navigationParentItemKey);
-
-        if (filled($navigationGroup) && filled($navigationGroup->getLabel())) {
-            $breadcrumbs[] = $navigationGroup->getLabel();
-        }
-
-        if (filled($navigationParentItem)) {
-            $navigationParentItemUrl = $navigationParentItem->getUrl();
-
-            filled($navigationParentItemUrl)
-                ? $breadcrumbs[$navigationParentItemUrl] = $navigationParentItem->getLabel()
-                : $breadcrumbs[] = $navigationParentItem->getLabel();
-        }
-
-        return $breadcrumbs;
+        return $resource::getNavigationUrl();
     }
 
     /**

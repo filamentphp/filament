@@ -2,6 +2,7 @@
 
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -21,26 +22,29 @@ uses(TestCase::class);
 afterEach(function (): void {
     PostResource::navigationGroup('Blog');
     PostResource::navigationParentItem(null);
+    UserManagement::navigationGroup(null);
+    UserManagement::navigationParentItem(null);
+    WithoutSubNavigationCluster::navigationGroup(null);
 });
 
-it('can configure strict hierarchical breadcrumbs with a `Closure`', function (): void {
+it('can configure the navigation hierarchy in breadcrumbs with a `Closure`', function (): void {
     $panel = Filament::getCurrentOrDefaultPanel()
-        ->breadcrumbs(false, strictHierarchical: fn (): bool => true);
+        ->breadcrumbs(false, hasNavigationHierarchy: fn (): bool => true);
 
     expect($panel->hasBreadcrumbs())->toBeFalse()
-        ->and($panel->hasStrictHierarchicalBreadcrumbs())->toBeTrue();
+        ->and($panel->hasNavigationHierarchyInBreadcrumbs())->toBeTrue();
 });
 
-it('preserves existing page and resource breadcrumbs when strict hierarchical breadcrumbs are disabled', function (): void {
+it('preserves existing page and resource breadcrumbs when the navigation hierarchy is not included', function (): void {
     expect(app(Settings::class)->getBreadcrumbs())->toBe([])
         ->and(app(ListPosts::class)->getResourceBreadcrumbs())->toBe([
             PostResource::getUrl() => 'Posts',
         ]);
 });
 
-it('builds strict hierarchical breadcrumbs for a grouped page with a parent item', function (): void {
+it('includes the navigation hierarchy in breadcrumbs for a grouped page with a parent item', function (): void {
     Filament::getCurrentOrDefaultPanel()
-        ->breadcrumbs(strictHierarchical: true)
+        ->breadcrumbs(hasNavigationHierarchy: true)
         ->navigationItems([
             NavigationItem::make('Administration home')
                 ->group('Administration')
@@ -59,14 +63,15 @@ it('builds strict hierarchical breadcrumbs for a grouped page with a parent item
         ->assertSuccessful();
 });
 
-it('builds strict hierarchical breadcrumbs for a grouped resource page with a parent item', function (): void {
+it('includes the navigation hierarchy in breadcrumbs for a grouped resource page with a parent item', function (): void {
     PostResource::navigationParentItem('Blog home');
 
     Filament::getCurrentOrDefaultPanel()
-        ->breadcrumbs(strictHierarchical: true)
+        ->breadcrumbs(hasNavigationHierarchy: true)
         ->navigationItems([
             NavigationItem::make('Blog home')
                 ->group('Blog')
+                ->icon(Heroicon::OutlinedHome)
                 ->url('/blog'),
         ]);
 
@@ -77,10 +82,45 @@ it('builds strict hierarchical breadcrumbs for a grouped resource page with a pa
     ]);
 });
 
-it('builds strict hierarchical breadcrumbs for clustered pages', function (): void {
-    Filament::getCurrentOrDefaultPanel()->breadcrumbs(strictHierarchical: true);
+it('renders the navigation hierarchy in breadcrumbs', function (): void {
+    PostResource::navigationParentItem('Blog home');
+
+    Filament::getCurrentOrDefaultPanel()
+        ->breadcrumbs(hasNavigationHierarchy: true)
+        ->navigationItems([
+            NavigationItem::make('Blog home')
+                ->group('Blog')
+                ->icon(Heroicon::OutlinedHome)
+                ->url('/blog'),
+        ]);
+
+    visit(PostResource::getUrl())
+        ->assertScript(<<<'JS'
+            Array.from(document.querySelectorAll('.fi-breadcrumbs-item-label')).map((item) => [
+                item.textContent.trim(),
+                item.href ? new URL(item.href).pathname : null,
+            ])
+            JS, [
+            ['Blog', null],
+            ['Blog home', '/blog'],
+            ['Posts', '/posts'],
+            ['List', null],
+        ])
+        ->assertNoAccessibilityIssues();
+
+    visit(PostResource::getUrl())
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});
+
+it('includes the navigation hierarchy in breadcrumbs for clustered pages', function (): void {
+    UserManagement::navigationGroup('Administration');
+
+    Filament::getCurrentOrDefaultPanel()
+        ->breadcrumbs(hasNavigationHierarchy: true);
 
     expect(app(ManageAdmins::class)->getBreadcrumbs())->toBe([
+        'Administration',
         UserManagement::getUrl() => 'User Management',
         'User Management',
         'Manage Admins',
@@ -88,31 +128,85 @@ it('builds strict hierarchical breadcrumbs for clustered pages', function (): vo
 });
 
 it('falls back to cluster breadcrumbs when cluster sub-navigation is disabled', function (): void {
-    Filament::getCurrentOrDefaultPanel()->breadcrumbs(strictHierarchical: true);
+    WithoutSubNavigationCluster::navigationGroup('Administration');
 
-    expect(app(ClusteredPageWithoutSubNavigation::class)->getBreadcrumbs())->toBe([
-        WithoutSubNavigationCluster::getUrl() => 'Without Sub Navigation',
-        'Clustered Page Without Sub Navigation',
-    ]);
+    $breadcrumbs = app(ClusteredPageWithoutSubNavigation::class)->getBreadcrumbs();
+
+    Filament::getCurrentOrDefaultPanel()->breadcrumbs(hasNavigationHierarchy: true);
+
+    expect(app(ClusteredPageWithoutSubNavigation::class)->getBreadcrumbs())->toBe($breadcrumbs);
 
     $this->get(ClusteredPageWithoutSubNavigation::getUrl())
         ->assertSuccessful();
 });
 
-it('falls back to existing breadcrumbs when a custom `NavigationBuilder` omits the page hierarchy', function (): void {
+it('falls back to cluster breadcrumbs when a custom `NavigationBuilder` omits the cluster', function (): void {
+    $breadcrumbs = app(ManageAdmins::class)->getBreadcrumbs();
+
     Filament::getCurrentOrDefaultPanel()
-        ->breadcrumbs(strictHierarchical: true)
+        ->breadcrumbs(hasNavigationHierarchy: true)
         ->navigation(fn (NavigationBuilder $navigation): NavigationBuilder => $navigation);
 
-    expect(app(GroupedBreadcrumbsPage::class)->getBreadcrumbs())->toBe(['Reports']);
+    expect(app(ManageAdmins::class)->getBreadcrumbs())->toBe($breadcrumbs);
+});
+
+it('falls back to existing breadcrumbs when a custom `NavigationBuilder` omits the page hierarchy', function (): void {
+    $breadcrumbs = app(GroupedBreadcrumbsPage::class)->getBreadcrumbs();
+
+    Filament::getCurrentOrDefaultPanel()
+        ->breadcrumbs(hasNavigationHierarchy: true)
+        ->navigation(fn (NavigationBuilder $navigation): NavigationBuilder => $navigation);
+
+    expect(app(GroupedBreadcrumbsPage::class)->getBreadcrumbs())->toBe($breadcrumbs);
+});
+
+it('includes the navigation hierarchy in breadcrumbs from a custom `NavigationBuilder`', function (): void {
+    Filament::getCurrentOrDefaultPanel()
+        ->breadcrumbs(hasNavigationHierarchy: true)
+        ->navigation(fn (NavigationBuilder $navigation): NavigationBuilder => $navigation
+            ->group(NavigationGroup::make('Administration')
+                ->items(GroupedBreadcrumbsPage::getNavigationItems())));
+
+    expect(app(GroupedBreadcrumbsPage::class)->getBreadcrumbs())->toBe([
+        'Administration',
+        'Reports',
+    ]);
 });
 
 it('falls back to existing breadcrumbs for a grouped page that does not register navigation', function (): void {
-    Filament::getCurrentOrDefaultPanel()->breadcrumbs(strictHierarchical: true);
+    $breadcrumbs = app(GroupedUnregisteredBreadcrumbsPage::class)->getBreadcrumbs();
 
-    expect(app(GroupedUnregisteredBreadcrumbsPage::class)->getBreadcrumbs())->toBe([
-        'Archived reports',
-    ]);
+    Filament::getCurrentOrDefaultPanel()
+        ->breadcrumbs(hasNavigationHierarchy: true)
+        ->navigationItems([
+            NavigationItem::make('Published reports')
+                ->key(GroupedUnregisteredBreadcrumbsPage::class)
+                ->group('Administration')
+                ->icon(Heroicon::OutlinedDocumentText)
+                ->childItems([
+                    NavigationItem::make('Published report')
+                        ->url('/published-reports'),
+                ]),
+        ]);
+
+    expect(app(GroupedUnregisteredBreadcrumbsPage::class)->getBreadcrumbs())->toBe($breadcrumbs);
+});
+
+it('falls back to existing breadcrumbs when navigation is disabled', function (): void {
+    $breadcrumbs = app(GroupedBreadcrumbsPage::class)->getBreadcrumbs();
+
+    Filament::getCurrentOrDefaultPanel()
+        ->breadcrumbs(hasNavigationHierarchy: true)
+        ->navigationItems([
+            NavigationItem::make('Administration home')
+                ->group('Administration')
+                ->icon(Heroicon::OutlinedHome)
+                ->url('/administration'),
+            ...GroupedBreadcrumbsPage::getNavigationItems(),
+        ])
+        ->navigation(false);
+
+    expect(app(GroupedBreadcrumbsPage::class)->getBreadcrumbs())->toBe($breadcrumbs);
 });
 
 class GroupedBreadcrumbsPage extends Page
