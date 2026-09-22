@@ -25,7 +25,7 @@ trait HasHeadings
 
     public function getHeadingTag(int $index = 0): string
     {
-        $level = $this->getHeadingLevel($index);
+        $level = max(1, $this->getHeadingLevel($index));
 
         if ($level > 6) {
             return 'p';
