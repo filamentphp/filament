@@ -24,7 +24,8 @@ use Symfony\Component\Process\Process;
 
 use function Filament\Tests\livewire;
 
-if (getenv('EXPORT_WORKER_DIRECTORY')) {
+if (getenv('EXPORT_WORKER_DIRECTORY') !== false) {
+    WorkerTestCase::validateWorkerEnvironment();
     uses(WorkerTestCase::class);
 }
 
@@ -32,7 +33,7 @@ it('exports through separate serialized database worker processes', function ():
     $directory = getenv('EXPORT_WORKER_DIRECTORY');
 
     if (! $directory) {
-        $directory = sys_get_temp_dir() . '/filament-export-worker-' . bin2hex(random_bytes(12));
+        $directory = realpath(sys_get_temp_dir()) . '/filament-export-worker-' . bin2hex(random_bytes(12));
         $filesystem = new Filesystem;
         $filesystem->makeDirectory($directory . '/storage/framework/views', 0700, recursive: true);
         $filesystem->makeDirectory($directory . '/storage/framework/cache', 0700, recursive: true);
@@ -49,7 +50,8 @@ it('exports through separate serialized database worker processes', function ():
                     'TEST_TOKEN' => false,
                 ]);
                 $process->setTimeout(120)->run();
-                expect($process->isSuccessful())->toBeTrue($phase . ":\n" . $process->getOutput() . $process->getErrorOutput());
+                expect($process->isSuccessful())->toBeTrue($phase . ":\n" . $process->getOutput() . $process->getErrorOutput() .
+                    ((! $process->isSuccessful() && is_file($directory . '/worker.log')) ? file_get_contents($directory . '/worker.log') : ''));
             }
 
             $processIds = array_map(static fn (string $phase): int => (int) file_get_contents($directory . '/' . $phase . '.pid'), ['enqueue', 'worker', 'verify']);
@@ -64,6 +66,9 @@ it('exports through separate serialized database worker processes', function ():
     }
 
     $phase = getenv('EXPORT_WORKER_PHASE');
+    $connection = DB::connection();
+    expect($connection->getConfig('driver'))->toBe('sqlite')
+        ->and(realpath($connection->getConfig('database')))->toBe($directory . '/database.sqlite');
     file_put_contents($directory . '/' . $phase . '.pid', (string) getmypid());
 
     if ($phase === 'enqueue') {
@@ -125,9 +130,12 @@ it('exports through separate serialized database worker processes', function ():
                 'xlsxExists' => $export->getFileDisk()->exists($export->getFileDirectory() . '/' . $export->file_name . '.xlsx'),
             ]) . "\n", FILE_APPEND);
         });
-        Artisan::call('queue:work', ['connection' => 'database', '--queue' => 'exports', '--stop-when-empty' => true, '--sleep' => 0, '--tries' => 1]);
-        expect(DB::table('jobs')->count())->toBe(0)
-            ->and(DB::table('failed_jobs')->count())->toBe(0);
+        $exitCode = Artisan::call('queue:work', ['connection' => 'database', '--queue' => 'exports', '--stop-when-empty' => true, '--sleep' => 0, '--tries' => 1]);
+        $failedJobs = DB::table('failed_jobs')->get(['queue', 'exception']);
+        $diagnostics = Artisan::output() . "\n" . $failedJobs->toJson();
+        expect($exitCode)->toBe(0, $diagnostics)
+            ->and(DB::table('jobs')->count())->toBe(0, $diagnostics)
+            ->and($failedJobs)->toHaveCount(0, $diagnostics);
 
         return;
     }
@@ -207,3 +215,71 @@ it('exports through separate serialized database worker processes', function ():
         expect($notification->data['iconColor'])->toBe('warning');
     }
 });
+
+if (getenv('EXPORT_WORKER_DIRECTORY') === false) {
+    it('rejects unsafe worker entrypoints without changing a sentinel database', function (string $scenario, string $rejection): void {
+        $directory = realpath(sys_get_temp_dir()) . '/filament-export-worker-' . bin2hex(random_bytes(12));
+        $alias = realpath(sys_get_temp_dir()) . '/filament-export-worker-' . bin2hex(random_bytes(12));
+        $filesystem = new Filesystem;
+        $filesystem->makeDirectory($directory, 0700);
+
+        try {
+            $database = new PDO('sqlite:' . $directory . '/database.sqlite');
+            $database->exec('CREATE TABLE sentinel (value TEXT)');
+            $database->exec("INSERT INTO sentinel VALUES ('untouched')");
+            $database = null;
+            $hash = hash_file('sha256', $directory . '/database.sqlite');
+            $phase = 'worker';
+            $childDirectory = $directory;
+
+            switch ($scenario) {
+                case 'phase':
+                    $phase = 'invalid';
+
+                    break;
+                case 'populated enqueue':
+                    $phase = 'enqueue';
+
+                    break;
+                case 'noncanonical directory':
+                    $childDirectory = $directory . '/.';
+
+                    break;
+                case 'directory symlink':
+                    symlink($directory, $alias);
+                    $childDirectory = $alias;
+
+                    break;
+                case 'database symlink':
+                    rename($directory . '/database.sqlite', $directory . '/sentinel.sqlite');
+                    symlink($directory . '/sentinel.sqlite', $directory . '/database.sqlite');
+
+                    break;
+            }
+
+            $process = new Process([PHP_BINARY, 'vendor/bin/pest', '--configuration=phpunit.sqlite.xml', '--no-logging', '--do-not-cache-result', __FILE__], dirname(__DIR__, 4), [
+                'EXPORT_WORKER_DIRECTORY' => $childDirectory,
+                'EXPORT_WORKER_PHASE' => $phase,
+                'DB_CONNECTION' => 'testing',
+                'DB_DATABASE' => $directory . '/database.sqlite',
+                'TEST_TOKEN' => false,
+            ]);
+            $process->setTimeout(30)->run();
+            expect($process->isSuccessful())->toBeFalse()
+                ->and($process->getOutput() . $process->getErrorOutput())->toContain('Rejected export worker ' . $rejection . '.')
+                ->and(hash_file('sha256', $directory . '/database.sqlite'))->toBe($hash)
+                ->and(glob($directory . '/*.pid'))->toBe([]);
+        } finally {
+            if (is_link($alias)) {
+                unlink($alias);
+            }
+            $filesystem->deleteDirectory($directory);
+        }
+    })->with([
+        ['phase', 'phase'],
+        ['populated enqueue', 'database'],
+        ['noncanonical directory', 'directory'],
+        ['directory symlink', 'directory'],
+        ['database symlink', 'database'],
+    ]);
+}
