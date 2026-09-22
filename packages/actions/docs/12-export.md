@@ -990,6 +990,57 @@ public function getJobBatchName(): ?string
 }
 ```
 
+## Testing an exporter
+
+You can use `TestExporter` to test the values your exporter produces for an Eloquent record without running an export action or queue jobs:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use App\Models\Product;
+use Filament\Actions\Testing\TestExporter;
+
+it('exports product details', function () {
+    $product = Product::factory()->make([
+        'name' => 'Oak desk',
+        'sku' => 'DESK-01',
+    ]);
+
+    $row = TestExporter::make(ProductExporter::class, columnMap: [
+        'name' => 'Name',
+        'sku' => 'SKU',
+    ])->export($product);
+
+    expect($row)->toBe(['Oak desk', 'DESK-01']);
+});
+```
+
+The helper calls your real exporter once for each `export()` call, including its state and formatting callbacks, and returns its array unchanged. The standard exporter returns positional values in column-map order, not an array keyed by column names or labels. Duplicate labels do not merge values. You can reuse the helper to export multiple records. Exceptions are not caught or converted into test assertions.
+
+If you omit `columnMap` or pass `null`, the helper uses `getVisibleColumns()`, keeps columns enabled by default, and uses their labels in declaration order. Visibility, default selection, and label callbacks run on unbound columns, as they do when the action builds its selection form. This default does not reproduce every action configuration: for example, `columnMapping(false)` normally includes all visible columns, including those disabled by default, and table-specific column selection is not simulated.
+
+An explicit `columnMap` is authoritative, including an empty array. The helper does not evaluate visibility, default selection, or label callbacks for it. You may select a hidden or default-disabled column directly to test its output; this does not prove that an action allows that selection.
+
+You can pass `options` and an `export` model to `make()` when your exporter needs additional context:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Testing\TestExporter;
+
+$export = app(Export::class);
+$export->setRelation('user', $user);
+
+$exporter = TestExporter::make(
+    ProductExporter::class,
+    options: ['descriptionLimit' => 50],
+    export: $export,
+);
+```
+
+If you do not supply an `export`, the helper resolves an unsaved `Export` model from the container. It sets the model's `exporter` attribute to the class passed to `make()` and resolves the exporter through `Export::getExporter()`, so container bindings and the model's column map and options are respected. It does not save the export or record, or switch the authenticated user to the export's owner. Set up authentication yourself when callbacks depend on it.
+
+This helper tests row transformation only. It does not run query modifications, eager loading, or relationship aggregates: prepare relationships and aggregate attributes on the record yourself. Your exporter may still issue queries, including Eloquent lazy loading. Test action selection, authorization, queued jobs, notifications, and CSV or XLSX file generation separately.
+
 ## Authorization
 
 By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
