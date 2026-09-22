@@ -1131,6 +1131,166 @@ Unexpected exceptions still propagate to your test unchanged; assert them using 
     This helper invokes the importer directly. It does not parse files, validate the column mapping or options forms, run queue jobs, record failed rows, update import counters, wrap the row in a transaction, or send completion notifications. `requiredMapping()` is enforced by the mapping select in the import modal, so it is not validated here. `requiredMappingForNewRecordsOnly()` is still checked by the importer when processing a new record. Test the form and queued workflows separately. Your importer's own database writes and other side effects still run, so use your normal database isolation for tests.
 </Aside>
 
+### Testing relationship resolution
+
+Assert your application's matching policy and the saved association, not just a successful outcome. For example, a `PostImporter` with required `title` and `content` columns might resolve its `author` relationship to an existing user by email:
+
+```php
+use App\Models\User;
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('author')
+    ->rules(['required'])
+    ->relationship(resolveUsing: static fn (string $state): ?User => User::query()->where('email', $state)->first())
+```
+
+Create another user so that selecting the wrong parent would fail the test. Reload the post to check the persisted relationship:
+
+```php
+use App\Filament\Imports\PostImporter;
+use App\Models\User;
+use Filament\Actions\Testing\TestImporter;
+
+it('associates the author matched by email', function () {
+    User::factory()->create(['email' => 'grace@example.com']);
+    $author = User::factory()->create(['email' => 'ada@example.com']);
+
+    $record = TestImporter::make(PostImporter::class)->import([
+        'title' => 'Importing posts',
+        'content' => 'A practical guide',
+        'author' => 'ada@example.com',
+    ])->assertImported()->getRecord();
+
+    expect($record->fresh()->author->is($author))->toBeTrue();
+    $this->assertDatabaseCount('users', 2);
+});
+```
+
+This resolver returns `null` for an unknown email, which fails relationship validation; it does not create a user. Test that policy too. For an importer that updates posts matched by title, verify that a rejected row leaves the existing content and author unchanged:
+
+```php
+use App\Filament\Imports\PostImporter;
+use App\Models\Post;
+use Filament\Actions\Testing\TestImporter;
+
+it('rejects an unknown author without changing the post', function () {
+    $post = Post::factory()->create(['title' => 'Importing posts', 'content' => 'Original content']);
+
+    TestImporter::make(PostImporter::class)->import([
+        'title' => $post->title,
+        'content' => 'Replacement content',
+        'author' => 'unknown@example.com',
+    ])->assertHasErrors(['author']);
+
+    $this->assertDatabaseHas('posts', [
+        'id' => $post->getKey(),
+        'author_id' => $post->author_id,
+        'content' => 'Original content',
+    ]);
+    $this->assertDatabaseCount('posts', 1);
+    $this->assertDatabaseMissing('users', ['email' => 'unknown@example.com']);
+});
+```
+
+If your resolver deliberately creates missing parents or throws a `RowImportFailedException`, assert that application's outcome instead.
+
+### Testing options that control writes
+
+Options have no built-in create, update, or skip semantics. Test the decisions your `resolveRecord()` makes. For example, this post importer uses titles as its application-specific matching key and supports two independent options:
+
+```php
+use App\Models\Post;
+
+public function resolveRecord(): ?Post
+{
+    $post = Post::query()->firstOrNew(['title' => $this->data['title']]);
+
+    if ($post->exists) {
+        return ($this->options['updateExisting'] ?? true) ? $post : null;
+    }
+
+    return ($this->options['createMissing'] ?? true) ? $post : null;
+}
+```
+
+An updates-only test should exercise both a matching and a missing post, checking the record identity, changed values, and absence of an unwanted insert:
+
+```php
+use App\Filament\Imports\PostImporter;
+use App\Models\Post;
+use Filament\Actions\Testing\TestImporter;
+
+it('updates existing posts and skips missing posts', function () {
+    $post = Post::factory()->create(['title' => 'Existing post', 'content' => 'Original content']);
+    $importer = TestImporter::make(PostImporter::class, options: [
+        'createMissing' => false,
+        'updateExisting' => true,
+    ]);
+
+    $record = $importer->import([
+        'title' => 'Existing post',
+        'content' => 'Replacement content',
+        'author' => $post->author->email,
+    ])->assertImported()->getRecord();
+
+    expect($record->is($post))->toBeTrue();
+    expect($post->fresh()->content)->toBe('Replacement content');
+
+    $importer->import([
+        'title' => 'New post',
+        'content' => 'New content',
+        'author' => $post->author->email,
+    ])->assertSkipped();
+
+    $this->assertDatabaseMissing('posts', ['title' => 'New post']);
+    $this->assertDatabaseCount('posts', 1);
+});
+```
+
+Cover the other combinations your application offers: create-only should leave matching records unchanged and persist missing records; enabling both should update and create; disabling both should skip without writes. Use valid row data for these tests so validation cannot hide an incorrect option decision. Options passed to `TestImporter` do not receive options-form defaults or validation.
+
+### Testing hook side effects
+
+Use Laravel's fakes or database assertions for work your hooks perform. For example, if `PostImporter::afterSave()` dispatches `IndexImportedPost` with the saved post's ID, fake that job and assert its payload and count. Also submit a row that fails the importer's required `content` rule, checking that neither the post nor the job is created:
+
+```php
+use App\Filament\Imports\PostImporter;
+use App\Jobs\IndexImportedPost;
+use App\Models\User;
+use Filament\Actions\Testing\TestImporter;
+use Illuminate\Support\Facades\Bus;
+
+it('indexes saved posts but not invalid rows', function () {
+    Bus::fake([IndexImportedPost::class]);
+    $author = User::factory()->create();
+    $importer = TestImporter::make(PostImporter::class);
+
+    $importer->import([
+        'title' => 'Importing posts',
+        'content' => '',
+        'author' => $author->email,
+    ])->assertHasErrors(['content' => 'required']);
+
+    $this->assertDatabaseCount('posts', 0);
+    Bus::assertNothingDispatched();
+
+    $record = $importer->import([
+        'title' => 'Importing posts',
+        'content' => 'A practical guide',
+        'author' => $author->email,
+    ])->assertImported()->getRecord();
+
+    $this->assertDatabaseHas('posts', [
+        'id' => $record->getKey(),
+        'content' => 'A practical guide',
+    ]);
+    Bus::assertDispatched(IndexImportedPost::class, static fn (IndexImportedPost $job): bool => $job->postId === $record->getKey());
+    Bus::assertDispatchedTimes(IndexImportedPost::class, 1);
+});
+```
+
+This checks dispatch, not the job's implementation. Test that job separately. The absence assertion applies to this column-validation failure before `afterSave()`, not to exceptions raised after side effects have already run. For a hook that writes an audit record instead, assert its saved record ID and application-specific fields, and assert no audit record exists for the rejected row.
+
 ### Testing import action submissions
 
 Use `ImportAction::fake()` to test that your action requests an import without running its jobs. It returns a fresh fake for assertions and only replaces import dispatch in the current application container; unrelated jobs, batches, and events continue to work normally:
