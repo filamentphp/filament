@@ -1,0 +1,9 @@
+{
+    "extends": "./avatar.tsconfig.json",
+    "include": [
+        "fieldset-consumers/**/*",
+        "../../packages/support/resources/js/react/Fieldset.tsx",
+        "../../packages/support/resources/js/vue/Fieldset.vue",
+        "../../packages/support/resources/js/svelte/Fieldset.svelte"
+    ]
+}

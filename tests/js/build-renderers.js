@@ -51,7 +51,12 @@ await buildViteRenderers(
     'build/js-breadcrumbs-renderers',
 )
 
-for (const component of ['avatar', 'breadcrumbs']) {
+await buildViteRenderers(
+    { fieldset: 'tests/js/renderers/fieldset.svelte.js' },
+    'build/js-fieldset-renderers',
+)
+
+for (const component of ['avatar', 'breadcrumbs', 'fieldset']) {
     const configuration = `tests/js/${component}.tsconfig.json`
     for (const [command, arguments_] of [
         ['node_modules/typescript/bin/tsc', ['--project', configuration]],
