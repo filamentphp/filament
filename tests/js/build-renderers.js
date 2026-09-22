@@ -66,10 +66,16 @@ await buildViteRenderers(
     'build/js-checkbox-renderers',
 )
 
+await buildViteRenderers(
+    { radio: 'tests/js/renderers/radio.svelte.js' },
+    'build/js-radio-renderers',
+)
+
 for (const component of [
     'avatar',
     'breadcrumbs',
     'checkbox',
+    'radio',
     'fieldset',
     'loading-indicator',
 ]) {

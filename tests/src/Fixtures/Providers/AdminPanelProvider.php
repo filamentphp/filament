@@ -55,6 +55,7 @@ use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
+use Filament\Tests\Fixtures\Pages\RadioPrimitiveBrowserTest;
 use Filament\Tests\Fixtures\Pages\RadioTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
@@ -140,6 +141,7 @@ class AdminPanelProvider extends PanelProvider
                 CalloutBrowserTest::class,
                 CheckboxListTest::class,
                 CheckboxPrimitiveBrowserTest::class,
+                RadioPrimitiveBrowserTest::class,
                 CodeEditorBrowserTest::class,
                 ColumnManagerBrowserTest::class,
                 ColumnsBrowserTest::class,
