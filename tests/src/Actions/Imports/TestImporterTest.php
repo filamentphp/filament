@@ -10,6 +10,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\AssertionFailedError;
 
 uses(TestCase::class);
 
@@ -17,7 +18,7 @@ it('imports a row with identity mapping through casting, validation and save hoo
     $record = TestImporter::make(UserRowTestImporter::class)->import([
         'name' => '  Ada Lovelace  ',
         'email' => 'ada@example.com',
-    ]);
+    ])->assertHasNoErrors()->getRecord();
 
     expect($record)->toBeInstanceOf(User::class)
         ->exists->toBeTrue();
@@ -39,7 +40,7 @@ it('updates a record using explicit headers without filling or validating an omi
     ], options: ['updateExisting' => true])->import([
         'Email address' => $user->email,
         'name' => '',
-    ]);
+    ])->assertHasNoErrors()->getRecord();
 
     expect($record->is($user))->toBeTrue();
     $this->assertDatabaseCount('users', 1);
@@ -47,34 +48,99 @@ it('updates a record using explicit headers without filling or validating an omi
 });
 
 it('keeps an explicit empty column map instead of applying identity mapping', function (): void {
-    expect(fn () => TestImporter::make(UserRowTestImporter::class, columnMap: [])->import([
+    TestImporter::make(UserRowTestImporter::class, columnMap: [])->import([
         'name' => 'Ada Lovelace',
         'email' => 'ada@example.com',
-    ]))->toThrow(ValidationException::class);
+    ])->assertHasErrors(['name' => 'required']);
 
     $this->assertDatabaseCount('users', 0);
 });
 
-it('propagates validation errors from the importer without saving a record', function (): void {
-    try {
-        TestImporter::make(UserRowTestImporter::class)->import([
-            'name' => 'Ada Lovelace',
-            'email' => 'not-an-email',
-        ]);
+it('captures validation errors from the importer without saving a record', function (): void {
+    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer->import(['name' => '', 'email' => 'x'])->assertHasErrors(['name', 'email']);
 
-        $this->fail('Expected a validation exception.');
-    } catch (ValidationException $exception) {
-        expect($exception->errors())->toHaveKey('email')->not->toHaveKey('name');
-    }
+    $importer->import([
+        'name' => 'Ada Lovelace',
+        'email' => 'not-an-email',
+    ])->assertHasErrors(['email' => 'email'])
+        ->assertHasNoErrors(['name'])
+        ->assertHasNoErrors(['email' => 'min']);
+
+    expect($importer->getRecord())->toBeInstanceOf(User::class)
+        ->exists->toBeFalse();
 
     $this->assertDatabaseCount('users', 0);
     $this->assertDatabaseCount('failed_import_rows', 0);
 });
 
+it('asserts validation field and rule subsets without rejecting additional errors', function (): void {
+    TestImporter::make(UserRowTestImporter::class)->import([
+        'name' => '',
+        'email' => 'x',
+    ])->assertHasErrors()
+        ->assertHasErrors(['name', 'email'])
+        ->assertHasErrors(['name' => 'required'])
+        ->assertHasErrors(['email' => ['email', 'min:6']])
+        ->assertHasNoErrors(['missing'])
+        ->assertHasNoErrors(['email' => 'required']);
+});
+
+it('rejects incorrect validation assertions with useful diagnostics', function (string $method, array $keys, string $message): void {
+    $importer = TestImporter::make(UserRowTestImporter::class)->import([
+        'name' => 'Ada Lovelace',
+        'email' => 'x',
+    ]);
+
+    expect(fn () => $importer->{$method}($keys))->toThrow(AssertionFailedError::class, $message);
+})->with([
+    'wrong rule on invalid field' => ['assertHasErrors', ['email' => 'required'], 'no matching failed rule'],
+    'valid field' => ['assertHasErrors', ['name'], 'missing error: name'],
+    'missing field' => ['assertHasErrors', ['missing' => 'required'], 'no matching failed rule'],
+    'partially matching rules' => ['assertHasErrors', ['email' => ['email', 'required']], 'no matching failed rule'],
+    'global no errors' => ['assertHasNoErrors', [], 'Component has errors:'],
+    'field no errors' => ['assertHasNoErrors', ['email'], 'Component has error: email'],
+    'rule no errors' => ['assertHasNoErrors', ['email' => 'min:6'], 'Component has [min] errors'],
+]);
+
+it('clears captured validation errors and failed rules when reused for successful or skipped rows', function (array $data): void {
+    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer->import(['name' => '', 'email' => 'x'])->assertHasErrors(['name', 'email']);
+
+    expect($importer->import($data))->toBe($importer);
+    $importer->assertHasNoErrors()->assertHasNoErrors(['email' => 'min']);
+    expect($importer->failedRules())->toBe([]);
+    expect(fn () => $importer->assertHasErrors())->toThrow(AssertionFailedError::class, 'Component has no errors.');
+})->with([
+    'success' => [['name' => 'Ada Lovelace', 'email' => 'ada@example.com']],
+    'skipped' => [['skip' => true]],
+]);
+
+it('captures a `ValidationException` raised in a lifecycle hook', function (): void {
+    $exception = ValidationException::withMessages(['custom' => 'Rejected by the hook.']);
+
+    TestImporter::make(UserRowTestImporter::class, options: ['exception' => $exception])
+        ->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com'])
+        ->assertHasErrors(['custom' => 'Rejected by the hook.']);
+
+    $this->assertDatabaseCount('users', 0);
+});
+
 it('propagates deliberate row failures and unexpected exceptions unchanged', function (Throwable $exception): void {
-    expect(fn () => TestImporter::make(UserRowTestImporter::class, options: [
+    $importer = TestImporter::make(UserRowTestImporter::class, options: [
         'exception' => $exception,
-    ])->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']))->toThrow($exception);
+    ]);
+    $importer->import(['name' => '', 'email' => 'x'])->assertHasErrors();
+
+    try {
+        $importer->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']);
+        $this->fail('Expected the importer exception.');
+    } catch (Throwable $caughtException) {
+        expect($caughtException)->toBe($exception);
+    }
+
+    $importer->assertHasNoErrors();
+    expect($importer->failedRules())->toBe([]);
 
     $this->assertDatabaseCount('users', 0);
 })->with([
@@ -82,11 +148,11 @@ it('propagates deliberate row failures and unexpected exceptions unchanged', fun
     'unexpected failure' => [new RuntimeException('Unexpected failure.')],
 ]);
 
-it('returns `null` for a skipped row without retaining the previous record', function (): void {
+it('returns `null` from `getRecord()` for a skipped row without retaining the previous record', function (): void {
     $importer = TestImporter::make(UserRowTestImporter::class);
 
-    expect($importer->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']))->toBeInstanceOf(User::class);
-    expect($importer->import(['skip' => true]))->toBeNull();
+    expect($importer->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com'])->assertHasNoErrors()->getRecord())->toBeInstanceOf(User::class);
+    expect($importer->import(['skip' => true])->assertHasNoErrors()->getRecord())->toBeNull();
 
     $this->assertDatabaseCount('users', 1);
 });
@@ -150,7 +216,7 @@ class UserRowTestImporter extends Importer
                 ->requiredMappingForNewRecordsOnly()
                 ->castStateUsing(static fn (?string $state): string => trim($state ?? ''))
                 ->rules(['required']),
-            ImportColumn::make('email')->rules(['required', 'email']),
+            ImportColumn::make('email')->rules(['required', 'email', 'min:6']),
         ];
     }
 

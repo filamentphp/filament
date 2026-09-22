@@ -1023,7 +1023,7 @@ The current record (if it exists yet) is accessible in `$this->record`, and the 
 
 ## Testing importers
 
-You can test a row using `TestImporter` without uploading a CSV or dispatching a queued job. It runs your application's importer, including column mapping, casting, validation, lifecycle hooks, and saving records and relationships. The `import()` method returns the resolved record, so you can use ordinary model and database assertions:
+You can test a row using `TestImporter` without uploading a CSV or dispatching a queued job. It runs your application's importer, including column mapping, casting, validation, lifecycle hooks, and saving records and relationships. The `import()` method returns the test helper so you can chain validation assertions. Use `getRecord()` to retrieve the resolved record for ordinary model and database assertions:
 
 ```php
 use App\Filament\Imports\ProductImporter;
@@ -1034,7 +1034,7 @@ it('imports a product', function () {
         'sku' => 'MUG-001',
         'name' => 'Ceramic mug',
         'price' => '12.50',
-    ]);
+    ])->assertHasNoErrors()->getRecord();
 
     $this->assertDatabaseHas('products', [
         'id' => $record->getKey(),
@@ -1059,7 +1059,7 @@ $record = TestImporter::make(ProductImporter::class, columnMap: [
 ])->import([
     'Product code' => 'MUG-001',
     'Product name' => 'Large ceramic mug',
-]);
+])->assertHasNoErrors()->getRecord();
 ```
 
 `TestImporter` creates an unsaved `Import` model as context. If your importer needs a particular import or user, pass your own model using the `import` argument. The helper sets its `importer` attribute to the supplied importer class without saving it. Use Laravel's `actingAs()` to set the authenticated user; the helper does not change authentication or associate a user automatically:
@@ -1080,10 +1080,27 @@ $record = TestImporter::make(ProductImporter::class, import: $import)->import([
     'sku' => 'MUG-001',
     'name' => 'Ceramic mug',
     'price' => '12.50',
-]);
+])->assertHasNoErrors()->getRecord();
 ```
 
-Validation exceptions, `RowImportFailedException`, and unexpected exceptions propagate to your test. You can assert them using Pest's `toThrow()` or PHPUnit's `expectException()`. To inspect individual validation errors, catch Laravel's `ValidationException` and assert against its `errors()` array. If your importer's `resolveRecord()` returns `null`, `import()` returns `null` without treating the row as an error.
+### Asserting validation errors
+
+The helper captures `ValidationException` from any part of the importer lifecycle, including your hooks. Use `assertHasErrors()` and `assertHasNoErrors()` with the same conventions as Livewire's validation assertions:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\Testing\TestImporter;
+
+TestImporter::make(ProductImporter::class)->import([
+    'sku' => 'MUG-001',
+    'name' => 'Ceramic mug',
+    'price' => '-1',
+])->assertHasErrors(['price' => 'min']);
+```
+
+Without arguments, `assertHasErrors()` checks for any validation errors and `assertHasNoErrors()` checks for none. Pass a field list such as `['price', 'name']` to check those fields, or a field-to-rule map such as `['price' => ['numeric', 'min']]` to check specific rules. These are subset assertions: errors on other fields do not cause `assertHasErrors(['price'])` or `assertHasNoErrors(['name'])` to fail. Rule parameters are not compared; use the rule name, such as `'min'`.
+
+Each `import()` call clears the previous row's captured validation errors. `RowImportFailedException` and unexpected exceptions still propagate to your test; assert them using Pest's `toThrow()` or PHPUnit's `expectException()`. If your importer's `resolveRecord()` returns `null`, `getRecord()` returns `null` without treating the row as an error. A resolved record may exist even when validation fails, so use `assertHasNoErrors()` before treating it as successfully imported.
 
 <Aside variant="info">
     This helper invokes the importer directly. It does not parse files, validate the column mapping or options forms, run queue jobs, record failed rows, update import counters, wrap the row in a transaction, or send completion notifications. `requiredMapping()` is enforced by the mapping select in the import modal, so it is not validated here. `requiredMappingForNewRecordsOnly()` is still checked by the importer when processing a new record. Test the form and queued workflows separately. Your importer's own database writes and other side effects still run, so use your normal database isolation for tests.
