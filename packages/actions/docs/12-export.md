@@ -1041,6 +1041,103 @@ If you do not supply an `export`, the helper resolves an unsaved `Export` model 
 
 This helper tests row transformation only. It does not run query modifications, eager loading, or relationship aggregates: prepare relationships and aggregate attributes on the record yourself. Your exporter may still issue queries, including Eloquent lazy loading. Test action selection, authorization, queued jobs, notifications, and CSV or XLSX file generation separately.
 
+### Testing calculated values and options
+
+Test your application's calculations and formatting together. For example, a `PostExporter` could calculate a score from a rating and an option:
+
+```php
+use App\Models\Post;
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('score')
+    ->state(static fn (Post $record, array $options): int => $record->rating * ($options['multiplier'] ?? 1))
+    ->formatStateUsing(static fn (int $state): string => "{$state} points")
+```
+
+Export the same record with different options to check that the option changes the result:
+
+```php
+use App\Filament\Exports\PostExporter;
+use App\Models\Post;
+use Filament\Actions\Testing\TestExporter;
+
+it('exports calculated scores', function () {
+    $post = Post::factory()->make(['rating' => 3]);
+    $columnMap = ['score' => 'Score'];
+
+    expect(TestExporter::make(PostExporter::class, $columnMap, options: ['multiplier' => 2])->export($post))
+        ->toBe(['6 points'])
+        ->and(TestExporter::make(PostExporter::class, $columnMap, options: ['multiplier' => 5])->export($post))
+        ->toBe(['15 points']);
+});
+```
+
+The helper passes options through unchanged. It does not run `getOptionsFormComponents()`, apply form defaults, or validate options. If your options form defaults `multiplier` to `2`, pass `['multiplier' => 2]` explicitly. Omitting it in this example uses the callback's fallback of `1`, not the form default. Test the options form's validation separately.
+
+### Testing preloaded relationships and aggregates
+
+For an `AuthorExporter` with the following columns, load the author's team and post aggregates using Eloquent before exporting:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+public static function getColumns(): array
+{
+    return [
+        ExportColumn::make('team.name'),
+        ExportColumn::make('posts_count')->counts('posts'),
+        ExportColumn::make('posts_sum_rating')->sum('posts', 'rating'),
+    ];
+}
+```
+
+In your test, create an author on the `Editorial` team with two posts rated `3` and `8`. Create another author on a different team with one post rated `9`, so including the wrong author's posts would fail the assertion. Then prepare the record:
+
+```php
+use App\Filament\Exports\AuthorExporter;
+use App\Models\Author;
+use Filament\Actions\Testing\TestExporter;
+
+$author = Author::query()->with('team')->findOrFail($author->getKey());
+$author->loadCount('posts')->loadSum('posts', 'rating');
+
+expect(TestExporter::make(AuthorExporter::class)->export($author))
+    ->toBe(['Editorial', '2', '11']);
+```
+
+The column names follow Eloquent's aggregate attribute conventions. You can also use `withCount()` and `withSum()` on the query. Match any relationship scopes used by your exporter when preparing the record. The helper does not call `modifyQuery()` or prepare aggregates from `counts()` or `sum()`; this test checks the row output, not whether the export action prepares the query correctly.
+
+Prepare the record before its first export. Export columns cache state for saved records, so use a fresh `TestExporter::make()` if you change a record or load additional attributes after exporting it.
+
+### Testing formula injection protection
+
+For untrusted text, opt into [formula injection protection](#csv-formula-injection) on the column in your exporter:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('title')
+    ->preventFormulaInjection()
+```
+
+Test that your exporter protects a leading formula while preserving ordinary text:
+
+```php
+use App\Filament\Exports\PostExporter;
+use App\Models\Post;
+use Filament\Actions\Testing\TestExporter;
+
+it('protects untrusted titles', function () {
+    $exporter = TestExporter::make(PostExporter::class, ['title' => 'Title']);
+
+    expect($exporter->export(Post::factory()->make(['title' => '=1+1'])))->toBe(["'=1+1"])
+        ->and($exporter->export(Post::factory()->make(['title' => 'Quarterly report'])))->toBe(['Quarterly report'])
+        ->and($exporter->export(Post::factory()->make(['title' => '-12'])))->toBe(['-12']);
+});
+```
+
+This checks your exporter's opt-in policy: `TestExporter` does not enable protection itself. Numeric strings such as `-12` remain unchanged. The assertion checks the final row value, not CSV quoting or XLSX cell serialization.
+
 ## Authorization
 
 By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
