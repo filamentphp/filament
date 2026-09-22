@@ -94,3 +94,31 @@ Native attributes such as `disabled`, `name`, `form`, `id`, and `aria-*`, and na
 Use `className` in React and `class` in Vue or Svelte to add classes alongside the Filament theme hooks. Svelte classes accept space-separated strings. Changing props updates the legend and native attributes without replacing the child controls.
 
 Keep framework-mounted content inside the host's `wire:ignore` boundary when embedding it in a Livewire component, and unmount it through the host renderer's lifecycle.
+
+### Rendering rich legends
+
+In React, pass a node to `label`:
+
+```jsx
+<Fieldset label={<strong>Delivery preferences</strong>}>
+    {/* Form controls */}
+</Fieldset>
+```
+
+In Vue, use the named `label` slot:
+
+```vue
+<Fieldset>
+    <template #label><strong>Delivery preferences</strong></template>
+    <!-- Form controls -->
+</Fieldset>
+```
+
+In Svelte, use a `label` snippet:
+
+```svelte
+<Fieldset>
+    {#snippet label()}<strong>Delivery preferences</strong>{/snippet}
+    <!-- Form controls -->
+</Fieldset>
+```

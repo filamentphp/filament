@@ -5,7 +5,10 @@ import {
     type ReactNode,
 } from 'react'
 
-export type FieldsetProps = ComponentPropsWithoutRef<'fieldset'> & {
+export type FieldsetProps = Omit<
+    ComponentPropsWithoutRef<'fieldset'>,
+    'dangerouslySetInnerHTML'
+> & {
     contained?: boolean
     label?: ReactNode
     labelHidden?: boolean

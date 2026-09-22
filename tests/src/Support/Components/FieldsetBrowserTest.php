@@ -47,6 +47,7 @@ it('renders `Fieldset` like Blade and updates native attributes, legends and chi
 
         foreach (['react', 'vue', 'svelte'] as $framework) {
             $input = "[data-fieldset-row={$framework}] > div:first-child input";
+            $page->script("document.querySelector('[data-fieldset-row={$framework}]').originalInput = document.querySelector('{$input}')");
             $page->fill($input, 'Baker Street')
                 ->assertScript("document.querySelector('[data-fieldset-row={$framework}] > div').dataset.input", 'Baker Street')
                 ->assertScript("document.querySelector('[data-fieldset-row={$framework}] > div').dataset.eventTarget", 'FIELDSET')
@@ -79,7 +80,17 @@ it('renders `Fieldset` like Blade and updates native attributes, legends and chi
                 })()
                 JS, true)
                 ->fill("[data-fieldset-row={$framework}] > div:first-child input", 'Updated street')
-                ->assertScript("document.querySelector('[data-fieldset-row={$framework}] > div').dataset.input", 'Updated street');
+                ->assertScript("document.querySelector('[data-fieldset-row={$framework}] > div').dataset.input", 'Updated street')
+                ->click("[data-testid=update-{$framework}]")
+                ->assertScript(<<<JS
+                (() => {
+                    const row = document.querySelector('[data-fieldset-row={$framework}]')
+                    const fieldset = row.querySelector('fieldset')
+                    return fieldset.querySelector('legend').textContent.trim() === 'Updated address*'
+                        && fieldset.querySelector('input') === row.originalInput
+                        && row.originalInput.value === 'Updated street'
+                })()
+                JS, true);
         }
 
         $page->assertNoSmoke()->assertNoAccessibilityIssues();

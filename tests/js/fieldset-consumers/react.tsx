@@ -20,3 +20,5 @@ export const fieldset = (
 export const invalidContained = <Fieldset contained="false" />
 // @ts-expect-error `disabled` must be a boolean.
 export const invalidDisabled = <Fieldset disabled="false" />
+// @ts-expect-error Use `children` rather than `dangerouslySetInnerHTML`.
+export const invalidHtml = <Fieldset dangerouslySetInnerHTML={{ __html: '' }} />
