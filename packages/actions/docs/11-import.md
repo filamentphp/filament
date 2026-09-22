@@ -1086,7 +1086,7 @@ $record = TestImporter::make(ProductImporter::class, import: $import)->import([
 Validation exceptions, `RowImportFailedException`, and unexpected exceptions propagate to your test. You can assert them using Pest's `toThrow()` or PHPUnit's `expectException()`. To inspect individual validation errors, catch Laravel's `ValidationException` and assert against its `errors()` array. If your importer's `resolveRecord()` returns `null`, `import()` returns `null` without treating the row as an error.
 
 <Aside variant="info">
-    This helper invokes the importer directly. It does not parse files, validate the options form, run queue jobs, record failed rows, update import counters, wrap the row in a transaction, or send completion notifications. Test those workflows separately. Your importer's own database writes and other side effects still run, so use your normal database isolation for tests.
+    This helper invokes the importer directly. It does not parse files, validate the column mapping or options forms, run queue jobs, record failed rows, update import counters, wrap the row in a transaction, or send completion notifications. `requiredMapping()` is enforced by the mapping select in the import modal, so it is not validated here. `requiredMappingForNewRecordsOnly()` is still checked by the importer when processing a new record. Test the form and queued workflows separately. Your importer's own database writes and other side effects still run, so use your normal database isolation for tests.
 </Aside>
 
 ## Authorization

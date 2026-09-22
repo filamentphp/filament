@@ -7,6 +7,7 @@ use Filament\Actions\Imports\Models\Import;
 use Filament\Actions\Testing\TestImporter;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 
@@ -91,10 +92,11 @@ it('returns `null` for a skipped row without retaining the previous record', fun
 });
 
 it('resolves the importer through the container with the supplied import, mapping and options without changing authentication', function (): void {
-    $user = User::factory()->create();
-    $this->actingAs($user);
+    $authenticatedUser = User::factory()->create();
+    $importUser = User::factory()->create();
+    $this->actingAs($authenticatedUser);
     $import = app(Import::class);
-    $import->setRelation('user', $user);
+    $import->setRelation('user', $importUser);
     $resolvedImporter = null;
 
     app()->bind(UserRowTestImporter::class, function ($application, array $parameters) use (&$resolvedImporter): UserRowTestImporter {
@@ -102,21 +104,45 @@ it('resolves the importer through the container with the supplied import, mappin
     });
 
     TestImporter::make(UserRowTestImporter::class, options: ['updateExisting' => true], import: $import)
-        ->import(['name' => 'Updated name', 'email' => $user->email]);
+        ->import(['name' => 'Updated name', 'email' => $importUser->email]);
 
     expect($resolvedImporter->getImport())->toBe($import)
         ->and($import->importer)->toBe(UserRowTestImporter::class)
         ->and($import->getColumnMap())->toBe(['name' => 'name', 'email' => 'email'])
         ->and($import->getOptions())->toBe(['updateExisting' => true])
         ->and($resolvedImporter->getOptions())->toBe(['updateExisting' => true])
-        ->and($resolvedImporter->getImport()->user)->toBe($user)
-        ->and(auth()->user())->toBe($user);
+        ->and($resolvedImporter->getImport()->user)->toBe($importUser)
+        ->and($resolvedImporter->authenticatedUserBeforeSave)->toBe($authenticatedUser)
+        ->and(auth()->user())->toBe($authenticatedUser);
 
-    $this->assertDatabaseHas('users', ['id' => $user->getKey(), 'name' => 'Updated name']);
+    $this->assertDatabaseHas('users', ['id' => $importUser->getKey(), 'name' => 'Updated name']);
+});
+
+it('does not associate the authenticated user with the default import context', function (): void {
+    $authenticatedUser = User::factory()->create();
+    $this->actingAs($authenticatedUser);
+    $resolvedImporter = null;
+
+    app()->bind(UserRowTestImporter::class, function ($application, array $parameters) use (&$resolvedImporter): UserRowTestImporter {
+        return $resolvedImporter = new UserRowTestImporter(...$parameters);
+    });
+
+    TestImporter::make(UserRowTestImporter::class)->import([
+        'name' => 'Ada Lovelace',
+        'email' => 'ada@example.com',
+    ]);
+
+    expect($resolvedImporter->getImport()->exists)->toBeFalse()
+        ->and($resolvedImporter->getImport()->user_id)->toBeNull()
+        ->and($resolvedImporter->getImport()->user)->toBeNull()
+        ->and($resolvedImporter->authenticatedUserBeforeSave)->toBe($authenticatedUser)
+        ->and(auth()->user())->toBe($authenticatedUser);
 });
 
 class UserRowTestImporter extends Importer
 {
+    public ?Authenticatable $authenticatedUserBeforeSave = null;
+
     public static function getColumns(): array
     {
         return [
@@ -143,6 +169,8 @@ class UserRowTestImporter extends Importer
 
     protected function beforeSave(): void
     {
+        $this->authenticatedUserBeforeSave = auth()->user();
+
         if (isset($this->options['exception'])) {
             throw $this->options['exception'];
         }
