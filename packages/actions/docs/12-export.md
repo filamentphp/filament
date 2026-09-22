@@ -1270,6 +1270,8 @@ Action preparation still queries and counts records, applies row limits, resolve
 
 Use your normal test database and fake the configured filesystem disk with Laravel's `Storage::fake()` when you need to isolate storage cleanup. The fake does not prove that custom jobs work, queue workers can process the serialized payload, or generated CSV/XLSX files and downloads are correct. Keep separate unfaked integration tests for those behaviors and use `TestExporter` for row transformation tests.
 
+For an application integration test, enqueue the real action and run a worker in a separate process against a disposable database and storage directory shared by both processes. Commit your test records before starting the worker, and use the same application key and configuration in both processes. Include enough rows for multiple chunks, parse the resulting files, and check download authorization. Assert that the stored XLSX file exists before requesting its download: the downloader can generate a missing XLSX file on demand, which could hide a worker failure.
+
 ## Authorization
 
 By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
