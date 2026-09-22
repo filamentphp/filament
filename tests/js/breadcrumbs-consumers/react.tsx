@@ -12,6 +12,8 @@ export const breadcrumbs = (
                 label: 'Home',
                 href: '/',
                 target: '_blank',
+                'data-testid': 'home-link',
+                'data-intercept': true,
                 onClick: (event) => event.currentTarget.focus(),
             },
             { label: 'Current' },

@@ -17,6 +17,8 @@ void invalidHref
                 label: 'Home',
                 href: '/',
                 target: '_blank',
+                'data-testid': 'home-link',
+                'data-intercept': true,
                 onClick: (event) => event.preventDefault(),
             },
             { label: 'Current' },

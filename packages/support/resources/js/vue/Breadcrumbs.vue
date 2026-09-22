@@ -8,7 +8,7 @@ import {
 type BreadcrumbItem = Omit<
     AnchorHTMLAttributes,
     'innerHTML' | 'textContent'
-> & { label: string }
+> & { label: string; [attribute: `data-${string}`]: unknown }
 
 interface BreadcrumbsProps extends /* @vue-ignore */ HTMLAttributes {
     breadcrumbs?: readonly BreadcrumbItem[]

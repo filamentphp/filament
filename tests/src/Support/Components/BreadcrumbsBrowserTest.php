@@ -47,6 +47,17 @@ it('renders `Breadcrumbs` like Blade and preserves native links during reactive 
         })()
         JS, true)->assertNoAccessibilityIssues();
 
+        foreach (['ltr' => 'rtl', 'rtl' => 'ltr'] as $documentDirection => $componentDirection) {
+            $page->script("document.documentElement.dir = '{$documentDirection}'; document.querySelectorAll('[data-breadcrumbs-row] nav').forEach(navigation => navigation.dir = '{$componentDirection}')");
+            $page->assertScript(<<<JS
+            [...document.querySelectorAll('[data-breadcrumbs-row] nav')].every(navigation =>
+                [...navigation.querySelectorAll('.fi-{$documentDirection}')].every(icon => getComputedStyle(icon).display === 'none') &&
+                [...navigation.querySelectorAll('.fi-{$componentDirection}')].every(icon => getComputedStyle(icon).display !== 'none'),
+            )
+            JS, true);
+        }
+        $page->script("document.querySelectorAll('[data-breadcrumbs-row] nav').forEach(navigation => navigation.removeAttribute('dir'))");
+
         $page->script("document.documentElement.dir = 'rtl'");
         $page->assertScript(<<<'JS'
         [...document.querySelectorAll('[data-breadcrumbs-row] nav')].every(navigation =>
@@ -54,6 +65,8 @@ it('renders `Breadcrumbs` like Blade and preserves native links during reactive 
             [...navigation.querySelectorAll('.fi-rtl')].every(icon => getComputedStyle(icon).display !== 'none'),
         )
         JS, true)->assertNoAccessibilityIssues();
+
+        $page->script("document.documentElement.dir = 'ltr'");
 
         foreach (['react', 'vue', 'svelte'] as $framework) {
             $page->click("[data-breadcrumbs-row={$framework}] > div:first-child a[href='#home']")
@@ -69,6 +82,8 @@ it('renders `Breadcrumbs` like Blade and preserves native links during reactive 
                     const items = [...navigation.querySelectorAll('li')].map(item => item.lastElementChild)
                     return navigation.getAttribute('aria-label') === 'Updated location'
                         && navigation.dir === 'rtl'
+                        && [...navigation.querySelectorAll('.fi-ltr')].every(icon => getComputedStyle(icon).display === 'none')
+                        && [...navigation.querySelectorAll('.fi-rtl')].every(icon => getComputedStyle(icon).display !== 'none')
                         && navigation.className === 'fi-breadcrumbs custom-breadcrumbs'
                         && !navigation.hasAttribute('title')
                         && items.length === 3

@@ -84,7 +84,7 @@ All three components accept an ordered `breadcrumbs` array, defaulting to `[]`. 
 
 Pass native anchor attributes such as `target`, `rel`, and `title` on each entry. Native event handlers use `onClick` in React and Vue entries, and `onclick` in Svelte entries. Use `className` in React and `class` in Vue or Svelte. Svelte classes accept space-separated strings. Additional component attributes and events are forwarded to the `<nav>` element. Changing props updates the trail, including switching entries between links and plain text.
 
-The navigation's default `aria-label` is `Breadcrumbs`. Pass a translated `aria-label` when needed; JavaScript components do not read Laravel's locale. Set `dir` on the document to switch between LTR and RTL chevrons. As with Blade, the existing theme does not support nesting a trail with the opposite direction inside an explicitly directed ancestor: both chevrons may be hidden.
+The navigation's default `aria-label` is `Breadcrumbs`. Pass a translated `aria-label` when needed; JavaScript components do not read Laravel's locale. Set `dir` on the document or the component to switch between LTR and RTL chevrons, including trails nested inside an ancestor with the opposite direction.
 
 ### Customizing separators
 

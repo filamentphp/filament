@@ -12,7 +12,7 @@ import {
 export type BreadcrumbItem = Omit<
     ComponentPropsWithoutRef<'a'>,
     'children' | 'dangerouslySetInnerHTML'
-> & { label: string }
+> & { label: string; [attribute: `data-${string}`]: unknown }
 
 export type BreadcrumbsProps = Omit<
     ComponentPropsWithoutRef<'nav'>,
