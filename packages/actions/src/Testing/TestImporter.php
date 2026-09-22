@@ -2,11 +2,13 @@
 
 namespace Filament\Actions\Testing;
 
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\MessageBag;
+use Illuminate\Testing\Assert;
 use Illuminate\Validation\ValidationException;
 use Livewire\Features\SupportValidation\TestsValidation;
 
@@ -15,6 +17,8 @@ class TestImporter
     use TestsValidation;
 
     protected ?Validator $validator = null;
+
+    protected ?string $rowFailureMessage = null;
 
     final public function __construct(
         protected Importer $importer,
@@ -49,12 +53,33 @@ class TestImporter
     public function import(array $data): static
     {
         $this->validator = null;
+        $this->rowFailureMessage = null;
 
         try {
             ($this->importer)($data);
         } catch (ValidationException $exception) {
             $this->validator = $exception->validator;
+        } catch (RowImportFailedException $exception) {
+            $this->rowFailureMessage = $exception->getMessage();
         }
+
+        return $this;
+    }
+
+    public function assertHasRowFailure(?string $message = null): static
+    {
+        Assert::assertNotNull($this->rowFailureMessage, 'Importer has no row failure.');
+
+        if ($message !== null) {
+            Assert::assertSame($message, $this->rowFailureMessage, 'Importer row failure message does not match.');
+        }
+
+        return $this;
+    }
+
+    public function assertHasNoRowFailure(): static
+    {
+        Assert::assertNull($this->rowFailureMessage, "Importer has a row failure: [{$this->rowFailureMessage}].");
 
         return $this;
     }

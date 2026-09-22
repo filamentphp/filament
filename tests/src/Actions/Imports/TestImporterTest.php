@@ -129,26 +129,95 @@ it('captures a `ValidationException` raised in a lifecycle hook', function (): v
     $this->assertDatabaseCount('users', 0);
 });
 
-it('propagates deliberate row failures and unexpected exceptions unchanged', function (Throwable $exception): void {
-    $importer = TestImporter::make(UserRowTestImporter::class, options: [
-        'exception' => $exception,
+it('captures deliberate row failures before resolution and in hooks, including empty messages', function (string $stage, string $message): void {
+    $importer = TestImporter::make(UserRowTestImporter::class)->import([
+        'name' => 'Ada Lovelace',
+        'email' => 'ada@example.com',
+        $stage => new RowImportFailedException($message),
+    ])->assertHasNoErrors();
+
+    expect($importer->assertHasRowFailure())->toBe($importer);
+    expect($importer->assertHasRowFailure($message))->toBe($importer);
+    expect(fn () => $importer->assertHasNoRowFailure())->toThrow(AssertionFailedError::class, "Importer has a row failure: [{$message}].");
+
+    if ($stage === 'resolutionException') {
+        expect($importer->getRecord())->toBeNull();
+    } else {
+        expect($importer->getRecord()->exists)->toBeFalse();
+    }
+
+    $this->assertDatabaseCount('users', 0);
+    $this->assertDatabaseCount('failed_import_rows', 0);
+})->with([
+    'before resolution' => ['resolutionException', 'No matching user.'],
+    'before save hook' => ['exception', 'Cannot import this row.'],
+    'empty message' => ['exception', ''],
+]);
+
+it('rejects non-exact row failure messages', function (string $message): void {
+    $importer = TestImporter::make(UserRowTestImporter::class)->import([
+        'resolutionException' => new RowImportFailedException('No matching user.'),
     ]);
-    $importer->import(['name' => '', 'email' => 'x'])->assertHasErrors();
+
+    expect(fn () => $importer->assertHasRowFailure($message))
+        ->toThrow(AssertionFailedError::class, 'Importer row failure message does not match.');
+})->with(['Wrong message.', 'matching user', '']);
+
+it('keeps row failures separate from validation and replaces both states on reuse', function (): void {
+    $importer = TestImporter::make(UserRowTestImporter::class);
+
+    $importer->import(['resolutionException' => new RowImportFailedException('No matching user.')])
+        ->assertHasRowFailure()->assertHasNoErrors();
+
+    $importer->import(['name' => '', 'email' => 'x'])->assertHasErrors(['name', 'email']);
+    expect($importer->assertHasNoRowFailure())->toBe($importer);
+    expect(fn () => $importer->assertHasRowFailure())->toThrow(AssertionFailedError::class, 'Importer has no row failure.');
+
+    $importer->import(['resolutionException' => new RowImportFailedException('Another row failure.')])
+        ->assertHasRowFailure('Another row failure.')->assertHasNoErrors();
+    expect($importer->failedRules())->toBe([]);
+});
+
+it('clears row failures for successful and skipped rows', function (array $data): void {
+    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer->import(['resolutionException' => new RowImportFailedException('No matching user.')])->assertHasRowFailure();
+
+    $importer->import($data)->assertHasNoRowFailure()->assertHasNoErrors();
+    expect(fn () => $importer->assertHasRowFailure(''))->toThrow(AssertionFailedError::class, 'Importer has no row failure.');
+})->with([
+    'success' => [['name' => 'Ada Lovelace', 'email' => 'ada@example.com']],
+    'skipped' => [['skip' => true]],
+]);
+
+it('does not roll back records when a row failure occurs after saving', function (): void {
+    $record = TestImporter::make(UserRowTestImporter::class)->import([
+        'name' => 'Ada Lovelace',
+        'email' => 'ada@example.com',
+        'afterSaveException' => new RowImportFailedException('Failure after saving.'),
+    ])->assertHasRowFailure('Failure after saving.')->assertHasNoErrors()->getRecord();
+
+    $this->assertDatabaseHas('users', ['id' => $record->getKey(), 'email' => 'ada@example.com']);
+});
+
+it('propagates unexpected exceptions unchanged and clears prior captured failures', function (array $previousRow): void {
+    $exception = new RuntimeException('Unexpected failure.');
+    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer->import($previousRow);
 
     try {
-        $importer->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']);
+        $importer->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com', 'exception' => $exception]);
         $this->fail('Expected the importer exception.');
     } catch (Throwable $caughtException) {
         expect($caughtException)->toBe($exception);
     }
 
-    $importer->assertHasNoErrors();
+    $importer->assertHasNoErrors()->assertHasNoRowFailure();
     expect($importer->failedRules())->toBe([]);
 
     $this->assertDatabaseCount('users', 0);
 })->with([
-    'row failure' => [new RowImportFailedException('Cannot import this row.')],
-    'unexpected failure' => [new RuntimeException('Unexpected failure.')],
+    'validation failure' => [['name' => '', 'email' => 'x']],
+    'row failure' => [['resolutionException' => new RowImportFailedException('No matching user.')]],
 ]);
 
 it('returns `null` from `getRecord()` for a skipped row without retaining the previous record', function (): void {
@@ -225,6 +294,10 @@ class UserRowTestImporter extends Importer
 
     public function resolveRecord(): ?Model
     {
+        if (isset($this->data['resolutionException'])) {
+            throw $this->data['resolutionException'];
+        }
+
         if ($this->data['skip'] ?? false) {
             return null;
         }
@@ -240,11 +313,22 @@ class UserRowTestImporter extends Importer
     {
         $this->authenticatedUserBeforeSave = auth()->user();
 
+        if (isset($this->data['exception'])) {
+            throw $this->data['exception'];
+        }
+
         if (isset($this->options['exception'])) {
             throw $this->options['exception'];
         }
 
         $this->record->password = 'set-by-before-save';
+    }
+
+    protected function afterSave(): void
+    {
+        if (isset($this->data['afterSaveException'])) {
+            throw $this->data['afterSaveException'];
+        }
     }
 
     public static function getCompletedNotificationBody(Import $import): string
