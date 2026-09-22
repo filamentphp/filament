@@ -17,10 +17,11 @@ The loading indicator is an animated SVG that can be used to indicate that somet
 
 ## Using JavaScript components
 
-You can import the default loading indicator into React, Vue, or Svelte renderers. These source components use your application's existing framework build and Filament theme CSS; they do not require converting your application to TypeScript.
+You can import the default loading indicator into React, Vue, or Svelte renderers. These source components use your application's existing framework build and Filament theme CSS; they do not require converting your application to TypeScript. The examples assume your component is in `resources/js/`; adjust the import path for other directories.
 
 ```jsx
-import LoadingIndicator from '/vendor/filament/support/resources/js/react/LoadingIndicator'
+import React from 'react'
+import LoadingIndicator from '../../vendor/filament/support/resources/js/react/LoadingIndicator'
 
 <div role="status" aria-label="Loading results">
     <LoadingIndicator size="sm" />
@@ -29,7 +30,7 @@ import LoadingIndicator from '/vendor/filament/support/resources/js/react/Loadin
 
 ```vue
 <script setup>
-import LoadingIndicator from '/vendor/filament/support/resources/js/vue/LoadingIndicator.vue'
+import LoadingIndicator from '../../vendor/filament/support/resources/js/vue/LoadingIndicator.vue'
 </script>
 
 <template>
@@ -41,7 +42,7 @@ import LoadingIndicator from '/vendor/filament/support/resources/js/vue/LoadingI
 
 ```svelte
 <script>
-    import LoadingIndicator from '/vendor/filament/support/resources/js/svelte/LoadingIndicator.svelte'
+    import LoadingIndicator from '../../vendor/filament/support/resources/js/svelte/LoadingIndicator.svelte'
 </script>
 
 <div role="status" aria-label="Loading results">
