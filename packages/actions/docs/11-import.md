@@ -1197,7 +1197,7 @@ Upload the file before setting `columnMap`, so the form can read the headers and
 
 To test form rejection, use the same setup with an invalid mapping or option, then call `assertHasActionErrors()`. For example, if `sku` uses `requiredMapping()`, set `'columnMap' => ['sku' => null, 'name' => 'Product name', 'price' => 'Unit price']` and assert `assertHasActionErrors(['columnMap.sku' => 'required'])`. Then assert `Event::assertNotDispatched(ImportStarted::class)`, `Bus::assertBatchCount(0)`, and that no `Import` record was created. These are action form errors, not row validation errors: the queued importer has not run.
 
-For authorization rejection, authenticate a user who cannot run the action and invoke the server methods using `->call('mountAction', 'import')->call('callMountedAction')`, then assert that neither the event nor a batch was dispatched and no `Import` was created. Checking action visibility alone does not prove that the server rejects invocation. You can also mount with an authorized user, revoke permission, and call `->call('callMountedAction')` to test authorization at submission time.
+To test authorization at submission time, mount the action while authorized and populate an otherwise valid file, column mapping, and options. Then revoke the user's permission and invoke the server method using `->call('callMountedAction')`. Assert that neither `ImportStarted` nor a batch was dispatched and no `Import` was created. Using otherwise-valid data prevents form validation from masking a missing authorization check. Checking action visibility alone does not prove that the server rejects invocation.
 
 ## Authorization
 
