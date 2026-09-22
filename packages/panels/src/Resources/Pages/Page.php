@@ -270,6 +270,26 @@ abstract class Page extends BasePage
         return $resource::getNavigationUrl();
     }
 
+    protected function getSubNavigationBreadcrumbItemKey(): string
+    {
+        return $this->getSubNavigationParameters() ? static::class : parent::getSubNavigationBreadcrumbItemKey();
+    }
+
+    protected function getSubNavigationBreadcrumbItemUrl(): ?string
+    {
+        $parameters = $this->getSubNavigationParameters();
+
+        if (! $parameters) {
+            return parent::getSubNavigationBreadcrumbItemUrl();
+        }
+
+        if (! static::shouldRegisterNavigation($parameters)) {
+            return null;
+        }
+
+        return static::getNavigationUrl($parameters);
+    }
+
     /**
      * @param  array<string, mixed>  $parameters
      */

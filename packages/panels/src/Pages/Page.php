@@ -227,8 +227,8 @@ abstract class Page extends BasePage
                 static fn (): string => $cluster::getNavigationUrl(),
             );
             $pageBreadcrumbs = $this->getNavigationBreadcrumbs(
-                $this->getNavigationBreadcrumbItemKey(),
-                fn (): ?string => $this->getNavigationBreadcrumbItemUrl(),
+                $this->getSubNavigationBreadcrumbItemKey(),
+                fn (): ?string => $this->getSubNavigationBreadcrumbItemUrl(),
                 $this->getCachedSubNavigation(),
             );
 
@@ -261,6 +261,16 @@ abstract class Page extends BasePage
         }
 
         return static::getNavigationUrl();
+    }
+
+    protected function getSubNavigationBreadcrumbItemKey(): string
+    {
+        return $this->getNavigationBreadcrumbItemKey();
+    }
+
+    protected function getSubNavigationBreadcrumbItemUrl(): ?string
+    {
+        return $this->getNavigationBreadcrumbItemUrl();
     }
 
     /**

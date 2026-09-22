@@ -138,6 +138,21 @@ it('includes the navigation hierarchy in breadcrumbs for clustered pages', funct
     ]);
 });
 
+it('includes the navigation hierarchy in breadcrumbs for clustered resource record pages with sub-navigation', function (): void {
+    UserManagement::navigationGroup('Administration');
+
+    Filament::getCurrentOrDefaultPanel()
+        ->breadcrumbs(hasNavigationHierarchy: true);
+
+    expect(app(ClusteredResourceRecordPage::class)->getBreadcrumbs())->toBe([
+        'Administration',
+        UserManagement::getUrl() => 'User Management',
+        'Record',
+        PostResource::getUrl() => 'Posts',
+        'Edit post',
+    ]);
+});
+
 it('falls back to cluster breadcrumbs when cluster sub-navigation is disabled', function (): void {
     WithoutSubNavigationCluster::navigationGroup('Administration');
 
@@ -248,6 +263,38 @@ class ResourcePageWithTitle extends ResourcePage
     protected static string $resource = PostResource::class;
 
     protected static ?string $title = 'Resource page title';
+}
+
+class ClusteredResourceRecordPage extends ResourcePage
+{
+    protected static string $resource = PostResource::class;
+
+    protected static ?string $title = 'Edit post';
+
+    public static function getCluster(): ?string
+    {
+        return UserManagement::class;
+    }
+
+    public function getSubNavigation(): array
+    {
+        return [
+            NavigationItem::make('Edit post')
+                ->key(static::class)
+                ->group('Record')
+                ->url('/posts/1/edit'),
+        ];
+    }
+
+    public function getSubNavigationParameters(): array
+    {
+        return ['record' => 1];
+    }
+
+    public static function getNavigationUrl(array $parameters = []): string
+    {
+        return "/posts/{$parameters['record']}/edit";
+    }
 }
 
 class GroupedUnregisteredBreadcrumbsPage extends Page
