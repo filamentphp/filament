@@ -1037,7 +1037,7 @@ $exporter = TestExporter::make(
 );
 ```
 
-If you do not supply an `export`, the helper resolves an unsaved `Export` model from the container. It sets the model's `exporter` attribute to the class passed to `make()` and resolves the exporter through `Export::getExporter()`, so container bindings and the model's column map and options are respected. It does not save the export or record, or switch the authenticated user to the export's owner. Set up authentication yourself when callbacks depend on it.
+If you do not supply an `export`, the helper resolves an unsaved `Export` model from the container. It sets the model's `exporter` attribute to the class passed to `make()`. The selected column map and supplied options are passed through `Export::getExporter()`, replacing the model's existing column map and options, and the exporter is resolved from the container. Omitting these arguments uses the helper's default column selection and empty options, not values already stored on the model. It does not save the export or record, or switch the authenticated user to the export's owner. Set up authentication yourself when callbacks depend on it.
 
 This helper tests row transformation only. It does not run query modifications, eager loading, or relationship aggregates: prepare relationships and aggregate attributes on the record yourself. Your exporter may still issue queries, including Eloquent lazy loading. Test action selection, authorization, queued jobs, notifications, and CSV or XLSX file generation separately.
 

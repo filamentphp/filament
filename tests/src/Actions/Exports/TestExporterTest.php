@@ -133,7 +133,7 @@ it('uses supplied export context through `getExporter()` and container bindings 
         ->and($export->exists)->toBeFalse();
 });
 
-it('invokes an overridden `__invoke()` exactly once per record and returns its array unchanged', function (): void {
+it('invokes an overridden `__invoke()` on every `export()` call and returns its array unchanged', function (): void {
     $exporter = new class(app(Export::class), [], []) extends RowTestExporter
     {
         public int $calls = 0;
@@ -151,6 +151,9 @@ it('invokes an overridden `__invoke()` exactly once per record and returns its a
 
     expect($helper->export($record))->toBe([7 => $record, 'custom' => [false, null, 0, '0']])
         ->and($exporter->calls)->toBe(1);
+
+    expect($helper->export($record))->toBe([7 => $record, 'custom' => [false, null, 0, '0']])
+        ->and($exporter->calls)->toBe(2);
 });
 
 it('propagates the original throwable from row formatting', function (Throwable $exception): void {
