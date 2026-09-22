@@ -71,6 +71,7 @@ export default function fileUploadFormComponent({
     shouldOrientImageFromExif,
     shouldTransformImage,
     state,
+    statePath,
     uploadButtonPosition,
     uploadingMessage,
     uploadProgressIndicatorPosition,
@@ -281,7 +282,7 @@ export default function fileUploadFormComponent({
                         }
 
                         this.$wire.upload(
-                            `${this.$statePath}.${fileKey}`,
+                            `${statePath}.${fileKey}`,
                             file,
                             () => {
                                 finishUpload()
@@ -307,7 +308,7 @@ export default function fileUploadFormComponent({
                                 finishUpload()
 
                                 this.$wire.cancelUpload(
-                                    `${this.$statePath}.${fileKey}`,
+                                    `${statePath}.${fileKey}`,
                                 )
                                 abort()
                             },

@@ -2019,6 +2019,47 @@ it('does not refetch file metadata when reordering files', function (): void {
         ->assertScript("{$fileUploadAlpineData}.fileKeyIndex['first-key'].url !== window.initialUploadedFileUrls['first-key']", true);
 });
 
+it('uploads and cancels using the field path rather than its embedded utility scope', function (string $layout, string $expectedPathPattern): void {
+    $this->actingAs(User::factory()->create());
+    $page = visit('/file-upload-browser-test?layout=' . $layout);
+    $page->assertScript("Boolean(Alpine.\$data(document.querySelector('[data-testid=attachment-upload]')).pond)", true);
+
+    $paths = $page->script(<<<'JS'
+        (async () => {
+            const element = document.querySelector('[data-testid=attachment-upload]')
+            const component = Alpine.$data(element)
+            const paths = []
+            const wire = {
+                upload: (path) => paths.push(path),
+                cancelUpload: (path) => paths.push(path),
+            }
+            const context = new Proxy(component, {
+                get: (target, property) => property === '$wire' ? wire : Reflect.get(target, property),
+            })
+
+            component.pond.destroy()
+            component.pond = null
+            await component.init.call(context)
+            component.pond.server.process(
+                'attachment', new File(['Report'], 'report.txt'), {},
+                () => {}, () => {}, () => {}, () => {},
+            ).abort()
+            return paths
+        })()
+        JS);
+
+    expect($paths)->toHaveCount(2)
+        ->and($paths[0])->toMatch($expectedPathPattern)
+        ->and($paths[1])->toBe($paths[0]);
+
+    $page->wait(0.5)->assertNoSmoke()->assertNoAccessibilityIssues();
+    $page->inDarkMode()->wait(0.5)->assertNoAccessibilityIssues();
+})->with([
+    'ordinary' => ['default', '/^data\.attachment\.[^.]+$/'],
+    'embedded footer' => ['footer', '/^data\.attachment\.[^.]+$/'],
+    'repeater' => ['repeater', '/^data\.items\.[^.]+\.attachment\.[^.]+$/'],
+]);
+
 class RenderFileUploadWithAvatar extends Livewire
 {
     public function form(Schema $form): Schema

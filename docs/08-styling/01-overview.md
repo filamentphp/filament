@@ -131,7 +131,7 @@ By default, this command will use NPM to install dependencies. If you want to us
 
 ```bash
 php artisan make:filament-theme --pm=bun
-````
+```
 
 This command will:
 
@@ -140,6 +140,12 @@ This command will:
 3. Attempt to automatically add the theme to your `vite.config.js` input array
 4. Attempt to automatically register `->viteTheme()` in your panel provider
 5. Offer to compile the theme with Vite
+
+You can use `--skip-install` if you want to install the required dependencies yourself, and `--skip-build` if you want to compile the theme later:
+
+```bash
+php artisan make:filament-theme admin --skip-install --skip-build
+```
 
 If the command cannot automatically configure your files (due to non-standard formatting), it will display manual instructions instead. In that case, follow these steps:
 

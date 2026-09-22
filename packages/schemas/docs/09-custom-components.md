@@ -445,7 +445,15 @@ class Chart extends Component
 
 #### Calling the method from JavaScript
 
-In your Blade view or embedded HTML, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this schema component, so you do not need its key:
+Give your component a unique `key()` when adding it to a schema so Filament can locate it when the method is called:
+
+```php
+use App\Filament\Schemas\Components\Chart;
+
+Chart::make()->key('chart')
+```
+
+In your Blade view or embedded HTML, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this schema component, so you do not need to pass its key:
 
 ```blade
 <div

@@ -1614,7 +1614,11 @@ it('can search and insert a mention through the Alpine scope', function (): void
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        $page->inDarkMode()->assertNoAccessibilityIssues();
+        $page->inDarkMode()
+            ->fill('[data-testid="default-rich-editor"] [contenteditable="true"]', '@Ali')
+            ->click('Alice Chen')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
+            ->assertNoAccessibilityIssues();
     });
 });
 
