@@ -1021,6 +1021,74 @@ Inside these hooks, you can access the current row's data using `$this->data`. Y
 
 The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.
 
+## Testing importers
+
+You can test a row using `TestImporter` without uploading a CSV or dispatching a queued job. It runs your application's importer, including column mapping, casting, validation, lifecycle hooks, and saving records and relationships. The `import()` method returns the resolved record, so you can use ordinary model and database assertions:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\Testing\TestImporter;
+
+it('imports a product', function () {
+    $record = TestImporter::make(ProductImporter::class)->import([
+        'sku' => 'MUG-001',
+        'name' => 'Ceramic mug',
+        'price' => '12.50',
+    ]);
+
+    $this->assertDatabaseHas('products', [
+        'id' => $record->getKey(),
+        'sku' => 'MUG-001',
+        'name' => 'Ceramic mug',
+        'price' => 12.50,
+    ]);
+});
+```
+
+By default, each importer column is mapped to a row key with the same name. To use different CSV headers, pass a `columnMap` from importer column names to row keys. An explicit map replaces the default entirely: omitted columns remain unmapped, and an empty array leaves all columns unmapped. You can also pass importer options:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\Testing\TestImporter;
+
+$record = TestImporter::make(ProductImporter::class, columnMap: [
+    'sku' => 'Product code',
+    'name' => 'Product name',
+], options: [
+    'updateExisting' => true,
+])->import([
+    'Product code' => 'MUG-001',
+    'Product name' => 'Large ceramic mug',
+]);
+```
+
+`TestImporter` creates an unsaved `Import` model as context. If your importer needs a particular import or user, pass your own model using the `import` argument. The helper sets its `importer` attribute to the supplied importer class without saving it. Use Laravel's `actingAs()` to set the authenticated user; the helper does not change authentication or associate a user automatically:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use App\Models\User;
+use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Testing\TestImporter;
+
+$user = User::factory()->create();
+$this->actingAs($user);
+
+$import = app(Import::class);
+$import->user()->associate($user);
+
+$record = TestImporter::make(ProductImporter::class, import: $import)->import([
+    'sku' => 'MUG-001',
+    'name' => 'Ceramic mug',
+    'price' => '12.50',
+]);
+```
+
+Validation exceptions, `RowImportFailedException`, and unexpected exceptions propagate to your test. You can assert them using Pest's `toThrow()` or PHPUnit's `expectException()`. To inspect individual validation errors, catch Laravel's `ValidationException` and assert against its `errors()` array. If your importer's `resolveRecord()` returns `null`, `import()` returns `null` without treating the row as an error.
+
+<Aside variant="info">
+    This helper invokes the importer directly. It does not parse files, validate the options form, run queue jobs, record failed rows, update import counters, wrap the row in a transaction, or send completion notifications. Test those workflows separately. Your importer's own database writes and other side effects still run, so use your normal database isolation for tests.
+</Aside>
+
 ## Authorization
 
 By default, only the user who started the import may access the failure CSV file that gets generated if part of an import fails. If you'd like to customize the authorization logic, you may create an `ImportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
