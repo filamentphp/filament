@@ -16,7 +16,7 @@
         "ueberdosis/tiptap-php": "^2.0"
     },
     "suggest": {
-        "fakerphp/faker": "Required to generate fake rich content."
+        "fakerphp/faker": "Required to generate fake rich content and Markdown."
     },
     "autoload": {
         "files": [

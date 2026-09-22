@@ -4,13 +4,14 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
 use Faker\Generator;
+use Filament\Forms\Components\ContentFaker;
 use Filament\Forms\Components\RichEditor\Contracts\CanGenerateFakeConfiguration;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use LogicException;
 
-class RichContentFaker
+class RichContentFaker extends ContentFaker
 {
     use Macroable;
 
@@ -22,9 +23,11 @@ class RichContentFaker
     protected ?RichContentRenderer $renderer = null;
 
     public function __construct(
-        protected Generator $faker,
+        Generator $faker,
         protected ?RichContentAttribute $attribute = null,
-    ) {}
+    ) {
+        parent::__construct($faker);
+    }
 
     public static function make(Generator $faker, ?RichContentAttribute $attribute = null): static
     {
@@ -42,35 +45,19 @@ class RichContentFaker
         return $this;
     }
 
-    public function article(int $depth = 1): static
+    protected function addArticleIntroduction(): void
     {
-        if (($depth < 1) || ($depth > 5)) {
-            throw new InvalidArgumentException('Article depth must be between 1 and 5.');
-        }
-
         $this->lead();
-        $this->articleSections(level: 2, depth: $depth, isRoot: true);
-
-        return $this;
     }
 
-    protected function articleSections(int $level, int $depth, bool $isRoot = false): void
+    protected function addArticleHeading(int $level): void
     {
-        $sectionCount = $this->faker->numberBetween($isRoot ? 2 : 1, $isRoot ? 4 : 2);
+        $this->heading($level);
+    }
 
-        for ($section = 0; $section < $sectionCount; $section++) {
-            $this->heading($level);
-            $this->paragraphs(
-                count: $this->faker->numberBetween(1, 3),
-                links: $this->faker->boolean(30),
-                bold: $this->faker->boolean(40),
-                italic: $this->faker->boolean(20),
-            );
-
-            if ($depth > 1) {
-                $this->articleSections(level: $level + 1, depth: $depth - 1);
-            }
-        }
+    protected function addArticleParagraphs(int $count, bool $links, bool $bold, bool $italic): void
+    {
+        $this->paragraphs($count, $links, $bold, $italic);
     }
 
     public function heading(int $level = 2): static
@@ -84,7 +71,7 @@ class RichContentFaker
             'attrs' => ['level' => $level],
             'content' => [[
                 'type' => 'text',
-                'text' => Str::title($this->faker->words($this->faker->numberBetween(3, 8), true)),
+                'text' => $this->makeHeadingText(),
             ]],
         ];
 
@@ -352,7 +339,7 @@ class RichContentFaker
             'content' => [[
                 'type' => 'image',
                 'attrs' => [
-                    'src' => $url ?? "https://picsum.photos/seed/{$this->faker->uuid()}/{$width}/{$height}",
+                    'src' => $url ?? $this->makeImageUrl($width, $height),
                     'alt' => $alt ?? $this->faker->sentence(),
                     'width' => $width,
                     'height' => $height,
@@ -921,7 +908,7 @@ class RichContentFaker
         bool $small = false,
         bool $highlight = false,
     ): array {
-        $text = rtrim($sentence ? $this->faker->sentence() : $this->faker->paragraph(), '.');
+        $text = $this->makeParagraphText($sentence);
 
         $content = [[
             'type' => 'text',
@@ -974,27 +961,8 @@ class RichContentFaker
         ];
     }
 
-    protected function makeLinkUrl(): string
+    protected function makeLinkUrl(?array $protocols = null): string
     {
-        $protocols = $this->attribute?->getLinkProtocols();
-
-        if ($protocols === null) {
-            return $this->faker->url();
-        }
-
-        if ($protocols === []) {
-            return '/' . $this->faker->slug();
-        }
-
-        $protocol = $this->faker->randomElement($protocols);
-
-        return match ($protocol) {
-            'http', 'https', 'ftp', 'ftps' => "{$protocol}://{$this->faker->domainName()}/{$this->faker->slug()}",
-            'mailto' => "mailto:{$this->faker->safeEmail()}",
-            'tel', 'callto', 'sms' => "{$protocol}:{$this->faker->numerify('+1##########')}",
-            'cid' => "cid:{$this->faker->uuid()}",
-            'xmpp' => "xmpp:{$this->faker->userName()}@{$this->faker->domainName()}",
-            default => "{$protocol}:{$this->faker->slug()}",
-        };
+        return parent::makeLinkUrl($this->attribute?->getLinkProtocols());
     }
 }
