@@ -5,6 +5,7 @@ use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
@@ -40,6 +41,16 @@ it('preserves existing page and resource breadcrumbs when the navigation hierarc
         ->and(app(ListPosts::class)->getResourceBreadcrumbs())->toBe([
             PostResource::getUrl() => 'Posts',
         ]);
+});
+
+it('includes an explicitly configured custom page breadcrumb without the navigation hierarchy', function (): void {
+    expect(app(PageWithBreadcrumb::class)->getBreadcrumbs())->toBe([
+        'Custom breadcrumb',
+    ]);
+});
+
+it('preserves the title fallback for resource page breadcrumbs', function (): void {
+    expect(app(ResourcePageWithTitle::class)->getBreadcrumb())->toBe('Resource page title');
 });
 
 it('includes the navigation hierarchy in breadcrumbs for a grouped page with a parent item', function (): void {
@@ -223,6 +234,20 @@ class GroupedBreadcrumbsPage extends Page
     {
         return '/reports';
     }
+}
+
+class PageWithBreadcrumb extends Page
+{
+    protected static ?string $breadcrumb = 'Custom breadcrumb';
+
+    protected string $view = 'filament-panels::pages.page';
+}
+
+class ResourcePageWithTitle extends ResourcePage
+{
+    protected static string $resource = PostResource::class;
+
+    protected static ?string $title = 'Resource page title';
 }
 
 class GroupedUnregisteredBreadcrumbsPage extends Page

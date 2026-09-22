@@ -639,6 +639,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Adding a breadcrumb to a custom page
+
+Custom pages do not include a breadcrumb for the current page by default. You may add one using the `$breadcrumb` property:
+
+```php
+use Filament\Pages\Page;
+
+class Settings extends Page
+{
+    protected static ?string $breadcrumb = 'Settings';
+
+    // ...
+}
+```
+
 ## Including the navigation hierarchy in breadcrumbs
 
 By default, breadcrumbs for a page are built from its resource and parent record relationships. For example, an `EditRecord` page's breadcrumbs are derived from its resource's list and view pages, and any parent resources in the case of nested resources.
@@ -656,7 +671,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-When enabled, the navigation hierarchy is prepended to the page's existing breadcrumbs. If the page is not present in the navigation, its existing breadcrumbs are used instead.
+When enabled, the navigation hierarchy is prepended to the page's existing breadcrumbs. If a custom page does not have a `$breadcrumb`, its title is used as the current breadcrumb when its navigation hierarchy can be resolved. If the page is not present in the navigation, its existing breadcrumbs are used instead.
 
 ## Reloading the sidebar and topbar
 

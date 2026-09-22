@@ -184,30 +184,36 @@ abstract class Page extends BasePage
 
     public function getBreadcrumb(): ?string
     {
-        return static::$breadcrumb ?? static::getTitle();
+        return static::$breadcrumb;
     }
 
     /**
-     * @return array<string>
+     * @return array<string | Htmlable>
      */
     public function getBreadcrumbs(): array
     {
+        $breadcrumb = $this->getBreadcrumb();
+
         if (Filament::getCurrentOrDefaultPanel()->hasNavigationHierarchyInBreadcrumbs()) {
             $navigationHierarchyBreadcrumbs = $this->getNavigationHierarchyBreadcrumbs();
 
             if ($navigationHierarchyBreadcrumbs !== null) {
                 return [
                     ...$navigationHierarchyBreadcrumbs,
-                    $this->getBreadcrumb(),
+                    $breadcrumb ?? $this->getTitle(),
                 ];
             }
         }
 
-        if (filled($cluster = static::getCluster())) {
-            return $cluster::unshiftClusterBreadcrumbs([]);
+        $breadcrumbs = filled($cluster = static::getCluster())
+            ? $cluster::unshiftClusterBreadcrumbs([])
+            : [];
+
+        if ($breadcrumb !== null) {
+            $breadcrumbs[] = $breadcrumb;
         }
 
-        return [];
+        return $breadcrumbs;
     }
 
     /**
