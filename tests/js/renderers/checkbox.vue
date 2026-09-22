@@ -20,7 +20,14 @@ defineProps(['settings', 'cases', 'form', 'reportChange'])
             :form="form"
             name="controlled"
             value="enabled"
-            @change="reportChange"
+            @change="
+                (event) => {
+                    event.currentTarget.dataset.modelAtChange = String(
+                        settings.checked,
+                    )
+                    reportChange(event)
+                }
+            "
         />
         Controlled
     </label>

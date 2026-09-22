@@ -28,17 +28,17 @@ defineSlots<{}>()
 
 <template>
     <input
-        v-bind="{
-            ...$attrs,
-            ...(modelValue === undefined ? {} : { checked: modelValue }),
-        }"
-        type="checkbox"
-        :class="['fi-checkbox-input', valid ? 'fi-valid' : 'fi-invalid']"
         @change="
             emit(
                 'update:modelValue',
                 ($event.target as HTMLInputElement).checked,
             )
         "
+        v-bind="{
+            ...$attrs,
+            ...(modelValue === undefined ? {} : { checked: modelValue }),
+        }"
+        type="checkbox"
+        :class="['fi-checkbox-input', valid ? 'fi-valid' : 'fi-invalid']"
     />
 </template>

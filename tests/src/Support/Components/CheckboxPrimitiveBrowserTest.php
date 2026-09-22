@@ -94,6 +94,13 @@ it('preserves native `Checkbox` state, form behavior and reactive bindings acros
             }
         }
 
+        $page->script("const row = document.querySelector('[data-checkbox-row=vue]'); row.dataset.initialChanges = row.dataset.changes");
+        foreach ([true, false] as $checked) {
+            $page->click('[data-checkbox-row=vue] input[name=controlled]')
+                ->assertScript("document.querySelector('[data-checkbox-row=vue] input[name=controlled]').dataset.modelAtChange", $checked ? 'true' : 'false')
+                ->assertScript("Number(document.querySelector('[data-checkbox-row=vue]').dataset.changes) - Number(document.querySelector('[data-checkbox-row=vue]').dataset.initialChanges)", $checked ? 1 : 2);
+        }
+
         $page->assertScript("[...document.querySelectorAll('[data-checkbox-row] input')].every((element, index) => element === window.checkboxElements[index])", true)
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
