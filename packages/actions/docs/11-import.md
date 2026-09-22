@@ -1127,6 +1127,78 @@ Unexpected exceptions still propagate to your test unchanged; assert them using 
     This helper invokes the importer directly. It does not parse files, validate the column mapping or options forms, run queue jobs, record failed rows, update import counters, wrap the row in a transaction, or send completion notifications. `requiredMapping()` is enforced by the mapping select in the import modal, so it is not validated here. `requiredMappingForNewRecordsOnly()` is still checked by the importer when processing a new record. Test the form and queued workflows separately. Your importer's own database writes and other side effects still run, so use your normal database isolation for tests.
 </Aside>
 
+### Testing import action submissions
+
+To test the upload, column mapping, and options form, mount the real `ImportAction` using the [action testing helpers](../testing/testing-actions). Use Laravel's `Bus::fake()` to prevent queued jobs from running and selectively fake `ImportStarted` to inspect the submitted import. For a page with an `import` action using `ProductImporter` and its `updateExisting` option:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Models\User;
+use Filament\Actions\Imports\Events\ImportStarted;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Event;
+
+use function Pest\Livewire\livewire;
+
+it('submits a product import', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    Bus::fake();
+    Event::fake([ImportStarted::class]);
+
+    livewire(ListProducts::class)
+        ->mountAction('import')
+        ->setActionData([
+            'file' => UploadedFile::fake()->createWithContent(
+                'products.csv',
+                "Product code,Product name,Unit price\nMUG-001,Ceramic mug,12.50\n",
+            ),
+        ])
+        ->setActionData([
+            'columnMap' => [
+                'sku' => 'Product code',
+                'name' => 'Product name',
+                'price' => 'Unit price',
+            ],
+            'updateExisting' => true,
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors();
+
+    Event::assertDispatched(ImportStarted::class, function (ImportStarted $event) use ($user): bool {
+        $import = $event->getImport();
+
+        return $import->exists
+            && ($import->importer === ProductImporter::class)
+            && $import->user->is($user)
+            && ($import->file_name === 'products.csv')
+            && ($import->total_rows === 1)
+            && ($event->getColumnMap() === [
+                'sku' => 'Product code',
+                'name' => 'Product name',
+                'price' => 'Unit price',
+            ])
+            && ($event->getOptions()['updateExisting'] === true);
+    });
+    Event::assertDispatchedTimes(ImportStarted::class, 1);
+    Bus::assertBatchCount(1);
+
+    $this->assertDatabaseCount('imports', 1);
+    $this->assertDatabaseMissing('products', ['sku' => 'MUG-001']);
+});
+```
+
+Upload the file before setting `columnMap`, so the form can read the headers and build its mapping fields. Updating only the relevant fields with `setActionData()` preserves other form defaults. Submitted option values override matching values from the action's `options()`, while static options without a matching form field are retained.
+
+`ImportStarted` is emitted before the batch is dispatched, so assert the batch separately: the event alone does not prove dispatch. These fakes still allow the action to read the CSV and persist an `Import` record. They do not run importer rows, casts, lifecycle hooks, or completion callbacks and notifications. Keep row behavior tests separate using `TestImporter`, and use your normal database isolation for action tests.
+
+To test form rejection, use the same setup with an invalid mapping or option, then call `assertHasActionErrors()`. For example, if `sku` uses `requiredMapping()`, set `'columnMap' => ['sku' => null, 'name' => 'Product name', 'price' => 'Unit price']` and assert `assertHasActionErrors(['columnMap.sku' => 'required'])`. Then assert `Event::assertNotDispatched(ImportStarted::class)`, `Bus::assertBatchCount(0)`, and that no `Import` record was created. These are action form errors, not row validation errors: the queued importer has not run.
+
+For authorization rejection, authenticate a user who cannot run the action and invoke the server methods using `->call('mountAction', 'import')->call('callMountedAction')`, then assert that neither the event nor a batch was dispatched and no `Import` was created. Checking action visibility alone does not prove that the server rejects invocation. You can also mount with an authorized user, revoke permission, and call `->call('callMountedAction')` to test authorization at submission time.
+
 ## Authorization
 
 By default, only the user who started the import may access the failure CSV file that gets generated if part of an import fails. If you'd like to customize the authorization logic, you may create an `ImportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
