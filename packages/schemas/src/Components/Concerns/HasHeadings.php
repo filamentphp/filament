@@ -6,12 +6,12 @@ trait HasHeadings
 {
     public function getHeadingLevel(int $index = 0): int
     {
-        return $this->getContainer()->getRootHeadingLevel() + $index;
+        return max(1, $this->getContainer()->getRootHeadingLevel() + $index);
     }
 
     public function getHeadingTag(int $index = 0): string
     {
-        $level = max(1, $this->getHeadingLevel($index));
+        $level = $this->getHeadingLevel($index);
 
         if ($level > 6) {
             return 'p';
