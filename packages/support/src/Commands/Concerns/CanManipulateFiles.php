@@ -37,8 +37,6 @@ trait CanManipulateFiles
 
                 return true;
             }
-
-            unlink($path);
         }
 
         return false;

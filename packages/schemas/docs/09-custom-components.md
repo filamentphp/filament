@@ -4,6 +4,24 @@ title: Custom components
 import Aside from "@components/Aside.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
+## Introduction
+
+For a one-off component, insert a [Blade view](#inserting-a-blade-view-into-a-schema) into your schema. For a reusable component with its own PHP configuration, generate a class and view:
+
+```bash
+php artisan make:filament-schema-component Chart
+```
+
+Use the generated class in your schema:
+
+```php
+use App\Filament\Schemas\Components\Chart;
+
+Chart::make()
+```
+
+Then customize the generated view, following [custom component classes](#custom-component-classes). Most custom components can use Blade and the schema's existing utilities; use a [nested Livewire component](#inserting-a-livewire-component-into-a-schema) when you need a separately managed Livewire component.
+
 ## Inserting a Blade view into a schema
 
 You may use a "view" component to insert a Blade view into a schema arbitrarily:
@@ -392,15 +410,15 @@ class Chart extends Component
 
 ### Calling component methods from JavaScript
 
-Sometimes you need to call a method on the component class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously or perform some server-side computation. Filament provides a way to expose methods on your component class to JavaScript using the `#[ExposedLivewireMethod]` attribute.
+Sometimes you need to call a method on the component class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously or perform some server-side computation. Filament provides a way to expose methods on your component class to JavaScript using the `#[Exposed]` attribute.
 
 #### Exposing a method
 
-To expose a method to JavaScript, add the `#[ExposedLivewireMethod]` attribute to a public method on your custom component class:
+To expose a method to JavaScript, add the `#[Exposed]` attribute to a public method on your custom component class:
 
 ```php
 use Filament\Schemas\Components\Component;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 
 class Chart extends Component
 {
@@ -411,7 +429,7 @@ class Chart extends Component
         return app(static::class);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     public function getChartData(): array
     {
         // Fetch and process chart data...
@@ -422,26 +440,27 @@ class Chart extends Component
 ```
 
 <Aside variant="info">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+    Only methods marked with `#[Exposed]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
 </Aside>
 
 #### Calling the method from JavaScript
 
-In your Blade view, you may call the exposed method using `$wire.callSchemaComponentMethod()`. The first argument is the component's key (available via `$getKey()`), and the second argument is the method name. You may pass arguments as a third argument:
+Give your component a unique `key()` when adding it to a schema so Filament can locate it when the method is called:
+
+```php
+use App\Filament\Schemas\Components\Chart;
+
+Chart::make()->key('chart')
+```
+
+In your Blade view or embedded HTML, call the exposed public instance method using its `$`-prefixed name. The utility is bound to this schema component, so you do not need to pass its key:
 
 ```blade
-@php
-    $key = $getKey();
-@endphp
-
 <div
     x-data="{
         data: null,
         async loadData() {
-            this.data = await $wire.callSchemaComponentMethod(
-                @js($key),
-                'getChartData',
-            )
+            this.data = await this.$getChartData()
         },
     }"
     x-init="loadData"
@@ -452,21 +471,19 @@ In your Blade view, you may call the exposed method using `$wire.callSchemaCompo
 </div>
 ```
 
-You may pass arguments to the method by providing an object as the third argument:
+You can also use `$callSchemaComponentMethod('getChartData')`. Built-in utility and Alpine magic names are reserved; methods with colliding names remain available through the general utility. Avoid registering your own Alpine magics with the same names as exposed methods.
+
+#### Passing arguments to an exposed method
+
+Pass arguments as an object keyed by PHP parameter name:
 
 ```blade
-@php
-    $key = $getKey();
-@endphp
-
 <div
     x-data="{
         data: null,
         dateRange: 'week',
         async loadData() {
-            this.data = await $wire.callSchemaComponentMethod(
-                @js($key),
-                'getChartData',
+            this.data = await this.$getChartData(
                 { dateRange: this.dateRange },
             )
         },
@@ -487,11 +504,11 @@ You may pass arguments to the method by providing an object as the third argumen
 
 #### Preventing re-renders
 
-By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[ExposedLivewireMethod]` to skip the re-render:
+By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[Exposed]` to skip the re-render:
 
 ```php
 use Filament\Schemas\Components\Component;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Attributes\Exposed;
 use Livewire\Attributes\Renderless;
 
 class Chart extends Component
@@ -503,7 +520,7 @@ class Chart extends Component
         return app(static::class);
     }
 
-    #[ExposedLivewireMethod]
+    #[Exposed]
     #[Renderless]
     public function getChartData(): array
     {
@@ -511,3 +528,7 @@ class Chart extends Component
     }
 }
 ```
+
+### Styling components outside the container grid
+
+Components using `liberatedFromContainerGrid()` receive a `.fi-sc-liberated` Alpine scope wrapper with `display: contents`, so their contents still participate in the surrounding layout. If your [custom CSS](../styling/css-hooks) targets their output as a direct child of `.fi-sc`, include `.fi-sc > .fi-sc-liberated > ...` in that selector too. The wrapper provides the scope for [calling component methods](#calling-component-methods-from-javascript), but does not generate its own layout box.

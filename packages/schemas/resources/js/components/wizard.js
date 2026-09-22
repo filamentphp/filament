@@ -1,7 +1,6 @@
 export default function wizardSchemaComponent({
     isSkippable,
     isStepPersistedInQueryString,
-    key,
     livewireId,
     schemaKey,
     startStep,
@@ -42,7 +41,7 @@ export default function wizardSchemaComponent({
         },
 
         async requestNextStep() {
-            await this.$wire.callSchemaComponentMethod(key, 'nextStep', {
+            await this.$nextStep({
                 currentStepIndex: this.getStepIndex(this.step),
             })
         },
@@ -97,20 +96,25 @@ export default function wizardSchemaComponent({
 
         autofocusFields(respectCurrentFocus = false) {
             this.$nextTick(() => {
+                const wizard = this.$el.closest('.fi-sc-wizard')
                 if (
                     respectCurrentFocus &&
                     document.activeElement &&
                     document.activeElement !== document.body &&
-                    this.$el.compareDocumentPosition(document.activeElement) &
+                    wizard.compareDocumentPosition(document.activeElement) &
                         Node.DOCUMENT_POSITION_PRECEDING
                 ) {
                     return
                 }
 
                 const fields =
-                    this.$refs[`step-${this.step}`]?.querySelectorAll(
-                        '[autofocus]',
-                    ) ?? []
+                    Array.from(wizard.children)
+                        .find(
+                            (element) =>
+                                element.getAttribute('x-ref') ===
+                                `step-${this.step}`,
+                        )
+                        ?.querySelectorAll('[autofocus]') ?? []
 
                 for (const field of fields) {
                     field.focus()

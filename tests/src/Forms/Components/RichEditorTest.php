@@ -1601,17 +1601,23 @@ describe('custom block grouping', function (): void {
     });
 });
 
-it('can render `RichEditor` in the browser', function (): void {
+it('can search and insert a mention through the Alpine scope', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/rich-editor-browser-test')
+        $page = visit('/rich-editor-browser-test');
+
+        $page
+            ->fill('[data-testid="default-rich-editor"] [contenteditable="true"]', '@Ali')
+            ->click('Alice Chen')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/rich-editor-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
+        $page->inDarkMode()
+            ->fill('[data-testid="default-rich-editor"] [contenteditable="true"]', '@Ali')
+            ->click('Alice Chen')
+            ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
             ->assertNoAccessibilityIssues();
     });
 });

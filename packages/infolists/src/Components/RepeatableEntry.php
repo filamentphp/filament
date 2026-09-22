@@ -328,7 +328,10 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                                     <?php $counter++ ?>
 
                                     <?php if ($component->isVisible()) { ?>
-                                        <td>
+                                        <td
+                                            wire:key="<?= e($component->getLivewireKey()) ?>"
+                                            x-data="filamentSchemaComponent(<?= Js::from($component->getAlpineScopeConfiguration()) ?>)"
+                                        >
                                             <?= $component->toHtml() ?>
                                         </td>
                                     <?php } else { ?>

@@ -170,6 +170,24 @@ describe('HTML rendering', function (): void {
 
         expect($view)->toBeInstanceOf(View::class);
     });
+
+    it('falls back to an overridden `render()` without a configured view', function (): void {
+        $component = new class extends ViewComponent
+        {
+            public function render(): View
+            {
+                return view('simple-component');
+            }
+        };
+
+        expect($component->hasView())->toBeFalse()
+            ->and($component->toHtml())->toBe(view('simple-component')->render());
+    });
+
+    it('preserves the missing-view exception when no renderer is provided', function (): void {
+        expect(static fn () => (new ViewComponentWithoutView)->toHtml())
+            ->toThrow(LogicException::class, 'does not have a [$view] property defined.');
+    });
 });
 
 describe('published view override', function (): void {
@@ -215,19 +233,26 @@ describe('published view override', function (): void {
         expect($component->getPublishedViewOverrideCheckPath())->toBeNull();
     });
 
-    it('renders `toEmbeddedHtml()` when no published override exists', function (): void {
-        $component = new EmbeddedViewComponent;
+    it('renders `toEmbeddedHtml()` when no published override exists', function (string $componentClass): void {
+        $component = new $componentClass;
 
         expect($component->toHtml())->toBe('embedded');
-    });
+    })->with([[EmbeddedViewComponent::class], [LegacyEmbeddedViewComponent::class]]);
 
-    it('renders the published Blade override instead of `toEmbeddedHtml()` when one exists', function (): void {
+    it('renders the published Blade override instead of `toEmbeddedHtml()` when one exists', function (string $componentClass): void {
         writePublishedOverride('filament-forms/test-override.blade.php', 'PUBLISHED OVERRIDE');
 
-        $component = new EmbeddedViewComponent;
+        $component = new $componentClass;
 
         expect($component->toHtml())->toBe('PUBLISHED OVERRIDE');
-    });
+    })->with([[EmbeddedViewComponent::class], [LegacyEmbeddedViewComponent::class]]);
+
+    it('prefers a configured view over published and embedded HTML', function (string $componentClass, string $setter): void {
+        writePublishedOverride('filament-forms/test-override.blade.php', 'PUBLISHED OVERRIDE');
+        $component = (new $componentClass)->{$setter}('simple-component');
+
+        expect($component->toHtml())->toBe(view('simple-component')->render());
+    })->with([[EmbeddedViewComponent::class], [LegacyEmbeddedViewComponent::class]])->with(['view', 'defaultView']);
 
     it('caches the override-detection result by view path', function (): void {
         $path = writePublishedOverride('filament-forms/test-override.blade.php', 'X');
@@ -275,7 +300,7 @@ class ConcreteViewComponent extends ViewComponent
     protected string $view = 'simple-component';
 }
 
-class EmbeddedViewComponent extends ViewComponent implements HasEmbeddedView
+class EmbeddedViewComponent extends ViewComponent
 {
     protected ?string $publishedViewOverrideCheckPath = 'filament-forms::test-override';
 
@@ -284,6 +309,8 @@ class EmbeddedViewComponent extends ViewComponent implements HasEmbeddedView
         return 'embedded';
     }
 }
+
+class LegacyEmbeddedViewComponent extends EmbeddedViewComponent implements HasEmbeddedView {}
 
 class ViewComponentWithoutView extends ViewComponent
 {

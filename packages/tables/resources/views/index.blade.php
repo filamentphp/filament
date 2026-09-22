@@ -230,7 +230,6 @@
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
-                $wire,
             })"
     {{
         $getExtraAttributeBag()->class([
