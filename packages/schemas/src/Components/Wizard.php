@@ -395,7 +395,6 @@ class Wizard extends Component implements HasEmbeddedView
                         isSkippable: <?= Js::from($this->isSkippable()) ?>,
                         isStepPersistedInQueryString: <?= Js::from($this->isStepPersistedInQueryString()) ?>,
                         livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
-                        nextStep: $nextStep,
                         schemaKey: <?= Js::from($this->getRootContainer()->getKey()) ?>,
                         startStep: <?= Js::from($this->getStartStep()) ?>,
                         stepQueryStringKey: <?= Js::from($this->getStepQueryStringKey()) ?>,

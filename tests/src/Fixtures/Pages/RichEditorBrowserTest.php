@@ -4,6 +4,7 @@ namespace Filament\Tests\Fixtures\Pages;
 
 use BackedEnum;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -29,6 +30,10 @@ class RichEditorBrowserTest extends Page
             ->schema([
                 RichEditor::make('content')
                     ->label('Content')
+                    ->mentions([
+                        MentionProvider::make('@')
+                            ->getSearchResultsUsing(static fn (string $search): array => $search === 'Ali' ? ['author-7' => 'Alice Chen'] : []),
+                    ])
                     ->extraAttributes(['data-testid' => 'default-rich-editor']),
                 RichEditor::make('heightConstrainedContent')
                     ->label('Height constrained content')

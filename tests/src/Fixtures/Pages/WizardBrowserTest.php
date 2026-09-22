@@ -50,7 +50,8 @@ class WizardBrowserTest extends Page
                                 ->extraAttributes(['data-testid' => 'wizard-dynamic-select']),
                         ]),
 
-                    Step::make('Contact Information'),
+                    Step::make('Contact Information')
+                        ->extraAttributes(['data-testid' => 'wizard-contact-step']),
                 ])
                     ->nextAction(static fn (Action $action): Action => $action->extraAttributes([
                         'data-testid' => 'wizard-next-action',

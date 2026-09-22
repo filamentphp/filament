@@ -30,13 +30,10 @@ export default function fileUploadFormComponent({
     automaticallyResizeImagesHeight,
     automaticallyResizeImagesMode,
     automaticallyResizeImagesWidth,
-    cancelUploadUsing,
     canEditSvgs,
     confirmSvgEditingMessage,
-    deleteUploadedFileUsing,
     disabledSvgEditingMessage,
     downloadActionLabel,
-    getUploadedFilesUsing,
     hasCircleCropper,
     hasImageEditor,
     imageEditorEmptyFillColor,
@@ -69,8 +66,6 @@ export default function fileUploadFormComponent({
     panelLayout,
     placeholder,
     removeUploadedFileButtonPosition,
-    removeUploadedFileUsing,
-    reorderUploadedFilesUsing,
     shouldAppendFiles,
     shouldAutomaticallyUpscaleImagesWhenResizing,
     shouldOrientImageFromExif,
@@ -79,7 +74,6 @@ export default function fileUploadFormComponent({
     uploadButtonPosition,
     uploadingMessage,
     uploadProgressIndicatorPosition,
-    uploadUsing,
 }) {
     let isDestroyed = false
 
@@ -286,10 +280,10 @@ export default function fileUploadFormComponent({
                             }
                         }
 
-                        uploadUsing(
-                            fileKey,
+                        this.$wire.upload(
+                            `${this.$statePath}.${fileKey}`,
                             file,
-                            (fileKey) => {
+                            () => {
                                 finishUpload()
 
                                 load(fileKey)
@@ -299,14 +293,22 @@ export default function fileUploadFormComponent({
 
                                 error(...args)
                             },
-                            progress,
+                            (progressEvent) => {
+                                progress(
+                                    true,
+                                    progressEvent.detail.progress,
+                                    100,
+                                )
+                            },
                         )
 
                         return {
                             abort: () => {
                                 finishUpload()
 
-                                cancelUploadUsing(fileKey)
+                                this.$wire.cancelUpload(
+                                    `${this.$statePath}.${fileKey}`,
+                                )
                                 abort()
                             },
                         }
@@ -318,12 +320,14 @@ export default function fileUploadFormComponent({
                             return
                         }
 
-                        await deleteUploadedFileUsing(fileKey)
+                        await this.$deleteUploadedFile({ fileKey })
 
                         load()
                     },
                     revert: async (uniqueFileId, load) => {
-                        await removeUploadedFileUsing(uniqueFileId)
+                        await this.$removeUploadedFile({
+                            fileKey: uniqueFileId,
+                        })
 
                         load()
                     },
@@ -435,11 +439,11 @@ export default function fileUploadFormComponent({
                     ) // file.serverId is null for a file that is not yet uploaded
                     .filter((fileKey) => fileKey)
 
-                await reorderUploadedFilesUsing(
-                    shouldAppendFiles
+                await this.$reorderUploadedFiles({
+                    fileKeys: shouldAppendFiles
                         ? orderedFileKeys
                         : orderedFileKeys.reverse(),
-                )
+                })
             })
 
             this.pond.on('initfile', async (fileItem) => {
@@ -590,7 +594,7 @@ export default function fileUploadFormComponent({
         },
 
         async getUploadedFiles() {
-            const uploadedFiles = await getUploadedFilesUsing()
+            const uploadedFiles = await this.$getUploadedFiles()
 
             this.fileKeyIndex = uploadedFiles ?? {}
 

@@ -1595,12 +1595,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                             editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
                             extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
                             floatingToolbars: <?= Js::from($floatingToolbars) ?>,
-                            getMentionLabelsUsing: async (mentions) => {
-                                return await $getMentionLabelsForJs({ mentions })
-                            },
-                            getMentionSearchResultsUsing: async (query, char) => {
-                                return await $getMentionSearchResultsForJs({ search: query, char })
-                            },
                             hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,
                             label: <?= Js::from($label) ?>,

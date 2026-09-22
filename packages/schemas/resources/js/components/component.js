@@ -49,8 +49,9 @@ export default function schemaComponent({
     exposedMethods = [],
     path,
     containerPath,
-    $wire,
 }) {
+    const $wire = this.$wire
+
     const callSchemaComponentMethod = (method, argumentsObject = {}) =>
         $wire.callSchemaComponentMethod(key, method, argumentsObject)
 

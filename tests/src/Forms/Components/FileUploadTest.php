@@ -1973,18 +1973,22 @@ describe('rendering', function (): void {
     });
 });
 
-it('can render `FileUpload` in the browser', function (): void {
+it('can remove a stored file through the Alpine scope', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
-        visit('/file-upload-browser-test')
+        $component = "Alpine.\$data(document.querySelector('[data-testid=attachment-upload]'))";
+        $page = visit('/file-upload-browser-test?testReordering=1');
+
+        $page->assertScript("{$component}.pond?.getFiles().length", 2);
+
+        $page->script("{$component}.pond.removeFile({$component}.pond.getFiles().find(file => file.filename === 'second.txt').id)");
+
+        $page->assertScript("{$component}.\$wire.data.attachment", ['first-key' => 'first.txt'])
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        visit('/file-upload-browser-test')
-            ->inDarkMode()
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
+        $page->inDarkMode()->assertNoAccessibilityIssues();
     });
 });
 

@@ -236,10 +236,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                     <div
                         class="fi-sc-liberated"
                         wire:key="<?= e($schemaComponent->getLivewireKey()) ?>"
-                        x-data="filamentSchemaComponent({
-                            ...<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>,
-                            $wire,
-                        })"
+                        x-data="filamentSchemaComponent(<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>)"
                     >
                         <?= $schemaComponent->toHtml() ?>
                     </div>

@@ -91,10 +91,7 @@ class Flex extends Component implements HasEmbeddedView
                     ?>
                     <div
                         wire:key="<?= e($schemaComponent->getLivewireKey()) ?>"
-                        x-data="filamentSchemaComponent({
-                                    ...<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>,
-                                    $wire,
-                                })"
+                        x-data="filamentSchemaComponent(<?= Js::from($schemaComponent->getAlpineScopeConfiguration()) ?>)"
                         <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
                             x-init="<?= implode(';', array_map(
                                 fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',

@@ -451,7 +451,9 @@ it('only shows the next action loading indicator for its own request', function 
         $nextAction = '[data-testid="wizard-next-action"]';
         $nextActionLoadingIndicator = "{$nextAction} .fi-loading-indicator";
 
-        $browser = visit('/wizard-browser-test')
+        $browser = visit('/wizard-browser-test');
+
+        $browser
             ->click('[data-testid="wizard-dynamic-select"] .fi-select-input-btn')
             ->wait(0.3);
 
@@ -467,7 +469,12 @@ it('only shows the next action loading indicator for its own request', function 
             ->click('Draft')
             ->click($nextAction)
             ->assertVisible($nextActionLoadingIndicator)
-            ->assertNoSmoke();
+            ->assertVisible('[data-testid="wizard-contact-step"]')
+            ->wait(0.5)
+            ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+
+        $browser->inDarkMode()->assertNoAccessibilityIssues();
     });
 });
 

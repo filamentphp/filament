@@ -1951,18 +1951,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                                     canOptionLabelsWrap: <?= Js::from($canOptionLabelsWrap) ?>,
                                     canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
                                     clearButtonLabel: <?= Js::from(__('filament-forms::components.select.actions.clear.label')) ?>,
-                                    getOptionLabelUsing: async () => {
-                                        return await $getOptionLabel()
-                                    },
-                                    getOptionLabelsUsing: async () => {
-                                        return await $getOptionLabelsForJs()
-                                    },
-                                    getOptionsUsing: async () => {
-                                        return await $getOptionsForJs()
-                                    },
-                                    getSearchResultsUsing: async (search) => {
-                                        return await $getSearchResultsForJs({ search })
-                                    },
                                     hasDynamicOptions: <?= Js::from($hasDynamicOptions) ?>,
                                     hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
                                     hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,

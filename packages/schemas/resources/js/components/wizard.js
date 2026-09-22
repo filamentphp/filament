@@ -2,7 +2,6 @@ export default function wizardSchemaComponent({
     isSkippable,
     isStepPersistedInQueryString,
     livewireId,
-    nextStep,
     schemaKey,
     startStep,
     stepQueryStringKey,
@@ -42,7 +41,7 @@ export default function wizardSchemaComponent({
         },
 
         async requestNextStep() {
-            await nextStep({
+            await this.$nextStep({
                 currentStepIndex: this.getStepIndex(this.step),
             })
         },

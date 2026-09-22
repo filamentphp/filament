@@ -11,16 +11,20 @@ test('named and general calls bind to each instance and preserve promises and fa
             return result
         },
     }
-    const first = schemaComponent({
-        key: 'form.items.0.custom',
-        exposedMethods: ['search'],
-        $wire,
-    })
-    const second = schemaComponent({
-        key: 'form.items.1.custom',
-        exposedMethods: ['search'],
-        $wire,
-    })
+    const first = schemaComponent.call(
+        { $wire },
+        {
+            key: 'form.items.0.custom',
+            exposedMethods: ['search'],
+        },
+    )
+    const second = schemaComponent.call(
+        { $wire },
+        {
+            key: 'form.items.1.custom',
+            exposedMethods: ['search'],
+        },
+    )
     const { $search } = second
     assert.equal($search({ query: 'café', limit: 3 }), result)
     assert.equal(first.$search(), result)
@@ -40,50 +44,55 @@ test('named and general calls bind to each instance and preserve promises and fa
 
 test('reserved names never override utilities or Alpine magics and remain callable by name', () => {
     const calls = []
-    const component = schemaComponent({
-        key: 'form.custom',
-        path: 'data.items.1.title',
-        containerPath: 'data.items.1',
-        exposedMethods: [
-            'get',
-            'set',
-            'state',
-            'statePath',
-            'wire',
-            'el',
-            'refs',
-            'store',
-            'watch',
-            'dispatch',
-            'nextTick',
-            'root',
-            'data',
-            'id',
-            'event',
-            'focus',
-            'persist',
-            'tooltip',
-            'callSchemaComponentMethod',
-            'schemaComponentMethods',
-            'search',
-        ],
-        $wire: {
-            $get: (path) => path,
-            $set: (...parameters) => calls.push(parameters),
-            callSchemaComponentMethod: (...parameters) =>
-                calls.push(parameters),
+    const component = schemaComponent.call(
+        {
+            $wire: {
+                $get: (path) => path,
+                $set: (...parameters) => calls.push(parameters),
+                callSchemaComponentMethod: (...parameters) =>
+                    calls.push(parameters),
+            },
         },
-    })
+        {
+            key: 'form.custom',
+            path: 'data.items.1.title',
+            containerPath: 'data.items.1',
+            exposedMethods: [
+                'get',
+                'set',
+                'state',
+                'statePath',
+                'wire',
+                'el',
+                'refs',
+                'store',
+                'watch',
+                'dispatch',
+                'nextTick',
+                'root',
+                'data',
+                'id',
+                'event',
+                'focus',
+                'persist',
+                'tooltip',
+                'callSchemaComponentMethod',
+                'schemaComponentMethods',
+                'search',
+            ],
+        },
+    )
     assert.deepEqual(Object.keys(component.$schemaComponentMethods), [
         '$search',
     ])
+    const { $get, $set } = component
     assert.equal(component.$state, 'data.items.1.title')
-    assert.equal(component.$get('../0.title'), 'data.items.0.title')
+    assert.equal($get('../0.title'), 'data.items.0.title')
     assert.equal(component.$get('../../caption'), 'data.caption')
     assert.equal(component.$get('/data.caption'), 'data.caption')
     assert.equal(component.$get('data.caption', true), 'data.caption')
     assert.equal(component.$get(''), 'data.items.1')
-    component.$set('../0.title', false, false, true)
+    $set('../0.title', false, false, true)
     component.$callSchemaComponentMethod('get', { path: 'remote' })
     assert.deepEqual(calls, [
         ['data.items.0.title', false, true],
