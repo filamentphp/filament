@@ -13,6 +13,7 @@ use Filament\Actions\Exports\ExportDispatcher;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Testing\ExportFake;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -354,6 +355,15 @@ trait CanExportRecords
     public static function getDefaultName(): ?string
     {
         return 'export';
+    }
+
+    public static function fake(): ExportFake
+    {
+        $fake = app(ExportFake::class);
+
+        app()->instance(ExportDispatcher::class, $fake);
+
+        return $fake;
     }
 
     public function columnMappingColumns(int | Closure $columns): static

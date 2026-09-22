@@ -22,6 +22,8 @@ class ExportActions extends Component implements HasActions, HasSchemas
 
     public static ?int $maxRows = null;
 
+    public static ?int $queryLimit = null;
+
     public static ?string $guard = null;
 
     public function exportAction(): ExportAction
@@ -30,7 +32,9 @@ class ExportActions extends Component implements HasActions, HasSchemas
             ->exporter(ActionPostExporter::class)
             ->authorize(static fn (): bool => static::$authorized)
             ->options(['minimum' => 7, 'static' => 'retained'])
-            ->modifyQueryUsing(static fn (Builder $query, array $options): Builder => $query->where('rating', '>=', $options['minimum']))
+            ->modifyQueryUsing(static fn (Builder $query, array $options): Builder => $query
+                ->where('rating', '>=', $options['minimum'])
+                ->when(static::$queryLimit !== null, static fn (Builder $query): Builder => $query->limit(static::$queryLimit)))
             ->fileDisk('local')
             ->fileName('selected-posts')
             ->maxRows(static::$maxRows)

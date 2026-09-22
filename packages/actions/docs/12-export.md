@@ -1138,6 +1138,136 @@ it('protects untrusted titles', function () {
 
 This checks your exporter's opt-in policy: `TestExporter` does not enable protection itself. Numeric strings such as `-12` remain unchanged. The assertion checks the final row value, not CSV quoting or XLSX cell serialization.
 
+## Testing export actions
+
+Use `ExportAction::fake()` to test an action's form, column selection, options, and query without constructing or dispatching export jobs. Keep the returned fake to make assertions:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Models\User;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Testing\TestAction;
+
+use function Pest\Livewire\livewire;
+
+it('starts a product export', function () {
+    $this->actingAs(User::factory()->create());
+    $exports = ExportAction::fake();
+
+    livewire(ListProducts::class)
+        ->callAction(TestAction::make('export')->table())
+        ->assertHasNoErrors();
+
+    $exports->assertDispatched(ProductExporter::class)
+        ->assertDispatchedTimes(ProductExporter::class);
+});
+```
+
+This example assumes an action named `export` in the table header. For an action outside a table, use `callAction('export')`. Set up your normal panel, tenant, and authenticated user as required by your page.
+
+`assertDispatchedTimes()` checks the exact count, defaulting to `1`. Use `assertNothingDispatched()` after a rejected submission. `ExportBulkAction::fake()` and `ExportAction::fake()` replace the same container binding and capture both action types. Each call to either method installs a fresh fake with no recorded exports, so call it once before the actions you want to assert together.
+
+### Inspecting the query and submitted configuration
+
+Pass a callback to `assertDispatched()` to inspect a matching export. Its arguments, in order, are the actual saved `Export` model, a freshly deserialized Eloquent `Builder`, the column map, merged options, formats, and selected records. Return `true` when the export matches, or `false` to try another recorded export. You can use normal Pest or PHPUnit assertions inside the callback.
+
+For example, given a table with a searchable `name` column, a `ProductExporter` with only a `name` export column, and an action configured with `formats([ExportFormat::Csv])`:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Models\Product;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Database\Eloquent\Builder;
+
+use function Pest\Livewire\livewire;
+
+$matching = Product::factory()->create(['name' => 'Oak desk']);
+Product::factory()->create(['name' => 'Walnut chair']);
+$exports = ExportAction::fake();
+
+livewire(ListProducts::class)
+    ->searchTable('Oak')
+    ->callAction(TestAction::make('export')->table(), data: [
+        'columnMap' => [
+            'name' => ['isEnabled' => true, 'label' => 'Product name'],
+        ],
+    ])
+    ->assertHasNoErrors();
+
+$exports->assertDispatched(ProductExporter::class, function (
+    Export $export,
+    Builder $query,
+    array $columnMap,
+    array $options,
+    array $formats,
+    ?array $records,
+) use ($matching): bool {
+    expect($query->pluck('id')->all())->toBe([$matching->getKey()])
+        ->and($columnMap)->toBe(['name' => 'Product name'])
+        ->and($formats)->toBe([ExportFormat::Csv])
+        ->and($records)->toBeNull()
+        ->and($export->total_rows)->toBe(1);
+
+    return true;
+});
+```
+
+The query includes table filters, search, ordering, exporter `modifyQuery()`, and action `modifyQueryUsing()`. Form defaults and validation run normally, and submitted options override keys from the action's static `options()`. The fake does not execute or materialize the query, eager-load relationships, or add aggregates. Calls such as `pluck()` in your callback execute against your test database. Each callback gets a new builder, so changing it in one assertion does not affect another. Assertions without a callback do not deserialize the query.
+
+### Inspecting bulk selections
+
+For a bulk action, selected record IDs are captured separately from the base query. Do not assume that the callback's query is restricted to the selection:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Models\Product;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Database\Eloquent\Builder;
+
+use function Pest\Livewire\livewire;
+
+$products = Product::factory()->count(3)->create();
+$exports = ExportBulkAction::fake();
+
+livewire(ListProducts::class)
+    ->selectTableRecords([$products[1]])
+    ->callAction(TestAction::make('export')->table()->bulk())
+    ->assertHasNoErrors();
+
+$exports->assertDispatched(ProductExporter::class, function (
+    Export $export,
+    Builder $query,
+    array $columnMap,
+    array $options,
+    array $formats,
+    ?array $records,
+) use ($products): bool {
+    expect($query->reorder('id')->pluck('id')->all())->toBe($products->modelKeys())
+        ->and($records)->toBe([$products[1]->getKey()])
+        ->and($export->total_rows)->toBe(1);
+
+    return true;
+});
+```
+
+This example assumes the table and exporter do not exclude any of the three products. The fake preserves the selected-record payload unchanged, including the distinction between `null` (a non-bulk export) and an empty array. It does not introduce per-record authorization: scope your export query to the records the user may access, as described under [security](#per-record-authorization).
+
+### Understanding the fake's side effects
+
+The fake skips custom preparation-job construction, export batches and chains, file generation, row processing, and completion notifications. It does not fake Laravel's bus or events, so unrelated jobs and listeners continue to operate.
+
+Action preparation still queries and counts records, applies row limits, resolves the authenticated user and exporter, saves the `Export` model twice, deletes its existing export directory, resolves the file disk, file name and formats, serializes the query, and evaluates queue, connection, batch-name and chunk-size configuration. These callbacks and model events still run and may have side effects. Started notifications still follow the action's queue configuration; the fake does not generate a completion notification or mark the export complete.
+
+Use your normal test database and fake the configured filesystem disk with Laravel's `Storage::fake()` when you need to isolate storage cleanup. The fake does not prove that custom jobs work, queue workers can process the serialized payload, or generated CSV/XLSX files and downloads are correct. Keep separate unfaked integration tests for those behaviors and use `TestExporter` for row transformation tests.
+
 ## Authorization
 
 By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):

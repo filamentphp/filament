@@ -32,6 +32,7 @@ beforeEach(function (): void {
     ExportActions::$formats = [ExportFormat::Csv];
     ExportActions::$guard = null;
     ExportActions::$maxRows = null;
+    ExportActions::$queryLimit = null;
 });
 
 it('submits a real form and completes a synchronous export using the configured guard', function (array $formats): void {
