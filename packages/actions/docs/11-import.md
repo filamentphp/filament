@@ -1129,6 +1129,52 @@ Unexpected exceptions still propagate to your test unchanged; assert them using 
 
 ### Testing import action submissions
 
+Use `ImportAction::fake()` to test that your action requests an import without running its jobs. It returns a fresh fake for assertions and only replaces import dispatch in the current application container; unrelated jobs, batches, and events continue to work normally:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Models\User;
+use Filament\Actions\ImportAction;
+use Filament\Actions\Imports\Models\Import;
+use Illuminate\Http\UploadedFile;
+
+use function Pest\Livewire\livewire;
+
+it('requests a product import', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+    $imports = ImportAction::fake();
+
+    livewire(ListProducts::class)
+        ->mountAction('import')
+        ->setActionData([
+            'file' => UploadedFile::fake()->createWithContent(
+                'products.csv',
+                "Product code,Product name,Unit price\nMUG-001,Ceramic mug,12.50\n",
+            ),
+        ])
+        ->setActionData([
+            'columnMap' => ['sku' => 'Product code', 'name' => 'Product name', 'price' => 'Unit price'],
+            'updateExisting' => true,
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors();
+
+    $imports->assertDispatched(ProductImporter::class, function (Import $import, array $columnMap, array $options) use ($user): bool {
+        return $import->user->is($user)
+            && ($columnMap['sku'] === 'Product code')
+            && ($options['updateExisting'] === true);
+    })->assertDispatchedTimes(ProductImporter::class);
+});
+```
+
+`assertDispatched()` checks for at least one request for the given importer, optionally matching a callback that receives the `Import` model, column map, and merged options. `assertDispatchedTimes()` checks the exact count for that importer, defaulting to one. Use `assertNothingDispatched()` to check that no import was requested, for example after invalid form data or rejected authorization. Calling `ImportAction::fake()` again replaces the active fake with an empty one.
+
+The upload is still read, mapping and options are validated, and an `Import` row is still persisted. The fake skips import job construction (including custom `job()` classes), importer row processing, queue configuration getters, import events, and completion callbacks and notifications. It does not suppress action hooks or other action behavior. The action's started notification can still appear when the default queue connection is not `sync`; with a `sync` default, no started or completion notification is sent. Use `TestImporter` separately to test row behavior.
+
+#### Inspecting import batches and events
+
 To test the upload, column mapping, and options form, mount the real `ImportAction` using the [action testing helpers](../testing/testing-actions). Use Laravel's `Bus::fake()` to prevent queued jobs from running and selectively fake `ImportStarted` to inspect the submitted import. For a page with an `import` action using `ProductImporter` and its `updateExisting` option:
 
 ```php

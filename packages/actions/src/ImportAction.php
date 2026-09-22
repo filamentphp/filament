@@ -8,6 +8,7 @@ use Filament\Actions\Imports\ImportDispatcher;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Testing\ImportFake;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
@@ -67,6 +68,15 @@ class ImportAction extends Action
     protected array $fileValidationRules = [];
 
     protected string | Closure | null $authGuard = null;
+
+    public static function fake(): ImportFake
+    {
+        $fake = app(ImportFake::class);
+
+        app()->instance(ImportDispatcher::class, $fake);
+
+        return $fake;
+    }
 
     protected function setUp(): void
     {
