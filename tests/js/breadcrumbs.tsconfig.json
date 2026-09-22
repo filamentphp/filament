@@ -1,0 +1,9 @@
+{
+    "extends": "./avatar.tsconfig.json",
+    "include": [
+        "breadcrumbs-consumers/**/*",
+        "../../packages/support/resources/js/react/Breadcrumbs.tsx",
+        "../../packages/support/resources/js/vue/Breadcrumbs.vue",
+        "../../packages/support/resources/js/svelte/Breadcrumbs.svelte"
+    ]
+}

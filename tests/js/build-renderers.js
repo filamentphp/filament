@@ -46,23 +46,25 @@ await buildViteRenderers(
     'build/js-avatar-renderers',
 )
 
-for (const [command, arguments_] of [
-    [
-        'node_modules/typescript/bin/tsc',
-        ['--project', 'tests/js/avatar.tsconfig.json'],
-    ],
-    [
-        'node_modules/vue-tsc/bin/vue-tsc.js',
-        ['--project', 'tests/js/avatar.tsconfig.json'],
-    ],
-    [
-        'node_modules/svelte-check/bin/svelte-check',
-        ['--tsconfig', 'tests/js/avatar.tsconfig.json', '--fail-on-warnings'],
-    ],
-]) {
-    execFileSync(process.execPath, [command, ...arguments_], {
-        stdio: 'inherit',
-    })
+await buildViteRenderers(
+    { breadcrumbs: 'tests/js/renderers/breadcrumbs.svelte.js' },
+    'build/js-breadcrumbs-renderers',
+)
+
+for (const component of ['avatar', 'breadcrumbs']) {
+    const configuration = `tests/js/${component}.tsconfig.json`
+    for (const [command, arguments_] of [
+        ['node_modules/typescript/bin/tsc', ['--project', configuration]],
+        ['node_modules/vue-tsc/bin/vue-tsc.js', ['--project', configuration]],
+        [
+            'node_modules/svelte-check/bin/svelte-check',
+            ['--tsconfig', configuration, '--fail-on-warnings'],
+        ],
+    ]) {
+        execFileSync(process.execPath, [command, ...arguments_], {
+            stdio: 'inherit',
+        })
+    }
 }
 
 // Plugin authors can also bundle plain JavaScript and React without Vite.
