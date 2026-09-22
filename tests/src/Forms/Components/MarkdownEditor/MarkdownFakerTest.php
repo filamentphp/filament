@@ -78,8 +78,8 @@ it('generates all supported block content as valid Markdown', function (): void 
 });
 
 it('keeps format-specific macros isolated', function (): void {
-    RichContentFaker::macro('formatName', static fn (): string => 'rich');
-    MarkdownFaker::macro('formatName', static fn (): string => 'markdown');
+    RichContentFaker::macro('formatName', fn (): string => 'rich');
+    MarkdownFaker::macro('formatName', fn (): string => 'markdown');
 
     try {
         expect(fake()->filamentRichContent()->formatName())->toBe('rich')
