@@ -274,7 +274,7 @@ class LocationPicker extends Field
 ```
 
 <Aside variant="warning">
-    Only methods marked with `#[ExposedLivewireMethod]` can be called through `$wire.callSchemaComponentMethod()`. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
+    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. The attribute does not authorize access to the method's data or operations. Validate client-supplied arguments and [authorize sensitive operations](../advanced/security#authorization) inside the method.
 
     Exposed methods remain callable when the field is [disabled](overview#disabling-a-field), since read methods may still be needed to display its value. If a method changes the field's value and should respect its disabled state, check `$this->isDisabled()` before making changes.
 </Aside>

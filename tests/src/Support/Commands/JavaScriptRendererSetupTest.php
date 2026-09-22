@@ -84,6 +84,33 @@ it('leaves commented Vite configurations unchanged for manual setup', function (
     }
 })->with(['vue', 'svelte'])->with(['import', 'plugin', 'input']);
 
+it('leaves ambiguous Vite build configuration unchanged', function (string $properties): void {
+    $path = base_path('vite.config.js');
+    $original = File::exists($path) ? File::get($path) : null;
+    $contents = "export default defineConfig({ {$properties}, plugins: [] })";
+
+    try {
+        File::put($path, $contents);
+
+        expect(app(JavaScriptRendererSetupCommand::class)->configureJavaScriptRendererVite('js'))->toBeFalse()
+            ->and(File::get($path))->toBe($contents);
+    } finally {
+        if ($original === null) {
+            File::delete($path);
+        } else {
+            File::put($path, $original);
+        }
+    }
+})->with([
+    'spread' => '...sharedConfiguration',
+    'computed property' => '[buildKey]: sharedBuild',
+    'single-quoted build' => "'build': { outDir: 'public/assets' }",
+    'double-quoted build' => '"build": { outDir: "public/assets" }',
+    'shorthand build' => 'build',
+    'build accessor' => 'get build() { return sharedBuild }',
+    'quoted build accessor' => "get 'build'() { return sharedBuild }",
+]);
+
 class JavaScriptRendererSetupCommand extends Command
 {
     use CanConfigureVite {

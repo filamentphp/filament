@@ -6,11 +6,15 @@ export default function wizardSchemaComponent({
     startStep,
     stepQueryStringKey,
 }) {
+    let nextStep
+
     return {
         boundResetHandler: null,
         step: null,
 
         init() {
+            nextStep = this.$nextStep
+
             const steps = this.getSteps()
             const queryStringStep = new URLSearchParams(
                 window.location.search,
@@ -49,7 +53,7 @@ export default function wizardSchemaComponent({
         },
 
         async requestNextStep() {
-            await this.$nextStep({
+            await nextStep({
                 currentStepIndex: this.getStepIndex(this.step),
                 currentStepKey: this.step,
             })

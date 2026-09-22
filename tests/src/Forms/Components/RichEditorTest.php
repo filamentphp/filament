@@ -2264,7 +2264,9 @@ describe('browser interactions', function (): void {
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
 
-        $page->inDarkMode()->assertNoAccessibilityIssues();
+        $page->inDarkMode()
+            ->assertVisible('[data-testid="default-rich-editor"] [role="textbox"]')
+            ->assertNoAccessibilityIssues();
     });
 
     it('can search custom blocks and insert one at the preserved editor selection', function (): void {

@@ -2205,10 +2205,10 @@ describe('browser rendering', function (): void {
                 $page = visit('/file-upload-browser-test');
 
                 $page
-                    ->assertSeeIn('[data-testid="attachment-upload"]', 'first.txt')
-                    ->click('[data-testid="attachment-upload"] li:has-text("second.txt") button:enabled')
-                    ->assertDontSeeIn('[data-testid="attachment-upload"]', 'second.txt')
-                    ->assertSeeIn('[data-testid="attachment-upload"]', 'first.txt')
+                    ->assertPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("first.txt"))')
+                    ->click('[data-testid="attachment-upload"] fieldset:has(legend:text-is("second.txt")) button:enabled')
+                    ->assertNotPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("second.txt"))')
+                    ->assertPresent('[data-testid="attachment-upload"] fieldset:has(legend:text-is("first.txt"))')
                     ->assertNoSmoke()
                     ->assertNoAccessibilityIssues();
 

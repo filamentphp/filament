@@ -23,7 +23,11 @@ trait CanConfigureVite
             return false;
         }
 
-        if (preg_match('/\bbuild\s*:/', $contents)) {
+        if (preg_match('/(?:\bbuild|[\'"]build[\'"])\s*[,}(]/', $contents)) {
+            return false;
+        }
+
+        if (preg_match('/(?:\bbuild|[\'"]build[\'"])\s*:/', $contents)) {
             if (! preg_match('/\bpreserveEntrySignatures\s*:\s*[\'"](?:exports-only|strict)[\'"]/', $contents)) {
                 return false;
             }
@@ -194,9 +198,9 @@ trait CanConfigureVite
     protected function hasUnsupportedViteSyntax(string $contents): bool
     {
         // Skip quoted paths so glob patterns and URLs are not mistaken for comments.
-        // Comments and template literals require manual configuration instead of regex edits.
+        // Comments, template literals, spreads and computed properties require manual configuration instead of regex edits.
         return (bool) preg_match(<<<'REGEX'
-            ~'(?:\\.|[^'\\])*'(*SKIP)(*F)|"(?:\\.|[^"\\])*"(*SKIP)(*F)|//|/\*|`~s
+            ~'(?:\\.|[^'\\])*'(*SKIP)(*F)|"(?:\\.|[^"\\])*"(*SKIP)(*F)|//|/\*|`|\.\.\.|\]\s*:~s
             REGEX, $contents);
     }
 }
