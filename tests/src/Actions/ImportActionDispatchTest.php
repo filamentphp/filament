@@ -96,8 +96,9 @@ it('preserves importer batch metadata and the asynchronous started notification'
 
 it('fakes only import dispatch while preserving action metadata and unrelated jobs, batches and events', function (string $connection): void {
     config(['queue.default' => $connection, 'auth.guards.staff' => config('auth.guards.web'), 'testing.import_job' => UnconstructableImportJob::class]);
-    $user = auth()->user();
-    auth('staff')->setUser($user);
+    $defaultUser = auth()->user();
+    $staffUser = User::factory()->create();
+    auth('staff')->setUser($staffUser);
     $bus = Bus::getFacadeRoot();
     $events = Event::getFacadeRoot();
     $importEvents = [];
@@ -125,9 +126,10 @@ it('fakes only import dispatch while preserving action metadata and unrelated jo
         $page->assertNotified();
     }
 
-    $fake->assertDispatched(DispatchPostImporter::class, function (Import $import, array $columnMap, array $options) use ($user): bool {
+    $fake->assertDispatched(DispatchPostImporter::class, function (Import $import, array $columnMap, array $options) use ($defaultUser, $staffUser): bool {
         expect($import->exists)->toBeTrue()
-            ->and($import->user->is($user))->toBeTrue()
+            ->and($import->user->is($staffUser))->toBeTrue()
+            ->and($import->user->is($defaultUser))->toBeFalse()
             ->and($import->file_name)->toBe('posts.csv')
             ->and($import->total_rows)->toBe(1)
             ->and($columnMap)->toBe(['title' => 'Headline', 'content' => 'Body'])
