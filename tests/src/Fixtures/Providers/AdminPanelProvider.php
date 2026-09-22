@@ -30,6 +30,7 @@ use Filament\Tests\Fixtures\Pages\BreadcrumbsBrowserTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
 use Filament\Tests\Fixtures\Pages\CheckboxListTest;
+use Filament\Tests\Fixtures\Pages\CheckboxPrimitiveBrowserTest;
 use Filament\Tests\Fixtures\Pages\CheckboxTest;
 use Filament\Tests\Fixtures\Pages\CodeEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ColorPickerTest;
@@ -138,6 +139,7 @@ class AdminPanelProvider extends PanelProvider
                 BuilderTest::class,
                 CalloutBrowserTest::class,
                 CheckboxListTest::class,
+                CheckboxPrimitiveBrowserTest::class,
                 CodeEditorBrowserTest::class,
                 ColumnManagerBrowserTest::class,
                 ColumnsBrowserTest::class,

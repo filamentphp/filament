@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "jsx": "react-jsx"
+    },
+    "vueCompilerOptions": { "strictTemplates": true },
+    "include": [
+        "checkbox-consumers/**/*",
+        "../../packages/support/resources/js/react/Checkbox.tsx",
+        "../../packages/support/resources/js/vue/Checkbox.vue",
+        "../../packages/support/resources/js/svelte/Checkbox.svelte"
+    ]
+}

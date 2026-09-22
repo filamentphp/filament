@@ -61,9 +61,15 @@ await buildViteRenderers(
     'build/js-loading-indicator-renderers',
 )
 
+await buildViteRenderers(
+    { checkbox: 'tests/js/renderers/checkbox.svelte.js' },
+    'build/js-checkbox-renderers',
+)
+
 for (const component of [
     'avatar',
     'breadcrumbs',
+    'checkbox',
     'fieldset',
     'loading-indicator',
 ]) {
