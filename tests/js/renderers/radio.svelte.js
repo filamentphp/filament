@@ -95,6 +95,14 @@ export default function mountRadios(host, framework, cases) {
             settings.delivery = 'express'
             render()
         },
+        clear: () => {
+            settings.delivery = null
+            render()
+        },
+        release: () => {
+            settings.delivery = undefined
+            render()
+        },
         reset: () => {
             settings.delivery = 'standard'
             render()

@@ -74,6 +74,23 @@
             </x-filament::button>
             <x-filament::button
                 color="gray"
+                data-testid="clear-{{ $framework }}"
+                x-on:click="renderer.clear()"
+            >
+                Clear selection
+            </x-filament::button>
+            @if ($framework !== 'react')
+                <x-filament::button
+                    color="gray"
+                    data-testid="release-{{ $framework }}"
+                    x-on:click="renderer.release()"
+                >
+                    Use undefined model
+                </x-filament::button>
+            @endif
+
+            <x-filament::button
+                color="gray"
                 data-testid="reset-{{ $framework }}"
                 type="reset"
                 form-id="radio-form-{{ $framework }}"

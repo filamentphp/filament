@@ -92,7 +92,9 @@ Pass a reactive boolean `valid` prop (default `true`) for error styling. Native 
 
 ### Binding the selected value
 
-React supports native controlled `checked` / `onChange` and uncontrolled `defaultChecked`. Vue's `v-model` and Svelte's `bind:group` share a selected **string value**, not a boolean, array, or object. Use `null` for no selection. An omitted / `undefined` model leaves checked state under native attribute control. The value defaults to `on`. Model updates happen before Vue `@change` and Svelte `onchange` callbacks, so those callbacks can read the new selected value synchronously.
+React supports native controlled `checked` / `onChange` and uncontrolled `defaultChecked`. Vue's `v-model` and Svelte's `bind:group` share a selected **string value**, not a boolean, array, or object. Use `null` for no selection. An omitted / `undefined` model leaves checked state under native attribute control. The value defaults to `on`.
+
+Initialize a bound Svelte group to `null`, not `undefined`, if it should capture user selections. An `undefined` Svelte group does not update when an option is selected. Vue emits the selected value even when its previous model was `undefined`. Model updates happen before Vue `@change` and, when the group is defined, Svelte `onchange` callbacks, so those callbacks can read the new selected value synchronously.
 
 Use the same model and native `name` for every option in a group, and distinct names and models for independent groups. The browser handles exclusivity and arrow-key navigation. Svelte's component `bind:group` shares the value through props; it does not register inputs globally or use a cross-component native `bind:group` directive.
 

@@ -82,6 +82,27 @@ it('preserves native `Radio` groups, form behavior and reactive bindings across 
                 ->assertScript("JSON.stringify([...new FormData({$form})])", '[["delivery","standard"],["separate","saved"],["controlled","standard"]]')
                 ->assertScript("document.querySelector('{$selector} input[name=disabled]').checked", true)
                 ->assertScript("{$form}.checkValidity()", false);
+
+            $page->assertScript("document.querySelector('{$selector}').dataset.changes", '4')
+                ->click("[data-testid=clear-{$framework}]")
+                ->assertScript("document.querySelectorAll('{$selector} input[name=controlled]:checked').length", 0)
+                ->assertScript("new FormData({$form}).has('controlled')", false)
+                ->click("{$selector} input[name=controlled][value=standard]")
+                ->assertScript("document.querySelector('{$selector} output').dataset.model", 'standard')
+                ->assertScript("document.querySelector('{$selector} input[name=controlled][value=standard]').dataset.modelAtChange", 'standard')
+                ->assertScript("document.querySelector('{$selector}').dataset.changes", '5')
+                ->click("[data-testid=reset-{$framework}]")
+                ->assertScript("document.querySelector('{$selector}').dataset.changes", '5');
+
+            if ($framework !== 'react') {
+                $page->click("[data-testid=clear-{$framework}]")
+                    ->click("[data-testid=release-{$framework}]")
+                    ->click("{$selector} input[name=controlled][value=express]")
+                    ->assertScript("new FormData({$form}).get('controlled')", 'express')
+                    ->assertScript("document.querySelector('{$selector} input[name=controlled][value=express]').dataset.modelAtChange", $framework === 'vue' ? 'express' : 'undefined')
+                    ->assertScript("document.querySelector('{$selector} output').hasAttribute('data-model')", $framework === 'vue')
+                    ->assertScript("document.querySelector('{$selector}').dataset.changes", '6');
+            }
         }
 
         $page->assertScript("[...document.querySelectorAll('[data-radio-row] input')].every((element, index) => element === window.radioElements[index])", true)
