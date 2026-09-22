@@ -251,7 +251,7 @@ it('returns `null` from `getRecord()` for a skipped row without retaining the pr
     $this->assertDatabaseCount('users', 1);
 });
 
-it('rejects both completed outcome assertions after exceptions and recovers on reuse', function (string $stage, Closure $makeException): void {
+it('rejects both completed outcome assertions after exceptions and recovers on reuse', function (string $stage, Closure $makeException, string $message): void {
     $importer = TestImporter::make(UserRowTestImporter::class, options: ['updateExisting' => true]);
     $data = ['name' => 'Ada Lovelace', 'email' => 'ada@example.com'];
     $importer->import($data)->assertImported();
@@ -260,15 +260,17 @@ it('rejects both completed outcome assertions after exceptions and recovers on r
     try {
         $importer->import([...$data, $stage => $exception]);
 
-        if ($exception instanceof RuntimeException) {
+        if ((! $exception instanceof ValidationException) && (! $exception instanceof RowImportFailedException)) {
             $this->fail('Expected the importer exception.');
         }
-    } catch (RuntimeException $caughtException) {
-        expect($caughtException)->toBe($exception);
+    } catch (Throwable $caughtException) {
+        expect($caughtException)->toBe($exception)
+            ->not->toBeInstanceOf(ValidationException::class)
+            ->not->toBeInstanceOf(RowImportFailedException::class);
     }
 
-    expect(fn () => $importer->assertImported())->toThrow(AssertionFailedError::class, 'has not completed without an exception')
-        ->and(fn () => $importer->assertSkipped())->toThrow(AssertionFailedError::class, 'has not completed without an exception');
+    expect(fn () => $importer->assertImported())->toThrow(AssertionFailedError::class, $message)
+        ->and(fn () => $importer->assertSkipped())->toThrow(AssertionFailedError::class, $message);
 
     if ($stage === 'afterSaveException') {
         expect($importer->getRecord()->exists)->toBeTrue();
@@ -277,12 +279,13 @@ it('rejects both completed outcome assertions after exceptions and recovers on r
     $importer->import(['skip' => true])->assertSkipped();
     $importer->import($data)->assertImported();
 })->with([
-    'validation before resolution' => ['resolutionException', static fn () => ValidationException::withMessages(['custom' => 'Rejected.'])],
-    'deliberate failure before resolution' => ['resolutionException', static fn () => new RowImportFailedException('Rejected.')],
-    'validation after save' => ['afterSaveException', static fn () => ValidationException::withMessages(['custom' => 'Rejected.'])],
-    'empty validation after save' => ['afterSaveException', static fn () => ValidationException::withMessages([])],
-    'deliberate failure after save' => ['afterSaveException', static fn () => new RowImportFailedException('')],
-    'unexpected exception after save' => ['afterSaveException', static fn () => new RuntimeException('Unexpected failure.')],
+    'validation before resolution' => ['resolutionException', static fn () => ValidationException::withMessages(['custom' => 'Rejected.']), 'Component has errors: "custom"'],
+    'deliberate failure before resolution' => ['resolutionException', static fn () => new RowImportFailedException('Rejected.'), 'Importer has a row failure: [Rejected.].'],
+    'validation after save' => ['afterSaveException', static fn () => ValidationException::withMessages(['custom' => 'Rejected.']), 'Component has errors: "custom"'],
+    'empty validation after save' => ['afterSaveException', static fn () => ValidationException::withMessages([]), 'has not completed without an exception'],
+    'deliberate failure after save' => ['afterSaveException', static fn () => new RowImportFailedException(''), 'Importer has a row failure: [].'],
+    'unexpected exception after save' => ['afterSaveException', static fn () => new RuntimeException('Unexpected failure.'), 'has not completed without an exception'],
+    'unexpected error after save' => ['afterSaveException', static fn () => new TypeError('Unexpected error.'), 'has not completed without an exception'],
 ]);
 
 it('asserts an imported outcome without requiring custom `saveRecord()` implementations to persist the record', function (): void {

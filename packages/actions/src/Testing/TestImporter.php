@@ -72,6 +72,9 @@ class TestImporter
 
     public function assertImported(): static
     {
+        $this->assertHasNoErrors();
+        $this->assertHasNoRowFailure();
+
         Assert::assertTrue($this->hasCompleted, 'Cannot assert imported: the latest importer invocation has not completed without an exception.');
         Assert::assertNotNull($this->getRecord(), 'Expected the row to be imported, but it was skipped.');
 
@@ -80,6 +83,9 @@ class TestImporter
 
     public function assertSkipped(): static
     {
+        $this->assertHasNoErrors();
+        $this->assertHasNoRowFailure();
+
         Assert::assertTrue($this->hasCompleted, 'Cannot assert skipped: the latest importer invocation has not completed without an exception.');
         Assert::assertNull($this->getRecord(), 'Expected the row to be skipped, but it was imported.');
 
