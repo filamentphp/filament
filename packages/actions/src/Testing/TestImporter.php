@@ -20,6 +20,8 @@ class TestImporter
 
     protected ?string $rowFailureMessage = null;
 
+    protected bool $hasCompleted = false;
+
     final public function __construct(
         protected Importer $importer,
     ) {}
@@ -54,14 +56,32 @@ class TestImporter
     {
         $this->validator = null;
         $this->rowFailureMessage = null;
+        $this->hasCompleted = false;
 
         try {
             ($this->importer)($data);
+            $this->hasCompleted = true;
         } catch (ValidationException $exception) {
             $this->validator = $exception->validator;
         } catch (RowImportFailedException $exception) {
             $this->rowFailureMessage = $exception->getMessage();
         }
+
+        return $this;
+    }
+
+    public function assertImported(): static
+    {
+        Assert::assertTrue($this->hasCompleted, 'Cannot assert imported: the latest importer invocation has not completed without an exception.');
+        Assert::assertNotNull($this->getRecord(), 'Expected the row to be imported, but it was skipped.');
+
+        return $this;
+    }
+
+    public function assertSkipped(): static
+    {
+        Assert::assertTrue($this->hasCompleted, 'Cannot assert skipped: the latest importer invocation has not completed without an exception.');
+        Assert::assertNull($this->getRecord(), 'Expected the row to be skipped, but it was imported.');
 
         return $this;
     }

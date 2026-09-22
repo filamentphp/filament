@@ -18,7 +18,7 @@ it('imports a row with identity mapping through casting, validation and save hoo
     $record = TestImporter::make(UserRowTestImporter::class)->import([
         'name' => '  Ada Lovelace  ',
         'email' => 'ada@example.com',
-    ])->assertHasNoErrors()->assertHasNoRowFailure()->getRecord();
+    ])->assertImported()->getRecord();
 
     expect($record)->toBeInstanceOf(User::class)
         ->exists->toBeTrue();
@@ -40,7 +40,7 @@ it('updates a record using explicit headers without filling or validating an omi
     ], options: ['updateExisting' => true])->import([
         'Email address' => $user->email,
         'name' => '',
-    ])->assertHasNoErrors()->assertHasNoRowFailure()->getRecord();
+    ])->assertImported()->getRecord();
 
     expect($record->is($user))->toBeTrue();
     $this->assertDatabaseCount('users', 1);
@@ -223,10 +223,76 @@ it('propagates unexpected exceptions unchanged and clears prior captured failure
 it('returns `null` from `getRecord()` for a skipped row without retaining the previous record', function (): void {
     $importer = TestImporter::make(UserRowTestImporter::class);
 
-    expect($importer->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com'])->assertHasNoErrors()->getRecord())->toBeInstanceOf(User::class);
-    expect($importer->import(['skip' => true])->assertHasNoErrors()->getRecord())->toBeNull();
+    expect(fn () => $importer->assertImported())->toThrow(AssertionFailedError::class, 'has not completed without an exception')
+        ->and(fn () => $importer->assertSkipped())->toThrow(AssertionFailedError::class, 'has not completed without an exception');
+
+    $importer->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']);
+    expect($importer->assertImported())->toBe($importer)
+        ->and($importer->getRecord())->toBeInstanceOf(User::class)
+        ->and(fn () => $importer->assertSkipped())->toThrow(AssertionFailedError::class, 'but it was imported');
+
+    $importer->import(['skip' => true]);
+    expect($importer->assertSkipped())->toBe($importer)
+        ->and($importer->getRecord())->toBeNull()
+        ->and(fn () => $importer->assertImported())->toThrow(AssertionFailedError::class, 'but it was skipped');
+
+    $exception = new RuntimeException('Failure before resolution.');
+
+    try {
+        $importer->import(['resolutionException' => $exception]);
+        $this->fail('Expected the importer exception.');
+    } catch (RuntimeException $caughtException) {
+        expect($caughtException)->toBe($exception);
+    }
+
+    expect(fn () => $importer->assertImported())->toThrow(AssertionFailedError::class)
+        ->and(fn () => $importer->assertSkipped())->toThrow(AssertionFailedError::class);
 
     $this->assertDatabaseCount('users', 1);
+});
+
+it('rejects both completed outcome assertions after exceptions and recovers on reuse', function (string $stage, Closure $makeException): void {
+    $importer = TestImporter::make(UserRowTestImporter::class, options: ['updateExisting' => true]);
+    $data = ['name' => 'Ada Lovelace', 'email' => 'ada@example.com'];
+    $importer->import($data)->assertImported();
+    $exception = $makeException();
+
+    try {
+        $importer->import([...$data, $stage => $exception]);
+
+        if ($exception instanceof RuntimeException) {
+            $this->fail('Expected the importer exception.');
+        }
+    } catch (RuntimeException $caughtException) {
+        expect($caughtException)->toBe($exception);
+    }
+
+    expect(fn () => $importer->assertImported())->toThrow(AssertionFailedError::class, 'has not completed without an exception')
+        ->and(fn () => $importer->assertSkipped())->toThrow(AssertionFailedError::class, 'has not completed without an exception');
+
+    if ($stage === 'afterSaveException') {
+        expect($importer->getRecord()->exists)->toBeTrue();
+    }
+
+    $importer->import(['skip' => true])->assertSkipped();
+    $importer->import($data)->assertImported();
+})->with([
+    'validation before resolution' => ['resolutionException', static fn () => ValidationException::withMessages(['custom' => 'Rejected.'])],
+    'deliberate failure before resolution' => ['resolutionException', static fn () => new RowImportFailedException('Rejected.')],
+    'validation after save' => ['afterSaveException', static fn () => ValidationException::withMessages(['custom' => 'Rejected.'])],
+    'empty validation after save' => ['afterSaveException', static fn () => ValidationException::withMessages([])],
+    'deliberate failure after save' => ['afterSaveException', static fn () => new RowImportFailedException('')],
+    'unexpected exception after save' => ['afterSaveException', static fn () => new RuntimeException('Unexpected failure.')],
+]);
+
+it('asserts an imported outcome without requiring custom `saveRecord()` implementations to persist the record', function (): void {
+    $record = TestImporter::make(UserRowTestImporter::class, options: ['skipSaving' => true])->import([
+        'name' => 'Ada Lovelace',
+        'email' => 'ada@example.com',
+    ])->assertImported()->getRecord();
+
+    expect($record)->toBeInstanceOf(User::class)->exists->toBeFalse();
+    $this->assertDatabaseCount('users', 0);
 });
 
 it('resolves the importer through the container with the supplied import, mapping and options without changing authentication', function (): void {
@@ -322,6 +388,15 @@ class UserRowTestImporter extends Importer
         }
 
         $this->record->password = 'set-by-before-save';
+    }
+
+    public function saveRecord(): void
+    {
+        if ($this->options['skipSaving'] ?? false) {
+            return;
+        }
+
+        parent::saveRecord();
     }
 
     protected function afterSave(): void

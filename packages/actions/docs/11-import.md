@@ -1023,7 +1023,7 @@ The current record (if it exists yet) is accessible in `$this->record`, and the 
 
 ## Testing importers
 
-You can test a row using `TestImporter` without uploading a CSV or dispatching a queued job. It runs your application's importer, including column mapping, casting, validation, lifecycle hooks, and saving records and relationships. The `import()` method returns the test helper so you can chain validation and row-failure assertions. Check both failure types before using `getRecord()` to retrieve the resolved record for ordinary model and database assertions:
+You can test a row using `TestImporter` without uploading a CSV or dispatching a queued job. It runs your application's importer, including column mapping, casting, validation, lifecycle hooks, and saving records and relationships. The `import()` method returns the test helper so you can chain assertions. Use `assertImported()` to check that the invocation completed without an exception and resolved a non-null record, then `getRecord()` to retrieve that record for ordinary model and database assertions:
 
 ```php
 use App\Filament\Imports\ProductImporter;
@@ -1034,7 +1034,7 @@ it('imports a product', function () {
         'sku' => 'MUG-001',
         'name' => 'Ceramic mug',
         'price' => '12.50',
-    ])->assertHasNoErrors()->assertHasNoRowFailure()->getRecord();
+    ])->assertImported()->getRecord();
 
     $this->assertDatabaseHas('products', [
         'id' => $record->getKey(),
@@ -1059,7 +1059,7 @@ $record = TestImporter::make(ProductImporter::class, columnMap: [
 ])->import([
     'Product code' => 'MUG-001',
     'Product name' => 'Large ceramic mug',
-])->assertHasNoErrors()->assertHasNoRowFailure()->getRecord();
+])->assertImported()->getRecord();
 ```
 
 `TestImporter` creates an unsaved `Import` model as context. If your importer needs a particular import or user, pass your own model using the `import` argument. The helper sets its `importer` attribute to the supplied importer class without saving it. Use Laravel's `actingAs()` to set the authenticated user; the helper does not change authentication or associate a user automatically:
@@ -1080,8 +1080,12 @@ $record = TestImporter::make(ProductImporter::class, import: $import)->import([
     'sku' => 'MUG-001',
     'name' => 'Ceramic mug',
     'price' => '12.50',
-])->assertHasNoErrors()->assertHasNoRowFailure()->getRecord();
+])->assertImported()->getRecord();
 ```
+
+Use `assertSkipped()` when your importer's `resolveRecord()` returns `null`. This checks that the invocation completed without an exception and has no record. A skipped row is not a validation or deliberate row failure. Neither `assertImported()` nor `assertSkipped()` passes before `import()` or after any exception, even if you catch an unexpected exception in your test. Both assertions describe only the latest invocation and reset on reuse.
+
+These outcomes describe direct importer execution, not queue counters. `assertImported()` does not guarantee database persistence: your customized `saveRecord()` behavior still applies. Check database effects separately. Similarly, `assertSkipped()` does not imply a failed row or a separate skipped counter in queued imports.
 
 ### Asserting validation errors
 
@@ -1119,7 +1123,7 @@ TestImporter::make(ProductImporter::class)->import([
 
 Call `assertHasRowFailure()` without a message to check for any deliberate row failure. If you pass a message, it must match exactly, including when you pass an empty string. Use `assertHasNoRowFailure()` to check that no `RowImportFailedException` was captured.
 
-Validation errors and deliberate row failures are separate: `assertHasNoErrors()` only checks validation, and `assertHasNoRowFailure()` only checks deliberate row failures. Use both before treating a resolved record as successfully imported. Each `import()` call clears both captured states from the previous row. If your importer's `resolveRecord()` returns `null`, `getRecord()` returns `null` and neither failure type is recorded.
+Validation errors and deliberate row failures are separate: `assertHasNoErrors()` only checks validation, and `assertHasNoRowFailure()` only checks deliberate row failures. Neither establishes an imported outcome; use `assertImported()` for that. Each `import()` call clears both captured states from the previous row. If your importer's `resolveRecord()` returns `null`, `getRecord()` returns `null` and neither failure type is recorded.
 
 Unexpected exceptions still propagate to your test unchanged; assert them using Pest's `toThrow()` or PHPUnit's `expectException()`. Capturing either failure type does not roll back database writes or other side effects. For example, an exception in `afterSave()` may leave the record saved, and `getRecord()` may return a record even when the row failed.
 
