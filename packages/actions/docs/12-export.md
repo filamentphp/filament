@@ -1217,6 +1217,8 @@ $exports->assertDispatched(ProductExporter::class, function (
 });
 ```
 
+Other default-enabled columns remain selected unless you explicitly set their `isEnabled` value to `false`. Passing a partial `columnMap` through `callAction(data: ...)` does not replace the entire mapping.
+
 The query includes table filters, search, ordering, exporter `modifyQuery()`, and action `modifyQueryUsing()`. Form defaults and validation run normally, and submitted options override keys from the action's static `options()`. The fake does not execute or materialize the query, eager-load relationships, or add aggregates. Calls such as `pluck()` in your callback execute against your test database. Each callback gets a new builder, so changing it in one assertion does not affect another. Assertions without a callback do not deserialize the query.
 
 ### Inspecting bulk selections

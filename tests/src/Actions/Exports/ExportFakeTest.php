@@ -121,6 +121,18 @@ it('deserializes a fresh query for every callback without applying selection or 
     $export = new Export(['exporter' => ActionPostExporter::class]);
     $fake->dispatch($export, EloquentSerializeFacade::serialize(Post::query()->whereKey($post->id)), [], [], [], [], PrepareCsvExport::class, 100, null, null, null, 'web');
 
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+    $fake->assertDispatched(ActionPostExporter::class, function (Export $export, Builder $query) use ($post): bool {
+        expect($query->getModel())->toBeInstanceOf(Post::class)
+            ->and($query->getQuery()->from)->toBe('posts')
+            ->and($query->getBindings())->toBe([$post->id]);
+
+        return true;
+    });
+    expect(DB::getQueryLog())->toBe([]);
+    DB::disableQueryLog();
+
     $fake->assertDispatched(ActionPostExporter::class, function (Export $actualExport, Builder $query, array $columnMap, array $options, array $formats, ?array $records) use ($export): bool {
         expect($actualExport)->toBe($export)->and($records)->toBe([]);
         $query->whereRaw('1 = 0');

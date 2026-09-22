@@ -38,21 +38,21 @@ class ActionPostExporter extends Exporter
     {
         static::$getterCalls[] = 'queue';
 
-        return 'exports';
+        return config('testing.exports.queue', 'exports');
     }
 
     public function getJobConnection(): ?string
     {
         static::$getterCalls[] = 'connection';
 
-        return config('queue.default');
+        return config('testing.exports.connection', config('queue.default'));
     }
 
     public function getJobBatchName(): ?string
     {
         static::$getterCalls[] = 'batch';
 
-        return 'Post export';
+        return config('testing.exports.batch_name', 'Post export');
     }
 
     public static function getCompletedNotificationBody(Export $export): string

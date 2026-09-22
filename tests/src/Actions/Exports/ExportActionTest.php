@@ -1,6 +1,7 @@
 <?php
 
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
+use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
@@ -118,6 +119,12 @@ it('preserves job construction and serialized chain ordering and configuration',
 
 it('keeps table filters search order and both query modifiers in the preparation payload', function (): void {
     Bus::fake();
+    ExportAction::configureUsing(static fn (ExportAction $action) => $action
+        ->job(CustomPrepareCsvExport::class)
+        ->chunkSize(static fn (): int => 37));
+    ExportActions::$guard = 'export';
+    config()->set('auth.guards.export', ['driver' => 'session', 'provider' => 'users']);
+    auth('export')->setUser(User::factory()->create());
     $second = Post::factory()->create(['title' => 'Match B', 'rating' => 5, 'is_published' => true]);
     $first = Post::factory()->create(['title' => 'Match A', 'rating' => 6, 'is_published' => true]);
     Post::factory()->create(['title' => 'Match low', 'rating' => 3, 'is_published' => true]);
@@ -134,18 +141,66 @@ it('keeps table filters search order and both query modifiers in the preparation
 
     Bus::assertDispatched(ChainedBatch::class, function (ChainedBatch $batch) use ($first, $second): bool {
         $job = $batch->jobs->sole();
-        expect($job)->toBeInstanceOf(PrepareCsvExport::class);
+        expect($job)->toBeInstanceOf(CustomPrepareCsvExport::class);
         $payload = (fn (): array => get_object_vars($this))->call($job);
         expect(EloquentSerializeFacade::unserialize($payload['query'])->pluck('id')->all())->toBe([$first->id, $second->id])
             ->and($payload['options'])->toBe(['minimum' => 5.0, 'static' => 'retained'])
             ->and($payload['columnMap'])->toBe(['title' => 'Title'])
+            ->and($payload['chunkSize'])->toBe(37)
             ->and($payload['records'])->toBeNull()
             ->and($batch->name)->toBe('Post export')
             ->and($batch->options)->toMatchArray(['allowFailures' => true, 'queue' => 'exports', 'connection' => 'sync']);
+        $completion = unserialize($batch->chained[0]);
+        expect($completion)->toBeInstanceOf(ExportCompletion::class);
+        $completionPayload = (fn (): array => get_object_vars($this))->call($completion);
+        expect($completionPayload['authGuard'])->toBe('export');
 
         return true;
     });
 });
+
+it('honors nullable queue settings and explicit connections when dispatching and notifying', function (string $defaultConnection, ?string $connection, ?string $queue, ?string $batchName, bool $expectsStartedNotification): void {
+    config()->set([
+        'queue.default' => $defaultConnection,
+        'testing.exports.connection' => $connection,
+        'testing.exports.queue' => $queue,
+        'testing.exports.batch_name' => $batchName,
+    ]);
+    Bus::fake();
+
+    livewire(ExportActions::class)->callAction('export')->assertHasNoErrors();
+
+    Bus::assertDispatched(ChainedBatch::class, function (ChainedBatch $batch) use ($connection, $queue, $batchName): bool {
+        expect($batch->name)->toBe($batchName ?? '')
+            ->and($batch->queue)->toBe($queue)
+            ->and($batch->connection)->toBe($connection)
+            ->and($batch->chainQueue)->toBe($queue)
+            ->and($batch->chainConnection)->toBe($connection)
+            ->and($batch->options)->toBe([
+                'allowFailures' => true,
+                ...($queue !== null ? ['queue' => $queue] : []),
+                ...($connection !== null ? ['connection' => $connection] : []),
+            ]);
+
+        return true;
+    });
+
+    session()->forget(['filament.notifications', 'filament.claimed_notifications']);
+    $fake = ExportAction::fake();
+    livewire(ExportActions::class)->callAction('export')->assertHasNoErrors();
+    $fake->assertDispatchedTimes(ActionPostExporter::class);
+
+    $notifications = session('filament.claimed_notifications') ?? session('filament.notifications') ?? [];
+    expect($notifications)->toHaveCount($expectsStartedNotification ? 1 : 0);
+    if ($expectsStartedNotification) {
+        expect(reset($notifications)['title'])->toBe(__('filament-actions::export.notifications.started.title'));
+    }
+})->with([
+    'null settings with synchronous default' => ['sync', null, null, null, false],
+    'null settings with asynchronous default' => ['database', null, null, null, true],
+    'explicit asynchronous connection overrides synchronous default' => ['sync', 'database', 'custom-exports', 'Custom export', true],
+    'explicit synchronous connection overrides asynchronous default' => ['database', 'sync', 'custom-exports', 'Custom export', false],
+]);
 
 it('keeps bulk selected IDs separate from the full export query', function (): void {
     Bus::fake();
@@ -192,3 +247,5 @@ it('enforces `maxRows()` before creating an export and accepts the exact boundar
     expect(Export::query()->sole()->total_rows)->toBe(2);
     Bus::assertDispatchedTimes(ChainedBatch::class, 1);
 });
+
+class CustomPrepareCsvExport extends PrepareCsvExport {}
