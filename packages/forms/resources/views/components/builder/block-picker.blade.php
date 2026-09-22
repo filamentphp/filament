@@ -4,9 +4,9 @@
     'afterItem' => null,
     'blocks',
     'columns' => null,
-    'isSearchable' => false,
     'key',
     'noSearchResultsMessage' => null,
+    'searchable' => false,
     'searchDebounce' => 0,
     'searchPrompt' => null,
     'trigger',
@@ -16,13 +16,28 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
+    use Filament\Support\Enums\Width;
     use Filament\Support\Facades\FilamentAsset;
     use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\Contracts\Support\Htmlable;
     use Illuminate\Support\Js;
     use Illuminate\Support\Str;
 
-    $listAttributes = $isSearchable
+    $placement = match ($actionAlignment) {
+        Alignment::Start, Alignment::Left => 'bottom-start',
+        Alignment::End, Alignment::Right => 'bottom-end',
+        default => null,
+    };
+
+    if (is_string($width)) {
+        $width = Width::tryFrom($width) ?? $width;
+    }
+
+    $widthClass = ($width instanceof Width)
+        ? "fi-width-{$width->value}"
+        : (is_string($width) ? $width : null);
+
+    $listAttributes = $searchable
         ? new FilamentComponentAttributeBag([
             'x-load' => true,
             'x-load-src' => FilamentAsset::getAlpineComponentSrc('builder', 'filament/forms'),
@@ -34,16 +49,10 @@
 @endphp
 
 <x-filament::dropdown
-    :placement="
-        match ($actionAlignment) {
-            Alignment::Start, Alignment::Left => 'bottom-start',
-            Alignment::End, Alignment::Right => 'bottom-end',
-            default => null,
-        }
-    "
+    :placement="$placement"
     shift
     :width="$width"
-    :wire:key="$key . '.' . $action->getName() . '.' . $afterItem . '.block-picker.' . md5(serialize([$width, $actionAlignment, filled($blocks), $isSearchable]))"
+    :wire:key="$key . '.' . $action->getName() . '.' . $afterItem . '.block-picker.' . md5(serialize([$widthClass, $placement, filled($blocks), $searchable]))"
     :attributes="
         \Filament\Support\prepare_inherited_attributes(
             $attributes->class([
@@ -61,7 +70,7 @@
         <x-filament::dropdown.list
             :attributes="\Filament\Support\prepare_inherited_attributes($listAttributes)"
         >
-            @if ($isSearchable)
+            @if ($searchable)
                 <div class="fi-fo-builder-block-picker-search-ctn">
                     <x-filament::input
                         type="text"
@@ -92,7 +101,7 @@
 
                         $blockSearchLabel = null;
 
-                        if ($isSearchable) {
+                        if ($searchable) {
                             $blockSearchLabel = $blockLabel;
 
                             if ($blockSearchLabel instanceof Htmlable) {
@@ -117,16 +126,16 @@
                         :icon="$blockIcon"
                         x-on:click="close"
                         :wire:click="$wireClickAction"
-                        :wire:key="$isSearchable ? md5($wireClickAction . $blockSearchLabel) : null"
+                        :wire:key="$searchable ? md5($wireClickAction . $blockSearchLabel) : null"
                         :data-block-label="$blockSearchLabel"
-                        :x-show="$isSearchable ? 'isBlockVisible($el)' : null"
+                        :x-show="$searchable ? 'isBlockVisible($el)' : null"
                     >
                         {{ $blockLabel }}
                     </x-filament::dropdown.list.item>
                 @endforeach
             </div>
 
-            @if ($isSearchable)
+            @if ($searchable)
                 <div
                     x-cloak
                     x-show="hasNoSearchResults"

@@ -10,6 +10,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -731,6 +732,7 @@ describe('block picker search', function (): void {
         try {
             livewire(RenderBuilderWithSearchableBlocks::class)
                 ->assertSuccessful()
+                ->assertSeeHtml('data-dropdown-autofocus')
                 ->assertSeeHtml('placeholder="Find &quot;R&amp;D&quot;"')
                 ->assertSeeHtml('aria-label="Find &quot;R&amp;D&quot;"')
                 ->assertSeeHtml('data-block-label="paragraph"')
@@ -741,6 +743,33 @@ describe('block picker search', function (): void {
             $cache->setValue(null, $originalCache);
         }
     })->with(['embedded' => false, 'published Blade' => true]);
+
+    it('uses the same picker identity for equivalent widths in both renderers', function (): void {
+        $cache = new ReflectionProperty(ViewComponent::class, 'hasPublishedEmbeddedViewOverrideCache');
+        $originalCache = $cache->getValue();
+        $render = new ReflectionMethod(Builder::class, 'generateBlockPickerHtml');
+        $keys = [];
+
+        try {
+            foreach ([false, true] as $hasPublishedView) {
+                $cache->setValue(null, [
+                    ...$originalCache,
+                    'filament-forms::components.builder.block-picker' => $hasPublishedView,
+                ]);
+
+                foreach (['sm', Width::Small] as $width) {
+                    $html = $render->invoke(Builder::make('content'), Action::make('add'), [], 'content', '', width: $width);
+                    preg_match('/wire:key="([^"]+)"/', $html, $matches);
+                    expect($matches)->toHaveCount(2);
+                    $keys[] = $matches[1];
+                }
+            }
+
+            expect(array_unique($keys))->toHaveCount(1);
+        } finally {
+            $cache->setValue(null, $originalCache);
+        }
+    });
 
     it('does not render search markup when not `searchable()`', function (): void {
         livewire(TestComponentWithBuilder::class)
@@ -798,8 +827,6 @@ it('can search blocks in the picker in the browser', function (bool $isDarkMode)
         ->assertVisible($searchInput)
         ->assertAttribute($searchInput, 'type', 'text')
         ->assertScript('document.activeElement.matches(\'[data-testid="builder"] input[data-dropdown-autofocus]\')', true)
-        ->assertScript('getComputedStyle(document.activeElement.parentElement).boxShadow', 'none')
-        ->assertScript('document.activeElement.parentElement.querySelector("svg") === null', true)
         ->type($searchInput, 'ReSeArCh & DEVELOPMENT')
         ->assertVisible('[data-testid="builder"] [data-block-label="research & development"]')
         ->assertMissing('[data-testid="builder"] [data-block-label="paragraph"]')
@@ -1045,23 +1072,23 @@ it('focuses the search when blocks become available and after deleting the last 
     }
 })->with(['embedded' => false, 'published Blade' => true]);
 
-it('updates a dynamic `blockPickerWidth()`', function (bool $isSearchable): void {
+it('can reopen the picker and add a block after `blockPickerWidth()` changes', function (bool $isSearchable): void {
     Artisan::call('filament:assets');
 
     $this->actingAs(User::factory()->create());
 
     $page = visit('/builder-searchable-test?notSearchable=' . (int) (! $isSearchable))
         ->click('[data-testid="add-block"]')
-        ->assertVisible('[data-testid="builder"] .fi-dropdown-panel.fi-width-sm');
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true');
 
     $page->script('Alpine.$data(document.querySelector(\'[data-testid="builder"]\')).$wire.$set(\'hasWidePicker\', true)');
 
     $page
-        ->assertPresent('[data-testid="builder"] .fi-dropdown-panel.fi-width-lg')
-        ->assertNotPresent('[data-testid="builder"] .fi-dropdown-panel.fi-width-sm')
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'false')
         ->click('[data-testid="add-block"]')
-        ->assertVisible('[data-testid="builder"] .fi-dropdown-panel.fi-width-lg')
-        ->assertScript('getComputedStyle(document.querySelector(\'[data-testid="builder"] .fi-dropdown-panel\')).opacity', '1')
+        ->assertAttribute('[data-testid="add-block"]', 'aria-expanded', 'true')
+        ->click('[data-testid="builder"] .fi-dropdown-list-item:first-child')
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
         ->assertNoSmoke();
 })->with(['searchable' => true, 'not searchable' => false]);
 

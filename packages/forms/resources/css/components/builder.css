@@ -169,6 +169,14 @@
     & .fi-fo-builder-block-picker {
         @apply flex justify-center;
 
+        & .fi-dropdown-panel {
+            @apply overflow-y-auto;
+        }
+
+        & .fi-dropdown-list > .fi-grid {
+            @apply gap-x-0;
+        }
+
         &.fi-align-start,
         &.fi-align-left {
             @apply justify-start;
