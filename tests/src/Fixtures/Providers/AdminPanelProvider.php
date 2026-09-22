@@ -47,6 +47,7 @@ use Filament\Tests\Fixtures\Pages\JsComponentBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
 use Filament\Tests\Fixtures\Pages\JsWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
+use Filament\Tests\Fixtures\Pages\LoadingIndicatorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
@@ -131,6 +132,7 @@ class AdminPanelProvider extends PanelProvider
                 AutofocusSecondTabBrowserTest::class,
                 AutofocusWizardBrowserTest::class,
                 AvatarBrowserTest::class,
+                LoadingIndicatorBrowserTest::class,
                 BreadcrumbsBrowserTest::class,
                 FieldsetBrowserTest::class,
                 BuilderTest::class,

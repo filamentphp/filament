@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "jsx": "react-jsx"
+    },
+    "vueCompilerOptions": { "strictTemplates": true },
+    "include": [
+        "loading-indicator-consumers/**/*",
+        "../../packages/support/resources/js/react/LoadingIndicator.tsx",
+        "../../packages/support/resources/js/vue/LoadingIndicator.vue",
+        "../../packages/support/resources/js/svelte/LoadingIndicator.svelte"
+    ]
+}

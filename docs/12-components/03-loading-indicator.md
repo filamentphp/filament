@@ -15,6 +15,48 @@ The loading indicator is an animated SVG that can be used to indicate that somet
 
 <AutoScreenshot name="components/loading-indicator/simple" alt="A loading indicator" version="4.x" />
 
+## Using JavaScript components
+
+You can import the default loading indicator into React, Vue, or Svelte renderers. These source components use your application's existing framework build and Filament theme CSS; they do not require converting your application to TypeScript.
+
+```jsx
+import LoadingIndicator from '/vendor/filament/support/resources/js/react/LoadingIndicator'
+
+<div role="status" aria-label="Loading results">
+    <LoadingIndicator size="sm" />
+</div>
+```
+
+```vue
+<script setup>
+import LoadingIndicator from '/vendor/filament/support/resources/js/vue/LoadingIndicator.vue'
+</script>
+
+<template>
+    <div role="status" aria-label="Loading results">
+        <LoadingIndicator size="sm" />
+    </div>
+</template>
+```
+
+```svelte
+<script>
+    import LoadingIndicator from '/vendor/filament/support/resources/js/svelte/LoadingIndicator.svelte'
+</script>
+
+<div role="status" aria-label="Loading results">
+    <LoadingIndicator size="sm" />
+</div>
+```
+
+Adjust the import paths to your Composer vendor directory. The typed `size` prop accepts `xs`, `sm`, `md` (default), `lg`, `xl`, and `2xl`, matching `IconSize::ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, and `TwoExtraLarge` respectively. These map to the existing `fi-size-*` hooks alongside `fi-icon fi-loading-indicator`. In PHP, `generate_loading_indicator_html()` takes an `IconSize` argument; the Blade wrapper only forwards attributes and does not interpret a `size` prop.
+
+Native SVG attributes and events are forwarded, including overrides for `aria-hidden`, `fill`, and `viewBox`. Use `className` in React and `class` in Vue or Svelte to add classes. React also forwards a ref to the `SVGSVGElement`. The component owns its two paths and does not accept children, slots, or raw HTML. Animation comes only from Filament's existing motion-safe CSS and stops when the user prefers reduced motion.
+
+The SVG is decorative (`aria-hidden="true"`) by default. Your host should convey the loading state through a labelled control, a status region, or `aria-busy` on the affected content. If you expose the SVG itself, override `aria-hidden` and provide an accessible name and role.
+
+JavaScript components always render the default SVG; they do not resolve PHP container bindings. If your application replaces the loading indicator, compose or replace the component in your host renderer as well.
+
 ## Replacing the default loading indicator
 
 Filament renders the loading indicator through the `Filament\Support\Contracts\LoadingIndicator` contract, which is bound to `Filament\Support\View\DefaultLoadingIndicator` by default. You may replace it with your own implementation by binding a different class in a service provider:

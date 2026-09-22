@@ -56,7 +56,17 @@ await buildViteRenderers(
     'build/js-fieldset-renderers',
 )
 
-for (const component of ['avatar', 'breadcrumbs', 'fieldset']) {
+await buildViteRenderers(
+    { 'loading-indicator': 'tests/js/renderers/loading-indicator.svelte.js' },
+    'build/js-loading-indicator-renderers',
+)
+
+for (const component of [
+    'avatar',
+    'breadcrumbs',
+    'fieldset',
+    'loading-indicator',
+]) {
     const configuration = `tests/js/${component}.tsconfig.json`
     for (const [command, arguments_] of [
         ['node_modules/typescript/bin/tsc', ['--project', configuration]],
