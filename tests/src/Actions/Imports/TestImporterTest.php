@@ -18,7 +18,7 @@ it('imports a row with identity mapping through casting, validation and save hoo
     $record = TestImporter::make(UserRowTestImporter::class)->import([
         'name' => '  Ada Lovelace  ',
         'email' => 'ada@example.com',
-    ])->assertHasNoErrors()->getRecord();
+    ])->assertHasNoErrors()->assertHasNoRowFailure()->getRecord();
 
     expect($record)->toBeInstanceOf(User::class)
         ->exists->toBeTrue();
@@ -40,7 +40,7 @@ it('updates a record using explicit headers without filling or validating an omi
     ], options: ['updateExisting' => true])->import([
         'Email address' => $user->email,
         'name' => '',
-    ])->assertHasNoErrors()->getRecord();
+    ])->assertHasNoErrors()->assertHasNoRowFailure()->getRecord();
 
     expect($record->is($user))->toBeTrue();
     $this->assertDatabaseCount('users', 1);
