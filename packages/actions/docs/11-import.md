@@ -1251,7 +1251,7 @@ Cover the other combinations your application offers: create-only should leave m
 
 ### Testing hook side effects
 
-Use Laravel's fakes or database assertions for work your hooks perform. For example, if `PostImporter::afterSave()` dispatches `IndexImportedPost` with the saved post's ID, fake that job and assert its payload and count. Also submit a row that fails the importer's required `content` rule, checking that neither the post nor the job is created:
+Use Laravel's fakes or database assertions for work your hooks perform. For example, if `PostImporter::afterSave()` dispatches `IndexImportedPost` with the saved post's ID, fake that job and assert its payload and count. Import two posts for the same author so mistakenly dispatching the author's ID cannot satisfy both payload assertions. Also submit a row that fails the importer's required `content` rule, checking that neither the post nor the job is created:
 
 ```php
 use App\Filament\Imports\PostImporter;
@@ -1285,7 +1285,21 @@ it('indexes saved posts but not invalid rows', function () {
         'content' => 'A practical guide',
     ]);
     Bus::assertDispatched(IndexImportedPost::class, static fn (IndexImportedPost $job): bool => $job->postId === $record->getKey());
-    Bus::assertDispatchedTimes(IndexImportedPost::class, 1);
+
+    $secondRecord = $importer->import([
+        'title' => 'Updating posts',
+        'content' => 'A follow-up guide',
+        'author' => $author->email,
+    ])->assertImported()->getRecord();
+
+    expect($secondRecord->getKey())->not->toBe($record->getKey());
+    $this->assertDatabaseHas('posts', [
+        'id' => $secondRecord->getKey(),
+        'content' => 'A follow-up guide',
+        'author_id' => $author->getKey(),
+    ]);
+    Bus::assertDispatched(IndexImportedPost::class, static fn (IndexImportedPost $job): bool => $job->postId === $secondRecord->getKey());
+    Bus::assertDispatchedTimes(IndexImportedPost::class, 2);
 });
 ```
 

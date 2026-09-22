@@ -132,7 +132,21 @@ it('dispatches the application indexing job for the saved post but not for inval
         'content' => 'A practical guide',
     ]);
     Bus::assertDispatched(IndexImportedPost::class, static fn (IndexImportedPost $job): bool => $job->postId === $record->getKey());
-    Bus::assertDispatchedTimes(IndexImportedPost::class, 1);
+
+    $secondRecord = $importer->import([
+        'title' => 'Updating posts',
+        'content' => 'A follow-up guide',
+        'author' => $author->email,
+    ])->assertImported()->getRecord();
+
+    expect($secondRecord->getKey())->not->toBe($record->getKey());
+    $this->assertDatabaseHas('posts', [
+        'id' => $secondRecord->getKey(),
+        'content' => 'A follow-up guide',
+        'author_id' => $author->getKey(),
+    ]);
+    Bus::assertDispatched(IndexImportedPost::class, static fn (IndexImportedPost $job): bool => $job->postId === $secondRecord->getKey());
+    Bus::assertDispatchedTimes(IndexImportedPost::class, 2);
 });
 
 class PostRecipeImporter extends Importer
