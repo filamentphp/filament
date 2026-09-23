@@ -22,6 +22,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Exceptions;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\AssertionFailedError;
 
 use function Filament\Tests\livewire;
@@ -31,8 +33,18 @@ use function Pest\Laravel\assertDatabaseHas;
 uses(TestCase::class);
 
 beforeEach(function (): void {
+    // Keep fake upload paths within the `imports.file_path` column's length limit.
+    Storage::set('tmp-for-tests', Storage::build([
+        'driver' => 'local',
+        'root' => sys_get_temp_dir() . '/filament-imports-' . bin2hex(random_bytes(8)),
+    ]));
+
     app()->bind(Authenticatable::class, User::class);
     DispatchPostImporter::$connectionCalls = 0;
+});
+
+afterEach(function (): void {
+    File::deleteDirectory(Storage::disk('tmp-for-tests')->path(''));
 });
 
 it('runs synchronous imports and completion notifications with the original guard and one connection lookup', function (): void {
@@ -56,6 +68,7 @@ it('runs synchronous imports and completion notifications with the original guar
 
     $import = Import::query()->sole();
     expect($events)->toBe(['started', 'completed'])
+        ->and(strlen($import->file_path))->toBeLessThanOrEqual(255)
         ->and(DispatchPostImporter::$connectionCalls)->toBe(1)
         ->and($import->processed_rows)->toBe(2)
         ->and($import->successful_rows)->toBe(1)

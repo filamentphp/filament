@@ -12,6 +12,8 @@ use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertDatabaseCount;
@@ -20,8 +22,18 @@ use function Pest\Laravel\assertDatabaseHas;
 uses(TestCase::class);
 
 beforeEach(function (): void {
+    // Keep fake upload paths within the `imports.file_path` column's length limit.
+    Storage::set('tmp-for-tests', Storage::build([
+        'driver' => 'local',
+        'root' => sys_get_temp_dir() . '/filament-imports-' . bin2hex(random_bytes(8)),
+    ]));
+
     Bus::fake();
     Event::fake([ImportStarted::class]);
+});
+
+afterEach(function (): void {
+    File::deleteDirectory(Storage::disk('tmp-for-tests')->path(''));
 });
 
 it('submits a real `ImportAction` with CSV mapping and merged options without running the import', function (): void {
@@ -47,6 +59,7 @@ it('submits a real `ImportAction` with CSV mapping and merged options without ru
             ->and($import->user->is($user))->toBeTrue()
             ->and($import->file_name)->toBe('articles.csv')
             ->and($import->total_rows)->toBe(2)
+            ->and(strlen($import->file_path))->toBeLessThanOrEqual(255)
             ->and(file_get_contents($import->file_path))->toBe($csv)
             ->and($event->getColumnMap())->toBe(['title' => 'Article headline', 'content' => 'Article body'])
             ->and($event->getOptions())->toBe(['mode' => 'replace', 'source' => 'catalog', 'region' => 'Europe']);
