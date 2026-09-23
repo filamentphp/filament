@@ -134,11 +134,11 @@ export default function mountWrappers(host, framework, cases) {
         }
     })
     return {
-        update: () =>
+        update: (suffix = 'GBP') =>
             renderers.forEach((renderer) =>
                 renderer.update({
                     prefix: '£',
-                    suffix: 'GBP',
+                    suffix,
                     rich: true,
                     icons: true,
                     actions: true,

@@ -43,9 +43,11 @@ it('renders `InputWrapper` like Blade and reactively composes affixes without ch
         $page->assertScript($parity, true)->assertNoAccessibilityIssues();
 
         foreach (['react', 'vue', 'svelte'] as $framework) {
+            $page->script("window.wrapperInput = document.querySelector('[data-wrapper-row={$framework}] input')");
             $page->assertScript("document.querySelectorAll('[data-wrapper-row={$framework}] [data-ref=DIV]').length", 8)
                 ->fill("[data-wrapper-row={$framework}] > div:first-child input", '125')
                 ->click("[data-testid=update-{$framework}]")
+                ->assertScript("document.querySelector('[data-wrapper-row={$framework}] input') === window.wrapperInput && window.wrapperInput.value === '125'", true)
                 ->assertScript("document.querySelectorAll('[data-wrapper-row={$framework}] [data-state=changed]').length", 8)
                 ->assertScript(<<<JS
             [...document.querySelectorAll('[data-wrapper-row={$framework}] [data-state=changed]')].every(element => {
@@ -58,17 +60,23 @@ it('renders `InputWrapper` like Blade and reactively composes affixes without ch
                     && suffix.children[0].textContent === 'GBP'
                     && suffix.children[1].querySelector('svg') !== null
                     && suffix.children[2].querySelector('button').type === 'button'
+                    && element.classList.contains('fi-disabled') && element.classList.contains('fi-invalid')
+                    && !prefix.classList.contains('fi-inline') && suffix.classList.contains('fi-inline')
                     && !input.disabled && !input.hasAttribute('aria-invalid') && input.required;
             })
             JS, true)
                 ->assertNoAccessibilityIssues();
+            $page->click("[data-testid=currency-{$framework}]")
+                ->assertScript("[...document.querySelectorAll('[data-wrapper-row={$framework}] .fi-input-wrp-suffix .fi-input-wrp-label')].every(element => element.textContent === 'USD')", true);
             $page->script("document.querySelector('[data-wrapper-row={$framework}] button').click()");
             $page->assertScript("document.querySelector('[data-wrapper-row={$framework}] > div').dataset.clicked", 'true')
                 ->assertScript("document.querySelector('[data-wrapper-row={$framework}] > div').dataset.wrapperClicked", 'DIV')
                 ->assertScript("document.querySelector('[data-wrapper-row={$framework}] input').value", '125')
                 ->click("[data-testid=clear-{$framework}]")
+                ->assertScript("document.querySelector('[data-wrapper-row={$framework}] input') === window.wrapperInput && window.wrapperInput.value === '125'", true)
                 ->assertScript("[...document.querySelectorAll('[data-wrapper-row={$framework}] > div > div')].every(element => element.children.length === 1 && !element.hasAttribute('data-state') && element.querySelector('input').required)", true)
-                ->click("[data-testid=reset-{$framework}]");
+                ->click("[data-testid=reset-{$framework}]")
+                ->assertScript("document.querySelector('[data-wrapper-row={$framework}] input') === window.wrapperInput && window.wrapperInput.value === '125'", true);
         }
 
         $page->assertScript($parity, true)->assertNoSmoke()->assertNoAccessibilityIssues();

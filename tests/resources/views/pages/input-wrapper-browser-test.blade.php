@@ -58,6 +58,13 @@
                     {{ ucfirst($action) }} {{ ucfirst($framework) }} wrappers
                 </x-filament::button>
             @endforeach
+
+            <x-filament::button
+                data-testid="currency-{{ $framework }}"
+                x-on:click="renderer.update('USD')"
+            >
+                Change currency
+            </x-filament::button>
         </section>
     @endforeach
 </x-filament-panels::page>
