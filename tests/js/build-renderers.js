@@ -81,7 +81,13 @@ await buildViteRenderers(
     'build/js-input-wrapper-renderers',
 )
 
+await buildViteRenderers(
+    { input: 'tests/js/renderers/input.svelte.js' },
+    'build/js-input-renderers',
+)
+
 for (const component of [
+    'input',
     'input-wrapper',
     'icon',
     'avatar',
