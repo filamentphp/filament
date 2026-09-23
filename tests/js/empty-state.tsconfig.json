@@ -1,0 +1,9 @@
+{
+    "extends": "./avatar.tsconfig.json",
+    "include": [
+        "empty-state-consumers/**/*",
+        "../../packages/support/resources/js/react/EmptyState.tsx",
+        "../../packages/support/resources/js/vue/EmptyState.vue",
+        "../../packages/support/resources/js/svelte/EmptyState.svelte"
+    ]
+}

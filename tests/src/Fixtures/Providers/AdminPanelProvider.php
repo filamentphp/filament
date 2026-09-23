@@ -40,6 +40,7 @@ use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
 use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
+use Filament\Tests\Fixtures\Pages\EmptyStateBrowserTest;
 use Filament\Tests\Fixtures\Pages\FieldsetBrowserTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\IconBrowserTest;
@@ -143,6 +144,7 @@ class AdminPanelProvider extends PanelProvider
                 InputBrowserTest::class,
                 InputWrapperBrowserTest::class,
                 SelectBrowserTest::class,
+                EmptyStateBrowserTest::class,
                 BreadcrumbsBrowserTest::class,
                 FieldsetBrowserTest::class,
                 BuilderTest::class,

@@ -91,7 +91,13 @@ await buildViteRenderers(
     'build/js-select-renderers',
 )
 
+await buildViteRenderers(
+    { 'empty-state': 'tests/js/renderers/empty-state.svelte.js' },
+    'build/js-empty-state-renderers',
+)
+
 for (const component of [
+    'empty-state',
     'select',
     'input',
     'input-wrapper',
