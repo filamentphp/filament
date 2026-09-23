@@ -115,6 +115,7 @@ export default function mountIcons(host, framework, cases) {
                     src: '/icon-browser-test.svg',
                     alt: 'Saved image',
                     size: 'sm',
+                    loading: 'eager',
                 }),
             ),
         reset: () =>

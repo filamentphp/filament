@@ -67,7 +67,7 @@ it('renders `Icon` like Blade and updates content, sizes, native attributes, eve
 
         foreach (['react', 'vue', 'svelte'] as $framework) {
             $page->click("[data-testid=image-{$framework}]")
-                ->assertScript("[...document.querySelectorAll('[data-icon-row={$framework}] img')].filter(element => element.alt === 'Saved image' && !element.hasAttribute('data-state') && !element.hasAttribute('aria-label') && element.getBoundingClientRect().width === 16).length", 10);
+                ->assertScript("[...document.querySelectorAll('[data-icon-row={$framework}] img')].filter(element => element.alt === 'Saved image' && element.getAttribute('loading') === 'eager' && !element.hasAttribute('data-state') && !element.hasAttribute('aria-label') && element.getBoundingClientRect().width === 16).length", 10);
             $page->script("document.querySelector('[data-icon-row={$framework}] img').dispatchEvent(new MouseEvent('click', { bubbles: true }))");
             $page->assertScript("document.querySelector('[data-icon-row={$framework}] > div').dataset.clicked", 'IMG');
         }
@@ -78,6 +78,7 @@ it('renders `Icon` like Blade and updates content, sizes, native attributes, eve
             $page->click("[data-testid=reset-{$framework}]");
         }
         $page->assertScript($parity, true)
+            ->assertScript("[...document.querySelectorAll('[data-icon-row=react] > div')].map(element => element.dataset.ref).join(',')", 'SPAN,SPAN,SPAN,SPAN,SPAN,SPAN,SPAN,IMG,IMG,none')
             ->assertNoSmoke()
             ->assertNoAccessibilityIssues();
     }

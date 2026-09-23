@@ -21,7 +21,7 @@ class IconBrowserTest extends Page
             ['size' => 'lg'],
             ['size' => 'xl'],
             ['size' => '2xl', 'class' => 'custom-icon', 'role' => 'img', 'aria-label' => 'Saved', 'data-state' => 'waiting'],
-            ['src' => '/icon-browser-test.svg'],
+            ['src' => '/icon-browser-test.svg', 'loading' => 'lazy'],
             ['src' => '/icon-browser-test.svg', 'alt' => 'Saved image', 'size' => 'lg'],
             ['empty' => true],
         ];

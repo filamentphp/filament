@@ -9,7 +9,6 @@ interface IconProps extends /* @vue-ignore */ Omit<
     src?: string
     alt?: string
     size?: IconSize
-    loading?: 'eager' | 'lazy'
 }
 
 withDefaults(defineProps<IconProps>(), { alt: '', size: 'md' })
