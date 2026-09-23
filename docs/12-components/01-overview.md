@@ -22,6 +22,7 @@ The various packages in the Filament project can be used outside of a panel:
 
 Aside from the core packages, all Filament projects can also consume the Blade components that Filament uses internally:
 
+- [Actions layout](actions)
 - [Avatar](avatar)
 - [Badge](badge)
 - [Button](button)

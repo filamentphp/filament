@@ -1,0 +1,9 @@
+{
+    "extends": "./avatar.tsconfig.json",
+    "include": [
+        "actions-consumers/**/*",
+        "../../packages/support/resources/js/react/Actions.tsx",
+        "../../packages/support/resources/js/vue/Actions.vue",
+        "../../packages/support/resources/js/svelte/Actions.svelte"
+    ]
+}

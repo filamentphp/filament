@@ -101,7 +101,13 @@ await buildViteRenderers(
     'build/js-callout-renderers',
 )
 
+await buildViteRenderers(
+    { actions: 'tests/js/renderers/actions.svelte.js' },
+    'build/js-actions-renderers',
+)
+
 for (const component of [
+    'actions',
     'callout',
     'empty-state',
     'select',
