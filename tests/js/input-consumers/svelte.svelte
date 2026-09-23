@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ComponentProps } from 'svelte'
     import Input from '../../../packages/support/resources/js/svelte/Input.svelte'
-    let value = $state<string | number>()
+    let value = $state<string | number | null>(null)
     let element = $state<HTMLInputElement>()
     const invalid: ComponentProps<typeof Input> = {
         // @ts-expect-error Inline flags are boolean.

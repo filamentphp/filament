@@ -12,7 +12,7 @@
         inlinePrefix?: boolean
         inlineSuffix?: boolean
         element?: HTMLInputElement
-        value?: string | number
+        value?: string | number | null
         class?: string
     } = $props()
 </script>

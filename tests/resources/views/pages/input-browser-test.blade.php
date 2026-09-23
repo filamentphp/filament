@@ -56,6 +56,32 @@
             >
                 Enable
             </x-filament::button>
+            <x-filament::button
+                data-testid="text-{{ $framework }}"
+                x-on:click="renderer.update({ type: 'text' })"
+            >
+                Text type
+            </x-filament::button>
+            <x-filament::button
+                data-testid="number-{{ $framework }}"
+                x-on:click="renderer.update({ type: 'number' })"
+            >
+                Number type
+            </x-filament::button>
+            @if ($framework === 'vue')
+                <x-filament::button
+                    data-testid="number-modifier"
+                    x-on:click="renderer.update({ type: 'text', modifiers: { number: true } })"
+                >
+                    Number modifier
+                </x-filament::button>
+                <x-filament::button
+                    data-testid="trim-modifier"
+                    x-on:click="renderer.update({ type: 'text', modifiers: { trim: true } })"
+                >
+                    Trim modifier
+                </x-filament::button>
+            @endif
         </section>
     @endforeach
 </x-filament-panels::page>

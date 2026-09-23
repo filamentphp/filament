@@ -11,7 +11,7 @@ void invalid
 <template>
     <Input
         ref="input"
-        v-model="value"
+        v-model.number.trim="value"
         type="number"
         :defaultValue="0"
         inline-prefix

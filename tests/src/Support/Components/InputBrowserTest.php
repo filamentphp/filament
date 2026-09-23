@@ -51,9 +51,15 @@ it('preserves `Input` Blade hooks, native values, form semantics and identity ac
                 ->click("[data-testid=readonly-{$framework}]")
                 ->assertScript("{$input}.readOnly && !{$input}.disabled && new FormData({$input}.form).get('amount') === '17'", true)
                 ->click("[data-testid=enabled-{$framework}]");
-            $page->click("[data-input-row={$framework}] [data-testid=empty]");
+            if ($framework !== 'react') {
+                $page->assertScript("{$host}.dataset.callbackValue", $framework === 'svelte' ? '17' : '"17"');
+            }
+            $page->fill("[data-input-row={$framework}] [name=amount]", '');
             $page->assertScript("{$input}.value === '' && !{$input}.checkValidity()", true)
-                ->assertScript("{$host}.dataset.value", $framework === 'svelte' ? 'undefined' : '""');
+                ->assertScript("{$host}.dataset.value", $framework === 'svelte' ? 'null' : '""');
+            if ($framework !== 'react') {
+                $page->assertScript("{$host}.dataset.callbackValue", $framework === 'svelte' ? 'null' : '""');
+            }
             $page->click("[data-input-row={$framework}] [data-testid=submit]");
             $page->assertScript("{$host}.dataset.submission === undefined", true);
             $page->click("[data-input-row={$framework}] [data-testid=zero]");
@@ -72,11 +78,54 @@ it('preserves `Input` Blade hooks, native values, form semantics and identity ac
             $defaults = "{$host}.querySelector('[data-testid=uncontrolled]')";
             $page->assertScript("{$defaults}.elements.zero.value === '0' && {$defaults}.elements.empty.value === ''", true)
                 ->fill("[data-input-row={$framework}] [name=zero]", '23')
-                ->fill("[data-input-row={$framework}] [name=empty]", 'Temporary');
+                ->fill("[data-input-row={$framework}] [name=empty]", 'Temporary')
+                ->fill("[data-input-row={$framework}] [name=emptyNumber]", '19');
+            $page->script("{$defaults}.addEventListener('reset', event => event.preventDefault(), { once: true }); {$defaults}.reset()");
+            $page->assertScript("{$defaults}.elements.zero.value === '23' && {$defaults}.elements.empty.value === 'Temporary' && {$defaults}.elements.emptyNumber.value === '19'", true);
+            if ($framework === 'svelte') {
+                $page->assertScript("{$host}.dataset.emptyNumber", '19');
+            }
             $page->script("{$defaults}.reset()");
-            $page->assertScript("{$defaults}.elements.zero.value === '0' && {$defaults}.elements.empty.value === ''", true);
+            $page->assertScript("{$defaults}.elements.zero.value === '0' && {$defaults}.elements.empty.value === '' && {$defaults}.elements.emptyNumber.value === '' && !{$defaults}.elements.emptyNumber.checkValidity()", true);
+            if ($framework === 'svelte') {
+                $page->assertScript("{$host}.dataset.emptyNumber", 'null');
+            }
             $page->click("[data-testid=enabled-{$framework}]")
                 ->assertScript("{$defaults}.elements.zero.value === '0' && {$defaults}.elements.empty.value === ''", true);
+
+            foreach (['text' => '27', 'number' => '31'] as $type => $value) {
+                $page->click("[data-testid={$type}-{$framework}]")
+                    ->assertScript("{$input} === window.originalInput && {$input}.type === '{$type}'", true)
+                    ->fill("[data-input-row={$framework}] [name=amount]", $value)
+                    ->assertScript("{$host}.dataset.value", ($framework === 'svelte' && $type === 'number') ? $value : '"' . $value . '"');
+                if ($framework !== 'react') {
+                    $page->assertScript("{$host}.dataset.callbackValue", ($framework === 'svelte' && $type === 'number') ? $value : '"' . $value . '"');
+                }
+            }
+            $page->click("[data-testid=text-{$framework}]")
+                ->fill("[data-input-row={$framework}] [name=amount]", 'Drawing')
+                ->assertScript("{$input} === window.originalInput && {$input}.type === 'text'", true)
+                ->assertScript("{$host}.dataset.value", '"Drawing"');
+            if ($framework === 'vue') {
+                $page->click('[data-testid=number-modifier]')
+                    ->fill('[data-input-row=vue] [name=amount]', '12.5')
+                    ->assertScript("{$host}.dataset.value", '12.5')
+                    ->assertScript("{$host}.dataset.callbackValue", '12.5')
+                    ->fill('[data-input-row=vue] [name=amount]', '')
+                    ->assertScript("{$host}.dataset.value", '""')
+                    ->fill('[data-input-row=vue] [name=amount]', 'Drawing')
+                    ->assertScript("{$host}.dataset.value", '"Drawing"')
+                    ->click('[data-testid=trim-modifier]')
+                    ->fill('[data-input-row=vue] [name=amount]', '  Botanical drawing  ')
+                    ->assertScript("{$host}.dataset.value", '"Botanical drawing"')
+                    ->assertScript("{$host}.dataset.callbackValue", '"Botanical drawing"')
+                    ->assertScript("{$input}.hasAttribute('modelmodifiers')", false);
+                $page->script("{$input}.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true })); {$input}.value = '草'; {$input}.dispatchEvent(new InputEvent('input', { bubbles: true, isComposing: true }))");
+                $page->assertScript("{$host}.dataset.value", '"草"');
+                $page->script("{$input}.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }))");
+            }
+            $page->click("[data-testid=enabled-{$framework}]")
+                ->click("[data-input-row={$framework}] [data-testid=reset]");
         }
         $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }

@@ -15,6 +15,7 @@ interface InputProps extends /* @vue-ignore */ InputAttributes {
     inlinePrefix?: boolean
     inlineSuffix?: boolean
     modelValue?: string | number
+    modelModifiers?: { number?: boolean; trim?: boolean }
 }
 
 defineOptions({ inheritAttrs: false })
@@ -23,7 +24,7 @@ withDefaults(defineProps<InputProps>(), {
     inlineSuffix: false,
 })
 const emit = defineEmits<{
-    'update:modelValue': [value: string]
+    'update:modelValue': [value: string | number]
 }>()
 const element = ref<HTMLInputElement>()
 defineExpose({ element })

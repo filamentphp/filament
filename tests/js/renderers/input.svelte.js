@@ -23,6 +23,7 @@ export default function mountInput(host, framework) {
         Input,
         Wrapper,
         vue = false,
+        readValue,
     ) => {
         const wrap = (props, attributes) =>
             create(
@@ -58,7 +59,7 @@ export default function mountInput(host, framework) {
                     {
                         ref: (element) =>
                             report(vue ? element?.element : element, value),
-                        type: 'number',
+                        type: configuration.type ?? 'number',
                         name: 'amount',
                         'aria-label': 'Amount',
                         min: 0,
@@ -68,10 +69,14 @@ export default function mountInput(host, framework) {
                         inlinePrefix: configuration.inline,
                         onInput: (event) => {
                             host.dataset.inputEvent = event.currentTarget.value
+                            if (vue)
+                                host.dataset.callbackValue =
+                                    JSON.stringify(readValue())
                         },
                         ...(vue
                             ? {
                                   modelValue: value,
+                                  modelModifiers: configuration.modifiers,
                                   'onUpdate:modelValue': update,
                               }
                             : {
@@ -154,6 +159,15 @@ export default function mountInput(host, framework) {
                             defaultValue: '',
                         },
                     ),
+                    wrap(
+                        { key: 'emptyNumber' },
+                        {
+                            type: 'number',
+                            name: 'emptyNumber',
+                            'aria-label': 'Empty number',
+                            required: true,
+                        },
+                    ),
                     create(
                         'button',
                         { key: 'reset', type: 'reset' },
@@ -194,6 +208,7 @@ export default function mountInput(host, framework) {
                     VueInput,
                     VueWrapper,
                     true,
+                    () => value.value,
                 ),
         })
         application.mount(host)
@@ -205,8 +220,12 @@ export default function mountInput(host, framework) {
     const props = $state({
         configuration: {},
         report,
-        reportInput: (event) => {
+        reportInput: (event, value) => {
             host.dataset.inputEvent = event.currentTarget.value
+            host.dataset.callbackValue = JSON.stringify(value)
+        },
+        reportEmptyNumber: (value) => {
+            host.dataset.emptyNumber = JSON.stringify(value)
         },
     })
     const component = mount(SvelteInput, { target: host, props })

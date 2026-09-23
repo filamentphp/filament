@@ -58,7 +58,7 @@ const price = ref('0')
 </template>
 ```
 
-`v-model` accepts strings or numbers and emits the DOM string on `input`, including `''` when empty. Unlike Vue's native input directive, this component does not automatically coerce numeric types or implement `.number`, `.trim`, or `.lazy` modifiers. Convert explicitly in your host if needed. Native `@input`, `@change`, and other listeners still receive DOM events. A component template ref exposes the native input as `.element`. For uncontrolled inputs omit `v-model` / `value` and use `:defaultValue="initialValue"`. `modelValue` takes precedence over `value` when supplied. Native reset does not emit `input` or update your Vue model: reset host state too, or cancel reset and restore all fields explicitly.
+`v-model` accepts strings or numbers and emits the DOM string on `input`, including `''` when empty. Numeric input types alone do not enable coercion. Vue applies `.number` and `.trim` to the component's model events: `.number` converts parseable values to numbers but keeps empty or nonnumeric strings, and `.trim` removes surrounding whitespace. `.lazy` is not supported. Model updates also include intermediate IME composition input; this is not the composition buffering of Vue's native `v-model` directive. Native `@input`, `@change`, and other listeners still receive DOM events. A component template ref exposes the native input as `.element`. For uncontrolled inputs omit `v-model` / `value` and use `:defaultValue="initialValue"`. `modelValue` takes precedence over `value` when supplied. Native reset does not emit `input` or update your Vue model: reset host state too, or cancel reset and restore all fields explicitly.
 
 ### Using Svelte
 
@@ -74,10 +74,12 @@ const price = ref('0')
 </InputWrapper>
 ```
 
-Use `bind:value` and optionally `bind:element` for the native input. Svelte's native value binding converts `number` and `range` inputs to numbers; an empty number input produces `undefined`. Other input types produce strings. `defaultValue` supplies the native reset value, and Svelte synchronizes bound state on reset. Omit `value` / `bind:value` for an internally managed input initialized by `defaultValue`. Native events such as `oninput` are forwarded.
+Use `bind:value` and optionally `bind:element` for the native input. In the tested Svelte 5.57 versions, native value binding converts `number` and `range` inputs to numbers and converts an empty numeric value to `null`. Other input types produce strings. Include `null` in typed numeric models. `defaultValue` supplies the native reset value, and Svelte synchronizes bound state on uncancelled reset. Omit `value` / `bind:value` for an internally managed input initialized by `defaultValue`. Native events such as `oninput` are forwarded.
 
 ### Choosing native types and form behavior
 
 Use text-like inputs (`text`, `email`, `number`, `password`, `search`, `tel`, `url`, date/time types), or native `color` / `range` controls. Native attributes and browser sanitization determine their values and validation; there is no cross-framework numeric or date conversion layer. Although native type attributes are forwarded, use `Checkbox` / `Radio` for checked or group bindings and native file/button controls for files and actions: `Input`'s value API is not a checked, files, or group API.
+
+Supply valid explicit defaults for `color`, `range`, and date/time controls when you need predictable reset state. Browsers sanitize missing or invalid defaults; Svelte's reset binding can read the raw `defaultValue`, so host state may differ from the sanitized DOM value. The adapter does not normalize these differences. Changing `type` preserves the element, but does not promise immediate host-state conversion: subsequent input follows the new type's native framework binding.
 
 `name`, `form`, `required`, `min`, `max`, `step`, `pattern`, `disabled`, and `readOnly` (React) / `readonly` (Vue and Svelte) retain native semantics. Disabled fields are excluded from `FormData`; read-only fields are included. Submission values are strings, including `'0'`; empty is not zero. Updating props does not replace the input node. The host owns external state synchronization, submission, reset policy, and validation messages.

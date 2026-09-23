@@ -1,10 +1,12 @@
 <script>
     import Input from '../../../packages/support/resources/js/svelte/Input.svelte'
     import InputWrapper from '../../../packages/support/resources/js/svelte/InputWrapper.svelte'
-    let { configuration, report, reportInput } = $props()
+    let { configuration, report, reportInput, reportEmptyNumber } = $props()
     let amount = $state(0)
+    let emptyNumber = $state(null)
     let element = $state()
     $effect(() => report(element, amount))
+    $effect(() => reportEmptyNumber(emptyNumber))
 </script>
 
 <form
@@ -21,7 +23,7 @@
         <Input
             bind:element
             bind:value={amount}
-            type="number"
+            type={configuration.type ?? 'number'}
             name="amount"
             aria-label="Amount"
             min="0"
@@ -30,7 +32,7 @@
             disabled={configuration.disabled}
             readonly={configuration.readOnly}
             inlinePrefix={configuration.inline}
-            oninput={reportInput}
+            oninput={(event) => reportInput(event, amount)}
         />
     </InputWrapper>
     <InputWrapper
@@ -56,10 +58,8 @@
     <button type="button" data-testid="zero" onclick={() => (amount = 0)}
         >Zero</button
     >
-    <button
-        type="button"
-        data-testid="empty"
-        onclick={() => (amount = undefined)}>Empty</button
+    <button type="button" data-testid="empty" onclick={() => (amount = null)}
+        >Empty</button
     >
 </form>
 <form data-testid="uncontrolled">
@@ -76,6 +76,15 @@
             name="empty"
             aria-label="Uncontrolled text"
             defaultValue=""
+        /></InputWrapper
+    >
+    <InputWrapper
+        ><Input
+            bind:value={emptyNumber}
+            type="number"
+            name="emptyNumber"
+            aria-label="Empty number"
+            required
         /></InputWrapper
     >
     <button type="reset">Reset uncontrolled</button>
