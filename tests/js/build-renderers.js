@@ -71,7 +71,13 @@ await buildViteRenderers(
     'build/js-radio-renderers',
 )
 
+await buildViteRenderers(
+    { icon: 'tests/js/renderers/icon.svelte.js' },
+    'build/js-icon-renderers',
+)
+
 for (const component of [
+    'icon',
     'avatar',
     'breadcrumbs',
     'checkbox',

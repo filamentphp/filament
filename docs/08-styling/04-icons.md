@@ -84,6 +84,59 @@ Action::make('star')
     ->icon('icon-star')
 ```
 
+## Using JavaScript components
+
+You can import `Icon` into your React, Vue, or Svelte renderer. These typed source components work with plain JavaScript and TypeScript through your application's existing framework build and Filament theme CSS. The examples assume your file is in `resources/js/`; adjust the vendor path for other directories.
+
+Pass host-owned SVG content as React children, a Vue default slot, or Svelte children:
+
+```jsx
+import React from 'react'
+import Icon from '../../vendor/filament/support/resources/js/react/Icon'
+
+<Icon size="lg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="m5 12 4 4L19 6" />
+    </svg>
+</Icon>
+```
+
+```vue
+<script setup>
+import Icon from '../../vendor/filament/support/resources/js/vue/Icon.vue'
+</script>
+
+<template>
+    <Icon size="lg" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="m5 12 4 4L19 6" />
+        </svg>
+    </Icon>
+</template>
+```
+
+```svelte
+<script>
+    import Icon from '../../vendor/filament/support/resources/js/svelte/Icon.svelte'
+</script>
+
+<Icon size="lg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="m5 12 4 4L19 6" />
+    </svg>
+</Icon>
+```
+
+The `size` prop accepts `xs`, `sm`, `md` (default), `lg`, `xl`, and `2xl`, matching PHP's `IconSize` enum. `Icon` renders a `span` with `fi-icon fi-size-*`, like `generate_icon_html()` with `Htmlable` content. The existing theme sizes a direct SVG child. You can use your framework's icon-library component in place of the SVG if it renders an SVG root, including Heroicons or Lucide. Components with another wrapper or inline width/height styles may need host-side adjustment. `size` changes the CSS dimensions, not the selected artwork or stroke width.
+
+To render an image, pass `src` and optionally `alt`: `<Icon src="/images/check.svg" alt="Saved" size="sm" />`. This renders an `img` instead of a span; `src` takes precedence over children. Images default to `alt=""` for decorative use. Without `src` or children, no element is rendered. A provided but empty slot/snippet can still render an empty span.
+
+Native attributes and events reach the span or image, not the nested SVG. Use `className` in React and `class` in Vue or Svelte. React forwards its ref to the current `HTMLSpanElement` or `HTMLImageElement`; changing between content and image replaces that element. Put SVG-specific attributes such as `viewBox`, `stroke`, or `fill` on your SVG or icon-library component.
+
+For decorative content, set `aria-hidden="true"` on `Icon`. For a standalone meaningful SVG, use `role="img"` and `aria-label="Saved"` on `Icon`, and hide the child SVG from assistive technology to avoid duplicate announcements. For images, use `alt`. Interactive icons belong inside a named button or link; adding a click listener to an icon does not make it an accessible control.
+
+PHP icon names, Blade discovery, `ScalableIcon`, and `FilamentIcon` aliases cannot resolve in the browser. Select the component or URL in your host renderer, including any size-specific artwork or alias override, rather than passing an `icon` or `alias` string. There is no browser registry or raw HTML requirement.
+
 ## Replacing the default icons
 
 Filament includes an icon management system that allows you to replace any icons that are used by default in the UI with your own. This happens in the `boot()` method of any service provider, like `AppServiceProvider`, or even a dedicated service provider for icons. If you wanted to build a plugin to replace Heroicons with a different set, you could absolutely do that by creating a Laravel package with a similar service provider.
