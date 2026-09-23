@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import { execFileSync } from 'node:child_process'
 import { build } from 'esbuild'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -88,4 +89,79 @@ test('loading section normalizes scalar and responsive grid values like Blade', 
         getLoadingSectionLayout({ columnSpan: null, columnStart: '' }),
         getLoadingSectionLayout({}),
     )
+})
+
+test('column starts match PHP integer coercion and reject nonnumeric span keywords', () => {
+    for (const columnStart of [NaN, Infinity, -Infinity]) {
+        assert.throws(() => getLoadingSectionLayout({ columnStart }), TypeError)
+    }
+    const values = [
+        '1e1',
+        '2.9',
+        '-2.9',
+        '  +03  ',
+        '.5',
+        '0.0',
+        2.9,
+        0.5,
+        0,
+        '0',
+        null,
+        '',
+        'full',
+        'hidden',
+        '0x10',
+        ' ',
+        'Infinity',
+        '1e40',
+        '\t3\n',
+        '\u00a03',
+        '3\u00a0',
+    ]
+    const expected = JSON.parse(
+        execFileSync(
+            'php',
+            [
+                '-r',
+                `
+        require 'vendor/autoload.php';
+        $results = [];
+        foreach (json_decode($argv[1]) as $value) {
+            foreach ([$value, ['lg' => $value]] as $start) {
+                try {
+                    $results[] = (new Filament\\Support\\View\\ComponentAttributeBag)->gridColumn([], $start)->get('style', '');
+                } catch (TypeError $exception) {
+                    $results[] = 'TypeError';
+                }
+            }
+        }
+        echo json_encode($results);
+    `,
+                JSON.stringify(values),
+            ],
+            { encoding: 'utf8' },
+        ),
+    )
+    // Check the independent PHP reference's significant coercions explicitly.
+    assert.equal(expected[0], '--col-start-lg: 10;')
+    assert.equal(expected[4], '--col-start-lg: -2;')
+    assert.equal(expected[24], 'TypeError')
+    values
+        .flatMap((value) => [value, { lg: value }])
+        .forEach((columnStart, index) => {
+            if (expected[index] === 'TypeError') {
+                assert.throws(
+                    () => getLoadingSectionLayout({ columnStart }),
+                    TypeError,
+                )
+            } else {
+                const { style } = getLoadingSectionLayout({ columnStart })
+                assert.equal(
+                    style['--col-start-lg'] === undefined
+                        ? ''
+                        : `--col-start-lg: ${style['--col-start-lg']};`,
+                    expected[index],
+                )
+            }
+        })
 })

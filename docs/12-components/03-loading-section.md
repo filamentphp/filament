@@ -18,7 +18,9 @@ The height defaults to `8rem`. Set `height` to a CSS length and `loadingLabel` t
 
 ## Positioning the placeholder
 
-Use `columnSpan` and `columnStart` (`column-span` and `column-start` in Blade or Vue) with Filament's existing grid. Scalars apply at `lg`; objects map breakpoints such as `default`, `sm`, `md`, `lg`, `xl`, and `2xl` to values. Column spans also accept `full` and `hidden`. The adapters emit the same grid classes and CSS variables as Blade; they do not create a grid or additional CSS. Only breakpoints present in your theme take effect.
+Use `columnSpan` and `columnStart` (`column-span` and `column-start` in Blade or Vue) with Filament's existing grid. Scalars apply at `lg`; objects map breakpoints such as `default`, `sm`, `md`, `lg`, `xl`, and `2xl` to values. The adapters emit the same grid classes and CSS variables as Blade; they do not create a grid or additional CSS. Only breakpoints present in your theme take effect. Container breakpoints such as `@sm` require an ancestor with `container-type: inline-size`.
+
+Column spans accept `full`. Only `columnSpan={{ default: 'hidden' }}` hides the placeholder. A scalar `hidden` applies at `lg` and does **not** hide it. Column starts accept numbers and decimal numeric strings, including exponent notation: `'1e1'` becomes `10`, and `'2.9'` truncates to `2`, matching PHP's integer coercion. Nonnumeric starts such as `full` and `hidden` throw `TypeError`; they are not start keywords. Values must fit a PHP integer, and JavaScript numbers remain subject to its numeric precision limits.
 
 ## Using loading sections in React, Vue, and Svelte
 

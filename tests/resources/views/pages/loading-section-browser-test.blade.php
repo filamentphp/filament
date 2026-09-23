@@ -8,7 +8,13 @@
         <h2>Blade</h2>
         <div data-loading-section-row="blade">
             @foreach ($this->getLoadingSectionCases() as $attributes)
-                <div>
+                <div
+                    class="fi-grid"
+                    style="
+                        --cols-default: repeat(4, minmax(0, 1fr));
+                        container-type: inline-size;
+                    "
+                >
                     <x-filament::loading-section
                         :attributes="new ComponentAttributeBag($attributes)"
                     />

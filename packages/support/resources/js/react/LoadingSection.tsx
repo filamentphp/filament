@@ -1,4 +1,9 @@
-import { createElement, forwardRef, type ComponentPropsWithoutRef } from 'react'
+import {
+    createElement,
+    forwardRef,
+    type ComponentPropsWithoutRef,
+    type CSSProperties,
+} from 'react'
 import {
     getLoadingSectionLayout,
     type LoadingSectionOptions,
@@ -6,9 +11,13 @@ import {
 
 export type LoadingSectionProps = Omit<
     ComponentPropsWithoutRef<'div'>,
-    'children' | 'dangerouslySetInnerHTML'
+    'children' | 'dangerouslySetInnerHTML' | 'style'
 > &
-    LoadingSectionOptions
+    LoadingSectionOptions & {
+        style?: CSSProperties & {
+            [property: `--${string}`]: string | number | undefined
+        }
+    }
 
 export default forwardRef<HTMLDivElement, LoadingSectionProps>(
     function LoadingSection(

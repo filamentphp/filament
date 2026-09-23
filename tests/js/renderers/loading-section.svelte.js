@@ -9,6 +9,9 @@ import SvelteLoadingSection from './loading-section.svelte'
 export default function mountLoadingSections(host, framework, cases) {
     const renderers = cases.map((initial) => {
         const container = document.createElement('div')
+        container.className = 'fi-grid'
+        container.style.cssText =
+            '--cols-default: repeat(4, minmax(0, 1fr)); container-type: inline-size'
         host.append(container)
         const onElement = (element) => {
             container.element = element
@@ -16,8 +19,14 @@ export default function mountLoadingSections(host, framework, cases) {
         const onClick = (event) => {
             container.dataset.target = event.currentTarget.tagName
         }
-        const prepare = ({ class: className, ...attributes }) => ({
+        const prepare = ({ class: className, style, ...attributes }) => ({
             ...attributes,
+            style:
+                framework === 'svelte' && style
+                    ? Object.entries(style)
+                          .map(([name, value]) => `${name}: ${value}`)
+                          .join('; ')
+                    : style,
             [framework === 'react' ? 'className' : 'class']: className,
             [framework === 'svelte' ? 'onclick' : 'onClick']: onClick,
         })
@@ -66,16 +75,15 @@ export default function mountLoadingSections(host, framework, cases) {
             props,
         })
         return {
-            update: (attributes) =>
+            update: (attributes) => {
+                for (const name of Object.keys(props)) {
+                    if (name !== 'onElement') delete props[name]
+                }
                 Object.assign(props, {
                     state: 'loading',
-                    height: undefined,
-                    columnSpan: undefined,
-                    columnStart: undefined,
-                    loadingLabel: undefined,
-                    title: undefined,
                     ...prepare(attributes),
-                }),
+                })
+            },
             destroy: () => unmount(component),
         }
     })

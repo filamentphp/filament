@@ -9,9 +9,9 @@ interface LoadingSectionProps extends /* @vue-ignore */ Omit<
     columnSpan?: number | string | null | Record<string, number | string | null>
     columnStart?:
         | number
-        | string
+        | `${number}`
         | null
-        | Record<string, number | string | null>
+        | Record<string, number | `${number}` | null>
     height?: string | null
     loadingLabel?: string | null
 }
