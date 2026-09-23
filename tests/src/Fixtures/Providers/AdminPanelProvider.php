@@ -45,6 +45,7 @@ use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
 use Filament\Tests\Fixtures\Pages\IconBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
+use Filament\Tests\Fixtures\Pages\InputWrapperBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsComponentBrowserTest;
 use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
 use Filament\Tests\Fixtures\Pages\JsWidgetBrowserTest;
@@ -137,6 +138,7 @@ class AdminPanelProvider extends PanelProvider
                 AvatarBrowserTest::class,
                 LoadingIndicatorBrowserTest::class,
                 IconBrowserTest::class,
+                InputWrapperBrowserTest::class,
                 BreadcrumbsBrowserTest::class,
                 FieldsetBrowserTest::class,
                 BuilderTest::class,

@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "jsx": "react-jsx"
+    },
+    "vueCompilerOptions": { "strictTemplates": true },
+    "include": [
+        "input-wrapper-consumers/**/*",
+        "../../packages/support/resources/js/react/InputWrapper.tsx",
+        "../../packages/support/resources/js/vue/InputWrapper.vue",
+        "../../packages/support/resources/js/svelte/InputWrapper.svelte"
+    ]
+}

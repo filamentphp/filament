@@ -124,3 +124,63 @@ Affix icons are gray by default, but you may set a different color using the `pr
 ```
 
 <AutoScreenshot name="components/input/suffix-icon-color" alt="An input with a colored suffix icon" version="4.x" />
+
+## Using the wrapper in JavaScript
+
+You can import `InputWrapper` directly into a React, Vue, or Svelte renderer. These typed components also work in plain JavaScript projects. Load your Filament theme as usual; the adapters use the same `fi-input-wrp` markup and CSS hooks as Blade. These examples assume your file is in `resources/js/`; adjust the vendor path for other directories.
+
+```jsx
+import InputWrapper from '../../vendor/filament/support/resources/js/react/InputWrapper'
+import Icon from '../../vendor/filament/support/resources/js/react/Icon'
+
+<InputWrapper
+    prefix="£"
+    suffix="GBP"
+    inlinePrefix
+    disabled={disabled}
+    valid={valid}
+    suffixIcon={<Icon src="/icons/currency.svg" />}
+>
+    <input className="fi-input" aria-label="Price" type="number" required disabled={disabled} aria-invalid={!valid} />
+</InputWrapper>
+```
+
+```vue
+<script setup>
+import InputWrapper from '../../vendor/filament/support/resources/js/vue/InputWrapper.vue'
+import Icon from '../../vendor/filament/support/resources/js/vue/Icon.vue'
+</script>
+
+<template>
+    <InputWrapper prefix="£" suffix="GBP" inline-prefix>
+        <template #suffixIcon><Icon src="/icons/currency.svg" /></template>
+        <input class="fi-input" aria-label="Price" type="number" required />
+    </InputWrapper>
+</template>
+```
+
+```svelte
+<script>
+    import InputWrapper from '../../vendor/filament/support/resources/js/svelte/InputWrapper.svelte'
+    import Icon from '../../vendor/filament/support/resources/js/svelte/Icon.svelte'
+</script>
+
+<InputWrapper prefix="£" suffix="GBP" inlinePrefix>
+    {#snippet suffixIcon()}<Icon src="/icons/currency.svg" />{/snippet}
+    <input class="fi-input" aria-label="Price" type="number" required />
+</InputWrapper>
+```
+
+### Composing affix content
+
+All adapters support `disabled` (default `false`), `valid` (default `true`), `inlinePrefix`, and `inlineSuffix` (both default `false`). React accepts nodes for `prefix`, `suffix`, `prefixIcon`, `suffixIcon`, `prefixActions`, and `suffixActions`. Vue accepts text props for `prefix` and `suffix`, or named slots with those six names. Svelte accepts text or snippets for `prefix` and `suffix`, and snippets for icons and actions. Use the default slot, React children, or Svelte children for your native input or other control.
+
+Text affixes are escaped and whitespace-only strings do not create labels. Rich affixes are wrapped in `fi-input-wrp-label`. Icon slots render directly: supply the [Icon](../styling/icons#using-javascript-components) adapter to retain the icon theme hooks, or a `LoadingIndicator` while your host is busy. Use action slots for your own buttons; the prefix order is actions, icon, label, and the suffix order is label, icon, actions. Remove a conditional slot or snippet itself when an affix should disappear; a supplied slot that renders nothing still reserves its container.
+
+Native attributes and events apply to the outer `div`. React forwards `ref`, Vue exposes its root through the component ref's `$el`, and Svelte supports `bind:element`. Unlike Blade, a supplied native `tabindex` is preserved. No wrapper click automatically focuses the input; wire an explicit handler or label in your host if needed.
+
+### Owning input semantics and server behavior
+
+`disabled` and `valid` only change the wrapper's appearance. You must separately supply the input's `disabled`, `required`, value bindings, `aria-invalid`, label, and error description. The wrapper does not mutate descendant inputs, cancel their events, or change native validation. The examples use a native input, not a JavaScript Input component.
+
+PHP `Action` objects, visibility checks, icon names and aliases, and Livewire `wire:target` loading and delay behavior remain host-owned. There are no browser equivalents of `prefixIconAlias`, `suffixIconAlias`, `alpineDisabled`, or `alpineValid`; pass reactive booleans and rendered content instead. Icon colors belong to the supplied icon's classes or styles. If you compose a loading indicator, you also own its conditional rendering and accessible status announcement; adding a `wire:target` attribute alone does not start loading behavior in these adapters.
