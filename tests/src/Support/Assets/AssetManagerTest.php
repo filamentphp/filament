@@ -6,12 +6,38 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
+use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
+use Filament\Support\View\Components\BadgeComponent;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\View;
+use Illuminate\View\View as ViewInstance;
 
 uses(TestCase::class);
 
 beforeEach(function (): void {
     $this->manager = new AssetManager;
+});
+
+it('renders `Badge` color classes from registered palettes and container bindings with existing script data', function (): void {
+    FilamentColor::register(['brand' => Color::Violet]);
+    app()->bind(BadgeComponent::class, static fn () => new class extends BadgeComponent
+    {
+        public function getColorMap(array $color): array
+        {
+            return ['text' => 950, 'dark:text' => 50];
+        }
+    });
+    $data = null;
+    View::composer('filament::assets', function (ViewInstance $view) use (&$data): void {
+        $data = $view->getData()['data'];
+    });
+    $this->manager->registerScriptData(['locale' => 'fr']);
+    $this->manager->renderScripts();
+
+    expect($data['locale'])->toBe('fr')
+        ->and($data['supportComponentColors']['badge']['brand'])->toBe(['fi-color', 'fi-color-brand', 'fi-text-color-950', 'dark:fi-text-color-50'])
+        ->and($data['supportComponentColors']['badge']['gray'])->toBe([]);
 });
 
 describe('app version', function (): void {

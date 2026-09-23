@@ -4,6 +4,7 @@ namespace Filament\Support\Assets;
 
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Support\Arr;
 use LogicException;
 
@@ -201,9 +202,20 @@ class AssetManager
             );
         }
 
+        $badgeColors = [];
+
+        foreach (array_keys(FilamentColor::getColors()) as $color) {
+            $badgeColors[$color] = FilamentColor::getComponentClasses(BadgeComponent::class, $color);
+        }
+
         return view('filament::assets', [
             'assets' => $assets,
-            'data' => $this->getScriptData($packages),
+            'data' => [
+                ...$this->getScriptData($packages),
+                'supportComponentColors' => [
+                    'badge' => $badgeColors,
+                ],
+            ],
         ])->render();
     }
 

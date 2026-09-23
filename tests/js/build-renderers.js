@@ -111,7 +111,13 @@ await buildViteRenderers(
     'build/js-loading-section-renderers',
 )
 
+await buildViteRenderers(
+    { badge: 'tests/js/renderers/badge.svelte.js' },
+    'build/js-badge-renderers',
+)
+
 for (const component of [
+    'badge',
     'loading-section',
     'actions',
     'callout',

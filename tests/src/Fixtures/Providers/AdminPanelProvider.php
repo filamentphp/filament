@@ -27,6 +27,7 @@ use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\AvatarBrowserTest;
+use Filament\Tests\Fixtures\Pages\BadgePrimitiveBrowserTest;
 use Filament\Tests\Fixtures\Pages\BreadcrumbsBrowserTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
@@ -155,6 +156,7 @@ class AdminPanelProvider extends PanelProvider
                 CalloutPrimitiveBrowserTest::class,
                 ActionsPrimitiveBrowserTest::class,
                 LoadingSectionBrowserTest::class,
+                BadgePrimitiveBrowserTest::class,
                 CheckboxListTest::class,
                 CheckboxPrimitiveBrowserTest::class,
                 RadioPrimitiveBrowserTest::class,
