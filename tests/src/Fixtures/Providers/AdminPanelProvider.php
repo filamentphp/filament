@@ -63,6 +63,7 @@ use Filament\Tests\Fixtures\Pages\RadioTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
+use Filament\Tests\Fixtures\Pages\SelectBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
@@ -141,6 +142,7 @@ class AdminPanelProvider extends PanelProvider
                 IconBrowserTest::class,
                 InputBrowserTest::class,
                 InputWrapperBrowserTest::class,
+                SelectBrowserTest::class,
                 BreadcrumbsBrowserTest::class,
                 FieldsetBrowserTest::class,
                 BuilderTest::class,

@@ -86,7 +86,13 @@ await buildViteRenderers(
     'build/js-input-renderers',
 )
 
+await buildViteRenderers(
+    { select: 'tests/js/renderers/select.svelte.js' },
+    'build/js-select-renderers',
+)
+
 for (const component of [
+    'select',
     'input',
     'input-wrapper',
     'icon',
