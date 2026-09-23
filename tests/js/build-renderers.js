@@ -106,7 +106,13 @@ await buildViteRenderers(
     'build/js-actions-renderers',
 )
 
+await buildViteRenderers(
+    { 'loading-section': 'tests/js/renderers/loading-section.svelte.js' },
+    'build/js-loading-section-renderers',
+)
+
 for (const component of [
+    'loading-section',
     'actions',
     'callout',
     'empty-state',

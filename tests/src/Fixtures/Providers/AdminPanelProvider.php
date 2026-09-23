@@ -55,6 +55,7 @@ use Filament\Tests\Fixtures\Pages\JsFieldFrameworkTest;
 use Filament\Tests\Fixtures\Pages\JsWidgetBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\LoadingIndicatorBrowserTest;
+use Filament\Tests\Fixtures\Pages\LoadingSectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
@@ -153,6 +154,7 @@ class AdminPanelProvider extends PanelProvider
                 CalloutBrowserTest::class,
                 CalloutPrimitiveBrowserTest::class,
                 ActionsPrimitiveBrowserTest::class,
+                LoadingSectionBrowserTest::class,
                 CheckboxListTest::class,
                 CheckboxPrimitiveBrowserTest::class,
                 RadioPrimitiveBrowserTest::class,

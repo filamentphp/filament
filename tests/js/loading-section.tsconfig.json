@@ -1,0 +1,9 @@
+{
+    "extends": "./avatar.tsconfig.json",
+    "include": [
+        "loading-section-consumers/**/*",
+        "../../packages/support/resources/js/react/LoadingSection.tsx",
+        "../../packages/support/resources/js/vue/LoadingSection.vue",
+        "../../packages/support/resources/js/svelte/LoadingSection.svelte"
+    ]
+}
