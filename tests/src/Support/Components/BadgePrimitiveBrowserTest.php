@@ -154,11 +154,14 @@ it('renders `Badge` like Blade and handles native activation, reactive loading, 
             $page->assertScript("{$host}.children[1].element.tagName", 'SPAN');
             $page->keys('[data-testid="shortcut-input"]', 'Alt+b');
             $page->assertScript("{$container}.dataset.clicks", '2');
-            $page->script("{$host}.update({tag: 'button', keyBindings: ['g p'], tooltip: 'Sequence shortcut'})");
+            $page->script("{$host}.update({tag: 'button', controlledSequence: true, tooltip: 'Sequence shortcut'})");
             $page->assertScript("{$container}.element._tippy?.props.content", 'Sequence shortcut');
             $page->keys('[data-testid="shortcut-input"]', 'Alt+b');
             $page->assertScript("{$container}.dataset.clicks", '2');
-            $page->keys('[data-testid="shortcut-input"]', ['g', 'p']);
+            $sequenceInput = '[data-badge-row="' . $framework . '"] [data-testid="sequence-input"]';
+            $page->keys($sequenceInput, 'g');
+            $page->assertScript("{$host}.querySelector('[data-testid=sequence-value]').textContent", 'g');
+            $page->keys($sequenceInput, 'p');
             $page->assertScript("{$container}.dataset.clicks", '3');
             $page->script("{$host}.update({tag: 'button', loading: true, keyBindings: ['alt+b']})");
             $page->assertScript("{$container}.element.disabled && {$container}.element.getAttribute('aria-busy') === 'true' && {$container}.element.contains({$container}.label)", true);

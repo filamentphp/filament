@@ -47,6 +47,7 @@
             | { tag: 'a' | 'button'; onDelete?: never }
         ) = $props()
     let blocked = $derived(disabled || loading)
+    let keyBindingsSignature = $derived(JSON.stringify(keyBindings ?? []))
     let validatedTag = $derived.by(() => {
         if (onDelete && tag !== 'span')
             throw new Error('Deletable badges must use tag="span".')
@@ -56,7 +57,7 @@
         if (element)
             return interactive(element, {
                 tooltip,
-                keyBindings,
+                keyBindings: JSON.parse(keyBindingsSignature),
                 disabled: blocked,
             })
     })

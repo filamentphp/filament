@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+    computed,
     ref,
     watchEffect,
     type AnchorHTMLAttributes,
@@ -37,6 +38,9 @@ const props = withDefaults(defineProps<BadgeProps>(), {
     deleteLabel: 'Delete',
 })
 const element = ref<HTMLElement>()
+const keyBindingsSignature = computed(() =>
+    JSON.stringify(props.keyBindings ?? []),
+)
 defineExpose({ element })
 defineSlots<{ default?(): unknown; icon?(): unknown }>()
 watchEffect((cleanup) => {
@@ -46,7 +50,7 @@ watchEffect((cleanup) => {
         cleanup(
             interactive(element.value, {
                 tooltip: props.tooltip,
-                keyBindings: props.keyBindings,
+                keyBindings: JSON.parse(keyBindingsSignature.value),
                 disabled: props.disabled || props.loading,
             }),
         )

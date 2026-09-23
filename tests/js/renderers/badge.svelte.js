@@ -1,4 +1,4 @@
-import { createElement } from 'react'
+import { createElement, Fragment, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createApp, h, shallowRef } from 'vue'
 import { mount, unmount } from 'svelte'
@@ -27,36 +27,81 @@ export default function mountBadges(host, framework, cases) {
                 Number(container.dataset.deletes ?? 0) + 1,
             )
         }
-        const prepare = ({ deletable, ...attributes }) => ({
+        const prepare = ({ deletable, controlledSequence, ...attributes }) => ({
             ...attributes,
             [framework === 'svelte' ? 'onclick' : 'onClick']: onClick,
             ...(deletable ? { onDelete } : {}),
         })
         if (framework === 'react') {
             const root = createRoot(container)
-            const update = (attributes) =>
-                root.render(
+            function Fixture({ attributes }) {
+                const [value, setValue] = useState('')
+                return createElement(
+                    Fragment,
+                    null,
+                    attributes.controlledSequence &&
+                        createElement('input', {
+                            'aria-label': 'Sequence input',
+                            'data-testid': 'sequence-input',
+                            value,
+                            onChange: (event) => setValue(event.target.value),
+                        }),
                     createElement(
                         ReactBadge,
-                        { ...prepare(attributes), ref: onElement },
+                        {
+                            ...prepare(attributes),
+                            ref: onElement,
+                            ...(attributes.controlledSequence
+                                ? { keyBindings: ['g p'] }
+                                : {}),
+                        },
                         'Priority',
                     ),
+                    attributes.controlledSequence &&
+                        createElement(
+                            'output',
+                            { 'data-testid': 'sequence-value' },
+                            value,
+                        ),
                 )
+            }
+            const update = (attributes) =>
+                root.render(createElement(Fixture, { attributes }))
             update(initial)
             return { update, destroy: () => root.unmount() }
         }
         if (framework === 'vue') {
             const props = shallowRef(initial)
+            const value = shallowRef('')
             const application = createApp({
-                render: () =>
+                render: () => [
+                    props.value.controlledSequence &&
+                        h('input', {
+                            'aria-label': 'Sequence input',
+                            'data-testid': 'sequence-input',
+                            value: value.value,
+                            onInput: (event) => {
+                                value.value = event.target.value
+                            },
+                        }),
                     h(
                         VueBadge,
                         {
                             ...prepare(props.value),
+                            ...(props.value.controlledSequence
+                                ? { keyBindings: ['g p'] }
+                                : {}),
                             ref: (component) => onElement(component?.element),
                         },
                         () => 'Priority',
                     ),
+                    props.value.controlledSequence &&
+                        h(
+                            'output',
+                            { 'data-testid': 'sequence-value' },
+                            value.value,
+                        ),
+                ],
             })
             application.mount(container)
             return {
@@ -66,13 +111,19 @@ export default function mountBadges(host, framework, cases) {
                 destroy: () => application.unmount(),
             }
         }
-        const props = $state({ ...prepare(initial), onElement })
+        const props = $state({
+            ...prepare(initial),
+            controlledSequence: initial.controlledSequence,
+            onElement,
+        })
         const component = mount(SvelteBadge, { target: container, props })
         return {
             update: (attributes) => {
                 for (const name of Object.keys(props))
                     if (name !== 'onElement') delete props[name]
-                Object.assign(props, prepare(attributes))
+                Object.assign(props, prepare(attributes), {
+                    controlledSequence: attributes.controlledSequence,
+                })
             },
             destroy: () => unmount(component),
         }

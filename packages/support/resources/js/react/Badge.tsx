@@ -57,16 +57,17 @@ export default forwardRef<HTMLElement, BadgeProps>(function Badge(
     const element = useRef<HTMLElement>(null)
     useImperativeHandle(ref, () => element.current!, [tag])
     const blocked = disabled || loading
+    const keyBindingsSignature = JSON.stringify(keyBindings ?? [])
     useEffect(
         () =>
             element.current
                 ? interactive(element.current, {
                       tooltip,
-                      keyBindings,
+                      keyBindings: JSON.parse(keyBindingsSignature),
                       disabled: blocked,
                   })
                 : undefined,
-        [tooltip, keyBindings, blocked, tag],
+        [tooltip, keyBindingsSignature, blocked, tag],
     )
     if (onDelete && tag !== 'span')
         throw new Error('Deletable badges must use tag="span".')
