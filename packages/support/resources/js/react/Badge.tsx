@@ -4,7 +4,8 @@ import {
     useEffect,
     useImperativeHandle,
     useRef,
-    type ComponentPropsWithoutRef,
+    type AnchorHTMLAttributes,
+    type ButtonHTMLAttributes,
     type ReactNode,
 } from 'react'
 import { getBadgeClasses, type BadgeOptions } from '../components/badge'
@@ -13,14 +14,19 @@ import Icon from './Icon'
 import LoadingIndicator from './LoadingIndicator'
 
 export type BadgeProps = Omit<
-    ComponentPropsWithoutRef<'button'> & ComponentPropsWithoutRef<'a'>,
+    ButtonHTMLAttributes<HTMLElement> & AnchorHTMLAttributes<HTMLElement>,
     'children' | 'dangerouslySetInnerHTML' | 'color'
 > &
-    BadgeOptions & {
+    Omit<BadgeOptions, 'tag'> & {
         children?: ReactNode
         icon?: ReactNode
-        onDelete?: React.MouseEventHandler<HTMLButtonElement>
-    }
+    } & (
+        | {
+              tag?: 'span'
+              onDelete?: React.MouseEventHandler<HTMLButtonElement>
+          }
+        | { tag: 'a' | 'button'; onDelete?: never }
+    )
 
 export default forwardRef<HTMLElement, BadgeProps>(function Badge(
     {
@@ -75,6 +81,9 @@ export default forwardRef<HTMLElement, BadgeProps>(function Badge(
             ...attributes,
             ref: element,
             href: tag === 'a' && !blocked ? href : undefined,
+            role:
+                attributes.role ??
+                (tag === 'a' && href != null && blocked ? 'link' : undefined),
             type: tag === 'button' ? type : undefined,
             disabled:
                 tag === 'button' && blocked && !tooltip ? true : undefined,
@@ -91,9 +100,7 @@ export default forwardRef<HTMLElement, BadgeProps>(function Badge(
             ]
                 .filter(Boolean)
                 .join(' '),
-            onClick: (
-                event: React.MouseEvent<HTMLButtonElement & HTMLAnchorElement>,
-            ) => {
+            onClick: (event: React.MouseEvent<HTMLElement>) => {
                 if (blocked) {
                     event.preventDefault()
                     event.stopPropagation()

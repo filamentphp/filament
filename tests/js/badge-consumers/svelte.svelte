@@ -1,6 +1,24 @@
 <script lang="ts">
+    import type { ComponentProps } from 'svelte'
     import Badge from '../../../packages/support/resources/js/svelte/Badge.svelte'
     let element = $state<HTMLElement>()
+    // @ts-expect-error Delete buttons cannot be nested in links.
+    const invalidLink: ComponentProps<typeof Badge> = {
+        tag: 'a',
+        onDelete: () => {},
+    }
+    // @ts-expect-error Delete buttons cannot be nested in buttons.
+    const invalidButton: ComponentProps<typeof Badge> = {
+        tag: 'button',
+        onDelete: () => {},
+    }
+    const events: ComponentProps<typeof Badge> = {
+        onclick: (event) => {
+            // @ts-expect-error The root is an `HTMLElement`, not both a button and anchor.
+            event.currentTarget.href
+        },
+    }
+    void [invalidLink, invalidButton, events]
 </script>
 
 <Badge

@@ -65,6 +65,12 @@ function click(event: MouseEvent) {
         v-bind="$attrs"
         :class="getBadgeClasses(props)"
         :href="tag === 'a' && !(disabled || loading) ? $attrs.href : undefined"
+        :role="
+            $attrs.role ??
+            (tag === 'a' && $attrs.href != null && (disabled || loading)
+                ? 'link'
+                : undefined)
+        "
         :type="tag === 'button' ? ($attrs.type ?? 'button') : undefined"
         :disabled="
             tag === 'button' && (disabled || loading) && !tooltip

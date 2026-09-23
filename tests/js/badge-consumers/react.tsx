@@ -29,3 +29,13 @@ const element = createRef<HTMLElement>()
 ;<Badge tag="div" />
 // @ts-expect-error HTML tooltips are intentionally unsupported.
 ;<Badge tooltip={{ html: '<b>Unsafe</b>' }} />
+// @ts-expect-error Delete buttons cannot be nested in links.
+;<Badge tag="a" onDelete={() => {}} />
+// @ts-expect-error Delete buttons cannot be nested in buttons.
+;<Badge tag="button" onDelete={() => {}} />
+;<Badge
+    onClick={(event) => {
+        // @ts-expect-error The root is an `HTMLElement`, not both a button and anchor.
+        event.currentTarget.href
+    }}
+/>

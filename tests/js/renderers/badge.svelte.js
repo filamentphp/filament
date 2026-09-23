@@ -5,8 +5,12 @@ import { mount, unmount } from 'svelte'
 import ReactBadge from '../../../packages/support/resources/js/react/Badge'
 import VueBadge from '../../../packages/support/resources/js/vue/Badge.vue'
 import SvelteBadge from './badge.svelte'
+import { interactive } from '../../../packages/support/resources/js/components/interactive'
+import mousetrap from 'mousetrap'
 
 export default function mountBadges(host, framework, cases) {
+    host.interactive = interactive
+    host.applicationShortcuts = mousetrap
     const renderers = cases.map((initial) => {
         const container = document.createElement('div')
         host.append(container)

@@ -1,6 +1,8 @@
 <script lang="ts">
     import type { Snippet } from 'svelte'
     import type {
+        DOMAttributes,
+        HTMLAttributes,
         HTMLAnchorAttributes,
         HTMLButtonAttributes,
     } from 'svelte/elements'
@@ -31,17 +33,26 @@
         type = 'button',
         tabindex,
         ...attributes
-    }: Omit<HTMLAnchorAttributes & HTMLButtonAttributes, 'children' | 'color'> &
-        BadgeOptions & {
+    }: Omit<
+        HTMLAnchorAttributes & HTMLButtonAttributes,
+        keyof DOMAttributes<HTMLElement> | 'children' | 'color'
+    > &
+        Omit<HTMLAttributes<HTMLElement>, 'children' | 'color'> &
+        Omit<BadgeOptions, 'tag'> & {
             children?: Snippet
             icon?: Snippet
             element?: HTMLElement
-            onDelete?: (event: MouseEvent) => void
-        } = $props()
+        } & (
+            | { tag?: 'span'; onDelete?: (event: MouseEvent) => void }
+            | { tag: 'a' | 'button'; onDelete?: never }
+        ) = $props()
     let blocked = $derived(disabled || loading)
-    $effect(() => {
+    let validatedTag = $derived.by(() => {
         if (onDelete && tag !== 'span')
             throw new Error('Deletable badges must use tag="span".')
+        return tag
+    })
+    $effect(() => {
         if (element)
             return interactive(element, {
                 tooltip,
@@ -58,10 +69,12 @@
         >{/if}
 {/snippet}
 <svelte:element
-    this={tag}
+    this={validatedTag}
     {...attributes}
     bind:this={element}
     href={tag === 'a' && !blocked ? href : undefined}
+    role={attributes.role ??
+        (tag === 'a' && href != null && blocked ? 'link' : undefined)}
     type={tag === 'button' ? type : undefined}
     disabled={tag === 'button' && blocked && !tooltip ? true : undefined}
     aria-disabled={blocked || undefined}
@@ -78,11 +91,7 @@
             return
         }
         onclick?.(
-            event as MouseEvent & {
-                currentTarget: EventTarget &
-                    HTMLAnchorElement &
-                    HTMLButtonElement
-            },
+            event as MouseEvent & { currentTarget: EventTarget & HTMLElement },
         )
     }}
 >

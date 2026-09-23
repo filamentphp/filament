@@ -3,6 +3,9 @@ import { test } from 'node:test'
 import { build } from 'esbuild'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { readFile } from 'node:fs/promises'
+import { compile } from 'svelte/compiler'
+import { render as renderSvelte } from 'svelte/server'
 
 await build({
     entryPoints: ['packages/support/resources/js/react/Badge.tsx'],
@@ -14,6 +17,68 @@ await build({
 const { default: Badge } = await import('../../build/badge-test.mjs')
 const render = (props) =>
     renderToStaticMarkup(createElement(Badge, props, 'Priority <projects>'))
+
+await build({
+    entryPoints: ['packages/support/resources/js/svelte/Badge.svelte'],
+    bundle: true,
+    format: 'esm',
+    packages: 'external',
+    outfile: 'build/badge-svelte-test.mjs',
+    plugins: [
+        {
+            name: 'svelte',
+            setup(builder) {
+                builder.onLoad({ filter: /\.svelte$/ }, async ({ path }) => ({
+                    contents: compile(await readFile(path, 'utf8'), {
+                        filename: path,
+                        generate: 'server',
+                    }).js.code,
+                }))
+            },
+        },
+    ],
+})
+const { default: SvelteBadge } =
+    await import('../../build/badge-svelte-test.mjs')
+
+test('Svelte rejects interactive delete roots during rendering, before client effects', () => {
+    for (const tag of ['a', 'button']) {
+        assert.throws(
+            () =>
+                renderSvelte(SvelteBadge, {
+                    props: { tag, onDelete: () => {} },
+                }).body,
+            /Deletable badges/,
+        )
+    }
+    assert.match(
+        renderSvelte(SvelteBadge, { props: { onDelete: () => {} } }).body,
+        /fi-badge-delete-btn/,
+    )
+})
+
+test('disabled anchors retain link semantics, including empty URLs, without replacing explicit roles', () => {
+    for (const markup of [
+        render,
+        (props) => renderSvelte(SvelteBadge, { props }).body,
+    ]) {
+        for (const href of ['', '/projects']) {
+            assert.match(
+                markup({ tag: 'a', href, disabled: true }),
+                /role="link"/,
+            )
+            assert.doesNotMatch(
+                markup({ tag: 'a', href, loading: true }),
+                /href=/,
+            )
+            assert.match(
+                markup({ tag: 'a', href, disabled: true, role: 'button' }),
+                /role="button"/,
+            )
+        }
+        assert.doesNotMatch(markup({ tag: 'a', disabled: true }), /role="link"/)
+    }
+})
 
 test('badge renders escaped content with Blade hooks and registered color names', () => {
     assert.equal(
