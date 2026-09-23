@@ -642,6 +642,26 @@ it('returns an empty array for a non-existent group in array tables', function (
         });
 });
 
+it('only includes filtered records in `getGroupedSelectableTableRecordKeys()` for a `null` relationship group', function (): void {
+    $user = User::factory()->create();
+
+    $publishedPostWithoutAuthor = Post::factory()->create(['author_id' => null, 'is_published' => true]);
+    Post::factory()->create(['author_id' => null, 'is_published' => false]);
+    Post::factory()->create(['author_id' => $user->id, 'is_published' => true]);
+
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.name')
+        ->filterTable('is_published')
+        ->tap(function (Testable $testable) use ($publishedPostWithoutAuthor): void {
+            /** @var PostsTable $livewire */
+            $livewire = $testable->instance();
+
+            $keys = $livewire->getGroupedSelectableTableRecordKeys(null);
+
+            expect($keys)->toBe([(string) $publishedPostWithoutAuthor->id]);
+        });
+});
+
 it('can set `collapsible()` and get with `isCollapsible()`', function (): void {
     expect(Group::make('status')->collapsible()->isCollapsible())->toBeTrue();
 });
