@@ -3,7 +3,9 @@ import { ref } from 'vue'
 import Select from '../../../packages/support/resources/js/vue/Select.vue'
 const single = ref('drawing')
 const multiple = ref(['drawing'])
-const objects = ref(new Set([{ id: 1 }]))
+const workshop = { id: 1 }
+const objects = ref(new Set([workshop]))
+const modified = ref<string | number>('')
 const element = ref<{ element?: HTMLSelectElement }>()
 </script>
 <template>
@@ -19,7 +21,10 @@ const element = ref<{ element?: HTMLSelectElement }>()
         ><option value="drawing">Drawing</option></Select
     >
     <Select v-model="objects" multiple
-        ><option :value="{ id: 1 }">Drawing</option></Select
+        ><option :value="workshop">Drawing</option></Select
+    >
+    <Select v-model.number.trim="modified"
+        ><option value=" 1 ">One</option></Select
     >
     <!-- @vue-expect-error Inline flags are boolean. -->
     <Select inline-prefix="yes"><option>Invalid</option></Select>

@@ -8,6 +8,7 @@ interface SelectProps extends /* @vue-ignore */ Omit<
 > {
     inlinePrefix?: boolean
     modelValue?: Value
+    modelModifiers?: { number?: boolean; trim?: boolean; lazy?: boolean }
 }
 
 defineOptions({ inheritAttrs: false })

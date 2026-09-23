@@ -213,18 +213,70 @@ export default function mountSelect(host, framework) {
         const application = createApp({
             render: () => {
                 report(value.value, multiple.value)
-                return render(
-                    h,
-                    VueSelect,
-                    VueWrapper,
-                    value,
-                    multiple,
-                    (name, next) => {
-                        ;(name === 'workshop' ? value : multiple).value = next
-                    },
-                    configuration.value,
-                    true,
-                )
+                return h('div', null, [
+                    render(
+                        h,
+                        VueSelect,
+                        VueWrapper,
+                        value,
+                        multiple,
+                        (name, next) => {
+                            ;(name === 'workshop' ? value : multiple).value =
+                                next
+                        },
+                        configuration.value,
+                        true,
+                    ),
+                    ...[
+                        {
+                            name: 'trimmed',
+                            modifiers: { trim: true },
+                            options: ['', '  drawing  '],
+                        },
+                        {
+                            name: 'number',
+                            modifiers: { number: true },
+                            options: ['', '1', '2'],
+                        },
+                        {
+                            name: 'numbers',
+                            modifiers: { number: true },
+                            multiple: true,
+                            options: ['1', '2', '3'],
+                        },
+                    ].map(({ name, modifiers, multiple, options }) =>
+                        h(
+                            VueWrapper,
+                            { key: name },
+                            {
+                                default: () =>
+                                    h(
+                                        VueSelect,
+                                        {
+                                            'data-testid': name,
+                                            'aria-label': name,
+                                            multiple,
+                                            modelValue: multiple ? [] : '',
+                                            modelModifiers: modifiers,
+                                            'onUpdate:modelValue': (next) =>
+                                                (host.dataset[name] =
+                                                    JSON.stringify(next)),
+                                        },
+                                        {
+                                            default: () =>
+                                                options.map((value) =>
+                                                    h(
+                                                        'option',
+                                                        { value, key: value },
+                                                        value || 'Choose',
+                                                    ),
+                                                ),
+                                        },
+                                    ),
+                            },
+                        ),
+                    ),
+                ])
             },
         })
         application.mount(host)
@@ -241,6 +293,8 @@ export default function mountSelect(host, framework) {
             (host.dataset.callbackValue = JSON.stringify(value)),
         reportSubmission: (data) =>
             (host.dataset.submission = JSON.stringify([...data])),
+        reportOptionDefault: (value) =>
+            (host.dataset.optionDefault = JSON.stringify(value)),
     })
     const component = mount(SvelteSelect, { target: host, props })
     return {

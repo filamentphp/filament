@@ -64,7 +64,9 @@ const workshops = ref(['drawing'])
 </template>
 ```
 
-The default slot accepts native options and option groups. `v-model` uses Vue's native select directive, including array or `Set` multiple selections and non-string option values supplied with `:value`. Use typed option values instead of component model modifiers (`.number`, `.trim`, and `.lazy` are not supported). Native `@change` runs after the model assignment. A template ref exposes the select as `.element`.
+The default slot accepts native options and option groups. `v-model` uses Vue's native select directive, including array or `Set` multiple selections and non-string option values supplied with `:value`. Native `@change` runs after the model assignment. A template ref exposes the select as `.element`.
+
+Use typed `:value` options instead of component model modifiers (`.number`, `.trim`, and `.lazy` are outside the supported contract). The adapter consumes `modelModifiers` so it does not become a DOM attribute, but does not forward modifiers to the native select directive. Vue still applies component-level coercion when emitting the model event: `.trim` trims scalar strings, and `.number` applies `parseFloat` to the entire emitted argument. For example, a multiple selection of `['1', '2']` becomes the scalar `1`, not `[1, 2]`. **Do not use `.number` with multiple array selections.** The adapter does not add a custom coercion layer.
 
 For uncontrolled selection, omit `v-model` and set `selected` on the initial option(s). Do not add or remove `v-model` during the component's lifetime. Vue has no native select `defaultValue` API. Native reset restores selected attributes but does not update `v-model`; reset host state as well, or cancel reset and restore all fields explicitly.
 

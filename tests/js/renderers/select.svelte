@@ -7,13 +7,16 @@
         reportElement,
         reportChange,
         reportSubmission,
+        reportOptionDefault,
     } = $props()
     let value = $state('drawing')
     let multiple = $state(['ceramics'])
     let defaultMultiple = $state()
+    let optionDefault = $state('drawing')
     let element = $state()
     $effect(() => reportElement(element))
     $effect(() => report(value, multiple))
+    $effect(() => reportOptionDefault(optionDefault))
 </script>
 
 {#snippet options()}
@@ -104,4 +107,40 @@
         >
     </InputWrapper>
     <button type="reset">Reset defaults</button>
+</form>
+<form data-testid="option-defaults">
+    <InputWrapper>
+        <Select
+            name="optionDefault"
+            aria-label="Option default"
+            disabled={configuration.disabled}
+        >
+            <option value="drawing">Drawing</option>
+            <option value="ceramics" selected>Ceramics</option>
+            <option value="printing">Printing</option>
+        </Select>
+    </InputWrapper>
+    <InputWrapper>
+        <Select
+            name="boundOptionDefault"
+            aria-label="Bound option default"
+            bind:value={optionDefault}
+            disabled={configuration.disabled}
+        >
+            <option value="drawing">Drawing</option>
+            <option value="ceramics" selected>Ceramics</option>
+            <option value="printing">Printing</option>
+        </Select>
+    </InputWrapper>
+    <InputWrapper>
+        <Select
+            name="nullDefault"
+            aria-label="Null default"
+            defaultValue={null}
+        >
+            <option value="drawing">Drawing</option>
+            <option value="ceramics" selected>Ceramics</option>
+        </Select>
+    </InputWrapper>
+    <button type="reset">Reset option defaults</button>
 </form>

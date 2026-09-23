@@ -27,7 +27,7 @@
 
 <select
     {...attributes}
-    {defaultValue}
+    {...defaultValue === undefined ? {} : { defaultValue }}
     bind:this={element}
     bind:value
     class={[

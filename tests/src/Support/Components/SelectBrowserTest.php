@@ -22,6 +22,20 @@ beforeEach(function (): void {
 
 it('preserves `Select` native selection, defaults, validation and identity in both themes', function (): void {
     $page = visit('/select-browser-test');
+    $svelte = "document.querySelector('[data-select-row=svelte]')";
+    $optionDefaults = "{$svelte}.querySelector('[data-testid=option-defaults]')";
+    $page->assertScript("{$optionDefaults}.elements.optionDefault.value", 'ceramics')
+        ->assertScript("{$optionDefaults}.elements.boundOptionDefault.value", 'drawing')
+        ->assertScript("{$optionDefaults}.elements.boundOptionDefault.options[1].defaultSelected", true)
+        ->assertScript("{$optionDefaults}.elements.nullDefault.selectedIndex === -1 && !{$optionDefaults}.elements.nullDefault.options[1].defaultSelected", true)
+        ->select('[data-testid=option-defaults] [name=optionDefault]', 'drawing')
+        ->select('[data-testid=option-defaults] [name=boundOptionDefault]', 'printing')
+        ->assertScript("{$svelte}.dataset.optionDefault", '"printing"')
+        ->click('[data-testid=disabled-svelte]')
+        ->click('[data-testid=enabled-svelte]')
+        ->click('[data-testid=option-defaults] [type=reset]')
+        ->assertScript("{$optionDefaults}.elements.optionDefault.value === 'ceramics' && {$optionDefaults}.elements.boundOptionDefault.value === 'ceramics'", true)
+        ->assertScript("{$svelte}.dataset.optionDefault", '"ceramics"');
     foreach (['light', 'dark'] as $theme) {
         if ($theme === 'dark') {
             $page = $page->inDarkMode();
@@ -85,6 +99,15 @@ it('preserves `Select` native selection, defaults, validation and identity in bo
                 ->assertScript("new FormData({$defaults}).getAll('defaultExtras')", ['ceramics'])
                 ->click("[data-testid=enabled-{$framework}]")
                 ->assertScript("{$defaults}.elements.defaultWorkshop.value", 'ceramics');
+            if ($framework === 'vue') {
+                $page->assertScript("{$host}.querySelector('[modelmodifiers]') === null", true)
+                    ->select("{$selector} [data-testid=trimmed]", '  drawing  ')
+                    ->assertScript("{$host}.dataset.trimmed", '"drawing"')
+                    ->select("{$selector} [data-testid=number]", '2')
+                    ->assertScript("{$host}.dataset.number", '2')
+                    ->select("{$selector} [data-testid=numbers]", ['1', '2'])
+                    ->assertScript("{$host}.dataset.numbers", '1');
+            }
         }
         $page->assertNoSmoke()->assertNoAccessibilityIssues();
     }
