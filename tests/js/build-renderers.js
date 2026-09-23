@@ -96,7 +96,13 @@ await buildViteRenderers(
     'build/js-empty-state-renderers',
 )
 
+await buildViteRenderers(
+    { callout: 'tests/js/renderers/callout.svelte.js' },
+    'build/js-callout-renderers',
+)
+
 for (const component of [
+    'callout',
     'empty-state',
     'select',
     'input',

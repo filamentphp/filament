@@ -29,6 +29,7 @@ use Filament\Tests\Fixtures\Pages\AvatarBrowserTest;
 use Filament\Tests\Fixtures\Pages\BreadcrumbsBrowserTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
+use Filament\Tests\Fixtures\Pages\CalloutPrimitiveBrowserTest;
 use Filament\Tests\Fixtures\Pages\CheckboxListTest;
 use Filament\Tests\Fixtures\Pages\CheckboxPrimitiveBrowserTest;
 use Filament\Tests\Fixtures\Pages\CheckboxTest;
@@ -149,6 +150,7 @@ class AdminPanelProvider extends PanelProvider
                 FieldsetBrowserTest::class,
                 BuilderTest::class,
                 CalloutBrowserTest::class,
+                CalloutPrimitiveBrowserTest::class,
                 CheckboxListTest::class,
                 CheckboxPrimitiveBrowserTest::class,
                 RadioPrimitiveBrowserTest::class,

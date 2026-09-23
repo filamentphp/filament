@@ -1,0 +1,9 @@
+{
+    "extends": "./avatar.tsconfig.json",
+    "include": [
+        "callout-consumers/**/*",
+        "../../packages/support/resources/js/react/Callout.tsx",
+        "../../packages/support/resources/js/vue/Callout.vue",
+        "../../packages/support/resources/js/svelte/Callout.svelte"
+    ]
+}
