@@ -230,8 +230,9 @@ class SelectFilter extends BaseFilter
         ) {
             if (filled($filteredValues)) {
                 $query->where(function (Builder $query) use ($applyRelationshipScope): void {
-                    $applyRelationshipScope($query);
-                    $query->orWhereDoesntHave($this->getRelationshipName());
+                    $query
+                        ->where(fn (Builder $query) => $applyRelationshipScope($query))
+                        ->orWhereDoesntHave($this->getRelationshipName());
                 });
             } else {
                 $query->whereDoesntHave($this->getRelationshipName());
