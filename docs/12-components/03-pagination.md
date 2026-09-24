@@ -89,3 +89,18 @@ Extreme links are the first and last page links. You can add them by passing the
 ```
 
 <AutoScreenshot name="components/pagination/extreme-links" alt="Pagination with extreme links" version="4.x" />
+
+## Rendering multiple pagination components
+
+If you render the same paginator multiple times within a Livewire component, you should give each additional pagination component a unique `wire-key-prefix` so that its Livewire keys do not collide:
+
+```blade
+<x-filament::pagination :paginator="$users" />
+
+<x-filament::pagination
+    :paginator="$users"
+    wire-key-prefix="top-pagination"
+/>
+```
+
+The default wire key prefix is `pagination`, so you only need to set `wire-key-prefix` on additional instances.

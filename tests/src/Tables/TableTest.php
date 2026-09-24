@@ -4,10 +4,13 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Facades\FilamentView;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\View\TablesRenderHook;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -223,6 +226,60 @@ describe('rendering', function (): void {
     it('can render a table with custom empty state', function (): void {
         livewire(EmptyStateTableTestComponent::class)
             ->assertSuccessful();
+    });
+
+    it('can render `CONTENT_BEFORE` and `CONTENT_AFTER` hooks around the table content', function (): void {
+        $contentBeforeData = null;
+        $contentAfterData = null;
+
+        FilamentView::registerRenderHook(
+            TablesRenderHook::CONTENT_BEFORE,
+            static function (array $data) use (&$contentBeforeData): string {
+                $contentBeforeData = $data;
+
+                return '<div data-testid="table-content-before-hook"></div>';
+            },
+            scopes: TableTestComponent::class,
+        );
+
+        FilamentView::registerRenderHook(
+            TablesRenderHook::CONTENT_AFTER,
+            static function (array $data) use (&$contentAfterData): string {
+                $contentAfterData = $data;
+
+                return '<div data-testid="table-content-after-hook"></div>';
+            },
+            scopes: TableTestComponent::class,
+        );
+
+        Post::factory()->count(3)->create();
+
+        $component = livewire(TableTestComponent::class)
+            ->assertSuccessful();
+
+        $html = $component->html();
+
+        $contentBeforePosition = strpos($html, 'data-testid="table-content-before-hook"');
+        $tableContentPosition = strpos($html, 'class="fi-ta-content-ctn fi-fixed-positioning-context"');
+        $contentAfterPosition = strpos($html, 'data-testid="table-content-after-hook"');
+        $paginationPosition = strpos($html, '<nav');
+
+        expect($contentBeforePosition)->not->toBeFalse()
+            ->and($tableContentPosition)->not->toBeFalse()
+            ->and($contentAfterPosition)->not->toBeFalse()
+            ->and($paginationPosition)->not->toBeFalse()
+            ->and($contentBeforePosition)->toBeLessThan($tableContentPosition)
+            ->and($tableContentPosition)->toBeLessThan($contentAfterPosition)
+            ->and($contentAfterPosition)->toBeLessThan($paginationPosition)
+            ->and($contentBeforeData)->toHaveKeys(['hasPagination', 'livewire', 'records', 'table'])
+            ->and($contentBeforeData['hasPagination'])->toBeTrue()
+            ->and($contentBeforeData['livewire'])->toBeInstanceOf(TableTestComponent::class)
+            ->and($contentBeforeData['records'])->toBeInstanceOf(LengthAwarePaginator::class)
+            ->and($contentBeforeData['table'])->toBeInstanceOf(Table::class)
+            ->and($contentAfterData['hasPagination'])->toBeTrue()
+            ->and($contentAfterData['livewire'])->toBe($contentBeforeData['livewire'])
+            ->and($contentAfterData['records'])->toBe($contentBeforeData['records'])
+            ->and($contentAfterData['table'])->toBe($contentBeforeData['table']);
     });
 });
 

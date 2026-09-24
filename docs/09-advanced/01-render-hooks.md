@@ -135,6 +135,8 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 use Filament\Tables\View\TablesRenderHook;
 ```
 
+- `TablesRenderHook::CONTENT_AFTER` - After the table content and empty state, before the pagination and filters below the content, receives `hasPagination`, `livewire`, `records`, and `table` data
+- `TablesRenderHook::CONTENT_BEFORE` - Before the table content and empty state, after the selection and filter indicators, receives `hasPagination`, `livewire`, `records`, and `table` data
 - `TablesRenderHook::FILTER_INDICATORS` - Replace the existing filter indicators, receives `filterIndicators` data as `array<Filament\Tables\Filters\Indicator>`
 - `TablesRenderHook::HEADER_CELL` - Replace the existing header cells, receives the `Filament\Tables\Columns\Column` object as `column` and `isReordering` in the data.
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
