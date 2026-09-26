@@ -7,7 +7,7 @@ use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Database\Eloquent\Model;
 
-class TestExporter
+class TestableExport
 {
     final public function __construct(
         protected Exporter $exporter,

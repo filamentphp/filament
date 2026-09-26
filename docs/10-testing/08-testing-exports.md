@@ -4,16 +4,15 @@ title: Testing exports
 
 ## Introduction
 
-You can test [exports](../actions/export) at two levels: use `TestExporter` to check row values, and `ExportAction::fake()` to check an action's form, column selection, options, and query without running export jobs.
+You can test [exports](../actions/export) at two levels: call `test()` on your exporter to check row values, and `ExportAction::fake()` to check an action's form, column selection, options, and query without running export jobs.
 
 ## Testing row values
 
-Pass your exporter class to `TestExporter::make()`, then call `export()` with an Eloquent record:
+Call `test()` on your exporter to create a `Filament\Actions\Testing\TestableExport`, then call `export()` with an Eloquent record:
 
 ```php
 use App\Filament\Exports\ProductExporter;
 use App\Models\Product;
-use Filament\Actions\Testing\TestExporter;
 
 it('exports product details', function () {
     $product = Product::factory()->make([
@@ -21,7 +20,7 @@ it('exports product details', function () {
         'sku' => 'DESK-01',
     ]);
 
-    $row = TestExporter::make(ProductExporter::class, columnMap: [
+    $row = ProductExporter::test(columnMap: [
         'name' => 'Name',
         'sku' => 'SKU',
     ])->export($product);
@@ -54,15 +53,14 @@ Pass `options` to check how they change the exported value:
 ```php
 use App\Filament\Exports\PostExporter;
 use App\Models\Post;
-use Filament\Actions\Testing\TestExporter;
 
 it('exports calculated scores', function () {
     $post = Post::factory()->make(['rating' => 3]);
     $columnMap = ['score' => 'Score'];
 
-    expect(TestExporter::make(PostExporter::class, $columnMap, options: ['multiplier' => 2])->export($post))
+    expect(PostExporter::test($columnMap, options: ['multiplier' => 2])->export($post))
         ->toBe(['6 points'])
-        ->and(TestExporter::make(PostExporter::class, $columnMap, options: ['multiplier' => 5])->export($post))
+        ->and(PostExporter::test($columnMap, options: ['multiplier' => 5])->export($post))
         ->toBe(['15 points']);
 });
 ```
@@ -75,15 +73,14 @@ The helper does not call `modifyQuery()`, eager-load relationships, or prepare a
 
 ```php
 use App\Filament\Exports\AuthorExporter;
-use Filament\Actions\Testing\TestExporter;
 
 $author->load('team')->loadCount('posts')->loadSum('posts', 'rating');
 
-expect(TestExporter::make(AuthorExporter::class)->export($author))
+expect(AuthorExporter::test()->export($author))
     ->toBe(['Editorial', '2', '11']);
 ```
 
-You can reuse a helper for different records. If you change a saved record or load more attributes after exporting it, create a fresh `TestExporter::make()`, since columns cache record state. Callbacks and Eloquent lazy loading may still issue queries.
+You can reuse a helper for different records. If you change a saved record or load more attributes after exporting it, call `test()` again to create a fresh helper, since columns cache record state. Callbacks and Eloquent lazy loading may still issue queries.
 
 ## Testing export actions
 
@@ -203,4 +200,4 @@ Do not assume the query is restricted to the selection. Non-bulk exports pass `n
 
 The action still persists an `Export`, enforces row limits, and deletes its existing export directory. Configuration callbacks, action hooks, and model events still run. Use your normal test database and Laravel's `Storage::fake()` on the configured export disk to isolate storage cleanup. Started notifications follow the action's queue configuration; unrelated jobs and listeners are not faked.
 
-The fake does not process rows, generate files, or complete exports and send completion notifications. Keep separate unfaked integration tests for worker processing, CSV/XLSX contents, and downloads. Use `TestExporter` for row values, including any [formula injection protection](../actions/export#csv-formula-injection) configured on your columns.
+The fake does not process rows, generate files, or complete exports and send completion notifications. Keep separate unfaked integration tests for worker processing, CSV/XLSX contents, and downloads. Use your exporter's `test()` method for row values, including any [formula injection protection](../actions/export#csv-formula-injection) configured on your columns.

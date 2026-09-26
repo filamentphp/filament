@@ -3,7 +3,7 @@
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Actions\Testing\TestExporter;
+use Filament\Actions\Testing\TestableExport;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ it('derives a default map from visible and default-enabled columns without bindi
     $export = app(Export::class);
     $record = new User(['name' => 'Ada', 'email' => 'ada@example.com']);
 
-    $row = TestExporter::make(RowTestExporter::class, export: $export)->export($record);
+    $row = RowTestExporter::test(export: $export)->export($record);
 
     expect($export->getColumnMap())->toBe(['name' => 'Identity', 'email' => 'Identity'])
         ->and($row)->toBe(['Ada', 'ada@example.com'])
@@ -22,7 +22,7 @@ it('derives a default map from visible and default-enabled columns without bindi
         ->and($record->exists)->toBeFalse();
 });
 
-it('honors an overridden `getVisibleColumns()`', function (): void {
+it('uses the calling subclass and its overridden `getVisibleColumns()` through inherited `test()`', function (): void {
     $exporter = new class(app(Export::class), [], []) extends RowTestExporter
     {
         public static function getVisibleColumns(): array
@@ -31,7 +31,7 @@ it('honors an overridden `getVisibleColumns()`', function (): void {
         }
     };
 
-    expect(TestExporter::make($exporter::class)->export(new User([
+    expect($exporter::test()->export(new User([
         'name' => 'Ada',
         'email' => 'ada@example.com',
     ])))->toBe(['ada@example.com']);
@@ -43,7 +43,7 @@ it('preserves explicit map order and duplicate labels including hidden and defau
     $record = new User(['name' => 'Ada', 'email' => 'ada@example.com']);
     $record->setRawAttributes([...$record->getAttributes(), 'password' => 'secret', 'id' => 42]);
 
-    expect(TestExporter::make(RowTestExporter::class, $columnMap, export: $export)->export($record))
+    expect(RowTestExporter::test(columnMap: $columnMap, export: $export)->export($record))
         ->toBe(['secret', 'ada@example.com', 'Ada', '42'])
         ->and($export->getColumnMap())->toBe($columnMap);
 });
@@ -63,7 +63,7 @@ it('does not evaluate selection callbacks for an explicit map including `[]`', f
             }
         };
 
-        expect(TestExporter::make($exporter::class, $columnMap)->export(new User(['name' => 'Ada'])))
+        expect($exporter::test($columnMap)->export(new User(['name' => 'Ada'])))
             ->toBe($expected);
     });
 })->with([
@@ -72,7 +72,7 @@ it('does not evaluate selection callbacks for an explicit map including `[]`', f
 ]);
 
 it('reuses the real exporter with each record and passes options to formatting callbacks', function (): void {
-    $helper = TestExporter::make(RowTestExporter::class, ['name' => 'Name'], ['prefix' => 'Author: ']);
+    $helper = RowTestExporter::test(columnMap: ['name' => 'Name'], options: ['prefix' => 'Author: ']);
 
     expect($helper->export(new User(['name' => 'Ada'])))->toBe(['Author: Ada'])
         ->and($helper->export(new User(['name' => 'Grace'])))->toBe(['Author: Grace']);
@@ -81,9 +81,9 @@ it('reuses the real exporter with each record and passes options to formatting c
 it('resolves the default unsaved `Export` and wrapper from the container', function (): void {
     $export = app(Export::class);
     app()->bind(Export::class, static fn (): Export => $export);
-    app()->bind(TestExporter::class, CustomRowTestHelper::class);
+    app()->bind(TestableExport::class, CustomRowTestHelper::class);
 
-    $helper = TestExporter::make(RowTestExporter::class);
+    $helper = RowTestExporter::test();
 
     expect($helper)->toBeInstanceOf(CustomRowTestHelper::class)
         ->and($export->exporter)->toBe(RowTestExporter::class)
@@ -120,7 +120,7 @@ it('uses supplied export context through `getExporter()` and container bindings 
         static function (ExportColumn $column) use ($authenticatedUser): void {
             $column->visible(static fn (): bool => auth()->user() === $authenticatedUser);
         },
-        during: static fn (): TestExporter => TestExporter::make(RowTestExporter::class, null, $options, $export),
+        during: static fn (): TestableExport => RowTestExporter::test(columnMap: null, options: $options, export: $export),
     );
 
     expect($helper->export($record))->toBe([$export, $options, $authenticatedUser, $record])
@@ -146,7 +146,7 @@ it('invokes an overridden `__invoke()` on every `export()` call and returns its 
         }
     };
     app()->bind(RowTestExporter::class, static fn (): Exporter => $exporter);
-    $helper = TestExporter::make(RowTestExporter::class, []);
+    $helper = RowTestExporter::test([]);
     $record = new User(['name' => 'Ada']);
 
     expect($helper->export($record))->toBe([7 => $record, 'custom' => [false, null, 0, '0']])
@@ -160,7 +160,7 @@ it('propagates the original throwable from row formatting', function (Throwable 
     ExportColumn::configureUsing(static function (ExportColumn $column) use ($exception): void {
         $column->state(static fn () => throw $exception);
     }, during: function () use ($exception): void {
-        $helper = TestExporter::make(RowTestExporter::class, ['email' => 'Email']);
+        $helper = RowTestExporter::test(['email' => 'Email']);
 
         try {
             $helper->export(new User);
@@ -182,7 +182,7 @@ it('propagates the original exception while resolving the exporter', function ()
     app()->bind(RowTestExporter::class, static fn () => throw $exception);
 
     try {
-        TestExporter::make(RowTestExporter::class);
+        RowTestExporter::test();
     } catch (Throwable $caughtException) {
         expect($caughtException)->toBe($exception);
 
@@ -228,7 +228,7 @@ class RowTestExporter extends Exporter
     }
 }
 
-class CustomRowTestHelper extends TestExporter {}
+class CustomRowTestHelper extends TestableExport {}
 
 class ContextRowTestExporter extends RowTestExporter
 {

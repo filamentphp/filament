@@ -3,7 +3,6 @@
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Actions\Testing\TestExporter;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
@@ -16,13 +15,13 @@ uses(TestCase::class);
 it('exports calculated scores with explicit options without applying options form defaults or validation', function (): void {
     $post = Post::factory()->make(['rating' => 3]);
 
-    expect(TestExporter::make(RecipePostExporter::class, ['score' => 'Score'], options: ['multiplier' => 2])->export($post))
+    expect(RecipePostExporter::test(['score' => 'Score'], options: ['multiplier' => 2])->export($post))
         ->toBe(['6 points'])
-        ->and(TestExporter::make(RecipePostExporter::class, ['score' => 'Score'], options: ['multiplier' => 5])->export($post))
+        ->and(RecipePostExporter::test(['score' => 'Score'], options: ['multiplier' => 5])->export($post))
         ->toBe(['15 points'])
-        ->and(TestExporter::make(RecipePostExporter::class, ['score' => 'Score'])->export($post))
+        ->and(RecipePostExporter::test(['score' => 'Score'])->export($post))
         ->toBe(['3 points'])
-        ->and(TestExporter::make(RecipePostExporter::class, ['score' => 'Score'], options: ['multiplier' => 0])->export($post))
+        ->and(RecipePostExporter::test(['score' => 'Score'], options: ['multiplier' => 0])->export($post))
         ->toBe(['0 points']);
 });
 
@@ -36,19 +35,19 @@ it('exports preloaded relationships and aggregates without running `modifyQuery(
 
     $author = User::query()->with('team')->findOrFail($author->getKey());
 
-    expect(TestExporter::make(RecipeAuthorExporter::class)->export($author))->toBe(['Editorial', null, null]);
+    expect(RecipeAuthorExporter::test()->export($author))->toBe(['Editorial', null, null]);
 
     $author->loadCount('posts')->loadSum('posts', 'rating');
     $otherAuthor->load('team')->loadCount('posts')->loadSum('posts', 'rating');
 
-    $exporter = TestExporter::make(RecipeAuthorExporter::class);
+    $exporter = RecipeAuthorExporter::test();
 
     expect($exporter->export($author))->toBe(['Editorial', '2', '11'])
         ->and($exporter->export($otherAuthor))->toBe(['Research', '1', '9']);
 });
 
 it('opts into `preventFormulaInjection()` for untrusted titles while preserving ordinary values', function (): void {
-    $exporter = TestExporter::make(RecipePostExporter::class, ['title' => 'Title']);
+    $exporter = RecipePostExporter::test(['title' => 'Title']);
 
     expect($exporter->export(Post::factory()->make(['title' => '=1+1'])))->toBe(["'=1+1"])
         ->and($exporter->export(Post::factory()->make(['title' => 'Quarterly report'])))->toBe(['Quarterly report'])
