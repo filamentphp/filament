@@ -7,10 +7,14 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\MimeTypeDetection\ExtensionMimeTypeDetector;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -2736,6 +2740,59 @@ describe('`saveUploadedFile()` branches', function (): void {
 
         expect($path)->toStartWith('uploads/');
         expect(Storage::disk('public')->exists($path))->toBeTrue();
+    });
+
+    it('stores the server-detected `mimetype` instead of the temporary storage metadata', function () use ($makeField): void {
+        Storage::fake('tmp-for-tests');
+
+        $temporaryDiskRoot = Storage::disk('tmp-for-tests')->path('');
+        $temporaryDiskAdapter = new LocalFilesystemAdapter(
+            $temporaryDiskRoot,
+            null,
+            LOCK_EX,
+            LocalFilesystemAdapter::DISALLOW_LINKS,
+            new ExtensionMimeTypeDetector,
+        );
+        $temporaryDisk = new FilesystemAdapter(
+            new Filesystem($temporaryDiskAdapter),
+            $temporaryDiskAdapter,
+            ['root' => $temporaryDiskRoot],
+        );
+
+        Storage::set('tmp-for-tests', $temporaryDisk);
+
+        $pngContents = UploadedFile::fake()->image('image.png')->getContent();
+        $temporaryDisk->put('livewire-tmp/image.webp', $pngContents);
+
+        expect($temporaryDisk->mimeType('livewire-tmp/image.webp'))->toBe('image/webp');
+
+        $file = new class('image.webp', 'tmp-for-tests') extends TemporaryUploadedFile
+        {
+            /** @var array<string, string> */
+            public array $storedOptions = [];
+
+            public function storeAs($path, $name = null, $options = [])
+            {
+                $this->storedOptions = $options;
+
+                return trim("{$path}/{$name}", '/');
+            }
+        };
+
+        $field = $makeField(static fn (FileUpload $field) => $field
+            ->disk('public')
+            ->directory('uploads')
+            ->visibility('private'));
+
+        $path = $field->saveUploadedFile($file);
+
+        expect($path)
+            ->toStartWith('uploads/')
+            ->toEndWith('.webp')
+            ->and($file->storedOptions)->toBe([
+                'disk' => 'public',
+                'mimetype' => 'image/png',
+            ]);
     });
 
     it('does not call `setVisibility(public)` when visibility is private', function () use ($makeField, $makeTemporaryUploadedFile): void {

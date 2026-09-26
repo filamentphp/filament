@@ -138,6 +138,21 @@ class RichEditorSchema
                         ]),
                 ]),
             Group::make()
+                ->id('richEditorCustomBlocksGrid')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorCustomBlocksGrid')
+                        ->label('Page content')
+                        ->customBlocks([
+                            HeroBlock::class,
+                            CallToActionBlock::class,
+                        ])
+                        ->customBlocksGrid()
+                        ->activePanel('customBlocks'),
+                ]),
+            Group::make()
                 ->id('richEditorCustomBlockPreviews')
                 ->extraAttributes([
                     'class' => 'p-16 max-w-5xl',
@@ -185,6 +200,30 @@ class RichEditorSchema
                                 VideoEmbedBlock::class,
                             ],
                         ]),
+                ]),
+            Group::make()
+                ->id('richEditorSearchableCustomBlocksGrid')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorSearchableCustomBlocksGrid')
+                        ->label('Page content')
+                        ->customBlocks([
+                            'Marketing' => [
+                                HeroBlock::class,
+                                CallToActionBlock::class,
+                                BannerBlock::class,
+                                TestimonialBlock::class,
+                            ],
+                            'Media' => [
+                                ImageGalleryBlock::class,
+                                VideoEmbedBlock::class,
+                            ],
+                        ])
+                        ->customBlocksGrid()
+                        ->searchableCustomBlocks()
+                        ->activePanel('customBlocks'),
                 ]),
             Group::make()
                 ->id('richEditorFloatingToolbar')

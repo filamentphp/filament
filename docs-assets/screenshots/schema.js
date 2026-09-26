@@ -1821,6 +1821,39 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/rich-editor/custom-blocks-grid': {
+        url: 'forms/fields/rich-editor',
+        selector: '#richEditorCustomBlocksGrid',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/rich-editor/searchable-custom-blocks-grid': {
+        url: 'forms/fields/rich-editor',
+        selector: '#richEditorSearchableCustomBlocksGrid',
+        viewport: {
+            width: 1920,
+            height: 900,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.evaluate(() => {
+                document.querySelector('#richEditorSearchableCustomBlocksGrid').scrollIntoView()
+            })
+            await page.waitForSelector('#richEditorSearchableCustomBlocksGrid .tiptap.ProseMirror')
+            await page.type('#richEditorSearchableCustomBlocksGrid input[type="search"]', 'Media')
+            await page.waitForFunction(() => {
+                const panel = document.querySelector('#richEditorSearchableCustomBlocksGrid')
+                const labels = [...panel.querySelectorAll('.fi-fo-rich-editor-custom-block-btn')]
+                    .filter((block) => block.checkVisibility())
+                    .map((block) => block.textContent.trim())
+                return labels.length === 2 && labels.includes('Image gallery') && labels.includes('Video embed')
+            })
+            await page.mouse.move(0, 0)
+        },
+    },
     'forms/fields/rich-editor/floating-toolbar': {
         url: 'forms/fields/rich-editor',
         selector: '#richEditorFloatingToolbar',

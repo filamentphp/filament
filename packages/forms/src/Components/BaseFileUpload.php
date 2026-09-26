@@ -242,7 +242,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         $path = $file->storeAs(
             $this->getDirectory(),
             $this->getUploadedFileNameForStorage($file),
-            $this->getDiskName(),
+            [
+                'disk' => $this->getDiskName(),
+                'mimetype' => $file->getMimeType(),
+            ],
         );
 
         if ($this->getVisibility() === 'public') {

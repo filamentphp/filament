@@ -5,9 +5,15 @@ namespace App\RichContentBlocks;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
 
 class AlertBlock extends RichContentCustomBlock
 {
+    public static function getIcon(): Heroicon
+    {
+        return Heroicon::ExclamationTriangle;
+    }
+
     public static function getId(): string
     {
         return 'alert';
