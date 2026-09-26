@@ -229,9 +229,11 @@ class SelectFilter extends BaseFilter
             in_array(static::EMPTY_RELATIONSHIP_OPTION_KEY, Arr::wrap($values))
         ) {
             if (filled($filteredValues)) {
-                $query
-                    ->where(fn (Builder $query) => $applyRelationshipScope($query))
-                    ->orWhereDoesntHave($this->getRelationshipName());
+                $query->where(function (Builder $query) use ($applyRelationshipScope): void {
+                    $query
+                        ->where(fn (Builder $query) => $applyRelationshipScope($query))
+                        ->orWhereDoesntHave($this->getRelationshipName());
+                });
             } else {
                 $query->whereDoesntHave($this->getRelationshipName());
             }

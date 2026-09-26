@@ -33,7 +33,15 @@ export default Node.create({
             const dom = document.createElement('div')
             dom.setAttribute('data-config', JSON.stringify(node.attrs.config))
             dom.setAttribute('data-id', node.attrs.id)
+            dom.setAttribute('data-testid', 'rich-editor-custom-block')
             dom.setAttribute('data-type', 'customBlock')
+
+            if (
+                extension.options.hasMinimalCustomBlockControls &&
+                node.attrs.preview
+            ) {
+                dom.classList.add('fi-fo-rich-editor-custom-block-minimal')
+            }
 
             const header = document.createElement('div')
             header.className =
@@ -53,15 +61,25 @@ export default Node.create({
 
                 const editButton = document.createElement('button')
                 editButton.className = 'fi-icon-btn'
+                editButton.dataset.testid =
+                    'rich-editor-custom-block-edit-button'
                 editButton.type = 'button'
+                if (extension.options.editCustomBlockButtonLabel) {
+                    editButton.setAttribute(
+                        'aria-label',
+                        extension.options.editCustomBlockButtonLabel,
+                    )
+                }
                 editButton.innerHTML =
                     extension.options.editCustomBlockButtonIconHtml
-                editButton.addEventListener('click', () =>
+                editButton.addEventListener('click', () => {
+                    editor.commands.setNodeSelection(getPos())
+
                     extension.options.editCustomBlockUsing(
                         node.attrs.id,
                         node.attrs.config,
-                    ),
-                )
+                    )
+                })
                 editButtonContainer.appendChild(editButton)
             }
 
@@ -78,12 +96,21 @@ export default Node.create({
 
                 const deleteButton = document.createElement('button')
                 deleteButton.className = 'fi-icon-btn'
+                deleteButton.dataset.testid =
+                    'rich-editor-custom-block-delete-button'
                 deleteButton.type = 'button'
+                if (extension.options.deleteCustomBlockButtonLabel) {
+                    deleteButton.setAttribute(
+                        'aria-label',
+                        extension.options.deleteCustomBlockButtonLabel,
+                    )
+                }
                 deleteButton.innerHTML =
                     extension.options.deleteCustomBlockButtonIconHtml
                 deleteButton.addEventListener('click', () =>
                     editor
                         .chain()
+                        .focus()
                         .setNodeSelection(getPos())
                         .deleteSelection()
                         .run(),
@@ -112,6 +139,9 @@ export default Node.create({
 
             return {
                 dom,
+                stopEvent: (event) =>
+                    event.target instanceof Element &&
+                    header.contains(event.target.closest('button')),
             }
         }
     },
@@ -119,8 +149,11 @@ export default Node.create({
     addOptions() {
         return {
             deleteCustomBlockButtonIconHtml: null,
+            deleteCustomBlockButtonLabel: null,
             editCustomBlockButtonIconHtml: null,
+            editCustomBlockButtonLabel: null,
             editCustomBlockUsing: () => {},
+            hasMinimalCustomBlockControls: false,
             insertCustomBlockUsing: () => {},
         }
     },
