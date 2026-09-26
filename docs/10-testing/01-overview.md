@@ -22,6 +22,8 @@ If you would like to test importer rows or import action submissions, check out 
 
 If you would like to test a notification that you have sent, check out the [Testing notifications](testing-notifications) section.
 
+If you would like to test exporter row values or export actions, check out the [Testing exports](testing-exports) section.
+
 If you would like to test a custom page in a panel, these are Livewire components with no special behavior, so you should visit the [testing](https://livewire.laravel.com/docs/testing) section of the Livewire documentation.
 
 ## What is a Livewire component when using Filament?
