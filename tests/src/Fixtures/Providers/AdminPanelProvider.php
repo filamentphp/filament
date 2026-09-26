@@ -9,6 +9,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Tables\View\TablesRenderHook;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\GeneralSettings;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
@@ -45,7 +46,6 @@ use Filament\Tests\Fixtures\Pages\ManageSiteSettings;
 use Filament\Tests\Fixtures\Pages\MarkdownEditorBrowserTest;
 use Filament\Tests\Fixtures\Pages\ModalBrowserTest;
 use Filament\Tests\Fixtures\Pages\OneTimeCodeInputBrowserTest;
-use Filament\Tests\Fixtures\Pages\PaginationBrowserTest;
 use Filament\Tests\Fixtures\Pages\PartialRenderingTest;
 use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Fixtures\Pages\RadioTest;
@@ -56,6 +56,7 @@ use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Pages\SliderBrowserTest;
 use Filament\Tests\Fixtures\Pages\StatsOverviewWidgetBrowserTest;
+use Filament\Tests\Fixtures\Pages\TableRenderHooksBrowserTest;
 use Filament\Tests\Fixtures\Pages\TabsBrowserTest;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
 use Filament\Tests\Fixtures\Pages\TextareaTest;
@@ -97,6 +98,16 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification()
             ->profile()
             ->unsavedChangesAlerts(static fn (): bool => request()->routeIs('filament.admin.pages.unsaved-changes-alert-browser-test'))
+            ->renderHook(
+                TablesRenderHook::CONTENT_BEFORE,
+                static fn (): string => '<div data-testid="table-content-before-hook">Before table content</div>',
+                TableRenderHooksBrowserTest::class,
+            )
+            ->renderHook(
+                TablesRenderHook::CONTENT_AFTER,
+                static fn (): string => '<div data-testid="table-content-after-hook">After table content</div>',
+                TableRenderHooksBrowserTest::class,
+            )
             ->resources([
                 CompanyResource::class,
                 CompanyTeamResource::class,
@@ -141,7 +152,6 @@ class AdminPanelProvider extends PanelProvider
                 MarkdownEditorBrowserTest::class,
                 ModalBrowserTest::class,
                 OneTimeCodeInputBrowserTest::class,
-                PaginationBrowserTest::class,
                 PartialRenderingTest::class,
                 QueryBuilderTableTest::class,
                 RadioTest::class,
@@ -152,6 +162,7 @@ class AdminPanelProvider extends PanelProvider
                 Settings::class,
                 SliderBrowserTest::class,
                 StatsOverviewWidgetBrowserTest::class,
+                TableRenderHooksBrowserTest::class,
                 TabsBrowserTest::class,
                 TagsInputTest::class,
                 TextareaTest::class,

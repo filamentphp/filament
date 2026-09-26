@@ -156,6 +156,8 @@ use Filament\Tables\View\TablesRenderHook;
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` - After the [column manager](../tables/columns/overview#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` - Before the [column manager](../tables/columns/overview#toggling-column-visibility) trigger
 
+The `records` data provided to the content hooks contains the current records collection or paginator, or `null` before a deferred table has loaded. The `hasPagination` data indicates whether the native pagination component will be rendered. The `livewire` data contains the owning Livewire component, and the `table` data contains its `Filament\Tables\Table` instance.
+
 
 ### Actions render hooks
 

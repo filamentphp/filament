@@ -3,7 +3,6 @@
     'extremeLinks' => false,
     'paginator',
     'pageOptions' => [],
-    'wireKeyPrefix' => 'pagination',
 ])
 
 @php
@@ -39,7 +38,7 @@
             color="gray"
             rel="prev"
             :wire:click="$wireClickAction"
-            :wire:key="$this->getId() . '.' . $wireKeyPrefix . '.previous'"
+            :wire:key="$this->getId() . '.pagination.previous'"
             class="fi-pagination-previous-btn"
         >
             {{ __('filament::components/pagination.actions.previous.label') }}
@@ -113,7 +112,7 @@
             color="gray"
             rel="next"
             :wire:click="$wireClickAction"
-            :wire:key="$this->getId() . '.' . $wireKeyPrefix . '.next'"
+            :wire:key="$this->getId() . '.pagination.next'"
             class="fi-pagination-next-btn"
         >
             {{ __('filament::components/pagination.actions.next.label') }}
@@ -134,7 +133,7 @@
                         "
                         rel="first"
                         :wire:click="'gotoPage(1, \'' . $paginator->getPageName() . '\')'"
-                        :wire:key="$this->getId() . '.' . $wireKeyPrefix . '.first'"
+                        :wire:key="$this->getId() . '.pagination.first'"
                     />
                 @endif
 
@@ -152,7 +151,7 @@
                     "
                     rel="prev"
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                    :wire:key="$this->getId() . '.' . $wireKeyPrefix . '.previous'"
+                    :wire:key="$this->getId() . '.pagination.previous'"
                 />
             @endif
 
@@ -168,7 +167,7 @@
                             :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => Number::format($page)])"
                             :label="Number::format($page)"
                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
-                            :wire:key="$this->getId() . '.' . $wireKeyPrefix . '.' . $paginator->getPageName() . '.' . $page"
+                            :wire:key="$this->getId() . '.pagination.' . $paginator->getPageName() . '.' . $page"
                         />
                     @endforeach
                 @endif
@@ -189,7 +188,7 @@
                     "
                     rel="next"
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                    :wire:key="$this->getId() . '.' . $wireKeyPrefix . '.next'"
+                    :wire:key="$this->getId() . '.pagination.next'"
                 />
 
                 @if ($extremeLinks)
@@ -203,7 +202,7 @@
                         "
                         rel="last"
                         :wire:click="'gotoPage(' . $paginator->lastPage() . ', \'' . $paginator->getPageName() . '\')'"
-                        :wire:key="$this->getId() . '.' . $wireKeyPrefix . '.last'"
+                        :wire:key="$this->getId() . '.pagination.last'"
                     />
                 @endif
             @endif
