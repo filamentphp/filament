@@ -2324,6 +2324,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/toggle-buttons/full-width': {
+        url: 'forms/fields/toggle-buttons',
+        selector: '#toggleButtonsFullWidth',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/toggle-buttons/grouped': {
         url: 'forms/fields/toggle-buttons',
         selector: '#toggleButtonsGrouped',

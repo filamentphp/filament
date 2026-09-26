@@ -42,6 +42,25 @@ class ToggleButtonsTest extends Page
                     ])
                     ->size(Size::ExtraSmall)
                     ->grouped(),
+                ToggleButtons::make('fullWidthStacked')
+                    ->label('Full-width stacked ToggleButtons')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->fullWidth(),
+                ToggleButtons::make('fullWidthInline')
+                    ->label('Full-width inline ToggleButtons')
+                    ->options([
+                        'draft' => 'Draft',
+                        'review' => 'Needs additional review',
+                        'response' => 'Awaiting customer response',
+                        'published' => 'Published publicly',
+                    ])
+                    ->inline()
+                    ->fullWidth(),
+                ToggleButtons::make('fullWidthGrouped')
+                    ->label('Full-width grouped ToggleButtons')
+                    ->options(['a' => 'Option A', 'b' => 'Option B'])
+                    ->grouped()
+                    ->fullWidth(),
             ])
             ->statePath('data');
     }

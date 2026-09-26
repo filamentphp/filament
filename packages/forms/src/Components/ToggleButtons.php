@@ -46,6 +46,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
 
     protected bool | Closure $areButtonLabelsHidden = false;
 
+    protected bool | Closure $isFullWidth = false;
+
     protected Size | string | Closure | null $size = null;
 
     public function size(Size | string | Closure | null $size): static
@@ -108,6 +110,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
         $isAutofocused = $this->isAutofocused();
+        $isFullWidth = $this->isFullWidth();
 
         $containerAttributes = $this->getExtraAttributeBag();
 
@@ -123,6 +126,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
             ->class([
                 'fi-fo-toggle-buttons',
                 'fi-inline' => $isInline,
+                'fi-width-full' => $isFullWidth,
             ]);
 
         $first = true;
@@ -203,13 +207,18 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
         };
         $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
         $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
+        $isFullWidth = $this->isFullWidth();
 
         $containerAttributes = $this->getExtraAttributeBag()
             ->merge([
                 'aria-labelledby' => "{$id}-label",
                 'role' => $isMultiple ? 'group' : 'radiogroup',
             ], escape: false)
-            ->class(['fi-fo-toggle-buttons fi-btn-group']);
+            ->class([
+                'fi-fo-toggle-buttons',
+                'fi-btn-group',
+                'fi-width-full' => $isFullWidth,
+            ]);
 
         ob_start(); ?>
 
@@ -303,6 +312,18 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmb
     public function isInline(): bool
     {
         return (bool) $this->evaluate($this->isInline);
+    }
+
+    public function fullWidth(bool | Closure $condition = true): static
+    {
+        $this->isFullWidth = $condition;
+
+        return $this;
+    }
+
+    public function isFullWidth(): bool
+    {
+        return (bool) $this->evaluate($this->isFullWidth);
     }
 
     public function hiddenButtonLabels(bool | Closure $condition = true): static
