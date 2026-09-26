@@ -32,9 +32,7 @@ it('imports a product', function () {
 
 `assertImported()` checks that the importer completed without an exception and resolved a record. It does not guarantee database persistence, since your importer may customize `saveRecord()`. Use `getRecord()` with model or database assertions to check the saved values.
 
-<Aside variant="info">
-    The helper runs your importer's database writes and other side effects without rolling them back, even when a row fails. Use your normal database isolation for tests. Test queued processing and completion notifications separately.
-</Aside>
+The helper runs your importer's database writes and other side effects without rolling them back, even when a row fails. Use your normal database isolation for tests. Test queued processing and completion notifications separately.
 
 ### Passing column mappings and options
 
@@ -71,7 +69,7 @@ The helper creates an unsaved `Import` model by default. If your importer needs 
 
 ## Asserting skipped rows
 
-Use `assertSkipped()` when your importer's `resolveRecord()` returns `null`. For example, an [updates-only importer](../actions/import#updating-existing-records-when-importing-only) can skip products that do not exist:
+Use `assertSkipped()` when your importer's `resolveRecord()` returns `null`. For example, if your importer returns `null` for products that do not exist:
 
 ```php
 use App\Filament\Imports\ProductImporter;

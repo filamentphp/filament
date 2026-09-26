@@ -6,7 +6,7 @@ title: Overview
 
 All examples in this guide will be written using [Pest](https://pestphp.com). To use Pest's Livewire plugin for testing, you can follow the installation instructions in the Pest documentation on plugins: [Livewire plugin for Pest](https://pestphp.com/docs/plugins#livewire). However, you can easily adapt this to PHPUnit, mostly by switching out the `livewire()` function from Pest with the `Livewire::test()` method.
 
-Most Filament UI tests use Livewire testing helpers. Other helpers, such as `TestImporter`, test application behavior without mounting a Livewire component. If you've never tested Livewire components before, please read [this guide](https://livewire.laravel.com/docs/testing) from the Livewire docs.
+Most Filament UI tests use Livewire testing helpers. Some helpers test application behavior directly, without mounting a Livewire component. If you've never tested Livewire components before, please read [this guide](https://livewire.laravel.com/docs/testing) from the Livewire docs.
 
 ## Testing guides
 
