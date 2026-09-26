@@ -44,7 +44,7 @@ class MentionExtension extends Node
     {
         return [
             'id' => [
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-id') ?: null,
+                'parseHTML' => static fn ($DOMNode) => (($id = $DOMNode->getAttribute('data-id')) === '') ? null : $id,
                 'renderHTML' => fn ($attributes) => ['data-id' => $attributes->id ?? null],
             ],
             'label' => [

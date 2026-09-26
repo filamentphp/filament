@@ -969,6 +969,16 @@ class Builder extends Field implements HasEmbeddedView, HasExtraItemActions
         return $this->cachedItemsRawStateStructure === $this->getRawStateStructure($this->getRawState());
     }
 
+    protected function isCachedDefaultChildSchemaFresh(string | int $key): bool
+    {
+        $rawState = $this->getRawState();
+
+        return is_array($rawState)
+            && array_key_exists($key, $rawState)
+            && array_key_exists($key, $this->cachedItemsRawStateStructure ?? [])
+            && ($this->cachedItemsRawStateStructure[$key] === (is_array($rawState[$key]) ? ($rawState[$key]['type'] ?? null) : null));
+    }
+
     /**
      * @return array<?string>
      */

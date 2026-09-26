@@ -70,6 +70,52 @@ export default function richEditorFormComponent({
         editorUpdatedAt: Date.now(),
 
         async init() {
+            const resolvedExtensions = await getExtensions({
+                acceptedFileTypes,
+                acceptedFileTypesValidationMessage,
+                canAttachFiles,
+                customExtensionUrls: extensions,
+                deleteCustomBlockButtonIconHtml,
+                editCustomBlockButtonIconHtml,
+                editCustomBlockUsing: (id, config) =>
+                    this.$wire.mountAction(
+                        'customBlock',
+                        {
+                            editorSelection: this.editorSelection,
+                            id,
+                            config,
+                            mode: 'edit',
+                        },
+                        { schemaComponent: key },
+                    ),
+                floatingToolbars,
+                hasResizableImages,
+                insertCustomBlockUsing: (id, dragPosition = null) =>
+                    this.$wire.mountAction(
+                        'customBlock',
+                        { id, dragPosition, mode: 'insert' },
+                        { schemaComponent: key },
+                    ),
+                key,
+                linkProtocols,
+                maxFileSize,
+                maxFileSizeValidationMessage,
+                mergeTags,
+                mentions,
+                getMentionSearchResultsUsing,
+                getMentionLabelsUsing,
+                noMergeTagSearchResultsMessage,
+                placeholder,
+                statePath,
+                textColors,
+                uploadingFileMessage,
+                $wire: this.$wire,
+            })
+
+            if (isDestroyed) {
+                return
+            }
+
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
@@ -78,47 +124,7 @@ export default function richEditorFormComponent({
                         ...(label ? { 'aria-label': label } : {}),
                     },
                 },
-                extensions: await getExtensions({
-                    acceptedFileTypes,
-                    acceptedFileTypesValidationMessage,
-                    canAttachFiles,
-                    customExtensionUrls: extensions,
-                    deleteCustomBlockButtonIconHtml,
-                    editCustomBlockButtonIconHtml,
-                    editCustomBlockUsing: (id, config) =>
-                        this.$wire.mountAction(
-                            'customBlock',
-                            {
-                                editorSelection: this.editorSelection,
-                                id,
-                                config,
-                                mode: 'edit',
-                            },
-                            { schemaComponent: key },
-                        ),
-                    floatingToolbars,
-                    hasResizableImages,
-                    insertCustomBlockUsing: (id, dragPosition = null) =>
-                        this.$wire.mountAction(
-                            'customBlock',
-                            { id, dragPosition, mode: 'insert' },
-                            { schemaComponent: key },
-                        ),
-                    key,
-                    linkProtocols,
-                    maxFileSize,
-                    maxFileSizeValidationMessage,
-                    mergeTags,
-                    mentions,
-                    getMentionSearchResultsUsing,
-                    getMentionLabelsUsing,
-                    noMergeTagSearchResultsMessage,
-                    placeholder,
-                    statePath,
-                    textColors,
-                    uploadingFileMessage,
-                    $wire: this.$wire,
-                }),
+                extensions: resolvedExtensions,
                 content: this.state,
             })
 
