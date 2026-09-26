@@ -3,6 +3,8 @@
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
 
 uses(TestCase::class);
 
@@ -21,6 +23,19 @@ class TestSimpleBlock extends RichContentCustomBlock
     public static function getId(): string
     {
         return 'quote';
+    }
+}
+
+class TestBlockWithIcon extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'with-icon';
+    }
+
+    public static function getIcon(): Htmlable
+    {
+        return new HtmlString('icon');
     }
 }
 
@@ -81,6 +96,10 @@ describe('`getLabel()` logic', function (): void {
 });
 
 describe('default implementations', function (): void {
+    it('returns `null` from `getIcon()` by default', function (): void {
+        expect(TestCalloutBlock::getIcon())->toBeNull();
+    });
+
     it('returns `null` from `toHtml()` by default', function (): void {
         expect(TestCalloutBlock::toHtml([], []))->toBeNull();
     });
@@ -98,6 +117,12 @@ describe('default implementations', function (): void {
         $result = TestCalloutBlock::configureEditorAction($action);
 
         expect($result)->toBe($action);
+    });
+});
+
+describe('`getIcon()`', function (): void {
+    it('can return an `Htmlable` icon', function (): void {
+        expect(TestBlockWithIcon::getIcon())->toBeInstanceOf(Htmlable::class);
     });
 });
 

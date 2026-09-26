@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -477,18 +478,20 @@ class ImportColumn extends Component
 
         $resolveUsing = Arr::wrap($resolveUsing);
 
-        $isFirst = true;
+        $relationshipQuery->where(function (Builder $query) use ($resolveUsing, $state): void {
+            $isFirst = true;
 
-        foreach ($resolveUsing as $columnToResolve) {
-            $whereClause = $isFirst ? 'where' : 'orWhere';
+            foreach ($resolveUsing as $columnToResolve) {
+                $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            $relationshipQuery->{$whereClause}(
-                $columnToResolve,
-                $state,
-            );
+                $query->{$whereClause}(
+                    $columnToResolve,
+                    $state,
+                );
 
-            $isFirst = false;
-        }
+                $isFirst = false;
+            }
+        });
 
         return $this->resolvedRelatedRecords[$state] = $relationshipQuery->first();
     }
@@ -532,18 +535,20 @@ class ImportColumn extends Component
 
         $resolveUsing = Arr::wrap($resolveUsing);
 
-        $isFirst = true;
+        $relationshipQuery->where(function (Builder $query) use ($resolveUsing, $state): void {
+            $isFirst = true;
 
-        foreach ($resolveUsing as $columnToResolve) {
-            $whereClause = $isFirst ? 'whereIn' : 'orWhereIn';
+            foreach ($resolveUsing as $columnToResolve) {
+                $whereClause = $isFirst ? 'whereIn' : 'orWhereIn';
 
-            $relationshipQuery->{$whereClause}(
-                $columnToResolve,
-                $state,
-            );
+                $query->{$whereClause}(
+                    $columnToResolve,
+                    $state,
+                );
 
-            $isFirst = false;
-        }
+                $isFirst = false;
+            }
+        });
 
         return $this->resolvedRelatedRecords[$encodedState] = $relationshipQuery->get();
     }
