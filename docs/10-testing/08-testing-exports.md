@@ -112,6 +112,15 @@ This assumes an action named `export` in the table header. For an action outside
 
 `assertDispatchedTimes()` checks the exact count, defaulting to `1`. Use `assertNothingDispatched()` after a rejected submission. `ExportBulkAction::fake()` captures both action types too. Calling either `fake()` method resets the recorded exports, so call it once before actions you want to assert together.
 
+Use `assertNotDispatched(ProductExporter::class)` to check that a particular exporter was not dispatched, while allowing other exporters. It accepts the same optional callback as `assertDispatched()` and fails if any export matches:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\Exports\Models\Export;
+
+$exports->assertNotDispatched(ProductExporter::class, static fn (Export $export): bool => $export->user_id === $otherUser->getKey());
+```
+
 ### Inspecting the query and submitted configuration
 
 Pass a callback to `assertDispatched()` to inspect the saved `Export`, a fresh query builder, column map, merged options, formats, and selected record IDs, in that order. Return `true` for a match or `false` to try another export. You may use Pest or PHPUnit assertions inside the callback.

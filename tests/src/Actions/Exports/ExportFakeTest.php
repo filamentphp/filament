@@ -150,6 +150,7 @@ it('deserializes a fresh query for every callback without applying selection or 
     DB::enableQueryLog();
     DB::flushQueryLog();
     $fake->assertDispatched(ActionPostExporter::class)->assertDispatchedTimes(ActionPostExporter::class);
+    expect(fn () => $fake->assertNotDispatched(ActionPostExporter::class))->toThrow(AssertionFailedError::class);
     expect(DB::getQueryLog())->toBe([]);
     DB::disableQueryLog();
 });
@@ -164,6 +165,46 @@ it('fails assertions for the wrong exporter predicate count and unexpected expor
         ->and(fn () => $fake->assertDispatchedTimes(ActionPostExporter::class, 2))->toThrow(AssertionFailedError::class)
         ->and(fn () => $fake->assertDispatchedTimes(Exporter::class))->toThrow(AssertionFailedError::class)
         ->and(fn () => $fake->assertNothingDispatched())->toThrow(AssertionFailedError::class);
+});
+
+it('asserts no matching export was dispatched without rejecting other exports', function (): void {
+    $fake = ExportAction::fake();
+    expect($fake->assertNotDispatched(ActionPostExporter::class))->toBe($fake);
+    Post::factory()->create(['rating' => 4]);
+    livewire(ExportActions::class)->callAction('export', data: ['minimum' => 2]);
+    livewire(ExportActions::class)->callAction('export', data: ['minimum' => 5]);
+
+    $fake->assertNotDispatched(Exporter::class, static fn (): bool => throw new LogicException('Unrelated exporter callback invoked.'));
+    $seenMinimums = [];
+    expect($fake->assertNotDispatched(ActionPostExporter::class, function (Export $export, Builder $query, array $columnMap, array $options, array $formats, ?array $records) use (&$seenMinimums): bool {
+        $seenMinimums[] = $options['minimum'];
+        expect($export->total_rows)->toBe($options['minimum'] === 2.0 ? 1 : 0)
+            ->and($query->count())->toBe($export->total_rows)
+            ->and($columnMap)->toBe(['title' => 'Title'])
+            ->and($formats)->toBe([ExportFormat::Csv])
+            ->and($records)->toBeNull();
+        $query->whereRaw('1 = 0');
+
+        return false;
+    }))->toBe($fake);
+    expect($seenMinimums)->toBe([2.0, 5.0]);
+    $fake->assertDispatched(ActionPostExporter::class, static fn (Export $export, Builder $query): bool => $query->count() === 1);
+
+    expect(fn () => $fake->assertNotDispatched(ActionPostExporter::class))->toThrow(AssertionFailedError::class)
+        ->and(fn () => $fake->assertNotDispatched(ActionPostExporter::class, static fn (Export $export): bool => $export->total_rows === 0))
+        ->toThrow(AssertionFailedError::class, 'with matching data.');
+
+    $exception = new LogicException('Callback failed.');
+
+    try {
+        $fake->assertNotDispatched(ActionPostExporter::class, static fn (): bool => throw $exception);
+    } catch (LogicException $caughtException) {
+        expect($caughtException)->toBe($exception);
+
+        return;
+    }
+
+    $this->fail('The callback exception was swallowed.');
 });
 
 it('does not change unrelated real jobs batches or events or existing bus and event fakes', function (): void {

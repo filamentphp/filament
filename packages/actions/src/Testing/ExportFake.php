@@ -81,6 +81,36 @@ class ExportFake extends ExportDispatcher
         return $this;
     }
 
+    /**
+     * @param  class-string<Exporter>  $exporter
+     * @param  (Closure(Export, Builder<Model>, array<string, string>, array<string, mixed>, array<ExportFormat>, array<mixed> | null): bool) | null  $callback
+     */
+    public function assertNotDispatched(string $exporter, ?Closure $callback = null): static
+    {
+        foreach ($this->dispatched as $dispatch) {
+            if ($dispatch['export']->exporter !== $exporter) {
+                continue;
+            }
+
+            if ($callback && (! $callback(
+                $dispatch['export'],
+                EloquentSerializeFacade::unserialize($dispatch['serializedQuery']),
+                $dispatch['columnMap'],
+                $dispatch['options'],
+                $dispatch['formats'],
+                $dispatch['records'],
+            ))) {
+                continue;
+            }
+
+            Assert::fail("The unexpected [{$exporter}] export was dispatched" . ($callback ? ' with matching data.' : '.'));
+        }
+
+        Assert::assertTrue(true);
+
+        return $this;
+    }
+
     public function assertNothingDispatched(): static
     {
         Assert::assertEmpty($this->dispatched, 'Unexpected exports were dispatched.');
