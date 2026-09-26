@@ -520,7 +520,9 @@ trait HasState
             return;
         }
 
-        $this->loadStateFromRelationships();
+        if ($this->getContainer()->shouldLoadStateFromRelationshipsWhenHydratingPartially()) {
+            $this->loadStateFromRelationships();
+        }
 
         $rawState = $this->getRawState();
 

@@ -26,7 +26,8 @@ class CompanyTeamResource extends Resource
 
     public static function getParentResourceRegistration(): ?ParentResourceRegistration
     {
-        return CompanyResource::asParent(static::class);
+        return CompanyResource::asParent(static::class)
+            ->page('missing');
     }
 
     public static function form(Schema $form): Schema

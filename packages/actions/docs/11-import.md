@@ -165,6 +165,30 @@ Any rows that do not pass validation will not be imported. Instead, they will be
 
 <UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+#### Validating a column against an enum
+
+If a column maps onto a [backed enum](https://www.php.net/manual/en/language.enumerations.backed.php), you can pass the enum class to the `enum()` method. Any row whose value is not a case of the enum will fail validation, instead of reaching the model's cast and throwing a `ValueError`:
+
+```php
+use App\Enums\Status;
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('status')
+    ->enum(Status::class)
+```
+
+Empty cells are not validated against the enum, so users may leave an optional column blank. If you want to reject empty cells, add a `required` [rule](#validating-csv-data) to the column.
+
+The backing values of the enum are also used as the [example CSV data](#providing-example-csv-data) for the column, so the user can see which values are accepted without you listing them by hand. Passing `examples()` yourself overrides this, and passing an empty array prevents example rows from being generated for that column.
+
+<Aside variant="info">
+    If the column [handles multiple values](#handling-multiple-values-in-a-single-column), each item in the array is validated against the enum.
+</Aside>
+
+<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `enum()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+When the enum is calculated dynamically, its cases are not automatically used as example CSV data, since the function may depend on the current row being imported. You can pass the example data to `examples()` yourself if required.
+
 ### Casting state
 
 Before [validation](#validating-csv-data), data from the CSV can be cast. This is useful for converting strings into the correct data type, otherwise validation may fail. For example, if you have a `price` column in your CSV, you may want to cast it to a float:
