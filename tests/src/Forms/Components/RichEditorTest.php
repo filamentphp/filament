@@ -1064,6 +1064,45 @@ it('can clear `activePanel()` with `null`', function (): void {
     expect($editor->getActivePanel())->toBeNull();
 });
 
+it('keeps optional custom block and sticky features disabled by default and evaluates their conditions', function (string $setter, string $getter): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}();
+
+    expect($editor->{$getter}())->toBeTrue();
+
+    $editor->{$setter}(static fn (): bool => false);
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}(false);
+
+    expect($editor->{$getter}())->toBeFalse();
+})->with([
+    '`customBlocksGrid()`' => ['customBlocksGrid', 'hasCustomBlocksGrid'],
+    '`searchableCustomBlocks()`' => ['searchableCustomBlocks', 'hasSearchableCustomBlocks'],
+    '`stickyToolbar()`' => ['stickyToolbar', 'hasStickyToolbar'],
+    '`stickyPanels()`' => ['stickyPanels', 'hasStickyPanels'],
+]);
+
+it('can evaluate and clear `stickyOffset()` without enabling sticky controls', function (): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->getStickyOffset())->toBeNull();
+
+    $editor->stickyOffset(static fn (): string => '5rem');
+
+    expect($editor->getStickyOffset())->toBe('5rem')
+        ->and($editor->hasStickyToolbar())->toBeFalse()
+        ->and($editor->hasStickyPanels())->toBeFalse();
+
+    $editor->stickyOffset(null);
+
+    expect($editor->getStickyOffset())->toBeNull();
+});
+
 it('returns fluent `$this` from `customTextColors()`', function (): void {
     $editor = RichEditor::make('content');
 
@@ -1612,6 +1651,53 @@ it('can render `RichEditor` in the browser', function (): void {
         visit('/rich-editor-browser-test')
             ->inDarkMode()
             ->assertNoSmoke()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('can search custom blocks and insert one at the preserved editor selection', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-browser-test')
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  eDiToRiAl  ')
+            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="section"]')
+            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="image"]')
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', 'unknown block')
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] [role="status"]')
+            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertNoAccessibilityIssues()
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="custom-blocks-rich-editor"] .tiptap')).$getEditor()
+                    editor.commands.focus()
+                    editor.commands.setTextSelection(editor.state.doc.firstChild.nodeSize - 1)
+
+                    return true
+                })()
+                JS)
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  QuOtE  ')
+            ->click('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="custom-blocks-rich-editor"] .tiptap')).$getEditor()
+                    const content = editor.getJSON().content
+                    const blockPosition = content.findIndex((node) => node.type === 'customBlock')
+                    const lastParagraphPosition = content.findIndex((node) => node.content?.[0]?.text === 'Last paragraph.')
+
+                    return blockPosition > 0 &&
+                        blockPosition < lastParagraphPosition &&
+                        content[blockPosition].attrs.id === 'quote'
+                })()
+                JS)
+            ->assertNoAccessibilityIssues();
+
+        visit('/rich-editor-browser-test')
+            ->inDarkMode()
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
             ->assertNoAccessibilityIssues();
     });
 });
