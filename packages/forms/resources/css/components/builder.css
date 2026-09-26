@@ -162,8 +162,24 @@
         @apply flex-1 border-t border-gray-200 dark:border-white/10;
     }
 
+    & .fi-fo-builder-block-picker-search-ctn {
+        @apply sticky top-0 z-10 -mx-1 -mt-1 border-b border-gray-100 bg-white dark:border-white/5 dark:bg-gray-900;
+    }
+
+    & .fi-fo-builder-block-picker-no-search-results-message {
+        @apply px-2 py-1.5 text-sm text-gray-500 dark:text-gray-400;
+    }
+
     & .fi-fo-builder-block-picker {
         @apply flex justify-center;
+
+        & .fi-dropdown-panel {
+            @apply overflow-y-auto;
+        }
+
+        & .fi-dropdown-list > .fi-grid {
+            @apply gap-x-0;
+        }
 
         &.fi-align-start,
         &.fi-align-left {
