@@ -6,6 +6,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -315,6 +316,40 @@ describe('hydrating state', function (): void {
                     $statePath2 => $state2,
                 ],
             ]);
+    });
+
+    test('relationship state loading can be skipped when state is hydrated partially', function (): void {
+        $schema = Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->model(User::factory()->create())
+            ->components([
+                (new Component)->schema([
+                    (new Component)
+                        ->statePath($statePath = Str::random())
+                        ->loadStateFromRelationshipsUsing(
+                            fn (Component $component) => $component->state('relationship state'),
+                        ),
+                ]),
+            ])
+            ->fill([$statePath => 'initial state']);
+
+        $schema->fillPartially([$statePath => 'first explicit state'], statePaths: [$statePath]);
+
+        expect($livewire)
+            ->getData()->toBe([$statePath => 'relationship state']);
+
+        $schema->fillPartiallyWithoutLoadingStateFromRelationships(
+            [$statePath => 'explicit state'],
+            statePaths: [$statePath],
+        );
+
+        expect($livewire)
+            ->getData()->toBe([$statePath => 'explicit state']);
+
+        $schema->fillPartially([$statePath => 'second explicit state'], statePaths: [$statePath]);
+
+        expect($livewire)
+            ->getData()->toBe([$statePath => 'relationship state']);
     });
 
     test('custom logic can be executed after state hydrated partially, only for components that are hydrated partially', function (): void {

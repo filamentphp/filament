@@ -112,6 +112,46 @@ describe('browser interactions', function (): void {
         'dark mode' => true,
     ]);
 
+    it('keeps the parent modal open when `getValidatedData()` prevents a nested modal from opening', function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $browser = visit('/modal-browser-test');
+
+        $assertValidationBehavior = static function ($browser): void {
+            $browser
+                ->click('[data-testid="validated-parent-data-trigger"]')
+                ->assertVisible('[data-testid="validated-parent-data-modal"]')
+                ->click('[data-testid="validated-parent-data-suffix-action"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'First generated name')
+                ->click('[data-testid="validated-parent-data-suffix-action"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'Second generated name')
+                ->fill('[data-testid="validated-parent-data-input"]', '')
+                ->click('[data-testid="validated-parent-data-nested-trigger"]')
+                ->assertVisible('[data-testid="validated-parent-data-modal"]')
+                ->assertMissing('[data-testid="validated-parent-data-nested-modal"]')
+                ->assertVisible('[data-testid="validated-parent-data-field"] [data-validation-error]')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
+                ->assertNoAccessibilityIssues()
+                ->type('[data-testid="validated-parent-data-input"]', 'Jane Doe')
+                ->click('[data-testid="validated-parent-data-nested-trigger"]')
+                ->assertValue('[data-testid="validated-parent-data-input"]', 'Jane Doe')
+                ->assertVisible('[data-testid="validated-parent-data-nested-modal"]')
+                ->assertScript('document.getAnimations().every((animation) => animation.effect.getTiming().iterations === Infinity || animation.playState === "finished")')
+                ->assertNoSmoke()
+                ->assertNoAccessibilityIssues();
+        };
+
+        $assertValidationBehavior($browser);
+
+        $browser
+            ->click('[data-testid="validated-parent-data-nested-modal"] .fi-modal-footer-actions button >> text=Cancel')
+            ->click('[data-testid="validated-parent-data-modal"] .fi-modal-footer-actions button >> text=Cancel');
+
+        $browser->inDarkMode();
+
+        $assertValidationBehavior($browser);
+    });
+
     it('locks page scroll and restores focus and scroll position after closing a standalone modal', function (): void {
         retry(10, function (): void {
             $this->actingAs(User::factory()->create());
