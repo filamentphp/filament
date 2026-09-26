@@ -59,11 +59,15 @@ expect($product->fresh()->name)->toBe('Large ceramic mug');
 
 An explicit map replaces the default entirely; omitted columns remain unmapped. Options control only the behavior you implement in your importer.
 
+The default map includes every declared column, not just the keys present in the row. To test a file that omits a column, pass an explicit map without that column. Omitting a row value alone does not remove the column's validation rules.
+
 `TestableImport` does not validate the column mapping or options forms, or apply options-form defaults. For example, `requiredMapping()` is enforced by the import action's form, not this helper. Test those requirements through the [import action](#testing-import-action-submissions).
 
 ### Providing import context
 
 The helper creates an unsaved `Import` model by default. If your importer needs a particular import or associated user, pass your own model to `ProductImporter::test(import: $import)`. Associate its user using `$import->user()->associate($user)` and authenticate explicitly using `$this->actingAs($user)` when needed. The helper does not associate a user or change authentication for you.
+
+If your importer uses the import ID, for example to scope cached values shared across rows, give your supplied model a key appropriate to your application or persist it when a database record is required. The helper does not generate an ID. Use the same import ID for rows from one import and different IDs when testing isolation between imports.
 
 ## Asserting skipped rows
 
@@ -203,3 +207,5 @@ For example, if `sku` uses `requiredMapping()`, submit an otherwise valid form w
 To test submission-time authorization, mount and fill a valid form while authorized, revoke permission, and invoke `->call('callMountedAction')` before asserting that nothing was dispatched. Visibility checks alone do not prove that submission is rejected.
 
 The fake still reads the file, validates the form, and persists an `Import` record. It does not run import jobs, process rows, emit `ImportStarted` or `ImportCompleted`, or send completion notifications. It does not globally fake Laravel's bus or events: unrelated jobs and events, and your action hooks, still run. Use your importer's `test()` method separately to test row behavior.
+
+The fake only intercepts dispatch through Filament's `ImportDispatcher`. If your custom action dispatches jobs directly instead, use Laravel's bus or queue fakes to test that workflow. Keep separate tests for completion listeners and unfaked integration tests for worker processing and failed-row downloads.
