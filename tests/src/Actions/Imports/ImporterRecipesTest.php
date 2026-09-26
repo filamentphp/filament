@@ -3,7 +3,6 @@
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use Filament\Actions\Testing\TestImporter;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -20,7 +19,7 @@ it('associates the author matched by email instead of another existing user', fu
     User::factory()->create(['email' => 'grace@example.com']);
     $author = User::factory()->create(['email' => 'ada@example.com']);
 
-    $record = TestImporter::make(PostRecipeImporter::class)->import([
+    $record = PostRecipeImporter::test()->import([
         'title' => 'Importing posts',
         'content' => 'A practical guide',
         'author' => 'ada@example.com',
@@ -37,7 +36,7 @@ it('associates the author matched by email instead of another existing user', fu
 it('rejects an unknown author without creating a parent or changing an existing association', function (): void {
     $post = Post::factory()->create(['title' => 'Importing posts', 'content' => 'Original content']);
 
-    TestImporter::make(PostRecipeImporter::class)->import([
+    PostRecipeImporter::test()->import([
         'title' => $post->title,
         'content' => 'Replacement content',
         'author' => 'unknown@example.com',
@@ -56,7 +55,7 @@ it('rejects an unknown author without creating a parent or changing an existing 
 it('uses `createMissing` and `updateExisting` options to control writes and skipped rows', function (bool $createMissing, bool $updateExisting): void {
     $post = Post::factory()->create(['title' => 'Existing post', 'content' => 'Original content']);
     $author = User::factory()->create();
-    $importer = TestImporter::make(PostRecipeImporter::class, options: [
+    $importer = PostRecipeImporter::test(options: [
         'createMissing' => $createMissing,
         'updateExisting' => $updateExisting,
     ]);
@@ -110,7 +109,7 @@ it('uses `createMissing` and `updateExisting` options to control writes and skip
 
 it('dispatches the application indexing job for the saved post but not for invalid content', function (): void {
     $author = User::factory()->create();
-    $importer = TestImporter::make(PostRecipeImporter::class);
+    $importer = PostRecipeImporter::test();
 
     $importer->import([
         'title' => 'Importing posts',

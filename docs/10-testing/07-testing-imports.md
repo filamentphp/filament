@@ -4,18 +4,17 @@ title: Testing imports
 
 ## Introduction
 
-You can test your importer's row processing using `TestImporter`, and test submissions from an import action using `ImportAction::fake()`.
+You can test your importer's row processing using its `test()` method, and test submissions from an import action using `ImportAction::fake()`.
 
 ## Testing a row
 
-`TestImporter` runs your application's importer, including column mapping, casting, validation, lifecycle hooks, and saving records and relationships, without uploading a CSV or dispatching import jobs:
+Call `test()` on your importer, such as `PostImporter::test()`, to get a `Filament\Actions\Testing\TestableImport` instance. It runs your application's importer, including column mapping, casting, validation, lifecycle hooks, and saving records and relationships, without uploading a CSV or dispatching import jobs:
 
 ```php
 use App\Filament\Imports\ProductImporter;
-use Filament\Actions\Testing\TestImporter;
 
 it('imports a product', function () {
-    $record = TestImporter::make(ProductImporter::class)->import([
+    $record = ProductImporter::test()->import([
         'sku' => 'MUG-001',
         'name' => 'Ceramic mug',
         'price' => '12.50',
@@ -41,11 +40,10 @@ By default, each importer column is mapped to a row key with the same name. Pass
 ```php
 use App\Filament\Imports\ProductImporter;
 use App\Models\Product;
-use Filament\Actions\Testing\TestImporter;
 
 $product = Product::factory()->create(['sku' => 'MUG-001', 'name' => 'Ceramic mug']);
 
-$record = TestImporter::make(ProductImporter::class, columnMap: [
+$record = ProductImporter::test(columnMap: [
     'sku' => 'Product code',
     'name' => 'Product name',
 ], options: [
@@ -61,11 +59,11 @@ expect($product->fresh()->name)->toBe('Large ceramic mug');
 
 An explicit map replaces the default entirely; omitted columns remain unmapped. Options control only the behavior you implement in your importer.
 
-`TestImporter` does not validate the column mapping or options forms, or apply options-form defaults. For example, `requiredMapping()` is enforced by the import action's form, not this helper. Test those requirements through the [import action](#testing-import-action-submissions).
+`TestableImport` does not validate the column mapping or options forms, or apply options-form defaults. For example, `requiredMapping()` is enforced by the import action's form, not this helper. Test those requirements through the [import action](#testing-import-action-submissions).
 
 ### Providing import context
 
-The helper creates an unsaved `Import` model by default. If your importer needs a particular import or associated user, pass your own model to `TestImporter::make(ProductImporter::class, import: $import)`. Associate its user using `$import->user()->associate($user)` and authenticate explicitly using `$this->actingAs($user)` when needed. The helper does not associate a user or change authentication for you.
+The helper creates an unsaved `Import` model by default. If your importer needs a particular import or associated user, pass your own model to `ProductImporter::test(import: $import)`. Associate its user using `$import->user()->associate($user)` and authenticate explicitly using `$this->actingAs($user)` when needed. The helper does not associate a user or change authentication for you.
 
 ## Asserting skipped rows
 
@@ -73,9 +71,8 @@ Use `assertSkipped()` when your importer's `resolveRecord()` returns `null`. For
 
 ```php
 use App\Filament\Imports\ProductImporter;
-use Filament\Actions\Testing\TestImporter;
 
-TestImporter::make(ProductImporter::class)->import([
+ProductImporter::test()->import([
     'sku' => 'MISSING-001',
 ])->assertSkipped();
 
@@ -90,9 +87,8 @@ Use `assertHasErrors()` and `assertHasNoErrors()` to check validation errors, in
 
 ```php
 use App\Filament\Imports\ProductImporter;
-use Filament\Actions\Testing\TestImporter;
 
-TestImporter::make(ProductImporter::class)->import([
+ProductImporter::test()->import([
     'sku' => 'MUG-001',
     'name' => 'Ceramic mug',
     'price' => '-1',
@@ -112,9 +108,8 @@ Use `assertHasRowFailure()` to check for a `RowImportFailedException`. For examp
 
 ```php
 use App\Filament\Imports\ProductImporter;
-use Filament\Actions\Testing\TestImporter;
 
-TestImporter::make(ProductImporter::class)->import([
+ProductImporter::test()->import([
     'sku' => 'MISSING-001',
 ])->assertHasRowFailure('No product found with SKU [MISSING-001].');
 ```
@@ -130,13 +125,12 @@ Use model assertions to check saved relationships. For example, for a `PostImpor
 ```php
 use App\Filament\Imports\PostImporter;
 use App\Models\User;
-use Filament\Actions\Testing\TestImporter;
 
 it('associates the author matched by email', function () {
     User::factory()->create(['email' => 'grace@example.com']);
     $author = User::factory()->create(['email' => 'ada@example.com']);
 
-    $record = TestImporter::make(PostImporter::class)->import([
+    $record = PostImporter::test()->import([
         'title' => 'Importing posts',
         'content' => 'A practical guide',
         'author' => 'ada@example.com',
@@ -199,4 +193,4 @@ For example, if `sku` uses `requiredMapping()`, submit an otherwise valid form w
 
 To test submission-time authorization, mount and fill a valid form while authorized, revoke permission, and invoke `->call('callMountedAction')` before asserting that nothing was dispatched. Visibility checks alone do not prove that submission is rejected.
 
-The fake still reads the file, validates the form, and persists an `Import` record. It does not run import jobs, process rows, emit `ImportStarted` or `ImportCompleted`, or send completion notifications. It does not globally fake Laravel's bus or events: unrelated jobs and events, and your action hooks, still run. Use `TestImporter` separately to test row behavior.
+The fake still reads the file, validates the form, and persists an `Import` record. It does not run import jobs, process rows, emit `ImportStarted` or `ImportCompleted`, or send completion notifications. It does not globally fake Laravel's bus or events: unrelated jobs and events, and your action hooks, still run. Use your importer's `test()` method separately to test row behavior.

@@ -12,7 +12,7 @@ use Illuminate\Testing\Assert;
 use Illuminate\Validation\ValidationException;
 use Livewire\Features\SupportValidation\TestsValidation;
 
-class TestImporter
+class TestableImport
 {
     use TestsValidation;
 

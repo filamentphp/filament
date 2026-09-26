@@ -4,7 +4,7 @@ use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use Filament\Actions\Testing\TestImporter;
+use Filament\Actions\Testing\TestableImport;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -15,7 +15,7 @@ use PHPUnit\Framework\AssertionFailedError;
 uses(TestCase::class);
 
 it('imports a row with identity mapping through casting, validation and save hooks', function (): void {
-    $record = TestImporter::make(UserRowTestImporter::class)->import([
+    $record = UserRowTestImporter::test()->import([
         'name' => '  Ada Lovelace  ',
         'email' => 'ada@example.com',
     ])->assertImported()->getRecord();
@@ -35,7 +35,7 @@ it('imports a row with identity mapping through casting, validation and save hoo
 it('updates a record using explicit headers without filling or validating an omitted column', function (): void {
     $user = User::factory()->create(['name' => 'Original name']);
 
-    $record = TestImporter::make(UserRowTestImporter::class, columnMap: [
+    $record = UserRowTestImporter::test(columnMap: [
         'email' => 'Email address',
     ], options: ['updateExisting' => true])->import([
         'Email address' => $user->email,
@@ -48,7 +48,7 @@ it('updates a record using explicit headers without filling or validating an omi
 });
 
 it('keeps an explicit empty column map instead of applying identity mapping', function (): void {
-    TestImporter::make(UserRowTestImporter::class, columnMap: [])->import([
+    UserRowTestImporter::test(columnMap: [])->import([
         'name' => 'Ada Lovelace',
         'email' => 'ada@example.com',
     ])->assertHasErrors(['name' => 'required']);
@@ -57,7 +57,7 @@ it('keeps an explicit empty column map instead of applying identity mapping', fu
 });
 
 it('captures validation errors from the importer without saving a record', function (): void {
-    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer = UserRowTestImporter::test();
     $importer->import(['name' => '', 'email' => 'x'])->assertHasErrors(['name', 'email']);
 
     $importer->import([
@@ -75,7 +75,7 @@ it('captures validation errors from the importer without saving a record', funct
 });
 
 it('asserts validation field and rule subsets without rejecting additional errors', function (): void {
-    TestImporter::make(UserRowTestImporter::class)->import([
+    UserRowTestImporter::test()->import([
         'name' => '',
         'email' => 'x',
     ])->assertHasErrors()
@@ -87,7 +87,7 @@ it('asserts validation field and rule subsets without rejecting additional error
 });
 
 it('rejects incorrect validation assertions with useful diagnostics', function (string $method, array $keys, string $message): void {
-    $importer = TestImporter::make(UserRowTestImporter::class)->import([
+    $importer = UserRowTestImporter::test()->import([
         'name' => 'Ada Lovelace',
         'email' => 'x',
     ]);
@@ -104,7 +104,7 @@ it('rejects incorrect validation assertions with useful diagnostics', function (
 ]);
 
 it('clears captured validation errors and failed rules when reused for successful or skipped rows', function (array $data): void {
-    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer = UserRowTestImporter::test();
     $importer->import(['name' => '', 'email' => 'x'])->assertHasErrors(['name', 'email']);
 
     expect($importer->import($data))->toBe($importer);
@@ -119,7 +119,7 @@ it('clears captured validation errors and failed rules when reused for successfu
 it('captures a `ValidationException` raised in a lifecycle hook', function (): void {
     $exception = ValidationException::withMessages(['custom' => 'Rejected by the hook.']);
 
-    $importer = TestImporter::make(UserRowTestImporter::class, options: ['exception' => $exception])
+    $importer = UserRowTestImporter::test(options: ['exception' => $exception])
         ->import(['name' => 'Ada Lovelace', 'email' => 'ada@example.com'])
         ->assertHasErrors(['custom'])
         ->assertHasErrors(['custom' => 'Rejected by the hook.']);
@@ -130,7 +130,7 @@ it('captures a `ValidationException` raised in a lifecycle hook', function (): v
 });
 
 it('captures deliberate row failures before resolution and in hooks, including empty messages', function (string $stage, string $message): void {
-    $importer = TestImporter::make(UserRowTestImporter::class)->import([
+    $importer = UserRowTestImporter::test()->import([
         'name' => 'Ada Lovelace',
         'email' => 'ada@example.com',
         $stage => new RowImportFailedException($message),
@@ -155,7 +155,7 @@ it('captures deliberate row failures before resolution and in hooks, including e
 ]);
 
 it('rejects non-exact row failure messages', function (string $message): void {
-    $importer = TestImporter::make(UserRowTestImporter::class)->import([
+    $importer = UserRowTestImporter::test()->import([
         'resolutionException' => new RowImportFailedException('No matching user.'),
     ]);
 
@@ -164,7 +164,7 @@ it('rejects non-exact row failure messages', function (string $message): void {
 })->with(['Wrong message.', 'matching user', '']);
 
 it('keeps row failures separate from validation and replaces both states on reuse', function (): void {
-    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer = UserRowTestImporter::test();
 
     $importer->import(['resolutionException' => new RowImportFailedException('No matching user.')])
         ->assertHasRowFailure()->assertHasNoErrors();
@@ -179,7 +179,7 @@ it('keeps row failures separate from validation and replaces both states on reus
 });
 
 it('clears row failures for successful and skipped rows', function (array $data): void {
-    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer = UserRowTestImporter::test();
     $importer->import(['resolutionException' => new RowImportFailedException('No matching user.')])->assertHasRowFailure();
 
     $importer->import($data)->assertHasNoRowFailure()->assertHasNoErrors();
@@ -190,7 +190,7 @@ it('clears row failures for successful and skipped rows', function (array $data)
 ]);
 
 it('does not roll back records when a row failure occurs after saving', function (): void {
-    $record = TestImporter::make(UserRowTestImporter::class)->import([
+    $record = UserRowTestImporter::test()->import([
         'name' => 'Ada Lovelace',
         'email' => 'ada@example.com',
         'afterSaveException' => new RowImportFailedException('Failure after saving.'),
@@ -201,7 +201,7 @@ it('does not roll back records when a row failure occurs after saving', function
 
 it('propagates unexpected exceptions unchanged and clears prior captured failures', function (array $previousRow): void {
     $exception = new RuntimeException('Unexpected failure.');
-    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer = UserRowTestImporter::test();
     $importer->import($previousRow);
 
     try {
@@ -221,7 +221,7 @@ it('propagates unexpected exceptions unchanged and clears prior captured failure
 ]);
 
 it('returns `null` from `getRecord()` for a skipped row without retaining the previous record', function (): void {
-    $importer = TestImporter::make(UserRowTestImporter::class);
+    $importer = UserRowTestImporter::test();
 
     expect(fn () => $importer->assertImported())->toThrow(AssertionFailedError::class, 'has not completed without an exception')
         ->and(fn () => $importer->assertSkipped())->toThrow(AssertionFailedError::class, 'has not completed without an exception');
@@ -252,7 +252,7 @@ it('returns `null` from `getRecord()` for a skipped row without retaining the pr
 });
 
 it('rejects both completed outcome assertions after exceptions and recovers on reuse', function (string $stage, Closure $makeException, string $message): void {
-    $importer = TestImporter::make(UserRowTestImporter::class, options: ['updateExisting' => true]);
+    $importer = UserRowTestImporter::test(options: ['updateExisting' => true]);
     $data = ['name' => 'Ada Lovelace', 'email' => 'ada@example.com'];
     $importer->import($data)->assertImported();
     $exception = $makeException();
@@ -289,7 +289,7 @@ it('rejects both completed outcome assertions after exceptions and recovers on r
 ]);
 
 it('asserts an imported outcome without requiring custom `saveRecord()` implementations to persist the record', function (): void {
-    $record = TestImporter::make(UserRowTestImporter::class, options: ['skipSaving' => true])->import([
+    $record = UserRowTestImporter::test(options: ['skipSaving' => true])->import([
         'name' => 'Ada Lovelace',
         'email' => 'ada@example.com',
     ])->assertImported()->getRecord();
@@ -298,24 +298,33 @@ it('asserts an imported outcome without requiring custom `saveRecord()` implemen
     $this->assertDatabaseCount('users', 0);
 });
 
-it('resolves the importer through the container with the supplied import, mapping and options without changing authentication', function (): void {
+it('resolves the importer and `TestableImport` through the container with named arguments to `test()` without changing authentication', function (): void {
     $authenticatedUser = User::factory()->create();
     $importUser = User::factory()->create();
     $this->actingAs($authenticatedUser);
     $import = app(Import::class);
     $import->setRelation('user', $importUser);
     $resolvedImporter = null;
+    $resolvedTestableImport = null;
 
     app()->bind(UserRowTestImporter::class, function ($application, array $parameters) use (&$resolvedImporter): UserRowTestImporter {
         return $resolvedImporter = new UserRowTestImporter(...$parameters);
     });
 
-    TestImporter::make(UserRowTestImporter::class, options: ['updateExisting' => true], import: $import)
-        ->import(['name' => 'Updated name', 'email' => $importUser->email]);
+    app()->bind(TestableImport::class, function ($application, array $parameters) use (&$resolvedTestableImport): TestableImport {
+        return $resolvedTestableImport = new TestableImport(...$parameters);
+    });
 
-    expect($resolvedImporter->getImport())->toBe($import)
+    $testableImport = UserRowTestImporter::test(
+        columnMap: ['name' => 'Full name', 'email' => 'Email address'],
+        options: ['updateExisting' => true],
+        import: $import,
+    )->import(['Full name' => 'Updated name', 'Email address' => $importUser->email])->assertImported();
+
+    expect($testableImport)->toBeInstanceOf(TestableImport::class)->toBe($resolvedTestableImport)
+        ->and($resolvedImporter->getImport())->toBe($import)
         ->and($import->importer)->toBe(UserRowTestImporter::class)
-        ->and($import->getColumnMap())->toBe(['name' => 'name', 'email' => 'email'])
+        ->and($import->getColumnMap())->toBe(['name' => 'Full name', 'email' => 'Email address'])
         ->and($import->getOptions())->toBe(['updateExisting' => true])
         ->and($resolvedImporter->getOptions())->toBe(['updateExisting' => true])
         ->and($resolvedImporter->getImport()->user)->toBe($importUser)
@@ -334,7 +343,7 @@ it('does not associate the authenticated user with the default import context', 
         return $resolvedImporter = new UserRowTestImporter(...$parameters);
     });
 
-    TestImporter::make(UserRowTestImporter::class)->import([
+    UserRowTestImporter::test()->import([
         'name' => 'Ada Lovelace',
         'email' => 'ada@example.com',
     ]);
