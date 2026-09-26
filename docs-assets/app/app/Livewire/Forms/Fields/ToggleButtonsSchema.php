@@ -4,6 +4,7 @@ namespace App\Livewire\Forms\Fields;
 
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Group;
+use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
 
 class ToggleButtonsSchema
@@ -116,6 +117,22 @@ class ToggleButtonsSchema
                             'published' => 'Publish now',
                         ])
                         ->default('draft'),
+                ]),
+            Group::make()
+                ->id('toggleButtonsSize')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-xl',
+                ])
+                ->schema([
+                    ToggleButtons::make('toggleButtonsSize')
+                        ->label('Status')
+                        ->options([
+                            'draft' => 'Draft',
+                            'scheduled' => 'Scheduled',
+                            'published' => 'Published',
+                        ])
+                        ->size(Size::Small)
+                        ->default('published'),
                 ]),
             Group::make()
                 ->id('toggleButtonsBoolean')

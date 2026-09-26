@@ -4,6 +4,8 @@ namespace Filament\Tests\Forms\Components;
 
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Size;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -52,6 +54,61 @@ it('can set multiple state', function (): void {
 });
 
 describe('properties', function (): void {
+    it('can set `size()` and get `getSize()`', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->size(Size::Small);
+
+        expect($toggleButtons->getSize())->toBe(Size::Small);
+    });
+
+    it('can set `size()` with a `Closure`', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->size(static fn (): Size => Size::Small);
+
+        expect($toggleButtons->getSize())->toBe(Size::Small);
+    });
+
+    it('normalizes string sizes returned by a `size()` `Closure`', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->size(static fn (): string => 'sm');
+
+        expect($toggleButtons->getSize())->toBe(Size::Small);
+    });
+
+    it('preserves custom string sizes returned by `getSize()`', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->size('custom-size');
+
+        expect($toggleButtons->getSize())->toBe('custom-size');
+    });
+
+    it('returns `Size::Medium` from `getSize()` by default', function (): void {
+        $toggleButtons = ToggleButtons::make('status')->options(['a' => 'A']);
+
+        expect($toggleButtons->getSize())->toBe(Size::Medium);
+    });
+
+    it('can reset `size()` to its default', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->size(Size::Small)
+            ->size(null);
+
+        expect($toggleButtons->getSize())->toBe(Size::Medium);
+    });
+
+    it('uses the default button size when a `size()` `Closure` returns `null`', function (): void {
+        $toggleButtons = ToggleButtons::make('status')
+            ->options(['a' => 'A'])
+            ->size(static fn (): null => null);
+
+        expect($toggleButtons->getSize())->toBe(Size::Medium);
+    });
+
     it('can set `inline()` and check `isInline()`', function (): void {
         $inline = ToggleButtons::make('status')->options(['a' => 'A'])->inline();
         $notInline = ToggleButtons::make('status')->options(['a' => 'A'])->inline(false);
@@ -330,6 +387,110 @@ it('returns only enabled option keys from `getInValidationRuleValues()`', functi
 });
 
 describe('rendering', function (): void {
+    it('renders the medium button size by default', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active']),
+            ])
+            ->fill();
+
+        expect($field->toHtml())->toContain('fi-size-md');
+    });
+
+    it('renders the configured button size', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->size(Size::Small),
+            ])
+            ->fill();
+
+        expect($field->toHtml())
+            ->toContain('fi-size-sm')
+            ->not->toContain('fi-size-md');
+    });
+
+    it('renders the configured button size when grouped', function (): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->size(Size::Small)
+                    ->grouped(),
+            ])
+            ->fill();
+
+        expect($field->toHtml())
+            ->toContain('fi-size-sm')
+            ->not->toContain('fi-size-md');
+    });
+
+    it('renders a configured string button size', function (bool $isGrouped): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->size('sm')
+                    ->grouped($isGrouped),
+            ])
+            ->fill();
+
+        expect($field->toHtml())
+            ->toContain('fi-size-sm')
+            ->not->toContain('class="fi-btn sm');
+    })->with([
+        'ungrouped' => false,
+        'grouped' => true,
+    ]);
+
+    it('escapes custom string button sizes', function (bool $isGrouped): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->size('custom-size" data-injected="yes')
+                    ->grouped($isGrouped),
+            ])
+            ->fill();
+
+        expect($field->toHtml())
+            ->toContain('custom-size&quot; data-injected=&quot;yes')
+            ->not->toContain('data-injected="yes"');
+    })->with([
+        'ungrouped' => false,
+        'grouped' => true,
+    ]);
+
+    it('renders the expected icon size for each button size', function (bool $isGrouped, Size $size, string $expectedIconSize): void {
+        Schema::make($livewire = Livewire::make())
+            ->statePath('data')
+            ->components([
+                $field = ToggleButtons::make('status')
+                    ->options(['active' => 'Active'])
+                    ->icons(['active' => Heroicon::Check])
+                    ->size($size)
+                    ->grouped($isGrouped),
+            ])
+            ->fill();
+
+        expect($field->toHtml())
+            ->toContain("fi-icon fi-size-{$expectedIconSize}");
+    })->with([
+        'ungrouped extra small' => [false, Size::ExtraSmall, 'sm'],
+        'grouped extra small' => [true, Size::ExtraSmall, 'sm'],
+        'ungrouped small' => [false, Size::Small, 'sm'],
+        'grouped small' => [true, Size::Small, 'sm'],
+        'ungrouped medium' => [false, Size::Medium, 'md'],
+        'grouped medium' => [true, Size::Medium, 'md'],
+    ]);
+
     it('can render with `inline()`', function (): void {
         livewire(RenderToggleButtonsWithInline::class)->assertSuccessful();
     });

@@ -2378,6 +2378,15 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 800))
         },
     },
+    'forms/fields/toggle-buttons/size': {
+        url: 'forms/fields/toggle-buttons',
+        selector: '#toggleButtonsSize',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/toggle-buttons/disabled-option': {
         url: 'forms/fields/toggle-buttons',
         selector: '#disabledOptionToggleButtons',

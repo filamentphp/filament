@@ -104,6 +104,29 @@ ToggleButtons::make('status')
 
 <AutoScreenshot name="forms/fields/toggle-buttons/tooltips" alt="Toggle buttons with tooltips" version="4.x" />
 
+## Changing the button size
+
+By default, toggle buttons use the medium size. You can change the size using the `size()` method:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Support\Enums\Size;
+
+ToggleButtons::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published',
+    ])
+    ->size(Size::Small)
+```
+
+The available sizes are `Size::ExtraSmall`, `Size::Small`, `Size::Medium`, `Size::Large`, and `Size::ExtraLarge`. You can also pass their backed values (`'xs'`, `'sm'`, `'md'`, `'lg'`, and `'xl'`). Any other string is applied as a custom CSS class. Passing `null` restores the default medium size. The button size is also applied when using `grouped()`.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/toggle-buttons/size" alt="Small toggle buttons" version="4.x" />
+
 ## Boolean options
 
 If you want a simple boolean toggle button group, with "Yes" and "No" options, you can use the `boolean()` method:
