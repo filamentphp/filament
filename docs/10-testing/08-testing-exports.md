@@ -104,7 +104,7 @@ it('starts a product export', function () {
 
     livewire(ListProducts::class)
         ->callAction(TestAction::make('export')->table())
-        ->assertHasNoErrors();
+        ->assertHasNoFormErrors();
 
     $exports->assertDispatched(ProductExporter::class)
         ->assertDispatchedTimes(ProductExporter::class);
@@ -143,7 +143,7 @@ livewire(ListProducts::class)
             'name' => ['isEnabled' => true, 'label' => 'Product name'],
         ],
     ])
-    ->assertHasNoErrors();
+    ->assertHasNoFormErrors();
 
 $exports->assertDispatched(ProductExporter::class, function (Export $export, Builder $query, array $columnMap) use ($matchingProduct): bool {
     expect($query->pluck('id')->all())->toBe([$matchingProduct->getKey()])
@@ -179,7 +179,7 @@ $exports = ExportBulkAction::fake();
 livewire(ListProducts::class)
     ->selectTableRecords([$products[1]->getKey()])
     ->callAction(TestAction::make('export')->table()->bulk())
-    ->assertHasNoErrors();
+    ->assertHasNoFormErrors();
 
 $exports->assertDispatched(ProductExporter::class, function (
     Export $export,
