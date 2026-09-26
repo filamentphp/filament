@@ -27,7 +27,8 @@ class UserPostResource extends Resource
     public static function getParentResourceRegistration(): ?ParentResourceRegistration
     {
         return UserResource::asParent(static::class)
-            ->inverseRelationship('author');
+            ->inverseRelationship('author')
+            ->page('managePosts');
     }
 
     public static function form(Schema $form): Schema

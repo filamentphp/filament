@@ -104,6 +104,29 @@ ToggleButtons::make('status')
 
 <AutoScreenshot name="forms/fields/toggle-buttons/tooltips" alt="Toggle buttons with tooltips" version="5.x" />
 
+## Changing the button size
+
+By default, toggle buttons use the medium size. You can change the size using the `size()` method:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Support\Enums\Size;
+
+ToggleButtons::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published',
+    ])
+    ->size(Size::Small)
+```
+
+The available sizes are `Size::ExtraSmall`, `Size::Small`, `Size::Medium`, `Size::Large`, and `Size::ExtraLarge`. You can also pass their backed values (`'xs'`, `'sm'`, `'md'`, `'lg'`, and `'xl'`). Any other string is applied as a custom CSS class. Passing `null` restores the default medium size. The button size is also applied when using `grouped()`.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/toggle-buttons/size" alt="Small toggle buttons" version="4.x" />
+
 ## Boolean options
 
 If you want a simple boolean toggle button group, with "Yes" and "No" options, you can use the `boolean()` method:
@@ -195,6 +218,36 @@ ToggleButtons::make('feedback')
 ```
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `grouped()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Filling the container's width
+
+By default, the buttons only take up as much horizontal space as they need. You may use the `fullWidth()` method to allow buttons to stretch and fill the available width of their container. This can be used with the default (stacked) configuration, or alongside both `inline()` and `grouped()` methods:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('feedback')
+    ->label('Like this post?')
+    ->boolean()
+    ->inline()
+    ->fullWidth()
+```
+
+<AutoScreenshot name="forms/fields/toggle-buttons/full-width" alt="Full width toggle buttons" version="4.x" />
+
+Optionally, you may pass a boolean value to control if the buttons should fill the container width or not:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('feedback')
+    ->label('Like this post?')
+    ->boolean()
+    ->inline()
+    ->fullWidth(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `fullWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Selecting multiple buttons
 
