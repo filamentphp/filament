@@ -71,7 +71,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     /**
      * @var array<string> | Closure
      */
-    protected array | Closure $linkProtocols = ['http', 'https', 'ftp', 'ftps', 'mailto', 'tel', 'callto', 'sms', 'cid', 'xmpp'];
+    protected array | Closure | null $linkProtocols = null;
 
     protected bool | Closure | null $isJson = null;
 
@@ -786,7 +786,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      */
     public function getLinkProtocols(): array
     {
-        return $this->evaluate($this->linkProtocols);
+        return $this->evaluate($this->linkProtocols)
+            ?? ($this->hasContainer() ? $this->getContentAttribute()?->getLinkProtocols() : null)
+            ?? ['http', 'https', 'ftp', 'ftps', 'mailto', 'tel', 'callto', 'sms', 'cid', 'xmpp'];
     }
 
     /**

@@ -15,6 +15,9 @@
         "filament/support": "self.version",
         "ueberdosis/tiptap-php": "^2.0"
     },
+    "suggest": {
+        "fakerphp/faker": "Required to generate fake rich content."
+    },
     "autoload": {
         "files": [
             "src/helpers.php"

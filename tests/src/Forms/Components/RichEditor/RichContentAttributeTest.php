@@ -264,6 +264,24 @@ describe('custom text colors flag', function (): void {
     });
 });
 
+describe('link protocols', function (): void {
+    it('returns `null` when no link protocols are set', function (): void {
+        $post = Post::factory()->create();
+        $attribute = RichContentAttribute::make($post, 'content');
+
+        expect($attribute->getLinkProtocols())->toBeNull();
+    });
+
+    it('passes `linkProtocols()` to the renderer', function (): void {
+        $post = Post::factory()->create();
+        $attribute = RichContentAttribute::make($post, 'content')
+            ->linkProtocols(['https', 'mailto']);
+
+        expect($attribute->getLinkProtocols())->toBe(['https', 'mailto'])
+            ->and($attribute->getRenderer()->getLinkProtocols())->toBe(['https', 'mailto']);
+    });
+});
+
 describe('`toHtml()` and `toText()`', function (): void {
     it('returns empty string from `toHtml()` when content is blank', function (): void {
         $post = Post::factory()->create(['content' => null]);
@@ -295,6 +313,7 @@ describe('fluent API', function (): void {
         expect($attribute->json())->toBe($attribute);
         expect($attribute->textColors(null))->toBe($attribute);
         expect($attribute->customTextColors())->toBe($attribute);
+        expect($attribute->linkProtocols(null))->toBe($attribute);
     });
 });
 

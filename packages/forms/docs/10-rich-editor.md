@@ -1159,6 +1159,7 @@ class Post extends Model implements HasRichContent
                 'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
             ])
             ->customTextColors()
+            ->linkProtocols(['http', 'https', 'mailto'])
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);
@@ -1196,6 +1197,161 @@ TextColumn::make('content')
 
 TextEntry::make('content')
 ```
+
+## Generating fake rich content
+
+You can generate rich content in database factories using Faker's `filamentRichContent()` method. You can build the document by chaining methods, then store it as HTML using `toHtml()`:
+
+```php
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class PostFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'content' => fake()
+                ->filamentRichContent()
+                ->heading()
+                ->paragraphs(3)
+                ->bulletList()
+                ->toHtml(),
+        ];
+    }
+}
+```
+
+If the rich editor is [storing content as JSON](#storing-content-as-json), you can use `toArray()` instead:
+
+```php
+'content' => fake()
+    ->filamentRichContent()
+    ->heading()
+    ->paragraphs(3)
+    ->toArray(),
+```
+
+You can generate a complete article using the `article()` method. An article starts with a lead introduction followed by sections with level-two headings. The `depth` argument recursively adds nested sections, using the next heading level for each depth:
+
+```php
+'content' => fake()
+    ->filamentRichContent()
+    ->article(depth: 2)
+    ->toHtml(),
+```
+
+In this example, the article contains level-two sections with level-three subsections. The maximum depth is `5`, corresponding to heading levels two through six.
+
+You can generate the following block content:
+
+- `heading()`
+- `paragraphs()`
+- `lead()`
+- `bulletList()`
+- `orderedList()`
+- `blockquote()`
+- `codeBlock()`
+- `horizontalRule()`
+- `table()`
+- `details()`
+- `grid()`
+- `image()` for an image with a URL
+- `fileAttachment()` for an existing image ID managed by a [file attachment provider](#uploading-images-to-the-editor)
+
+The `paragraphs()` method can generate links and the `bold`, `italic`, `underline`, `strike`, `subscript`, `superscript`, `code`, `small`, and `highlight` marks:
+
+```php
+'content' => fake()
+    ->filamentRichContent()
+    ->paragraphs(
+        count: 3,
+        links: true,
+        bold: true,
+        italic: true,
+    )
+    ->toHtml(),
+```
+
+You can apply a configured text color to generated text using `textColor()`, apply an alignment using `textAlignment()`, or insert a hard break using `hardBreak()`.
+
+### Using rich content attribute configuration
+
+You may pass a [rich content attribute](#registering-rich-content-attributes) to `filamentRichContent()`. The faker will use its JSON mode, renderer, custom blocks, merge tags, mentions, text colors, plugins, link protocols, and file attachment configuration:
+
+```php
+use App\Models\Post;
+
+$attribute = (new Post)->getRichContentAttribute('content');
+
+return [
+    'content' => fake()
+        ->filamentRichContent($attribute)
+        ->article()
+        ->mergeTags(2)
+        ->mention()
+        ->textColor()
+        ->toValue(),
+];
+```
+
+The `toValue()` method returns an array when the attribute uses JSON mode and storage HTML otherwise, so the factory does not need to repeat that configuration. Storage HTML preserves custom blocks, merge tags, mentions, and attachments so that they can be edited later. You may also use `toArray()` or `toHtml()` to choose the stored format explicitly.
+
+If you need to render the generated content for display instead of storing it, use `toRenderedHtml()` or `toText()`. The `attribute()` method can set the attribute after constructing the faker, and `renderUsing()` can override the renderer used for display output.
+
+The `mergeTag()` and `mention()` methods insert inline nodes into generated paragraphs. Without arguments, they choose from the merge tags or mention providers registered on the attribute. You can use `mergeTags()` and `mentions()` to insert several. You may also pass a specific merge tag ID to `mergeTag()`, or a mention ID and trigger character to `mention()`. When multiple mention providers are configured, you must specify the trigger character when passing an ID.
+
+### Generating custom blocks
+
+Calling `customBlock()` without arguments only selects from registered custom blocks that implement the `CanGenerateFakeConfiguration` contract. This prevents the faker from generating blocks with invalid empty configuration:
+
+```php
+use Faker\Generator;
+use Filament\Forms\Components\RichEditor\Contracts\CanGenerateFakeConfiguration;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+
+class CallToActionBlock extends RichContentCustomBlock implements CanGenerateFakeConfiguration
+{
+    public static function generateFakeConfiguration(Generator $faker): array
+    {
+        return [
+            'heading' => $faker->sentence(),
+            'buttonLabel' => $faker->words(3, true),
+            'buttonUrl' => $faker->url(),
+        ];
+    }
+
+    // ...
+}
+```
+
+You may pass a block class or ID and its configuration directly when you need a particular block:
+
+```php
+->customBlock(CallToActionBlock::class, [
+    'heading' => 'Start building today',
+    'buttonLabel' => 'Get started',
+    'buttonUrl' => '/register',
+])
+```
+
+### Generating plugin content
+
+Plugins may add arbitrary TipTap nodes, so you may insert their raw JSON structures using `block()` and `inline()`:
+
+```php
+->block([
+    'type' => 'callout',
+    'attrs' => ['variant' => 'info'],
+])
+->inline([
+    'type' => 'stockTicker',
+    'attrs' => ['symbol' => 'AAPL'],
+])
+```
+
+The `RichContentFaker` class is macroable, so a plugin can also register fluent methods for its own nodes.
+
+All random values use the same Faker generator, so seeded Faker output remains reproducible.
 
 ## Extending the rich editor
 
