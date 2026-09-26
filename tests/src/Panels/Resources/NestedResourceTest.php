@@ -2,6 +2,7 @@
 
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
@@ -25,6 +26,22 @@ use function Pest\Laravel\assertSoftDeleted;
 uses(TestCase::class);
 
 describe('soft-deletable nested resource', function (): void {
+    it('can render with the navigation hierarchy in breadcrumbs regardless of panel navigation visibility', function (): void {
+        $parentRecord = User::factory()->create();
+        $url = UserPostResource::getUrl('index', [
+            'author' => $parentRecord,
+        ]);
+
+        $panel = Filament::getCurrentOrDefaultPanel()
+            ->breadcrumbs(hasNavigationHierarchy: true);
+
+        $this->get($url)->assertSuccessful();
+
+        $panel->navigation(false);
+
+        $this->get($url)->assertSuccessful();
+    });
+
     it('can render list page', function (): void {
         $parentRecord = User::factory()->create();
 

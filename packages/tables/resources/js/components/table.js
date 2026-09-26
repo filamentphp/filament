@@ -34,15 +34,31 @@ export default ({
 
     cleanUpFiltersDropdown: null,
 
+    livewireEventListenersController: null,
+
     unsubscribeLivewireHook: null,
 
     init() {
         this.livewireId =
             this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
 
-        $wire.$on('deselectAllTableRecords', () => this.deselectAllRecords())
-        $wire.$on('scrollToTopOfTable', () =>
-            this.$root.scrollIntoView({ block: 'start', inline: 'nearest' }),
+        this.livewireEventListenersController = new AbortController()
+
+        const { signal } = this.livewireEventListenersController
+
+        $wire.$el.addEventListener(
+            'deselectAllTableRecords',
+            () => this.deselectAllRecords(),
+            { signal },
+        )
+        $wire.$el.addEventListener(
+            'scrollToTopOfTable',
+            () =>
+                this.$root.scrollIntoView({
+                    block: 'start',
+                    inline: 'nearest',
+                }),
+            { signal },
         )
 
         if (currentSelectionLivewireProperty) {
@@ -390,30 +406,27 @@ export default ({
         this.areFiltersOpen = !this.areFiltersOpen
 
         if (this.areFiltersOpen) {
-            const cleanUpAutoUpdate = autoUpdate(
-                this.$refs.filtersTriggerActionContainer,
-                this.$refs.filtersContentContainer,
-                async () => {
-                    const { x, y } = await computePosition(
-                        this.$refs.filtersTriggerActionContainer,
-                        this.$refs.filtersContentContainer,
-                        {
-                            placement: 'bottom-end',
-                            middleware: [offset(8), shift({ padding: 8 })],
-                        },
-                    )
+            const trigger = this.$refs.filtersTriggerActionContainer
+            const filters = this.$refs.filtersContentContainer
+            let isPositioningActive = true
 
-                    Object.assign(this.$refs.filtersContentContainer.style, {
-                        left: `${x}px`,
-                        top: `${y}px`,
-                    })
-                },
-            )
+            const cleanUpAutoUpdate = autoUpdate(trigger, filters, async () => {
+                const { x, y } = await computePosition(trigger, filters, {
+                    placement: 'bottom-end',
+                    middleware: [offset(8), shift({ padding: 8 })],
+                })
+
+                if (!isPositioningActive) {
+                    return
+                }
+
+                Object.assign(filters.style, {
+                    left: `${x}px`,
+                    top: `${y}px`,
+                })
+            })
 
             const onClickAway = (event) => {
-                const trigger = this.$refs.filtersTriggerActionContainer
-                const filters = this.$refs.filtersContentContainer
-
                 if (
                     (filters && filters.contains(event.target)) ||
                     (trigger && trigger.contains(event.target))
@@ -441,6 +454,7 @@ export default ({
             document.addEventListener('keydown', onKeydown)
 
             this.cleanUpFiltersDropdown = () => {
+                isPositioningActive = false
                 cleanUpAutoUpdate()
                 document.removeEventListener('mousedown', onClickAway)
                 document.removeEventListener('touchstart', onClickAway, {
@@ -455,6 +469,8 @@ export default ({
     },
 
     destroy() {
+        this.cleanUpFiltersDropdown?.()
+        this.livewireEventListenersController?.abort()
         this.unsubscribeLivewireHook?.()
     },
 })

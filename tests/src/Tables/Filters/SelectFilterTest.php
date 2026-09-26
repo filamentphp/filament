@@ -144,6 +144,20 @@ describe('filtering records', function (): void {
             ->assertCanSeeTableRecords($postsWithAuthor1->merge($postsWithoutAuthor))
             ->assertCanNotSeeTableRecords($postsWithAuthor2);
     });
+
+    it('does not allow an empty relationship option to bypass another filter', function (): void {
+        $author = User::factory()->create();
+
+        $matchingPostWithAuthor = Post::factory()->create(['author_id' => $author->getKey(), 'rating' => 1]);
+        $matchingPostWithoutAuthor = Post::factory()->create(['author_id' => null, 'rating' => 1]);
+        $filteredOutPostWithoutAuthor = Post::factory()->create(['author_id' => null, 'rating' => 5]);
+
+        livewire(TestTableWithMultipleEmptyRelationshipFilter::class)
+            ->filterTable('rating', 1)
+            ->filterTable('author', ['__empty', $author->getKey()])
+            ->assertCanSeeTableRecords([$matchingPostWithAuthor, $matchingPostWithoutAuthor])
+            ->assertCanNotSeeTableRecords([$filteredOutPostWithoutAuthor]);
+    });
 });
 
 class TestTableWithSelectFilter extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
@@ -222,6 +236,11 @@ class TestTableWithMultipleEmptyRelationshipFilter extends Component implements 
                 Tables\Columns\TextColumn::make('author.name'),
             ])
             ->filters([
+                SelectFilter::make('rating')
+                    ->options([
+                        1 => '1 Star',
+                        5 => '5 Stars',
+                    ]),
                 SelectFilter::make('author')
                     ->relationship('author', 'name', hasEmptyOption: true)
                     ->multiple(),

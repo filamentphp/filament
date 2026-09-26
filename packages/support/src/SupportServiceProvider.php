@@ -30,6 +30,7 @@ use Filament\Support\View\Components\Contracts\HasColor;
 use Filament\Support\View\DefaultLoadingIndicator;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -267,7 +268,7 @@ class SupportServiceProvider extends PackageServiceProvider
 
             $start = array_filter($start);
 
-            $order = array_filter($order);
+            $order = Arr::whereNotNull($order);
 
             return $this
                 ->class([
