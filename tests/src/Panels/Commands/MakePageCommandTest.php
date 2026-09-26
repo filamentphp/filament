@@ -2,6 +2,7 @@
 
 use Filament\Commands\MakePageCommand;
 use Filament\Facades\Filament;
+use Filament\PanelRegistry;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -560,4 +561,17 @@ it('can generate a custom record page class in a resource', function (): void {
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserPermissions.php'));
     expect(file_get_contents($path))
         ->toMatchSnapshot();
+});
+
+it('fails when Filament has not been installed', function (): void {
+    app(PanelRegistry::class)->panels = [];
+
+    $this->artisan('make:filament-page', [
+        'name' => 'PageWithoutPanel',
+        '--no-interaction' => true,
+    ])
+        ->expectsOutputToContain('Filament has not been installed yet')
+        ->assertFailed();
+
+    assertFileDoesNotExist(app_path('Filament/Pages/PageWithoutPanel.php'));
 });

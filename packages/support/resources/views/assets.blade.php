@@ -1,7 +1,9 @@
+@php
+    use Illuminate\Support\Facades\Vite;
+@endphp
+
 @if (isset($data))
     @php
-        use Illuminate\Support\Facades\Vite;
-
         $nonce = Vite::cspNonce();
     @endphp
 

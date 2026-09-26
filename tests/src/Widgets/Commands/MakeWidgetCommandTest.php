@@ -1,5 +1,6 @@
 <?php
 
+use Filament\PanelRegistry;
 use Filament\Tests\TestCase;
 
 use function PHPUnit\Framework\assertFileExists;
@@ -52,6 +53,19 @@ it('can run `make:filament-widget` non-interactively to generate a custom widget
     ]);
 
     assertFileExists(app_path('Filament/Widgets/NonInteractiveWidget.php'));
+});
+
+it('can generate a standalone widget when no panels are registered', function (): void {
+    $this->withoutMockingConsoleOutput();
+
+    app(PanelRegistry::class)->panels = [];
+
+    $this->artisan('make:filament-widget', [
+        'name' => 'StandaloneWidget',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists(app_path('Livewire/StandaloneWidget.php'));
 });
 
 it('can generate a chart widget class', function (): void {

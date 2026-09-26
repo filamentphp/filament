@@ -149,6 +149,11 @@
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $hasPagination = (($records instanceof Paginator) || ($records instanceof CursorPaginator)) && (($records instanceof LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
+    $contentRenderHookData = [
+        'hasPagination' => $hasPagination,
+        'records' => $records,
+        'table' => $this->getTable(),
+    ];
     $hasEmptyState = ($records !== null) && ! count($records);
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
@@ -894,6 +899,8 @@
                     </div>
                 @endif
             @endif
+
+            {{ FilamentView::renderHook(TablesRenderHook::CONTENT_BEFORE, scopes: static::class, data: $contentRenderHookData) }}
 
             @if (((! $content) && (! $hasColumnsLayout)) || ($records === null) || count($records))
                 <div
@@ -2643,6 +2650,8 @@
                     </div>
                 @endif
             @endif
+
+            {{ FilamentView::renderHook(TablesRenderHook::CONTENT_AFTER, scopes: static::class, data: $contentRenderHookData) }}
 
             @if ($hasPagination)
                 @php
