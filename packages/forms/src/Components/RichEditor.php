@@ -110,6 +110,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
      */
     protected array | Closure | null $customBlocks = null;
 
+    protected bool | Closure $hasMinimalCustomBlockControls = false;
+
     protected string | Closure | null $noMergeTagSearchResultsMessage = null;
 
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
@@ -1247,6 +1249,18 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         return $this->evaluate($this->activePanel);
     }
 
+    public function minimalCustomBlockControls(bool | Closure $condition = true): static
+    {
+        $this->hasMinimalCustomBlockControls = $condition;
+
+        return $this;
+    }
+
+    public function hasMinimalCustomBlockControls(): bool
+    {
+        return (bool) $this->evaluate($this->hasMinimalCustomBlockControls);
+    }
+
     public function customBlocksGrid(bool | Closure $condition = true): static
     {
         $this->hasCustomBlocksGrid = $condition;
@@ -1690,6 +1704,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                                 )
                             },
                             hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            hasMinimalCustomBlockControls: <?= Js::from($this->hasMinimalCustomBlockControls()) ?>,
                             hasStickyToolbar: <?= Js::from($this->hasStickyToolbar()) ?>,
                             isDisabled: <?= Js::from($isDisabled) ?>,
                             label: <?= Js::from($label) ?>,

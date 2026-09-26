@@ -31,6 +31,7 @@ export default function richEditorFormComponent({
     extensions,
     floatingToolbars,
     hasResizableImages,
+    hasMinimalCustomBlockControls = false,
     hasStickyToolbar = false,
     isDisabled,
     isLiveDebounced,
@@ -100,6 +101,7 @@ export default function richEditorFormComponent({
                     ),
                 floatingToolbars,
                 hasResizableImages,
+                hasMinimalCustomBlockControls,
                 insertCustomBlockUsing: (id, dragPosition = null) =>
                     this.$wire.mountAction(
                         'customBlock',
@@ -245,6 +247,7 @@ export default function richEditorFormComponent({
                 editorProps: {
                     attributes: {
                         ...(label ? { 'aria-label': label } : {}),
+                        'data-testid': 'rich-editor-content',
                     },
                 },
                 extensions: resolvedExtensions,

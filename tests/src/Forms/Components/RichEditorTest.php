@@ -1321,6 +1321,11 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('can render with `minimalCustomBlockControls()`', function (): void {
+        livewire(RenderRichEditorWithMinimalCustomBlockControls::class)
+            ->assertSuccessful();
+    });
+
     it('can render with `noMergeTagSearchResultsMessage()`', function (): void {
         livewire(RenderRichEditorWithNoMergeTagSearchResultsMessage::class)
             ->assertSuccessful();
@@ -1340,6 +1345,96 @@ describe('rendering', function (): void {
         livewire(RenderRichEditorWithPluginDisabledButtons::class)
             ->assertSuccessful();
     });
+});
+
+it('keeps `minimalCustomBlockControls()` opt-in and evaluates and resets its condition', function (): void {
+    $richEditor = RichEditor::make('content')
+        ->container(Schema::make(Livewire::make())->statePath('data'));
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls();
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => true);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+});
+
+it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/rich-editor-minimal-controls-browser-test');
+
+    $minimalEditor = '[data-testid="minimal-controls-editor"]';
+    $customBlock = '[data-testid="rich-editor-custom-block"]';
+    $firstCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 1)';
+    $secondCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 2)';
+    $editButton = ' [data-testid="rich-editor-custom-block-edit-button"]';
+    $deleteButton = ' [data-testid="rich-editor-custom-block-delete-button"]';
+
+    $page
+        ->assertVisible($minimalEditor . ' ' . $customBlock . '[data-id="divider"]' . $deleteButton)
+        ->assertNotPresent('[data-testid="disabled-controls-editor"] [data-testid$="-button"]')
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                editor.commands.focus()
+                editor.commands.setTextSelection(editor.state.doc.content.size - 1)
+                return true
+            })()
+            JS)
+        ->click($secondCallout . $editButton)
+        ->assertVisible('[data-testid="minimal-controls-edit-modal"]')
+        ->fill('[data-testid="minimal-controls-message-input"]', 'Updated second callout.')
+        ->click('[data-testid="minimal-controls-edit-modal"] button[type="submit"]')
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['First callout.', 'Updated second callout.'])
+        // Keep the deletion outside TipTap's history grouping interval for the edit.
+        ->wait(0.6)
+        ->click($firstCallout . $deleteButton)
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['Updated second callout.'])
+        ->assertScript(<<<'JS'
+            document.activeElement === document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')
+            JS);
+
+    $page->page()->keyDown('Control');
+    $page->page()->keyDown('z');
+    $page->page()->keyUp('z');
+    $page->page()->keyUp('Control');
+
+    $page
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['First callout.', 'Updated second callout.'])
+        ->assertNoAccessibilityIssues();
+
+    visit('/rich-editor-minimal-controls-browser-test')
+        ->on()->mobile()
+        ->inDarkMode()
+        ->assertVisible($firstCallout . $editButton)
+        ->assertNoAccessibilityIssues();
 });
 
 describe('custom blocks', function (): void {
@@ -2246,6 +2341,16 @@ class RenderRichEditorWithClosureCustomBlocks extends Livewire
     {
         return $form->schema([
             RichEditor::make('content')->customBlocks(static fn (): array => []),
+        ])->statePath('data');
+    }
+}
+
+class RenderRichEditorWithMinimalCustomBlockControls extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            RichEditor::make('content')->minimalCustomBlockControls(),
         ])->statePath('data');
     }
 }
