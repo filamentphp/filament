@@ -170,18 +170,18 @@ it('requests a product import', function () {
 
     livewire(ListProducts::class)
         ->mountAction('import')
-        ->setActionData([
+        ->fillForm([
             'file' => UploadedFile::fake()->createWithContent(
                 'products.csv',
                 "Product code,Product name,Unit price\nMUG-001,Ceramic mug,12.50\n",
             ),
         ])
-        ->setActionData([
+        ->fillForm([
             'columnMap' => ['sku' => 'Product code', 'name' => 'Product name', 'price' => 'Unit price'],
             'updateExisting' => true,
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     $imports->assertDispatched(ProductImporter::class, function (Import $import, array $columnMap, array $options) use ($user): bool {
         return $import->user->is($user)
@@ -191,12 +191,12 @@ it('requests a product import', function () {
 });
 ```
 
-Upload the file before setting `columnMap`, so the form can read the headers and build its mapping fields. `setActionData()` preserves other form defaults. The callback receives the `Import` model, column map, and options merged from the action and form.
+Upload the file before setting `columnMap`, so the form can read the headers and build its mapping fields. `fillForm()` preserves other form defaults. The callback receives the `Import` model, column map, and options merged from the action and form.
 
 `assertDispatched()` checks for at least one request for the importer, optionally matching a callback. `assertDispatchedTimes()` checks its exact count, defaulting to one. Use `assertNothingDispatched()` after invalid form data or rejected authorization.
 
-For example, if `sku` uses `requiredMapping()`, submit an otherwise valid form with `columnMap.sku` set to `null`, assert `assertHasActionErrors(['columnMap.sku' => 'required'])`, then `$imports->assertNothingDispatched()`. These are form errors, not row validation errors.
+For example, if `sku` uses `requiredMapping()`, submit an otherwise valid form with `columnMap.sku` set to `null`, assert `assertHasFormErrors(['columnMap.sku' => 'required'])`, then `$imports->assertNothingDispatched()`. These are form errors, not row validation errors.
 
 To test submission-time authorization, mount and fill a valid form while authorized, revoke permission, and invoke `->call('callMountedAction')` before asserting that nothing was dispatched. Visibility checks alone do not prove that submission is rejected.
 
-The fake still reads the file, validates the form, and persists an `Import` record. It does not run import jobs, process rows, or send completion notifications. It does not globally fake Laravel's bus or events: unrelated jobs and events, and your action hooks, still run. Use `TestImporter` separately to test row behavior.
+The fake still reads the file, validates the form, and persists an `Import` record. It does not run import jobs, process rows, emit `ImportStarted` or `ImportCompleted`, or send completion notifications. It does not globally fake Laravel's bus or events: unrelated jobs and events, and your action hooks, still run. Use `TestImporter` separately to test row behavior.
