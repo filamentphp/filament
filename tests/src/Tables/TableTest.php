@@ -257,13 +257,12 @@ describe('rendering', function (): void {
             ->and($contentBeforePosition)->toBeLessThan($tableContentPosition)
             ->and($tableContentPosition)->toBeLessThan($contentAfterPosition)
             ->and($contentAfterPosition)->toBeLessThan($paginationPosition)
-            ->and($contentBeforeData)->toHaveKeys(['hasPagination', 'livewire', 'records', 'table'])
+            ->and($contentBeforeData)->toHaveKeys(['hasPagination', 'records', 'table'])
+            ->not->toHaveKey('livewire')
             ->and($contentBeforeData['hasPagination'])->toBeTrue()
-            ->and($contentBeforeData['livewire'])->toBeInstanceOf(TableTestComponent::class)
             ->and($contentBeforeData['records'])->toBeInstanceOf(LengthAwarePaginator::class)
             ->and($contentBeforeData['table'])->toBeInstanceOf(Table::class)
             ->and($contentAfterData['hasPagination'])->toBeTrue()
-            ->and($contentAfterData['livewire'])->toBe($contentBeforeData['livewire'])
             ->and($contentAfterData['records'])->toBe($contentBeforeData['records'])
             ->and($contentAfterData['table'])->toBe($contentBeforeData['table']);
     });

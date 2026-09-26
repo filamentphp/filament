@@ -150,7 +150,6 @@
     $hasPagination = (($records instanceof Paginator) || ($records instanceof CursorPaginator)) && (($records instanceof LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
     $contentRenderHookData = [
         'hasPagination' => $hasPagination,
-        'livewire' => $this,
         'records' => $records,
         'table' => $this->getTable(),
     ];
