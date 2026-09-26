@@ -50,6 +50,7 @@
     $contentFooter = $getContentFooter();
     $filterIndicators = $getFilterIndicators();
     $filtersApplyAction = $getFiltersApplyAction();
+    $filtersResetAction = $getFiltersResetAction();
     $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
     $filtersResetActionPosition = $getFiltersResetActionPosition();
@@ -268,6 +269,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
+                    :reset-action="$filtersResetAction"
                     :reset-action-position="$filtersResetActionPosition"
                 />
             </div>
@@ -338,6 +340,7 @@
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
                             :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
+                            :reset-action="$filtersResetAction"
                             :reset-action-position="$filtersResetActionPosition"
                         />
 
@@ -632,6 +635,7 @@
                                                 :apply-action="$filtersApplyAction"
                                                 :form="$filtersForm"
                                                 :heading-tag="$secondLevelHeadingTag"
+                                                :reset-action="$filtersResetAction"
                                                 :reset-action-position="$filtersResetActionPosition"
                                             />
                                         </x-filament::dropdown>
@@ -2659,6 +2663,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
+                    :reset-action="$filtersResetAction"
                     :reset-action-position="$filtersResetActionPosition"
                 />
             @endif
@@ -2682,6 +2687,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
+                    :reset-action="$filtersResetAction"
                     :reset-action-position="$filtersResetActionPosition"
                 />
             </div>
