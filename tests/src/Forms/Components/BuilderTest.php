@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
+use ReflectionProperty;
 
 use function Filament\Tests\livewire;
 
