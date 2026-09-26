@@ -133,6 +133,14 @@ describe('headings', function (): void {
         expect($table->getHeadingTag())->toBe('h2');
         expect($table->getHeadingTag(1))->toBe('h3');
     });
+
+    it('clamps `getHeadingLevel()` to a minimum of `1`', function (int $rootHeadingLevel): void {
+        $table = livewire(TableTestComponent::class)->instance()->getTable()
+            ->rootHeadingLevel($rootHeadingLevel);
+
+        expect($table->getHeadingLevel())->toBe(1)
+            ->and($table->getHeadingTag())->toBe('h1');
+    })->with([0, -1]);
 });
 
 describe('record URL', function (): void {

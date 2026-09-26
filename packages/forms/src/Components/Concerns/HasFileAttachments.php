@@ -104,7 +104,10 @@ trait HasFileAttachments
             return $savedFile;
         }
 
-        $path = $file->store($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
+        $path = $file->store($this->getFileAttachmentsDirectory(), [
+            'disk' => $this->getFileAttachmentsDiskName(),
+            'mimetype' => $file->getMimeType(),
+        ]);
 
         if ($this->getFileAttachmentsVisibility() === 'public') {
             rescue(fn () => $this->getFileAttachmentsDisk()->setVisibility($path, 'public'), report: false);

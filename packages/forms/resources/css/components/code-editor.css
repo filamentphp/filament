@@ -6,6 +6,14 @@
             @apply outline-none!;
         }
 
+        & .cm-panels {
+            @apply z-5!;
+        }
+
+        & .cm-tooltip {
+            @apply z-20!;
+        }
+
         & .cm-gutters {
             @apply min-h-48! border-e-gray-300! bg-gray-100! dark:border-e-gray-800! dark:bg-gray-950!;
 

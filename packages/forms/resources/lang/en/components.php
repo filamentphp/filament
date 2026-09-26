@@ -503,6 +503,10 @@ return [
 
             ],
 
+            'close_panel' => [
+                'label' => 'Close panel',
+            ],
+
             'custom_block' => [
 
                 'modal' => [
@@ -667,6 +671,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Delete block',
+                ],
+
+                'edit' => [
+                    'label' => 'Edit block',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'No blocks match your search.',
+
+            'search_label' => 'Search blocks',
+
+            'search_prompt' => 'Search blocks',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'Uploaded files must be of type: :values.',
 
         'file_attachments_max_size_message' => 'Uploaded files must not be greater than :max kilobytes.',
@@ -676,7 +702,7 @@ return [
         'mentions' => [
             'no_options_message' => 'No options available.',
             'no_search_results_message' => 'No results match your search.',
-            'search_prompt' => 'Start typing to search...',
+            'search_prompt' => 'Start typing to search',
             'searching_message' => 'Searching...',
         ],
 
@@ -817,7 +843,7 @@ return [
 
         'search_label' => 'Search',
 
-        'search_prompt' => 'Start typing to search...',
+        'search_prompt' => 'Start typing to search',
 
     ],
 
