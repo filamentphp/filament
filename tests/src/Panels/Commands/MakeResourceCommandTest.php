@@ -3,6 +3,7 @@
 use Composer\Autoload\ClassLoader;
 use Filament\Commands\MakeResourceCommand;
 use Filament\Facades\Filament;
+use Filament\PanelRegistry;
 use Filament\Tests\TestCase;
 
 use function Filament\Support\get_composer_vendor_directory;
@@ -916,4 +917,19 @@ it('can generate a nested resource class in a nested directory', function (): vo
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
+});
+
+it('fails when Filament has not been installed', function (): void {
+    app(PanelRegistry::class)->panels = [];
+
+    $this->mockConsoleOutput = true;
+
+    $this->artisan('make:filament-resource', [
+        'model' => 'Post',
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
+        '--record-title-attribute' => 'title',
+        '--no-interaction' => true,
+    ])
+        ->expectsOutputToContain('Filament has not been installed yet')
+        ->assertFailed();
 });
