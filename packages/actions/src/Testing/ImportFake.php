@@ -55,6 +55,25 @@ class ImportFake extends ImportDispatcher
         return $this;
     }
 
+    /**
+     * @param  class-string<Importer>  $importer
+     * @param  (Closure(Import, array<string, string>, array<string, mixed>): bool) | null  $callback
+     */
+    public function assertNotDispatched(string $importer, ?Closure $callback = null): static
+    {
+        foreach ($this->imports[$importer] ?? [] as $import) {
+            if ($callback && (! $callback($import['import'], $import['columnMap'], $import['options']))) {
+                continue;
+            }
+
+            Assert::fail("The unexpected [{$importer}] import was dispatched" . ($callback ? ' with matching data.' : '.'));
+        }
+
+        Assert::assertTrue(true);
+
+        return $this;
+    }
+
     public function assertNothingDispatched(): static
     {
         Assert::assertCount(0, $this->imports, 'Imports were dispatched.');

@@ -216,6 +216,51 @@ it('asserts matching requests and exact per-importer counts with useful failures
         ->and(fn () => $fake->assertNothingDispatched())->toThrow(AssertionFailedError::class, 'Imports were dispatched.');
 });
 
+it('asserts no matching import was dispatched without rejecting other imports', function (): void {
+    config(['auth.guards.staff' => config('auth.guards.web')]);
+    auth('staff')->setUser(auth()->user());
+    $fake = ImportAction::fake();
+    expect($fake->assertNotDispatched(DispatchPostImporter::class))->toBe($fake);
+
+    foreach (['append', 'replace'] as $mode) {
+        livewire(ImportDispatchPage::class)
+            ->mountAction('import')
+            ->setActionData(['file' => UploadedFile::fake()->createWithContent('posts.csv', "Headline,Body\nFirst post,Content\n")])
+            ->setActionData(['columnMap' => ['title' => 'Headline', 'content' => 'Body'], 'mode' => $mode])
+            ->callMountedAction()
+            ->assertHasNoActionErrors();
+    }
+
+    $fake->assertNotDispatched(Importer::class, static fn (): bool => throw new LogicException('Unrelated importer callback invoked.'));
+    $seenModes = [];
+    expect($fake->assertNotDispatched(DispatchPostImporter::class, function (Import $import, array $columnMap, array $options) use (&$seenModes): bool {
+        $seenModes[] = $options['mode'];
+        expect($import->exists)->toBeTrue()
+            ->and($import->total_rows)->toBe(1)
+            ->and($columnMap)->toBe(['title' => 'Headline', 'content' => 'Body'])
+            ->and($options['source'])->toBe('catalog');
+
+        return false;
+    }))->toBe($fake);
+    expect($seenModes)->toBe(['append', 'replace']);
+
+    expect(fn () => $fake->assertNotDispatched(DispatchPostImporter::class))->toThrow(AssertionFailedError::class)
+        ->and(fn () => $fake->assertNotDispatched(DispatchPostImporter::class, static fn (Import $import, array $columnMap, array $options): bool => $options['mode'] === 'replace'))
+        ->toThrow(AssertionFailedError::class, 'with matching data.');
+
+    $exception = new LogicException('Callback failed.');
+
+    try {
+        $fake->assertNotDispatched(DispatchPostImporter::class, static fn (): bool => throw $exception);
+    } catch (LogicException $caughtException) {
+        expect($caughtException)->toBe($exception);
+
+        return;
+    }
+
+    $this->fail('The callback exception was swallowed.');
+});
+
 class ImportDispatchPage extends Actions
 {
     public bool $canImport = true;

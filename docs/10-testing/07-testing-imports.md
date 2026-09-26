@@ -189,6 +189,15 @@ Upload the file before setting `columnMap`, so the form can read the headers and
 
 `assertDispatched()` checks for at least one request for the importer, optionally matching a callback. `assertDispatchedTimes()` checks its exact count, defaulting to one. Use `assertNothingDispatched()` after invalid form data or rejected authorization.
 
+Use `assertNotDispatched(ProductImporter::class)` to check that a particular importer was not dispatched, while allowing other importers. It accepts the same optional callback as `assertDispatched()` and fails if any import matches:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\Imports\Models\Import;
+
+$imports->assertNotDispatched(ProductImporter::class, static fn (Import $import): bool => $import->user_id === $otherUser->getKey());
+```
+
 For example, if `sku` uses `requiredMapping()`, submit an otherwise valid form with `columnMap.sku` set to `null`, assert `assertHasFormErrors(['columnMap.sku' => 'required'])`, then `$imports->assertNothingDispatched()`. These are form errors, not row validation errors.
 
 To test submission-time authorization, mount and fill a valid form while authorized, revoke permission, and invoke `->call('callMountedAction')` before asserting that nothing was dispatched. Visibility checks alone do not prove that submission is rejected.
