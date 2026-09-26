@@ -494,7 +494,7 @@ trait HasState
     /**
      * @param  array<string>  $statePaths
      */
-    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldLoadStateFromRelationships = true): void
+    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true): void
     {
         if ($this->hasStatePath()) {
             $statePathToCheck = $this->getStatePath();
@@ -514,13 +514,13 @@ trait HasState
 
         if (! ($isStatePathMatching ?? false)) {
             foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-                $childSchema->hydrateStatePartially($statePaths, $shouldCallHydrationHooks, $shouldLoadStateFromRelationships);
+                $childSchema->hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
             }
 
             return;
         }
 
-        if ($shouldLoadStateFromRelationships) {
+        if ($this->getContainer()->shouldLoadStateFromRelationshipsWhenHydratingPartially()) {
             $this->loadStateFromRelationships();
         }
 
@@ -535,7 +535,7 @@ trait HasState
         }
 
         foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
-            $childSchema->hydrateStatePartially($statePaths, $shouldCallHydrationHooks, $shouldLoadStateFromRelationships);
+            $childSchema->hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
         }
 
         $rawState = $this->getRawState();

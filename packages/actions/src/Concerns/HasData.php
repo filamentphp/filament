@@ -207,7 +207,7 @@ trait HasData
             return;
         }
 
-        $schema->fillPartially($data, $statePaths, shouldLoadStateFromRelationships: false);
+        $schema->fillPartiallyWithoutLoadingStateFromRelationships($data, $statePaths);
         $schema->flushCachedHierarchy();
     }
 

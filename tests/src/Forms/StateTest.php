@@ -323,11 +323,13 @@ describe('hydrating state', function (): void {
             ->statePath('data')
             ->model(User::factory()->create())
             ->components([
-                (new Component)
-                    ->statePath($statePath = Str::random())
-                    ->loadStateFromRelationshipsUsing(
-                        fn (Component $component) => $component->state('relationship state'),
-                    ),
+                (new Component)->schema([
+                    (new Component)
+                        ->statePath($statePath = Str::random())
+                        ->loadStateFromRelationshipsUsing(
+                            fn (Component $component) => $component->state('relationship state'),
+                        ),
+                ]),
             ])
             ->fill([$statePath => 'initial state']);
 
@@ -336,14 +338,18 @@ describe('hydrating state', function (): void {
         expect($livewire)
             ->getData()->toBe([$statePath => 'relationship state']);
 
-        $schema->fillPartially(
+        $schema->fillPartiallyWithoutLoadingStateFromRelationships(
             [$statePath => 'explicit state'],
             statePaths: [$statePath],
-            shouldLoadStateFromRelationships: false,
         );
 
         expect($livewire)
             ->getData()->toBe([$statePath => 'explicit state']);
+
+        $schema->fillPartially([$statePath => 'second explicit state'], statePaths: [$statePath]);
+
+        expect($livewire)
+            ->getData()->toBe([$statePath => 'relationship state']);
     });
 
     test('custom logic can be executed after state hydrated partially, only for components that are hydrated partially', function (): void {

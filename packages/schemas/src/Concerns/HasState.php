@@ -16,6 +16,8 @@ trait HasState
 
     protected string $cachedAbsoluteStatePath;
 
+    protected bool $shouldLoadStateFromRelationshipsWhenHydratingPartially = true;
+
     /**
      * @var array<string, mixed> | object | null
      */
@@ -344,7 +346,7 @@ trait HasState
      * @param  array<string, mixed>  $state
      * @param  array<string>  $statePaths
      */
-    public function fillPartially(array $state, array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true, bool $shouldLoadStateFromRelationships = true): static
+    public function fillPartially(array $state, array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
     {
         $partialState = [];
 
@@ -372,7 +374,6 @@ trait HasState
         $this->hydrateStatePartially(
             $statePaths,
             $shouldCallHydrationHooks,
-            $shouldLoadStateFromRelationships,
         );
 
         if ($shouldFillStateWithNull) {
@@ -380,6 +381,25 @@ trait HasState
         }
 
         return $this;
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     *
+     * @param  array<string, mixed>  $state
+     * @param  array<string>  $statePaths
+     */
+    public function fillPartiallyWithoutLoadingStateFromRelationships(array $state, array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldFillStateWithNull = true): static
+    {
+        $shouldLoadStateFromRelationships = $this->shouldLoadStateFromRelationshipsWhenHydratingPartially;
+
+        $this->shouldLoadStateFromRelationshipsWhenHydratingPartially = false;
+
+        try {
+            return $this->fillPartially($state, $statePaths, $shouldCallHydrationHooks, $shouldFillStateWithNull);
+        } finally {
+            $this->shouldLoadStateFromRelationshipsWhenHydratingPartially = $shouldLoadStateFromRelationships;
+        }
     }
 
     /**
@@ -400,15 +420,24 @@ trait HasState
     /**
      * @param  array<string>  $statePaths
      */
-    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true, bool $shouldLoadStateFromRelationships = true): void
+    public function hydrateStatePartially(array $statePaths, bool $shouldCallHydrationHooks = true): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component instanceof Entry) {
                 continue;
             }
 
-            $component->hydrateStatePartially($statePaths, $shouldCallHydrationHooks, $shouldLoadStateFromRelationships);
+            $component->hydrateStatePartially($statePaths, $shouldCallHydrationHooks);
         }
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function shouldLoadStateFromRelationshipsWhenHydratingPartially(): bool
+    {
+        return $this->shouldLoadStateFromRelationshipsWhenHydratingPartially &&
+            ($this->getParentComponent()?->getContainer()->shouldLoadStateFromRelationshipsWhenHydratingPartially() ?? true);
     }
 
     public function fillStateWithNull(): void
