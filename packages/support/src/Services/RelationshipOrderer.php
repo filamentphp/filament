@@ -13,8 +13,29 @@ use Illuminate\Database\Query\Builder;
 use InvalidArgumentException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\is_database_driver_supported;
+
 class RelationshipOrderer
 {
+    public function orderQuery(EloquentBuilder $query, string $relationshipName, string $column, string $direction): EloquentBuilder
+    {
+        $orderByRelationMethod = 'orderByRelation';
+
+        if (
+            (! is_database_driver_supported($query->getConnection())) &&
+            method_exists($query, $orderByRelationMethod)
+        ) {
+            $query->{$orderByRelationMethod}($relationshipName, $column, $direction);
+
+            return $query;
+        }
+
+        return $query->orderBy(
+            $this->buildSubquery($query, $relationshipName, $column),
+            $direction,
+        );
+    }
+
     public function buildSubquery(EloquentBuilder $query, string $relationshipName, string $column): Builder
     {
         $relationshipChain = $this->buildRelationshipChain($query->getModel(), $relationshipName);
