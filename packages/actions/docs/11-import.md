@@ -185,7 +185,7 @@ The backing values of the enum are also used as the [example CSV data](#providin
     If the column [handles multiple values](#handling-multiple-values-in-a-single-column), each item in the array is validated against the enum.
 </Aside>
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `enum()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x">As well as allowing a static value, the `enum()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 When the enum is calculated dynamically, its cases are not automatically used as example CSV data, since the function may depend on the current row being imported. You can pass the example data to `examples()` yourself if required.
 

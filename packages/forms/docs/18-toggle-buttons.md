@@ -123,9 +123,9 @@ ToggleButtons::make('status')
 
 The available sizes are `Size::ExtraSmall`, `Size::Small`, `Size::Medium`, `Size::Large`, and `Size::ExtraLarge`. You can also pass their backed values (`'xs'`, `'sm'`, `'md'`, `'lg'`, and `'xl'`). Any other string is applied as a custom CSS class. Passing `null` restores the default medium size. The button size is also applied when using `grouped()`.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/toggle-buttons/size" alt="Small toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/size" alt="Small toggle buttons" version="5.x" />
 
 ## Boolean options
 
@@ -233,7 +233,7 @@ ToggleButtons::make('feedback')
     ->fullWidth()
 ```
 
-<AutoScreenshot name="forms/fields/toggle-buttons/full-width" alt="Full width toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/toggle-buttons/full-width" alt="Full width toggle buttons" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the buttons should fill the container width or not:
 
@@ -247,7 +247,7 @@ ToggleButtons::make('feedback')
     ->fullWidth(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `fullWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `fullWidth()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Selecting multiple buttons
 

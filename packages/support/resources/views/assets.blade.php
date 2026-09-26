@@ -1,6 +1,8 @@
 @if (isset($data))
     @php
-        $nonce = \Illuminate\Support\Facades\Vite::cspNonce();
+        use Illuminate\Support\Facades\Vite;
+
+        $nonce = Vite::cspNonce();
     @endphp
 
     <script @if (filled($nonce)) nonce="{{ $nonce }}" @endif>

@@ -276,7 +276,7 @@ RichEditor::make('content')
 
 The offset accepts a CSS length value. Pass `null` to restore the automatic offset.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `stickyToolbar()`, `stickyPanels()`, and `stickyOffset()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `stickyToolbar()`, `stickyPanels()`, and `stickyOffset()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Customizing text colors
 
@@ -665,7 +665,7 @@ class HeroBlock extends RichContentCustomBlock
 }
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/custom-block-previews" alt="Rich editor with custom block previews and normal controls" version="4.x" />
+<AutoScreenshot name="forms/fields/rich-editor/custom-block-previews" alt="Rich editor with custom block previews and normal controls" version="5.x" />
 
 The `getPreviewLabel()` can be defined if you would like to customize the label that is displayed above the preview in the editor. By default, it will use the label defined in the `getLabel()` method, but the `getPreviewLabel()` is able to access the `$config` for the block, allowing you to display dynamic information in the label:
 
@@ -701,13 +701,13 @@ RichEditor::make('content')
     ->minimalCustomBlockControls()
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/minimal-custom-block-controls" alt="Rich editor with minimal controls beside short and tall custom block previews" version="4.x" />
+<AutoScreenshot name="forms/fields/rich-editor/minimal-custom-block-controls" alt="Rich editor with minimal controls beside short and tall custom block previews" version="5.x" />
 
 This setting applies to all custom blocks with previews in the editor. Blocks without a preview keep their usual header and label. Disabled editors do not display edit or delete buttons.
 
 The buttons stay at the top beside tall previews. Previews shorter than the buttons are vertically centered, with enough space for both buttons.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `minimalCustomBlockControls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `minimalCustomBlockControls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Rendering content with custom blocks
 
@@ -804,9 +804,9 @@ Each grid item displays the block's label and its [icon](#adding-icons-to-custom
 
 Defining an icon for each block makes the grid easier to scan:
 
-<AutoScreenshot name="forms/fields/rich-editor/custom-blocks-grid" alt="Rich editor with icons above custom block labels in a grid" version="4.x" />
+<AutoScreenshot name="forms/fields/rich-editor/custom-blocks-grid" alt="Rich editor with icons above custom block labels in a grid" version="5.x" />
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `customBlocksGrid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `customBlocksGrid()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Grouping custom blocks
 
@@ -877,9 +877,9 @@ Search matches block labels and group names, ignoring capitalization and surroun
 
 Search works with both the list and [grid](#displaying-custom-blocks-in-a-grid) layouts. It is disabled by default, and you can pass `false` to `searchableCustomBlocks()` to disable it.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `searchableCustomBlocks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `searchableCustomBlocks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/rich-editor/searchable-custom-blocks-grid" alt="Rich editor with custom blocks filtered to the Media group, showing image gallery and video embed icons in a grid" version="4.x" />
+<AutoScreenshot name="forms/fields/rich-editor/searchable-custom-blocks-grid" alt="Rich editor with custom blocks filtered to the Media group, showing image gallery and video embed icons in a grid" version="5.x" />
 
 ### Opening the custom blocks panel by default
 
