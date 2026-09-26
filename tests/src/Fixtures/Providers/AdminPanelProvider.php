@@ -25,6 +25,7 @@ use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
 use Filament\Tests\Fixtures\Pages\AutofocusWizardBrowserTest;
+use Filament\Tests\Fixtures\Pages\BuilderSearchableTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
 use Filament\Tests\Fixtures\Pages\CheckboxListTest;
@@ -37,7 +38,9 @@ use Filament\Tests\Fixtures\Pages\DatabaseNotificationsBrowserTest;
 use Filament\Tests\Fixtures\Pages\DatePickerBrowserTest;
 use Filament\Tests\Fixtures\Pages\DateTimePickerTest;
 use Filament\Tests\Fixtures\Pages\DeferredSchemaLoadingBrowserTest;
+use Filament\Tests\Fixtures\Pages\DropdownTest;
 use Filament\Tests\Fixtures\Pages\FileUploadBrowserTest;
+use Filament\Tests\Fixtures\Pages\FiltersResetActionBrowserTest;
 use Filament\Tests\Fixtures\Pages\IndividualColumnSearchBrowserTest;
 use Filament\Tests\Fixtures\Pages\InfolistEntriesBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
@@ -50,6 +53,7 @@ use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Fixtures\Pages\RadioTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\RichEditorBrowserTest;
+use Filament\Tests\Fixtures\Pages\RichEditorMinimalControlsBrowserTest;
 use Filament\Tests\Fixtures\Pages\SectionBrowserTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
@@ -120,7 +124,9 @@ class AdminPanelProvider extends PanelProvider
                 AutofocusBrowserTest::class,
                 AutofocusSecondTabBrowserTest::class,
                 AutofocusWizardBrowserTest::class,
+                BuilderSearchableTest::class,
                 BuilderTest::class,
+                DropdownTest::class,
                 CalloutBrowserTest::class,
                 CheckboxListTest::class,
                 CodeEditorBrowserTest::class,
@@ -133,6 +139,7 @@ class AdminPanelProvider extends PanelProvider
                 DateTimePickerTest::class,
                 DeferredSchemaLoadingBrowserTest::class,
                 FileUploadBrowserTest::class,
+                FiltersResetActionBrowserTest::class,
                 IndividualColumnSearchBrowserTest::class,
                 InfolistEntriesBrowserTest::class,
                 KeyValueTest::class,
@@ -145,6 +152,7 @@ class AdminPanelProvider extends PanelProvider
                 RadioTest::class,
                 RepeaterTest::class,
                 RichEditorBrowserTest::class,
+                RichEditorMinimalControlsBrowserTest::class,
                 SectionBrowserTest::class,
                 SelectTest::class,
                 Settings::class,
