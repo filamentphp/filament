@@ -6,6 +6,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 
@@ -83,6 +84,43 @@ class ModalBrowserTest extends Page
                 ->action(static fn () => null)
                 ->extraAttributes(['data-testid' => 'escape-close-disabled-trigger'])
                 ->extraModalWindowAttributes(['data-testid' => 'escape-close-disabled-modal']),
+            Action::make('validatedParentData')
+                ->label('Validated parent data')
+                ->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->extraInputAttributes(['data-testid' => 'validated-parent-data-input'])
+                        ->extraFieldWrapperAttributes(['data-testid' => 'validated-parent-data-field'])
+                        ->suffixAction(
+                            Action::make('generateValidatedParentDataName')
+                                ->action(function (Action $parentAction): void {
+                                    $parentAction->fillData([
+                                        'name' => blank($parentAction->getRawData()['name'] ?? null)
+                                            ? 'First generated name'
+                                            : 'Second generated name',
+                                    ]);
+                                })
+                                ->extraAttributes(['data-testid' => 'validated-parent-data-suffix-action']),
+                        ),
+                ])
+                ->action(static fn () => null)
+                ->extraAttributes(['data-testid' => 'validated-parent-data-trigger'])
+                ->extraModalWindowAttributes(['data-testid' => 'validated-parent-data-modal'])
+                ->extraModalFooterActions([
+                    Action::make('validateParentDataBeforeOpening')
+                        ->label('Open nested modal')
+                        ->schema([
+                            TextInput::make('confirmation'),
+                        ])
+                        ->mountUsing(function (Action $parentAction, Schema $schema): void {
+                            $parentAction->getValidatedData();
+
+                            $schema->fill();
+                        })
+                        ->action(static fn () => null)
+                        ->extraAttributes(['data-testid' => 'validated-parent-data-nested-trigger'])
+                        ->extraModalWindowAttributes(['data-testid' => 'validated-parent-data-nested-modal']),
+                ]),
             Action::make('scrollPreservation')
                 ->label('Scroll preservation')
                 ->modalSubmitAction(false)
