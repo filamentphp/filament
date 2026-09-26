@@ -1045,6 +1045,10 @@ Inside these hooks, you can access the current row's data using `$this->data`. Y
 
 The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.
 
+## Testing
+
+To test importer rows and import action submissions, see the [Testing imports](../testing/testing-imports) guide.
+
 ## Authorization
 
 By default, only the user who started the import may access the failure CSV file that gets generated if part of an import fails. If you'd like to customize the authorization logic, you may create an `ImportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
