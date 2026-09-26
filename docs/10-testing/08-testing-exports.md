@@ -209,4 +209,6 @@ Do not assume the query is restricted to the selection. Non-bulk exports pass `n
 
 The action still persists an `Export`, enforces row limits, and deletes its existing export directory. Configuration callbacks, action hooks, and model events still run. Use your normal test database and Laravel's `Storage::fake()` on the configured export disk to isolate storage cleanup. Started notifications follow the action's queue configuration; unrelated jobs and listeners are not faked.
 
+The fake only intercepts dispatch through Filament's `ExportDispatcher`. If your custom action dispatches jobs directly instead, use Laravel's bus or queue fakes to test that workflow.
+
 The fake does not process rows, generate files, or complete exports and send completion notifications. Keep separate unfaked integration tests for worker processing, CSV/XLSX contents, and downloads. Use your exporter's `test()` method for row values, including any [formula injection protection](../actions/export#csv-formula-injection) configured on your columns.
