@@ -6,7 +6,7 @@ title: Overview
 
 All examples in this guide will be written using [Pest](https://pestphp.com). To use Pest's Livewire plugin for testing, you can follow the installation instructions in the Pest documentation on plugins: [Livewire plugin for Pest](https://pestphp.com/docs/plugins#livewire). However, you can easily adapt this to PHPUnit, mostly by switching out the `livewire()` function from Pest with the `Livewire::test()` method.
 
-Since all Filament components are mounted to a Livewire component, we're just using Livewire testing helpers everywhere. If you've never tested Livewire components before, please read [this guide](https://livewire.laravel.com/docs/testing) from the Livewire docs.
+Most Filament UI tests use Livewire testing helpers. Other helpers, such as `TestImporter`, test application behavior without mounting a Livewire component. If you've never tested Livewire components before, please read [this guide](https://livewire.laravel.com/docs/testing) from the Livewire docs.
 
 ## Testing guides
 
@@ -17,6 +17,8 @@ If you would like to learn the different methods available to test tables, check
 If you need to test a schema, which encompasses both forms and infolists, check out the [Testing schemas](testing-schemas) section.
 
 If you would like to test an action, including actions that exist in tables or in schemas, check out the [Testing actions](testing-actions) section.
+
+If you would like to test importer rows or import action submissions, check out the [Testing imports](testing-imports) section.
 
 If you would like to test a notification that you have sent, check out the [Testing notifications](testing-notifications) section.
 
