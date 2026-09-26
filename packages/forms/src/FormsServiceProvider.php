@@ -3,7 +3,6 @@
 namespace Filament\Forms;
 
 use Faker\Generator;
-use Filament\Forms\Components\RichEditor\RichContentFakerProvider;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Forms\Testing\TestsFormComponentActions;
 use Filament\Forms\Testing\TestsForms;
@@ -23,14 +22,14 @@ class FormsServiceProvider extends PackageServiceProvider
             return;
         }
 
-        $registerRichContentFakerProvider = static function (Generator $faker): void {
+        $registerFakerProvider = static function (Generator $faker): void {
             foreach ($faker->getProviders() as $provider) {
-                if ($provider instanceof RichContentFakerProvider) {
+                if ($provider instanceof FakerProvider) {
                     return;
                 }
             }
 
-            $faker->addProvider(new RichContentFakerProvider($faker));
+            $faker->addProvider(new FakerProvider($faker));
         };
 
         $fakerBindings = [
@@ -46,10 +45,10 @@ class FormsServiceProvider extends PackageServiceProvider
                 continue;
             }
 
-            $registerRichContentFakerProvider($this->app->make($fakerBinding));
+            $registerFakerProvider($this->app->make($fakerBinding));
         }
 
-        $this->app->afterResolving(Generator::class, $registerRichContentFakerProvider);
+        $this->app->afterResolving(Generator::class, $registerFakerProvider);
     }
 
     public function configurePackage(Package $package): void

@@ -2,6 +2,7 @@
 
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
+use Filament\Forms\Components\MarkdownEditor\MarkdownFaker;
 use Filament\Forms\Components\RichEditor\Contracts\CanGenerateFakeConfiguration;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
@@ -16,8 +17,9 @@ use Illuminate\Support\ServiceProvider;
 
 uses(TestCase::class);
 
-it('registers a Filament rich content provider with Faker', function (): void {
-    expect(fake()->filamentRichContent())->toBeInstanceOf(RichContentFaker::class);
+it('registers the Filament content provider with Faker', function (): void {
+    expect(fake()->filamentRichContent())->toBeInstanceOf(RichContentFaker::class)
+        ->and(fake()->filamentMarkdown())->toBeInstanceOf(MarkdownFaker::class);
 });
 
 it('registers with locale-specific Faker generators that were resolved before the service provider', function (string $binding): void {
@@ -30,7 +32,8 @@ it('registers with locale-specific Faker generators that were resolved before th
     (new ReflectionProperty(ServiceProvider::class, 'app'))->setValue($serviceProvider, $container);
     $serviceProvider->packageRegistered();
 
-    expect($faker->filamentRichContent())->toBeInstanceOf(RichContentFaker::class);
+    expect($faker->filamentRichContent())->toBeInstanceOf(RichContentFaker::class)
+        ->and($faker->filamentMarkdown())->toBeInstanceOf(MarkdownFaker::class);
 })->with([
     Generator::class,
     Generator::class . ':en_US',
