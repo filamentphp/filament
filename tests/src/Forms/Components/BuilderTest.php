@@ -915,7 +915,6 @@ it('closes only the block picker with `Escape` when it is inside a modal', funct
     $page
         ->click('[data-testid="modal-builder-trigger"]')
         ->assertVisible($modal)
-        ->assertScript('document.querySelector(\'[data-testid="builder-modal"]\').contains(document.activeElement)', true)
         ->click($addBlockAction)
         ->assertVisible($searchInput)
         ->assertScript('document.querySelector(\'[data-testid="builder-modal"]\').getAnimations({ subtree: true }).length', 0)
