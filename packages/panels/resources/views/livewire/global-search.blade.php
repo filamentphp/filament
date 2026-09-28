@@ -15,6 +15,7 @@
 
     <div
         x-on:focus-first-global-search-result.stop="$el.querySelector('.fi-global-search-result-link')?.focus()"
+        x-on:livewire:navigate.window="if ($wire.search) $wire.$set('search', '')"
         class="fi-global-search"
     >
         <div x-id="['input']" class="fi-global-search-field">
@@ -61,6 +62,7 @@
                 x-init="$nextTick(() => open())"
                 x-on:click.away="close()"
                 x-on:keydown.escape.window="close()"
+                x-on:livewire:navigate.window="close()"
                 x-on:keydown.up.prevent="$focus.wrap().previous()"
                 x-on:keydown.down.prevent="$focus.wrap().next()"
                 x-on:open-global-search-results.window="$nextTick(() => open())"

@@ -12,6 +12,7 @@ use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -80,6 +81,49 @@ describe('search results', function (): void {
 
         expect($categories[0])->toBe('users');
         expect($categories[1])->toBe('posts');
+    });
+});
+
+describe('SPA mode', function (): void {
+    it('clears the search and closes the results after clicking a result', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            Post::query()->delete();
+
+            $post = Post::factory()->create();
+
+            visit(PostResource::getUrl(panel: 'spa'))
+                ->type('.fi-global-search-field input', $post->title)
+                ->wait(1)
+                ->assertVisible('.fi-global-search-result-link')
+                ->click('.fi-global-search-result-link')
+                ->wait(1)
+                ->assertPathIs('/spa/posts/*')
+                ->assertValue('.fi-global-search-field input', '')
+                ->assertNotPresent('.fi-global-search-results-ctn');
+        });
+    });
+
+    it('clears the search and closes the results after selecting a result with the keyboard', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            Post::query()->delete();
+
+            $post = Post::factory()->create();
+
+            visit(PostResource::getUrl(panel: 'spa'))
+                ->type('.fi-global-search-field input', $post->title)
+                ->wait(1)
+                ->assertVisible('.fi-global-search-result-link')
+                ->keys('.fi-global-search-field input', 'ArrowDown')
+                ->keys('.fi-global-search-result-link', 'Enter')
+                ->wait(1)
+                ->assertPathIs('/spa/posts/*')
+                ->assertValue('.fi-global-search-field input', '')
+                ->assertNotPresent('.fi-global-search-results-ctn');
+        });
     });
 });
 
