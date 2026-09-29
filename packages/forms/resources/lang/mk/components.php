@@ -104,6 +104,14 @@ return [
 
         ],
 
+        'block_picker' => [
+
+            'no_search_results_message' => 'Нема блокови кои се совпаѓаат со вашето пребарување.',
+
+            'search_prompt' => 'Пребарај блокови',
+
+        ],
+
     ],
 
     'checkbox_list' => [
@@ -122,9 +130,53 @@ return [
 
     ],
 
+    'color_picker' => [
+
+        'panel_label' => 'Избирач на боја',
+
+    ],
+
+    'date_time_picker' => [
+
+        'month_select' => [
+            'label' => 'Месец',
+        ],
+
+        'year_input' => [
+            'label' => 'Година',
+        ],
+
+        'hour_input' => [
+            'label' => 'Час',
+        ],
+
+        'minute_input' => [
+            'label' => 'Минута',
+        ],
+
+        'second_input' => [
+            'label' => 'Секунда',
+        ],
+
+    ],
+
     'file_upload' => [
 
+        'actions' => [
+
+            'download' => [
+                'label' => 'Преземи',
+            ],
+
+            'open' => [
+                'label' => 'Отвори во нов таб',
+            ],
+
+        ],
+
         'editor' => [
+
+            'label' => 'Уредувач на слики',
 
             'actions' => [
 
@@ -268,6 +320,18 @@ return [
 
         ],
 
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Акции',
+            ],
+
+            'reorder' => [
+                'label' => 'Преуреди',
+            ],
+
+        ],
+
         'fields' => [
 
             'key' => [
@@ -338,6 +402,18 @@ return [
     ],
 
     'repeater' => [
+
+        'columns' => [
+
+            'actions' => [
+                'label' => 'Акции',
+            ],
+
+            'reorder' => [
+                'label' => 'Преуреди',
+            ],
+
+        ],
 
         'actions' => [
 
@@ -425,6 +501,10 @@ return [
 
                 ],
 
+            ],
+
+            'close_panel' => [
+                'label' => 'Затвори панел',
             ],
 
             'custom_block' => [
@@ -548,6 +628,35 @@ return [
 
                         'color' => [
                             'label' => 'Боја',
+
+                            'options' => [
+                                'slate' => 'Шкрилец',
+                                'gray' => 'Сива',
+                                'zinc' => 'Цинк',
+                                'neutral' => 'Неутрална',
+                                'stone' => 'Камен',
+                                'mauve' => 'Бледовиолетова',
+                                'olive' => 'Маслинеста',
+                                'mist' => 'Магла',
+                                'taupe' => 'Сивокафеава',
+                                'red' => 'Црвена',
+                                'orange' => 'Портокалова',
+                                'amber' => 'Килибарна',
+                                'yellow' => 'Жолта',
+                                'lime' => 'Лимета',
+                                'green' => 'Зелена',
+                                'emerald' => 'Смарагдна',
+                                'teal' => 'Синозелена',
+                                'cyan' => 'Цијан',
+                                'sky' => 'Небесна',
+                                'blue' => 'Сина',
+                                'indigo' => 'Индиго',
+                                'violet' => 'Виолетова',
+                                'purple' => 'Пурпурна',
+                                'fuchsia' => 'Фуксија',
+                                'pink' => 'Розова',
+                                'rose' => 'Роза',
+                            ],
                         ],
 
                         'custom_color' => [
@@ -562,6 +671,28 @@ return [
 
         ],
 
+        'custom_blocks' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Избриши блок',
+                ],
+
+                'edit' => [
+                    'label' => 'Уреди блок',
+                ],
+
+            ],
+
+            'no_search_results_message' => 'Нема блокови кои се совпаѓаат со вашето пребарување.',
+
+            'search_label' => 'Пребарај блокови',
+
+            'search_prompt' => 'Пребарај блокови',
+
+        ],
+
         'file_attachments_accepted_file_types_message' => 'Прикачените датотеки мора да бидат од тип: :values.',
 
         'file_attachments_max_size_message' => 'Прикачените датотеки не смеат да бидат поголеми од :max килобајти.',
@@ -573,6 +704,10 @@ return [
             'no_search_results_message' => 'Нема резултати кои се совпаѓаат со вашето пребарување.',
             'search_prompt' => 'Започнете да пишувате за пребарување...',
             'searching_message' => 'Се пребарува...',
+        ],
+
+        'toolbar' => [
+            'label' => 'Лента со алатки на уредувачот',
         ],
 
         'tools' => [
@@ -592,6 +727,9 @@ return [
             'h1' => 'Наслов',
             'h2' => 'Заглавие',
             'h3' => 'Подзаглавие',
+            'h4' => 'Заглавие 4',
+            'h5' => 'Заглавие 5',
+            'h6' => 'Заглавие 6',
             'grid' => 'Мрежа',
             'grid_delete' => 'Избриши мрежа',
             'highlight' => 'Истакни',
@@ -601,6 +739,7 @@ return [
             'link' => 'Линк',
             'merge_tags' => 'Спој тагови',
             'ordered_list' => 'Нумериран список',
+            'paragraph' => 'Пасус',
             'redo' => 'Повтори',
             'small' => 'Мал текст',
             'strike' => 'Прецртано',
@@ -630,6 +769,10 @@ return [
     'select' => [
 
         'actions' => [
+
+            'clear' => [
+                'label' => 'Исчисти избор',
+            ],
 
             'create_option' => [
 
@@ -675,6 +818,10 @@ return [
 
             ],
 
+            'remove_option' => [
+                'label' => 'Отстрани :label',
+            ],
+
         ],
 
         'boolean' => [
@@ -694,6 +841,8 @@ return [
 
         'searching_message' => 'Се пребарува...',
 
+        'search_label' => 'Пребарај',
+
         'search_prompt' => 'Започнете да пишувате за пребарување...',
 
     ],
@@ -709,6 +858,10 @@ return [
         ],
 
         'placeholder' => 'Нов таг',
+
+        'tag_added' => 'Додадено: :tag',
+
+        'tag_removed' => 'Отстрането: :tag',
 
     ],
 
