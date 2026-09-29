@@ -55,7 +55,7 @@ trait CanGetStateFromRelationships
             return $this->hasMultipleStateRelationshipCache;
         }
 
-        $relationships = explode('.', $this->getStateRelationshipName($record));
+        $relationships = explode('.', $this->getStateRelationshipName() ?? '');
 
         while (count($relationships)) {
             $currentRelationshipName = array_shift($relationships);
