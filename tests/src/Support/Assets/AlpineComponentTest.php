@@ -151,7 +151,7 @@ describe('version', function (): void {
 
         $version = $asset->getVersion();
 
-        expect($version)->toBe(InstalledVersions::getVersion('filament/support'));
+        expect($version)->toBe(AlpineComponent::make('my-component')->package('filament/support')->getVersion());
     });
 
     it('returns package version when a valid package is set', function (): void {
@@ -160,15 +160,64 @@ describe('version', function (): void {
 
         $version = $asset->getVersion();
 
-        expect($version)->toBe(InstalledVersions::getVersion('filament/support'));
+        // A release reads as the release; a dev checkout (this monorepo) as its commit.
+        $installed = InstalledVersions::getVersion('filament/support');
+        $expected = (str_starts_with($installed, 'dev-') || str_ends_with($installed, '-dev'))
+            ? substr(InstalledVersions::getReference('filament/support'), 0, 12)
+            : $installed;
+
+        expect($version)->toBe($expected);
     });
 
-    it('falls back to `filament/support` version for unknown packages', function (): void {
+    it('uses the installed commit reference for a dev version, so a new commit busts the cache', function (): void {
+        $original = InstalledVersions::getAllRawData()[0];
+
+        InstalledVersions::reload([
+            'root' => $original['root'],
+            'versions' => [
+                ...$original['versions'],
+                'vendor/dev-plugin' => [
+                    'pretty_version' => '5.x-dev',
+                    'version' => '5.9999999.9999999.9999999-dev',
+                    'reference' => 'abcdef1234567890abcdef1234567890abcdef12',
+                    'type' => 'library',
+                    'install_path' => __DIR__,
+                    'aliases' => [],
+                    'dev_requirement' => false,
+                ],
+                'vendor/released-plugin' => [
+                    'pretty_version' => 'v2.3.1',
+                    'version' => '2.3.1.0',
+                    'reference' => 'fedcba0987654321fedcba0987654321fedcba09',
+                    'type' => 'library',
+                    'install_path' => __DIR__,
+                    'aliases' => [],
+                    'dev_requirement' => false,
+                ],
+            ],
+        ]);
+
+        try {
+            expect(AlpineComponent::make('my-component')->package('vendor/dev-plugin')->getVersion())->toBe('abcdef123456');
+            expect(AlpineComponent::make('my-component')->package('vendor/released-plugin')->getVersion())->toBe('2.3.1.0');
+        } finally {
+            InstalledVersions::reload($original);
+        }
+    });
+
+    it('falls back to the file\'s modification time for a package Composer does not know', function (): void {
+        $asset = AlpineComponent::make('my-component', __FILE__)
+            ->package('nonexistent/package');
+
+        expect($asset->getVersion())->toBe((string) filemtime(__FILE__));
+    });
+
+    it('falls back to `filament/support` version for unknown packages without a file', function (): void {
         $asset = AlpineComponent::make('my-component')
             ->package('nonexistent/package');
 
         $version = $asset->getVersion();
 
-        expect($version)->toBe(InstalledVersions::getVersion('filament/support'));
+        expect($version)->toBe(AlpineComponent::make('my-component')->getVersion());
     });
 });
