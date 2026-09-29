@@ -135,6 +135,7 @@
                     @php
                         $isGroupActive = $group->isActive();
                         $isGroupCollapsible = $group->isCollapsible();
+                        $isGroupDimmed = $group->isDimmed();
                         $groupIcon = $group->getIcon();
                         $groupItems = $group->getItems();
                         $groupLabel = $group->getLabel();
@@ -144,6 +145,7 @@
                     <x-filament-panels::sidebar.group
                         :active="$isGroupActive"
                         :collapsible="$isGroupCollapsible"
+                        :dimmed="$isGroupDimmed"
                         :icon="$groupIcon"
                         :items="$groupItems"
                         :label="$groupLabel"

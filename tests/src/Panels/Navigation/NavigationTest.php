@@ -297,6 +297,20 @@ describe('navigation groups from enums', function (): void {
     });
 });
 
+describe('dimmed navigation', function (): void {
+    it('is not dimmed by default', function (): void {
+        expect(NavigationGroup::make('Settings')->isDimmed())->toBeFalse();
+        expect(NavigationItem::make('Settings')->isDimmed())->toBeFalse();
+    });
+
+    it('can dim a group and an item, statically or through a closure', function (): void {
+        expect(NavigationGroup::make('Settings')->dimmed()->isDimmed())->toBeTrue();
+        expect(NavigationGroup::make('Settings')->dimmed(fn (): bool => false)->isDimmed())->toBeFalse();
+        expect(NavigationItem::make('Settings')->dimmed()->isDimmed())->toBeTrue();
+        expect(NavigationItem::make('Settings')->dimmed(fn (): bool => true)->isDimmed())->toBeTrue();
+    });
+});
+
 describe('navigation item key', function (): void {
     it('falls back to the label when no key is set', function (): void {
         $item = NavigationItem::make('Settings');

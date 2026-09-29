@@ -18,6 +18,15 @@
             }
         }
     }
+
+    /* A dimmed group steps back while it is collapsed; opening it, hovering
+       or focusing its header brings it back to full strength. */
+    &.fi-dimmed.fi-collapsed {
+        & > .fi-sidebar-group-btn,
+        & .fi-sidebar-group-dropdown-trigger-btn {
+            @apply opacity-60 transition duration-75 hover:opacity-100 focus-within:opacity-100;
+        }
+    }
 }
 
 .fi-sidebar-group-btn {
@@ -164,6 +173,12 @@
     &.fi-active,
     &.fi-sidebar-item-has-active-child-items {
         @apply flex flex-col gap-y-1;
+    }
+
+    &.fi-dimmed:not(.fi-active) {
+        & > .fi-sidebar-item-btn {
+            @apply opacity-60 hover:opacity-100 focus-visible:opacity-100;
+        }
     }
 
     &.fi-active {

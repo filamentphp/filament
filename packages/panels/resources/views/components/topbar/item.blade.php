@@ -4,6 +4,7 @@
     'badge' => null,
     'badgeColor' => null,
     'badgeTooltip' => null,
+    'dimmed' => false,
     'icon' => null,
     'shouldOpenUrlInNewTab' => false,
     'url' => null,
@@ -22,6 +23,7 @@
         $attributes->class([
             'fi-topbar-item',
             'fi-active' => $active,
+            'fi-dimmed' => $dimmed,
         ])
     }}
 >

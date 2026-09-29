@@ -144,6 +144,7 @@
                             $groupLabel = $group->getLabel();
                             $groupExtraTopbarAttributeBag = $group->getExtraTopbarAttributeBag();
                             $isGroupActive = $group->isActive();
+                            $isGroupDimmed = $group->isDimmed();
                             $groupIcon = $group->getIcon();
                         @endphp
 
@@ -156,6 +157,7 @@
                                 <x-slot name="trigger">
                                     <x-filament-panels::topbar.item
                                         :active="$isGroupActive"
+                                        :dimmed="$isGroupDimmed"
                                         :icon="$groupIcon"
                                     >
                                         {{ $groupLabel }}
@@ -230,6 +232,7 @@
                                     $itemBadge = $item->getBadge();
                                     $itemBadgeColor = $item->getBadgeColor($itemBadge);
                                     $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
+                                    $isItemDimmed = $item->isDimmed();
                                     $itemIcon = $item->getIcon();
                                     $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
                                     $itemUrl = $item->getUrl();
@@ -242,6 +245,7 @@
                                     :badge="$itemBadge"
                                     :badge-color="$itemBadgeColor"
                                     :badge-tooltip="$itemBadgeTooltip"
+                                    :dimmed="$isItemDimmed"
                                     :icon="$itemIcon"
                                     :should-open-url-in-new-tab="$shouldItemOpenUrlInNewTab"
                                     :url="$itemUrl"

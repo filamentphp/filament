@@ -23,6 +23,8 @@ class NavigationGroup extends Component
 
     protected bool | Closure | null $isCollapsible = null;
 
+    protected bool | Closure $isDimmed = false;
+
     protected string | BackedEnum | Htmlable | Closure | null $icon = null;
 
     /**
@@ -57,6 +59,13 @@ class NavigationGroup extends Component
     public function collapsible(bool | Closure | null $condition = true): static
     {
         $this->isCollapsible = $condition;
+
+        return $this;
+    }
+
+    public function dimmed(bool | Closure $condition = true): static
+    {
+        $this->isDimmed = $condition;
 
         return $this;
     }
@@ -111,6 +120,11 @@ class NavigationGroup extends Component
     public function isCollapsible(): bool
     {
         return (bool) ($this->evaluate($this->isCollapsible) ?? filament()->hasCollapsibleNavigationGroups());
+    }
+
+    public function isDimmed(): bool
+    {
+        return (bool) $this->evaluate($this->isDimmed);
     }
 
     public function isActive(): bool

@@ -46,6 +46,8 @@ class NavigationItem extends Component
 
     protected bool | Closure $isHidden = false;
 
+    protected bool | Closure $isDimmed = false;
+
     protected bool | Closure $isVisible = true;
 
     /**
@@ -110,6 +112,13 @@ class NavigationItem extends Component
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
+
+        return $this;
+    }
+
+    public function dimmed(bool | Closure $condition = true): static
+    {
+        $this->isDimmed = $condition;
 
         return $this;
     }
@@ -215,6 +224,11 @@ class NavigationItem extends Component
     public function isVisible(): bool
     {
         return ! $this->isHidden();
+    }
+
+    public function isDimmed(): bool
+    {
+        return (bool) $this->evaluate($this->isDimmed);
     }
 
     public function isHidden(): bool

@@ -6,6 +6,7 @@
     'badgeColor' => null,
     'badgeTooltip' => null,
     'childItems' => [],
+    'dimmed' => false,
     'first' => false,
     'grouped' => false,
     'icon' => null,
@@ -29,6 +30,7 @@
         $attributes->class([
             'fi-sidebar-item',
             'fi-active' => $active,
+            'fi-dimmed' => $dimmed,
             'fi-sidebar-item-has-active-child-items' => $activeChildItems,
             'fi-sidebar-item-has-url' => filled($url),
         ])
@@ -129,6 +131,7 @@
                     $childItemBadge = $childItem->getBadge();
                     $childItemBadgeColor = $childItem->getBadgeColor($childItemBadge);
                     $childItemBadgeTooltip = $childItem->getBadgeTooltip($childItemBadge);
+                    $isChildItemDimmed = $childItem->isDimmed();
                     $childItemIcon = $childItem->getIcon();
                     $shouldChildItemOpenUrlInNewTab = $childItem->shouldOpenUrlInNewTab();
                     $childItemUrl = $childItem->getUrl();
@@ -142,6 +145,7 @@
                     :badge="$childItemBadge"
                     :badge-color="$childItemBadgeColor"
                     :badge-tooltip="$childItemBadgeTooltip"
+                    :dimmed="$isChildItemDimmed"
                     :first="$loop->first"
                     grouped
                     :icon="$childItemIcon"

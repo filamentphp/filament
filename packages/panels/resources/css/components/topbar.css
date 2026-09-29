@@ -72,6 +72,12 @@
 }
 
 .fi-topbar-item {
+    &.fi-dimmed:not(.fi-active) {
+        & .fi-topbar-item-btn {
+            @apply opacity-60 hover:opacity-100 focus-visible:opacity-100;
+        }
+    }
+
     &.fi-active {
         & .fi-topbar-item-btn {
             @apply bg-gray-50 dark:bg-white/5;

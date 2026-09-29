@@ -1,6 +1,7 @@
 @props([
     'active' => false,
     'collapsible' => true,
+    'dimmed' => false,
     'icon' => null,
     'items' => [],
     'label' => null,
@@ -33,6 +34,7 @@
             'fi-sidebar-group',
             'fi-active' => $active,
             'fi-collapsible' => $collapsible,
+            'fi-dimmed' => $dimmed,
         ])
     }}
 >
@@ -192,6 +194,7 @@
                 $itemBadgeColor = $item->getBadgeColor($itemBadge);
                 $itemBadgeTooltip = $item->getBadgeTooltip($itemBadge);
                 $itemChildItems = $item->getChildItems();
+                $isItemDimmed = $item->isDimmed();
                 $itemIcon = $item->getIcon();
                 $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
                 $itemUrl = $item->getUrl();
@@ -215,6 +218,7 @@
                 :badge-color="$itemBadgeColor"
                 :badge-tooltip="$itemBadgeTooltip"
                 :child-items="$itemChildItems"
+                :dimmed="$isItemDimmed"
                 :first="$loop->first"
                 :grouped="filled($label)"
                 :icon="$itemIcon"

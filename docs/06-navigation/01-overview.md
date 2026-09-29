@@ -214,6 +214,21 @@ $panel
     ])
 ```
 
+#### Dimming navigation groups
+
+Secondary groups — settings, system pages, automation — can step back visually so the day-to-day items stand out. Call `dimmed()` on the `NavigationGroup` object:
+
+```php
+use Filament\Navigation\NavigationGroup;
+
+NavigationGroup::make()
+    ->label('Settings')
+    ->collapsed()
+    ->dimmed()
+```
+
+A dimmed group is rendered at reduced opacity while it is collapsed; expanding, hovering or focusing it restores full strength, so its items stay readable when they are in use. The same method exists on `NavigationItem` for single items, which stay dimmed until hovered, focused or active.
+
 #### Making navigation groups not collapsible
 
 By default, navigation groups are collapsible.
