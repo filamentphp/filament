@@ -92,16 +92,20 @@ describe('SPA mode', function (): void {
             Post::query()->delete();
 
             $post = Post::factory()->create();
+            $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
 
-            visit(PostResource::getUrl(panel: 'spa'))
+            $page = visit(PostResource::getUrl(panel: 'spa'))
                 ->type('.fi-global-search-field input', $post->title)
-                ->wait(1)
-                ->assertVisible('.fi-global-search-result-link')
+                ->assertVisible('.fi-global-search-result-link');
+
+            $page->script("window.persistedGlobalSearch = document.querySelector('.fi-global-search')");
+
+            $page
                 ->click('.fi-global-search-result-link')
-                ->wait(1)
-                ->assertPathIs('/spa/posts/*')
+                ->assertPathIs($expectedPath)
                 ->assertValue('.fi-global-search-field input', '')
-                ->assertNotPresent('.fi-global-search-results-ctn');
+                ->assertMissing('.fi-global-search-results-ctn')
+                ->assertScript("window.persistedGlobalSearch === document.querySelector('.fi-global-search')");
         });
     });
 
@@ -112,19 +116,92 @@ describe('SPA mode', function (): void {
             Post::query()->delete();
 
             $post = Post::factory()->create();
+            $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
 
-            visit(PostResource::getUrl(panel: 'spa'))
+            $page = visit(PostResource::getUrl(panel: 'spa'))
                 ->type('.fi-global-search-field input', $post->title)
-                ->wait(1)
-                ->assertVisible('.fi-global-search-result-link')
+                ->assertVisible('.fi-global-search-result-link');
+
+            $page->script("window.persistedGlobalSearch = document.querySelector('.fi-global-search')");
+
+            $page
                 ->keys('.fi-global-search-field input', 'ArrowDown')
+                ->assertPresent('.fi-global-search-result-link:focus')
                 ->keys('.fi-global-search-result-link', 'Enter')
-                ->wait(1)
-                ->assertPathIs('/spa/posts/*')
+                ->assertPathIs($expectedPath)
                 ->assertValue('.fi-global-search-field input', '')
-                ->assertNotPresent('.fi-global-search-results-ctn');
+                ->assertMissing('.fi-global-search-results-ctn')
+                ->assertScript("window.persistedGlobalSearch === document.querySelector('.fi-global-search')");
         });
     });
+
+    it('preserves the search when navigation is canceled', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            Post::query()->delete();
+
+            $post = Post::factory()->create();
+            $expectedPath = parse_url(PostResource::getUrl(panel: 'spa'), PHP_URL_PATH);
+
+            $page = visit(PostResource::getUrl(panel: 'spa'))
+                ->type('.fi-global-search-field input', $post->title)
+                ->assertVisible('.fi-global-search-result-link');
+
+            $page->script("window.addEventListener('livewire:navigate', (event) => event.preventDefault(), { once: true })");
+
+            $page
+                ->click('.fi-global-search-result-link')
+                ->assertPathIs($expectedPath)
+                ->assertValue('.fi-global-search-field input', $post->title);
+        });
+    });
+
+    it('does not reopen the results after the search is cleared', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            Post::query()->delete();
+
+            $post = Post::factory()->create();
+
+            $page = visit(PostResource::getUrl(panel: 'spa'))
+                ->type('.fi-global-search-field input', $post->title)
+                ->assertVisible('.fi-global-search-results-ctn');
+
+            $page->script(<<<'JS'
+                const globalSearch = document.querySelector('.fi-global-search')
+                const livewireId = globalSearch.closest('[wire\\:id]').getAttribute('wire:id')
+
+                window.dispatchEvent(new CustomEvent('livewire:navigate'))
+                Livewire.find(livewireId).search = ''
+                window.dispatchEvent(new CustomEvent('open-global-search-results'))
+                JS);
+
+            $page->assertMissing('.fi-global-search-results-ctn');
+        });
+    });
+
+    it('has no accessibility issues in light and dark modes', function (bool $isDarkMode): void {
+        retry(10, function () use ($isDarkMode): void {
+            Artisan::call('filament:assets');
+
+            Post::query()->delete();
+
+            $post = Post::factory()->create();
+
+            $page = visit(PostResource::getUrl(panel: 'spa'));
+
+            if ($isDarkMode) {
+                $page = $page->inDarkMode();
+            }
+
+            $page
+                ->type('.fi-global-search-field input', $post->title)
+                ->assertVisible('.fi-global-search-results-ctn')
+                ->assertNoAccessibilityIssues();
+        });
+    })->with(['light' => false, 'dark' => true]);
 });
 
 describe('`globalSearchResourceOptIn()`', function (): void {
