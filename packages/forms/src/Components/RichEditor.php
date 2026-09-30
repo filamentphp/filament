@@ -435,9 +435,36 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
                 ->activeJsExpression('false')
                 ->icon('fi-o-columns')
                 ->iconAlias('forms:components.rich-editor.toolbar.grid'),
+            RichEditorTool::make('gridAddColumnBefore')
+                ->label(__('filament-forms::components.rich_editor.tools.table_add_column_before'))
+                ->jsHandler('$getEditor()?.chain().focus().addGridColumnBefore().run()')
+                ->activeJsExpression('$getEditor()?.can().addGridColumnBefore()')
+                ->activeStyling(false)
+                ->disabledWhenNotActive()
+                ->icon('fi-o-table-add-column-before')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid_add_column_before')
+                ->extraAttributes(['data-testid' => 'grid-add-column-before']),
+            RichEditorTool::make('gridAddColumnAfter')
+                ->label(__('filament-forms::components.rich_editor.tools.table_add_column_after'))
+                ->jsHandler('$getEditor()?.chain().focus().addGridColumnAfter().run()')
+                ->activeJsExpression('$getEditor()?.can().addGridColumnAfter()')
+                ->activeStyling(false)
+                ->disabledWhenNotActive()
+                ->icon('fi-o-table-add-column-after')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid_add_column_after')
+                ->extraAttributes(['data-testid' => 'grid-add-column-after']),
+            RichEditorTool::make('gridDeleteColumn')
+                ->label(__('filament-forms::components.rich_editor.tools.table_delete_column'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteGridColumn().run()')
+                ->activeJsExpression('$getEditor()?.can().deleteGridColumn()')
+                ->activeStyling(false)
+                ->disabledWhenNotActive()
+                ->icon('fi-o-table-delete-column')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid_delete_column')
+                ->extraAttributes(['data-testid' => 'grid-delete-column']),
             RichEditorTool::make('gridDelete')
                 ->label(__('filament-forms::components.rich_editor.tools.grid_delete'))
-                ->jsHandler('$getEditor()?.chain().focus().deleteNode(\'grid\').run()')
+                ->jsHandler('$getEditor()?.chain().focus().deleteGrid().run()')
                 ->activeKey('grid')
                 ->activeStyling(false)
                 ->disabledWhenNotActive()
@@ -937,6 +964,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     public function getDefaultFloatingToolbars(): array
     {
         return [
+            'grid' => [
+                'gridAddColumnBefore', 'gridAddColumnAfter', 'gridDeleteColumn',
+                'gridDelete',
+            ],
             'table' => [
                 'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
                 'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
