@@ -598,6 +598,40 @@ describe('reordering', function (): void {
             ->toBe([$secondMedia->uuid, $firstMedia->uuid]);
     });
 
+    it('only updates stored media order when the dynamic `reorderable()` condition is `true`', function (): void {
+        $record = MediaPost::factory()->create();
+        $firstMedia = $record->addMediaFromString('first-file')
+            ->usingFileName('first.txt')
+            ->toMediaCollection('avatars');
+        $secondMedia = $record->addMediaFromString('second-file')
+            ->usingFileName('second.txt')
+            ->toMediaCollection('avatars');
+
+        $isReorderable = false;
+        $field = SpatieMediaLibraryFileUpload::make('avatar')
+            ->container(Schema::make(LivewireFixture::make())->statePath('data')->model($record))
+            ->collection('avatars')
+            ->multiple()
+            ->reorderable(static function () use (&$isReorderable): bool {
+                return $isReorderable;
+            });
+        $field->rawState([
+            $secondMedia->uuid => $secondMedia->uuid,
+            $firstMedia->uuid => $firstMedia->uuid,
+        ]);
+
+        $field->saveUploadedFiles();
+
+        expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
+            ->toBe([$firstMedia->uuid, $secondMedia->uuid]);
+
+        $isReorderable = true;
+        $field->saveUploadedFiles();
+
+        expect($record->fresh()->getMedia('avatars')->pluck('uuid')->all())
+            ->toBe([$secondMedia->uuid, $firstMedia->uuid]);
+    });
+
     it('keeps the stored media UUID in the state of a `reorderable()` field after saving an upload', function (): void {
         $record = MediaPost::factory()->create();
 
