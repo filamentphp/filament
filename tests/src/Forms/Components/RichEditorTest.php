@@ -2421,6 +2421,85 @@ it('can manage grid columns from its floating toolbar', function (): void {
                             content: [
                                 {
                                     type: 'grid',
+                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'lg' },
+                                    content: [
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Outer before' }] },
+                                                {
+                                                    type: 'grid',
+                                                    attrs: { 'data-cols': 2, 'data-from-breakpoint': 'xl' },
+                                                    content: [
+                                                        {
+                                                            type: 'gridColumn',
+                                                            attrs: { 'data-col-span': 1 },
+                                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Inner alpha' }] }],
+                                                        },
+                                                        {
+                                                            type: 'gridColumn',
+                                                            attrs: { 'data-col-span': 1 },
+                                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Inner beta' }] }],
+                                                        },
+                                                    ],
+                                                },
+                                                { type: 'paragraph', content: [{ type: 'text', text: 'Outer after' }] },
+                                            ],
+                                        },
+                                        {
+                                            type: 'gridColumn',
+                                            attrs: { 'data-col-span': 1 },
+                                            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Outer sibling' }] }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })
+
+                        let selectionPosition = null
+
+                        editor.state.doc.descendants((node, position) => {
+                            if (node.type.name === 'gridColumn' && node.textContent === 'Inner beta') {
+                                selectionPosition = position
+                            }
+                        })
+
+                        editor.chain().focus().setNodeSelection(selectionPosition).addGridColumnBefore().addGridColumnAfter().deleteGridColumn().run()
+
+                        const outerGrid = editor.getJSON().content[0]
+                        const outerColumn = outerGrid.content[0]
+                        const innerGrid = outerColumn.content[1]
+                        const getText = (node) => node.text ?? (node.content ?? []).map(getText).join('')
+
+                        return [
+                            outerGrid.attrs['data-cols'],
+                            outerGrid.attrs['data-from-breakpoint'],
+                            outerGrid.content.map(getText),
+                            innerGrid.attrs['data-cols'],
+                            innerGrid.attrs['data-from-breakpoint'],
+                            innerGrid.content.map((column) => column.attrs['data-col-span']),
+                            innerGrid.content.map(getText),
+                        ]
+                    })()
+                    JS, [
+                    2,
+                    'lg',
+                    ['Outer beforeInner alphaOuter after', 'Outer sibling'],
+                    3,
+                    'xl',
+                    [1, 1, 1],
+                    ['Inner alpha', '', ''],
+                ])
+                ->assertScript(<<<'JS'
+                    (() => {
+                        const editor = Alpine.$data(document.querySelector('[data-testid="default-rich-editor"] .tiptap')).$getEditor()
+
+                        editor.commands.setContent({
+                            type: 'doc',
+                            content: [
+                                {
+                                    type: 'grid',
                                     attrs: { 'data-cols': 12, 'data-from-breakpoint': 'md' },
                                     content: Array.from({ length: 12 }, (_, index) => ({
                                         type: 'gridColumn',

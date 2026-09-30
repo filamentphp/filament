@@ -8,12 +8,21 @@ const getGridContext = (selection, gridNodeName) => {
         selection.$from,
         (node) => node.type.name === gridNodeName,
     )
-    const column = findParentNodeClosestToPos(
-        selection.$from,
-        (node) => node.type.name === 'gridColumn',
-    )
+    const column =
+        selection.node?.type.name === 'gridColumn'
+            ? {
+                  node: selection.node,
+                  pos: selection.from,
+                  depth: selection.$from.depth + 1,
+              }
+            : findParentNodeClosestToPos(
+                  selection.$from,
+                  (node) => node.type.name === 'gridColumn',
+              )
 
-    return grid && column ? { grid, column } : null
+    return grid && column && column.depth === grid.depth + 1
+        ? { grid, column }
+        : null
 }
 
 const getColumnSpan = (column) =>
