@@ -253,6 +253,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getGlobalSearchDebounce();
     }
 
+    public function persistsGlobalSearchInSession(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->persistsGlobalSearchInSession();
+    }
+
     /**
      * @return array<string>
      */

@@ -11,6 +11,40 @@ class GlobalSearch extends Component
 {
     public ?string $search = '';
 
+    protected bool $areResultsDeferred = false;
+
+    public function mount(): void
+    {
+        if (! Filament::getCurrentOrDefaultPanel()->persistsGlobalSearchInSession()) {
+            return;
+        }
+
+        $this->search = session()->get($this->getSearchSessionKey(), '');
+
+        // Defers the results until the field is focused, so the search does not run on every page load.
+        // Protected properties are not dehydrated, so this is reset on the next request.
+        $this->areResultsDeferred = filled($this->search);
+    }
+
+    public function updatedSearch(): void
+    {
+        if (! Filament::getCurrentOrDefaultPanel()->persistsGlobalSearchInSession()) {
+            return;
+        }
+
+        session()->put(
+            $this->getSearchSessionKey(),
+            $this->search,
+        );
+    }
+
+    public function getSearchSessionKey(): string
+    {
+        $panel = Filament::getCurrentOrDefaultPanel()->getId();
+
+        return "filament.{$panel}.global_search";
+    }
+
     public function getResults(): ?GlobalSearchResults
     {
         $search = trim($this->search);
@@ -33,7 +67,8 @@ class GlobalSearch extends Component
     public function render(): View
     {
         return view('filament-panels::livewire.global-search', [
-            'results' => $this->getResults(),
+            'areResultsDeferred' => $this->areResultsDeferred,
+            'results' => $this->areResultsDeferred ? null : $this->getResults(),
         ]);
     }
 }

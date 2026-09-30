@@ -164,6 +164,7 @@ use Livewire\Component;
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
  * @method static bool hasTenantSwitcher()
  * @method static ?bool isTenantMenuSearchable()
+ * @method static bool persistsGlobalSearchInSession()
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | string | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)

@@ -8,14 +8,18 @@
     $debounce = filament()->getGlobalSearchDebounce();
     $keyBindings = filament()->getGlobalSearchKeyBindings();
     $suffix = filament()->getGlobalSearchFieldSuffix();
+    $isPersistedInSession = filament()->persistsGlobalSearchInSession();
 @endphp
 
 <div class="fi-global-search-ctn">
     {{ FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_START) }}
 
     <div
+        x-data="{ areResultsDeferred: @js($areResultsDeferred) }"
         x-on:focus-first-global-search-result.stop="$el.querySelector('.fi-global-search-result-link')?.focus()"
-        x-on:livewire:navigated.window="if ($wire.search) $wire.$set('search', '', false)"
+        @if (! $isPersistedInSession)
+            x-on:livewire:navigated.window="if ($wire.search) $wire.$set('search', '', false)"
+        @endif
         class="fi-global-search"
     >
         <div x-id="['input']" class="fi-global-search-field">
@@ -38,6 +42,14 @@
                     type="search"
                     wire:key="global-search.field.input"
                     x-bind:id="$id('input')"
+                    x-on:focus="
+                        if (areResultsDeferred) {
+                            areResultsDeferred = false
+                            $wire.$refresh()
+                        } else {
+                            $dispatch('open-global-search-results')
+                        }
+                    "
                     x-on:keydown.down.prevent.stop="$dispatch('focus-first-global-search-result')"
                     wire:model.live.debounce.{{ $debounce }}="search"
                     x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($id('input'))?.focus()"
@@ -64,7 +76,7 @@
                     },
                 }"
                 x-init="$nextTick(() => open())"
-                x-on:click.away="close()"
+                x-on:click.away="if (! $event.target.closest('.fi-global-search-field')) close()"
                 x-on:keydown.escape.window="close()"
                 x-on:livewire:navigate.window="close()"
                 x-on:keydown.up.prevent="$focus.wrap().previous()"

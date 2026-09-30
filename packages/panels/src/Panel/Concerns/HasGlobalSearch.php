@@ -28,6 +28,8 @@ trait HasGlobalSearch
 
     protected bool $isGlobalSearchResourceOptIn = false;
 
+    protected bool | Closure $persistsGlobalSearchInSession = false;
+
     public function globalSearch(string | bool $provider = true, GlobalSearchPosition | Closure | null $position = null): static
     {
         if (is_string($provider) && (! in_array(GlobalSearchProvider::class, class_implements($provider)))) {
@@ -133,6 +135,18 @@ trait HasGlobalSearch
     public function isGlobalSearchResourceOptIn(): bool
     {
         return $this->isGlobalSearchResourceOptIn;
+    }
+
+    public function persistGlobalSearchInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsGlobalSearchInSession = $condition;
+
+        return $this;
+    }
+
+    public function persistsGlobalSearchInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsGlobalSearchInSession);
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider

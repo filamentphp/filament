@@ -204,6 +204,141 @@ describe('SPA mode', function (): void {
     })->with(['light' => false, 'dark' => true]);
 });
 
+describe('`persistGlobalSearchInSession()`', function (): void {
+    it('can toggle `persistGlobalSearchInSession()` using a boolean or a `Closure`', function (): void {
+        $panel = Filament::getCurrentOrDefaultPanel();
+
+        expect($panel->persistsGlobalSearchInSession())->toBeFalse();
+
+        $panel->persistGlobalSearchInSession();
+
+        expect($panel->persistsGlobalSearchInSession())->toBeTrue();
+
+        $panel->persistGlobalSearchInSession(false);
+
+        expect($panel->persistsGlobalSearchInSession())->toBeFalse();
+
+        $panel->persistGlobalSearchInSession(static fn (): bool => true);
+
+        expect($panel->persistsGlobalSearchInSession())->toBeTrue();
+    });
+
+    it('does not persist the search in the session by default', function (): void {
+        $post = Post::factory()->create();
+
+        $component = livewire(GlobalSearch::class)
+            ->set('search', $post->title);
+
+        expect(session()->has($component->instance()->getSearchSessionKey()))->toBeFalse();
+
+        livewire(GlobalSearch::class)
+            ->assertSet('search', '');
+    });
+
+    it('restores the search from the session and defers the results until the component is refreshed', function (): void {
+        Filament::getCurrentOrDefaultPanel()->persistGlobalSearchInSession();
+
+        $post = Post::factory()->create();
+
+        $component = livewire(GlobalSearch::class)
+            ->set('search', $post->title);
+
+        expect(session()->get($component->instance()->getSearchSessionKey()))->toBe($post->title);
+
+        livewire(GlobalSearch::class)
+            ->assertSet('search', $post->title)
+            ->assertNotDispatched('open-global-search-results')
+            ->assertDontSeeHtml('fi-global-search-results-ctn')
+            ->call('$refresh')
+            ->assertDispatched('open-global-search-results')
+            ->assertSeeHtml('fi-global-search-results-ctn');
+    });
+
+    it('scopes the persisted search to the panel', function (): void {
+        Filament::getPanel('admin')->persistGlobalSearchInSession();
+        Filament::getPanel('spa')->persistGlobalSearchInSession();
+
+        livewire(GlobalSearch::class)
+            ->set('search', 'Laravel');
+
+        Filament::setCurrentPanel('spa');
+
+        livewire(GlobalSearch::class)
+            ->assertSet('search', '');
+    });
+
+    it('keeps the search after clicking a result in SPA mode and reopens the results when the field is focused', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            Filament::getPanel('spa')->persistGlobalSearchInSession();
+
+            Post::query()->delete();
+
+            $post = Post::factory()->create();
+            $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post], panel: 'spa'), PHP_URL_PATH);
+
+            $page = visit(PostResource::getUrl(panel: 'spa'))
+                ->type('.fi-global-search-field input', $post->title)
+                ->assertVisible('.fi-global-search-result-link');
+
+            $page->script("window.persistedGlobalSearch = document.querySelector('.fi-global-search')");
+
+            $page
+                ->click('.fi-global-search-result-link')
+                ->assertPathIs($expectedPath)
+                ->assertValue('.fi-global-search-field input', $post->title)
+                ->assertMissing('.fi-global-search-results-ctn')
+                ->assertScript("window.persistedGlobalSearch === document.querySelector('.fi-global-search')");
+
+            // Holding the mouse button like a real click lets the results open on `focus` before `click` fires.
+            $page->page()->locator('.fi-global-search-field input')->click(['delay' => 150]);
+
+            $page
+                ->wait(1)
+                ->assertVisible('.fi-global-search-result-link');
+        });
+    });
+
+    it('keeps the search after a full page load and loads the results when the field is focused', function (): void {
+        retry(10, function (): void {
+            Artisan::call('filament:assets');
+
+            Filament::getPanel('admin')->persistGlobalSearchInSession();
+
+            Post::query()->delete();
+
+            $post = Post::factory()->create();
+            $expectedPath = parse_url(PostResource::getUrl('view', ['record' => $post]), PHP_URL_PATH);
+
+            $page = visit(PostResource::getUrl())
+                ->type('.fi-global-search-field input', $post->title)
+                ->click(".fi-global-search-result-link[href$=\"{$expectedPath}\"]")
+                ->assertPathIs($expectedPath)
+                ->assertValue('.fi-global-search-field input', $post->title)
+                ->assertMissing('.fi-global-search-results-ctn');
+
+            $page->page()->locator('.fi-global-search-field input')->click(['delay' => 150]);
+
+            $page
+                ->wait(1)
+                ->assertVisible('.fi-global-search-result-link')
+                ->assertNoAccessibilityIssues();
+
+            $page = visit(PostResource::getUrl())
+                ->inDarkMode()
+                ->assertValue('.fi-global-search-field input', $post->title);
+
+            $page->page()->locator('.fi-global-search-field input')->click(['delay' => 150]);
+
+            $page
+                ->wait(1)
+                ->assertVisible('.fi-global-search-result-link')
+                ->assertNoAccessibilityIssues();
+        });
+    });
+});
+
 describe('`globalSearchResourceOptIn()`', function (): void {
     it('excludes resources without explicit `$isGloballySearchable` when `globalSearchResourceOptIn()` is enabled', function (): void {
         Filament::getCurrentOrDefaultPanel()->globalSearchResourceOptIn();

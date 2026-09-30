@@ -234,6 +234,23 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Persisting the global search in the session
+
+By default, the global search field is cleared when the user navigates to another page. To keep the search between page loads, you can use the `persistGlobalSearchInSession()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->persistGlobalSearchInSession();
+}
+```
+
+The search results are closed after navigating, and reopen when the user focuses the global search field again. The search is stored separately for each panel.
+
 ## Configuring the global search field suffix
 
 Global search field by default doesn't include any suffix. You may customize it using the `globalSearchFieldSuffix()` method in the [configuration](../panel-configuration).
