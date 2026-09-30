@@ -408,10 +408,14 @@ class Group extends Component
         }
 
         if ($relationshipName = $this->getRelationshipName()) {
-            return $query->whereHas(
-                $relationshipName,
-                fn (EloquentBuilder $query) => $this->applyDefaultScopeToQuery($query, $this->getRelationshipAttribute(), $key),
-            )->when(blank($key), fn (EloquentBuilder $query) => $query->orWhereDoesntHave($relationshipName));
+            return $query->where(
+                fn (EloquentBuilder $query) => $query
+                    ->whereHas(
+                        $relationshipName,
+                        fn (EloquentBuilder $query) => $this->applyDefaultScopeToQuery($query, $this->getRelationshipAttribute(), $key),
+                    )
+                    ->when(blank($key), fn (EloquentBuilder $query) => $query->orWhereDoesntHave($relationshipName)),
+            );
         }
 
         return $this->applyDefaultScopeToQuery($query, $column, $key);

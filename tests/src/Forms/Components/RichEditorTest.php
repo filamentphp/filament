@@ -8,6 +8,7 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Forms\RichEditor\MinimalControlsCalloutBlock;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
@@ -804,6 +805,52 @@ it('can set `linkProtocols()`', function (): void {
     expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
 });
 
+it('returns default link protocols before the editor is attached to a schema', function (): void {
+    expect(RichEditor::make('content')->getLinkProtocols())->toBe([
+        'http',
+        'https',
+        'ftp',
+        'ftps',
+        'mailto',
+        'tel',
+        'callto',
+        'sms',
+        'cid',
+        'xmpp',
+    ]);
+});
+
+it('inherits `linkProtocols()` from the rich content attribute', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['https', 'mailto']);
+});
+
+it('can override rich content attribute `linkProtocols()`', function (): void {
+    $record = new PostWithRichContent;
+    $record->getRichContentAttribute('content')
+        ->linkProtocols(['https', 'mailto']);
+
+    $editor = Schema::make(Livewire::make())
+        ->model($record)
+        ->components([
+            RichEditor::make('content')
+                ->linkProtocols(['tel']),
+        ])
+        ->getComponents()[0];
+
+    expect($editor->getLinkProtocols())->toBe(['tel']);
+});
+
 it('can set `textColors()`', function (): void {
     $editor = RichEditor::make('content')
         ->textColors(['red' => '#ff0000', 'blue' => '#0000ff']);
@@ -1064,6 +1111,45 @@ it('can clear `activePanel()` with `null`', function (): void {
     expect($editor->getActivePanel())->toBeNull();
 });
 
+it('keeps optional custom block and sticky features disabled by default and evaluates their conditions', function (string $setter, string $getter): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}();
+
+    expect($editor->{$getter}())->toBeTrue();
+
+    $editor->{$setter}(static fn (): bool => false);
+
+    expect($editor->{$getter}())->toBeFalse();
+
+    $editor->{$setter}(false);
+
+    expect($editor->{$getter}())->toBeFalse();
+})->with([
+    '`customBlocksGrid()`' => ['customBlocksGrid', 'hasCustomBlocksGrid'],
+    '`searchableCustomBlocks()`' => ['searchableCustomBlocks', 'hasSearchableCustomBlocks'],
+    '`stickyToolbar()`' => ['stickyToolbar', 'hasStickyToolbar'],
+    '`stickyPanels()`' => ['stickyPanels', 'hasStickyPanels'],
+]);
+
+it('can evaluate and clear `stickyOffset()` without enabling sticky controls', function (): void {
+    $editor = RichEditor::make('content');
+
+    expect($editor->getStickyOffset())->toBeNull();
+
+    $editor->stickyOffset(static fn (): string => '5rem');
+
+    expect($editor->getStickyOffset())->toBe('5rem')
+        ->and($editor->hasStickyToolbar())->toBeFalse()
+        ->and($editor->hasStickyPanels())->toBeFalse();
+
+    $editor->stickyOffset(null);
+
+    expect($editor->getStickyOffset())->toBeNull();
+});
+
 it('returns fluent `$this` from `customTextColors()`', function (): void {
     $editor = RichEditor::make('content');
 
@@ -1282,6 +1368,11 @@ describe('rendering', function (): void {
             ->assertSuccessful();
     });
 
+    it('can render with `minimalCustomBlockControls()`', function (): void {
+        livewire(RenderRichEditorWithMinimalCustomBlockControls::class)
+            ->assertSuccessful();
+    });
+
     it('can render with `noMergeTagSearchResultsMessage()`', function (): void {
         livewire(RenderRichEditorWithNoMergeTagSearchResultsMessage::class)
             ->assertSuccessful();
@@ -1301,6 +1392,96 @@ describe('rendering', function (): void {
         livewire(RenderRichEditorWithPluginDisabledButtons::class)
             ->assertSuccessful();
     });
+});
+
+it('keeps `minimalCustomBlockControls()` opt-in and evaluates and resets its condition', function (): void {
+    $richEditor = RichEditor::make('content')
+        ->container(Schema::make(Livewire::make())->statePath('data'));
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls();
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+
+    $richEditor->minimalCustomBlockControls(static fn (): bool => true);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeTrue();
+
+    $richEditor->minimalCustomBlockControls(false);
+
+    expect($richEditor->hasMinimalCustomBlockControls())->toBeFalse();
+});
+
+it('can edit, delete and undo custom blocks with `minimalCustomBlockControls()`', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/rich-editor-minimal-controls-browser-test');
+
+    $minimalEditor = '[data-testid="minimal-controls-editor"]';
+    $customBlock = '[data-testid="rich-editor-custom-block"]';
+    $firstCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 1)';
+    $secondCallout = ':nth-match(' . $minimalEditor . ' ' . $customBlock . '[data-id="callout"], 2)';
+    $editButton = ' [data-testid="rich-editor-custom-block-edit-button"]';
+    $deleteButton = ' [data-testid="rich-editor-custom-block-delete-button"]';
+
+    $page
+        ->assertVisible($minimalEditor . ' ' . $customBlock . '[data-id="divider"]' . $deleteButton)
+        ->assertNotPresent('[data-testid="disabled-controls-editor"] [data-testid$="-button"]')
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                editor.commands.focus()
+                editor.commands.setTextSelection(editor.state.doc.content.size - 1)
+                return true
+            })()
+            JS)
+        ->click($secondCallout . $editButton)
+        ->assertVisible('[data-testid="minimal-controls-edit-modal"]')
+        ->fill('[data-testid="minimal-controls-message-input"]', 'Updated second callout.')
+        ->click('[data-testid="minimal-controls-edit-modal"] button[type="submit"]')
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['First callout.', 'Updated second callout.'])
+        // Keep the deletion outside TipTap's history grouping interval for the edit.
+        ->wait(0.6)
+        ->click($firstCallout . $deleteButton)
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['Updated second callout.'])
+        ->assertScript(<<<'JS'
+            document.activeElement === document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')
+            JS);
+
+    $page->page()->keyDown('Control');
+    $page->page()->keyDown('z');
+    $page->page()->keyUp('z');
+    $page->page()->keyUp('Control');
+
+    $page
+        ->assertScript(<<<'JS'
+            (() => {
+                const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] [data-testid="rich-editor-content"]')).$getEditor()
+                return editor.getJSON().content.filter(node => node.type === 'customBlock' && node.attrs.id === 'callout').map(node => node.attrs.config.message)
+            })()
+            JS, ['First callout.', 'Updated second callout.'])
+        ->assertNoAccessibilityIssues();
+
+    visit('/rich-editor-minimal-controls-browser-test')
+        ->on()->mobile()
+        ->inDarkMode()
+        ->assertVisible($firstCallout . $editButton)
+        ->assertNoAccessibilityIssues();
 });
 
 describe('custom blocks', function (): void {
@@ -1428,6 +1609,37 @@ describe('custom blocks', function (): void {
             ->getComponents()[0];
 
         expect($richEditor->getCustomBlock('nonexistent'))->toBeNull();
+    });
+
+    it('returns trusted custom block previews from `getCustomBlockPreviewsForJs()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([MinimalControlsCalloutBlock::class]),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getExposedMethodNames())->toContain('getCustomBlockPreviewsForJs');
+
+        $previews = $richEditor->getCustomBlockPreviewsForJs([
+            [
+                'id' => 'callout',
+                'config' => ['message' => 'Copied callout.'],
+                'key' => 0,
+            ],
+            [
+                'id' => 'unknown',
+                'config' => [],
+                'key' => 1,
+            ],
+        ]);
+
+        expect($previews)->toHaveCount(1);
+        expect($previews[0]['key'])->toBe(0);
+        expect($previews[0]['label'])->toBe('Callout');
+        expect(base64_decode($previews[0]['preview']))->toBe('<p>Copied callout.</p>');
+        expect($previews[0]['shouldApplyProseStylingToPreview'])->toBeFalse();
     });
 
     it('includes `customBlocks` toolbar button when blocks are registered', function (): void {
@@ -1618,6 +1830,219 @@ it('can search and insert a mention through the Alpine scope', function (): void
             ->fill('[data-testid="default-rich-editor"] [contenteditable="true"]', '@Ali')
             ->click('Alice Chen')
             ->assertPresent('[data-testid="default-rich-editor"] [data-type="mention"][data-id="author-7"]')
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('does not render custom block previews from imported HTML', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-minimal-controls-browser-test');
+
+        $page
+            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+            ->assertScript("typeof Alpine.\$data(document.querySelector('[data-testid=\"minimal-controls-editor\"] .tiptap')).\$getCustomBlockPreviewsForJs", 'function')
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.customBlockPreviewCommitCount = 0
+                    window.removeCustomBlockPreviewCommitHook = Livewire.hook('commit', () => window.customBlockPreviewCommitCount++)
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"First callout."}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS)
+            ->wait(1)
+            ->assertScript('window.customBlockPreviewCommitCount', 0)
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.removeCustomBlockPreviewCommitHook()
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'First callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                ['Callout', '<p>First callout.</p>'],
+                ['Callout', '<p>First callout.</p>'],
+            ])
+            ->assertScript(<<<'JS'
+                (() => {
+                    window.customBlockPreviewExecuted = false
+
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const preview = btoa('<img src="x" onerror="window.customBlockPreviewExecuted = true">')
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}' data-label="Untrusted label" data-preview="${preview}" shouldApplyProseStylingToPreview="true"></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+
+                    return [
+                        Boolean(block),
+                        block?.attrs.id ?? null,
+                        block?.attrs.config?.message ?? null,
+                        block?.attrs.preview ?? null,
+                        block?.attrs.shouldApplyProseStylingToPreview ?? null,
+                    ]
+                })()
+                JS, [true, 'callout', 'Copied callout.', null, false])
+            ->wait(1)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const block = editor.getJSON().content.find((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+
+                    return [
+                        block?.attrs.label ?? null,
+                        block?.attrs.preview ? atob(block.attrs.preview) : null,
+                    ]
+                })()
+                JS, ['Callout', '<p>Copied callout.</p>'])
+            ->assertScript('window.customBlockPreviewExecuted', false)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+                    const clipboardData = new DataTransfer()
+
+                    clipboardData.setData('text/html', `<div data-type="customBlock" data-id="callout" data-config='{"message":"Copied callout.","options":{}}'></div>`)
+
+                    editor.view.dom.dispatchEvent(new ClipboardEvent('paste', {
+                        bubbles: true,
+                        cancelable: true,
+                        clipboardData,
+                    }))
+
+                    return true
+                })()
+                JS)
+            ->wait(1)
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                ['Callout', '<p>Copied callout.</p>'],
+                ['Callout', '<p>Copied callout.</p>'],
+            ])
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    editor.commands.focus()
+
+                    return true
+                })()
+                JS);
+
+        $page->page()->keyDown('Control');
+        $page->page()->keyDown('z');
+        $page->page()->keyUp('z');
+        $page->page()->keyUp('Control');
+
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content.filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.').length
+                })()
+                JS, 1);
+
+        $page->page()->keyDown('Control');
+        $page->page()->keyDown('Shift');
+        $page->page()->keyDown('z');
+        $page->page()->keyUp('z');
+        $page->page()->keyUp('Shift');
+        $page->page()->keyUp('Control');
+
+        $page
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="minimal-controls-editor"] .tiptap')).$getEditor()
+
+                    return editor.getJSON().content
+                        .filter((node) => node.type === 'customBlock' && node.attrs.config?.message === 'Copied callout.')
+                        .map((node) => [node.attrs.label, atob(node.attrs.preview)])
+                })()
+                JS, [
+                ['Callout', '<p>Copied callout.</p>'],
+                ['Callout', '<p>Copied callout.</p>'],
+            ])
+            ->assertNoAccessibilityIssues();
+
+        visit('/rich-editor-minimal-controls-browser-test')
+            ->inDarkMode()
+            ->assertPresent('[data-testid="minimal-controls-editor"] .tiptap')
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+it('can search custom blocks and insert one at the preserved editor selection', function (): void {
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
+
+        $page = visit('/rich-editor-browser-test')
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  eDiToRiAl  ')
+            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertVisible('[data-testid="custom-blocks-rich-editor"] [data-block-id="section"]')
+            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="image"]')
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', 'unknown block')
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] [role="status"]')
+            ->assertMissing('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertNoAccessibilityIssues()
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="custom-blocks-rich-editor"] .tiptap')).$getEditor()
+                    editor.commands.focus()
+                    editor.commands.setTextSelection(editor.state.doc.firstChild.nodeSize - 1)
+
+                    return true
+                })()
+                JS)
+            ->fill('[data-testid="custom-blocks-rich-editor"] input[type="search"]', '  QuOtE  ')
+            ->click('[data-testid="custom-blocks-rich-editor"] [data-block-id="quote"]')
+            ->assertScript(<<<'JS'
+                (() => {
+                    const editor = Alpine.$data(document.querySelector('[data-testid="custom-blocks-rich-editor"] .tiptap')).$getEditor()
+                    const content = editor.getJSON().content
+                    const blockPosition = content.findIndex((node) => node.type === 'customBlock')
+                    const lastParagraphPosition = content.findIndex((node) => node.content?.[0]?.text === 'Last paragraph.')
+
+                    return blockPosition > 0 &&
+                        blockPosition < lastParagraphPosition &&
+                        content[blockPosition].attrs.id === 'quote'
+                })()
+                JS)
+            ->assertNoAccessibilityIssues();
+
+        visit('/rich-editor-browser-test')
+            ->inDarkMode()
+            ->assertPresent('[data-testid="custom-blocks-rich-editor"] .tiptap')
             ->assertNoAccessibilityIssues();
     });
 });
@@ -2166,6 +2591,16 @@ class RenderRichEditorWithClosureCustomBlocks extends Livewire
     {
         return $form->schema([
             RichEditor::make('content')->customBlocks(static fn (): array => []),
+        ])->statePath('data');
+    }
+}
+
+class RenderRichEditorWithMinimalCustomBlockControls extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            RichEditor::make('content')->minimalCustomBlockControls(),
         ])->statePath('data');
     }
 }

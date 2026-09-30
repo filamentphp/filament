@@ -277,6 +277,29 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/filters/custom-remove-all-action" alt="Table with custom filters remove all action" version="4.x" />
 
+## Customizing the reset filters action
+
+To customize the action that resets the filters form, you may use the `filtersResetAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
+
+```php
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersResetAction(
+            fn (Action $action) => $action
+                ->icon(Heroicon::XMark)
+                ->label('Clear filters'),
+        );
+}
+```
+
 ## Filter utility injection
 
 The vast majority of methods used to configure filters accept functions as parameters instead of hardcoded values:

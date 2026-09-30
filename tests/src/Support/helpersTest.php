@@ -17,7 +17,7 @@ use function Filament\Support\prepare_inherited_attributes;
 
 uses(TestCase::class);
 
-it('discovers application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
+it('builds a fresh index of application classes and excludes symlinked path repository classes with `discover_app_classes()` when Composer uses a custom vendor directory', function (): void {
     $filesystem = app(Filesystem::class);
     $repositoryDirectory = dirname(__DIR__, 3);
     $temporaryRootDirectory = realpath(sys_get_temp_dir());
@@ -57,6 +57,7 @@ it('discovers application classes and excludes symlinked path repository classes
             return ClassLoader::getRegisteredLoaders()[__DIR__];
             PHP);
         $filesystem->put($temporaryDirectory . DIRECTORY_SEPARATOR . 'app/ApplicationClass.php', '<?php namespace Fixture; class ApplicationClass {}');
+        $filesystem->put($temporaryDirectory . DIRECTORY_SEPARATOR . 'app/FreshlyIndexedClass.php', '<?php namespace Fixture; class FreshlyIndexedClass {}');
         $filesystem->put($dependencySourceDirectory . DIRECTORY_SEPARATOR . 'src/DependencyClass.php', '<?php namespace Fixture; class DependencyClass {}');
         $filesystem->link($dependencySourceDirectory, $linkedDependencyDirectory);
 
@@ -73,6 +74,7 @@ it('discovers application classes and excludes symlinked path repository classes
                 $applicationPathPrefix = %s;
                 $classLoader = new Composer\Autoload\ClassLoader($vendorDirectory);
                 Composer\InstalledVersions::$rootInstallPath = $applicationPathPrefix;
+                $classLoader->addPsr4('Fixture\\', $applicationPathPrefix . 'app');
                 $classLoader->addClassMap([
                     'Fixture\\ApplicationClass' => $applicationPathPrefix . 'app/ApplicationClass.php',
                     'Fixture\\DependencyClass' => $vendorDirectory . DIRECTORY_SEPARATOR . 'composer/../fixture/dependency/src/DependencyClass.php',
@@ -104,7 +106,7 @@ it('discovers application classes and excludes symlinked path repository classes
 
         expect(json_decode($process->getOutput(), associative: true, flags: JSON_THROW_ON_ERROR))
             ->toBe([
-                'classes' => ['Fixture\\ApplicationClass'],
+                'classes' => ['Fixture\\ApplicationClass', 'Fixture\\FreshlyIndexedClass'],
                 'windowsClasses' => ['Fixture\\WindowsApplicationClass'],
                 'vendorDirectory' => $vendorDirectory,
             ]);

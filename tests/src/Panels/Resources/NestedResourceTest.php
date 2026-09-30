@@ -2,20 +2,26 @@
 
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\CreateCompanyTeam;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\EditCompanyTeam;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\ListCompanyTeams;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource\Pages\ViewCompanyTeam;
+use Filament\Tests\Fixtures\Resources\Tickets\Resources\TicketDepartmentResource;
+use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\CreateUserPost;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\EditUserPost;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\ListUserPosts;
 use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource\Pages\ViewUserPost;
+use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
 
 use function Filament\Tests\livewire;
@@ -24,7 +30,63 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
+describe('nested resource index URLs', function (): void {
+    it('resolves the parent relation page when the page key matches the relationship name', function (): void {
+        $parentRecord = Ticket::factory()->create();
+
+        expect(TicketDepartmentResource::getIndexUrl([
+            'ticket' => $parentRecord,
+        ]))->toBe(TicketResource::getUrl('departments', [
+            'record' => $parentRecord,
+        ]));
+    });
+
+    it('prefers an explicit page name when the relation page uses a custom key', function (): void {
+        $parentRecord = User::factory()->create();
+
+        expect(UserPostResource::getIndexUrl([
+            'author' => $parentRecord,
+        ]))->toBe(UserResource::getUrl('managePosts', [
+            'record' => $parentRecord,
+        ]));
+    });
+
+    it('can restore the relationship page name with `page(null)`', function (): void {
+        $registration = UserPostResource::getParentResourceRegistration();
+
+        expect($registration->getPageName())->toBe('managePosts')
+            ->and($registration->page(null)->getPageName())->toBe('posts');
+    });
+
+    it('falls back to the parent view page when the explicit page does not exist', function (): void {
+        $parentRecord = Company::factory()->create();
+
+        expect(CompanyTeamResource::getIndexUrl([
+            'company' => $parentRecord,
+        ]))->toBe(CompanyResource::getUrl('view', [
+            'relation' => 'teams',
+            'record' => $parentRecord,
+        ]));
+    });
+});
+
 describe('soft-deletable nested resource', function (): void {
+    it('can render with the navigation hierarchy in breadcrumbs regardless of panel navigation visibility', function (): void {
+        $parentRecord = User::factory()->create();
+        $url = UserPostResource::getUrl('index', [
+            'author' => $parentRecord,
+        ]);
+
+        $panel = Filament::getCurrentOrDefaultPanel()
+            ->breadcrumbs(hasNavigationHierarchy: true);
+
+        $this->get($url)->assertSuccessful();
+
+        $panel->navigation(false);
+
+        $this->get($url)->assertSuccessful();
+    });
+
     it('can render list page', function (): void {
         $parentRecord = User::factory()->create();
 

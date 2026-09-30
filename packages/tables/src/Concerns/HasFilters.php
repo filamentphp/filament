@@ -148,6 +148,20 @@ trait HasFilters
 
     public function resetTableFiltersForm(): void
     {
+        $action = $this->getTable()->getFiltersResetAction();
+
+        if ($action->isDisabled()) {
+            return;
+        }
+
+        if (! $action->isAuthorized()) {
+            if ($action->hasAuthorizationNotification()) {
+                $action->sendUnauthorizedNotification($action->getAuthorizationResponseWithMessage());
+            }
+
+            return;
+        }
+
         $this->getTableFiltersForm()->fill();
 
         if ($this->getTable()->hasDeferredFilters()) {

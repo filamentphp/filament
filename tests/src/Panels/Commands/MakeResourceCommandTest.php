@@ -1,9 +1,12 @@
 <?php
 
+use Composer\Autoload\ClassLoader;
 use Filament\Commands\MakeResourceCommand;
 use Filament\Facades\Filament;
+use Filament\PanelRegistry;
 use Filament\Tests\TestCase;
 
+use function Filament\Support\get_composer_vendor_directory;
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
@@ -13,6 +16,51 @@ beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
 
     MakeResourceCommand::$shouldCheckModelsForSoftDeletes = false;
+});
+
+it('warns and continues when refreshing the application class index fails', function (): void {
+    $this->mockConsoleOutput = true;
+
+    $vendorDirectory = get_composer_vendor_directory();
+    $originalClassLoader = ClassLoader::getRegisteredLoaders()[$vendorDirectory];
+    $failingClassLoader = new class($vendorDirectory) extends ClassLoader
+    {
+        public function getPrefixesPsr4()
+        {
+            throw new RuntimeException('Unable to read PSR-4 prefixes.');
+        }
+    };
+
+    foreach ($originalClassLoader->getPrefixesPsr4() as $namespace => $directories) {
+        $failingClassLoader->addPsr4($namespace, $directories);
+    }
+
+    $failingClassLoader->addPsr4('', $originalClassLoader->getFallbackDirsPsr4());
+
+    foreach ($originalClassLoader->getPrefixes() as $namespace => $directories) {
+        $failingClassLoader->add($namespace, $directories);
+    }
+
+    $failingClassLoader->add('', $originalClassLoader->getFallbackDirs());
+    $failingClassLoader->addClassMap($originalClassLoader->getClassMap());
+    $failingClassLoader->register();
+
+    try {
+        $this->artisan('make:filament-resource', [
+            '--panel' => 'admin',
+            '--record-title-attribute' => 'name',
+        ])
+            ->expectsOutputToContain('Unable to refresh the application class index. Model suggestions may be incomplete.')
+            ->expectsQuestion('What is the model?', 'Filament\Tests\Fixtures\Models\User')
+            ->expectsQuestion('Would you like to generate a read-only view page for the resource?', false)
+            ->expectsQuestion('Should the configuration be generated from the current database columns?', false)
+            ->expectsQuestion('Does the model use soft-deletes?', false)
+            ->assertSuccessful();
+    } finally {
+        $this->mockConsoleOutput = false;
+        $failingClassLoader->unregister();
+        $originalClassLoader->register();
+    }
 });
 
 it('can generate a resource class', function (): void {
@@ -869,4 +917,19 @@ it('can generate a nested resource class in a nested directory', function (): vo
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
+});
+
+it('fails when Filament has not been installed', function (): void {
+    app(PanelRegistry::class)->panels = [];
+
+    $this->mockConsoleOutput = true;
+
+    $this->artisan('make:filament-resource', [
+        'model' => 'Post',
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
+        '--record-title-attribute' => 'title',
+        '--no-interaction' => true,
+    ])
+        ->expectsOutputToContain('Filament has not been installed yet')
+        ->assertFailed();
 });

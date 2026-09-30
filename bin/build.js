@@ -114,6 +114,7 @@ cleanDirectory('./packages/panels/dist/fonts/inter')
 buildInter('./packages/panels/dist/fonts/inter')
 
 const formComponents = [
+    'builder',
     'checkbox-list',
     'code-editor',
     'color-picker',

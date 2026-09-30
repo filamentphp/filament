@@ -4,9 +4,29 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Filament\Tests\Fixtures\Pages\ConfigurableSettings;
 use Filament\Tests\Fixtures\Resources\Posts\ConfigurablePostResource;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListConfigurablePosts;
 use Filament\Tests\Panels\Configuration\TestCase;
 
 uses(TestCase::class);
+
+it('includes the navigation hierarchy in breadcrumbs for the active page and resource configurations', function (): void {
+    Filament::getCurrentOrDefaultPanel()->breadcrumbs(hasNavigationHierarchy: true);
+
+    Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+
+    expect(app(ConfigurableSettings::class)->getBreadcrumbs())->toBe([
+        'Settings',
+        'Configurable Settings',
+    ]);
+
+    Filament::setCurrentPageConfigurationKey(null);
+    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+
+    expect(app(ListConfigurablePosts::class)->getResourceBreadcrumbs())->toBe([
+        'Archive',
+        ConfigurablePostResource::getUrl() => 'Posts',
+    ]);
+});
 
 describe('resource configuration navigation', function (): void {
     it('registers separate navigation items for each resource configuration', function (): void {

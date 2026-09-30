@@ -33,7 +33,15 @@ export default Node.create({
             const dom = document.createElement('div')
             dom.setAttribute('data-config', JSON.stringify(node.attrs.config))
             dom.setAttribute('data-id', node.attrs.id)
+            dom.setAttribute('data-testid', 'rich-editor-custom-block')
             dom.setAttribute('data-type', 'customBlock')
+
+            if (
+                extension.options.hasMinimalCustomBlockControls &&
+                node.attrs.preview
+            ) {
+                dom.classList.add('fi-fo-rich-editor-custom-block-minimal')
+            }
 
             const header = document.createElement('div')
             header.className =
@@ -53,15 +61,25 @@ export default Node.create({
 
                 const editButton = document.createElement('button')
                 editButton.className = 'fi-icon-btn'
+                editButton.dataset.testid =
+                    'rich-editor-custom-block-edit-button'
                 editButton.type = 'button'
+                if (extension.options.editCustomBlockButtonLabel) {
+                    editButton.setAttribute(
+                        'aria-label',
+                        extension.options.editCustomBlockButtonLabel,
+                    )
+                }
                 editButton.innerHTML =
                     extension.options.editCustomBlockButtonIconHtml
-                editButton.addEventListener('click', () =>
+                editButton.addEventListener('click', () => {
+                    editor.commands.setNodeSelection(getPos())
+
                     extension.options.editCustomBlockUsing(
                         node.attrs.id,
                         node.attrs.config,
-                    ),
-                )
+                    )
+                })
                 editButtonContainer.appendChild(editButton)
             }
 
@@ -78,12 +96,21 @@ export default Node.create({
 
                 const deleteButton = document.createElement('button')
                 deleteButton.className = 'fi-icon-btn'
+                deleteButton.dataset.testid =
+                    'rich-editor-custom-block-delete-button'
                 deleteButton.type = 'button'
+                if (extension.options.deleteCustomBlockButtonLabel) {
+                    deleteButton.setAttribute(
+                        'aria-label',
+                        extension.options.deleteCustomBlockButtonLabel,
+                    )
+                }
                 deleteButton.innerHTML =
                     extension.options.deleteCustomBlockButtonIconHtml
                 deleteButton.addEventListener('click', () =>
                     editor
                         .chain()
+                        .focus()
                         .setNodeSelection(getPos())
                         .deleteSelection()
                         .run(),
@@ -112,6 +139,9 @@ export default Node.create({
 
             return {
                 dom,
+                stopEvent: (event) =>
+                    event.target instanceof Element &&
+                    header.contains(event.target.closest('button')),
             }
         }
     },
@@ -119,8 +149,12 @@ export default Node.create({
     addOptions() {
         return {
             deleteCustomBlockButtonIconHtml: null,
+            deleteCustomBlockButtonLabel: null,
             editCustomBlockButtonIconHtml: null,
+            editCustomBlockButtonLabel: null,
             editCustomBlockUsing: () => {},
+            getCustomBlockPreviewsUsing: async () => [],
+            hasMinimalCustomBlockControls: false,
             insertCustomBlockUsing: () => {},
         }
     },
@@ -158,18 +192,19 @@ export default Node.create({
 
             label: {
                 default: null,
-                parseHTML: (element) => element.getAttribute('data-label'),
+                parseHTML: () => null,
                 rendered: false,
             },
 
             preview: {
                 default: null,
-                parseHTML: (element) => element.getAttribute('data-preview'),
+                parseHTML: () => null,
                 rendered: false,
             },
 
             shouldApplyProseStylingToPreview: {
                 default: false,
+                parseHTML: () => false,
                 rendered: false,
             },
         }
@@ -221,7 +256,135 @@ export default Node.create({
     },
 
     addProseMirrorPlugins() {
-        const { insertCustomBlockUsing } = this.options
+        const { getCustomBlockPreviewsUsing, insertCustomBlockUsing } =
+            this.options
+        const customBlockPreviews = new Map()
+        const pendingCustomBlockPreviews = new Set()
+
+        const getCustomBlockFingerprint = (node) =>
+            JSON.stringify([node.attrs.id, node.attrs.config])
+
+        const hydrateCustomBlockPreviews = async (view) => {
+            if (this.editor.isDestroyed) {
+                return
+            }
+
+            const customBlocks = []
+            const customBlockFingerprints = []
+            const unhydratedCustomBlocks = new Map()
+
+            view.state.doc.descendants((node) => {
+                if (node.type.name !== this.name) {
+                    return
+                }
+
+                const fingerprint = getCustomBlockFingerprint(node)
+
+                if (node.attrs.preview !== null) {
+                    customBlockPreviews.set(fingerprint, {
+                        label: node.attrs.label,
+                        preview: node.attrs.preview,
+                        shouldApplyProseStylingToPreview:
+                            node.attrs.shouldApplyProseStylingToPreview,
+                    })
+
+                    return
+                }
+
+                if (
+                    !node.attrs.id ||
+                    pendingCustomBlockPreviews.has(fingerprint)
+                ) {
+                    return
+                }
+
+                unhydratedCustomBlocks.set(fingerprint, {
+                    config: node.attrs.config,
+                    id: node.attrs.id,
+                })
+            })
+
+            unhydratedCustomBlocks.forEach((customBlock, fingerprint) => {
+                if (customBlockPreviews.has(fingerprint)) {
+                    return
+                }
+
+                pendingCustomBlockPreviews.add(fingerprint)
+                customBlockFingerprints.push(fingerprint)
+                customBlocks.push({
+                    ...customBlock,
+                    key: customBlocks.length,
+                })
+            })
+
+            if (customBlocks.length) {
+                let hydratedCustomBlockPreviews
+
+                try {
+                    hydratedCustomBlockPreviews =
+                        await getCustomBlockPreviewsUsing(customBlocks)
+                } catch (error) {
+                    console.error(
+                        'Failed to hydrate custom block previews',
+                        error,
+                    )
+                    hydratedCustomBlockPreviews = []
+                }
+
+                customBlockFingerprints.forEach((fingerprint) => {
+                    pendingCustomBlockPreviews.delete(fingerprint)
+                    customBlockPreviews.set(fingerprint, null)
+                })
+
+                if (this.editor.isDestroyed) {
+                    return
+                }
+
+                hydratedCustomBlockPreviews.forEach((preview) => {
+                    const fingerprint = customBlockFingerprints[preview.key]
+
+                    if (fingerprint === undefined) {
+                        return
+                    }
+
+                    customBlockPreviews.set(fingerprint, {
+                        label: preview.label,
+                        preview: preview.preview,
+                        shouldApplyProseStylingToPreview:
+                            preview.shouldApplyProseStylingToPreview,
+                    })
+                })
+            }
+
+            const transaction = view.state.tr
+
+            view.state.doc.descendants((node, position) => {
+                if (
+                    node.type.name !== this.name ||
+                    node.attrs.preview !== null
+                ) {
+                    return
+                }
+
+                const preview = customBlockPreviews.get(
+                    getCustomBlockFingerprint(node),
+                )
+
+                if (!preview) {
+                    return
+                }
+
+                transaction.setNodeMarkup(position, undefined, {
+                    ...node.attrs,
+                    ...preview,
+                })
+            })
+
+            if (transaction.docChanged) {
+                transaction.setMeta('addToHistory', false)
+                view.dispatch(transaction)
+            }
+        }
 
         return [
             new Plugin({
@@ -231,11 +394,11 @@ export default Node.create({
                             return false
                         }
 
-                        event.preventDefault()
-
                         if (!event.dataTransfer.getData('customBlock')) {
                             return false
                         }
+
+                        event.preventDefault()
 
                         const customBlockId =
                             event.dataTransfer.getData('customBlock')
@@ -250,6 +413,16 @@ export default Node.create({
 
                         return false
                     },
+                },
+                view: (view) => {
+                    setTimeout(() => hydrateCustomBlockPreviews(view))
+
+                    return {
+                        update: (view) =>
+                            queueMicrotask(() =>
+                                hydrateCustomBlockPreviews(view),
+                            ),
+                    }
                 },
             }),
         ]

@@ -137,6 +137,8 @@ class Action extends ViewComponent implements Arrayable
 
     protected ?Action $parentAction = null;
 
+    protected ?Action $mountedParentAction = null;
+
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -568,6 +570,7 @@ class Action extends ViewComponent implements Arrayable
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
+            'parentAction' => [$this->mountedParentAction ?? $this->getParentAction()],
             'record' => [$this->getRecord()],
             'selectedRecords', 'records' => [$this->getIndividuallyAuthorizedSelectedRecords()],
             'selectedRecordsQuery', 'recordsQuery' => [$this->getSelectedRecordsQuery()],
@@ -1203,5 +1206,12 @@ class Action extends ViewComponent implements Arrayable
     public function getParentAction(): ?Action
     {
         return $this->parentAction;
+    }
+
+    public function mountedParentAction(?Action $action): static
+    {
+        $this->mountedParentAction = $action;
+
+        return $this;
     }
 }

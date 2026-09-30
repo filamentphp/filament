@@ -45,6 +45,8 @@ trait HasFilters
 
     protected ?Closure $modifyFiltersApplyActionUsing = null;
 
+    protected ?Closure $modifyFiltersResetActionUsing = null;
+
     protected ?Closure $modifyFiltersRemoveAllActionUsing = null;
 
     protected FiltersResetActionPosition | Closure | null $filtersResetActionPosition = null;
@@ -64,6 +66,13 @@ trait HasFilters
     public function filtersApplyAction(?Closure $callback): static
     {
         $this->modifyFiltersApplyActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function filtersResetAction(?Closure $callback): static
+    {
+        $this->modifyFiltersResetActionUsing = $callback;
 
         return $this;
     }
@@ -263,11 +272,7 @@ trait HasFilters
             ->extraModalFooterActions([
                 $this->getFiltersApplyAction()
                     ->close(),
-                Action::make('resetFilters')
-                    ->label(__('filament-tables::table.filters.actions.reset.label'))
-                    ->color('danger')
-                    ->action('resetTableFiltersForm')
-                    ->button(),
+                $this->getFiltersResetAction(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
             ->table($this)
@@ -296,6 +301,24 @@ trait HasFilters
 
         if ($this->modifyFiltersApplyActionUsing) {
             $action = $this->evaluate($this->modifyFiltersApplyActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function getFiltersResetAction(): Action
+    {
+        $action = Action::make('resetFilters')
+            ->label(__('filament-tables::table.filters.actions.reset.label'))
+            ->color('danger')
+            ->action('resetTableFiltersForm')
+            ->table($this)
+            ->authorize(true);
+
+        if ($this->modifyFiltersResetActionUsing) {
+            $action = $this->evaluate($this->modifyFiltersResetActionUsing, [
                 'action' => $action,
             ]) ?? $action;
         }

@@ -2,6 +2,7 @@
 
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -16,6 +17,19 @@ it('belongs to container', function (): void {
     expect($component)
         ->getContainer()->toBe($schema);
 });
+
+it('clamps `getHeadingLevel()` to a minimum of `1` while preserving nested heading levels', function (int $rootHeadingLevel): void {
+    $livewire = Livewire::make();
+    $parentSection = Section::make('Parent')
+        ->container(Schema::make($livewire)->rootHeadingLevel($rootHeadingLevel));
+    $childSection = Section::make('Child')
+        ->container(Schema::make($livewire)->parentComponent($parentSection));
+
+    expect($parentSection->getHeadingLevel())->toBe(1)
+        ->and($parentSection->getHeadingTag())->toBe('h1')
+        ->and($childSection->getHeadingLevel())->toBe(2)
+        ->and($childSection->getHeadingTag())->toBe('h2');
+})->with([0, -1]);
 
 it('invalidates hierarchy caches when attached to a different container', function (): void {
     $firstSchema = Schema::make(Livewire::make())
