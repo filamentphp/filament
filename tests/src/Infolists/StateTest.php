@@ -13,6 +13,8 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Livewire\Component;
 
@@ -323,6 +325,17 @@ describe('`constantState` path resolution', function (): void {
             BLADE;
         }
     }
+
+    it('preserves a single related state as an array only for multiple relationships', function (): void {
+        $team = Team::factory()->create(['name' => 'Team Alpha']);
+        $user = User::factory()->create(['team_id' => $team->getKey()]);
+        Post::factory()->for($user, 'author')->create(['title' => 'Only post']);
+
+        expect(TextEntry::make('posts.title')->getConstantStateFromRecord($user))
+            ->toBe(['Only post'])
+            ->and(TextEntry::make('team.name')->getConstantStateFromRecord($user))
+            ->toBe('Team Alpha');
+    });
 
     it('can resolve `getConstantStatePath()` when schema has `record()`', function (): void {
         $post = Post::factory()->create(['title' => 'Test Post', 'content' => 'Post content']);
